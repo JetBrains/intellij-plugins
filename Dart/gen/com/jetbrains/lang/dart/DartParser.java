@@ -4171,7 +4171,6 @@ public class DartParser implements PsiParser {
   //                                | breakStatement
   //                                | continueStatement
   //                                | returnStatement
-  //                                | throwStatementWithSemicolon
   //                                | assertStatement
   //                                | statementFollowedBySemiColon
   //                                | yieldEachStatement
@@ -4193,7 +4192,6 @@ public class DartParser implements PsiParser {
     if (!r) r = breakStatement(b, l + 1);
     if (!r) r = continueStatement(b, l + 1);
     if (!r) r = returnStatement(b, l + 1);
-    if (!r) r = consumeToken(b, THROWSTATEMENTWITHSEMICOLON);
     if (!r) r = assertStatement(b, l + 1);
     if (!r) r = statementFollowedBySemiColon(b, l + 1);
     if (!r) r = yieldEachStatement(b, l + 1);

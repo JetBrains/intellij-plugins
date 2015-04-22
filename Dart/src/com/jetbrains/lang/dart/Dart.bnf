@@ -404,7 +404,6 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.  
                                | breakStatement
                                | continueStatement
                                | returnStatement
-                               | throwStatementWithSemicolon
                                | assertStatement
                                | statementFollowedBySemiColon
                                | yieldEachStatement

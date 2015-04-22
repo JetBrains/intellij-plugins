@@ -246,7 +246,6 @@ public interface DartTokenTypes {
   IElementType SYNC = new DartElementType("sync");
   IElementType THIS = new DartElementType("this");
   IElementType THROW = new DartElementType("throw");
-  IElementType THROWSTATEMENTWITHSEMICOLON = new DartElementType("throwStatementWithSemicolon");
   IElementType TRUE = new DartElementType("true");
   IElementType TRY = new DartElementType("try");
   IElementType TYPEDEF = new DartElementType("typedef");
