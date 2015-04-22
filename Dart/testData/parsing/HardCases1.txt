@@ -60,7 +60,7 @@ Dart File
             BLOCK
               PsiElement({)('{')
               STATEMENTS
-                THROW_STATEMENT
+                THROW_EXPRESSION
                   PsiElement(throw)('throw')
                   NEW_EXPRESSION
                     PsiElement(new)('new')

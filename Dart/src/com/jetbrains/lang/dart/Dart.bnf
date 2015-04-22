@@ -433,8 +433,6 @@ breakStatement ::= 'break' referenceExpression? ';' {pin=1}
 continueStatement ::= 'continue' referenceExpression? ';' {pin=1}
 returnStatement ::= 'return' expression? ';' {pin=1}
 rethrowStatement ::= 'rethrow' ';' {pin=1}
-private throwStatementWithSemicolon ::= throwStatement ';' {pin=1}
-throwStatement ::= 'throw' expression? {pin=1} // in dart spec this is 'throw expression', not 'throw statement'
 
 forLoopPartsInBraces::= '(' forLoopParts ')'
 forLoopParts::= varDeclarationList ';' expression? ';' expressionList?
@@ -543,7 +541,8 @@ private primary ::=  literalExpression |
                      functionExpression |
                      newExpression |
                      constConstructorExpression |
-                     refOrThisOrSuperOrParenExpression
+                     refOrThisOrSuperOrParenExpression |
+                     throwExpression
 
 parenthesizedExpression ::= '(' expressionInParentheses ')'
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -583,6 +582,8 @@ newExpression ::= 'new' type ('.' referenceExpression)? arguments
 constConstructorExpression ::= 'const' type ('.' referenceExpression)? arguments
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
+throwExpression ::= 'throw' expression
+
 // todo get rid of all Wrappers and WITHOUT_CASCADE user data, implement expression parsing according to the spec and Grammar-Kit docs
 literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<mapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -621,6 +622,6 @@ functionExpressionBody ::= <<arrowBodyWrapper>> | <<blockBodyWrapper>>
 //private arrowBodyWithSemi ::= arrowBody ';' {pin=1}
 //functionExpressionBody ::= arrowBody | blockBody
 
-private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' (expression | throwStatement) {pin=2}
+private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' expression {pin=2}
 private blockBody ::= ('async' '*'? | 'sync' '*'?)? block
 

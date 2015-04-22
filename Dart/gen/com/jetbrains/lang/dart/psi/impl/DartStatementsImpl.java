@@ -102,12 +102,6 @@ public class DartStatementsImpl extends DartPsiCompositeElementImpl implements D
 
   @Override
   @NotNull
-  public List<DartThrowStatement> getThrowStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartThrowStatement.class);
-  }
-
-  @Override
-  @NotNull
   public List<DartTryStatement> getTryStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTryStatement.class);
   }
