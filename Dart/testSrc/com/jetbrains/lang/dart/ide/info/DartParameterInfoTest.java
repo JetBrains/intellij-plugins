@@ -121,4 +121,20 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
     doTest("[String s = 'foo']", 0, 1, 17);
   }
 
+  public void testParamInfo_call_localVariable() throws Throwable {
+    doTest("int a, double b", 0);
+  }
+
+  public void testParamInfo_call_newExpression() throws Throwable {
+    doTest("int a, double b", 0);
+  }
+
+  public void testParamInfo_call_functionInvocation() throws Throwable {
+    doTest("int a, double b", 0);
+  }
+
+  public void testParamInfo_call_getterInvocation() throws Throwable {
+    doTest("int a, double b", 0);
+  }
+
 }
