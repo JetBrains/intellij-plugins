@@ -178,7 +178,7 @@ class C {
 }
 
 factory CSSMatrix([String cssValue]) {
-    if (?cssValue) {
+    if (~cssValue && !a ||-b |+c &--d ^++e) {
       return _CSSMatrixFactoryProvider.createCSSMatrix();
     }
     return _CSSMatrixFactoryProvider.createCSSMatrix(cssValue);
