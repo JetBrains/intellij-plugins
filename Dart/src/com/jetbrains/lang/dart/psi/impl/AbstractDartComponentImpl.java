@@ -123,6 +123,11 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   }
 
   @Override
+  public boolean isUnitMember() {
+    return PsiTreeUtil.getParentOfType(this, DartComponent.class) == null;
+  }
+
+  @Override
   @Nullable
   public DartMetadata getMetadataByName(@NotNull final String name) {
     for (DartMetadata metadata : PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class)) {

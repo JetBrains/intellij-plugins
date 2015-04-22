@@ -118,8 +118,17 @@ public class DartColorAnnotator implements Annotator {
       final PsiElement resolved = element.resolve(); // todo this takes too much time
       if (resolved != null) {
         final PsiElement parent = resolved.getParent();
+        final DartComponent parentComponent = parent instanceof DartComponent ? (DartComponent)parent : null;
         if (parent instanceof DartFunctionDeclarationWithBodyOrNative) {
           createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_CALL);
+        }
+        else if (parent instanceof DartGetterDeclaration || parent instanceof DartSetterDeclaration) {
+          final String key = parentComponent.isUnitMember()
+                             ? DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_ACCESS
+                             : parentComponent.isStatic()
+                               ? DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE_ACCESS
+                               : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE_ACCESS;
+          createInfoAnnotation(holder, element, key);
         }
         else if (parent instanceof DartMethodDeclaration) {
           final String callType = getCallKind((DartMethodDeclaration)parent, element);
@@ -128,21 +137,16 @@ public class DartColorAnnotator implements Annotator {
         else if (parent instanceof DartVarAccessDeclaration) {
           final DartComponentType type = DartComponentType.typeOf(parent);
           if (type == DartComponentType.VARIABLE) {
-            final PsiElement varParent = parent.getParent().getParent();
-            if (varParent instanceof DartFile) {
-              createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_ACCESS);
-            }
-            else {
-              createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_ACCESS);
-            }
+            final String key = parentComponent.isUnitMember()
+                               ? DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_ACCESS
+                               : DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_ACCESS;
+            createInfoAnnotation(holder, element, key);
           }
           else {
-            if (((DartVarAccessDeclaration)parent).isStatic()) {
-              createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE_ACCESS);
-            }
-            else {
-              createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE_ACCESS);
-            }
+            final String key = parentComponent.isStatic()
+                               ? DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE_ACCESS
+                               : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE_ACCESS;
+            createInfoAnnotation(holder, element, key);
           }
         }
         else if (resolved instanceof DartComponentName) componentName = (DartComponentName)resolved;
@@ -280,6 +284,11 @@ public class DartColorAnnotator implements Annotator {
     }
   }
 
+  private static boolean isPropertyAccessorName(DartComponentName name) {
+    DartComponent component = (DartComponent)name.getParent();
+    return component.isGetter() || component.isSetter();
+  }
+
   private static boolean isStatic(final PsiElement element) {
     return element instanceof DartComponent && ((DartComponent)element).isStatic();
   }
@@ -301,9 +310,14 @@ public class DartColorAnnotator implements Annotator {
       case PARAMETER:
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_PARAMETER);
       case FUNCTION:
-        return isInFunctionBody(componentName)
-               ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_FUNCTION)
-               : TextAttributesKey.find(DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
+        if (isPropertyAccessorName(componentName)) {
+          return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION);
+        }
+        else {
+          return isInFunctionBody(componentName)
+                 ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_FUNCTION)
+                 : TextAttributesKey.find(DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
+        }
       case VARIABLE:
         return isInFunctionBody(componentName)
                ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE)
@@ -314,10 +328,18 @@ public class DartColorAnnotator implements Annotator {
         return isStatic(componentName.getParent())
                ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE)
                : TextAttributesKey.find(DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE);
-      case METHOD:
-        return isStatic(componentName.getParent())
-               ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION)
-               : TextAttributesKey.find(DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION);
+      case METHOD: {
+        if (isPropertyAccessorName(componentName)) {
+          return isStatic(componentName.getParent())
+                 ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE)
+                 : TextAttributesKey.find(DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE);
+        }
+        else {
+          return isStatic(componentName.getParent())
+                 ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION)
+                 : TextAttributesKey.find(DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION);
+        }
+      }
       default:
         return null;
     }
