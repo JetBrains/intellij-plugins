@@ -10,9 +10,6 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaConfigFileInspection extends JSInspection {
   @NotNull
   @Override
@@ -29,38 +26,30 @@ public class KarmaConfigFileInspection extends JSInspection {
     };
   }
 
-  private static void handleReference(@NotNull KarmaConfigFileReference ref,
-                                      @NotNull ProblemsHolder holder) {
-    PsiFileSystemItem fileItem = resolve(ref);
-    if (fileItem == null) {
-      if (!ref.isPatternUsed()) {
-        holder.registerProblemForReference(
-          ref,
-          ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-          ref.getUnresolvedMessagePattern()
-        );
+  private static void handleReference(@NotNull KarmaConfigFileReference ref, @NotNull ProblemsHolder holder) {
+    if (ref.isLast()) {
+      PsiFileSystemItem fileItem = resolve(ref);
+      if (fileItem == null) {
+        // JSFileReferencesInspection should highlight the reference as unresolved
+        return;
       }
-    }
-    else {
-      if (ref.isLast()) {
-        KarmaConfigFileReference.FileType fileType = ref.getExpectedFileType();
-        if (fileType == KarmaConfigFileReference.FileType.DIRECTORY) {
-          if (!fileItem.isDirectory()) {
-            holder.registerProblemForReference(
-              ref,
-              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-              "Directory expected"
-            );
-          }
+      KarmaConfigFileReference.FileType fileType = ref.getExpectedFileType();
+      if (fileType == KarmaConfigFileReference.FileType.DIRECTORY) {
+        if (!fileItem.isDirectory()) {
+          holder.registerProblemForReference(
+            ref,
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            "Directory expected"
+          );
         }
-        if (fileType == KarmaConfigFileReference.FileType.FILE) {
-          if (fileItem.isDirectory()) {
-            holder.registerProblemForReference(
-              ref,
-              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-              "File/Pattern expected"
-            );
-          }
+      }
+      if (fileType == KarmaConfigFileReference.FileType.FILE) {
+        if (fileItem.isDirectory()) {
+          holder.registerProblemForReference(
+            ref,
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            "File/Pattern expected"
+          );
         }
       }
     }
@@ -79,5 +68,4 @@ public class KarmaConfigFileInspection extends JSInspection {
     }
     return null;
   }
-
 }
