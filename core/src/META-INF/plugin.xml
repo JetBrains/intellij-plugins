@@ -31,7 +31,7 @@
     <multiHostInjector implementation="com.intellij.tapestry.intellij.lang.TelLanguageInjector" />
     <annotator language="TML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
 
-    <psi.referenceContributor implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
+    <psi.referenceContributor language="XML" implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
 
     <xml.xmlExtension implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension"/>
 
