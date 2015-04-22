@@ -24,6 +24,8 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
     fillMap(ATTRIBUTES, ASSIGNMENT_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
     fillMap(ATTRIBUTES, BINARY_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
     fillMap(ATTRIBUTES, UNARY_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
+    // '?' from ternary operator; ':' is handled separately in dartColorAnnotator, because there are also ':' in other syntax constructs
+    ATTRIBUTES.put(QUEST, DartSyntaxHighlighterColors.OPERATION_SIGN);
 
     fillMap(ATTRIBUTES, STRINGS, DartSyntaxHighlighterColors.STRING);
 
