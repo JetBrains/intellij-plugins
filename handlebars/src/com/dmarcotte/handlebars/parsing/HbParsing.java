@@ -153,7 +153,7 @@ public class HbParsing {
 
         PsiBuilder.Marker blockMarker = builder.mark();
         if (parseOpenInverse(builder)) {
-          parseProgramInverseProgramClose(builder, blockMarker, false);
+          parseProgramInverseProgramClose(builder, blockMarker);
         }
         else {
           return false;
@@ -165,7 +165,7 @@ public class HbParsing {
       if (tokenType == OPEN_BLOCK) {
         PsiBuilder.Marker blockMarker = builder.mark();
         if (parseOpenBlock(builder)) {
-          parseProgramInverseProgramClose(builder, blockMarker, false);
+          parseProgramInverseProgramClose(builder, blockMarker);
         }
         else {
           return false;
@@ -200,7 +200,11 @@ public class HbParsing {
     if (tokenType == OPEN_RAW_BLOCK) {
       PsiBuilder.Marker blockMarker = builder.mark();
       if (parseOpenRawBlock(builder)) {
-        parseProgramInverseProgramClose(builder, blockMarker, true);
+        if (builder.getTokenType() == CONTENT) {
+          builder.advanceLexer(); // eat non-HB content
+        }
+        parseCloseRawBlock(builder);
+        blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
       }
       else {
         return false;
@@ -241,27 +245,20 @@ public class HbParsing {
   }
 
   /**
-   * Helper method to take care of the business needed after an "open-type mustache" (openBlock, openRawBlock or openInverse)
+   * Helper method to take care of the business needed after an "open-type mustache" (openBlock or openInverse)
    *
    * Effective acts as the `program inverseAndProgram? closeBlock` part of the grammar
    *
    * <p/>
    * NOTE: will resolve the given blockMarker
    */
-  private void parseProgramInverseProgramClose(PsiBuilder builder, PsiBuilder.Marker blockMarker, boolean raw) {
-    if (raw) {
-      if (builder.getTokenType() == CONTENT) {
-        builder.advanceLexer(); // eat non-HB content
-      }
-      parseCloseRawBlock(builder);
-    } else {
-      parseProgram(builder);
-      if (parseSimpleInverse(builder)) {
-        // if we have a simple inverse, must have more statements
-        parseStatements(builder);
-      }
-      parseCloseBlock(builder);
+  private void parseProgramInverseProgramClose(PsiBuilder builder, PsiBuilder.Marker blockMarker) {
+    parseProgram(builder);
+    if (parseSimpleInverse(builder)) {
+      // if we have a simple inverse, must have more statements
+      parseStatements(builder);
     }
+    parseCloseBlock(builder);
     blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
   }
 
