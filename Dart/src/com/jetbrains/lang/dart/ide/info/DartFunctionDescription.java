@@ -49,8 +49,7 @@ public class DartFunctionDescription {
 
 
     if (myNamedParameters.length > 0) {
-      final String[] braces = myNamedParameters[0].isPositional() ? new String[]{"[", "]"} :
-                              new String[]{"{", "}"};
+      final String[] braces = myNamedParameters[0].isPositional() ? new String[]{"[", "]"} : new String[]{"{", "}"};
 
       if (result.length() > 0) {
         result.append(", ");
@@ -102,10 +101,24 @@ public class DartFunctionDescription {
 
   @Nullable
   public static DartFunctionDescription tryGetDescription(DartCallExpression callExpression) {
-    final PsiElement target = ((DartReference)callExpression.getExpression()).resolve();
-    final PsiElement targetParent = target == null ? null : target.getParent();
+    final DartReference expression = (DartReference)callExpression.getExpression();
+    PsiElement target = expression.resolve();
+    PsiElement targetParent = target == null ? null : target.getParent();
+    // If no target, such as "new Test()" or the target is a variable,
+    // check if the expression's DartClass defines the "call" method.
+    if (target == null || targetParent instanceof DartVarAccessDeclaration || targetParent instanceof DartGetterDeclaration) {
+      DartClassResolveResult resolveResult = expression.resolveDartClass();
+      DartClass dartClass = resolveResult.getDartClass();
+      if (dartClass != null) {
+        DartComponent callMethod = dartClass.findMethodByName("call");
+        if (callMethod != null) {
+          target = callMethod.getComponentName();
+          targetParent = callMethod;
+        }
+      }
+    }
     if (target instanceof DartComponentName && targetParent instanceof DartComponent) {
-      final DartReference[] references = PsiTreeUtil.getChildrenOfType(callExpression.getExpression(), DartReference.class);
+      final DartReference[] references = PsiTreeUtil.getChildrenOfType(expression, DartReference.class);
       final DartClassResolveResult resolveResult = (references != null && references.length == 2)
                                                    ? references[0].resolveDartClass()
                                                    : DartClassResolveResult
@@ -121,8 +134,7 @@ public class DartFunctionDescription {
     final String typeText = returnType == null
                             ? DartPresentableUtil.buildTypeText(namedComponent, dartType, resolveResult.getSpecialization())
                             : DartPresentableUtil.buildTypeText(namedComponent, returnType, resolveResult.getSpecialization());
-    return new DartFunctionDescription(namedComponent.getName(),
-                                       typeText,
+    return new DartFunctionDescription(namedComponent.getName(), typeText,
                                        DartParameterDescription.getParameters(namedComponent, resolveResult.getSpecialization()),
                                        DartNamedParameterDescription.getParameters(namedComponent, resolveResult.getSpecialization()));
   }

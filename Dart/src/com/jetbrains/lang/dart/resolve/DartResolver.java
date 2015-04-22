@@ -107,6 +107,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   private static List<? extends PsiElement> resolveSimpleReference(@NotNull DartReference reference) {
+    if (reference instanceof DartCallExpression) {
+      System.out.println("reference: " + reference);
+    }
     final List<? extends PsiElement> result = resolveSimpleReference(reference, reference.getCanonicalText());
     final PsiElement parent = reference.getParent();
     final PsiElement superParent = parent.getParent();
