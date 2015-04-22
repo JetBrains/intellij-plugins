@@ -37,5 +37,3 @@ class <info textAttributesKey="DART_CLASS">C</info> extends <info textAttributes
 }
 
 const <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">className</info> = <info textAttributesKey="DART_SYMBOL_LITERAL">#MyClass</info>;
-
-<error>`</error> // this syntax error is here to make sure that DartAnalysisServerAnnotator won't run

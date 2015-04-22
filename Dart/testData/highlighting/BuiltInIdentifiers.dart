@@ -119,5 +119,3 @@ new <info textAttributesKey="DART_CLASS"><info textAttributesKey="DART_CONSTRUCT
 }
 
 enum <info textAttributesKey="DART_CLASS">Foo</info> { <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">BAR</info> }
-
-<error>`</error> // this syntax error is here to make sure that DartAnalysisServerAnnotator won't run
