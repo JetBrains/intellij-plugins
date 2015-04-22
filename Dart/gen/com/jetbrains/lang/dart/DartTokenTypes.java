@@ -107,7 +107,6 @@ public interface DartTokenTypes {
   IElementType SETTER_DECLARATION = new DartElementType("SETTER_DECLARATION");
   IElementType SHIFT_EXPRESSION = new DartElementType("SHIFT_EXPRESSION");
   IElementType SHIFT_OPERATOR = new DartElementType("SHIFT_OPERATOR");
-  IElementType SHIFT_RIGHT_OPERATOR = new DartElementType("SHIFT_RIGHT_OPERATOR");
   IElementType SHORT_TEMPLATE_ENTRY = new DartElementType("SHORT_TEMPLATE_ENTRY");
   IElementType SHOW_COMBINATOR = new DartElementType("SHOW_COMBINATOR");
   IElementType SIMPLE_FORMAL_PARAMETER = new DartElementType("SIMPLE_FORMAL_PARAMETER");
@@ -181,6 +180,7 @@ public interface DartTokenTypes {
   IElementType GET = new DartElementType("get");
   IElementType GT = new DartElementType(">");
   IElementType GT_EQ = new DartElementType(">=");
+  IElementType GT_GT = new DartElementType(">>");
   IElementType GT_GT_EQ = new DartElementType(">>=");
   IElementType HASH = new DartElementType("#");
   IElementType HEX_NUMBER = new DartElementType("HEX_NUMBER");
@@ -556,9 +556,6 @@ public interface DartTokenTypes {
       }
       else if (type == SHIFT_OPERATOR) {
         return new DartShiftOperatorImpl(node);
-      }
-      else if (type == SHIFT_RIGHT_OPERATOR) {
-        return new DartShiftRightOperatorImpl(node);
       }
       else if (type == SHORT_TEMPLATE_ENTRY) {
         return new DartShortTemplateEntryImpl(node);

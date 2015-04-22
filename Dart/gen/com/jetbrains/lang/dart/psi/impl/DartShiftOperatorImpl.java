@@ -22,10 +22,4 @@ public class DartShiftOperatorImpl extends DartPsiCompositeElementImpl implement
     else super.accept(visitor);
   }
 
-  @Override
-  @Nullable
-  public DartShiftRightOperator getShiftRightOperator() {
-    return findChildByClass(DartShiftRightOperator.class);
-  }
-
 }

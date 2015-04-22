@@ -285,9 +285,7 @@ Dart File
                         PsiElement(#)('#')
                         USER_DEFINABLE_OPERATOR
                           SHIFT_OPERATOR
-                            SHIFT_RIGHT_OPERATOR
-                              PsiElement(>)('>')
-                              PsiElement(>)('>')
+                            PsiElement(>>)('>>')
                       PsiElement(,)(',')
                       SYMBOL_LITERAL_EXPRESSION
                         PsiElement(#)('#')
@@ -494,9 +492,7 @@ Dart File
                     PsiElement(#)('#')
                     USER_DEFINABLE_OPERATOR
                       SHIFT_OPERATOR
-                        SHIFT_RIGHT_OPERATOR
-                          PsiElement(>)('>')
-                          PsiElement(>)('>')
+                        PsiElement(>>)('>>')
                 PsiElement(;)(';')
                 ASSIGN_EXPRESSION
                   REFERENCE_EXPRESSION
