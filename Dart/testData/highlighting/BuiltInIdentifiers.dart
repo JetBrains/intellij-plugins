@@ -71,27 +71,27 @@ var <info textAttributesKey="DART_LOCAL_VARIABLE">sync</info>;
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">main</info></info>() {
 try{} <info textAttributesKey="DART_KEYWORD">on</info> on{}
 
-<info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">abstract</info> = 1;
-<info textAttributesKey="DART_METADATA">@<info textAttributesKey="DART_CLASS">Object</info></info>() var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">as</info> = 2;
-<info textAttributesKey="DART_BUILTIN">dynamic</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">deferred</info> = 2.5;
-<info textAttributesKey="DART_BUILTIN">dynamic</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">export</info> = 3;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">external</info> = 4;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">factory</info> = 5;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">get</info> = 6;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">implements</info> = 7;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">import</info> = 8;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">library</info> = 9;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">operator</info> = 10;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">part</info> = 11;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">set</info> = 12;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">static</info> = 13;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">typedef</info> = 14;
+<info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_LOCAL_VARIABLE">abstract</info> = 1;
+<info textAttributesKey="DART_METADATA">@<info textAttributesKey="DART_CLASS">Object</info></info>() var <info textAttributesKey="DART_LOCAL_VARIABLE">as</info> = 2;
+<info textAttributesKey="DART_BUILTIN">dynamic</info> <info textAttributesKey="DART_LOCAL_VARIABLE">deferred</info> = 2.5;
+<info textAttributesKey="DART_BUILTIN">dynamic</info> <info textAttributesKey="DART_LOCAL_VARIABLE">export</info> = 3;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">external</info> = 4;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">factory</info> = 5;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">get</info> = 6;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">implements</info> = 7;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">import</info> = 8;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">library</info> = 9;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">operator</info> = 10;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">part</info> = 11;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">set</info> = 12;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">static</info> = 13;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">typedef</info> = 14;
 
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">on</info> = 15;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">of</info> = 16;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">show</info> = 17;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">hide</info> = 18;
-var <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">native</info> = 19;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">on</info> = 15;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">of</info> = 16;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">show</info> = 17;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">hide</info> = 18;
+var <info textAttributesKey="DART_LOCAL_VARIABLE">native</info> = 19;
 
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_LOCAL_VARIABLE_ACCESS">abstract</info> + 1);
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_LOCAL_VARIABLE_ACCESS">as</info> + 1);

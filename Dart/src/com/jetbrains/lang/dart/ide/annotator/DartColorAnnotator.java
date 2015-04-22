@@ -4,7 +4,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,9 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class DartColorAnnotator implements Annotator {
-  private static final Set<String> BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS = new THashSet<String>(Arrays.asList(
-    "int", "num", "bool", "double"
-  ));
+  private static final Set<String> BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS =
+    new THashSet<String>(Arrays.asList("int", "num", "bool", "double"));
 
   @Override
   public void annotate(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
@@ -106,8 +104,8 @@ public class DartColorAnnotator implements Annotator {
       else {
         final boolean isStatic = isStatic(componentName.getParent());
         final boolean isTopLevel = !isStatic && isTopLevel(componentName.getParent());
-        final TextAttributesKey attribute = getDeclarationAttributeByType(DartComponentType.typeOf(componentName.getParent()), isStatic,
-                                                                          isTopLevel);
+        final TextAttributesKey attribute =
+          getDeclarationAttributeByType(DartComponentType.typeOf(componentName.getParent()), isStatic, isTopLevel);
         createInfoAnnotation(holder, element, attribute);
       }
     }
@@ -116,8 +114,7 @@ public class DartColorAnnotator implements Annotator {
     }
   }
 
-  private static DartComponentName highlightReference(final DartReference element,
-                                                      final AnnotationHolder holder) {
+  private static DartComponentName highlightReference(final DartReference element, final AnnotationHolder holder) {
     DartComponentName componentName = null;
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(element, DartReference.class);
     boolean chain = references != null && references.length > 1;
@@ -228,8 +225,9 @@ public class DartColorAnnotator implements Annotator {
             elementKind = DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION;
           }
           else {
-            elementKind = isStatic(element) ? DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION
-                                            : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION;
+            elementKind = isStatic(element)
+                          ? DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION
+                          : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION;
           }
           createInfoAnnotation(holder, decl.getComponentName(), elementKind);
         }
@@ -260,8 +258,7 @@ public class DartColorAnnotator implements Annotator {
   private static void createInfoAnnotation(final @NotNull AnnotationHolder holder,
                                            final @NotNull TextRange textRange,
                                            final @NotNull String attributeKey) {
-    holder.createInfoAnnotation(textRange, null).setTextAttributes(
-      TextAttributesKey.find(attributeKey));
+    holder.createInfoAnnotation(textRange, null).setTextAttributes(TextAttributesKey.find(attributeKey));
   }
 
 
@@ -275,14 +272,13 @@ public class DartColorAnnotator implements Annotator {
     final List<Pair<TextRange, Boolean>> escapeSequenceRangesAndValidity = getEscapeSequenceRangesAndValidity(node.getText());
     for (Pair<TextRange, Boolean> rangeAndValidity : escapeSequenceRangesAndValidity) {
       final TextRange range = rangeAndValidity.first.shiftRight(node.getTextRange().getStartOffset());
-      final TextAttributesKey attribute = rangeAndValidity.second ? DartSyntaxHighlighterColors.VALID_STRING_ESCAPE
-                                                                  : DartSyntaxHighlighterColors.INVALID_STRING_ESCAPE;
+      final TextAttributesKey attribute =
+        rangeAndValidity.second ? DartSyntaxHighlighterColors.VALID_STRING_ESCAPE : DartSyntaxHighlighterColors.INVALID_STRING_ESCAPE;
       if (rangeAndValidity.second) {
         holder.createInfoAnnotation(range, null).setTextAttributes(attribute);
       }
       else {
-        holder
-          .createErrorAnnotation(range, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
+        holder.createErrorAnnotation(range, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
           .setTextAttributes(attribute);
       }
     }
@@ -292,13 +288,14 @@ public class DartColorAnnotator implements Annotator {
     return element instanceof DartComponent && ((DartComponent)element).isStatic();
   }
 
-  private static boolean isTopLevel(final PsiElement element) {
-    return PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
-      @Override
-      public boolean value(final PsiElement element) {
-        return element instanceof DartMethodDeclaration;
+  private static boolean isTopLevel(PsiElement element) {
+    while (element != null) {
+      if (element instanceof DartFunctionBody) {
+        return false;
       }
-    }) == null;
+      element = element.getParent();
+    }
+    return true;
   }
 
   @Nullable
