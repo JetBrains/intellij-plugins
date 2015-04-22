@@ -21,7 +21,7 @@ class <info textAttributesKey="DART_CLASS">A</info> {
     var <info textAttributesKey="DART_LOCAL_VARIABLE">xx</info> = new <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL"><info textAttributesKey="DART_CONSTRUCTOR_CALL">A</info></info>().<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">b</info>();
   }
 
-  var <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">_c</info> = <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE_ACCESS">BAR</info>;
+  var <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">_c</info> = <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE_ACCESS">BAR</info> ? true <info textAttributesKey="DART_OPERATION_SIGN">:</info> false;
   <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION">A</info>();
   <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION"><info textAttributesKey="DART_CLASS">A</info>.aaa</info>();
 }

@@ -38,6 +38,11 @@ public class DartColorAnnotator implements Annotator {
 
     final DartSdk sdk = DartSdk.getDartSdk(element.getProject());
 
+    if (DartTokenTypes.COLON == element.getNode().getElementType() && element.getParent() instanceof DartTernaryExpression) {
+      createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.OPERATION_SIGN);
+      return;
+    }
+
     if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
       if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
         createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_KEYWORD);
