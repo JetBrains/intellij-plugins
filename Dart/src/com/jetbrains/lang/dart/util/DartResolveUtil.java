@@ -256,8 +256,7 @@ public class DartResolveUtil {
                                                     final @Nullable VirtualFile rootVirtualFile,
                                                     final @Nullable String componentNameHint) {
     final Set<VirtualFile> filesOfInterest =
-      componentNameHint == null ? null
-                                : (Set<VirtualFile>)DartComponentIndex.getAllFiles(componentNameHint, context.getResolveScope());
+      componentNameHint == null ? null : (Set<VirtualFile>)DartComponentIndex.getAllFiles(componentNameHint, context.getResolveScope());
 
     if (filesOfInterest != null && filesOfInterest.isEmpty()) return true;
 
@@ -561,21 +560,19 @@ public class DartResolveUtil {
   public static void collectSupers(@NotNull final List<DartClass> superClasses,
                                    @NotNull final List<DartClass> superInterfaces,
                                    @Nullable DartClass rootDartClass) {
-    processSupers(
-      new PsiElementProcessor<DartClass>() {
-        @Override
-        public boolean execute(@NotNull DartClass dartClass) {
-          superClasses.add(dartClass);
-          return true;
-        }
-      }, new PsiElementProcessor<DartClass>() {
-        @Override
-        public boolean execute(@NotNull DartClass dartClass) {
-          superInterfaces.add(dartClass);
-          return true;
-        }
-      }, rootDartClass
-    );
+    processSupers(new PsiElementProcessor<DartClass>() {
+                    @Override
+                    public boolean execute(@NotNull DartClass dartClass) {
+                      superClasses.add(dartClass);
+                      return true;
+                    }
+                  }, new PsiElementProcessor<DartClass>() {
+                    @Override
+                    public boolean execute(@NotNull DartClass dartClass) {
+                      superInterfaces.add(dartClass);
+                      return true;
+                    }
+                  }, rootDartClass);
   }
 
   public static void processSupers(@Nullable PsiElementProcessor<DartClass> superClassProcessor,
@@ -635,16 +632,12 @@ public class DartResolveUtil {
   }
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields, boolean filterPrivate) {
-    return getComponentNames(
-      filterPrivate ?
-      ContainerUtil.filter(fields, new Condition<DartComponent>() {
-        @Override
-        public boolean value(DartComponent component) {
-          return component.isPublic();
-        }
-      }) :
-      fields
-    );
+    return getComponentNames(filterPrivate ? ContainerUtil.filter(fields, new Condition<DartComponent>() {
+                               @Override
+                               public boolean value(DartComponent component) {
+                                 return component.isPublic();
+                               }
+                             }) : fields);
   }
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields) {
@@ -820,10 +813,8 @@ public class DartResolveUtil {
       return DartClassResolveResult.EMPTY;
     }
 
-    final DartVarInit varInit = PsiTreeUtil.getChildOfType(
-      element instanceof DartVarDeclarationListPart ? element : parentElement,
-      DartVarInit.class
-    );
+    final DartVarInit varInit =
+      PsiTreeUtil.getChildOfType(element instanceof DartVarDeclarationListPart ? element : parentElement, DartVarInit.class);
     final DartExpression initExpression = varInit == null ? null : varInit.getExpression();
     if (initExpression instanceof DartReference) {
       result = ((DartReference)initExpression).resolveDartClass();
@@ -839,6 +830,19 @@ public class DartResolveUtil {
       return references[0].resolveDartClass();
     }
     return DartClassResolveResult.create(PsiTreeUtil.getChildOfType(reference, DartClass.class));
+  }
+
+  /**
+   * Returns the constructor invoked by the given {@link DartNewExpression}.
+   *
+   * TODO(scheglov) Add non-named constructor declarations (they're methods now).
+   */
+  @Nullable
+  public static DartComponent findConstructorDeclaration(DartNewExpression newExpression) {
+    DartType type = newExpression.getType();
+    PsiElement psiElement = type != null ? type.getReferenceExpression() : null;
+    PsiElement target = psiElement != null ? ((DartReference)psiElement).resolve() : null;
+    return target != null ? (DartComponent)target.getParent() : null;
   }
 
   @Nullable
@@ -888,8 +892,7 @@ public class DartResolveUtil {
     int normalIndex = parameterList.getNormalFormalParameterList().indexOf(element);
     final DartNamedFormalParameters formalParameters = parameterList.getNamedFormalParameters();
     int namedIndex = formalParameters == null ? -1 : formalParameters.getDefaultFormalNamedParameterList().indexOf(element);
-    return normalIndex >= 0 ? normalIndex :
-           namedIndex >= 0 ? namedIndex + parameterList.getNormalFormalParameterList().size() : -1;
+    return normalIndex >= 0 ? normalIndex : namedIndex >= 0 ? namedIndex + parameterList.getNormalFormalParameterList().size() : -1;
   }
 
   private static DartClassResolveResult resolveForInPartClass(DartForInPart forInPart) {
@@ -898,9 +901,10 @@ public class DartResolveUtil {
     final DartClassResolveResult classResolveResult =
       dartReference == null ? DartClassResolveResult.EMPTY : dartReference.resolveDartClass();
     final DartClass dartClass = classResolveResult.getDartClass();
-    final DartClassResolveResult iteratorResult = dartClass == null ? DartClassResolveResult.EMPTY :
-                                                  getDartClassResolveResult(dartClass.findMemberByName("iterator"),
-                                                                            classResolveResult.getSpecialization());
+    final DartClassResolveResult iteratorResult = dartClass == null
+                                                  ? DartClassResolveResult.EMPTY
+                                                  : getDartClassResolveResult(dartClass.findMemberByName("iterator"),
+                                                                              classResolveResult.getSpecialization());
     final DartClassResolveResult finalResult = iteratorResult.getSpecialization().get(null, "E");
     return finalResult == null ? DartClassResolveResult.EMPTY : finalResult;
   }
@@ -910,8 +914,8 @@ public class DartResolveUtil {
     final DartArgumentList argumentList = PsiTreeUtil.getParentOfType(place, DartArgumentList.class, false);
     if (place == argumentList) {
       assert argumentList != null;
-      final DartFunctionDescription functionDescription = DartFunctionDescription.tryGetDescription(
-        (DartCallExpression)argumentList.getParent());
+      final DartFunctionDescription functionDescription =
+        DartFunctionDescription.tryGetDescription((DartCallExpression)argumentList.getParent());
       // the last one
       parameterIndex = functionDescription == null ? -1 : functionDescription.getParameters().length - 1;
     }
@@ -938,8 +942,7 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  private static DartClassResolveResult tryFindTypeAndResolveClass(@Nullable PsiElement element,
-                                                                   DartGenericSpecialization specialization) {
+  private static DartClassResolveResult tryFindTypeAndResolveClass(@Nullable PsiElement element, DartGenericSpecialization specialization) {
     DartType type = PsiTreeUtil.getChildOfType(element, DartType.class);
     if (type == null && element instanceof DartType) {
       type = (DartType)element;
@@ -1012,9 +1015,9 @@ public class DartResolveUtil {
   }
 
   public static boolean aloneOrFirstInChain(DartReference reference) {
-    return PsiTreeUtil.getChildrenOfType(reference, DartReference.class) == null
-           && getLeftReference(reference) == null
-           && getLeftReference(reference.getParent()) == null;
+    return PsiTreeUtil.getChildrenOfType(reference, DartReference.class) == null &&
+           getLeftReference(reference) == null &&
+           getLeftReference(reference.getParent()) == null;
   }
 
   @NotNull
@@ -1053,9 +1056,7 @@ public class DartResolveUtil {
     if (dartClassResolveResult.getDartClass() != null) {
       supers.add(dartClassResolveResult.getDartClass());
     }
-    List<DartClassResolveResult> implementsAndMixinsList = resolveClassesByTypes(
-      getImplementsAndMixinsList(dartClass)
-    );
+    List<DartClassResolveResult> implementsAndMixinsList = resolveClassesByTypes(getImplementsAndMixinsList(dartClass));
     for (DartClassResolveResult resolveResult : implementsAndMixinsList) {
       final DartClass resolveResultDartClass = resolveResult.getDartClass();
       if (resolveResultDartClass != null) {

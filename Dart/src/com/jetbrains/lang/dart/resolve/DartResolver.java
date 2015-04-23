@@ -29,11 +29,20 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       return toResult(PsiTreeUtil.getParentOfType(reference, DartClass.class));
     }
     if (reference instanceof DartParameterNameReferenceExpression) {
-      final DartCallExpression callExpression = PsiTreeUtil.getParentOfType(reference, DartCallExpression.class);
-      final DartExpression expression = callExpression != null ? callExpression.getExpression() : null;
-      final PsiElement target = expression instanceof DartReference ? ((DartReference)expression).resolve() : null;
-      final DartFormalParameterList parameters =
-        PsiTreeUtil.getChildOfType(target != null ? target.getParent() : null, DartFormalParameterList.class);
+      PsiElement target;
+      {
+        final DartCallExpression callExpression = PsiTreeUtil.getParentOfType(reference, DartCallExpression.class);
+        final DartExpression expression = callExpression != null ? callExpression.getExpression() : null;
+        target = expression instanceof DartReference ? ((DartReference)expression).resolve() : null;
+        target = target != null ? target.getParent() : null;
+      }
+      if (target == null) {
+        final DartNewExpression newExpression = PsiTreeUtil.getParentOfType(reference, DartNewExpression.class);
+        if (newExpression != null) {
+          target = DartResolveUtil.findConstructorDeclaration(newExpression);
+        }
+      }
+      final DartFormalParameterList parameters = PsiTreeUtil.getChildOfType(target, DartFormalParameterList.class);
       return toResult(DartResolveUtil.findParameterByName(parameters, reference.getText()));
     }
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {
@@ -47,8 +56,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       final List<DartComponentName> result = new SmartList<DartComponentName>();
       final String importPrefix = references[0].getCanonicalText();
       final String componentName = references[1].getCanonicalText();
-      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, importPrefix,
-                                                                      new DartResolveProcessor(result, componentName), componentName);
+      DartResolveUtil
+        .processDeclarationsInImportedFileByImportPrefix(reference, importPrefix, new DartResolveProcessor(result, componentName),
+                                                         componentName);
       if (!result.isEmpty()) {
         return result;
       }
@@ -70,8 +80,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       final List<DartComponentName> result = new SmartList<DartComponentName>();
       final String importPrefix = leftReference.getCanonicalText();
       final String componentName = reference.getCanonicalText();
-      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, importPrefix,
-                                                                      new DartResolveProcessor(result, componentName), componentName);
+      DartResolveUtil
+        .processDeclarationsInImportedFileByImportPrefix(reference, importPrefix, new DartResolveProcessor(result, componentName),
+                                                         componentName);
       if (!result.isEmpty()) {
         return result;
       }
@@ -110,9 +121,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     final List<? extends PsiElement> result = resolveSimpleReference(reference, reference.getCanonicalText());
     final PsiElement parent = reference.getParent();
     final PsiElement superParent = parent.getParent();
-    final boolean isSimpleConstructor = parent instanceof DartType
-                                        && superParent instanceof DartNewExpression
-                                        && ((DartNewExpression)superParent).getReferenceExpression() == null;
+    final boolean isSimpleConstructor = parent instanceof DartType &&
+                                        superParent instanceof DartNewExpression &&
+                                        ((DartNewExpression)superParent).getReferenceExpression() == null;
     if (!isSimpleConstructor || result.isEmpty()) {
       return result;
     }

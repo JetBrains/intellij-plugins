@@ -226,6 +226,18 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
     doTest(1);
   }
 
+  public void testReference_parameter_constructorDefaultInvocation() throws Throwable {
+    doTest(1);
+  }
+
+  public void testReference_parameter_constructorNamedInvocation() throws Throwable {
+    doTest(1);
+  }
+
+  public void testReference_parameter_functionInvocation() throws Throwable {
+    doTest(1);
+  }
+
   public void testReference2() throws Throwable {
     doTest(1);
   }
