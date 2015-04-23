@@ -237,7 +237,11 @@ public class DartStyleAction extends AnAction implements DumbAware {
       Messages.showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("dart.style.action.name"));
       return;
     }
-    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", StringUtil.join(dartFiles, ", ")),
+    final List<String> dartFilePaths = new ArrayList<String>(dartFiles.size());
+    for (VirtualFile virtualFile : dartFiles) {
+      dartFilePaths.add(FileUtil.toSystemDependentName(virtualFile.getPath()));
+    }
+    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", StringUtil.join(dartFilePaths, ", \n")),
                                     DartBundle.message("dart.style.action.name"), DartIcons.Dart_16) != Messages.OK) {
       return;
     }
