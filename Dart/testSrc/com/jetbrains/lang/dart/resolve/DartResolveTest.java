@@ -18,6 +18,7 @@ import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.util.CaretPositionInfo;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,13 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   private static String getPresentableElementPosition(final @Nullable PsiElement element) {
     if (element == null) return "";
 
-    final StringBuilder buf = new StringBuilder(element.getText());
+    final StringBuilder buf = new StringBuilder();
+    if (element.getParent() instanceof DartImportStatement) {
+      buf.append(element.getParent().getText());
+    } else {
+      buf.append(element.getText());
+    }
+
     DartComponent component = PsiTreeUtil.getParentOfType(element, DartComponent.class);
     while (component != null) {
       final DartComponentName componentName = component.getComponentName();
@@ -486,5 +493,30 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
            "var b = prefix.Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;\n" +
            "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;\n" +
            "var d = Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;");
+  }
+
+  public void test_prefix_unique() throws Exception {
+    doTest("import 'dart:async' as prefix;'\n" +
+           "main() {\n" +
+           "  pre<caret expected='file.dart -> import 'dart:async' as prefix;'>fix.Future;\n" +
+           "}");
+  }
+
+  public void test_prefix_shared() throws Exception {
+    doTest("import 'dart:async' as prefix;'\n" +
+           "import 'dart:math' as prefix\n" +
+           "main() {\n" +
+           "  pre<caret expected='file.dart -> import 'dart:async' as prefix;'>fix.Future;\n" +
+           "  pre<caret expected='file.dart -> import 'dart:math' as prefix'>fix.Random;\n" +
+           "}");
+  }
+
+  public void test_prefix_shared_combinators() throws Exception {
+    doTest("import 'dart:async' as prefix hide Stream;'\n" +
+           "import 'dart:async' as prefix show Stream\n" +
+           "main() {\n" +
+           "  pre<caret expected='file.dart -> import 'dart:async' as prefix;'>fix.Future;\n" +
+           "  pre<caret expected='file.dart -> import 'dart:math' as prefix'>fix.Stream;\n" +
+           "}");
   }
 }

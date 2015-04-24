@@ -37,7 +37,23 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       return toResult(DartResolveUtil.findParameterByName(parameters, reference.getText()));
     }
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {
-      return resolveSimpleReference(reference);
+      final List<? extends PsiElement> result = resolveSimpleReference(reference);
+      // If "reference" resolves to an import prefix, find the exact one.
+      // There might be more than one import statement with the same prefix name.
+      if (result.size() == 1 &&
+          result.get(0).getParent() instanceof DartImportStatement &&
+          reference.getParent() instanceof DartReference) {
+        final DartReference parent = (DartReference)reference.getParent();
+        // This has a side effect - the exact prefix if set into "reference" as a user data.
+        parent.resolve();
+        // Extract the exact prefix and return.
+        final DartComponentName importPrefixName = DartResolveUtil.getImportPrefixName(reference);
+        if (importPrefixName != null) {
+          return toResult(importPrefixName);
+        }
+      }
+      // Not an import prefix - a local variable, type, etc.
+      return result;
     }
     final DartReference leftReference = DartResolveUtil.getLeftReference(reference);
     // reference [node, node]
@@ -45,9 +61,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (references != null && references.length == 2) {
       // import prefix
       final List<DartComponentName> result = new SmartList<DartComponentName>();
-      final String importPrefix = references[0].getCanonicalText();
       final String componentName = references[1].getCanonicalText();
-      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, importPrefix,
+      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, references[0],
                                                                       new DartResolveProcessor(result, componentName), componentName);
       if (!result.isEmpty()) {
         return result;
@@ -68,9 +83,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
 
       // import prefix
       final List<DartComponentName> result = new SmartList<DartComponentName>();
-      final String importPrefix = leftReference.getCanonicalText();
       final String componentName = reference.getCanonicalText();
-      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, importPrefix,
+      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, leftReference,
                                                                       new DartResolveProcessor(result, componentName), componentName);
       if (!result.isEmpty()) {
         return result;
@@ -106,6 +120,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     });
   }
 
+  @NotNull
   private static List<? extends PsiElement> resolveSimpleReference(@NotNull DartReference reference) {
     final List<? extends PsiElement> result = resolveSimpleReference(reference, reference.getCanonicalText());
     final PsiElement parent = reference.getParent();
