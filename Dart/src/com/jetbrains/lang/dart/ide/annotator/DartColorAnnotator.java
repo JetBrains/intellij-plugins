@@ -134,7 +134,7 @@ public class DartColorAnnotator implements Annotator {
           final String callType = getCallKind((DartMethodDeclaration)parent, element);
           createInfoAnnotation(holder, element, callType);
         }
-        else if (parent instanceof DartVarAccessDeclaration) {
+        else if (parent instanceof DartVarAccessDeclaration || parent instanceof DartVarDeclarationListPart) {
           final DartComponentType type = DartComponentType.typeOf(parent);
           if (type == DartComponentType.VARIABLE) {
             final String key = parentComponent.isUnitMember()
