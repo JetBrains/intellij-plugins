@@ -133,10 +133,10 @@ class BndProjectImporterTest : IdeaTestCase() {
       if (it.getName() != "hello.tests") {
         assertNotNull(facet, it.getName())
 
-        val config = facet.getConfiguration()
-        assertEquals(ManifestGenerationMode.Bnd, config.getManifestGenerationMode())
-        assertEquals("bnd.bnd", config.getBndFileLocation(), it.getName())
-        assertEquals("${VfsUtilCore.urlToPath(rootManager.getContentRootUrls()[0])}/generated/${it.getName()}.jar", config.getJarFileLocation())
+        val config = facet?.getConfiguration()
+        assertEquals(ManifestGenerationMode.Bnd, config?.getManifestGenerationMode())
+        assertEquals("bnd.bnd", config?.getBndFileLocation(), it.getName())
+        assertEquals("${VfsUtilCore.urlToPath(rootManager.getContentRootUrls()[0])}/generated/${it.getName()}.jar", config?.getJarFileLocation())
       }
       else {
         assertNull(facet)

@@ -35,6 +35,7 @@ import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.jetbrains.lang.manifest.psi.ManifestToken;
 import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.osgi.framework.Constants;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
 
@@ -46,35 +47,23 @@ import java.util.List;
 public class ExportPackageParser extends BasePackageParser {
   public static final HeaderParser INSTANCE = new ExportPackageParser();
 
-  private static final String USES_DIRECTIVE = "uses";
-
-  private static boolean isPackageRef(final PsiElement element) {
-    final boolean result;
-    if (element instanceof ManifestToken) {
-      ManifestToken manifestToken = (ManifestToken)element;
-      result = manifestToken.getTokenType() != ManifestTokenType.SEMICOLON;
-    }
-    else {
-      result = true;
-    }
-
-    return result;
-  }
+  private static final TokenSet TOKEN_FILTER = TokenSet.create(ManifestTokenType.HEADER_VALUE_PART);
 
   @NotNull
   @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    if (headerValuePart.getParent() instanceof Clause) {
-      final PsiElement element = headerValuePart.getOriginalElement();
+    PsiElement parent = headerValuePart.getParent();
+    if (parent instanceof Clause) {
+      PsiElement element = headerValuePart.getOriginalElement();
       if (isPackageRef(element.getPrevSibling())) {
         return getPackageReferences(headerValuePart);
       }
     }
-    else if (headerValuePart.getParent() instanceof Attribute) {
-      Attribute attribute = (Attribute)headerValuePart.getParent();
-      if (USES_DIRECTIVE.equals(attribute.getName()) && !USES_DIRECTIVE.equals(headerValuePart.getUnwrappedText())) {
-        List<PsiReference> references = ContainerUtil.newArrayList();
-        for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
+    else if (parent instanceof Attribute) {
+      Attribute attribute = (Attribute)parent;
+      if (Constants.USES_DIRECTIVE.equals(attribute.getName())) {
+        List<PsiReference> references = ContainerUtil.newSmartList();
+        for (ASTNode astNode : headerValuePart.getNode().getChildren(TOKEN_FILTER)) {
           if (astNode instanceof ManifestToken) {
             ManifestToken manifestToken = (ManifestToken)astNode;
             ContainerUtil.addAll(references, getPackageReferences(manifestToken));
@@ -83,6 +72,17 @@ public class ExportPackageParser extends BasePackageParser {
         return ContainerUtilRt.toArray(references, new PsiReference[references.size()]);
       }
     }
+
     return PsiReference.EMPTY_ARRAY;
+  }
+
+  private static boolean isPackageRef(PsiElement element) {
+    if (element instanceof ManifestToken) {
+      ManifestToken manifestToken = (ManifestToken)element;
+      return manifestToken.getTokenType() != ManifestTokenType.SEMICOLON;
+    }
+    else {
+      return true;
+    }
   }
 }

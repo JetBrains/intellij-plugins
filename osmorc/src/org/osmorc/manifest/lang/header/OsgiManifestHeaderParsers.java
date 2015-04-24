@@ -36,7 +36,7 @@ import java.util.Map;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsgiManifestHeaderParsers implements HeaderParserProvider {
-  private final Map<String,HeaderParser> myParsers;
+  private final Map<String, HeaderParser> myParsers;
 
   public OsgiManifestHeaderParsers() {
     myParsers = ContainerUtil.newHashMap();
