@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -23,7 +38,17 @@ import java.util.List;
 public class BasePackageParser extends OsgiHeaderParser {
   public static final HeaderParser INSTANCE = new BasePackageParser();
 
-  protected static PsiReference[] getPackageReferences(final PsiElement psiElement) {
+  @NotNull
+  @Override
+  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+    if (headerValuePart.getParent() instanceof Clause) {
+      return getPackageReferences(headerValuePart);
+    }
+
+    return PsiReference.EMPTY_ARRAY;
+  }
+
+  protected static PsiReference[] getPackageReferences(PsiElement psiElement) {
     String packageName = psiElement.getText();
     if (StringUtil.isEmptyOrSpaces(packageName) ) {
       return PsiReference.EMPTY_ARRAY;
@@ -32,21 +57,16 @@ public class BasePackageParser extends OsgiHeaderParser {
     int offset = 0;
     if (packageName.charAt(0) == '!') {
       packageName = packageName.substring(1);
-      offset++;
+      offset = 1;
     }
 
     int size = packageName.length() - 1;
     if (packageName.charAt(size) == '?') {
       packageName = packageName.substring(0, size);
     }
+
     PackageReferenceSet referenceSet = new ManifestPackageReferenceSet(packageName, psiElement, offset);
     return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
-  }
-
-  @NotNull
-  @Override
-  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    return headerValuePart.getParent() instanceof Clause ? getPackageReferences(headerValuePart) : PsiReference.EMPTY_ARRAY;
   }
 
   @Nullable

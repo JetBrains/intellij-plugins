@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.manifest.completion;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
@@ -19,17 +34,17 @@ public class OsgiManifestCompletionContributor extends CompletionContributor {
     extend(
       CompletionType.BASIC,
       header(Constants.EXPORT_PACKAGE),
-      new HeaderParametersProvider(Constants.VERSION_ATTRIBUTE, Constants.USES_DIRECTIVE+':'));
+      new HeaderParametersProvider(Constants.VERSION_ATTRIBUTE, Constants.USES_DIRECTIVE + ':'));
 
     extend(
       CompletionType.BASIC,
       header(Constants.IMPORT_PACKAGE),
-      new HeaderParametersProvider(Constants.VERSION_ATTRIBUTE, Constants.RESOLUTION_DIRECTIVE+':'));
+      new HeaderParametersProvider(Constants.VERSION_ATTRIBUTE, Constants.RESOLUTION_DIRECTIVE + ':'));
 
     extend(
       CompletionType.BASIC,
       directive(Constants.RESOLUTION_DIRECTIVE),
-      new SimpleProvider("mandatory", "optional"));
+      new SimpleProvider(Constants.RESOLUTION_MANDATORY, Constants.RESOLUTION_OPTIONAL));
   }
 
   private static ElementPattern<PsiElement> header(String name) {
