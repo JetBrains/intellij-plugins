@@ -43,9 +43,6 @@ import org.jetbrains.debugger.connection.VmConnection;
 import java.io.File;
 import java.io.PrintWriter;
 
-/**
- * @author Sergey Simonchik
- */
 public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
   private static final String DEBUG_RUNNER_ID = JstdDebugProgramRunner.class.getSimpleName();
   private static Boolean IS_AVAILABLE_CACHE = null;
@@ -146,6 +143,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
       FileDocumentManager.getInstance().saveAllDocuments();
       JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
       final ExecutionResult executionResult = jstdState.executeWithServer(myServer);
+      myDebugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
       File configFile = new File(jstdState.getRunSettings().getConfigFile());
       final RemoteDebuggingFileFinder fileFinder = new JstdDebuggingFileFinderProvider(configFile, myServer).provideFileFinder();
