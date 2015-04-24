@@ -7,8 +7,6 @@ import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -37,8 +35,6 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.SmartList;
 import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.LocalPathCellEditor;
@@ -67,15 +63,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.*;
-import java.util.List;
 
 public class DartConfigurable implements SearchableConfigurable {
 
   public static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
-  private static final String CUSTOM_PACKAGE_ROOTS_LIB_NAME = "Dart custom package roots";
-  private static final String SEMICOLON = ";";
+  private static final String CUSTOM_PACKAGE_ROOT_LIB_NAME = "Dart custom package root";
 
   private JPanel myMainPanel;
   private JBCheckBox myEnableDartSupportCheckBox;
@@ -90,7 +84,7 @@ public class DartConfigurable implements SearchableConfigurable {
   private JButton myDartiumSettingsButton;
   private JBCheckBox myCheckedModeCheckBox;
 
-  private JBCheckBox myCustomPackageRootsCheckBox;
+  private JBCheckBox myCustomPackageRootCheckBox;
   private TextFieldWithBrowseButton myCustomPackageRootTextWithBrowse;
 
   private JPanel myModulesPanel;
@@ -190,14 +184,14 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private void initCustomPackageRootsPanel() {
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
-      myCustomPackageRootsCheckBox.setVisible(false);
+      myCustomPackageRootCheckBox.setVisible(false);
       myCustomPackageRootTextWithBrowse.setVisible(false);
       return;
     }
 
-    myCustomPackageRootsCheckBox.addActionListener(new ActionListener() {
+    myCustomPackageRootCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final boolean enabled = myCustomPackageRootsCheckBox.isSelected() && myCustomPackageRootsCheckBox.isEnabled();
+        final boolean enabled = myCustomPackageRootCheckBox.isSelected() && myCustomPackageRootCheckBox.isEnabled();
         myCustomPackageRootTextWithBrowse.setEnabled(enabled);
         updateErrorLabel();
 
@@ -208,15 +202,10 @@ public class DartConfigurable implements SearchableConfigurable {
     });
 
     final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> bfListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(DartBundle.message("select.custom.package.roots"), null,
+      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(DartBundle.message("select.custom.package.root"), null,
                                                                            myCustomPackageRootTextWithBrowse, myProject,
-                                                                           // this descriptor is not used because overridden in selectCustomPackageRoots()
                                                                            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
-        public void actionPerformed(final ActionEvent e) {
-          selectCustomPackageRoots(myCustomPackageRootTextWithBrowse.getTextField());
-        }
-      };
+                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
     myCustomPackageRootTextWithBrowse.addBrowseFolderListener(myProject, bfListener);
 
@@ -326,7 +315,7 @@ public class DartConfigurable implements SearchableConfigurable {
       if (myDartSupportEnabledInitial != myEnableDartSupportCheckBox.isSelected()) return true;
 
       final Map.Entry<Module, String> entry = myModuleToCustomPackageRootCurrent.entrySet().iterator().next();
-      final String currentPackageRootPath = myCustomPackageRootsCheckBox.isSelected() ? entry.getValue() : null;
+      final String currentPackageRootPath = myCustomPackageRootCheckBox.isSelected() ? entry.getValue() : null;
       if (!Comparing.equal(currentPackageRootPath, getCustomPackageRootPath(entry.getKey()))) return true;
     }
 
@@ -428,7 +417,7 @@ public class DartConfigurable implements SearchableConfigurable {
             for (Module module : ModuleManager.getInstance(myProject).getModules()) {
               if (ArrayUtil.contains(module, modules)) {
                 final String customPackageRoot =
-                  DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() || myCustomPackageRootsCheckBox.isSelected()
+                  DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() || myCustomPackageRootCheckBox.isSelected()
                   ? myModuleToCustomPackageRootCurrent.get(module)
                   : null;
                 setCustomPackageRootPath(module, customPackageRoot);
@@ -478,8 +467,8 @@ public class DartConfigurable implements SearchableConfigurable {
 
     if (!DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final String path = myModuleToCustomPackageRootCurrent.entrySet().iterator().next().getValue();
-      myCustomPackageRootsCheckBox.setSelected(path != null);
-      myCustomPackageRootTextWithBrowse.setEnabled(myCustomPackageRootsCheckBox.isSelected() && myCustomPackageRootsCheckBox.isEnabled());
+      myCustomPackageRootCheckBox.setSelected(path != null);
+      myCustomPackageRootTextWithBrowse.setEnabled(myCustomPackageRootCheckBox.isSelected() && myCustomPackageRootCheckBox.isEnabled());
     }
   }
 
@@ -510,20 +499,20 @@ public class DartConfigurable implements SearchableConfigurable {
 
       for (final Module module : modules) {
         final String customPackageRoot = myModuleToCustomPackageRootCurrent.get(module);
-        final String customPackagePathError = getErrorMessageForCustomPackageRoots(customPackageRoot);
+        final String customPackagePathError = getErrorMessageForCustomPackageRoot(customPackageRoot);
         if (customPackagePathError != null) {
           return customPackagePathError;
         }
       }
     }
     else {
-      if (myCustomPackageRootsCheckBox.isSelected()) {
+      if (myCustomPackageRootCheckBox.isSelected()) {
         final String customPackageRoot = myModuleToCustomPackageRootCurrent.entrySet().iterator().next().getValue();
         if (customPackageRoot == null) {
           return DartBundle.message("warning.custom.package.root.not.specified");
         }
 
-        final String customPackagePathError = getErrorMessageForCustomPackageRoots(customPackageRoot);
+        final String customPackagePathError = getErrorMessageForCustomPackageRoot(customPackageRoot);
         if (customPackagePathError != null) {
           return customPackagePathError;
         }
@@ -534,7 +523,7 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   @Nullable
-  private static String getErrorMessageForCustomPackageRoots(@Nullable final String customPackageRootPath) {
+  private static String getErrorMessageForCustomPackageRoot(@Nullable final String customPackageRootPath) {
     if (customPackageRootPath == null) return null;
     final VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(customPackageRootPath);
     if (folder == null || !folder.isDirectory()) {
@@ -574,7 +563,7 @@ public class DartConfigurable implements SearchableConfigurable {
       }
     };
 
-    final TableCellRenderer customPackageRootsCellRenderer = new TableCellRenderer() {
+    final TableCellRenderer customPackageRootCellRenderer = new TableCellRenderer() {
       private final JBLabel myLabel = new JBLabel();
       private final TextFieldWithBrowseButton myTextWithBrowse = new TextFieldWithBrowseButton() {
         public void setOpaque(final boolean isOpaque) {
@@ -589,9 +578,8 @@ public class DartConfigurable implements SearchableConfigurable {
                                                      final int row,
                                                      final int column) {
 
-        if (value instanceof List) {
-          //noinspection unchecked
-          final String text = value != null ? FileUtil.toSystemDependentName((String)value) : null;
+        if (value instanceof String) {
+          final String text = FileUtil.toSystemDependentName((String)value);
 
           if (isSelected) {
             myTextWithBrowse.setText(text);
@@ -609,9 +597,9 @@ public class DartConfigurable implements SearchableConfigurable {
       }
     };
 
-    final LocalPathCellEditor customPackageRootsEditor = new LocalPathCellEditor(myProject) {
+    final LocalPathCellEditor customPackageRootEditor = new LocalPathCellEditor(myProject) {
       public Object getCellEditorValue() {
-        return StringUtil.split(FileUtil.toSystemIndependentName(myComponent.getChildComponent().getText()), SEMICOLON);
+        return FileUtil.toSystemIndependentName(myComponent.getChildComponent().getText().trim());
       }
 
       @Override
@@ -620,25 +608,19 @@ public class DartConfigurable implements SearchableConfigurable {
                                                    final boolean isSelected,
                                                    final int row,
                                                    final int column) {
-        myComponent = new CellEditorComponentWithBrowseButton<JTextField>(new TextFieldWithBrowseButton(createActionListener(table)), this);
-        //noinspection unchecked
+        final TextFieldWithBrowseButton fieldWithBrowse = new TextFieldWithBrowseButton();
+        fieldWithBrowse.addBrowseFolderListener(DartBundle.message("select.custom.package.root"), null, myProject,
+                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
+        myComponent = new CellEditorComponentWithBrowseButton<JTextField>(fieldWithBrowse, this);
         final String text = value != null ? FileUtil.toSystemDependentName((String)value) : "";
 
         myComponent.getChildComponent().setText(text);
         return myComponent;
       }
-
-      protected ActionListener createActionListener(final JTable table) {
-        return new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            selectCustomPackageRoots(myComponent.getChildComponent());
-          }
-        };
-      }
     }/*.normalizePath(true)*/;
 
-    final String columnName = DartBundle.message("custom.package.roots");
-    final ColumnInfo<CheckedTreeNode, String> CUSTOM_PACKAGE_ROOTS_COLUMN = new ColumnInfo<CheckedTreeNode, String>(columnName) {
+    final String columnName = DartBundle.message("custom.package.root");
+    final ColumnInfo<CheckedTreeNode, String> CUSTOM_PACKAGE_ROOT_COLUMN = new ColumnInfo<CheckedTreeNode, String>(columnName) {
       @Nullable
       public String valueOf(final CheckedTreeNode node) {
         final Object userObject = node.getUserObject();
@@ -654,12 +636,12 @@ public class DartConfigurable implements SearchableConfigurable {
 
       @Nullable
       public TableCellRenderer getRenderer(final CheckedTreeNode node) {
-        return customPackageRootsCellRenderer;
+        return customPackageRootCellRenderer;
       }
 
       @Nullable
       public TableCellEditor getEditor(final CheckedTreeNode node) {
-        return customPackageRootsEditor;
+        return customPackageRootEditor;
       }
 
       public void setValue(final CheckedTreeNode node, final String value) {
@@ -676,7 +658,7 @@ public class DartConfigurable implements SearchableConfigurable {
     };
 
     myModulesCheckboxTreeTable =
-      new CheckboxTreeTable(null, checkboxTreeCellRenderer, new ColumnInfo[]{new TreeColumnInfo(""), CUSTOM_PACKAGE_ROOTS_COLUMN});
+      new CheckboxTreeTable(null, checkboxTreeCellRenderer, new ColumnInfo[]{new TreeColumnInfo(""), CUSTOM_PACKAGE_ROOT_COLUMN});
     myModulesCheckboxTreeTable.addCheckboxTreeListener(new CheckboxTreeAdapter() {
       @Override
       public void nodeStateChanged(@NotNull CheckedTreeNode node) {
@@ -696,39 +678,15 @@ public class DartConfigurable implements SearchableConfigurable {
     });
 
     final DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new RemoveCustomPackageRootsAction(myModulesCheckboxTreeTable));
+    group.add(new RemoveCustomPackageRootAction(myModulesCheckboxTreeTable));
     PopupHandler.installPopupHandler(myModulesCheckboxTreeTable, group, ActionPlaces.UNKNOWN, ActionManager.getInstance());
   }
 
-  private void selectCustomPackageRoots(final JTextField textField) {
-    final String currentCustomPackageRoots = textField.getText().trim();
-    final int separatorIndex = currentCustomPackageRoots.indexOf(SEMICOLON);
-    final String path = separatorIndex < 0 ? currentCustomPackageRoots : currentCustomPackageRoots.substring(0, separatorIndex).trim();
-    final VirtualFile initialFile = StringUtil.isNotEmpty(path) ? LocalFileSystem.getInstance().findFileByPath(path) : null;
-
-    final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createMultipleFoldersDescriptor();
-    descriptor.setTitle(DartBundle.message("select.custom.package.roots"));
-
-    FileChooser.chooseFiles(descriptor, myProject, initialFile, new Consumer<List<VirtualFile>>() {
-      public void consume(final List<VirtualFile> files) {
-        final StringBuilder buffer = new StringBuilder();
-        for (VirtualFile file : files) {
-          if (buffer.length() > 0) {
-            buffer.append(SEMICOLON);
-          }
-          buffer.append(file.getPath());
-        }
-
-        textField.setText(FileUtil.toSystemDependentName(buffer.toString()));
-      }
-    });
-  }
-
-  private class RemoveCustomPackageRootsAction extends AnAction {
+  private class RemoveCustomPackageRootAction extends AnAction {
     private final CheckboxTreeTable myTable;
 
-    public RemoveCustomPackageRootsAction(final CheckboxTreeTable table) {
-      super(DartBundle.message("remove.custom.package.roots"));
+    public RemoveCustomPackageRootAction(final CheckboxTreeTable table) {
+      super(DartBundle.message("remove.custom.package.root"));
       myTable = table;
     }
 
@@ -766,10 +724,16 @@ public class DartConfigurable implements SearchableConfigurable {
     }
   }
 
+  private static boolean isCustomPackageRootLibraryEntry(@NotNull final OrderEntry entry) {
+    final String libName = entry instanceof LibraryOrderEntry ? ((LibraryOrderEntry)entry).getLibraryName() : null;
+    // previously library name was plural "Dart custom package roots", so for compatibility we check startsWith() instead of equals()
+    return libName != null && libName.startsWith(CUSTOM_PACKAGE_ROOT_LIB_NAME);
+  }
+
   @Nullable
   private static String getCustomPackageRootPath(@NotNull final Module module) {
     for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+      if (isCustomPackageRootLibraryEntry(entry)) {
         final String[] urls = ((LibraryOrderEntry)entry).getRootUrls(OrderRootType.CLASSES);
         if (urls.length > 0) {
           return VfsUtilCore.urlToPath(urls[0]);
@@ -785,13 +749,13 @@ public class DartConfigurable implements SearchableConfigurable {
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
       for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
-        if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+        if (isCustomPackageRootLibraryEntry(entry)) {
           modifiableModel.removeOrderEntry(entry);
         }
       }
 
       if (path != null) {
-        final Library library = modifiableModel.getModuleLibraryTable().createLibrary(CUSTOM_PACKAGE_ROOTS_LIB_NAME);
+        final Library library = modifiableModel.getModuleLibraryTable().createLibrary(CUSTOM_PACKAGE_ROOT_LIB_NAME);
         final Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.addRoot(VfsUtilCore.pathToUrl(path), OrderRootType.CLASSES);
         libModel.commit();
@@ -807,7 +771,7 @@ public class DartConfigurable implements SearchableConfigurable {
   @NotNull
   public static VirtualFile[] getCustomPackageRoots(@NotNull final Module module) {
     for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+      if (isCustomPackageRootLibraryEntry(entry)) {
         return ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES);
       }
     }
@@ -815,23 +779,13 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   @NotNull
-  public static List<String> getContentRootPathsForModule(@NotNull final Module module) {
-    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
-    final List<String> contentRootPaths = new SmartList<String>();
-    if (contentEntries.length > 0) {
-      contentRootPaths.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntries[0].getUrl())));
-    }
-    return contentRootPaths;
-  }
-
-  @NotNull
-  public static Map<String, String> getModulePathAndPackageRoot(@NotNull final Module module) {
-    // Return the module path and package root. If no package root, return null.
-    final VirtualFile[] packageRootsForThisModule = getCustomPackageRoots(module);
-    if (packageRootsForThisModule.length > 0) {
+  public static Map<String, String> getContentRootPathToCustomPackageRootMap(@NotNull final Module module) {
+    final String customPackageRootPath = getCustomPackageRootPath(module);
+    if (customPackageRootPath != null) {
       final Map<String, String> result = new SmartHashMap<String, String>();
-      for (final String contentRootInModule : getContentRootPathsForModule(module)) {
-        result.put(contentRootInModule, FileUtil.toSystemDependentName(packageRootsForThisModule[0].getPath()));
+      for (String contentRootUrl : ModuleRootManager.getInstance(module).getContentRootUrls()) {
+        result.put(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentRootUrl)),
+                   FileUtil.toSystemDependentName(customPackageRootPath));
       }
       return result;
     }

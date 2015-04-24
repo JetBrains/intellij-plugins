@@ -205,7 +205,7 @@
               <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dartium.settings.button"/>
             </properties>
           </component>
-          <component id="30870" class="com.intellij.ui.components.JBCheckBox" binding="myCustomPackageRootsCheckBox">
+          <component id="30870" class="com.intellij.ui.components.JBCheckBox" binding="myCustomPackageRootCheckBox">
             <constraints>
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
