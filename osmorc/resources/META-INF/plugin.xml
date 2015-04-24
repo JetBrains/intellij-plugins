@@ -120,10 +120,6 @@
                      language="JAVA" enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
 
-    <localInspection bundle="messages.OsmorcBundle" key="UnknownManifestPackage.name"
-                     groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
-                     language="Manifest" enabledByDefault="true" level="ERROR"
-                     implementationClass="org.osmorc.inspection.UnknownManifestPackageInspection"/>
     <localInspection bundle="messages.OsmorcBundle" key="WrongImportPackageInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      language="Manifest" enabledByDefault="true" level="ERROR"

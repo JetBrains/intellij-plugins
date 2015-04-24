@@ -15,14 +15,21 @@
  */
 package org.osmorc.manifest.lang.header;
 
+import com.intellij.codeInsight.daemon.JavaErrorMessages;
+import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
@@ -67,6 +74,46 @@ public class BasePackageParser extends OsgiHeaderParser {
 
     PackageReferenceSet referenceSet = new ManifestPackageReferenceSet(packageName, psiElement, offset);
     return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
+  }
+
+  @Override
+  public boolean annotate(@NotNull Header header, @NotNull AnnotationHolder holder) {
+    boolean annotated = false;
+
+    for (HeaderValue value : header.getHeaderValues()) {
+      if (value instanceof Clause) {
+        HeaderValuePart valuePart = ((Clause)value).getValue();
+        if (valuePart != null) {
+          String packageName = valuePart.getUnwrappedText();
+          if (packageName.endsWith(".*")) {
+            packageName = packageName.substring(0, packageName.length() - 2);
+          }
+
+          if (StringUtil.isEmptyOrSpaces(packageName)) {
+            holder.createErrorAnnotation(valuePart.getHighlightingRange(), ManifestBundle.message("header.reference.invalid"));
+            annotated = true;
+            continue;
+          }
+
+          PsiDirectory[] directories = resolvePackage(header, packageName);
+          if (directories.length == 0) {
+            holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
+            annotated = true;
+          }
+        }
+      }
+    }
+
+    return annotated;
+  }
+
+  @NotNull
+  protected PsiDirectory[] resolvePackage(@NotNull Header header, @NotNull String packageName) {
+    Project project = header.getProject();
+    Module module = ModuleUtilCore.findModuleForPsiElement(header);
+    GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);
+    PsiPackage aPackage = JavaPsiFacade.getInstance(project).findPackage(packageName);
+    return aPackage == null ? PsiDirectory.EMPTY_ARRAY : aPackage.getDirectories(scope);
   }
 
   @Nullable
