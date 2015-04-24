@@ -88,6 +88,9 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   @Override
   public boolean isStatic() {
+    if (this instanceof DartVarDeclarationListPart) {
+      return ((DartVarDeclarationList)getParent()).getVarAccessDeclaration().isStatic();
+    }
     return findChildByType(DartTokenTypes.STATIC) != null;
   }
 
