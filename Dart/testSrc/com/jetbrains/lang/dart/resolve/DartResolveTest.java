@@ -425,8 +425,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testNamedParameter_constructorDefaultInvocaiton() throws Exception {
-    doTest("import 'package:ProjectName/lib.dart';'\n" +
-           "class A {\n" +
+    doTest("class A {\n" +
            "  A({test});\n" +
            "}\n" +
            "main() {\n" +
@@ -435,8 +434,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testNamedParameter_constructorNamedInvocaiton() throws Exception {
-    doTest("import 'package:ProjectName/lib.dart';'\n" +
-           "class A {\n" +
+    doTest("class A {\n" +
            "  A.named({test});\n" +
            "}\n" +
            "main() {\n" +
@@ -445,8 +443,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testNamedParameter_functionInvocaiton() throws Exception {
-    doTest("import 'package:ProjectName/lib.dart';'\n" +
-           "f({test}) {}\n" +
+    doTest("f({test}) {}\n" +
            "main() {\n" +
            "  f(te<caret expected='file.dart -> f -> test'>st: 0);\n" +
            "}");
