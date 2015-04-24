@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.manifest.lang;
 
 import org.osmorc.LightOsgiFixtureTestCase;
@@ -23,8 +38,8 @@ public class OsgiManifestHighlightingTest extends LightOsgiFixtureTestCase {
     );
 
     doTest(
-      "Bundle-Activator: com.<error descr=\"Cannot resolve\">acme</error>.Activator\n" +
-      "Bundle-Activator: java.lang.<error descr=\"Not a valid activator class\">String</error>\n" +
+      "Bundle-Activator: <error descr=\"Cannot resolve class 'com.acme.Activator'\">com.acme.Activator</error>\n" +
+      "Bundle-Activator: <error descr=\"Not a valid activator class\">java.lang.String</error>\n" +
       "Bundle-Activator: main.Activator\n"
     );
   }
