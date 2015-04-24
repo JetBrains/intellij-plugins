@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.SmartList;
@@ -18,6 +18,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public class DartServerRootsHandler {
   private final Set<Project> myTrackedProjects = new THashSet<Project>();
   private final List<String> myIncludedRoots = new SmartList<String>();
   private final List<String> myExcludedRoots = new SmartList<String>();
-  private final Map<String, String> myPackageRoots = new SmartHashMap<String, String>();
+  private final Map<String, String> myPackageRoots = new THashMap<String, String>();
 
   public DartServerRootsHandler() {
     // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
@@ -78,7 +79,7 @@ public class DartServerRootsHandler {
       for (Project project : myTrackedProjects) {
         for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkGlobalLibAttached(project, sdk.getGlobalLibName())) {
 
-          newPackageRoots.putAll(DartConfigurable.getModulePathAndPackageRoot(module));
+          newPackageRoots.putAll(DartConfigurable.getContentRootPathToCustomPackageRootMap(module));
 
           for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
             newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntry.getUrl())));
