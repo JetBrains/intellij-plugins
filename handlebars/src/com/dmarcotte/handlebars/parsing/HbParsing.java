@@ -398,17 +398,6 @@ public class HbParsing {
   }
 
   /**
-   * OPEN sexpr CLOSE
-   */
-  protected void parseRegularMustache(PsiBuilder builder) {
-    PsiBuilder.Marker mustacheMarker = builder.mark();
-    parseLeafToken(builder, OPEN);
-    parseSexpr(builder);
-    parseLeafTokenGreedy(builder, CLOSE);
-    mustacheMarker.done(MUSTACHE);
-  }
-
-  /**
    * mustache
    * : OPEN sexpr CLOSE
    * | OPEN_UNESCAPED sexpr CLOSE_UNESCAPED
