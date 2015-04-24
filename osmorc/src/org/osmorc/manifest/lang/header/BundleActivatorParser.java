@@ -25,18 +25,13 @@
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.header.impl.ClassReferenceParser;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.util.OsgiPsiUtil;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -47,21 +42,13 @@ public class BundleActivatorParser extends ClassReferenceParser {
   private BundleActivatorParser() { }
 
   @Override
-  protected boolean checkClass(@NotNull PsiReference reference, @NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    if (element instanceof PsiClass) {
-      Module module = ModuleUtilCore.findModuleForPsiElement(element);
-      if (module != null) {
-        GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
-        JavaPsiFacade facade = JavaPsiFacade.getInstance(element.getProject());
-        PsiClass activatorClass = facade.findClass("org.osgi.framework.BundleActivator", scope);
-        if (activatorClass != null && ((PsiClass)element).isInheritor(activatorClass, true)) {
-          return false;
-        }
-      }
+  protected boolean checkClass(@NotNull HeaderValuePart valuePart, @NotNull PsiClass aClass, @NotNull AnnotationHolder holder) {
+    PsiClass activatorClass = OsgiPsiUtil.getActivatorClass(valuePart.getProject());
+    if (activatorClass != null && !aClass.isInheritor(activatorClass, true)) {
+      holder.createErrorAnnotation(valuePart.getHighlightingRange(), OsmorcBundle.message("manifest.activator.class.invalid"));
+      return true;
     }
 
-    TextRange range = reference.getRangeInElement().shiftRight(reference.getElement().getTextOffset());
-    holder.createErrorAnnotation(range, OsmorcBundle.message("manifest.activator.class.invalid"));
-    return true;
+    return false;
   }
 }
