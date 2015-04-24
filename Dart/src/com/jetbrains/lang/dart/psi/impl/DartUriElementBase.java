@@ -12,7 +12,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
-import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 public class DartUriElementBase extends DartPsiCompositeElementImpl {
 
@@ -71,29 +69,20 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
       if (slashIndex > 0) {
         final String packageName = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length(), slashIndex);
         final String pathAfterPackageName = uri.substring(slashIndex + 1);
-        final VirtualFile packageDir = dartUrlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName, pathAfterPackageName);
+        final VirtualFile packageDir =
+          dartUrlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName, pathAfterPackageName);
         if (packageDir != null) {
           return getPackageReferences(file, packageDir, pathAfterPackageName, uriOffset + slashIndex + 1);
         }
       }
 
       final String relPath = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length());
-      final VirtualFile[] packageRoots = dartUrlResolver.getPackageRoots();
-
-      if (packageRoots.length == 0) return PsiReference.EMPTY_ARRAY;
-      if (packageRoots.length == 1) {
-        return getPackageReferences(file, packageRoots[0], relPath, uriOffset + DartUrlResolver.PACKAGE_PREFIX.length());
+      final VirtualFile packageRoot = dartUrlResolver.getPackageRoot();
+      if (packageRoot != null) {
+        return getPackageReferences(file, packageRoot, relPath, uriOffset + DartUrlResolver.PACKAGE_PREFIX.length());
       }
 
-      final Collection<PsiReference> result = new SmartList<PsiReference>();
-      for (VirtualFile packageRoot : packageRoots) {
-        if (packageRoot.findFileByRelativePath(relPath) != null) {
-          ContainerUtil.addAll(result,
-                               getPackageReferences(file, packageRoot, relPath, uriOffset + DartUrlResolver.PACKAGE_PREFIX.length()));
-        }
-      }
-
-      return result.toArray(new PsiReference[result.size()]);
+      return PsiReference.EMPTY_ARRAY;
     }
 
     final PsiFile containingFile = getContainingFile().getOriginalFile();
