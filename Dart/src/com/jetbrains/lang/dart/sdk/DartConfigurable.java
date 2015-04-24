@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,7 +38,6 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
 import com.intellij.util.ui.ColumnInfo;
@@ -226,7 +224,7 @@ public class DartConfigurable implements SearchableConfigurable {
       protected void textChanged(final DocumentEvent e) {
         final Module module = myModuleToCustomPackageRootCurrent.keySet().iterator().next();
         final String customPackageRoot = FileUtil.toSystemIndependentName(myCustomPackageRootTextWithBrowse.getText().trim());
-        myModuleToCustomPackageRootCurrent.put(module, customPackageRoot);
+        myModuleToCustomPackageRootCurrent.put(module, StringUtil.nullize(customPackageRoot));
         updateErrorLabel();
       }
     });
@@ -389,7 +387,7 @@ public class DartConfigurable implements SearchableConfigurable {
     }
     else {
       final String path = myModuleToCustomPackageRootCurrent.entrySet().iterator().next().getValue();
-      myCustomPackageRootTextWithBrowse.setText(FileUtil.toSystemDependentName(path));
+      myCustomPackageRootTextWithBrowse.setText(path == null ? "" : FileUtil.toSystemDependentName(path));
     }
 
     updateControlsEnabledState();
@@ -520,12 +518,12 @@ public class DartConfigurable implements SearchableConfigurable {
     }
     else {
       if (myCustomPackageRootsCheckBox.isSelected()) {
-        final String customPackageRoots = myModuleToCustomPackageRootCurrent.entrySet().iterator().next().getValue();
-        if (customPackageRoots.isEmpty()) {
+        final String customPackageRoot = myModuleToCustomPackageRootCurrent.entrySet().iterator().next().getValue();
+        if (customPackageRoot == null) {
           return DartBundle.message("warning.custom.package.root.not.specified");
         }
 
-        final String customPackagePathError = getErrorMessageForCustomPackageRoots(customPackageRoots);
+        final String customPackagePathError = getErrorMessageForCustomPackageRoots(customPackageRoot);
         if (customPackagePathError != null) {
           return customPackagePathError;
         }
@@ -617,7 +615,11 @@ public class DartConfigurable implements SearchableConfigurable {
       }
 
       @Override
-      public Component getTableCellEditorComponent(final JTable table, @Nullable Object value, boolean isSelected, final int row, int column) {
+      public Component getTableCellEditorComponent(final JTable table,
+                                                   @Nullable final Object value,
+                                                   final boolean isSelected,
+                                                   final int row,
+                                                   final int column) {
         myComponent = new CellEditorComponentWithBrowseButton<JTextField>(new TextFieldWithBrowseButton(createActionListener(table)), this);
         //noinspection unchecked
         final String text = value != null ? FileUtil.toSystemDependentName((String)value) : "";
@@ -663,7 +665,7 @@ public class DartConfigurable implements SearchableConfigurable {
       public void setValue(final CheckedTreeNode node, final String value) {
         final Object userObject = node.getUserObject();
         if (userObject instanceof Module) {
-          myModuleToCustomPackageRootCurrent.put((Module)userObject, value);
+          myModuleToCustomPackageRootCurrent.put((Module)userObject, StringUtil.nullize(value));
           updateErrorLabel();
         }
       }
@@ -737,7 +739,7 @@ public class DartConfigurable implements SearchableConfigurable {
       for (Object item : myTable.getSelection()) {
         if (item instanceof CheckedTreeNode && ((CheckedTreeNode)item).isChecked()) {
           final Object userObject = ((CheckedTreeNode)item).getUserObject();
-          if (userObject instanceof Module && !myModuleToCustomPackageRootCurrent.get(userObject).isEmpty()) {
+          if (userObject instanceof Module && myModuleToCustomPackageRootCurrent.get(userObject) != null) {
             enabled = true;
             break;
           }
@@ -825,26 +827,15 @@ public class DartConfigurable implements SearchableConfigurable {
   @NotNull
   public static Map<String, String> getModulePathAndPackageRoot(@NotNull final Module module) {
     // Return the module path and package root. If no package root, return null.
-    final List<String> contentRootPathsForModule = getContentRootPathsForModule(module);
-    if (contentRootPathsForModule.size() > 0) return null;
-
     final VirtualFile[] packageRootsForThisModule = getCustomPackageRoots(module);
-    Map<String, String> result = new SmartHashMap<String, String>();
     if (packageRootsForThisModule.length > 0) {
-      for(final String contentRootInModule : contentRootPathsForModule) {
+      final Map<String, String> result = new SmartHashMap<String, String>();
+      for (final String contentRootInModule : getContentRootPathsForModule(module)) {
         result.put(contentRootInModule, FileUtil.toSystemDependentName(packageRootsForThisModule[0].getPath()));
       }
-    }
-    return result;
-  }
-
-  public static boolean isCustomPackageRootSet(@NotNull final Module module) {
-    for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
-        return true;
-      }
+      return result;
     }
 
-    return false;
+    return Collections.emptyMap();
   }
 }
