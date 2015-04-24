@@ -42,6 +42,7 @@ public class HbTokenTypes {
   public static final IElementType OPEN_PARTIAL = new HbElementType("OPEN_PARTIAL", "hb.parsing.element.expected.open_partial");
   public static final IElementType OPEN_ENDBLOCK = new HbElementType("OPEN_ENDBLOCK", "hb.parsing.element.expected.open_end_block");
   public static final IElementType OPEN_INVERSE = new HbElementType("OPEN_INVERSE", "hb.parsing.element.expected.open_inverse");
+  public static final IElementType OPEN_INVERSE_CHAIN = new HbElementType("OPEN_INVERSE_CHAIN", "hb.parsing.element.expected.open_inverse_chain");
   public static final IElementType OPEN_UNESCAPED = new HbElementType("OPEN_UNESCAPED", "hb.parsing.element.expected.open_unescaped");
   public static final IElementType OPEN_SEXPR = new HbElementType("OPEN_SEXPR", "hb.parsing.element.expected.open_sexpr");
   public static final IElementType CLOSE_SEXPR = new HbElementType("CLOSE_SEXPR", "hb.parsing.element.expected.close_sexpr");

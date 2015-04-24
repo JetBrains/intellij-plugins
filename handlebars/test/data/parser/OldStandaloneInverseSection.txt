@@ -1,0 +1,29 @@
+HbFile:OldStandaloneInverseSection.hbs
+  HbStatementsImpl(STATEMENTS)
+    <empty list>
+  PsiErrorElement:Invalid
+    PsiElement([Hb] OPEN)('{{')
+  HbStatementsImpl(STATEMENTS)
+    <empty list>
+  PsiErrorElement:Invalid
+    PsiElement([Hb] ELSE)('else')
+  PsiWhiteSpace(' ')
+  HbStatementsImpl(STATEMENTS)
+    <empty list>
+  PsiErrorElement:Invalid
+    PsiElement([Hb] ID)('foo')
+  HbStatementsImpl(STATEMENTS)
+    <empty list>
+  PsiErrorElement:Invalid
+    PsiElement([Hb] CLOSE)('}}')
+  HbStatementsImpl(STATEMENTS)
+    PsiElement([Hb] CONTENT)('bar')
+  HbCloseBlockMustacheImpl(CLOSE_BLOCK_STACHE)
+    HbPsiElementImpl([Hb] OPEN_ENDBLOCK)
+      PsiElement([Hb] OPEN_ENDBLOCK)('{{/')
+    HbMustacheNameImpl(MUSTACHE_NAME)
+      HbPathImpl(PATH)
+        HbPsiElementImpl([Hb] ID)
+          PsiElement([Hb] ID)('foo')
+    HbPsiElementImpl([Hb] CLOSE)
+      PsiElement([Hb] CLOSE)('}}')
