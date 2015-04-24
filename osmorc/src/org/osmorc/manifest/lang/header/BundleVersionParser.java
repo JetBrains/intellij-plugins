@@ -25,6 +25,7 @@
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.header.HeaderParser;
@@ -33,7 +34,6 @@ import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osgi.framework.Version;
-import org.osmorc.util.OsgiPsiUtil;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -51,7 +51,8 @@ public class BundleVersionParser extends StandardHeaderParser {
         new Version(value.getUnwrappedText());
       }
       catch (IllegalArgumentException e) {
-        holder.createErrorAnnotation(OsgiPsiUtil.trimRange(value).shiftRight(value.getTextOffset()), e.getMessage());
+        TextRange range = ((HeaderValuePart)value).getHighlightingRange();
+        holder.createErrorAnnotation(range, e.getMessage());
         return true;
       }
     }

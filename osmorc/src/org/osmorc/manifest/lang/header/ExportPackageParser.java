@@ -24,20 +24,25 @@
  */
 package org.osmorc.manifest.lang.header;
 
+import com.intellij.codeInsight.daemon.JavaErrorMessages;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.header.HeaderParser;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
-import org.jetbrains.lang.manifest.psi.ManifestToken;
-import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.psi.*;
 import org.osgi.framework.Constants;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.Directive;
 
 import java.util.List;
 
@@ -84,5 +89,63 @@ public class ExportPackageParser extends BasePackageParser {
     else {
       return true;
     }
+  }
+
+  @Override
+  public boolean annotate(@NotNull Header header, @NotNull AnnotationHolder holder) {
+    if (super.annotate(header, holder)) {
+      return true;
+    }
+
+    boolean annotated = false;
+
+    for (HeaderValue value : header.getHeaderValues()) {
+      if (value instanceof Clause) {
+        Directive uses = ((Clause)value).getDirective(Constants.USES_DIRECTIVE);
+        if (uses != null) {
+          HeaderValuePart valuePart = uses.getValueElement();
+          if (valuePart != null) {
+            String text = valuePart.getText();
+            int offset = valuePart.getTextOffset();
+
+            int start = 0;
+            while (start < text.length() && Character.isWhitespace(text.charAt(start))) start++;
+            if (text.startsWith("\"")) start++;
+
+            while (start < text.length()) {
+              int end = text.indexOf(',', start);
+              if (end < 0) end = text.endsWith("\"") ? text.length() - 1 : text.length();
+              TextRange range = new TextRange(start, end);
+              start = end + 1;
+
+              String packageName = range.substring(text).replaceAll("\\s", "");
+
+              if (StringUtil.isEmptyOrSpaces(packageName)) {
+                TextRange highlight = range.shiftRight(offset);
+                holder.createErrorAnnotation(highlight, ManifestBundle.message("header.reference.invalid"));
+                annotated = true;
+                continue;
+              }
+
+              PsiDirectory[] directories = resolvePackage(header, packageName);
+              if (directories.length == 0) {
+                TextRange highlight = adjust(range, text).shiftRight(offset);
+                holder.createErrorAnnotation(highlight, JavaErrorMessages.message("cannot.resolve.package", packageName));
+                annotated = true;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return annotated;
+  }
+
+  private static TextRange adjust(TextRange range, String text) {
+    int end = range.getEndOffset(), start = range.getStartOffset();
+    while (end > start && Character.isWhitespace(text.charAt(end))) end--;
+    while (start < end && Character.isWhitespace(text.charAt(start))) start++;
+    return new TextRange(start, end);
   }
 }

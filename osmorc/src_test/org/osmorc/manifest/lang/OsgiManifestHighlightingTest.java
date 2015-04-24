@@ -44,6 +44,22 @@ public class OsgiManifestHighlightingTest extends LightOsgiFixtureTestCase {
     );
   }
 
+  public void testInvalidPackages() {
+    myFixture.addClass(
+      "package main;\n" +
+      "public class C { }"
+    );
+
+    doTest(
+      "Import-Package: org.osgi.*,\n" +
+      " <error descr=\"Cannot resolve package com.acme\">com.acme</error>\n" +
+      "Private-Package: <error descr=\"Cannot resolve package com.acme\">com.acme</error>\n" +
+      "Ignore-Package: <error descr=\"Cannot resolve package com.acme\">com.acme</error>\n" +
+      "Export-Package: main;uses:=\"<error descr=\"Invalid reference\"> </error>,\n" +
+      " <error descr=\"Cannot resolve package com.acme.p2\">com.acme.p2</error>\";version=\"1.1\"\n"
+    );
+  }
+
   public void testSelfRequiringBundle() {
     doTest(
       "Bundle-SymbolicName: t0\n" +
