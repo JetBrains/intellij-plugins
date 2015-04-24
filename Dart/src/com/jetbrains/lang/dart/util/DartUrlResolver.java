@@ -40,8 +40,8 @@ public abstract class DartUrlResolver {
   @Nullable
   public abstract VirtualFile getPubspecYamlFile();
 
-  @NotNull
-  public abstract VirtualFile[] getPackageRoots();
+  @Nullable
+  public abstract VirtualFile getPackageRoot();
 
   /**
    * Process 'Path Packages' (https://www.dartlang.org/tools/pub/dependencies.html#path-packages) and this package itself (symlink to local 'lib' folder)
@@ -51,7 +51,8 @@ public abstract class DartUrlResolver {
   public abstract Collection<String> getLivePackageNames();
 
   @Nullable
-  public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName, final @Nullable String pathAfterPackageName);
+  public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(@NotNull final String packageName,
+                                                                                 @Nullable final String pathAfterPackageName);
 
   /**
    * Dart url has <code>dart:</code>, <code>package:</code> or <code>file:</code> scheme

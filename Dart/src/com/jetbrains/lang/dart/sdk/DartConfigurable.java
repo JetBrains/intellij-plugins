@@ -108,7 +108,7 @@ public class DartConfigurable implements SearchableConfigurable {
     myProject = project;
     initEnableDartSupportCheckBox();
     initDartSdkAndDartiumControls();
-    initCustomPackageRootsPanel();
+    initCustomPackageRootPanel();
     initModulesPanel();
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
   }
@@ -182,7 +182,7 @@ public class DartConfigurable implements SearchableConfigurable {
     });
   }
 
-  private void initCustomPackageRootsPanel() {
+  private void initCustomPackageRootPanel() {
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       myCustomPackageRootCheckBox.setVisible(false);
       myCustomPackageRootTextWithBrowse.setVisible(false);
@@ -768,14 +768,15 @@ public class DartConfigurable implements SearchableConfigurable {
     }
   }
 
-  @NotNull
-  public static VirtualFile[] getCustomPackageRoots(@NotNull final Module module) {
+  @Nullable
+  public static VirtualFile getCustomPackageRoot(@NotNull final Module module) {
     for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (isCustomPackageRootLibraryEntry(entry)) {
-        return ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES);
+        VirtualFile[] files = ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES);
+        return files.length > 0 ? files[0] : null;
       }
     }
-    return VirtualFile.EMPTY_ARRAY;
+    return null;
   }
 
   @NotNull

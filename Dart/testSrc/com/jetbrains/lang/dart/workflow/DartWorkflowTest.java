@@ -204,10 +204,11 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     assertEquals(rootPath + "/custom_pack1/RootProject/rootlib.dart", file.getPath());
     assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
 
+    // multiple custom package roots are not supported anymore
     file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
-    assertNotNull(file);
-    assertEquals(rootPath + "/custom_pack2/SomePackage/somepack.dart", file.getPath());
-    assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
+    assertNull(file);
+    //assertEquals(rootPath + "/custom_pack2/SomePackage/somepack.dart", file.getPath());
+    //assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
   }
 
   public void testTwoPackageDirsForOnePackage() throws Exception {

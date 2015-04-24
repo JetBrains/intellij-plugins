@@ -29,17 +29,17 @@ import java.util.*;
 
 class DartUrlResolverImpl extends DartUrlResolver {
 
-  private final @NotNull Project myProject;
-  private final @Nullable DartSdk myDartSdk;
-  private final @Nullable VirtualFile myPubspecYamlFile;
-  private final @NotNull List<VirtualFile> myPackageRoots = new ArrayList<VirtualFile>();
-  private final @NotNull Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<String, VirtualFile>();
-  private final @NotNull Map<String, Set<String>> myPubListPackageDirsMap = new THashMap<String, Set<String>>();
+  @NotNull private final Project myProject;
+  @Nullable private final DartSdk myDartSdk;
+  @Nullable private final VirtualFile myPubspecYamlFile;
+  @Nullable private VirtualFile myPackageRoot;
+  @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<String, VirtualFile>();
+  @NotNull private final Map<String, Set<String>> myPubListPackageDirsMap = new THashMap<String, Set<String>>();
 
   DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
     myDartSdk = DartSdk.getDartSdk(project);
-    myPubspecYamlFile = initPackageRootsAndReturnPubspecYamlFile(contextFile);
+    myPubspecYamlFile = initPackageRootAndReturnPubspecYamlFile(contextFile);
     initLivePackageNameToDirMap();
     initPubListPackageDirsMap(contextFile);
   }
@@ -49,9 +49,9 @@ class DartUrlResolverImpl extends DartUrlResolver {
     return myPubspecYamlFile;
   }
 
-  @NotNull
-  public VirtualFile[] getPackageRoots() {
-    return myPackageRoots.toArray(new VirtualFile[myPackageRoots.size()]);
+  @Nullable
+  public VirtualFile getPackageRoot() {
+    return myPackageRoot;
   }
 
   public void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer) {
@@ -112,8 +112,8 @@ class DartUrlResolverImpl extends DartUrlResolver {
         return packageDir.findFileByRelativePath(pathRelToPackageDir);
       }
 
-      for (final VirtualFile packageRoot : myPackageRoots) {
-        final VirtualFile file = packageRoot.findFileByRelativePath(packageRelPath);
+      if (myPackageRoot != null) {
+        final VirtualFile file = myPackageRoot.findFileByRelativePath(packageRelPath);
         if (file != null) {
           return file;
         }
@@ -152,7 +152,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     result = getUrlIfFileFromLivePackage(file, myLivePackageNameToDirMap);
     if (result != null) return result;
 
-    result = getUrlIfFileFromPackageRoot(file, myPackageRoots);
+    result = getUrlIfFileFromPackageRoot(file, myPackageRoot);
     if (result != null) return result;
 
     result = getUrlIfFileFromPubListPackageDirs(file, myPubListPackageDirsMap);
@@ -193,8 +193,8 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
-  private static String getUrlIfFileFromPackageRoot(final @NotNull VirtualFile file, final @NotNull List<VirtualFile> packageRoots) {
-    for (VirtualFile packageRoot : packageRoots) {
+  private static String getUrlIfFileFromPackageRoot(@NotNull final VirtualFile file, @Nullable final VirtualFile packageRoot) {
+    if (packageRoot != null) {
       final String relPath = VfsUtilCore.getRelativePath(file, packageRoot, '/');
       if (relPath != null) {
         return PACKAGE_PREFIX + relPath;
@@ -218,13 +218,13 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
-  private VirtualFile initPackageRootsAndReturnPubspecYamlFile(final @NotNull VirtualFile contextFile) {
+  private VirtualFile initPackageRootAndReturnPubspecYamlFile(final @NotNull VirtualFile contextFile) {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
     if (module == null) return null;
 
-    final VirtualFile[] customPackageRoots = DartConfigurable.getCustomPackageRoots(module);
-    if (customPackageRoots.length > 0) {
-      Collections.addAll(myPackageRoots, customPackageRoots);
+    final VirtualFile customPackageRoot = DartConfigurable.getCustomPackageRoot(module);
+    if (customPackageRoot != null) {
+      myPackageRoot = customPackageRoot;
       return null;
     }
 
@@ -232,7 +232,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
     final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild(PACKAGES_FOLDER_NAME);
     if (packagesFolder != null && packagesFolder.isDirectory()) {
-      myPackageRoots.add(packagesFolder);
+      myPackageRoot = packagesFolder;
     }
 
     return pubspecYamlFile;

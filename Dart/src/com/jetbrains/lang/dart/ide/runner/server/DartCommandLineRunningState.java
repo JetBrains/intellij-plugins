@@ -160,10 +160,10 @@ public class DartCommandLineRunningState extends CommandLineState {
       throw new ExecutionException(e);
     }
 
-    final VirtualFile[] packageRoots = DartUrlResolver.getInstance(project, dartFile).getPackageRoots();
-    if (packageRoots.length > 0) {
+    final VirtualFile packageRoot = DartUrlResolver.getInstance(project, dartFile).getPackageRoot();
+    if (packageRoot != null) {
       // more than one package root is not supported by the [SDK]/bin/dart tool
-      commandLine.addParameter("--package-root=" + FileUtil.toSystemDependentName(packageRoots[0].getPath()));
+      commandLine.addParameter("--package-root=" + FileUtil.toSystemDependentName(packageRoot.getPath()));
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
