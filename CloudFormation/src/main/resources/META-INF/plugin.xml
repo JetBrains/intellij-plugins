@@ -24,7 +24,8 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileType"/>
+    <fileTypeDetector implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeDetector"/>
+
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
 
     <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
