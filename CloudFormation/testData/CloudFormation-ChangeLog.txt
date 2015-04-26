@@ -6,7 +6,7 @@ CloudFormation <http://aws.amazon.com/documentation/cloudformation/> »
 User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
 » Release History
 Did this page help you?  Yes | No |  Tell us about it...
-<https://portal.aws.amazon.com/gp/aws/html-forms-controller/documentation/aws_doc_feedback_04?service_name=CloudFormation&guide_name=User%20Guide&api_version=2010-05-15&file_name=DocumentHistory>
+<https://aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=CloudFormation&hidden_guide_name=User%20Guide&hidden_api_version=2010-05-15&hidden_file_name=DocumentHistory>
 « PreviousNext »
 
 [Go]
@@ -19,7 +19,6 @@ Did this page help you?  Yes | No |  Tell us about it...
           o Get Started
           o Learn Template Basics
           o Walkthrough: Updating a Stack
-          o Walkthrough: Custom Resources
           o Using CloudFormer to Create Templates
           o AWS CloudFormation Endpoints
     * Best Practices
@@ -59,6 +58,7 @@ Did this page help you?  Yes | No |  Tell us about it...
           o Template Anatomy
                 + Format Version
                 + Description
+                + Metadata
                 + Parameters
                 + Mappings
                 + Conditions
@@ -72,24 +72,23 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Auto-Scaled Worker that uses Spot Instances to Monitor
                   Work in an SQS Queue
           o Template Snippets
-                + Auto Scaling Snippets
-                + Amazon CloudFront Template Snippets
-                + Amazon CloudWatch Logs Sample
-                + Amazon EC2 Snippets
-                + AWS Elastic Beanstalk Snippets
-                + Elastic Load Balancing Snippets
-                + AWS Identity and Access Management Template Snippets
-                + AWS OpsWorks Snippets
-                + Amazon Redshift Snippets
-                + Amazon RDS Template Snippets
-                + Amazon Route 53 Template Snippets
-                + Amazon S3 Template Snippets
-                + Amazon SimpleDB Snippets
-                + Amazon SNS Snippets
-                + Amazon SQS Queue Snippet
-                + Stack Resource Snippets
-                + Wait Condition Template Snippets
-                + AWS CloudFormation Template Snippets
+                + General
+                + Auto Scaling
+                + AWS CloudFormation
+                + CloudFront
+                + CloudWatch
+                + CloudWatch Logs
+                + Amazon EC2
+                + Elastic Beanstalk
+                + Elastic Load Balancing
+                + IAM
+                + AWS OpsWorks
+                + Amazon Redshift
+                + Amazon RDS
+                + Amazon Route 53
+                + Amazon S3
+                + Amazon SNS
+                + Amazon SQS
           o Creating Templates
                 + Specifying Intrinsic Functions
                 + Adding Input Parameters
@@ -100,11 +99,23 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Specifying Output Values
                 + Creating Wait Conditions
                 + Deploying Applications
+          o Custom Resources
+                + Amazon Simple Notification Service-backed Custom
+                  Resources
+                + AWS Lambda-backed Custom Resources
+                + Custom Resource Reference
+                      # Request Objects
+                      # Response Objects
+                      # Request Types
+                            * Create
+                            * Delete
+                            * Update
           o Using Regular Expressions
     * Template Reference
           o AWS Resource Types
                 + AWS::AutoScaling::AutoScalingGroup
                 + AWS::AutoScaling::LaunchConfiguration
+                + AWS::AutoScaling::LifecycleHook
                 + AWS::AutoScaling::ScalingPolicy
                 + AWS::AutoScaling::ScheduledAction
                 + AWS::CloudFormation::Authentication
@@ -180,6 +191,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::RDS::DBSubnetGroup
                 + AWS::RDS::DBSecurityGroup
                 + AWS::RDS::DBSecurityGroupIngress
+                + AWS::RDS::EventSubscription
                 + AWS::Route53::HealthCheck
                 + AWS::Route53::HostedZone
                 + AWS::Route53::RecordSet
@@ -195,7 +207,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
                 + Auto Scaling MetricsCollection
-                + Auto Scaling NotificationConfiguration
+                + Auto Scaling NotificationConfigurations
                 + Auto Scaling Tags
                 + CloudFormation Stack Parameters
                 + CloudFront DistributionConfig
@@ -231,10 +243,10 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + EC2 Network Interface Private IP Specification
                 + EC2 PortRange
                 + EC2 Security Group Rule
-                + AWS Elastic Beanstalk Environment Tier
-                + AWS Elastic Beanstalk OptionSettings Property Type
-                + AWS Elastic Beanstalk SourceBundle Property Type
-                + AWS Elastic Beanstalk SourceConfiguration Property Type
+                + Elastic Beanstalk Environment Tier
+                + Elastic Beanstalk OptionSettings Property Type
+                + Elastic Beanstalk SourceBundle Property Type
+                + Elastic Beanstalk SourceConfiguration Property Type
                 + Elastic Load Balancing AccessLoggingPolicy
                 + AppCookieStickinessPolicy
                 + Elastic Load Balancing ConnectionDrainingPolicy
@@ -245,19 +257,25 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + ElasticLoadBalancing Policy
                 + IAM Policies
                 + Name Type
+                + AWS OpsWorks AutoScalingThresholds Type
                 + AWS OpsWorks ChefConfiguration Type
+                + AWS OpsWorks LoadBasedAutoScaling Type
                 + AWS OpsWorks Recipes Type
                 + AWS OpsWorks Source Type
                 + AWS OpsWorks SslConfiguration Type
                 + AWS OpsWorks StackConfigurationManager Type
+                + AWS OpsWorks TimeBasedAutoScaling Type
                 + AWS OpsWorks VolumeConfiguration Type
                 + Amazon Redshift Parameter Type
                 + AWS CloudFormation Resource Tags
                 + RDS Security Group Rule
                 + Route 53 AliasTarget Property
                 + Amazon Route 53 Record Set GeoLocation Property
-                + Amazon Route 53 HealthCheck Configuration
-                + Amazon Route 53 Hosted Zone Configuration Property
+                + Amazon Route 53 HealthCheckConfig
+                + Amazon Route 53 HealthCheckTags
+                + Amazon Route 53 HostedZoneConfig Property
+                + Amazon Route 53 HostedZoneTags
+                + Amazon Route 53 HostedZoneVPCs
                 + Amazon S3 Cors Configuration
                 + Amazon S3 Cors Configuration Rule
                 + Amazon S3 Lifecycle Configuration
@@ -338,22 +356,13 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Application Frameworks
                 + Services
     * AWS CloudFormation Limits
-    * Custom Resource Reference
-          o Request Objects
-          o Response Objects
-          o Request Types
-                + Create
-                + Delete
-                + Update
     * Logging API Calls
     * Troubleshooting
     * Release History
     * AWS Glossary
-[View the PDF for this guide.]
-<http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-ug.pdf> 
-[Go to the AWS Discussion Forum for this product.]
-<http://forums.aws.amazon.com/forum.jspa?forumID=92> [Go to the Kindle 
-Store to download this guide in Kindle format.]
+[View the PDF for this guide.][Go to the AWS Discussion Forum for this 
+product.] <http://forums.aws.amazon.com/forum.jspa?forumID=92> [Go to the 
+Kindle Store to download this guide in Kindle format.]
 <http://www.amazon.com/dp/B007S28IUW>
 
 
@@ -362,61 +371,172 @@ Release History
 The following table describes the important changes to the documentation 
 since the last release of AWS CloudFormation.
 
-Change 	API Version 	Description 	Release Date
+Change 	Release Date 	Description 	API Version
+
+New resources
+
+April 16, 2015
+
+AWS CloudFormation added the following resources:
+
+AWS::AutoScaling::LifecycleHook
+
+    Use Auto Scaling lifecycle hooks to control the state of an instance
+    after it is launched or terminated.
+
+AWS::RDS::EventSubscription
+
+    Use event subscriptions to get notifications about Amazon RDS events.
+
+2010-05-15
+
+Resource updates
+
+April 16, 2015
+
+AWS CloudFormation updated the following resources:
+
+AWS::AutoScaling::AutoScalingGroup
+
+    Use the NotificationConfigurations property to specify multiple
+    notifications.
+
+AWS::AutoScaling::LaunchConfiguration
+
+    Use the PlacementTenancy property to specify the tenancy of instances.
+
+    Use the ClassicLinkVPCId and ClassicLinkVPCSecurityGroups properties to
+    link Classic-EC2 instances to a ClassicLink-enabled VPC.
+
+AWS::AutoScaling::ScalingPolicy
+
+    Use the MinAdjustmentStep property to specify the minimum number of
+    instances that are added or removed during a scaling event.
+
+AWS::CloudFront::Distribution
+
+    For viewer certificates, use the MinimumProtocolVersion property to
+    specify a minimum protocol version. For cache behaviors, use the 
+    CachedMethods property to specify which methods CloudFront caches
+    responses for. For origins, use the OriginPath to specify a path that
+    CloudFront uses to request content.
+
+AWS::ElastiCache::CacheCluster
+
+    For Memcached cache clusters, use the AZMode and 
+    PreferredAvailabilityZones properties to specify nodes in multiple
+    Availability Zones.
+
+AWS::EC2::Volume
+
+    Use the KmsKeyId property to specify a master key for encrypted
+    volumes.
+
+AWS::OpsWorks::Instance
+
+    Use the TimeBasedAutoScaling property to automatically scale instances
+    based on a schedule that you specify.
+
+AWS::OpsWorks::Layer
+
+    Use the LoadBasedAutoScaling property to specify load-based scaling
+    policies. For volume configurations, use the VolumeType and Iops 
+    properties to specify a volume type and the number I/O operations per
+    second.
+
+AWS::RDS::DBInstance
+
+    Use the CharacterSetName property to specify a character set for
+    supported database engines.
+
+    Use the StorageEncrypted property to indicate whether database
+    instances are encrypted and the KmsKeyId to specify a master key for
+    encrypted database instances.
+
+AWS::Route53::HealthCheck
+
+    Use the HealthCheckTags property to associate tags with health checks.
+
+AWS::Route53::HostedZone
+
+    Use the VPCs property to create private hosted zones.
+
+    Use the HostedZoneTags property to associate tags with hosted zones.
+
+2010-05-15
+
+Metadata template section
+
+April 16, 2015
+
+Add the Metadata section to your templates to include arbitrary JSON 
+objects that describe your templates, such as the design or implementation 
+details.
+
+2010-05-15
+
+Resource update
+
+April 08, 2015
+
+For the AWS::CloudFormation::CustomResource resource, you can specify AWS 
+Lambda function ARNs in the ServiceToken property.
+
+2010-05-15
 
 Amazon RDS update
 
-2010-05-15
+December 24, 2014
 
 AWS CloudFormation added two new properties for Amazon RDS database 
 instances. You can associate an option group with a database instance and 
 specify the database instance storage type. For more information, see 
 AWS::RDS::DBInstance.
 
-December 24, 2014
+2010-05-15
 
 Elastic Load Balancing update
 
-2010-05-15
+December 24, 2014
 
 You can use the ConnectionSettings property to specify how long connections 
 can remain idle. For more information, see 
 AWS::ElasticLoadBalancing::LoadBalancer.
 
-December 24, 2014
+2010-05-15
 
 Amazon Route 53 update
 
-2010-05-15
+November 06, 2014
 
 You can now provision and manage Amazon Route 53 hosted zones, health 
 checks, failover record sets, and geolocation record sets.
 
-November 06, 2014
+2010-05-15
 
 Auto Scaling rolling update enhancement
 
-2010-05-15
+November 06, 2014
 
 During an update, you can use the WaitOnResourceSignals flag to instruct 
 AWS CloudFormation to wait for instances to signal success. That way, AWS 
 CloudFormation won't update the next batch of instances until the current 
 batch is ready. For more information, see UpdatePolicy.
 
-November 06, 2014
+2010-05-15
 
 Fn:GetAtt default VPC values
 
-2010-05-15
+November 06, 2014
 
 Given a VPC ID, you can retrieve the default security group and network ACL 
 for that VPC. For more information, see Fn::GetAtt.
 
-November 06, 2014
+2010-05-15
 
 AWS-specific parameter types
 
-2010-05-15
+November 06, 2014
 
 You can specify AWS-specific parameter types in your AWS CloudFormation 
 templates. In the AWS CloudFormation console, these parameter types provide 
@@ -424,11 +544,11 @@ a drop-down list of valid values. With the API or CLI, AWS CloudFormation
 can quickly validate values for these parameter types before creating or 
 updating a stack. For more information, see Parameters.
 
-November 06, 2014
+2010-05-15
 
 CreationPolicy attribute
 
-2010-05-15
+November 06, 2014
 
 With the CreationPolicy attribute, you can instruct AWS CloudFormation to 
 wait until applications are ready on Amazon EC2 instances before proceeding 
@@ -436,77 +556,77 @@ with stack creation. You can use a creation policy instead of a wait
 condition and wait condition handle. For more information, see 
 CreationPolicy.
 
-November 06, 2014
+2010-05-15
 
 Amazon CloudFront forwarded values
 
-2010-05-15
+September 29, 2014
 
 For cache behaviors, you can forward headers to the origin. See CloudFront 
 ForwardedValues.
 
-September 29, 2014
+2010-05-15
 
 AWS OpsWorks update
 
-2010-05-15
+September 29, 2014
 
 For Chef 11.10, you can use the ChefConfiguration property to enable 
 Berkshelf. You can also use the AWS OpsWorks built-in security groups with 
 your AWS OpsWorks stacks. For more information, see AWS::OpsWorks::Stack.
 
-September 29, 2014
+2010-05-15
 
 Elastic Load Balancing tagging support
 
-2010-05-15
+September 29, 2014
 
 AWS CloudFormation tags Elastic Load Balancing load balancers with 
 stack-level tags. You can also add your own tags to a load balancer. See 
 AWS::ElasticLoadBalancing::LoadBalancer.
 
-September 29, 2014
+2010-05-15
 
 Amazon Simple Notification Service topic policy
 
-2010-05-15
+September 29, 2014
 
 You can now update Amazon SNS topic policies. For more information, see 
 AWS::SNS::TopicPolicy.
 
-September 29, 2014
+2010-05-15
 
 Amazon RDS database instance update
 
-2010-05-15
+September 05, 2014
 
 You can specify whether a database instance is Internet-facing by using the 
 PubliclyAccessible property in the AWS::RDS::DBInstance resource.
 
-September 05, 2014
+2010-05-15
 
 UpdatePolicy Attribute update
 
-2010-05-15
+September 05, 2014
 
 You can specify an update policy for an Auto Scaling group that has an 
 associated scheduled action. For more information, see UpdatePolicy.
 
-September 05, 2014
+2010-05-15
 
 Amazon CloudWatch support
 
-2010-05-15
+July 10, 2014
 
 You can use AWS CloudFormation to provision and manage CloudWatch Logs log 
 groups and metric filters. For more information, see AWS::Logs::LogGroup 
 or AWS::Logs::MetricFilter.
 
-July 10, 2014
+2010-05-15
 
 Amazon CloudFront distribution configuration update
 
-2010-05-15
+June 17, 2014
 
 You can specify additional CloudFront distribution configuration 
 properties:
@@ -527,60 +647,60 @@ properties:
 
 For more information, see AWS::CloudFront::Distribution.
 
-June 17, 2014
+2010-05-15
 
 Amazon EC2 instance update
 
-2010-05-15
+June 17, 2014
 
 You can specify whether an instance stops or terminates when you invoke the 
 instance's operating system shutdown command. For more information, see 
 AWS::EC2::Instance.
 
-June 17, 2014
+2010-05-15
 
 Amazon EBS volume update
 
-2010-05-15
+June 17, 2014
 
 You can use encrypted Amazon EBS volumes with supported instance types. For 
 more information, see AWS::EC2::Volume.
 
-June 17, 2014
+2010-05-15
 
 Amazon VPC peering
 
-2010-05-15
+June 17, 2014
 
 You can use AWS CloudFormation to create a VPC peering connection, which 
 establishes a network connection between two VPCs. For more information, 
 see AWS::EC2::VPCPeeringConnection.
 
-June 17, 2014
+2010-05-15
 
 Auto Scaling group update
 
-2010-05-15
+June 17, 2014
 
 You can specify an existing cluster placement group in which to launch 
 instances for an Auto Scaling group. For more information, see 
 AWS::AutoScaling::AutoScalingGroup.
 
-June 17, 2014
+2010-05-15
 
 AWS CloudTrail
 
-2010-05-15
+June 17, 2014
 
 AWS CloudFormation supports AWS CloudTrail, which an capture API calls made 
 from your AWS account and where to publish the logs at a location you 
 designate. For more information, see AWS::CloudTrail::Trail.
 
-June 17, 2014
+2010-05-15
 
 Update stack enhancements
 
-2010-05-15
+May 12, 2014
 
 AWS CloudFormation supports additional features for updating stacks:
 
@@ -592,21 +712,21 @@ AWS CloudFormation supports additional features for updating stacks:
 
 For more information, see AWS CloudFormation Stacks Updates.
 
-May 12, 2014
+2010-05-15
 
 Amazon Kinesis
 
-2010-05-15
+May 06, 2014
 
 You can use AWS CloudFormation to create Amazon Kinesis streams that 
 capture and transport data records from data sources. For more information, 
 see AWS::Kinesis::Stream.
 
-May 06, 2014
+2010-05-15
 
 Amazon S3
 
-2010-05-15
+May 05, 2014
 
 AWS CloudFormation supports additional Amazon S3 bucket properties:
 
@@ -629,40 +749,40 @@ AWS CloudFormation supports additional Amazon S3 bucket properties:
 
 For more information, see AWS::S3::Bucket.
 
-May 05, 2014
+2010-05-15
 
 Auto Scaling
 
-2010-05-15
+May 05, 2014
 
 AWS CloudFormation supports metrics collection for an Auto Scaling group. 
 For more information, see AWS::AutoScaling::AutoScalingGroup.
 
-May 05, 2014
+2010-05-15
 
 Fn::If update
 
-2010-05-15
+May 05, 2014
 
 You can use the Fn::If intrinsic function in the output section of a 
 template. For more information, see Condition Functions. 	
 
-May 05, 2014
+2010-05-15
 
 API logging with AWS CloudTrail
 
-2010-05-15
+April 02, 2014
 
 You can use AWS CloudTrail to log AWS CloudFormation requests. With AWS 
 CloudTrail you can get a history of AWS CloudFormation API calls for your 
 account. For more information, see Logging AWS CloudFormation API Calls in 
 AWS CloudTrail.
 
-April 02, 2014
+2010-05-15
 
 Elastic Load Balancing update
 
-2010-05-15
+March 20, 2014
 
 You can specify an access logging policy to capture information about 
 requests made to your load balancer. You can also specify a connection 
@@ -670,150 +790,150 @@ draining policy that describes how to handle in-flight requests when
 instances are deregistered or become unhealthy. For more information, see 
 AWS::ElasticLoadBalancing::LoadBalancer.
 
-March 20, 2014
+2010-05-15
 
 AWS OpsWorks support
 
-2010-05-15
+March 03, 2014
 
 You can use AWS CloudFormation to provision and manage AWS OpsWorks stacks. 
-For more information, see AWS::OpsWorks::Stack or AWS OpsWorks Snippets.
+For more information, see AWS::OpsWorks::Stack or AWS OpsWorks Template 
+Snippets.
 
-March 03, 2014
+2010-05-15
 
 Limit increase
 
-2010-05-15
+February 18, 2014
 
 You can specify template sizes up to 460,800 bytes in Amazon S3.
 
-February 18, 2014
+2010-05-15
 
 Amazon Redshift support
 
-2010-05-15
+February 10, 2014
 
 You can use AWS CloudFormation to provision and manage Amazon Redshift 
-clusters. For more information, see Amazon Redshift Snippets or 
+clusters. For more information, see Amazon Redshift Template Snippets or 
 AWS::Redshift::Cluster.
 
-February 10, 2014
+2010-05-15
 
 Amazon S3 buckets and bucket policies update
 
-2010-05-15
+February 10, 2014
 
 You can update some properties of the Amazon S3 bucket and bucket policy 
 resources. For more information, see AWS::S3::Bucket or 
 AWS::S3::BucketPolicy.
 
-February 10, 2014
-
-AWS Elastic Beanstalk environments and application versions update
-
 2010-05-15
 
-You can update AWS Elastic Beanstalk environment configurations and 
-application versions. For more information, see 
-AWS::ElasticBeanstalk::Environment, 
+Elastic Beanstalk environments and application versions update
+
+February 10, 2014
+
+You can update Elastic Beanstalk environment configurations and application 
+versions. For more information, see AWS::ElasticBeanstalk::Environment, 
 AWS::ElasticBeanstalk::ConfigurationTemplate, or 
 AWS::ElasticBeanstalk::ApplicationVersion.
 
-February 10, 2014
+2010-05-15
 
 Amazon SQS update
 
-2010-05-15
+January 29, 2014
 
 You can specify a dead letter queue for an Amazon SQS queue. For more 
 information, see AWS::SQS::Queue.
 
-January 29, 2014
+2010-05-15
 
 Auto Scaling scheduled actions
 
-2010-05-15
+January 27, 2014
 
 You can scale the number of Amazon EC2 instances in an Auto Scaling group 
 based on a schedule. By using a schedule, you can scale applications in 
 response to predictable load changes. For more information, see 
 AWS::AutoScaling::ScheduledAction.
 
-January 27, 2014
+2010-05-15
 
 DynamoDB secondary indexes
 
-2010-05-15
+January 27, 2014
 
 You can create local and global secondary indexes for DynamoDB databases. 
 By using secondary indexes, you can efficiently access data with attributes 
 other than the primary key. For more information, see AWS::DynamoDB::Table
 .
 
-January 27, 2014
+2010-05-15
 
 Auto Scaling update
 
-2010-05-15
+January 02, 2014
 
 You can specify an instance ID for an Auto Scaling group or launch 
 configuration. You can also specify additional Auto Scaling block device 
 properties. For more information, see AWS::AutoScaling::AutoScalingGroup 
 or AWS::AutoScaling::LaunchConfiguration.
 
-January 02, 2014
+2010-05-15
 
 Amazon SQS update
 
-2010-05-15
+January 02, 2014
 
 You can update Amazon SQS queues and specify additional properties. For 
 more information, see AWS::SQS::Queue.
 
-January 02, 2014
+2010-05-15
 
 Limit increases
 
-2010-05-15
+January 02, 2014
 
 You can specify up to 60 parameters and 60 outputs in your AWS 
 CloudFormation templates
 
-January 02, 2014
+2010-05-15
 
 New console
 
-2010-05-15
+December 19, 2013
 
 The new AWS CloudFormation console
 <https://console.aws.amazon.com/cloudformation/> adds features like 
 auto-refreshing stack events and alphabetical ordering of stack parameters.
 
-December 19, 2013
+2010-05-15
 
 Cross-zone load balancing
 
-2010-05-15
+December 19, 2013
 
 With cross-zone load balancing, you can route traffic to back-end instances 
 across all Avalibility Zones. For more information, see 
 AWS::ElasticLoadBalancing::LoadBalancer.
 
-December 19, 2013
+2010-05-15
 
 AWS Elastic Beanstalk environment tiers
 
-2010-05-15
+December 19, 2013
 
 You can specify whether AWS Elastic Beanstalk provisions resources to 
 support a web server or to handle background-processing tasks. For more 
 information, see AWS::ElasticBeanstalk::Environment.
 
-December 19, 2013
+2010-05-15
 
 Resource names
 
-2010-05-15
+December 19, 2013
 
 You can assign names (physical IDs) to the following resources:
 
@@ -825,21 +945,21 @@ You can assign names (physical IDs) to the following resources:
 
 For more information, see Name Type.
 
-December 19, 2013
+2010-05-15
 
 VPN support
 
-2010-05-15
+November 22, 2013
 
 You can enable a virtual private gateway (VGW) to propagate routes to the 
 routing tables of a VPC. For more information, see 
 AWS::EC2::VPNGatewayRoutePropagation.
 
-November 22, 2013
+2010-05-15
 
 Conditionally create resources and assign properties
 
-2010-05-15
+November 08, 2013
 
 Using input parameters, you can control the creation and settings of 
 designated stack resources by defining conditions in your AWS 
@@ -848,11 +968,11 @@ stack resources for a production environment. Using the same template, you
 can create similar stack resources with lower capacity for a test 
 environment. For more information, see Condition Functions.
 
-November 08, 2013
+2010-05-15
 
 Prevent accidental updates to stack resources
 
-2010-05-15
+November 08, 2013
 
 You can prevent stack updates that might result in unintentional changes to 
 stack resources. For example, if you have a stack with a database layer 
@@ -860,11 +980,11 @@ that should rarely be updated, you can set a stack policy that prevents
 most users from updating that database layer. For more information, see 
 Prevent Updates to Stack Resources.
 
-November 08, 2013
+2010-05-15
 
 Name resources
 
-2010-05-15
+November 08, 2013
 
 Instead of using AWS CloudFormation-generated physical IDs, you can assign 
 names to certain resources. The following AWS CloudFormation resources 
@@ -884,11 +1004,11 @@ support naming:
 
 For more information, see Name Type.
 
-November 08, 2013
+2010-05-15
 
 Assign custom resource types
 
-2010-05-15
+November 08, 2013
 
 In your templates, you can specify your own resource type for AWS 
 CloudFormation custom resources (AWS::CloudFormation::CustomResource). By 
@@ -897,32 +1017,32 @@ of custom resources that you have in your stack. For example, you can
 specify "Type": "Custom::MyCustomResource". For more information, see 
 AWS::CloudFormation::CustomResource.
 
-November 08, 2013
+2010-05-15
 
 Add pseudo parameter
 
-2010-05-15
+November 08, 2013
 
 You can now refer to the AWS AccountID inside AWS CloudFormation templates 
 by referring to the AWS::AccountID pseudo parameter. For more information, 
 see Pseudo Parameters Reference.
 
-November 08, 2013
+2010-05-15
 
 Specify stacks in IAM policies
 
-2010-05-15
+November 08, 2013
 
 You can allow or deny IAM users, groups, or roles to operate on specific 
 AWS CloudFormation stacks. For example, you can deny the delete stack 
 action on a specific stack ID. For more information, see Controlling Access 
 with AWS Identity and Access Management.
 
-November 08, 2013
+2010-05-15
 
 Federation support
 
-2010-05-15
+October 14, 2013
 
 AWS CloudFormation supports temporary security credentials from IAM roles, 
 which enable scenarios such as federation and single sign-on to the AWS 
@@ -931,30 +1051,30 @@ Amazon EC2 instances without embedding long-term security credentials by
 using IAM roles. For more information about AWS CloudFormation and IAM, see 
 Controlling Access with AWS Identity and Access Management.
 
-October 14, 2013
+2010-05-15
 
 Amazon RDS read replica support
 
-2010-05-15
+September 24, 2013
 
 You can now create Amazon RDS read replicas from a source DB instance. For 
 more information, see the SourceDBInstanceIdentifier property in the 
 AWS::RDS::DBInstance resource.
 
-September 24, 2013
+2010-05-15
 
 Associate public IP address with instances in Auto Scaling group.
 
-2010-05-15
+September 19, 2013
 
 You can now associate public IP addresses with instances in an Auto Scaling 
 group. For more information, see AWS::AutoScaling::LaunchConfiguration.
 
-September 19, 2013
+2010-05-15
 
 Additional VPC support.
 
-2010-05-15
+September 17, 2013
 
 AWS CloudFormation added several enhancements to support VPC and VPN 
 functionality:
@@ -971,42 +1091,42 @@ functionality:
       your VPN gateway. For more information, see 
       AWS::EC2::VPNConnectionRoute.
 
-September 17, 2013
+2010-05-15
 
 Redis and VPC security groups support for Amazon ElastiCache.
 
-2010-05-15
+September 03, 2013
 
 You can now specify Redis as the cache engine for an ElastiCache cluster. 
 You can also now assign VPC security groups to ElastiCache clusters. For 
 more information, see AWS::ElastiCache::CacheCluster.
 
-September 3, 2013
+2010-05-15
 
 Parallel stack creation, update and deletion, and nested stack updates.
 
-2010-05-15
+August 12, 2013
 
 CloudFormation now creates, updates, and deletes resources in parallel, 
 improving the operations' performance. If you update a top-level template, 
 CloudFormation automatically updates any nested stacks that have changed. 
 For more information, see AWS CloudFormation Stacks Updates.
 
-August 12, 2013
+2010-05-15
 
 VPC security groups can now be set in AWS RDS instances
 
-2010-05-15
+February 28, 2013
 
 You can now assign VPC security groups to an Amazon RDS instance with AWS 
 CloudFormation. For more information, see the VPCSecurityGroups property in 
 AWS::RDS::DBInstance.
 
-February 28, 2013
+2010-05-15
 
 Rolling Deployments for Auto Scaling Groups
 
-2010-05-15
+February 20, 2013
 
 AWS CloudFormation now supports update policies on autoscaling groups, 
 which describe how instances in the autoscaling group are replaced or 
@@ -1015,11 +1135,11 @@ modify these settings at stack creation or during a stack update.
 
 For more information and an example, see UpdatePolicy.
 
-February 20, 2013
+2010-05-15
 
 Cancel and Rollback Action for Stack Updates
 
-2010-05-15
+February 20, 2013
 
 AWS CloudFormation supports the ability to cancel a stack update. The stack 
 must be in the UPDATE_IN_PROGRESS state when the update request is made. 
@@ -1034,11 +1154,11 @@ More information is available in the following topics:
       <http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CancelUpdateStack.html> 
       in the AWS CloudFormation API Reference
 
-February 20, 2013
+2010-05-15
 
 EBS-Optimized Instances for Auto Scaling Groups
 
-2010-05-15
+February 20, 2013
 
 You can now provision EBS-optimized instances in auto scaling groups for 
 dedicated throughput to Amazon EBS in autoscaled instances. The 
@@ -1048,11 +1168,11 @@ optimized EBS EC2 instances.
 For more information, see the new EbsOptimized property in 
 AWS::AutoScaling::LaunchConfiguration.
 
-February 20, 2013
+2010-05-15
 
 New Documentation
 
-2010-05-15
+December 21, 2012
 
 AWS::EC2::Instance now provides a BlockDeviceMappings property to allow you 
 to set block device mappings for your EC2 instance.
@@ -1062,11 +1182,11 @@ With this change, two new types have been added:
     * Amazon EC2 Block Device Mapping Property
     * Amazon Elastic Block Store Block Device Property
 
-December 21, 2012
+2010-05-15
 
 New Documentation
 
-2010-05-15
+December 21, 2012
 
 New sections have been added to describe the procedures for creating and 
 viewing stacks using the recently redesigned AWS Management Console. You 
@@ -1075,30 +1195,25 @@ can find them here:
     * Creating a Stack
     * Viewing Stack Data and Resources
 
-December 21, 2012
+2010-05-15
 
 New Documentation
 
-2010-05-15
-
-Custom resources are special AWS CloudFormation resources that provide a 
-way for a template developer to include non-AWS resources in an AWS 
-CloudFormation stack. The custom resource provider can be either a template 
-developer or a separate third-party resource provider.
+November 15, 2012
 
 Information about custom resources is provided in the following topics:
 
-    * AWS CloudFormation Custom Resource Walkthrough
+    * Custom Resources
 
     * AWS::CloudFormation::CustomResource
 
     * Custom Resource Reference
 
-November 15, 2012
+2010-05-15
 
 Updated Documentation
 
-2010-05-15
+November 15, 2012
 
 AWS CloudFormation now supports specifying provisioned I/O operations per 
 second (IOPS) for Amazon RDS instances. You can set this value from 
@@ -1110,11 +1225,11 @@ Provisioned IOPS
 <http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/RDSFAQ.PIOPS.html> 
 in the Amazon Relational Database Service User Guide.
 
-November 15, 2012
+2010-05-15
 
 New and Updated Documentation
 
-2010-05-15
+August 27, 2012
 
 Reorganization of topics to more clearly provide specific information about 
 using the AWS Management Console and using the AWS CloudFormation 
@@ -1145,11 +1260,11 @@ New information about working with Windows Stacks:
 
 New topic: Using Regular Expressions in AWS CloudFormation Templates.
 
-August 27, 2012
+2010-05-15
 
 New Feature
 
-2010-05-15
+April 25, 2012
 
 AWS CloudFormation now provides full support for Virtual Private Cloud 
 (VPC) security with Amazon EC2. You can now create and populate an entire 
@@ -1188,22 +1303,22 @@ AWS::EC2::Subnet
 AWS::EC2::VPNGateway
 AWS::EC2::CustomerGateway
 
-April 25, 2012
+2010-05-15
 
 New Feature
 
-2010-05-15
+April 13, 2012
 
 AWS CloudFormation now allows you to add or remove elements from a stack 
 when updating it. AWS CloudFormation Stacks Updates has been updated, and a 
 new section has been added to the walkthrough: Change the Stack's Resources
 , which describes how to add and remove resources when updating the stack.
 
-April 13, 2012
+2010-05-15
 
 New Feature
 
-2010-05-15
+February 02, 2012
 
 AWS CloudFormation now provides support for resources in an existing Amazon 
 Virtual Private Cloud (VPC). With this release, you can:
@@ -1234,11 +1349,11 @@ Virtual Private Cloud (VPC). With this release, you can:
     * Create an RDS instance in an existing VPC. For more information, see 
       AWS::RDS::DBInstance.
 
-February 2, 2012
+2010-05-15
 
 New Feature
 
-2010-05-15
+February 02, 2012
 
 You can now update properties for the following resources in an existing 
 stack:
@@ -1260,22 +1375,22 @@ stack:
 For the full list of updateable resources and details about things to 
 consider when updating a stack, see AWS CloudFormation Stacks Updates.
 
-February 2, 2012
+2010-05-15
 
 Restructured Guide
 
-2010-05-15
+February 02, 2012
 
 Reorganized existing sections into new sections: Working with AWS 
 CloudFormation Templates and Managing Stacks. Moved Template Reference to 
 the top level of the Table of Contents. Moved Estimating the Cost of Your 
 AWS CloudFormation Stack to the Getting Started section.
 
-February 2, 2012
+2010-05-15
 
 New Content
 
-2010-05-15
+February 02, 2012
 
 Added three new sections:
 
@@ -1290,48 +1405,49 @@ Added three new sections:
       for the AWS CloudFormation helper scripts (cfn-init,
       cfn-get-metadata, cfn-signal, and cfn-hup).
 
-February 2, 2012
+2010-05-15
 
 New Feature
 
-2010-05-15
+May 26, 2011
 
 AWS CloudFormation now provides the aws cloudformation list-stacks command, 
 which enables you to list stacks filtered by stack status. Deleted stacks 
 can be listed for up to 90 days after they have been deleted. For more 
 information, see Describing and Listing Your Stacks.
 
-May 26, 2011
+2010-05-15
 
 New Features
 
-2010-05-15
+May 26, 2011
 
 The aws cloudformation describe-stack-resources and aws cloudformation 
 get-template commands now enable you to get information from stacks which 
 have been deleted for 90 days after they have been deleted. For more 
 information, see Listing Resources and Retrieving a Template.
 
-May 26, 2011
+2010-05-15
 
 New Link
 
-2010-05-15
+March 01, 2011
 
 AWS CloudFormation endpoint information is now located in the Amazon Web 
 Services General Reference. For more information, go to Regions and 
 Endpoints in Amazon Web Services General Reference
 <http://docs.aws.amazon.com/general/latest/gr/index.html?rande.html> .
 
-March 1, 2011
+2010-05-15
 
 Initial Release
 
-2010-05-15
+February 25, 2011
 
 This is the initial public release of AWS CloudFormation.
 
-February 25, 2011
+2010-05-15
+
 Document Conventions 	© 2015, Amazon Web Services, Inc. or its affiliates. 
 All rights reserved.
 Terms of Use <http://aws.amazon.com/terms> 	

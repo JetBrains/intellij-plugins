@@ -152,6 +152,13 @@ public class ResourceTypesSaver {
           }
         }
 
+        if (resourceType.name.equals("AWS::AutoScaling::AutoScalingGroup") && property.name.equals("NotificationConfigurations")) {
+          // Examples prefer NotificationConfiguration spelling
+          // And cn docs too, see http://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+          // vs https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+          property.name = "NotificationConfiguration";
+        }
+
         // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
         // TODO Handle "Yes, for VPC security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
         // TODO Handle "Can be used instead of GroupId for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html

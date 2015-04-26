@@ -6,8 +6,8 @@
         <ResourceProperty>
           <name>AvailabilityZones</name>
           <description></description>
-          <type>A list of strings</type>
-          <required>true</required>
+          <type>List of strings</type>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Cooldown</name>
@@ -48,7 +48,7 @@
         <ResourceProperty>
           <name>LoadBalancerNames</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -72,7 +72,7 @@
         <ResourceProperty>
           <name>NotificationConfiguration</name>
           <description></description>
-          <type>NotificationConfiguration</type>
+          <type>List of Auto Scaling NotificationConfigurations</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -90,13 +90,13 @@
         <ResourceProperty>
           <name>TerminationPolicies</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>VPCZoneIdentifier</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -115,6 +115,18 @@
           <name>BlockDeviceMappings</name>
           <description></description>
           <type>A list of BlockDeviceMappings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClassicLinkVPCId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClassicLinkVPCSecurityGroups</name>
+          <description></description>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -166,6 +178,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>PlacementTenancy</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>RamDiskId</name>
           <description></description>
           <type>String</type>
@@ -193,6 +211,60 @@
       <attributes/>
     </ResourceType>
     <ResourceType>
+      <name>AWS::AutoScaling::LifecycleHook</name>
+      <properties>
+        <ResourceProperty>
+          <name>AutoScalingGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DefaultResult</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HeartbeatTimeout</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LifecycleHookName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LifecycleTransition</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NotificationMetadata</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NotificationTargetARN</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RoleARN</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
       <name>AWS::AutoScaling::ScalingPolicy</name>
       <properties>
         <ResourceProperty>
@@ -211,6 +283,12 @@
           <name>Cooldown</name>
           <description></description>
           <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MinAdjustmentStep</name>
+          <description></description>
+          <type>Integer</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -282,7 +360,7 @@
         <ResourceProperty>
           <name>buckets</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -306,7 +384,7 @@
         <ResourceProperty>
           <name>uris</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -342,7 +420,7 @@
         <ResourceProperty>
           <name>NotificationARNs</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -465,7 +543,7 @@
         <ResourceProperty>
           <name>AlarmActions</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -501,7 +579,7 @@
         <ResourceProperty>
           <name>InsufficientDataActions</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -519,7 +597,7 @@
         <ResourceProperty>
           <name>OKActions</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -585,7 +663,7 @@
         <ResourceProperty>
           <name>TableName</name>
           <description></description>
-          <type>Name Type</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -633,25 +711,25 @@
         <ResourceProperty>
           <name>DomainNameServers</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>NetbiosNameServers</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>NetbiosNodeType</name>
           <description></description>
-          <type>A list of numbers</type>
+          <type>List of numbers</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>NtpServers</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -818,13 +896,13 @@
         <ResourceProperty>
           <name>SecurityGroupIds</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>SecurityGroups</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1560,6 +1638,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>KmsKeyId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Size</name>
           <description></description>
           <type>String</type>
@@ -1620,6 +1704,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>AZMode</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>CacheNodeType</name>
           <description></description>
           <type>String</type>
@@ -1634,7 +1724,7 @@
         <ResourceProperty>
           <name>CacheSecurityGroupNames</name>
           <description></description>
-          <type>List of Strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1686,6 +1776,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>PreferredAvailabilityZones</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>PreferredMaintenanceWindow</name>
           <description></description>
           <type>String</type>
@@ -1694,7 +1790,19 @@
         <ResourceProperty>
           <name>SnapshotArns</name>
           <description></description>
-          <type>String list</type>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotRetentionLimit</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotWindow</name>
+          <description></description>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1883,7 +1991,7 @@
         <ResourceProperty>
           <name>SourceConfiguration</name>
           <description></description>
-          <type>AWS Elastic Beanstalk SourceConfiguration Property Type</type>
+          <type>Elastic Beanstalk SourceConfiguration Property Type</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1937,7 +2045,7 @@
         <ResourceProperty>
           <name>Tier</name>
           <description></description>
-          <type>AWS Elastic Beanstalk Environment Tier Property Type</type>
+          <type>Elastic Beanstalk Environment Tier Property Type</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1972,7 +2080,7 @@
         <ResourceProperty>
           <name>AvailabilityZones</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2002,7 +2110,7 @@
         <ResourceProperty>
           <name>Instances</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2044,7 +2152,7 @@
         <ResourceProperty>
           <name>Subnets</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2158,7 +2266,7 @@
         <ResourceProperty>
           <name>Groups</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2176,13 +2284,13 @@
         <ResourceProperty>
           <name>Roles</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Users</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2229,7 +2337,7 @@
         <ResourceProperty>
           <name>Groups</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2300,7 +2408,7 @@
         <ResourceProperty>
           <name>FilterPattern</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2342,7 +2450,7 @@
         <ResourceProperty>
           <name>Domains</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2418,6 +2526,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>AutoScalingType</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>AvailabilityZone</name>
           <description></description>
           <type>String</type>
@@ -2438,7 +2552,7 @@
         <ResourceProperty>
           <name>LayerIds</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2469,6 +2583,12 @@
           <name>SubnetId</name>
           <description></description>
           <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TimeBasedAutoScaling</name>
+          <description></description>
+          <type>AWS OpsWorks TimeBasedAutoScaling Type</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2510,7 +2630,7 @@
         <ResourceProperty>
           <name>CustomSecurityGroupIds</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2526,6 +2646,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>LoadBasedAutoScaling</name>
+          <description></description>
+          <type>AWS OpsWorks LoadBasedAutoScaling Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Name</name>
           <description></description>
           <type>String</type>
@@ -2534,7 +2660,7 @@
         <ResourceProperty>
           <name>Packages</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2558,7 +2684,7 @@
         <ResourceProperty>
           <name>VolumeConfigurations</name>
           <description></description>
-          <type>AWS OpsWorks VolumeConfiguration Type</type>
+          <type>A list of AWS OpsWorks VolumeConfiguration Type</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2706,6 +2832,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>CharacterSetName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>DBInstanceClass</name>
           <description></description>
           <type>String</type>
@@ -2732,7 +2864,7 @@
         <ResourceProperty>
           <name>DBSecurityGroups</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2763,6 +2895,12 @@
           <name>Iops</name>
           <description></description>
           <type>Number</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>KmsKeyId</name>
+          <description></description>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2826,6 +2964,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>StorageEncrypted</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>StorageType</name>
           <description></description>
           <type>String</type>
@@ -2840,7 +2984,7 @@
         <ResourceProperty>
           <name>VPCSecurityGroups</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2963,13 +3107,49 @@
         <ResourceProperty>
           <name>SubnetIds</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
           <type>A list of resource tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::RDS::EventSubscription</name>
+      <properties>
+        <ResourceProperty>
+          <name>Enabled</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EventCategories</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnsTopicArn</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceIds</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceType </name>
+          <description></description>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -3005,7 +3185,7 @@
         <ResourceProperty>
           <name>ClusterSecurityGroups</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -3119,7 +3299,7 @@
         <ResourceProperty>
           <name>VpcSecurityGroupIds</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -3212,7 +3392,7 @@
         <ResourceProperty>
           <name>SubnetIds</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>true</required>
         </ResourceProperty>
       </properties>
@@ -3224,8 +3404,14 @@
         <ResourceProperty>
           <name>HealthCheckConfig</name>
           <description></description>
-          <type>Amazon Route 53 HealthCheck Configuration</type>
+          <type>Amazon Route 53 HealthCheckConfig</type>
           <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HealthCheckTags</name>
+          <description></description>
+          <type>List of Amazon Route 53 HealthCheckTags</type>
+          <required>false</required>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -3236,7 +3422,13 @@
         <ResourceProperty>
           <name>HostedZoneConfig</name>
           <description></description>
-          <type>Amazon Route 53 Hosted Zone Configuration Property</type>
+          <type>Amazon Route 53 HostedZoneConfig Property</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HostedZoneTags</name>
+          <description></description>
+          <type>List of Amazon Route 53 HostedZoneTags</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -3244,6 +3436,12 @@
           <description></description>
           <type>String</type>
           <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VPCs</name>
+          <description></description>
+          <type>List of Amazon Route 53 HostedZoneVPCs</type>
+          <required>false</required>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -3307,7 +3505,7 @@
         <ResourceProperty>
           <name>ResourceRecords</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -3477,7 +3675,7 @@
         <ResourceProperty>
           <name>TopicName</name>
           <description></description>
-          <type>Name Type</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -3530,7 +3728,7 @@
         <ResourceProperty>
           <name>QueueName</name>
           <description></description>
-          <type>Name Type</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -3575,7 +3773,7 @@
         <ResourceProperty>
           <name>Queues</name>
           <description></description>
-          <type>A list of strings</type>
+          <type>List of strings</type>
           <required>true</required>
         </ResourceProperty>
       </properties>
