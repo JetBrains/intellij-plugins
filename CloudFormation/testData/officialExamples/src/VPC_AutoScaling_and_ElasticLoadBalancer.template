@@ -43,7 +43,7 @@
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
       "Default" : "m1.small",
-      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
 ,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
@@ -107,6 +107,10 @@
       "i2.2xlarge"  : { "Arch" : "HVM64"  },
       "i2.4xlarge"  : { "Arch" : "HVM64"  },
       "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "d2.xlarge"   : { "Arch" : "HVM64"  },
+      "d2.2xlarge"  : { "Arch" : "HVM64"  },
+      "d2.4xlarge"  : { "Arch" : "HVM64"  },
+      "d2.8xlarge"  : { "Arch" : "HVM64"  },
       "hi1.4xlarge" : { "Arch" : "HVM64"  },
       "hs1.8xlarge" : { "Arch" : "HVM64"  },
       "cr1.8xlarge" : { "Arch" : "HVM64"  },
@@ -114,16 +118,16 @@
     }
 ,
     "AWSRegionArch2AMI" : {
-      "us-east-1"        : {"PV64" : "ami-14d18a7c", "HVM64" : "ami-16d18a7e", "HVMG2" : "ami-7200461a"},
-      "us-west-2"        : {"PV64" : "ami-0fe7c43f", "HVM64" : "ami-73e7c443", "HVMG2" : "ami-0b78203b"},
-      "us-west-1"        : {"PV64" : "ami-d342a697", "HVM64" : "ami-f342a6b7", "HVMG2" : "ami-244b5361"},
-      "eu-west-1"        : {"PV64" : "ami-039e0d74", "HVM64" : "ami-ff9e0d88", "HVMG2" : "ami-4d7cf03a"},
-      "eu-central-1"     : {"PV64" : "ami-34ab9929", "HVM64" : "ami-2eab9933", "HVMG2" : "NOT_SUPPORTED"},
-      "ap-northeast-1"   : {"PV64" : "ami-17df3617", "HVM64" : "ami-51df3651", "HVMG2" : "ami-2e90892f"},
-      "ap-southeast-1"   : {"PV64" : "ami-4e596f1c", "HVM64" : "ami-76596f24", "HVMG2" : "ami-3e78526c"},
-      "ap-southeast-2"   : {"PV64" : "ami-a3b8c999", "HVM64" : "ami-99b8c9a3", "HVMG2" : "ami-315e2a0b"},
-      "sa-east-1"        : {"PV64" : "ami-f94af3e4", "HVM64" : "ami-ef4af3f2", "HVMG2" : "NOT_SUPPORTED"},
-      "cn-north-1"       : {"PV64" : "ami-c036a4f9", "HVM64" : "ami-c636a4ff", "HVMG2" : "NOT_SUPPORTED"}
+      "us-east-1"        : {"PV64" : "ami-1ccae774", "HVM64" : "ami-10cae778", "HVMG2" : "ami-8c6b40e4"},
+      "us-west-2"        : {"PV64" : "ami-ff527ecf", "HVM64" : "ami-e9527ed9", "HVMG2" : "ami-abbe919b"},
+      "us-west-1"        : {"PV64" : "ami-d514f291", "HVM64" : "ami-cb14f28f", "HVMG2" : "ami-f31ffeb7"},
+      "eu-west-1"        : {"PV64" : "ami-bf0897c8", "HVM64" : "ami-a30897d4", "HVMG2" : "ami-d5bc24a2"},
+      "eu-central-1"     : {"PV64" : "ami-ac221fb1", "HVM64" : "ami-ae221fb3", "HVMG2" : "ami-7cd2ef61"},
+      "ap-northeast-1"   : {"PV64" : "ami-27f90e27", "HVM64" : "ami-c7f90ec7", "HVMG2" : "ami-6318e863"},
+      "ap-southeast-1"   : {"PV64" : "ami-acd9e8fe", "HVM64" : "ami-64d8e936", "HVMG2" : "ami-3807376a"},
+      "ap-southeast-2"   : {"PV64" : "ami-ff9cecc5", "HVM64" : "ami-f39cecc9", "HVMG2" : "ami-89790ab3"},
+      "sa-east-1"        : {"PV64" : "ami-bb2890a6", "HVM64" : "ami-b72890aa", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"PV64" : "ami-fa39abc3", "HVM64" : "ami-e839abd1", "HVMG2" : "NOT_SUPPORTED"}
     }
 
   },

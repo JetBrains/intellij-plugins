@@ -51,6 +51,12 @@
       "MaxLength": "41",
       "AllowedPattern" : "[a-zA-Z0-9]*",
       "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "DatabasePort": {
+      "Description": "The port that Redshift will listen on and that will be allowed through the Security Group. ",
+      "Type": "String",
+      "Default": "5439"
     }
   },
 
@@ -70,7 +76,8 @@
         "MasterUserPassword": { "Ref": "MasterUserPassword" },
         "ClusterParameterGroupName": { "Ref": "RedshiftClusterParameterGroup" },
         "VpcSecurityGroupIds": [ { "Ref": "SecurityGroup" } ],
-        "ClusterSubnetGroupName": { "Ref": "RedshiftClusterSubnetGroup" }
+        "ClusterSubnetGroupName": { "Ref": "RedshiftClusterSubnetGroup" },
+        "PubliclyAccessible": "false"
       }
     },
     "RedshiftClusterParameterGroup": {
@@ -104,22 +111,12 @@
         "VpcId": { "Ref": "VPC" }
       }
     },
-    "InternetGateway" : {
-      "Type" : "AWS::EC2::InternetGateway"
-    },
-    "GatewayAttachment" : {
-       "Type" : "AWS::EC2::VPCGatewayAttachment",
-       "Properties" : {
-         "VpcId" : { "Ref" : "VPC" },
-         "InternetGatewayId" : { "Ref" : "InternetGateway" }
-       }
-    },
     "SecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription": "Security group",
         "SecurityGroupIngress": [ {
-          "CidrIp": "10.0.0.0/16", "FromPort": "80", "ToPort": "80", "IpProtocol": "tcp"
+          "CidrIp": "10.0.0.0/16", "FromPort": { "Ref" : "DatabasePort" }, "ToPort": { "Ref" : "DatabasePort" }, "IpProtocol": "tcp"
         } ],
         "VpcId": { "Ref": "VPC" }
       }
