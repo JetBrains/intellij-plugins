@@ -38,6 +38,7 @@ import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
@@ -71,27 +72,9 @@ import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcFacetConfiguration implements FacetConfiguration {
+public class OsmorcFacetConfiguration implements FacetConfiguration, ModificationTracker {
   private static final Logger LOG = Logger.getInstance(OsmorcFacetConfiguration.class);
 
-  private OsmorcFacet myFacet;
-  private String myManifestLocation;
-  private String myJarFileLocation;
-  private String myBundleSymbolicName;
-  private String myBundleActivator;
-  private String myBundleVersion;
-  private String myAdditionalProperties;
-  private List<Pair<String, String>> myAdditionalJARContents;
-  private boolean myUseProjectDefaultManifestFileLocation = true;
-  private boolean myDoNotSynchronizeWithMaven = false;
-  private String myBndFileLocation;
-  private String myBundlorFileLocation;
-  private String myIgnoreFilePattern;
-  private boolean myAlwaysRebuildBundleJAR;
-  private OutputPathType myOutputPathType;
-  private ManifestGenerationMode myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled;
-
-  // constants
   private static final String MANIFEST_GENERATION_MODE = "manifestGenerationMode";
   private static final String OSMORC_CONTROLS_MANIFEST = "osmorcControlsManifest";
   private static final String USE_BND_FILE = "useBndFile";
@@ -112,6 +95,25 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   private static final String PROPERTY = "property";
   private static final String KEY = "key";
   private static final String VALUE = "value";
+
+  private OsmorcFacet myFacet;
+  private String myManifestLocation;
+  private String myJarFileLocation;
+  private String myBundleSymbolicName;
+  private String myBundleActivator;
+  private String myBundleVersion;
+  private String myAdditionalProperties;
+  private List<Pair<String, String>> myAdditionalJARContents;
+  private boolean myUseProjectDefaultManifestFileLocation = true;
+  private boolean myDoNotSynchronizeWithMaven = false;
+  private String myBndFileLocation;
+  private String myBundlorFileLocation;
+  private String myIgnoreFilePattern;
+  private boolean myAlwaysRebuildBundleJAR;
+  private OutputPathType myOutputPathType;
+  private ManifestGenerationMode myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled;
+
+  private volatile long myModificationCount = 0;
 
   @Override
   public FacetEditorTab[] createEditorTabs(FacetEditorContext context, FacetValidatorsManager validatorsManager) {
@@ -213,6 +215,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
           entryElement.getAttributeValue("dest")));
       }
     }
+
+    myModificationCount++;
   }
 
   @Override
@@ -286,71 +290,33 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     element.addContent(additionalJARContentsElement);
   }
 
-  /**
-   * Returns the manifest generation mode.
-   *
-   * @return the manifest generation mode.
-   */
   public ManifestGenerationMode getManifestGenerationMode() {
     return myManifestGenerationMode;
   }
 
-
   public void setManifestGenerationMode(@NotNull ManifestGenerationMode manifestGenerationMode) {
     myManifestGenerationMode = manifestGenerationMode;
+    myModificationCount++;
   }
 
-  /**
-   * Convenience-getter. Shortcut for
-   * <pre>
-   *   getManifestGenerationMode() == ManifestGenerationMode.OsmorcControlled
-   * </pre>
-   *
-   * @return true if Osmorc controls the manifest, false if is edited manually, created by bundlor or created by bnd
-   */
   public boolean isOsmorcControlsManifest() {
     return getManifestGenerationMode() == ManifestGenerationMode.OsmorcControlled;
   }
 
-  /**
-   * Convenience getter. Shortcut for
-   * <pre>
-   *   getManifestGenerationMode() == ManifestGenerationMode.Manually
-   * </pre>
-   *
-   * @return true, if the manifest is edited manually, false if osmorc creates it on build using facet settings, pre-configured bnd file or bundlor file
-   */
   public boolean isManifestManuallyEdited() {
     return getManifestGenerationMode() == ManifestGenerationMode.Manually;
   }
 
-  /**
-   * Convenience getter. Shortcut for
-   * <pre>
-   *   getManifestGenerationMode() == ManifestGenerationMode.Bundlor
-   * </pre>
-   *
-   * @return true, if the manifest created by bundlor, false if osmorc creates it on build using facet settings, pre-configured bnd file or manually edited
-   */
   public boolean isUseBundlorFile() {
     return getManifestGenerationMode() == ManifestGenerationMode.Bundlor;
   }
 
-
-  /**
-   * Convenience getter. Shortcut for
-   * <pre>
-   *   getManifestGenerationMode() == ManifestGenerationMode.Bnd
-   * </pre>
-   *
-   * @return true, if the manifest created by bnd, false if osmorc creates it on build using facet settings, pre-configured bundlor file or manually edited
-   */
   public boolean isUseBndFile() {
     return getManifestGenerationMode() == ManifestGenerationMode.Bnd;
   }
 
   /**
-   * @return the manifest location, relative to the module's content roots.
+   * Returns the manifest location, relative to the module's content roots.
    */
   @NotNull
   public String getManifestLocation() {
@@ -358,11 +324,12 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   public void setManifestLocation(String manifestLocation) {
-    this.myManifestLocation = manifestLocation;
+    myManifestLocation = manifestLocation;
+    myModificationCount++;
   }
 
   /**
-   * @return the jar file to be created for this module
+   * Returns the .jar file to be created for this module.
    */
   @NotNull
   public String getJarFileLocation() {
@@ -396,9 +363,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   /**
-   * Returns the file name of the jar file.
-   *
-   * @return the file name of the jar file.
+   * Returns the file name of the .jar file.
    */
   @NotNull
   public String getJarFileName() {
@@ -419,11 +384,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     }
   }
 
-
   /**
-   * Returns the path where the jar file name should be stored (excluding the jar's name).
-   *
-   * @return the path name where the jar file is to be stored..
+   * Returns the path where the .jar file should be stored (excluding the name).
    */
   @NotNull
   public String getJarFilePath() {
@@ -447,26 +409,21 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     }
   }
 
-
   /**
-   * Sets the location of the jar file
-   *
-   * @param jarFileLocation the path to the jar file. If the output path type is {@link OutputPathType#SpecificOutputPath} this needs to
-   *                        be a full path otherwise it needs to be just the jar's name.
-   * @param outputPathType  the path type
+   * Sets the location of the jar file.
+   * If the output path type is {@link OutputPathType#SpecificOutputPath} this needs to be a full path,
+   * otherwise it needs to be just the jar's name.
    */
   public void setJarFileLocation(String jarFileLocation, OutputPathType outputPathType) {
     myJarFileLocation = jarFileLocation;
     myOutputPathType = outputPathType;
+    myModificationCount++;
   }
 
   public OutputPathType getOutputPathType() {
     return myOutputPathType != null ? myOutputPathType : OutputPathType.SpecificOutputPath;
   }
 
-  /**
-   * @return the symbolic name of the bundle to build
-   */
   @NotNull
   public String getBundleSymbolicName() {
     return myBundleSymbolicName != null ? myBundleSymbolicName : "";
@@ -474,22 +431,18 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setBundleSymbolicName(@Nullable String bundleSymbolicName) {
     myBundleSymbolicName = bundleSymbolicName;
+    myModificationCount++;
   }
 
-  /**
-   * @return the bundle activator class
-   */
   public String getBundleActivator() {
     return myBundleActivator != null ? myBundleActivator : "";
   }
 
   public void setBundleActivator(@Nullable String bundleActivator) {
     myBundleActivator = bundleActivator;
+    myModificationCount++;
   }
 
-  /**
-   * @return the version of the bundle.
-   */
   @NotNull
   public String getBundleVersion() {
     return myBundleVersion != null ? myBundleVersion : "1.0.0";
@@ -497,14 +450,16 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setBundleVersion(@Nullable String bundleVersion) {
     myBundleVersion = bundleVersion;
+    myModificationCount++;
   }
 
   public void setAdditionalProperties(@Nullable String additionalProperties) {
     myAdditionalProperties = additionalProperties;
+    myModificationCount++;
   }
 
   /**
-   * @return additional properties to be added to the bundle manifest
+   * Returns additional properties to be added to the bundle manifest.
    */
   @NotNull
   public String getAdditionalProperties() {
@@ -512,12 +467,10 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   /**
-   * Returns all additional properties as a map.Changes to this map will not change the facet configuration. If you want
+   * Returns all additional properties as a map. Changes to this map will not change the facet configuration. If you want
    * to change additional properties use the {@link #importAdditionalProperties(Map, boolean)} method to re-import the
    * map once you have changed it. The returned map is ordered and will return entries in the same order as they have been specified in the
    * settings dialog.
-   *
-   * @return the additional properties as a Map for convenience.
    */
   @NotNull
   public Map<String, String> getAdditionalPropertiesAsMap() {
@@ -558,12 +511,12 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setUseProjectDefaultManifestFileLocation(boolean useProjectDefaultManifestFileLocation) {
     myUseProjectDefaultManifestFileLocation = useProjectDefaultManifestFileLocation;
+    myModificationCount++;
   }
 
   public boolean isUseProjectDefaultManifestFileLocation() {
     return myUseProjectDefaultManifestFileLocation;
   }
-
 
   @NotNull
   public String getBndFileLocation() {
@@ -572,8 +525,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setBndFileLocation(String bndFileLocation) {
     myBndFileLocation = bndFileLocation;
+    myModificationCount++;
   }
-
 
   @NotNull
   public String getBundlorFileLocation() {
@@ -581,7 +534,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   public void setBundlorFileLocation(String _bundlorFileLocation) {
-    this.myBundlorFileLocation = _bundlorFileLocation;
+    myBundlorFileLocation = _bundlorFileLocation;
+    myModificationCount++;
   }
 
   @NotNull
@@ -594,15 +548,17 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setAdditionalJARContents(@NotNull List<Pair<String, String>> additionalJARContents) {
     myAdditionalJARContents = additionalJARContents;
-  }
-
-  public void setIgnoreFilePattern(String attributeValue) {
-    myIgnoreFilePattern = attributeValue;
+    myModificationCount++;
   }
 
   @NotNull
   public String getIgnoreFilePattern() {
     return myIgnoreFilePattern != null ? myIgnoreFilePattern : "";
+  }
+
+  public void setIgnoreFilePattern(String attributeValue) {
+    myIgnoreFilePattern = attributeValue;
+    myModificationCount++;
   }
 
   public boolean isAlwaysRebuildBundleJAR() {
@@ -611,19 +567,16 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setAlwaysRebuildBundleJAR(boolean alwaysRebuildBundleJAR) {
     myAlwaysRebuildBundleJAR = alwaysRebuildBundleJAR;
+    myModificationCount++;
   }
 
-  /**
-   * When this is true, the facet settings will not be automatically synchronized with maven.
-   *
-   * @return false if settings are synchronized with maven, true otherwise.
-   */
   public boolean isDoNotSynchronizeWithMaven() {
     return myDoNotSynchronizeWithMaven;
   }
 
   public void setDoNotSynchronizeWithMaven(boolean doNotSynchronizeWithMaven) {
     myDoNotSynchronizeWithMaven = doNotSynchronizeWithMaven;
+    myModificationCount++;
   }
 
   /**
@@ -635,5 +588,10 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   public void setFacet(OsmorcFacet facet) {
     myFacet = facet;
+  }
+
+  @Override
+  public long getModificationCount() {
+    return myModificationCount;
   }
 }

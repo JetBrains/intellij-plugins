@@ -41,13 +41,14 @@ public class ClassInDefaultPackageInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    return new JavaElementVisitor() {
+    OsmorcFacet facet = OsmorcFacet.getInstance(holder.getFile());
+    return facet == null ? PsiElementVisitor.EMPTY_VISITOR : new JavaElementVisitor() {
       @Override
-      public void visitClass(PsiClass psiClass) {
-        if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
-          PsiFile file = psiClass.getContainingFile();
-          if (file instanceof PsiJavaFile && ((PsiJavaFile)file).getPackageName().isEmpty()) {
-            PsiIdentifier nameIdentifier = psiClass.getNameIdentifier();
+      public void visitJavaFile(PsiJavaFile file) {
+        if (file.getPackageName().isEmpty()) {
+          PsiClass[] classes = file.getClasses();
+          if (classes.length > 0) {
+            PsiIdentifier nameIdentifier = classes[0].getNameIdentifier();
             if (nameIdentifier != null) {
               holder.registerProblem(nameIdentifier, OsmorcBundle.message("ClassInDefaultPackageInspection.message"));
             }

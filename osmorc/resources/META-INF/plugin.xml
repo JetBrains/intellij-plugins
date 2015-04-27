@@ -86,6 +86,7 @@
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
     <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
 
+    <projectService serviceImplementation="org.jetbrains.osgi.project.BundleManifestCache"/>
     <projectService serviceImplementation="org.osmorc.settings.ProjectSettings"/>
     <projectService serviceInterface="org.osmorc.BundleManager" serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
     <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"

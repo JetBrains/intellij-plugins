@@ -32,8 +32,6 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.packageDependencies.DependenciesBuilder;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -41,10 +39,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.jetbrains.osgi.project.BundleManifest;
+import org.jetbrains.osgi.project.BundleManifestCache;
 import org.osgi.framework.Constants;
-import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.manifest.BundleManifest;
 import org.osmorc.util.OsgiPsiUtil;
 
 import javax.swing.*;
@@ -135,50 +133,36 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       return null;
     }
 
+    Project project = targetClass.getProject();
+
     // The bundle's class path (private packages)
-    // todo[r.sh] need to check actual bundle classpath
     Module requestorModule = facet.getModule();
     Module targetModule = ModuleUtilCore.findModuleForPsiElement(targetClass);
     if (targetModule == requestorModule) {
       return null;
     }
 
+    BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(requestorModule);
+    if (manifest != null && manifest.isPrivatePackage(packageName)) {
+      return null;
+    }
+
     // obtaining export name of the package from a providing manifest
-    String exportedPackage = null;
-    BundleManager bundleManager = BundleManager.getInstance(targetClass.getProject());
-    ModuleFileIndex index = ModuleRootManager.getInstance(requestorModule).getFileIndex();
-    List<OrderEntry> entries = index.getOrderEntriesForFile(targetFile.getVirtualFile());
-    OrderEntry entry = !entries.isEmpty() ? entries.get(0) : null;
-    if (entry instanceof ModuleOrderEntry) {
-      Module module = ((ModuleOrderEntry)entry).getModule();
-      if (module != null) {
-        BundleManifest manifest = bundleManager.getManifestByObject(module);
-        if (manifest == null) return null;
-        exportedPackage = manifest.getExportedPackage(packageName);
-      }
+    BundleManifest exporter = BundleManifestCache.getInstance(project).getManifest(targetClass);
+    if (exporter == null || exporter.getBundleSymbolicName() == null) {
+      return Problem.weak(message("PackageAccessibilityInspection.non.osgi", packageName));
     }
-    else if (entry instanceof LibraryOrderEntry) {
-      Library library = ((LibraryOrderEntry)entry).getLibrary();
-      if (library != null) {
-        BundleManifest manifest = bundleManager.getManifestByObject(library);
-        if (manifest == null || manifest.getBundleSymbolicName() == null) {
-          return Problem.weak(message("PackageAccessibilityInspection.non.osgi", packageName));
-        }
-        exportedPackage = manifest.getExportedPackage(packageName);
-      }
-    }
-    else if (entry instanceof JdkOrderEntry) {
-      exportedPackage = packageName;
-    }
+
+    String exportedPackage = exporter.getExportedPackage(packageName);
     if (exportedPackage == null) {
       return Problem.error(message("PackageAccessibilityInspection.not.exported", packageName));
     }
 
+    // checking if the package is imported (only for manually-edited manifests)
     if (!facet.getConfiguration().isManifestManuallyEdited()) {
       return null;
     }
 
-    BundleManifest manifest = bundleManager.getManifestByObject(requestorModule);
     if (manifest != null) {
       // Imported packages
       if (manifest.isPackageImported(packageName)) {
@@ -186,11 +170,8 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       }
 
       // Required bundles
-      for (String bundleSpec : manifest.getRequiredBundles()) {
-        BundleManifest bundle = bundleManager.getManifestByBundleSpec(bundleSpec);
-        if (bundle != null && bundle.getExportedPackage(packageName) != null) {
-          return null;
-        }
+      if (manifest.isBundleRequired(exporter.getBundleSymbolicName())) {
+        return null;
       }
 
       // Attached fragments [AFAIK these should not be linked statically - r.sh]

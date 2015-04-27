@@ -1,18 +1,35 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.manifest.lang;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.LightIdeaTestCase;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osgi.framework.Version;
+import org.osmorc.LightOsgiFixtureTestCase;
 import org.osmorc.manifest.lang.psi.AssignmentExpression;
 import org.osmorc.manifest.lang.psi.Clause;
 
 import java.util.List;
 
-public class OsgiManifestPsiTest extends LightIdeaTestCase {
+public class OsgiManifestPsiTest extends LightOsgiFixtureTestCase {
   public void testClauses() {
     ManifestFile file = createFile("Import-Package: a.b,c.d;a=value;d:=value");
     Header header = file.getHeader("Import-Package");
@@ -54,8 +71,17 @@ public class OsgiManifestPsiTest extends LightIdeaTestCase {
     assertEquals(new Version(1, 2, 3, "b300"), value);
   }
 
-  private static ManifestFile createFile(String text) {
-    PsiFile file = createLightFile("MANIFEST.MF", text);
+  public void testBundleReference() {
+    ManifestFile file = createFile("Require-Bundle: org.apache.felix.framework\n");
+    PsiReference ref = file.findReferenceAt(16);
+    assertNotNull(ref);
+    PsiElement target = ref.resolve();
+    assertTrue(String.valueOf(target), target instanceof Header);
+    assertEquals("Bundle-SymbolicName", ((Header)target).getName());
+  }
+
+  private ManifestFile createFile(String text) {
+    PsiFile file = myFixture.addFileToProject("MANIFEST.MF", text);
     assert file instanceof ManifestFile : file;
     return (ManifestFile)file;
   }

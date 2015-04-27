@@ -43,6 +43,7 @@ import org.osgi.framework.Constants;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
+import org.osmorc.util.OsgiPsiUtil;
 
 import java.util.List;
 
@@ -127,7 +128,7 @@ public class ExportPackageParser extends BasePackageParser {
                 continue;
               }
 
-              PsiDirectory[] directories = resolvePackage(header, packageName);
+              PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
               if (directories.length == 0) {
                 TextRange highlight = adjust(range, text).shiftRight(offset);
                 holder.createErrorAnnotation(highlight, JavaErrorMessages.message("cannot.resolve.package", packageName));

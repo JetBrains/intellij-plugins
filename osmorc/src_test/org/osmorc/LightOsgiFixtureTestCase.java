@@ -28,6 +28,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
@@ -52,6 +53,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
   };
 
   protected OsmorcFacet myFacet;
+  protected OsmorcFacetConfiguration myConfiguration;
 
   @NotNull
   @Override
@@ -66,8 +68,10 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
     myFacet = OsmorcFacet.getInstance(myModule);
     assertNotNull(myFacet);
 
-    myFacet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
-    myFacet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
-    myFacet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
+    myConfiguration = myFacet.getConfiguration();
+    myConfiguration.setUseProjectDefaultManifestFileLocation(false);
+    myConfiguration.setManifestLocation("META-INF/MANIFEST.MF");
+    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Manually);
+    myConfiguration.setBndFileLocation("bnd.bnd");
   }
 }

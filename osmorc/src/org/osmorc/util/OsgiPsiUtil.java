@@ -15,8 +15,9 @@
  */
 package org.osmorc.util;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
@@ -53,17 +54,12 @@ public class OsgiPsiUtil {
   }
 
   @NotNull
-  public static TextRange trimRange(@NotNull PsiElement element) {
-    return trimRange(element, new TextRange(0, element.getTextLength()));
-  }
-
-  @NotNull
-  public static TextRange trimRange(@NotNull PsiElement element, @NotNull TextRange range) {
-    String text = element.getText();
-    String substring = range.substring(text).trim();
-    int start = text.indexOf(substring);
-    int end = start + substring.length();
-    return new TextRange(start, end);
+  public static PsiDirectory[] resolvePackage(@NotNull PsiElement element, @NotNull String packageName) {
+    Project project = element.getProject();
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);
+    PsiPackage aPackage = JavaPsiFacade.getInstance(project).findPackage(packageName);
+    return aPackage == null ? PsiDirectory.EMPTY_ARRAY : aPackage.getDirectories(scope);
   }
 
   public static boolean isHeader(@Nullable PsiElement element, @NotNull String headerName) {
