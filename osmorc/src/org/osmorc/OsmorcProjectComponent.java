@@ -33,12 +33,8 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootAdapter;
-import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -69,7 +65,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener {
+public class OsmorcProjectComponent implements ProjectComponent {
   public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
@@ -77,19 +73,16 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   private final OsgiConfigurationType myConfigurationType;
   private final Project myProject;
   private final ProjectSettings myProjectSettings;
-  private final BundleManager myBundleManager;
   private final MergingUpdateQueue myQueue;
   private final AtomicBoolean myReimportNotification = new AtomicBoolean(false);
 
   public OsmorcProjectComponent(@NotNull Application application,
                                 @NotNull OsgiConfigurationType configurationType,
                                 @NotNull Project project,
-                                @NotNull ProjectSettings projectSettings,
-                                @NotNull BundleManager bundleManager) {
+                                @NotNull ProjectSettings projectSettings) {
     myApplication = application;
     myConfigurationType = configurationType;
     myProject = project;
-    myBundleManager = bundleManager;
     myProjectSettings = projectSettings;
 
     myQueue = new MergingUpdateQueue(getComponentName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
@@ -106,10 +99,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     MessageBusConnection appBus = myApplication.getMessageBus().connect(myProject);
     appBus.subscribe(FrameworkDefinitionListener.TOPIC, new MyFrameworkDefinitionListener());
 
-    myProjectSettings.addProjectSettingsListener(this);
-
     MessageBusConnection projectBus = myProject.getMessageBus().connect(myProject);
-    projectBus.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
     projectBus.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
 
     Workspace workspace = BndProjectImporter.findWorkspace(myProject);
@@ -119,40 +109,13 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
   @Override
-  public void disposeComponent() {
-    myProjectSettings.removeProjectSettingsListener(this);
-  }
+  public void disposeComponent() { }
 
   @Override
-  public void projectOpened() {
-    scheduleIndexRebuild();
-  }
+  public void projectOpened() { }
 
   @Override
   public void projectClosed() { }
-
-  @Override
-  public void projectSettingsChanged() {
-    scheduleIndexRebuild();
-  }
-
-  private void scheduleIndexRebuild() {
-    myQueue.queue(new Update("reindex") {
-      @Override
-      public void run() {
-        new Task.Backgroundable(myProject, OsmorcBundle.message("index.updating.task"), false) {
-          @Override
-          public void run(@NotNull ProgressIndicator indicator) {
-            if (OsmorcProjectComponent.this.myProject.isOpen()) {
-              indicator.setIndeterminate(true);
-              indicator.setText(OsmorcBundle.message("index.updating.task"));
-              myBundleManager.reindexAll();
-            }
-          }
-        }.queue();
-      }
-    });
-  }
 
   private void scheduleImportNotification() {
     myQueue.queue(new Update("reimport") {
@@ -195,8 +158,6 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   private class MyFrameworkDefinitionListener implements FrameworkDefinitionListener {
     @Override
     public void definitionsChanged(@NotNull List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> changes) {
-      scheduleIndexRebuild();
-
       for (Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition> pair : changes) {
         if (pair.first == null) continue;
         for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(myConfigurationType)) {
@@ -205,15 +166,6 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
             osgiRunConfiguration.setInstanceToUse(pair.second);
           }
         }
-      }
-    }
-  }
-
-  private class MyModuleRootListener extends ModuleRootAdapter {
-    @Override
-    public void rootsChanged(ModuleRootEvent event) {
-      if (!event.isCausedByFileTypesChange()) {
-        scheduleIndexRebuild();
       }
     }
   }

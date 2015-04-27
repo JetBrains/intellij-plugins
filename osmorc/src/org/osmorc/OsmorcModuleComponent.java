@@ -29,13 +29,9 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 
 /**
@@ -74,9 +70,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   public void disposeComponent() { }
 
   @Override
-  public void projectOpened() {
-    // the project component will rebuild indices
-  }
+  public void projectOpened() { }
 
   @Override
   public void projectClosed() {
@@ -88,24 +82,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
 
   private void handleFacetChange(Facet facet) {
     if (facet.getTypeId() == OsmorcFacetType.ID) {
-      buildManifestIndex();
       AdditionalJARContentsWatcherManager.getInstance(myModule).updateWatcherSetup();
-    }
-  }
-
-  private void buildManifestIndex() {
-    OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
-    if (facet != null) {
-      new Task.Backgroundable(myModule.getProject(), OsmorcBundle.message("index.updating.task"), false) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          if (myModule.getProject().isOpen()) {
-            indicator.setIndeterminate(true);
-            indicator.setText(OsmorcBundle.message("index.updating.task"));
-            BundleManager.getInstance(myModule.getProject()).reindex(myModule);
-          }
-        }
-      }.queue();
     }
   }
 }
