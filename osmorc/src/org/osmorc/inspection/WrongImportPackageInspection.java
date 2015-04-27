@@ -1,18 +1,35 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
+import org.jetbrains.osgi.project.BundleManifest;
+import org.jetbrains.osgi.project.BundleManifestCache;
 import org.osgi.framework.Constants;
-import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.util.OsgiPsiUtil;
 
 /**
@@ -22,17 +39,36 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new PsiElementVisitor() {
-      private final BundleManager myBundleManager = BundleManager.getInstance(holder.getProject());
-
+    final OsmorcFacet facet = OsmorcFacet.getInstance(holder.getFile());
+    return facet == null ? PsiElementVisitor.EMPTY_VISITOR : new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        if (OsgiPsiUtil.isHeader(element, Constants.IMPORT_PACKAGE) && OsmorcFacet.hasOsmorcFacet(element)) {
+        if (OsgiPsiUtil.isHeader(element, Constants.IMPORT_PACKAGE)) {
+          nextValue:
           for (HeaderValue value : ((Header)element).getHeaderValues()) {
-            String packageSpec = value.getUnwrappedText();
-            if (!StringUtil.isEmptyOrSpaces(packageSpec) && !myBundleManager.isProvided(packageSpec)) {
-              TextRange range = OsgiPsiUtil.trimRange(value);
-              holder.registerProblem(value, range, OsmorcBundle.message("WrongImportPackageInspection.message"));
+            if (value instanceof Clause) {
+              HeaderValuePart valuePart = ((Clause)value).getValue();
+              if (valuePart != null) {
+                String packageName = valuePart.getUnwrappedText();
+                if (packageName.endsWith(".*")) {
+                  packageName = packageName.substring(0, packageName.length() - 2);
+                }
+                if (StringUtil.isEmptyOrSpaces(packageName)) continue;
+
+                PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(element, packageName);
+                if (directories.length == 0) continue;
+
+                for (PsiDirectory directory : directories) {
+                  BundleManifest manifest = BundleManifestCache.getInstance(element.getProject()).getManifest(directory);
+                  if (manifest != null && manifest.getExportedPackage(packageName) != null) {
+                    continue nextValue;
+                  }
+                }
+
+                String message = OsmorcBundle.message("WrongImportPackageInspection.message");
+                TextRange range = valuePart.getHighlightingRange().shiftRight(-valuePart.getTextOffset());
+                holder.registerProblem(valuePart, range, message);
+              }
             }
           }
         }

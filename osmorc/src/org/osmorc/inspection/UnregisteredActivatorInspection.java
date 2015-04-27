@@ -30,16 +30,14 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
-import org.osgi.framework.BundleActivator;
+import org.jetbrains.osgi.project.BundleManifest;
+import org.jetbrains.osgi.project.BundleManifestCache;
 import org.osgi.framework.Constants;
-import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.manifest.BundleManifest;
 import org.osmorc.util.OsgiPsiUtil;
 
 /**
@@ -50,42 +48,34 @@ import org.osmorc.util.OsgiPsiUtil;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class UnregisteredActivatorInspection extends LocalInspectionTool {
-  private static final String ACTIVATOR_CLASS = BundleActivator.class.getName();
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    return new JavaElementVisitor() {
+    final OsmorcFacet facet = OsmorcFacet.getInstance(holder.getFile());
+    return facet == null ? PsiElementVisitor.EMPTY_VISITOR : new JavaElementVisitor() {
       @Override
       public void visitClass(PsiClass psiClass) {
         if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT)) {
-          OsmorcFacet facet = OsmorcFacet.getInstance(psiClass);
-          if (facet != null) {
-            Project project = psiClass.getProject();
-            PsiClass activator = JavaPsiFacade.getInstance(project).findClass(ACTIVATOR_CLASS, ProjectScope.getLibrariesScope(project));
-            if (activator != null && psiClass.isInheritor(activator, true)) {
-              String className = psiClass.getQualifiedName();
-              if (className != null) {
-                LocalQuickFix fix = null;
+          Project project = psiClass.getProject();
+          PsiClass activator = OsgiPsiUtil.getActivatorClass(project);
+          if (activator != null && psiClass.isInheritor(activator, true)) {
+            String className = psiClass.getQualifiedName();
+            if (className != null) {
+              BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(facet.getModule());
+              if (manifest != null && !className.equals(manifest.getBundleActivator())) {
+                LocalQuickFix[] fixes = LocalQuickFix.EMPTY_ARRAY;
 
                 OsmorcFacetConfiguration configuration = facet.getConfiguration();
                 if (configuration.isManifestManuallyEdited()) {
-                  BundleManifest manifest = BundleManager.getInstance(project).getManifestByObject(facet.getModule());
-                  if (manifest == null || !className.equals(manifest.getBundleActivator())) {
-                    fix = new RegisterInManifestQuickfix(className);
-                  }
+                  fixes = new LocalQuickFix[]{new RegisterInManifestQuickfix(className)};
                 }
-                else {
-                  if (!className.equals(configuration.getBundleActivator())) {
-                    fix = new RegisterInConfigurationQuickfix(className, configuration);
-                  }
+                else if (configuration.isOsmorcControlsManifest()) {
+                  fixes = new LocalQuickFix[]{new RegisterInConfigurationQuickfix(className, configuration)};
                 }
 
-                if (fix != null) {
-                  PsiIdentifier identifier = psiClass.getNameIdentifier();
-                  if (identifier != null) {
-                    holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fix);
-                  }
+                PsiIdentifier identifier = psiClass.getNameIdentifier();
+                if (identifier != null) {
+                  holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fixes);
                 }
               }
             }

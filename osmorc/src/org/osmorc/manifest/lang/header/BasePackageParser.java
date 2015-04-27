@@ -17,15 +17,12 @@ package org.osmorc.manifest.lang.header;
 
 import com.intellij.codeInsight.daemon.JavaErrorMessages;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,9 +30,10 @@ import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
-import org.osmorc.manifest.lang.psi.Clause;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.resolve.reference.providers.ManifestPackageReferenceSet;
+import org.osmorc.util.OsgiPsiUtil;
 
 import java.util.List;
 
@@ -95,7 +93,7 @@ public class BasePackageParser extends OsgiHeaderParser {
             continue;
           }
 
-          PsiDirectory[] directories = resolvePackage(header, packageName);
+          PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
           if (directories.length == 0) {
             holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
             annotated = true;
@@ -105,15 +103,6 @@ public class BasePackageParser extends OsgiHeaderParser {
     }
 
     return annotated;
-  }
-
-  @NotNull
-  protected PsiDirectory[] resolvePackage(@NotNull Header header, @NotNull String packageName) {
-    Project project = header.getProject();
-    Module module = ModuleUtilCore.findModuleForPsiElement(header);
-    GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);
-    PsiPackage aPackage = JavaPsiFacade.getInstance(project).findPackage(packageName);
-    return aPackage == null ? PsiDirectory.EMPTY_ARRAY : aPackage.getDirectories(scope);
   }
 
   @Nullable

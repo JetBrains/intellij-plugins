@@ -25,35 +25,42 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
-import org.osmorc.BundleManager;
-import org.osmorc.manifest.BundleManifest;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.jetbrains.osgi.project.BundleManifest;
+import org.jetbrains.osgi.project.BundleManifestCache;
+import org.osgi.framework.Constants;
+import org.osmorc.i18n.OsmorcBundle;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class BundleReference extends PsiReferenceBase<HeaderValuePart> implements EmptyResolveMessageProvider {
-  private final BundleManager myBundleManager;
-
-  public BundleReference(HeaderValuePart element) {
+  public BundleReference(@NotNull HeaderValuePart element) {
     super(element);
-    myBundleManager = BundleManager.getInstance(element.getProject());
   }
 
   @Nullable
   @Override
   public PsiElement resolve() {
-    BundleManifest bundleManifest = myBundleManager.getManifestBySymbolicName(unwrap(getCanonicalText()));
-    return bundleManifest != null ? bundleManifest.getManifestFile() : null;
-  }
-
-  private static String unwrap(String text) {
-    return text != null ? text.replaceAll("\n ", "").trim() : null;
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, false, false);
   }
 
   @NotNull
@@ -65,6 +72,68 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
   @NotNull
   @Override
   public String getUnresolvedMessagePattern() {
-    return "Cannot resolve bundle";
+    return OsmorcBundle.message("cannot.resolve.bundle", getCanonicalText());
   }
+
+  private static final ResolveCache.AbstractResolver<BundleReference, PsiElement> RESOLVER =
+    new ResolveCache.AbstractResolver<BundleReference, PsiElement>() {
+      @Override
+      public PsiElement resolve(@NotNull BundleReference reference, boolean incompleteCode) {
+        final String text = reference.getCanonicalText();
+        final HeaderValuePart refElement = reference.getElement();
+
+        if (!StringUtil.isEmptyOrSpaces(text) && refElement.isValid()) {
+          Module module = ModuleUtilCore.findModuleForPsiElement(refElement);
+          if (module != null) {
+            final Ref<PsiElement> result = Ref.create();
+            final String refText = text.replaceAll("\\s", "");
+            final BundleManifestCache cache = BundleManifestCache.getInstance(module.getProject());
+            ModuleRootManager manager = ModuleRootManager.getInstance(module);
+
+            manager.orderEntries().forEachModule(new Processor<Module>() {
+              @Override
+              public boolean process(Module module) {
+                BundleManifest manifest = cache.getManifest(module);
+                if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
+                  result.set(getTarget(manifest));
+                  return false;
+                }
+                return true;
+              }
+            });
+            if (!result.isNull()) return result.get();
+
+            manager.orderEntries().forEachLibrary(new Processor<Library>() {
+              @Override
+              public boolean process(Library library) {
+                for (VirtualFile libRoot : library.getFiles(OrderRootType.CLASSES)) {
+                  BundleManifest manifest = cache.getManifest(libRoot);
+                  if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
+                    result.set(getTarget(manifest));
+                    return false;
+                  }
+                }
+                return true;
+              }
+            });
+            if (!result.isNull()) return result.get();
+          }
+        }
+
+        return null;
+      }
+
+      private PsiElement getTarget(BundleManifest manifest) {
+        PsiFile source = manifest.getSource();
+
+        if (source instanceof ManifestFile) {
+          Header header = ((ManifestFile)source).getHeader(Constants.BUNDLE_SYMBOLICNAME);
+          if (header != null) {
+            return header;
+          }
+        }
+
+        return source;
+      }
+    };
 }
