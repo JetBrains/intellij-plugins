@@ -3,7 +3,7 @@ package org.angularjs.codeInsight.tags;
 import com.intellij.codeInsight.completion.XmlTagInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
@@ -29,16 +29,16 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return;
 
     final Project project = xmlTag.getProject();
-    DirectiveUtil.processTagDirectives(project, new Processor<JSOffsetBasedImplicitElement>() {
+    DirectiveUtil.processTagDirectives(project, new Processor<JSImplicitElement>() {
       @Override
-      public boolean process(JSOffsetBasedImplicitElement directive) {
+      public boolean process(JSImplicitElement directive) {
         addLookupItem(elements, directive);
         return true;
       }
     });
   }
 
-  private static void addLookupItem(List<LookupElement> elements, JSOffsetBasedImplicitElement directive) {
+  private static void addLookupItem(List<LookupElement> elements, JSImplicitElement directive) {
     elements.add(LookupElementBuilder.create(directive).withInsertHandler(XmlTagInsertHandler.INSTANCE));
   }
 
@@ -55,7 +55,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     }
 
     final Project project = xmlTag.getProject();
-    final JSOffsetBasedImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
+    final JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
 
     return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
   }

@@ -1,10 +1,10 @@
 package org.angularjs;
 
 import com.intellij.lang.documentation.DocumentationProviderEx;
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiComment;
@@ -41,10 +41,9 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
   }
 
   private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
-    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.INDEX_ID, directiveName);
+    final JSImplicitElement directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.KEY, directiveName);
     if (directive != null) {
-      final PsiFile file = directive.getContainingFile();
-      final PsiElement comment = PsiTreeUtil.getParentOfType(file.findElementAt(directive.getTextOffset()), PsiComment.class);
+      final PsiComment comment = PsiTreeUtil.getParentOfType(directive, PsiComment.class);
       if (comment != null) {
         return comment;
       }
@@ -74,7 +73,7 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
         String name = nameValue != null ? nameValue.getText() : null;
         if (name != null) name = name.substring(name.indexOf(':') + 1);
 
-        if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, DirectiveUtil.getAttributeName(name)) != null) {
+        if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(name)) != null) {
           final String directiveName = DirectiveUtil.attributeToDirective(name);
           return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + directiveName);
         }

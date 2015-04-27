@@ -2,7 +2,7 @@ package org.angularjs.editor;
 
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -32,7 +32,7 @@ public class AngularJSBracesUtil {
   }
 
   private static String getInjectionDelimiter(Project project, final String id, final String defaultDelimiter) {
-    final JSOffsetBasedImplicitElement start = AngularIndexUtil.resolve(project, AngularInjectionDelimiterIndex.INDEX_ID, id);
+    final JSImplicitElement start = AngularIndexUtil.resolve(project, AngularInjectionDelimiterIndex.KEY, id);
     if (start != null) {
       return start.getTypeString();
     }

@@ -1,11 +1,12 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.indexing.ID;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -22,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
 public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx {
   protected final Project myProject;
   private final String myAttributeName;
-  private final ID<String, byte[]> myIndex;
+  private final StubIndexKey<String, JSImplicitElementProvider> myIndex;
 
-  public AngularAttributeDescriptor(final Project project, String attributeName, final ID<String, byte[]> index) {
+  public AngularAttributeDescriptor(final Project project, String attributeName, final StubIndexKey<String, JSImplicitElementProvider> index) {
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;
@@ -33,9 +34,9 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   @Override
   public PsiElement getDeclaration() {
     final String name = DirectiveUtil.normalizeAttributeName(getName());
-    final JSOffsetBasedImplicitElement declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, name);
+    final JSImplicitElement declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.KEY, name);
     return declaration != null ? declaration :
-           AngularIndexUtil.resolve(myProject, AngularDirectivesDocIndex.INDEX_ID, getName());
+           AngularIndexUtil.resolve(myProject, AngularDirectivesDocIndex.KEY, getName());
   }
 
   @Override

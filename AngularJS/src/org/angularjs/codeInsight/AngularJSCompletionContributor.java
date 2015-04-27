@@ -48,7 +48,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
 
   private static boolean addControllerVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
     if (AngularJSAsExpression.isAsControllerRef(ref, parent)) {
-      for (String controller : AngularIndexUtil.getAllKeys(AngularControllerIndex.INDEX_ID, parent.getProject())) {
+      for (String controller : AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, parent.getProject())) {
         result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
       }
       return true;
@@ -59,7 +59,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
 
   private static boolean addFilterVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
     if (AngularJSFilterExpression.isFilterNameRef(ref, parent)) {
-      for (String filter : AngularIndexUtil.getAllKeys(AngularFilterIndex.INDEX_ID, parent.getProject())) {
+      for (String filter : AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject())) {
         result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, filter, NG_VARIABLE_PRIORITY, false, false));
       }
       return true;

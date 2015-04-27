@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -18,17 +18,17 @@ public class AngularAttributesRegistry {
   static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
                                                      @NotNull String directiveName) {
     if ("ng-controller".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.INDEX_ID);
+      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY);
     }
     if ("ng-app".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.INDEX_ID);
+      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY);
     }
     return new AngularAttributeDescriptor(project, directiveName, null);
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
+    final JSImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.KEY, attributeName);
     if (directive != null) {
       final String restrict = directive.getTypeString();
       final String param = restrict.split(";", -1)[2];
@@ -42,7 +42,7 @@ public class AngularAttributesRegistry {
     if (value == null || !value.startsWith("{")) return false;
 
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
+    final JSImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.KEY, attributeName);
     if (directive != null) {
       final String restrict = directive.getTypeString();
       final String type = restrict.split(";", -1)[2];

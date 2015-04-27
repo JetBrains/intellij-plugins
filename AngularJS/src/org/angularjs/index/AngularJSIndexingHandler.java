@@ -3,30 +3,33 @@ package org.angularjs.index;
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
-import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
-import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.indexing.ID;
+import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
@@ -34,7 +37,6 @@ import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +45,8 @@ import java.util.regex.Pattern;
  * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
-  private static final Map<String, ID<String, byte[]>> INDEXERS = new HashMap<String, ID<String, byte[]>>();
+  private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXERS =
+    new HashMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
 
@@ -53,7 +56,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DIRECTIVE = "directive";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
+  private static final String START_SYMBOL = "startSymbol";
+  private static final String END_SYMBOL = "endSymbol";
   public static final String DEFAULT_RESTRICTIONS = "D";
+
+  private static final String[] ALL_INTERESTING_METHODS;
 
   static {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
@@ -61,7 +68,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INJECTABLE_METHODS.addAll(INTERESTING_METHODS);
     Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, MODULE);
 
-    INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.INDEX_ID);
+    INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.KEY);
     NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
       @Override
       public String fun(String s) {
@@ -75,9 +82,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     });
 
-    INDEXERS.put(CONTROLLER, AngularControllerIndex.INDEX_ID);
-    INDEXERS.put(MODULE, AngularModuleIndex.INDEX_ID);
-    INDEXERS.put(FILTER, AngularFilterIndex.INDEX_ID);
+    INDEXERS.put(CONTROLLER, AngularControllerIndex.KEY);
+    INDEXERS.put(MODULE, AngularModuleIndex.KEY);
+    INDEXERS.put(FILTER, AngularFilterIndex.KEY);
+
+    final THashSet<String> allInterestingMethods = new THashSet<String>(INTERESTING_METHODS);
+    allInterestingMethods.addAll(INJECTABLE_METHODS);
+    allInterestingMethods.addAll(INDEXERS.keySet());
+    allInterestingMethods.add(START_SYMBOL);
+    allInterestingMethods.add(END_SYMBOL);
+    ALL_INTERESTING_METHODS = ArrayUtil.toStringArray(allInterestingMethods);
   }
 
   private static final String RESTRICT = "@restrict";
@@ -92,135 +106,119 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       final JSExpression methodExpression = call.getMethodExpression();
       JSReferenceExpression callee = ObjectUtils.tryCast(methodExpression, JSReferenceExpression.class);
       JSExpression qualifier = callee != null ? callee.getQualifier() : null;
-      return qualifier != null && INJECTABLE_METHODS.contains(callee.getReferencedName());
+      return qualifier != null && INJECTABLE_METHODS.contains(callee.getReferenceName());
+    }
+    return false;
+  }
+
+
+  @NotNull
+  @Override
+  public String[] interestedMethodNames() {
+    return ALL_INTERESTING_METHODS;
+  }
+
+  @Override
+  public JSLiteralImplicitElementProvider createLiteralImplicitElementProvider(@NotNull final String command) {
+    return new JSLiteralImplicitElementProvider() {
+      @Override
+      public void fillIndexingData(@NotNull JSLiteralExpression argument,
+                                   @NotNull JSCallExpression callExpression,
+                                   @NotNull JSElementIndexingData outIndexingData) {
+        JSExpression[] arguments = callExpression.getArguments();
+        if (arguments.length == 0 || arguments[0] != argument) return;
+        final JSExpression methodExpression = callExpression.getMethodExpression();
+        if (!(methodExpression instanceof JSReferenceExpression)) return;
+        JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
+        if (qualifier == null) return;
+
+        final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(command);
+        if (index != null) {
+          if (argument.isQuotedLiteral()) {
+            final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
+            final String data = calculator != null ? calculator.fun(argument) : null;
+            final String argumentText = StringUtil.unquoteString(argument.getText());
+            addImplicitElements(argument, command, index, argumentText, data, outIndexingData);
+          }
+        }
+
+        // INTERESTING_METHODS are contained in INJECTABLE_METHODS
+        
+        if (INJECTABLE_METHODS.contains(command)) {
+          if (argument.isQuotedLiteral()) {
+            generateNamespace(argument, command, outIndexingData);
+          }
+        }
+
+        if (START_SYMBOL.equals(command) || END_SYMBOL.equals(command)) {
+          while (qualifier != null) {
+            if (qualifier instanceof JSReferenceExpression) {
+              if ("$interpolateProvider".equals(((JSReferenceExpression)qualifier).getReferenceName())) {
+                if (argument.isQuotedLiteral()) {
+                  String interpolation = StringUtil.unquoteString(argument.getText());
+                  // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
+                  if ("//".equals(interpolation)) return;
+                  addImplicitElements(argument, null, AngularInjectionDelimiterIndex.KEY, command, interpolation, outIndexingData);
+                }
+              }
+              qualifier = ((JSReferenceExpression)qualifier).getQualifier();
+            }
+            else {
+              qualifier = qualifier instanceof JSCallExpression ? ((JSCallExpression)qualifier).getMethodExpression() : null;
+            }
+          }
+        }
+      }
+    };
+  }
+
+  @Nullable
+  @Override
+  public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
+    final PsiElement parent = property.getParent();
+    if (!(parent instanceof JSObjectLiteralExpression)) return outData;
+    final PsiElement grandParent = parent.getParent();
+    if (!(grandParent instanceof JSArgumentList)) return outData;
+    final PsiElement callExpression = grandParent.getParent();
+    if (!(callExpression instanceof JSCallExpression)) return outData;
+    final JSExpression methodExpression = ((JSCallExpression)callExpression).getMethodExpression();
+    if (!(methodExpression instanceof JSReferenceExpression) || ((JSReferenceExpression)methodExpression).getQualifier() == null) {
+      return outData;
+    }
+    final String command = ((JSReferenceExpression)methodExpression).getReferenceName();
+    final StubIndexKey<String, JSImplicitElementProvider> index =
+      INDEXERS.get(command);
+    if (index == null) return outData;
+    if (((JSCallExpression)callExpression).getArguments()[0] != parent) return outData;
+    final String name = property.getName();
+    if (name == null) return outData;
+
+    if (outData == null) outData = new JSElementIndexingDataImpl();
+    addImplicitElements(property, command, index, name, null, outData);
+    return outData;
+  }
+
+  private static final Key<StubIndexKey<String, JSImplicitElementProvider>> IMPLICIT_ELEMENT_INDEXES_KEY =
+    Key.create("angular.implicit.element.indexes");
+
+  @Override
+  public boolean indexImplicitElement(@NotNull JSImplicitElement element, @Nullable IndexSink sink) {
+    // indexing will be performed only for psi-based (not deserialized stub trees) implicit elements
+    final StubIndexKey<String, JSImplicitElementProvider> index = element.getUserData(IMPLICIT_ELEMENT_INDEXES_KEY);
+    if (index != null) {
+      if (sink != null) {
+        sink.occurrence(index, element.getName());
+        if (index != AngularSymbolIndex.KEY) {
+          sink.occurrence(AngularSymbolIndex.KEY, element.getName());
+        }
+      }
+      return true;
     }
     return false;
   }
 
   @Override
-  public void processCallExpression(JSCallExpression callExpression, @NotNull JSIndexContentBuilder builder) {
-    final JSExpression methodExpression = callExpression.getMethodExpression();
-    if (!(methodExpression instanceof JSReferenceExpression)) return;
-    JSReferenceExpression callee = (JSReferenceExpression)methodExpression;
-    JSExpression qualifier = callee.getQualifier();
-
-    if (qualifier == null) return;
-
-    final String command = callee.getReferencedName();
-    final ID<String, byte[]> index = INDEXERS.get(command);
-    if (index != null) {
-      JSExpression[] arguments = callExpression.getArguments();
-      if (arguments.length > 0) {
-        JSExpression argument = arguments[0];
-        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          final String argumentText = argument.getText();
-          final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
-          final String data = calculator != null ? calculator.fun(argument) : null;
-          storeAdditionalData(builder, index, argument, command, argumentText, argument.getTextOffset(), data);
-        } else if (argument instanceof JSObjectLiteralExpression) {
-          for (JSProperty property : ((JSObjectLiteralExpression)argument).getProperties()) {
-            final String argumentText = property.getName();
-            storeAdditionalData(builder, index, property, command, argumentText, property.getTextOffset(), null);
-          }
-        }
-      }
-    }
-
-    if (INTERESTING_METHODS.contains(command)) {
-      JSExpression[] arguments = callExpression.getArguments();
-      if (arguments.length > 0) {
-        JSExpression argument = arguments[0];
-        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          builder.storeAdditionalData(AngularSymbolIndex.INDEX_ID.toString(), StringUtil.unquoteString(argument.getText()),
-                                      serializeDataValue(false, argument.getTextOffset(), null));
-        }
-      }
-    }
-
-    if (INJECTABLE_METHODS.contains(command)) {
-      JSExpression[] arguments = callExpression.getArguments();
-      if (arguments.length > 0) {
-        JSExpression argument = arguments[0];
-        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          generateNamespace(builder, argument);
-        }
-      }
-    }
-
-    if ("startSymbol".equals(command) || "endSymbol".equals(command)) {
-      while (qualifier != null) {
-        if (qualifier instanceof JSReferenceExpression) {
-          if ("$interpolateProvider".equals(((JSReferenceExpression)qualifier).getReferencedName())) {
-            JSExpression[] arguments = callExpression.getArguments();
-            if (arguments.length > 0) {
-              JSExpression argument = arguments[0];
-              if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-                String interpolation = StringUtil.unquoteString(argument.getText());
-                // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
-                if ("//".equals(interpolation)) return;
-
-                builder.storeAdditionalData(AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
-                                            serializeDataValue(false, argument.getTextOffset(), interpolation));
-              }
-            }
-          }
-          qualifier = ((JSReferenceExpression)qualifier).getQualifier();
-        }
-        else {
-          qualifier = qualifier instanceof JSCallExpression ? ((JSCallExpression)qualifier).getMethodExpression() : null;
-        }
-      }
-    }
-  }
-
-  private static void storeAdditionalData(final JSIndexContentBuilder builder,
-                                          final ID<String, byte[]> index,
-                                          final PsiElement declaration,
-                                          final String command,
-                                          final String argumentText,
-                                          final int offset,
-                                          final String value) {
-    final Function<String, String> converter = NAME_CONVERTERS.get(command);
-    final String defaultName = StringUtil.unquoteString(argumentText);
-    final String name = converter != null ? converter.fun(argumentText) : defaultName;
-    final boolean isComment = declaration instanceof PsiComment;
-    builder.storeAdditionalData(index.toString(), name, serializeDataValue(isComment, offset, value));
-    builder.storeAdditionalData(AngularSymbolIndex.INDEX_ID.toString(), name, serializeDataValue(isComment, offset, null));
-    if (!StringUtil.equals(defaultName, name)) {
-      builder.storeAdditionalData(AngularSymbolIndex.INDEX_ID.toString(), defaultName, serializeDataValue(isComment, offset, null));
-    }
-  }
-
-  @NotNull
-  private static byte[] serializeDataValue(boolean isComment, int offset, @Nullable String value) {
-    final byte[] valueBytes = value != null ? value.getBytes(Charset.forName("UTF-8")) : new byte[0];
-    final byte[] result = new byte[5 + valueBytes.length];
-    result[0] = (byte)(isComment ? 1 : 0);
-    for (int i = 4; i >= 1; i--) {
-      result[i] = (byte)(offset & 0xFF);
-      offset >>= 8;
-    }
-    System.arraycopy(valueBytes, 0, result, 5, result.length - 5);
-    return result;
-  }
-
-  @NotNull
-  public static Trinity<Boolean, Integer, String> deserializeDataValue(@NotNull byte[] serializedValue) {
-    assert serializedValue[0] == 0 || serializedValue[0] == 1;
-    final Boolean isComment = Boolean.valueOf(serializedValue[0] == 1);
-    int offset = 0;
-    for (int i = 1; i < 5; i++) {
-      offset <<= 8;
-      offset |= serializedValue[i] & 0xFF;
-    }
-    final String value = serializedValue.length > 5 ?
-                         new String(Arrays.copyOfRange(serializedValue, 5, serializedValue.length), Charset.forName("UTF-8")) :
-                         null;
-    return Trinity.create(isComment, offset, value);
-  }
-
-  @Override
-  public void processJSDocComment(final JSDocComment comment, @NotNull JSIndexContentBuilder builder) {
+  public JSElementIndexingData processJSDocComment(@NotNull final JSDocComment comment, @Nullable JSElementIndexingData outData) {
     JSDocTag ngdocTag = null;
     JSDocTag nameTag = null;
     for (JSDocTag tag : comment.getTags()) {
@@ -240,17 +238,19 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
       if (ngdocValue != null && name != null) {
         final String[] commentLines = StringUtil.splitByLines(comment.getText());
-        final int offset = nameTag.getTextOffset();
 
         if (ngdocValue.contains(DIRECTIVE)) {
           final String restrictions = calculateRestrictions(commentLines);
-          storeAdditionalData(builder, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE, name, offset, restrictions);
+          if (outData == null) outData = new JSElementIndexingDataImpl();
+          addImplicitElements(comment, DIRECTIVE, AngularDirectivesDocIndex.KEY, name, restrictions, outData);
         }
         else if (ngdocValue.contains(FILTER)) {
-          storeAdditionalData(builder, AngularFilterIndex.INDEX_ID, comment, FILTER, name, offset, null);
+          if (outData == null) outData = new JSElementIndexingDataImpl();
+          addImplicitElements(comment, FILTER, AngularFilterIndex.KEY, name, null, outData);
         }
       }
     }
+    return outData;
   }
 
   private static String calculateRestrictions(final String[] commentLines) {
@@ -285,19 +285,48 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
 
-  private static void generateNamespace(JSIndexContentBuilder builder, PsiElement second) {
-    final String namespace = StringUtil.unquoteString(second.getText());
+  private static void generateNamespace(@NotNull JSLiteralExpression argument,
+                                        @NotNull String calledMethodName,
+                                        @NotNull JSElementIndexingData outData) {
+    final String namespace = StringUtil.unquoteString(argument.getText());
     JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
     JSImplicitElementImpl.Builder elementBuilder =
-      new JSImplicitElementImpl.Builder(qName, second)
+      new JSImplicitElementImpl.Builder(qName, argument)
         .setType(JSImplicitElement.Type.Class);
-    builder.addImplicitElement(qName.getName(), new JSImplicitElementsIndex.JSElementProxy(elementBuilder, second.getTextOffset()));
+    final JSImplicitElementImpl implicitElement = elementBuilder.toImplicitElement();
+    outData.addImplicitElement(implicitElement);
     // TODO fix
-    //final JSFunction function = findFunction(second);
-    //final JSNamespace ns = visitor.findNsForExpr((JSExpression)second);
+    //final JSFunction function = findFunction(argument);
+    //final JSNamespace ns = visitor.findNsForExpr((JSExpression)argument);
     //if (function != null && ns != null) {
     //  visitor.visitWithNamespace(ns, function, false);
     //}
+  }
+
+  private static void addImplicitElements(@NotNull final JSImplicitElementProvider elementProvider,
+                                          @Nullable final String command,
+                                          @NotNull final StubIndexKey<String, JSImplicitElementProvider> index,
+                                          @NotNull String defaultName,
+                                          @Nullable final String value,
+                                          @NotNull final JSElementIndexingData outData) {
+    final Function<String, String> converter = command != null ? NAME_CONVERTERS.get(command) : null;
+    final String name = converter != null ? converter.fun(defaultName) : defaultName;
+
+    JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(name);
+    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(qName, elementProvider)
+      .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
+      .setTypeString(value);
+    final JSImplicitElementImpl implicitElement = elementBuilder.toImplicitElement();
+    implicitElement.putUserData(IMPLICIT_ELEMENT_INDEXES_KEY, index);
+    outData.addImplicitElement(implicitElement);
+    if (!StringUtil.equals(defaultName, name)) {
+      elementBuilder = new JSImplicitElementImpl.Builder(defaultName, elementProvider)
+        .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
+        .setTypeString(value);
+      final JSImplicitElementImpl implicitElement2 = elementBuilder.toImplicitElement();
+      implicitElement2.putUserData(IMPLICIT_ELEMENT_INDEXES_KEY, AngularSymbolIndex.KEY);
+      outData.addImplicitElement(implicitElement2);
+    }
   }
 
   private static String calculateRestrictions(PsiElement element) {
@@ -350,7 +379,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static JSFunction findDeclaredFunction(JSExpression expression) {
     final Ref<JSFunction> result = Ref.create();
     if (expression instanceof JSReferenceExpression) {
-      final String name = ((JSReferenceExpression)expression).getReferencedName();
+      final String name = ((JSReferenceExpression)expression).getReferenceName();
       expression.getContainingFile().accept(new JSRecursiveWalkingElementVisitor() {
         @Override
         public void visitJSFunctionExpression(JSFunctionExpression node) {
