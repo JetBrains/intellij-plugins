@@ -46,9 +46,8 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
                         "namespace", "package",
                         "extends", "implements", "import", "override", "static", "dynamic", "var", "const", "use",
                         "final");
-        return false;
       }
-      else return false;
+      return false;
     }
     if (JSResolveUtil.isInPlaceWhereTypeCanBeDuringCompletion(parent) && JSResolveUtil.isPlaceWhereNsCanBe(grandParent)
       ) {
