@@ -6,6 +6,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 
@@ -22,7 +23,8 @@ public class HbTestUtils {
     }
     return PathManager.getHomePath() + "/contrib/handlebars/test/data";
   }
-  
+
+  @TestOnly
   public static void setOpenHtmlAsHandlebars(final boolean value, @NotNull final Project project, @NotNull Disposable parentDisposable) {
     final boolean oldValue = HbConfig.shouldOpenHtmlAsHandlebars(project);
     if (oldValue == value) return;
