@@ -274,6 +274,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return restrict.trim() + ";" + tag.trim() + ";" + param.trim() + ";" + attributes.toString().trim();
   }
 
+  public static boolean isAngularRestrictions(@Nullable String restrictions) {
+    return restrictions == null || StringUtil.countChars(restrictions, ';') >= 3;
+  }
+
   private static String getParamValue(String previousValue, String line, final Pattern pattern, final String docTag) {
     if (line.contains(docTag)) {
       final Matcher matcher = pattern.matcher(line);

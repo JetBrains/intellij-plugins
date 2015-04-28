@@ -45,7 +45,8 @@ public class AngularIndexUtil {
             final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
             if (elements != null) {
               for (JSImplicitElement element : elements) {
-                if (element.getName().equals(lookupKey)) {
+                if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
+                                                            AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
                   result.set(element);
                   if (element.canNavigate()) {
                     return false;
