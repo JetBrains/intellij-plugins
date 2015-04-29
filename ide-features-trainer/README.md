@@ -7,4 +7,4 @@ This IntelliJ IDEA plugin helps use IDE productively
 
 **Run**: Run IDEA with this plugin than go to Code → Courses and choose any available course. 
 
-**IMPORTANT-NOTE**: If you are going to checkout this project – you should configure your SDK as IntelliJ IDEA SDK with Java 1.6 and don't forget to specify your project as plugin ([here](http://stackoverflow.com/questions/18278440/how-to-import-and-run-existing-plugins-from-intellij-community-edition-repo) the trick)
+**IMPORTANT-NOTE**: If you are going to checkout this project – you should configure your SDK as IntelliJ IDEA SDK with Java 1.6 and don't forget to specify your project as plugin ([here's](http://stackoverflow.com/questions/18278440/how-to-import-and-run-existing-plugins-from-intellij-community-edition-repo) the trick)
