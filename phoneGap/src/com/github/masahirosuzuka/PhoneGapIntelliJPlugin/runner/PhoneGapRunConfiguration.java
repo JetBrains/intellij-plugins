@@ -46,6 +46,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
                                                                                    PLATFORM_AMAZON_FIREOS,
                                                                                    PLATFORM_ANDROID,
                                                                                    PLATFORM_BLACKBERRY_10,
+                                                                                   PLATFORM_BROWSER,
                                                                                    PLATFORM_FIREFOXOS);
 
   private static final Set<String> WIN_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_AMAZON_FIREOS,
@@ -53,10 +54,12 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
                                                                                    PLATFORM_BLACKBERRY_10,
                                                                                    PLATFORM_FIREFOXOS,
                                                                                    PLATFORM_WP_8,
+                                                                                   PLATFORM_BROWSER,
                                                                                    PLATFORM_WINDOWS_8);
 
   private static final Set<String> LINUX_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_AMAZON_FIREOS,
                                                                                      PLATFORM_ANDROID,
+                                                                                     PLATFORM_BROWSER,
                                                                                      PLATFORM_FIREFOXOS,
                                                                                      PLATFORM_UBUNTU);
 
