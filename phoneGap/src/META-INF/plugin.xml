@@ -8,32 +8,17 @@
 
 
   <description><![CDATA[
-        <h4>PhoneGap/Cordova integration for InteliJ Platform.<h4>
+        <h4>PhoneGap/Cordova integration for InteliJ Platform.</h4>
+        <br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
+
         <p>* PhoneGap/Cordova Project wizard</p>
         <p>* Run PhoneGap/Cordova application from IntelliJ toolbar</p>
         <p>* Code completion for event types</p>
         <p>* Ionic support</p>
         <p>See README.md</p>
-        <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
+
     ]]></description>
 
-  <change-notes><![CDATA[
-    <p>v0.8.2 Make work on Windows && Change jvm 1.6 -> 1.7</p>
-    <p>v0.8.1 Fix request jvm version</p>
-    <p>v0.8.0 Code complements</p>
-    <p>v0.7.0 Cordova support</p>
-    <p>v0.6.0 Ripple emulator support</p>
-    <p>v0.5.1 Bug fix</p>
-    <p>v0.5.0 iOS Support</p>
-    <p>v0.4.1 External tool(NodeJS and Android SDK) detector && fix always output "PhoneGap platform is missing" bug</p>
-    <p>v0.3.3 Fix request jvm version 1.7 -> 1.6 (Error:Unsupported major.minor version 51.0)</p>
-    <p>v0.3.2 Fix target Platform</p>
-    <p>v0.3.1 Bug fix</p>
-    <p>v0.3.0 Project Builder (Dev)</p>
-    <p>v0.2 Project Importer</p>
-    <p>v0.1 RunConfigure</p>
-    ]]>
-  </change-notes>
 
   <idea-version since-build="138.1498"/>
 
