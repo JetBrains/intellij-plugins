@@ -6,7 +6,6 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTarg
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -20,8 +19,8 @@ import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.ReloadableComboBoxPanel;
 import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.ReloadableComboBoxPanel;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +30,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 
@@ -50,6 +52,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   public static final String PLATFORM_WP_8 = "wp8";
   public static final String PLATFORM_WINDOWS_8 = "windows8";
   public static final String PLATFORM_FIREFOXOS = "firefoxos";
+  public static final String PLATFORM_BROWSER = "browser";
 
 
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
@@ -300,6 +303,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     LinkedHashSet<String> set = ContainerUtil.newLinkedHashSet();
     set.add(PLATFORM_ANDROID);
     set.add(PLATFORM_IOS);
+    set.add(PLATFORM_BROWSER);
     return set;
   }
 

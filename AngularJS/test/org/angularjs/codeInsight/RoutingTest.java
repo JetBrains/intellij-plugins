@@ -1,6 +1,5 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -74,7 +73,7 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(ref);
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
-    assertEquals("'AppCtrl'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
+    assertEquals("'AppCtrl'", resolve.getParent().getText());
   }
 
   public void testControllerCompletion() {

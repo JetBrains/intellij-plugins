@@ -63,14 +63,14 @@
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
-    <fileBasedIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularControllerIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularModuleIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularFilterIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularControllerIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularModuleIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularFilterIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularTemplateCacheIndex"/>
-    <fileBasedIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />

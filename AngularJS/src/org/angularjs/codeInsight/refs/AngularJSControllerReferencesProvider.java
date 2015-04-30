@@ -4,7 +4,10 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
-import com.intellij.psi.*;
+import com.intellij.psi.ElementManipulators;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -31,13 +34,13 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
     @Nullable
     @Override
     public PsiElement resolveInner() {
-      return AngularIndexUtil.resolve(getElement().getProject(), AngularControllerIndex.INDEX_ID, getCanonicalText());
+      return AngularIndexUtil.resolve(getElement().getProject(), AngularControllerIndex.KEY, getCanonicalText());
     }
 
     @NotNull
     @Override
     public Object[] getVariants() {
-      final Collection<String> controllers = AngularIndexUtil.getAllKeys(AngularControllerIndex.INDEX_ID, getElement().getProject());
+      final Collection<String> controllers = AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, getElement().getProject());
       final LookupElement[] result = new LookupElement[controllers.size()];
       int i = 0;
       for (String controller : controllers) {

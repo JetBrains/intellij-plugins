@@ -1,6 +1,6 @@
 package org.angularjs.refactoring;
 
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -61,7 +61,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     @Nullable
     @Override
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
-      JSOffsetBasedImplicitElement directive = DirectiveUtil.getDirective(element);
+      JSImplicitElement directive = DirectiveUtil.getDirective(element);
       if (directive != null) {
         if (location instanceof UsageViewTypeLocation) return "directive";
         return DirectiveUtil.attributeToDirective(directive.getName());

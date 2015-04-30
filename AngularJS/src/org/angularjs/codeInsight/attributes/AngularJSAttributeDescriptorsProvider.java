@@ -1,11 +1,12 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ThreeState;
-import com.intellij.util.indexing.ID;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -29,15 +30,15 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
+      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
       for (String directiveName : docDirectives) {
-        if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID) == ThreeState.YES) {
+        if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.KEY) == ThreeState.YES) {
           addAttributes(project, result, directiveName);
         }
       }
-      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
+      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.KEY, project)) {
         if (!docDirectives.contains(directiveName) &&
-            isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID) == ThreeState.YES) {
+            isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.KEY) == ThreeState.YES) {
           addAttributes(project, result, directiveName);
         }
       }
@@ -54,8 +55,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     }
   }
 
-  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, byte[]> index) {
-    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
+  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final StubIndexKey<String, JSImplicitElementProvider> index) {
+    final JSImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
     if (directive == null) {
       return ThreeState.UNSURE;
     }
@@ -95,9 +96,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final String tagName = xmlTag.getName();
-      ThreeState attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesDocIndex.INDEX_ID);
+      ThreeState attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesDocIndex.KEY);
       if (attributeAvailable == ThreeState.UNSURE) {
-        attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesIndex.INDEX_ID);
+        attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesIndex.KEY);
       }
       return attributeAvailable == ThreeState.YES ? createDescriptor(project, attributeName) : null;
     }

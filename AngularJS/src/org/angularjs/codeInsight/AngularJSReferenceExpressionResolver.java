@@ -45,12 +45,12 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
     if (AngularJSAsExpression.isAsControllerRef(myRef, myRef.getParent())) {
-      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.INDEX_ID, myReferencedName);
+      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.KEY, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};
       }
     } else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
-      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.INDEX_ID, myReferencedName);
+      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[] {new JSResolveResult(resolve)};
       }

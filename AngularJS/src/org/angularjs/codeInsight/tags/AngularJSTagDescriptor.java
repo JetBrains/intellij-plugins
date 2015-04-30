@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight.tags;
 
 import com.intellij.html.impl.RelaxedHtmlFromSchemaElementDescriptor;
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularJSTagDescriptor implements XmlElementDescriptor {
   protected final String myName;
-  private final JSOffsetBasedImplicitElement myDeclaration;
+  private final JSImplicitElement myDeclaration;
 
-  public AngularJSTagDescriptor(String name, JSOffsetBasedImplicitElement declaration) {
+  public AngularJSTagDescriptor(String name, JSImplicitElement declaration) {
     myName = name;
     myDeclaration = declaration;
   }
@@ -115,7 +115,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   }
 
   @Override
-  public JSOffsetBasedImplicitElement getDeclaration() {
+  public JSImplicitElement getDeclaration() {
     return myDeclaration;
   }
 

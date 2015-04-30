@@ -94,6 +94,11 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(true, true, true);
   }
 
+  public void testColorAnnotator_varDeclarationListPart() {
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, true, true);
+  }
+
   public void testSimplePolymer() {
     myFixture.enableInspections(HtmlUnknownTagInspection.class);
     myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n" +

@@ -131,29 +131,23 @@ public class HbParsing {
 
     /**
      * block
-     * : openBlock program inverseAndProgram? closeBlock
+     * : openBlock program inverseAndChain? closeBlock
      * | openInverse program inverseAndProgram? closeBlock
      */
     {
-      if (atOpenInverseExpression(builder)) {
-        PsiBuilder.Marker inverseBlockStartMarker = builder.mark();
-        PsiBuilder.Marker lookAheadMarker = builder.mark();
-        boolean isSimpleInverse = parseSimpleInverse(builder);
-        lookAheadMarker.rollbackTo();
-
-        if (isSimpleInverse) {
+      if (builder.getTokenType() == OPEN_INVERSE) {
+        if (builder.lookAhead(1) == CLOSE) {
                 /* HB_CUSTOMIZATION */
-          // leave this to be caught be the simpleInverseParser
-          inverseBlockStartMarker.rollbackTo();
+          // this is actually a `{{^}}` simple inverse.  Bail out.  It gets parsed outside of `statement`
           return false;
-        }
-        else {
-          inverseBlockStartMarker.drop();
         }
 
         PsiBuilder.Marker blockMarker = builder.mark();
         if (parseOpenInverse(builder)) {
-          parseProgramInverseProgramClose(builder, blockMarker, false);
+          parseProgram(builder);
+          parseInverseAndProgram(builder);
+          parseCloseBlock(builder);
+          blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
         }
         else {
           return false;
@@ -165,7 +159,10 @@ public class HbParsing {
       if (tokenType == OPEN_BLOCK) {
         PsiBuilder.Marker blockMarker = builder.mark();
         if (parseOpenBlock(builder)) {
-          parseProgramInverseProgramClose(builder, blockMarker, false);
+          parseProgram(builder);
+          parseInverseChain(builder);
+          parseCloseBlock(builder);
+          blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
         }
         else {
           return false;
@@ -183,6 +180,12 @@ public class HbParsing {
      */
     {
       if (tokenType == OPEN) {
+        if (builder.lookAhead(1) == ELSE) {
+                /* HB_CUSTOMIZATION */
+          // this is actually an `{{else` expression, not a mustache.
+          return false;
+        }
+
         parseMustache(builder, OPEN, CLOSE);
         return true;
       }
@@ -200,7 +203,11 @@ public class HbParsing {
     if (tokenType == OPEN_RAW_BLOCK) {
       PsiBuilder.Marker blockMarker = builder.mark();
       if (parseOpenRawBlock(builder)) {
-        parseProgramInverseProgramClose(builder, blockMarker, true);
+        if (builder.getTokenType() == CONTENT) {
+          builder.advanceLexer(); // eat non-HB content
+        }
+        parseCloseRawBlock(builder);
+        blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
       }
       else {
         return false;
@@ -241,28 +248,30 @@ public class HbParsing {
   }
 
   /**
-   * Helper method to take care of the business needed after an "open-type mustache" (openBlock, openRawBlock or openInverse)
-   *
-   * Effective acts as the `program inverseAndProgram? closeBlock` part of the grammar
-   *
-   * <p/>
-   * NOTE: will resolve the given blockMarker
+   * inverseChain
+   * : openInverseChain program inverseChain?
+   * | inverseAndProgram
    */
-  private void parseProgramInverseProgramClose(PsiBuilder builder, PsiBuilder.Marker blockMarker, boolean raw) {
-    if (raw) {
-      if (builder.getTokenType() == CONTENT) {
-        builder.advanceLexer(); // eat non-HB content
+  private void parseInverseChain(PsiBuilder builder) {
+    if (!parseInverseAndProgram(builder)) {
+      if (parseOpenInverseChain(builder)) {
+        parseProgram(builder);
+        parseInverseChain(builder);
       }
-      parseCloseRawBlock(builder);
-    } else {
-      parseProgram(builder);
-      if (parseSimpleInverse(builder)) {
-        // if we have a simple inverse, must have more statements
-        parseStatements(builder);
-      }
-      parseCloseBlock(builder);
     }
-    blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
+  }
+
+  /**
+   * inverseAndProgram
+   * : INVERSE program
+   */
+  private boolean parseInverseAndProgram(PsiBuilder builder) {
+    if (parseINVERSE(builder)) {
+      parseProgram(builder);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -305,6 +314,28 @@ public class HbParsing {
   }
 
   /**
+   * openInverseChain
+   * : OPEN_INVERSE_CHAIN sexpr CLOSE
+   * ;
+   */
+  private boolean parseOpenInverseChain(PsiBuilder builder) {
+    PsiBuilder.Marker openInverseChainMarker = builder.mark();
+    if (!parseLeafToken(builder, OPEN)
+        || !parseLeafToken(builder, ELSE)) {
+      openInverseChainMarker.rollbackTo();
+      return false;
+    }
+
+    if (parseSexpr(builder)) {
+      parseLeafTokenGreedy(builder, CLOSE);
+    }
+
+    openInverseChainMarker.done(OPEN_INVERSE_CHAIN);
+
+    return true;
+  }
+
+  /**
    * openInverse
    * : OPEN_INVERSE sexpr CLOSE
    * ;
@@ -312,19 +343,8 @@ public class HbParsing {
   private boolean parseOpenInverse(PsiBuilder builder) {
     PsiBuilder.Marker openInverseBlockStacheMarker = builder.mark();
 
-    PsiBuilder.Marker regularInverseMarker = builder.mark();
     if (!parseLeafToken(builder, OPEN_INVERSE)) {
-      // didn't find a standard open inverse token,
-      // check for the "{{else" version
-      regularInverseMarker.rollbackTo();
-      if (!parseLeafToken(builder, OPEN)
-          || !parseLeafToken(builder, ELSE)) {
-        openInverseBlockStacheMarker.drop();
         return false;
-      }
-    }
-    else {
-      regularInverseMarker.drop();
     }
 
     if (parseSexpr(builder)) {
@@ -378,17 +398,6 @@ public class HbParsing {
   }
 
   /**
-   * OPEN sexpr CLOSE
-   */
-  protected void parseRegularMustache(PsiBuilder builder) {
-    PsiBuilder.Marker mustacheMarker = builder.mark();
-    parseLeafToken(builder, OPEN);
-    parseSexpr(builder);
-    parseLeafTokenGreedy(builder, CLOSE);
-    mustacheMarker.done(MUSTACHE);
-  }
-
-  /**
    * mustache
    * : OPEN sexpr CLOSE
    * | OPEN_UNESCAPED sexpr CLOSE_UNESCAPED
@@ -439,15 +448,16 @@ public class HbParsing {
   }
 
   /**
-   * simpleInverse
-   * : OPEN_INVERSE CLOSE
-   * ;
+   * HB_CUSTOMIZATION: we don't parse an INVERSE token like the wycats/handlebars grammar since we lex "else" as
+   *                   an individual token so we can highlight it distinctly.  This method parses {{^}} and {{else}}
+   *                   as a unit to synthesize INVERSE
+   *
    */
-  private boolean parseSimpleInverse(PsiBuilder builder) {
+  private boolean parseINVERSE(PsiBuilder builder) {
     PsiBuilder.Marker simpleInverseMarker = builder.mark();
     boolean isSimpleInverse;
 
-    // try and parse "{{^"
+    // try and parse "{{^}}"
     PsiBuilder.Marker regularInverseMarker = builder.mark();
     if (!parseLeafToken(builder, OPEN_INVERSE)
         || !parseLeafToken(builder, CLOSE)) {
@@ -459,7 +469,7 @@ public class HbParsing {
       isSimpleInverse = true;
     }
 
-    // if we didn't find "{{^", check for "{{else"
+    // if we didn't find "{{^}}", check for "{{else}}"
     PsiBuilder.Marker elseInverseMarker = builder.mark();
     if (!isSimpleInverse
         && (!parseLeafToken(builder, OPEN)
@@ -934,30 +944,5 @@ public class HbParsing {
     else {
       unexpectedTokensMarker.error(HbBundle.message("hb.parsing.element.expected.invalid"));
     }
-  }
-
-  /**
-   * Helper method to check whether the builder is an open inverse expression.
-   * <p/>
-   * An open inverse expression is either an OPEN_INVERSE token (i.e. "{{^"), or
-   * and OPEN token followed immediate by an ELSE token (i.e. "{{else")
-   */
-  private boolean atOpenInverseExpression(PsiBuilder builder) {
-    boolean atOpenInverse = false;
-
-    if (builder.getTokenType() == OPEN_INVERSE) {
-      atOpenInverse = true;
-    }
-
-    PsiBuilder.Marker lookAheadMarker = builder.mark();
-    if (builder.getTokenType() == OPEN) {
-      builder.advanceLexer();
-      if (builder.getTokenType() == ELSE) {
-        atOpenInverse = true;
-      }
-    }
-
-    lookAheadMarker.rollbackTo();
-    return atOpenInverse;
   }
 }
