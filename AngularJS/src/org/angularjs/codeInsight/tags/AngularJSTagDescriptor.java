@@ -4,6 +4,7 @@ import com.intellij.html.impl.RelaxedHtmlFromSchemaElementDescriptor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -71,7 +72,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
       }
     }
 
-    final XmlAttributeDescriptor[] commonAttributes = RelaxedHtmlFromSchemaElementDescriptor.getCommonAttributeDescriptors(context);
+    final XmlAttributeDescriptor[] commonAttributes = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
     return RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets(context, ArrayUtil.mergeArrays(result, commonAttributes));
   }
 
