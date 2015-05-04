@@ -355,4 +355,94 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', "///q<caret>z", "///q\n///<caret>z");
     doTypingTest('\n', " ///q<caret> \t ///z", " ///q \t \n ///<caret>z");
   }
+
+  public void testCascadeAlignAfterReturn1() throws Throwable {
+    doTypingTest('\n',
+                 "main(a) {\n" +
+                 "  a.b<caret>..c;\n" +
+                 "}",
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    <caret>..c;\n" +
+                 "}");
+  }
+
+  public void testCascadeAlignAfterReturn2() throws Throwable {
+    doTypingTest('\n',
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    ..c\n" +
+                 "    ..d<caret>\n" +
+                 "}",
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    ..c\n" +
+                 "    ..d\n" +
+                 "    <caret>\n" +
+                 "}");
+  }
+
+  public void testCascadeAlignAfterReturn3() throws Throwable {
+    doTypingTest('\n',
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    <caret>..c\n" +
+                 "    ..d\n" +
+                 "}",
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    \n" +
+                 "    <caret>..c\n" +
+                 "    ..d\n" +
+                 "}");
+  }
+
+  public void testCascadeAlignAfterReturn4() throws Throwable {
+    doTypingTest('\n',
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    ..c\n" +
+                 "    <caret>..d\n" +
+                 "}",
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    ..c\n" +
+                 "    \n" +
+                 "    <caret>..d\n" +
+                 "}");
+  }
+
+  public void testCascadeAlignAfterReturn5() throws Throwable {
+    // TODO This test should fail as written but the code isn't quite
+    // right yet. It should insert two spaces before the caret.
+    doTypingTest('\n',
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    ..c<caret>\n" +
+                 "    ..d\n" +
+                 "}",
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "    ..c\n" +
+                 "  <caret>\n" +
+                 "    ..d\n" +
+                 "}");
+  }
+
+  public void testCascadeAlignAfterReturn6() throws Throwable {
+    // TODO This test should fail as written but the code isn't quite
+    // right yet. It should insert two spaces before the caret.
+    doTypingTest('\n',
+                 "main(a) {\n" +
+                 "  a.b<caret>\n" +
+                 "    ..c\n" +
+                 "    ..d\n" +
+                 "}",
+                 "main(a) {\n" +
+                 "  a.b\n" +
+                 "  <caret>\n" +
+                 "    ..c\n" +
+                 "    ..d\n" +
+                 "}");
+  }
 }
