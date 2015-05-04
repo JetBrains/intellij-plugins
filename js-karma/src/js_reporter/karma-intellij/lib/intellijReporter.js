@@ -182,12 +182,14 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   };
 
   var tree;
+  var beforeRunStart = true;
 
   this.onRunStart = function (browsers) {
     clearOtherAdapters(injector, that);
 
     totalTestCount = 0;
     uncheckedBrowserCount = browsers.length;
+    beforeRunStart = false;
     tree = new Tree(cli.getConfigFile(), write);
     process.nextTick(function() {
       tree.write('##teamcity[enteredTheMatrix]\n');
@@ -195,7 +197,15 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   };
 
   this.onBrowserError = function (browser, error) {
-    addBrowserErrorNode(tree, browser, error);
+    if (tree == null) {
+      // https://youtrack.jetbrains.com/issue/WEB-16291
+      var message = beforeRunStart ? '"onBrowserError" unexpectedly called before "onRunStart"'
+                                   : '"onBrowserError" unexpectedly called after "onRunComplete"';
+      console.error('[karma bug found] ' + message + ", logged by karma-intellij plugin");
+    }
+    else {
+      addBrowserErrorNode(tree, browser, error);
+    }
   };
 
   this.onBrowserLog = function (browser, log, type) {
