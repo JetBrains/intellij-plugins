@@ -141,7 +141,7 @@ class OsgiBuildTest : JpsBuildTestCase() {
 
   private fun assertJar(expected: Set<String>) {
     JarFile(myExtension.getJarFileLocation()).use {
-      val names = it.entries().asSequence().filter { !it.isDirectory() }.map { it.getName() }.toSet()
+      val names = it.entries().stream().filter { !it.isDirectory() }.map { it.getName() }.toSet()
       assertEquals(expected, names)
     }
   }
@@ -160,8 +160,8 @@ class OsgiBuildTest : JpsBuildTestCase() {
     }
   }
 
-  private fun<T> Enumeration<T>.asSequence(): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> = this@asSequence.iterator()
+  private fun <T> Enumeration<T>.stream(): Stream<T> = object : Stream<T> {
+    override fun iterator(): Iterator<T> = this@stream.iterator()
   }
 
   private fun JarFile.use(block: (JarFile) -> Unit) {
