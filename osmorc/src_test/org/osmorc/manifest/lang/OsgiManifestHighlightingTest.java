@@ -56,7 +56,8 @@ public class OsgiManifestHighlightingTest extends LightOsgiFixtureTestCase {
       "Private-Package: <error descr=\"Cannot resolve package com.acme\">com.acme</error>\n" +
       "Ignore-Package: <error descr=\"Cannot resolve package com.acme\">com.acme</error>\n" +
       "Export-Package: main;uses:=\"<error descr=\"Invalid reference\"> </error>,\n" +
-      " <error descr=\"Cannot resolve package com.acme.p2\">com.acme.p2</error>\";version=\"1.1\"\n"
+      " <error descr=\"Cannot resolve package com.acme.p1\">com.acme.p1</error>\n" +
+      " ,<error descr=\"Cannot resolve package com.acme.p2\">com.acme.p2</error>\"\n"
     );
   }
 
