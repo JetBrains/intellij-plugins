@@ -30,19 +30,19 @@ public class ReportingProjectBuilder extends ProjectBuilder {
   @Override
   public SetLocation error(String format, Object... args) {
     myReporter.error(formatArrays(format, args), null, null);
-    return super.error(format, args);
+    return null;
   }
 
   @Override
   public SetLocation error(String format, Throwable t, Object... args) {
     myReporter.error(formatArrays(format, args), t, null);
-    return super.error(format, t, args);
+    return null;
   }
 
   @Override
   public SetLocation warning(String format, Object... args) {
     myReporter.warning(formatArrays(format, args), null, null);
-    return super.warning(format, args);
+    return null;
   }
 
   @Override
