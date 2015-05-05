@@ -106,16 +106,14 @@ public class ExportPackageParser extends BasePackageParser {
         if (uses != null) {
           HeaderValuePart valuePart = uses.getValueElement();
           if (valuePart != null) {
-            String text = valuePart.getText();
+            String text = StringUtil.trimTrailing(valuePart.getText());
+            int start = StringUtil.startsWithChar(text, '"') ? 1 : 0;
+            int length = StringUtil.endsWithChar(text, '"') ? text.length() - 1 : text.length();
             int offset = valuePart.getTextOffset();
 
-            int start = 0;
-            while (start < text.length() && Character.isWhitespace(text.charAt(start))) start++;
-            if (text.startsWith("\"")) start++;
-
-            while (start < text.length()) {
+            while (start < length) {
               int end = text.indexOf(',', start);
-              if (end < 0) end = text.endsWith("\"") ? text.length() - 1 : text.length();
+              if (end < 0) end = length;
               TextRange range = new TextRange(start, end);
               start = end + 1;
 
@@ -145,7 +143,7 @@ public class ExportPackageParser extends BasePackageParser {
 
   private static TextRange adjust(TextRange range, String text) {
     int end = range.getEndOffset(), start = range.getStartOffset();
-    while (end > start && Character.isWhitespace(text.charAt(end))) end--;
+    while (end > start && Character.isWhitespace(text.charAt(end - 1))) end--;
     while (start < end && Character.isWhitespace(text.charAt(start))) start++;
     return new TextRange(start, end);
   }
