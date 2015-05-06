@@ -1360,6 +1360,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return super.getResolveResultType(qualifier, resultElement);
   }
 
+  @Nullable
   @Override
   public ProblemHighlightType getUnresolvedReferenceHighlightType(@NotNull JSReferenceExpression node) {
     JSExpression qualifier = ((JSReferenceExpressionImpl)node).getResolveQualifier();
