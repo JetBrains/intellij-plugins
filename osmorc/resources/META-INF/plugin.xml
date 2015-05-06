@@ -103,6 +103,9 @@
     <runConfigurationProducer implementation="org.jetbrains.osgi.bnd.run.BndRunConfigurationProducer$Launch"/>
     <runConfigurationProducer implementation="org.jetbrains.osgi.bnd.run.BndRunConfigurationProducer$Test"/>
 
+    <stacktrace.fold substring="at aQute.launcher."/>
+    <stacktrace.fold substring="at aQute.junit."/>
+
     <localInspection bundle="messages.OsmorcBundle" key="UnregisteredActivatorInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      language="JAVA" enabledByDefault="true" level="ERROR"
