@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -29,6 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.lang.psi.AngularJSAsExpression;
@@ -61,6 +61,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DEFAULT_RESTRICTIONS = "D";
 
   private static final String[] ALL_INTERESTING_METHODS;
+  private static final BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXES;
 
   static {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
@@ -92,6 +93,19 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     allInterestingMethods.add(START_SYMBOL);
     allInterestingMethods.add(END_SYMBOL);
     ALL_INTERESTING_METHODS = ArrayUtil.toStringArray(allInterestingMethods);
+
+    INDEXES = new BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
+    INDEXES.put("aci", AngularControllerIndex.KEY);
+    INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
+    INDEXES.put("adi", AngularDirectivesIndex.KEY);
+    INDEXES.put("afi", AngularFilterIndex.KEY);
+    INDEXES.put("aidi", AngularInjectionDelimiterIndex.KEY);
+    INDEXES.put("ami", AngularModuleIndex.KEY);
+    INDEXES.put("asi", AngularSymbolIndex.KEY);
+
+    for (String key : INDEXES.keySet()) {
+      JSImplicitElement.UserStringsRegistry.registerUserString(key);
+    }
   }
 
   private static final String RESTRICT = "@restrict";
@@ -198,13 +212,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static final Key<StubIndexKey<String, JSImplicitElementProvider>> IMPLICIT_ELEMENT_INDEXES_KEY =
-    Key.create("angular.implicit.element.indexes");
-
   @Override
   public boolean indexImplicitElement(@NotNull JSImplicitElement element, @Nullable IndexSink sink) {
-    // indexing will be performed only for psi-based (not deserialized stub trees) implicit elements
-    final StubIndexKey<String, JSImplicitElementProvider> index = element.getUserData(IMPLICIT_ELEMENT_INDEXES_KEY);
+    final String userID = element.getUserString();
+    final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEXES.get(userID) : null;
     if (index != null) {
       if (sink != null) {
         sink.occurrence(index, element.getName());
@@ -320,15 +331,19 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(qName, elementProvider)
       .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
       .setTypeString(value);
+    List<String> keys = INDEXES.getKeysByValue(index);
+    assert keys != null && keys.size() == 1;
+    elementBuilder.setUserString(keys.get(0));
     final JSImplicitElementImpl implicitElement = elementBuilder.toImplicitElement();
-    implicitElement.putUserData(IMPLICIT_ELEMENT_INDEXES_KEY, index);
     outData.addImplicitElement(implicitElement);
     if (!StringUtil.equals(defaultName, name)) {
       elementBuilder = new JSImplicitElementImpl.Builder(defaultName, elementProvider)
         .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
         .setTypeString(value);
+      keys = INDEXES.getKeysByValue(AngularSymbolIndex.KEY);
+      assert keys != null && keys.size() == 1;
+      elementBuilder.setUserString(keys.get(0));
       final JSImplicitElementImpl implicitElement2 = elementBuilder.toImplicitElement();
-      implicitElement2.putUserData(IMPLICIT_ELEMENT_INDEXES_KEY, AngularSymbolIndex.KEY);
       outData.addImplicitElement(implicitElement2);
     }
   }
