@@ -65,7 +65,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
           StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren();
           for (final StructureViewTreeElement structureViewChild : structureViewChildren) {
             if (structureViewChild instanceof JSStructureViewElement) {
-              PsiElement childElement = ((JSStructureViewElement)structureViewChild).getUpToDateElement();
+              PsiElement childElement = ((JSStructureViewElement)structureViewChild).getValue();
               result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
             }
             else {
