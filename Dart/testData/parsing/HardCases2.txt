@@ -541,8 +541,7 @@ Dart File
                     ARGUMENTS
                       PsiElement(()('(')
                       PsiElement())(')')
-                  PsiElement(.)('.')
-                  PsiElement(.)('.')
+                  PsiElement(..)('..')
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('bar')
@@ -550,8 +549,7 @@ Dart File
                     PsiElement(=)('=')
                     LITERAL_EXPRESSION
                       PsiElement(NUMBER)('239')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     CALL_EXPRESSION

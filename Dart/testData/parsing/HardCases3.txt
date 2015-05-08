@@ -447,8 +447,7 @@ Dart File
                   LIST_LITERAL_EXPRESSION
                     PsiElement([)('[')
                     PsiElement(])(']')
-                  PsiElement(.)('.')
-                  PsiElement(.)('.')
+                  PsiElement(..)('..')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       ID
