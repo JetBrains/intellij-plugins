@@ -1,10 +1,13 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.completion.ActionScriptCompletionKeywordsContributor;
+import com.intellij.javascript.flex.index.ActionScriptCustomIndexer;
 import com.intellij.javascript.flex.resolve.*;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
+import com.intellij.lang.javascript.index.JSCustomIndexer;
+import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -73,5 +76,11 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public JSTypeHelper getTypeHelper() {
     return ActionScriptTypeHelper.getInstance();
+  }
+
+  @NotNull
+  @Override
+  public JSCustomIndexer createCustomIndexer(@NotNull PsiFile file, @NotNull JSIndexContentBuilder indexBuilder) {
+    return new ActionScriptCustomIndexer(file, indexBuilder);
   }
 }
