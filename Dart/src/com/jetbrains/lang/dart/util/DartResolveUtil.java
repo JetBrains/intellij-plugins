@@ -460,6 +460,7 @@ public class DartResolveUtil {
          sibling != null;
          sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(sibling, true)) {
       if (".".equals(sibling.getText())) continue;
+      if ("..".equals(sibling.getText())) continue;
       PsiElement candidate = sibling;
       if (candidate instanceof DartType) {
         candidate = ((DartType)sibling).getReferenceExpression();
