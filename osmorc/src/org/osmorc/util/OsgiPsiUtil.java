@@ -23,6 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public class OsgiPsiUtil {
       public Result<PsiClass> compute() {
         GlobalSearchScope scope = ProjectScope.getLibrariesScope(project);
         PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(BundleActivator.class.getName(), scope);
-        return Result.create(aClass, aClass);
+        return Result.create(aClass, PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT);
       }
     });
   }
