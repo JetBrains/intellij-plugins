@@ -15,9 +15,8 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 
 /**
  * @author vnikolaenko
@@ -71,15 +70,15 @@ public class CfmlUsagesHighlighterTest extends CfmlCodeInsightFixtureTestCase {
   public void testIncorrectAttributeName() throws Throwable {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.checkHighlighting();
-    TargetElementUtilBase.getInstance()
-      .findTargetElement(myFixture.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED, myFixture.getCaretOffset());
+    TargetElementUtil.getInstance()
+      .findTargetElement(myFixture.getEditor(), TargetElementUtil.ELEMENT_NAME_ACCEPTED, myFixture.getCaretOffset());
   }
 
   public void testIncorrectAttributeNameInArgumentTag() throws Throwable {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.checkHighlighting();
-    TargetElementUtilBase.getInstance()
-      .findTargetElement(myFixture.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED, myFixture.getCaretOffset());
+    TargetElementUtil.getInstance()
+      .findTargetElement(myFixture.getEditor(), TargetElementUtil.ELEMENT_NAME_ACCEPTED, myFixture.getCaretOffset());
   }
 
   @Override

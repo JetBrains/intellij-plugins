@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.groovy.search
 
-import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
@@ -35,8 +35,8 @@ class GrCucumberFindUsagesTest extends GrCucumberLightTestCase {
 
     myFixture.configureByText("current.${current.ext}", current.text)
 
-    def flags = TargetElementUtilBase.ELEMENT_NAME_ACCEPTED | TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED
-    final PsiElement targetElement = TargetElementUtilBase.findTargetElement(myFixture.editor, flags)
+    def flags = TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
+    final PsiElement targetElement = TargetElementUtil.findTargetElement(myFixture.editor, flags)
     assert targetElement != null : "Cannot find referenced element";
 
     Collection<UsageInfo> usages = myFixture.findUsages(targetElement)

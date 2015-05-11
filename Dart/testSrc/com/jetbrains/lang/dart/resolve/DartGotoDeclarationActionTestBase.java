@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -29,7 +29,7 @@ abstract public class DartGotoDeclarationActionTestBase extends DartCodeInsightF
 
   protected void doTest(PsiFile myFile, int expectedSize) {
     final Collection<PsiElement> elements =
-      TargetElementUtilBase.getInstance().getTargetCandidates(myFile.findReferenceAt(myFixture.getCaretOffset()));
+      TargetElementUtil.getInstance().getTargetCandidates(myFile.findReferenceAt(myFixture.getCaretOffset()));
     assertNotNull(elements);
     assertEquals(expectedSize, elements.size());
   }

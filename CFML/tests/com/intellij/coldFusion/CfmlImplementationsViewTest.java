@@ -15,10 +15,9 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.hint.ImplementationViewComponent;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +28,7 @@ public class CfmlImplementationsViewTest extends CfmlCodeInsightFixtureTestCase 
   public void testQuickDefinitionViewForTagFunctions() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     PsiElement element =
-      TargetElementUtilBase.findTargetElement(myFixture.getEditor(), TargetElementUtilBase.getInstance().getAllAccepted());
+      TargetElementUtil.findTargetElement(myFixture.getEditor(), TargetElementUtil.getInstance().getAllAccepted());
     assert element != null;
     final String newText = ImplementationViewComponent.getNewText(element.getNavigationElement());
     assertEquals(

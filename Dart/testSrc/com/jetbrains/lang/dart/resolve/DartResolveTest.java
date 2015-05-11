@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -40,7 +40,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       final int column = caretPositionInfo.caretOffset - myFixture.getEditor().getDocument().getLineStartOffset(line);
       final String fileNameAndPosition = myFixture.getFile().getName() + ":" + (line + 1) + ":" + (column + 1);
 
-      final PsiReference reference = TargetElementUtilBase.findReference(myFixture.getEditor(), caretPositionInfo.caretOffset);
+      final PsiReference reference = TargetElementUtil.findReference(myFixture.getEditor(), caretPositionInfo.caretOffset);
       assertNotNull("No reference in " + fileNameAndPosition, reference);
 
       final PsiElement resolve = reference.resolve();
