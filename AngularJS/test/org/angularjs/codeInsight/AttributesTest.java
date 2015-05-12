@@ -3,9 +3,12 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspectionBase;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import org.angularjs.AngularTestUtil;
 
 /**
@@ -98,6 +101,15 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
   }
 
+  public void testCustomAttributesCompletion20TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.testCompletion("custom.html", "custom.after.html", "custom.ts");
+      }
+    });
+  }
+
   public void testCustomAttributesResolve() {
     myFixture.configureByFiles("custom.after.html", "custom.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
@@ -107,6 +119,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("'myCustomer'", getDirectiveDefinitionText(resolve));
+  }
+
+  public void testCustomAttributesResolve20TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.after.html", "custom.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("custom.ts", resolve.getContainingFile().getName());
+        assertEquals("Directive({\n" +
+                     "    selector: '[my-customer]',\n" +
+                     "    properties: {\n" +
+                     "        'id':'dependency'\n" +
+                     "    }\n" +
+                     "})", getDirectiveDefinitionText(resolve));
+      }
+    });
   }
 
   public void testControllerCompletion() {

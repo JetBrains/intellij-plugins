@@ -1,9 +1,12 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -49,6 +52,15 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom13.html", "custom13.after.html", "angular13.js", "custom.js");
   }
 
+  public void testCustomTagsCompletion20TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom.ts");
+      }
+    });
+  }
+
   public void testCustomTagsViaFunctionCompletion() {
     myFixture.testCompletion("customViaFunction.html", "customViaFunction.after.html", "angular.js", "custom.js");
   }
@@ -82,6 +94,27 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("'myCustomer'", getDirectiveDefinitionText(resolve));
+  }
+
+  public void testCustomTagsResolve20TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.after.html", "angular2.js", "custom.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("custom.ts", resolve.getContainingFile().getName());
+        assertEquals("Component({\n" +
+                     "    selector: '[my-customer]',\n" +
+                     "    properties: {\n" +
+                     "        'id':'dependency'\n" +
+                     "    }\n" +
+                     "})", getDirectiveDefinitionText(resolve));
+      }
+    });
   }
 
   private static String getDirectiveDefinitionText(PsiElement resolve) {
