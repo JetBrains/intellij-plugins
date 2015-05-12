@@ -29,8 +29,7 @@ Dart File
                     ARGUMENTS
                       PsiElement(()('(')
                       PsiElement())(')')
-                  PsiElement(.)('.')
-                  PsiElement(.)('.')
+                  PsiElement(..)('..')
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('name')
@@ -40,8 +39,7 @@ Dart File
                       PsiElement(OPEN_QUOTE)(''')
                       PsiElement(REGULAR_STRING_PART)('Bob Smith')
                       PsiElement(CLOSING_QUOTE)(''')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('address')
@@ -60,8 +58,7 @@ Dart File
                           ARGUMENTS
                             PsiElement(()('(')
                             PsiElement())(')')
-                        PsiElement(.)('.')
-                        PsiElement(.)('.')
+                        PsiElement(..)('..')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('city')
@@ -71,8 +68,7 @@ Dart File
                             PsiElement(OPEN_QUOTE)(''')
                             PsiElement(REGULAR_STRING_PART)('Springfield')
                             PsiElement(CLOSING_QUOTE)(''')
-                      PsiElement(.)('.')
-                      PsiElement(.)('.')
+                      PsiElement(..)('..')
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('zip')
@@ -103,8 +99,7 @@ Dart File
                     ARGUMENTS
                       PsiElement(()('(')
                       PsiElement())(')')
-                  PsiElement(.)('.')
-                  PsiElement(.)('.')
+                  PsiElement(..)('..')
                   PsiElement([)('[')
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('1')
@@ -113,8 +108,7 @@ Dart File
                     PsiElement(=)('=')
                     LITERAL_EXPRESSION
                       PsiElement(NUMBER)('1')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 PsiElement([)('[')
                 LITERAL_EXPRESSION
                   PsiElement(NUMBER)('2')
@@ -143,8 +137,7 @@ Dart File
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('CCC')
-            PsiElement(.)('.')
-            PsiElement(.)('.')
+            PsiElement(..)('..')
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 ID
@@ -692,8 +685,7 @@ Dart File
                                                   REFERENCE_EXPRESSION
                                                     ID
                                                       PsiElement(IDENTIFIER)('a')
-                                                  PsiElement(.)('.')
-                                                  PsiElement(.)('.')
+                                                  PsiElement(..)('..')
                                                   CALL_EXPRESSION
                                                     REFERENCE_EXPRESSION
                                                       ID
@@ -707,8 +699,7 @@ Dart File
                                                         LITERAL_EXPRESSION
                                                           PsiElement(NUMBER)('2')
                                                       PsiElement())(')')
-                                                PsiElement(.)('.')
-                                                PsiElement(.)('.')
+                                                PsiElement(..)('..')
                                                 CALL_EXPRESSION
                                                   REFERENCE_EXPRESSION
                                                     ID
@@ -716,8 +707,7 @@ Dart File
                                                   ARGUMENTS
                                                     PsiElement(()('(')
                                                     PsiElement())(')')
-                                              PsiElement(.)('.')
-                                              PsiElement(.)('.')
+                                              PsiElement(..)('..')
                                               CALL_EXPRESSION
                                                 REFERENCE_EXPRESSION
                                                   ID
@@ -731,8 +721,7 @@ Dart File
                                                     LITERAL_EXPRESSION
                                                       PsiElement(NUMBER)('1')
                                                   PsiElement())(')')
-                                            PsiElement(.)('.')
-                                            PsiElement(.)('.')
+                                            PsiElement(..)('..')
                                             REFERENCE_EXPRESSION
                                               ID
                                                 PsiElement(IDENTIFIER)('x')
@@ -740,8 +729,7 @@ Dart File
                                               PsiElement(=)('=')
                                               LITERAL_EXPRESSION
                                                 PsiElement(NUMBER)('4')
-                                          PsiElement(.)('.')
-                                          PsiElement(.)('.')
+                                          PsiElement(..)('..')
                                           REFERENCE_EXPRESSION
                                             ID
                                               PsiElement(IDENTIFIER)('y')
@@ -749,8 +737,7 @@ Dart File
                                             PsiElement(=)('=')
                                             LITERAL_EXPRESSION
                                               PsiElement(NUMBER)('9')
-                                        PsiElement(.)('.')
-                                        PsiElement(.)('.')
+                                        PsiElement(..)('..')
                                         CALL_EXPRESSION
                                           REFERENCE_EXPRESSION
                                             ID
@@ -764,8 +751,7 @@ Dart File
                                               LITERAL_EXPRESSION
                                                 PsiElement(NUMBER)('9')
                                             PsiElement())(')')
-                                      PsiElement(.)('.')
-                                      PsiElement(.)('.')
+                                      PsiElement(..)('..')
                                       CALL_EXPRESSION
                                         REFERENCE_EXPRESSION
                                           ID
@@ -776,8 +762,7 @@ Dart File
                                             LITERAL_EXPRESSION
                                               PsiElement(NUMBER)('10')
                                           PsiElement())(')')
-                                    PsiElement(.)('.')
-                                    PsiElement(.)('.')
+                                    PsiElement(..)('..')
                                     CALL_EXPRESSION
                                       REFERENCE_EXPRESSION
                                         ID
@@ -791,8 +776,7 @@ Dart File
                                           LITERAL_EXPRESSION
                                             PsiElement(NUMBER)('9')
                                         PsiElement())(')')
-                                  PsiElement(.)('.')
-                                  PsiElement(.)('.')
+                                  PsiElement(..)('..')
                                   REFERENCE_EXPRESSION
                                     ID
                                       PsiElement(IDENTIFIER)('y')
@@ -800,8 +784,7 @@ Dart File
                                     PsiElement(=)('=')
                                     LITERAL_EXPRESSION
                                       PsiElement(NUMBER)('5')
-                                PsiElement(.)('.')
-                                PsiElement(.)('.')
+                                PsiElement(..)('..')
                                 CALL_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     ID
@@ -815,8 +798,7 @@ Dart File
                                       LITERAL_EXPRESSION
                                         PsiElement(NUMBER)('5')
                                     PsiElement())(')')
-                              PsiElement(.)('.')
-                              PsiElement(.)('.')
+                              PsiElement(..)('..')
                               CALL_EXPRESSION
                                 CALL_EXPRESSION
                                   CALL_EXPRESSION
@@ -832,8 +814,7 @@ Dart File
                                 ARGUMENTS
                                   PsiElement(()('(')
                                   PsiElement())(')')
-                            PsiElement(.)('.')
-                            PsiElement(.)('.')
+                            PsiElement(..)('..')
                             CALL_EXPRESSION
                               REFERENCE_EXPRESSION
                                 ID
@@ -847,8 +828,7 @@ Dart File
                                   LITERAL_EXPRESSION
                                     PsiElement(NUMBER)('10')
                                 PsiElement())(')')
-                          PsiElement(.)('.')
-                          PsiElement(.)('.')
+                          PsiElement(..)('..')
                           CALL_EXPRESSION
                             REFERENCE_EXPRESSION
                               ID
@@ -862,8 +842,7 @@ Dart File
                                 LITERAL_EXPRESSION
                                   PsiElement(NUMBER)('10')
                               PsiElement())(')')
-                        PsiElement(.)('.')
-                        PsiElement(.)('.')
+                        PsiElement(..)('..')
                         CALL_EXPRESSION
                           REFERENCE_EXPRESSION
                             CALL_EXPRESSION
@@ -886,8 +865,7 @@ Dart File
                               LITERAL_EXPRESSION
                                 PsiElement(NUMBER)('3')
                             PsiElement())(')')
-                      PsiElement(.)('.')
-                      PsiElement(.)('.')
+                      PsiElement(..)('..')
                       CALL_EXPRESSION
                         REFERENCE_EXPRESSION
                           ID
@@ -901,8 +879,7 @@ Dart File
                             LITERAL_EXPRESSION
                               PsiElement(NUMBER)('3')
                           PsiElement())(')')
-                    PsiElement(.)('.')
-                    PsiElement(.)('.')
+                    PsiElement(..)('..')
                     CALL_EXPRESSION
                       ARRAY_ACCESS_EXPRESSION
                         CALL_EXPRESSION
@@ -924,8 +901,7 @@ Dart File
                       ARGUMENTS
                         PsiElement(()('(')
                         PsiElement())(')')
-                  PsiElement(.)('.')
-                  PsiElement(.)('.')
+                  PsiElement(..)('..')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       ID
@@ -939,8 +915,7 @@ Dart File
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('7')
                       PsiElement())(')')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID
@@ -948,8 +923,7 @@ Dart File
                   ARGUMENTS
                     PsiElement(()('(')
                     PsiElement())(')')
-              PsiElement(.)('.')
-              PsiElement(.)('.')
+              PsiElement(..)('..')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   ID
@@ -963,8 +937,7 @@ Dart File
                     LITERAL_EXPRESSION
                       PsiElement(NUMBER)('7')
                   PsiElement())(')')
-            PsiElement(.)('.')
-            PsiElement(.)('.')
+            PsiElement(..)('..')
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 ID
@@ -998,8 +971,7 @@ Dart File
           ARGUMENTS
             PsiElement(()('(')
             PsiElement())(')')
-        PsiElement(.)('.')
-        PsiElement(.)('.')
+        PsiElement(..)('..')
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('x')
@@ -1013,8 +985,7 @@ Dart File
                   PsiElement(OPEN_QUOTE)('"')
                   PsiElement(REGULAR_STRING_PART)('foo')
                   PsiElement(CLOSING_QUOTE)('"')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID
@@ -1046,13 +1017,11 @@ Dart File
             ARGUMENTS
               PsiElement(()('(')
               PsiElement())(')')
-          PsiElement(.)('.')
-          PsiElement(.)('.')
+          PsiElement(..)('..')
           REFERENCE_EXPRESSION
             ID
               PsiElement(IDENTIFIER)('x')
-        PsiElement(.)('.')
-        PsiElement(.)('.')
+        PsiElement(..)('..')
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('y')
@@ -1066,8 +1035,7 @@ Dart File
                   PsiElement(OPEN_QUOTE)('"')
                   PsiElement(REGULAR_STRING_PART)('bar')
                   PsiElement(CLOSING_QUOTE)('"')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID
@@ -1084,13 +1052,11 @@ Dart File
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('baz')
-                  PsiElement(.)('.')
-                  PsiElement(.)('.')
+                  PsiElement(..)('..')
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('q')
-                PsiElement(.)('.')
-                PsiElement(.)('.')
+                PsiElement(..)('..')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID

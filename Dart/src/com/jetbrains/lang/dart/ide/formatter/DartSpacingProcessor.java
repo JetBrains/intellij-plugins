@@ -370,7 +370,7 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(true);
     }
 
-    if (type1 != DOT && type2 == DOT && elementType == CASCADE_REFERENCE_EXPRESSION) {
+    if (type1 != DOT && type2 == DOT_DOT && elementType == CASCADE_REFERENCE_EXPRESSION) {
       return addLineBreak();
     }
 

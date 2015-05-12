@@ -211,8 +211,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('a')
-                        PsiElement(.)('.')
-                        PsiElement(.)('.')
+                        PsiElement(..)('..')
                         CALL_EXPRESSION
                           REFERENCE_EXPRESSION
                             ID

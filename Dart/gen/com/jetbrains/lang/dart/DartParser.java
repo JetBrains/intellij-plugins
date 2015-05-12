@@ -1033,35 +1033,34 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '.''.' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
+  // '..' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
   public static boolean cascadeReferenceExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "cascadeReferenceExpression")) return false;
-    if (!nextTokenIs(b, DOT)) return false;
+    if (!nextTokenIs(b, DOT_DOT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, null);
-    r = consumeToken(b, DOT);
-    r = r && consumeToken(b, DOT);
+    r = consumeToken(b, DOT_DOT);
     r = r && cascadeStopper(b, l + 1);
-    r = r && cascadeReferenceExpression_3(b, l + 1);
+    r = r && cascadeReferenceExpression_2(b, l + 1);
     r = r && varInitWrapper(b, l + 1);
     exit_section_(b, l, m, CASCADE_REFERENCE_EXPRESSION, r, false, null);
     return r;
   }
 
   // arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression
-  private static boolean cascadeReferenceExpression_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "cascadeReferenceExpression_3")) return false;
+  private static boolean cascadeReferenceExpression_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cascadeReferenceExpression_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = arrayAccess(b, l + 1);
-    if (!r) r = cascadeReferenceExpression_3_1(b, l + 1);
+    if (!r) r = cascadeReferenceExpression_2_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression
-  private static boolean cascadeReferenceExpression_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "cascadeReferenceExpression_3_1")) return false;
+  private static boolean cascadeReferenceExpression_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cascadeReferenceExpression_2_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = refOrThisOrSuperOrParenExpression(b, l + 1);
@@ -1728,7 +1727,7 @@ public class DartParser implements PsiParser {
 
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
+  //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
   //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
@@ -1748,7 +1747,7 @@ public class DartParser implements PsiParser {
   }
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
+  //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
   //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
@@ -1783,6 +1782,7 @@ public class DartParser implements PsiParser {
     if (!r) r = consumeToken(b, MINUS_MINUS);
     if (!r) r = consumeToken(b, MINUS_EQ);
     if (!r) r = consumeToken(b, DOT);
+    if (!r) r = consumeToken(b, DOT_DOT);
     if (!r) r = consumeToken(b, DIV);
     if (!r) r = consumeToken(b, DIV_EQ);
     if (!r) r = consumeToken(b, COLON);

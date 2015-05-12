@@ -116,6 +116,7 @@
   EQ_EQ="=="
   NEQ="!="
   DOT="."
+  DOT_DOT=".."
   COMMA=","
   COLON=":"
   GT=">"
@@ -476,7 +477,7 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-                                 '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
+                                 '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
@@ -566,7 +567,7 @@ referenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 left qualifiedReferenceExpression ::= '.' referenceExpression {elementType="referenceExpression"}
-left cascadeReferenceExpression ::= '.''.' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
+left cascadeReferenceExpression ::= '..' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 simpleQualifiedReferenceExpression ::= referenceExpression qualifiedReferenceExpression* {elementType="referenceExpression"}
