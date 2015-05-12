@@ -99,6 +99,7 @@
   <extensions defaultExtensionNs="JavaScript">
     <intentionAndInspectionFilter language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSInspectionFilter"/>
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
+    <frameworkIndexingHandler implementation="org.angularjs.index.AngularJS2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
   </extensions>
 </idea-plugin>

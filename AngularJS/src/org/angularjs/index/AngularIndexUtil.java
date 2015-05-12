@@ -83,7 +83,9 @@ public class AngularIndexUtil {
       @Override
       public Result<Integer> compute() {
         int version = -1;
-        if (resolve(project, AngularDirectivesIndex.KEY, "ng-messages") != null) {
+        if (resolve(project, AngularDirectivesIndex.KEY, "non-bindable") != null) {
+          version = 20;
+        } else if (resolve(project, AngularDirectivesIndex.KEY, "ng-messages") != null) {
           version = 13;
         } else if (resolve(project, AngularDirectivesIndex.KEY, "ng-model") != null) {
           version = 12;
