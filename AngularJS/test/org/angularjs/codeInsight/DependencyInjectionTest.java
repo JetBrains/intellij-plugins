@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
@@ -33,5 +34,15 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertInstanceOf(JSResolveUtil.unwrapProxy(resolve), JSProperty.class);
+  }
+
+  public void testInjectedStaticResolve() {
+    myFixture.configureByFiles("static.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("DomUtils.createSVG<caret>ElementTemplate(", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertInstanceOf(JSResolveUtil.unwrapProxy(resolve), JSDefinitionExpression.class);
   }
 }

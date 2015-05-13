@@ -430,7 +430,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (resolveResult instanceof JSParameter && isInjectable(resolveResult)) {
       final String name = ((JSParameter)resolveResult).getName();
       final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
-      final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
+      final JSType type = JSNamedType.createType(name, source, JSContext.UNKNOWN);
       evaluator.addType(type, resolveResult);
     }
     return false;
