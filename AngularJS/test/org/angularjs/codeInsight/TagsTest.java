@@ -61,6 +61,15 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testCustomTagsCompletion20JavaScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.testCompletion("custom.html", "custom.after.html", "angular2.js", "custom2.js");
+      }
+    });
+  }
+
   public void testCustomTagsViaFunctionCompletion() {
     myFixture.testCompletion("customViaFunction.html", "customViaFunction.after.html", "angular.js", "custom.js");
   }
@@ -113,6 +122,24 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
                      "        'id':'dependency'\n" +
                      "    }\n" +
                      "})", getDirectiveDefinitionText(resolve));
+      }
+    });
+  }
+
+  public void testCustomTagsResolve20JavaScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.after.html", "angular2.js", "custom2.js");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("custom2.js", resolve.getContainingFile().getName());
+        assertEquals("new angular.ComponentAnnotation({\n" +
+                     "    selector: 'my-customer'\n" +
+                     "  })", getDirectiveDefinitionText(resolve));
       }
     });
   }
