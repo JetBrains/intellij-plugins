@@ -19,6 +19,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   private static final Set<String> REMOTE_BUILD_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_IOS,
                                                                                        PLATFORM_ANDROID,
                                                                                        PLATFORM_WP_8);
+  public static final String ANDROID_HOME_VARIABLE = "ANDROID_HOME";
 
   //public for serializer
   @Nullable
@@ -247,7 +249,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
       throwUnsupportedCommandWarning();
     }
 
-    if (myPlatform.equals(PLATFORM_ANDROID)) {
+    if (myPlatform.equals(PLATFORM_ANDROID) && StringUtil.isEmpty(EnvironmentUtil.getValue(ANDROID_HOME_VARIABLE))) {
       checkExistsSdkWithWarning(PhoneGapAndroidTargets.getAndroidName(), "Cannot detect android SDK in path");
     }
     if (myPlatform.equals(PLATFORM_IOS)) {
