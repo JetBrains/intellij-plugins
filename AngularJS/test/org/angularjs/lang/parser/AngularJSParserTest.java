@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.FileBasedTestCaseHelperEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import com.intellij.testFramework.PlatformTestCase;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.lang.lexer.AngularJSLexer;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +23,6 @@ import java.io.File;
  */
 @RunWith(com.intellij.testFramework.Parameterized.class)
 public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implements FileBasedTestCaseHelperEx {
-  { PlatformTestCase.initPlatformPrefix(IDEA_MARKER_CLASS, "UltimateLangXml"); }
-
   @NotNull
   @Override
   protected String getTestDataPath() {

@@ -6,7 +6,6 @@ import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import org.jetbrains.plugins.cucumber.psi.structure.GherkinStructureViewElement;
 
@@ -20,11 +19,6 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
   private static final String BASE_PATH = "/structureView/";
 
   private VirtualFile myFile;
-
-  public void setUp() throws Exception {
-    PlatformTestCase.initPlatformPrefix(IDEA_MARKER_CLASS, "PlatformLangXml");
-    super.setUp();
-  }
 
   public void testStructureView() throws Exception {
     final Object[] objects = doSimpleTest();
