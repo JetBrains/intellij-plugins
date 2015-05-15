@@ -1,19 +1,16 @@
 package org.jetbrains.training.util;
 
+
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
-import org.jetbrains.training.keymap.KeymapUtil;
-import org.jetbrains.training.keymap.SubKeymapUtil;
-
-import javax.swing.*;
 
 /**
  * Created by karashevich on 15/04/15.
  */
-public class BigBrother extends AnAction{
+public class BigBrother{
 
     public static final BigBrother INSTANCE = new BigBrother();
     private SmallLog mySmallLog;
@@ -23,7 +20,8 @@ public class BigBrother extends AnAction{
     }
 
     public BigBrother() {
-        mySmallLog = new SmallLog();
+        if (mySmallLog == null)
+            mySmallLog = new SmallLog();
         ActionManager.getInstance().addAnActionListener(new AnActionListener() {
 
             @Override
@@ -33,7 +31,9 @@ public class BigBrother extends AnAction{
 //                final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
 //                final String shortcutText = SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId);
                 final String shortcutText = "<shortcut>";
-                mySmallLog.addLine(SmallLog.ACTION + actionId.toString() + " (" + shortcutText +")");
+                if (actionId != null) {
+                    mySmallLog.addLine(SmallLog.ACTION + actionId.toString() + " (" + shortcutText + ")");
+                }
             }
 
             @Override
@@ -47,10 +47,6 @@ public class BigBrother extends AnAction{
         });
     }
 
-    @Override
-    public void actionPerformed(AnActionEvent anActionEvent) {
-        this.getInstance();
-    }
 
 
 }
