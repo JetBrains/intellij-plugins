@@ -1,7 +1,11 @@
 package org.jetbrains.training.util;
 
+import com.intellij.ui.components.JBScrollPane;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -31,13 +35,16 @@ public class SmallLog extends JFrame{
 
         setAlwaysOnTop(true);
 
+
         semiTransparentPanel = new SemiTransparentPanel(dimension, this);
         semiTransparentPanel.addLine("Initial message");
         semiTransparentPanel.addLine("Let's start log here!");
         semiTransparentPanel.addLine(ACTION + "Some action here");
 
+        JBScrollPane jbScrollPane = new JBScrollPane(semiTransparentPanel);
+
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        add(semiTransparentPanel);
+        add(jbScrollPane);
         semiTransparentPanel.setVisible(true);
         setSize(dimension);
         setVisible(true);
@@ -56,6 +63,8 @@ public class SmallLog extends JFrame{
 
         private static final int V_GAP = 2;
         private SmallLog smallLog;
+        private int lastClicked = -1;
+        private boolean shiftPressed = false;
 
         //clickLabels
         private final ArrayList<ClickLabel> clickLabels = new ArrayList<ClickLabel>();
@@ -66,6 +75,38 @@ public class SmallLog extends JFrame{
             setSize(dimension1);
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
             setAppearance(dimension1);
+
+            this.setFocusable(true);
+            this.requestFocus();
+            this.addKeyListener(new KeyAdapter() {
+
+                @Override
+                public void keyPressed(KeyEvent ke) {
+                    if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
+                        shiftPressed = true;
+                        System.out.println("Shift pressed. Last clicked:" + lastClicked);
+                    }
+                    if ((ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) || (ke.getKeyCode() == KeyEvent.VK_DELETE)){
+                        if (lastClicked != -1) {
+                            deleteClickLabel(clickLabels.get(lastClicked));
+                            update();
+                        }
+                    }
+                }
+
+                @Override
+                public void keyReleased(KeyEvent ke) {
+                    if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
+                        shiftPressed = false;
+                        System.out.println("Shift released. Last clicked:" + lastClicked);
+                    }
+                }
+            });
+        }
+
+        private void update(){
+            this.revalidate();
+            this.repaint();
         }
 
         private void setAppearance(Dimension dimension1){
@@ -94,24 +135,36 @@ public class SmallLog extends JFrame{
                 String cb = flushCharBuffer();
                 ClickLabel cLabel1 = new ClickLabel(smallLog, PROMPT + colorizeCommand(TYPING, TYPING, "green") + " " + cb);
                 clickLabels.add(cLabel1);
+                setClickable(cLabel1);
                 this.add(cLabel1);
-                this.add(Box.createRigidArea(new Dimension(0, V_GAP)));
-                this.repaint();
+                final Component rigidArea = Box.createRigidArea(new Dimension(0, V_GAP));
+                cLabel1.setVerticalSpace(rigidArea);
+                this.add(rigidArea);
+                update();
                 smallLog.repaint();
+
             }
             if(line.contains(ACTION)){
                 ClickLabel cLabel = new ClickLabel(smallLog, PROMPT + colorizeCommand(line, ACTION, "red"));
                 clickLabels.add(cLabel);
+                setClickable(cLabel);
                 this.add(cLabel);
-                this.add(Box.createRigidArea(new Dimension(0, V_GAP)));
+                final Component rigidArea = Box.createRigidArea(new Dimension(0, V_GAP));
+                cLabel.setVerticalSpace(rigidArea);
+                this.add(rigidArea);
+                this.revalidate();
                 this.repaint();
                 smallLog.repaint();
             } else {
                 ClickLabel cLabel = new ClickLabel(smallLog, PROMPT + line);
                 clickLabels.add(cLabel);
+                setClickable(cLabel);
                 this.add(cLabel);
-                this.add(Box.createRigidArea(new Dimension(0, V_GAP)));
+                final Component rigidArea = Box.createRigidArea(new Dimension(0, V_GAP));
+                cLabel.setVerticalSpace(rigidArea);
+                this.add(rigidArea);
                 this.repaint();
+                this.revalidate();
                 smallLog.repaint();
             }
         }
@@ -128,6 +181,65 @@ public class SmallLog extends JFrame{
             }
         }
 
+        private void setClickable(final ClickLabel clickLabel){
+            clickLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2 && !e.isConsumed()) {
+                        e.consume();
+                        final String text = clickLabel.getText();
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!clickLabel.striked){
+                                    clickLabel.setText(clickLabel.addHtmlTags("<strike>" + clickLabel.takeHtmltags(text) + "</strike>"));
+                                    repaint();
+                                    smallLog.repaint();
+                                    clickLabel.striked = true;
+                                }
+                            }
+                        });
+                    } else {
+                        e.consume();
+                        if (shiftPressed && lastClicked != -1){
+                            int current = clickLabels.indexOf(clickLabel);
+                            int last = lastClicked;
+                            for(int i = Math.min(last, current) + 1; i <= Math.max(last, current); i++ ){
+                                flip(clickLabels.get(i));
+                            }
+                        } else {
+                            e.consume();
+                            flip(clickLabel);
+                        }
+                    }
+                }
+            });
+        }
+
+        public void flip(ClickLabel cl){
+            if(!cl.selected) {
+                cl.setBackground(cl.selectedColor);
+                repaint();
+                smallLog.repaint();
+                cl.selected = true;
+                if (clickLabels != null) {
+                    lastClicked = clickLabels.indexOf(cl);
+                }
+            } else {
+                cl.setBackground(bck);
+                repaint();
+                smallLog.repaint();
+                cl.selected = false;
+            }
+        }
+
+        public void deleteClickLabel(ClickLabel cl){
+            if (cl.getVerticalSpace() != null)
+                this.remove(cl.getVerticalSpace());
+            this.remove(cl);
+            clickLabels.remove(cl);
+        }
+
     }
 
 
@@ -135,6 +247,8 @@ public class SmallLog extends JFrame{
 
         private boolean striked;
         private boolean selected;
+        private final Color selectedColor = new Color(34, 132, 255, 255);
+        private Component verticalSpace = null;
 
         private SmallLog smallLog;
 
@@ -150,50 +264,23 @@ public class SmallLog extends JFrame{
             setOpaque(true);
             setVisible(true);
             setBackground(bck);
-
-
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 2 && !e.isConsumed()) {
-                        e.consume();
-                        final String text = getText();
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(!striked) {
-                                    setText(addHtmlTags("<strike>" + takeHtmltags(text) + "</strike>"));
-                                    repaint();
-                                    smallLog.repaint();
-                                    striked = true;
-                                }
-                            }
-                        });
-                    } else {
-                        e.consume();
-                        if(!selected) {
-                            setBackground(new Color(118, 139, 198, 255));
-                            repaint();
-                            smallLog.repaint();
-                            selected = true;
-                        } else {
-                            setBackground(bck);
-                            repaint();
-                            smallLog.repaint();
-                            selected = false;
-                        }
-                    }
-                }
-            });
         }
 
-        private String takeHtmltags(String in){
+        public Component getVerticalSpace() {
+            return verticalSpace;
+        }
+
+        public void setVerticalSpace(Component verticalSpace) {
+            this.verticalSpace = verticalSpace;
+        }
+
+        public String takeHtmltags(String in){
             if(in.length() > 12 && in.substring(0,6).equals("<html>") && in.substring(in.length() - 7).equals("</html>"))
                 return in.substring(6, in.length() - 7);
             else return in;
         }
 
-        private String addHtmlTags(String in){
+        public String addHtmlTags(String in){
             return ("<html>" + in + "</html>");
         }
 
