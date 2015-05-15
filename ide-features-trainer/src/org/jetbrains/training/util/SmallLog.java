@@ -64,6 +64,7 @@ public class SmallLog extends JFrame{
         private static final int V_GAP = 2;
         private SmallLog smallLog;
         private int lastClicked = -1;
+        private int pivot = -1;
         private boolean shiftPressed = false;
 
         //clickLabels
@@ -82,14 +83,81 @@ public class SmallLog extends JFrame{
 
                 @Override
                 public void keyPressed(KeyEvent ke) {
+                    //multiple selection if user pressed SHIFT
                     if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
                         shiftPressed = true;
                         System.out.println("Shift pressed. Last clicked:" + lastClicked);
                     }
-                    if ((ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) || (ke.getKeyCode() == KeyEvent.VK_DELETE)){
-                        if (lastClicked != -1) {
-                            deleteClickLabel(clickLabels.get(lastClicked));
-                            update();
+                    //delete clickLabel if user pressed DEL ot BACKSPACE
+                    if ((ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) || (ke.getKeyCode() == KeyEvent.VK_DELETE)) {
+                        if (pivot != -1) {
+                            if (clickLabels.size() > pivot) {
+                                int deleted = pivot;
+                                deleteClickLabel(clickLabels.get(pivot));
+                                //init pivot again
+                                pivot = -1;
+                                if (deleted == clickLabels.size()) movePivot(clickLabels.size() - 1);
+                                else movePivot(deleted);
+                                update();
+                            }
+                        }
+                    }
+                    //clear all selection if user pressed ESCAPE
+                    if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        for (ClickLabel cl : clickLabels) {
+                            if (cl.selected) flip(cl);
+                        }
+                        movePivot(-1);
+                    }
+                    //move pivot UP
+                    if (ke.getKeyCode() == KeyEvent.VK_UP) {
+                        if (shiftPressed) {
+                            if (pivot == -1) {
+                                if (clickLabels != null) {
+                                    flip(clickLabels.get(clickLabels.size() - 1));
+                                    movePivot(clickLabels.size() - 1);
+                                }
+                            } else {
+                                if (pivot == 0) {
+                                    flip(clickLabels.get(0));
+                                    movePivot(-1);
+                                } else {
+                                    flip(clickLabels.get(pivot));
+                                    movePivot(pivot - 1);
+                                }
+                            }
+                        } else {
+                            if (pivot == -1) {
+                                if (clickLabels != null) {
+                                    movePivot(clickLabels.size() - 1);
+                                }
+                            } else {
+                                if (pivot == 0) movePivot(-1);
+                                else movePivot(pivot - 1);
+                            }
+                        }
+                    }
+                    //move pivot DOWN
+                    if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+                        if (shiftPressed) {
+                            if (pivot == -1) {
+                                if (clickLabels != null) movePivot(0);
+                            } else {
+                                if (pivot == clickLabels.size() - 1) {
+                                    flip(clickLabels.get(clickLabels.size() - 1));
+                                    movePivot(-1);
+                                } else {
+                                    flip(clickLabels.get(pivot));
+                                    movePivot(pivot + 1);
+                                }
+                            }
+                        } else {
+                            if (pivot == -1) {
+                                if (clickLabels != null) movePivot(0);
+                            } else {
+                                if (pivot == clickLabels.size() - 1) movePivot(-1);
+                                else movePivot(pivot + 1);
+                            }
                         }
                     }
                 }
@@ -204,8 +272,14 @@ public class SmallLog extends JFrame{
                         if (shiftPressed && lastClicked != -1){
                             int current = clickLabels.indexOf(clickLabel);
                             int last = lastClicked;
-                            for(int i = Math.min(last, current) + 1; i <= Math.max(last, current); i++ ){
-                                flip(clickLabels.get(i));
+                            if (last > current) {
+                                for(int i = last - 1; i >= current; i-- ){
+                                    flip(clickLabels.get(i));
+                                }
+                            } else if (last < current) {
+                                for(int i = last + 1; i <= current; i++ ){
+                                    flip(clickLabels.get(i));
+                                }
                             }
                         } else {
                             e.consume();
@@ -224,12 +298,18 @@ public class SmallLog extends JFrame{
                 cl.selected = true;
                 if (clickLabels != null) {
                     lastClicked = clickLabels.indexOf(cl);
+                    movePivot(lastClicked);
                 }
             } else {
                 cl.setBackground(bck);
                 repaint();
                 smallLog.repaint();
                 cl.selected = false;
+//                if (pivot == clickLabels.indexOf(cl)) movePivot(-1);
+                if (clickLabels != null) {
+                    lastClicked = clickLabels.indexOf(cl);
+                    movePivot(lastClicked);
+                }
             }
         }
 
@@ -240,6 +320,24 @@ public class SmallLog extends JFrame{
             clickLabels.remove(cl);
         }
 
+        private void movePivot(int position){
+            if(pivot == -1) {
+                pivot = position;
+                if (position != -1) {
+                    clickLabels.get(pivot).setBackground(clickLabels.get(pivot).pivotColor);
+                }
+            } else {
+                //demark
+                if (clickLabels.get(pivot).selected) clickLabels.get(pivot).setBackground(clickLabels.get(pivot).selectedColor);
+                else clickLabels.get(pivot).setBackground(bck);
+                //mark pivot
+                pivot = position;
+                if (position != -1) {
+                    clickLabels.get(pivot).setBackground(clickLabels.get(pivot).pivotColor);
+                }
+            }
+        }
+
     }
 
 
@@ -248,6 +346,7 @@ public class SmallLog extends JFrame{
         private boolean striked;
         private boolean selected;
         private final Color selectedColor = new Color(34, 132, 255, 255);
+        private final Color pivotColor = new Color(104, 196, 255, 255);
         private Component verticalSpace = null;
 
         private SmallLog smallLog;
