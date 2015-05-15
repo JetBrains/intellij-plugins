@@ -26,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -167,7 +169,9 @@ public final class DartServerFixIntention implements IntentionAction {
     final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
-    if (virtualFile == null || !fileIndex.isInContent(virtualFile)) return false;
+    if (fileEdit.getFileStamp() != -1) {
+      if (virtualFile == null || !fileIndex.isInContent(virtualFile)) return false;
+    }
 
     return true;
   }
@@ -180,9 +184,23 @@ public final class DartServerFixIntention implements IntentionAction {
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     final SourceFileEdit fileEdit = myChange.getEdits().get(0);
+    final String filePath = fileEdit.getFile();
     final SourceEdit sourceEdit = fileEdit.getEdits().get(0);
 
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    // Create the file if it does not exist.
+    if (fileEdit.getFileStamp() == -1) {
+      try {
+        final File ioFile = new File(filePath);
+        if (!ioFile.exists()) {
+          FileUtil.writeToFile(ioFile, "");
+          LocalFileSystem.getInstance().refreshAndFindFileByIoFile(ioFile);
+        }
+      }
+      catch (IOException e) {
+      }
+    }
+
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(filePath));
     if (virtualFile == null) return;
 
     if (!FileModificationService.getInstance().prepareVirtualFilesForWrite(project, Collections.singletonList(virtualFile))) return;
