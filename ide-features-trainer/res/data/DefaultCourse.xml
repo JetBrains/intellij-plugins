@@ -3,6 +3,5 @@
         <lesson name="Delete Line" isPassed="false" path="DeleteLine.xml"/>
         <lesson name="Duplicate Line" isPassed="false" path="DuplicateLine.xml"/>
         <lesson name="Comment Line" isPassed="false" path="CommentLine.xml"/>
-        <lesson name="Test" isPassed="false" path="Test.xml"/>
     </lessons>
 </xml>

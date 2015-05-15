@@ -16,8 +16,7 @@ public class ShowSmallLog extends AnAction{
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        smallLog = new SmallLog();
-
+        BigBrother.getInstance();
     }
 
     private static RelativePoint computeLocation(Editor editor, Dimension dimension){
@@ -29,9 +28,9 @@ public class ShowSmallLog extends AnAction{
         return new RelativePoint(editor.getComponent(), point);
     }
 
-    public static void main(String[] args) {
-        new SmallLog();
-    }
+//    public static void main(String[] args) {
+//        new SmallLog();
+//    }
 
 
 }
