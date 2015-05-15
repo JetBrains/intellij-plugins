@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -35,9 +36,26 @@ public class DartTestUtils {
   public static final String SDK_HOME_PATH = BASE_TEST_DATA_PATH + "/sdk";
 
   private static String findTestDataPath() {
-    final File f = new File("testData"); // launched from 'Dart-plugin' project
-    if (f.isDirectory()) return FileUtil.toSystemIndependentName(f.getAbsolutePath());
 
+    final File f = new File("testData");
+    if (f.isDirectory()) {
+      // started from 'Dart-plugin' project
+      return FileUtil.toSystemIndependentName(f.getAbsolutePath());
+    }
+
+    final String parentPath = PathUtil.getParentPath(PathManager.getHomePath());
+
+    if (new File(parentPath + "/intellij-plugins").isDirectory()) {
+      // started from IntelliJ IDEA Community Edition + Dart Plugin project
+      return FileUtil.toSystemIndependentName(parentPath + "/intellij-plugins/Dart/testData");
+    }
+
+    if (new File(parentPath + "/contrib").isDirectory()) {
+      // started from IntelliJ IDEA Community + Dart Plugin project
+      FileUtil.toSystemIndependentName(parentPath + "/contrib/Dart/testData");
+    }
+
+    // started from IntelliJ IDEA Ultimate project
     return FileUtil.toSystemIndependentName(PathManager.getHomePath() + "/contrib/Dart/testData");
   }
 
@@ -60,7 +78,7 @@ public class DartTestUtils {
         DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkGlobalLibName);
       }
     });
-    
+
     Disposer.register(disposable, new Disposable() {
       @Override
       public void dispose() {
