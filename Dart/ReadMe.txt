@@ -1,8 +1,59 @@
-How to start working with this 'Dart-plugin' project.
+How to setup IntelliJ IDEA project for developing Dart Plugin.
 
 Prerequisites:
-- Oracle JDK 1.6 or later
-- git command line client
+- Oracle JDK 1.6 or later (1.6 is preferred as we still must be compatible with its API)
+- Git command line client
+- IntelliJ IDEA Ultimate installed. The following bundled plugins are enabled:
+  UI Designer, Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support.
+  Additionally install 'Grammar-Kit' and 'Polymer & Web Components' plugins:
+  start IntelliJ IDEA, on Welcome screen click Configure | Plugins.
+  Press 'Browse repositories...', find plugins and install them. Restart IDE.
+
+1. Clone the following 2 repositories to neighbor folders:
+     - git clone https://github.com/JetBrains/intellij-plugins,
+     - git clone https://github.com/JetBrains/intellij-community,
+   run intellij-community/getPlugins.sh (getPlugins.bat on Win)
+
+2. Start IntelliJ Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
+   click [+] and add JDK. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
+
+3. On Welcome screen click Configure | Settings (Preferences), look for Path Variables and add the following vars there:
+   - IDEA_ULTIMATE_PLUGINS pointing to [IntelliJ IDEA Ultimate Installation]/Contents/plugins
+     (on Windows: [IntelliJ IDEA Ultimate Installation]/plugins)
+   - ADDITIONAL_PLUGINS pointing to IntelliJ IDEA Plugins folder (parent folder of WebComponents, GrammarKit and others)
+     See here how to find this folder: https://intellij-support.jetbrains.com/entries/23358108
+
+4. Open intellij-community project, compile it.
+   Open File | Project Structure | Modules | [+] | Import Module, select intellij-plugins/Dart/Dart-community.iml.
+   Open community-main module, add dependency on Dart module.
+
+5. Open Settings (Preferences) | Version Control and make sure that intellij-plugins is configured as a 4th Git root.
+   If you previously worked with a single-module Dart-plugin project you may have unversioned
+   intellij-plugins/Dart/.idea/workspace.xml file and intellij-plugins/Dart/out folder. You may simply delete these files
+   or add to Settings (Preferences) | Version Control | Ignored Files.
+
+6. Project is ready to use. There are 2 preconfigured run configurations for Dart plugin developers:
+   IDEA - to start IntelliJ IDEA + Dart Plugin from sources,
+   Dart tests - it runs all JUnit tests in the Dart plugin module
+
+7. Important! In order to be able to run a single test class ot test method you need to do the following:
+   - open Run | Edit Configurations, select 'Dart tests' run configuration, copy its VM Options to clipboard
+   - in the same dialog (Run/Debug Configurations) expand Defaults node, find JUnit under it and paste VM Options
+     to the corresponding field
+   - repeat the same with Working directory field - it must point to intellij-community/bin
+
+8. Enjoy! All tests should pass. All functionality (except debugging in browser) should work.
+   Zero mandatory local changes in intellij-plugins repository.
+   Only 3 files locally changed in intellij-community repository, just keep them in a separate '~never commit' changelist
+   and do not worry about them:
+     - intellij-community/community-main.iml
+     - intellij-community/.idea/modules.xml
+     - intellij-community/.idea/vcs.xml
+
+
+
+
+===========  Alternative way of the Dart-plugin project setup  ==================
 
 1. Install the latest IntelliJ IDEA Ultimate Edition. The latest is either
 official release (https://www.jetbrains.com/idea/download/) or (more likely)
@@ -84,7 +135,7 @@ Build Artifacts | All artifacts and then manually start WebStorm
   without debugging):
     - create Remote run configuration, leave default Mode: Attach, nothing
       in Before Launch
-    - add the line (starting from -agentlib...) shown in the Remore RC
+    - add the line (starting from -agentlib...) shown in the Remote RC
       to [WebStorm]/Contents/bin/idea.properties file
     - now to debug WebStorm you:
       - Build | Build Artifacts | All artifacts
