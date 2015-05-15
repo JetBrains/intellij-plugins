@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -20,6 +21,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testIntegration.TestCreator;
 import com.intellij.util.Consumer;
 import gnu.trove.THashSet;
@@ -83,7 +85,7 @@ public class FlexUnitTestCreator implements TestCreator {
           final PsiElement methods =
             JSChangeUtil.createJSTreeFromText(project, "{" + methodsText + "}", JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
           if (methods != null) {
-            for (final PsiElement psiElement : methods.getChildren()) {
+            for (final PsiElement psiElement : PsiTreeUtil.getChildrenOfTypeAsList(methods, JSFunction.class)) {
               createdClass.add(psiElement);
             }
           }
