@@ -13,23 +13,22 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="platform-api" />
-    <orderEntry type="module" module-name="lang-api" />
-    <orderEntry type="module" module-name="core-impl" />
+    <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="xdebugger-api" />
     <orderEntry type="module" module-name="smRunner" />
-    <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="copyright" />
-    <orderEntry type="module" module-name="spellchecker" />
+    <orderEntry type="module" module-name="xml" />
+    <orderEntry type="module" module-name="built-in-server" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="module" module-name="ChromeConnector" />
     <orderEntry type="module" module-name="yaml-plugin" />
     <orderEntry type="module" module-name="yaml" />
-    <orderEntry type="module" module-name="testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
+    <orderEntry type="module" module-name="copyright" />
+    <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="idea-tests" scope="TEST" />
-    <orderEntry type="module" module-name="htmltools" scope="TEST" />
     <orderEntry type="module" module-name="WebComponents" scope="TEST" />
+    <orderEntry type="library" name="Netty" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="markdownj" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -68,10 +67,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="markdownj" level="project" />
-    <orderEntry type="library" name="Netty" level="project" />
-    <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="module" module-name="built-in-server" />
-    <orderEntry type="module" module-name="xml" />
   </component>
 </module>
