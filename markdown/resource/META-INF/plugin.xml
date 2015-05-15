@@ -1,0 +1,31 @@
+<idea-plugin version="2">
+  <id>org.intellij.plugins.markdown</id>
+  <name>Markdown support</name>
+  <version>1.0</version>
+  <vendor url="http://www.jetbrains.com">JetBrains</vendor>
+
+  <depends>com.intellij.modules.lang</depends>
+  <description><![CDATA[
+      Markdown support for IntelliJ products
+    ]]></description>
+
+  <change-notes><![CDATA[
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="141"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="org.intellij.plugins.markdown.lang.MarkdownFileTypeFactory"/>
+    <lang.parserDefinition language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition"/>
+
+    <colorSettingsPage implementation="org.intellij.plugins.markdown.highlighting.MarkdownColorSettingsPage"/>
+    <syntaxHighlighter key="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownSyntaxHighlighter"/>
+
+    <braceMatcher filetype="Markdown" implementationClass="org.intellij.plugins.markdown.braces.MarkdownBraceMatcher"/>
+    <quoteHandler fileType="Markdown" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>
+
+    <annotator language="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
+  </extensions>
+
+</idea-plugin>

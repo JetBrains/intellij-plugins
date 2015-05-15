@@ -1,0 +1,7 @@
+.idea/workspace.xml
+/intellij-markdown
+
+/out
+
+.DS_Store
+*.patch
