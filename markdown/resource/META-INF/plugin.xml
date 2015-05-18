@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.intellij.plugins.markdown</id>
   <name>Markdown support</name>
-  <version>1.0</version>
+  <version>VERSION</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
   <depends>com.intellij.modules.lang</depends>
@@ -12,8 +12,6 @@
   <change-notes><![CDATA[
     ]]>
   </change-notes>
-
-  <idea-version since-build="141"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="org.intellij.plugins.markdown.lang.MarkdownFileTypeFactory"/>
