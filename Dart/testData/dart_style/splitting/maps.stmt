@@ -1,0 +1,71 @@
+40 columns                              |
+>>> empty map
+var m = { };
+<<<
+var m = {};
+>>> exactly 40 characters
+var m = {first: second, third: forth__};
+<<<
+var m = {first: second, third: forth__};
+>>>
+var m = {first: second, third: fourth, fifth: sixth};
+<<<
+var m = {
+  first: second,
+  third: fourth,
+  fifth: sixth
+};
+>>> nested unsplit map
+var m = {a: {b: c}, d: {},
+    e: {f: g  }  };
+<<<
+var m = {a: {b: c}, d: {}, e: {f: g}};
+>>> nested split map
+var m = {first: 1, second: {third: fourth}, fifth: 5, nested: {sixth: seventh, eighth: nine,
+    tenth: eleventh}};
+<<<
+var m = {
+  first: 1,
+  second: {third: fourth},
+  fifth: 5,
+  nested: {
+    sixth: seventh,
+    eighth: nine,
+    tenth: eleventh
+  }
+};
+>>> force multi-line because of contained block
+var m = {first: 1, fn: () {"fn";},third:fourth};
+<<<
+var m = {
+  first: 1,
+  fn: () {
+    "fn";
+  },
+  third: fourth
+};
+>>> containing comments
+var m = {first: one /* bang */, second: two};
+<<<
+var m = {
+  first: one /* bang */,
+  second: two
+};
+>>> const
+var map = const {"foo": "bar", "fuz": null};
+<<<
+var map = const {
+  "foo": "bar",
+  "fuz": null
+};
+>>> dangling comma
+var map = {"foo": "bar" , };
+<<<
+var map = {"foo": "bar",};
+>>> dangling comma multiline
+var map = {"foo": "bar", "fuzzy": null , };
+<<<
+var map = {
+  "foo": "bar",
+  "fuzzy": null,
+};

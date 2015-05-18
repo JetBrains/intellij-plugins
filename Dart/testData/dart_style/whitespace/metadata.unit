@@ -1,0 +1,218 @@
+40 columns                              |
+>>> force newline before directives
+@deprecated library foo;
+
+@deprecated import 'dart:io';
+
+@deprecated export 'dart:io';
+<<<
+@deprecated
+library foo;
+
+@deprecated
+import 'dart:io';
+
+@deprecated
+export 'dart:io';
+>>> force newline before types
+@meta class X {}
+
+@meta class Y = X with Z;
+
+@meta typedef void X(y);
+<<<
+@meta
+class X {}
+
+@meta
+class Y = X with Z;
+
+@meta
+typedef void X(y);
+>>> force newline before variable declarations
+foo() {
+  @meta var a;
+
+  @meta
+  var b;
+
+  @a @b
+
+
+  var c;
+}
+<<<
+foo() {
+  @meta
+  var a;
+
+  @meta
+  var b;
+
+  @a
+  @b
+  var c;
+}
+>>> allow inline annotations before functions
+@meta   foo() {}
+<<<
+@meta foo() {}
+>>> allow newline before functions
+@meta
+
+
+foo() {}
+<<<
+@meta
+foo() {}
+>>> allow inline annotations before members
+class X {
+  @meta   var _x;
+  @meta       X.y();
+  @meta   factory X(x) => null;
+  @meta  int x() => null;
+}
+<<<
+class X {
+  @meta var _x;
+  @meta X.y();
+  @meta factory X(x) => null;
+  @meta int x() => null;
+}
+>>> allow newline before members
+class X {
+  @meta
+
+  var _x;
+
+  @meta
+
+
+
+  X.y();
+
+  @meta
+  factory X(x) => null;
+
+  @meta
+
+  int x() => null;
+}
+<<<
+class X {
+  @meta
+  var _x;
+
+  @meta
+  X.y();
+
+  @meta
+  factory X(x) => null;
+
+  @meta
+  int x() => null;
+}
+>>> collapse newlines between annotations
+@a
+
+
+@b
+
+
+
+@c
+
+
+class A {}
+<<<
+@a
+@b
+@c
+class A {}
+>>> multiple top-level annotations always get their own line
+@a @b class A {}
+<<<
+@a
+@b
+class A {}
+>>> multiple member annotations always get their own line
+class A {
+  @a @b void foo() {}
+}
+<<<
+class A {
+  @a
+  @b
+  void foo() {}
+}
+>>> parameter annotations are inline
+foo(
+
+@a
+
+@b
+
+param) {}
+<<<
+foo(@a @b param) {}
+>>> type parameter annotations are inline
+class Foo<
+
+@a
+
+@b
+
+T> {}
+<<<
+class Foo<@a @b T> {}
+>>> comment after metadata
+@DomName('DatabaseCallback')
+@Experimental() // deprecated
+typedef void DatabaseCallback(database);
+<<<
+@DomName('DatabaseCallback')
+@Experimental() // deprecated
+typedef void DatabaseCallback(database);
+>>> comment between metadata
+@DomName('DatabaseCallback') // deprecated
+  @Experimental()
+      typedef void DatabaseCallback(database);
+<<<
+@DomName(
+    'DatabaseCallback') // deprecated
+@Experimental()
+typedef void DatabaseCallback(database);
+>>> metadata on top-level variables
+@DomName('DatabaseCallback')
+@Experimental()
+var variable;
+<<<
+@DomName('DatabaseCallback')
+@Experimental()
+var variable;
+>>> metadata on parameters
+main(@foo @bar param) {}
+<<<
+main(@foo @bar param) {}
+>>> metadata on initializing formal
+class Foo {
+  Foo(@bar this.field);
+}
+<<<
+class Foo {
+  Foo(@bar this.field);
+}
+>>> metadata on function-typed formal parameter
+withReturnType(@foo @bar int fn(@foo param)) {}
+withoutReturnType(@foo @bar fn(@foo param)) {}
+<<<
+withReturnType(
+    @foo @bar int fn(@foo param)) {}
+withoutReturnType(
+    @foo @bar fn(@foo param)) {}
+>>> metadata on default formal parameter
+positional([@foo bar]) {}
+named({@foo bar}) {}
+<<<
+positional([@foo bar]) {}
+named({@foo bar}) {}

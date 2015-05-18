@@ -1,0 +1,20 @@
+40 columns                              |
+>>> single
+enum Unity {ONE}
+<<<
+enum Unity { ONE }
+>>> single line
+enum Primate{BONOBO,CHIMP,GORILLA}
+<<<
+enum Primate { BONOBO, CHIMP, GORILLA }
+>>> single line trailing comma
+enum Primate{BONOBO,CHIMP,}
+<<<
+enum Primate { BONOBO, CHIMP, }
+>>> metadata
+@Awesome @Fierce("really")
+enum Primate{BONOBO,CHIMP,GORILLA}
+<<<
+@Awesome
+@Fierce("really")
+enum Primate { BONOBO, CHIMP, GORILLA }

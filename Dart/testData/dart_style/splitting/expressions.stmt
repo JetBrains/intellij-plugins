@@ -1,0 +1,117 @@
+40 columns                              |
+>>> space-separated adjacent strings are not split
+var name = new Symbol("the first string" "the second string");
+<<<
+var name = new Symbol(
+    "the first string" "the second string");
+>>> preserve one newline between adjacent strings
+var name = "the first string"
+"the second string"
+
+
+
+"the third string";
+<<<
+var name = "the first string"
+    "the second string"
+    "the third string";
+>>> conditions, same operator
+if (identifier || identifier || identifier || identifier) {
+}
+<<<
+if (identifier ||
+    identifier ||
+    identifier ||
+    identifier) {}
+>>> conditions, different operators
+if (identifier && identifier || identifier
+                && identifier) {
+}
+<<<
+if (identifier && identifier ||
+    identifier && identifier) {}
+>>> split conditional because then doesn't fit
+var kind = element != null ? longArgument : arg;
+<<<
+var kind = element != null
+    ? longArgument
+    : arg;
+>>> split conditional because else doesn't fit
+var kind = element != null ? argument : secondArgumentThatIsReallyLong;
+<<<
+var kind = element != null
+    ? argument
+    : secondArgumentThatIsReallyLong;
+>>> unsplit operator chains before and after block
+first + second + () {body;} + third + fourth;
+<<<
+first + second + () {
+  body;
+} + third + fourth;
+>>> split operator chain before block
+first + second + third + fourth + fifth + () {body;} + sixth + seventh;
+<<<
+first +
+    second +
+    third +
+    fourth +
+    fifth +
+    () {
+  body;
+} + sixth + seventh;
+>>> split operator chain after block
+first + second + third + () {body;} + fourth + fifth + sixth + seventh + eighth;
+<<<
+first + second + third + () {
+  body;
+} +
+    fourth +
+    fifth +
+    sixth +
+    seventh +
+    eighth;
+>>> indent previous line farther because later line is nested deeper
+someFunction(someExtremelyLongArgumentName).clamp();
+<<<
+someFunction(
+        someExtremelyLongArgumentName)
+    .clamp();
+>>> wrap inside parenthesized
+(someVerylongIdentifier * someVerylongIdentifier);
+<<<
+(someVerylongIdentifier *
+    someVerylongIdentifier);
+>>> same operator inside parenthesized is treated independently
+(identifier * (identifier * identifier) * identifier);
+<<<
+(identifier *
+    (identifier * identifier) *
+    identifier);
+>>> nested parenthesized are indented more
+(identifier * (verylongIdentifier * verylongIdentifier) * identifier);
+<<<
+(identifier *
+    (verylongIdentifier *
+        verylongIdentifier) *
+    identifier);
+>>> conditional operands are nested
+identifier ? identifier ? someParticularlyLongOperand : someParticularlyLongOperand : identifier ? someParticularlyLongOperand : someParticularlyLongOperand;
+<<<
+identifier
+    ? identifier
+        ? someParticularlyLongOperand
+        : someParticularlyLongOperand
+    : identifier
+        ? someParticularlyLongOperand
+        : someParticularlyLongOperand;
+>>> index expressions can split after "["
+verylongIdentifier[someParticularlyLongArgument];
+<<<
+verylongIdentifier[
+    someParticularlyLongArgument];
+>>> index arguments nest
+verylongIdentifier[someParticularlyLongArgument[someParticularlyLongArgument]];
+<<<
+verylongIdentifier[
+    someParticularlyLongArgument[
+        someParticularlyLongArgument]];

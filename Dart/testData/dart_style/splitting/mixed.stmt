@@ -1,0 +1,150 @@
+40 columns                              |
+>>> keeps map on one line if possible
+sendPort.send({'type': 'error', 'error': 'oops'});
+<<<
+sendPort.send(
+    {'type': 'error', 'error': 'oops'});
+>>> prefers to wrap before "."
+new Future.sync(() => callback('msg')).then(
+    (result) => replyTo.send()).catchError((error) {});
+<<<
+new Future.sync(() => callback('msg'))
+    .then((result) => replyTo.send())
+    .catchError((error) {});
+>>>
+Stream readInput(AssetId id) => future((input) => input.read());
+<<<
+Stream readInput(AssetId id) =>
+    future((input) => input.read());
+>>> nested expression indentation
+someFunctionName(argument, argument, argument,
+    someOtherFunction(argument, argument, arg));
+<<<
+someFunctionName(argument, argument,
+    argument, someOtherFunction(
+        argument, argument, arg));
+>>> does not extra indent when multiple levels of nesting happen on one line
+someFunctionName(argument, argument, argument,
+    some(other(function(argument, argument, arg))));
+<<<
+someFunctionName(argument, argument,
+    argument, some(other(function(
+        argument, argument, arg))));
+>>> forces extra indent and lines, if later line needs it
+callSomeMethod(innerFunction(argument, argument, argument), argument, argument, argument);
+<<<
+callSomeMethod(innerFunction(
+        argument, argument, argument),
+    argument, argument, argument);
+>>> function inside a collection
+[item, obj.method(argument).method(argument).method(() {body;}).another().another()];
+<<<
+[
+  item,
+  obj
+      .method(argument)
+      .method(argument)
+      .method(() {
+    body;
+  }).another().another()
+];
+>>> wrap before =>
+receiver.firstMethod().next(() => longIdentifier == veryLongIdentifier);
+<<<
+receiver.firstMethod().next(
+    () => longIdentifier ==
+        veryLongIdentifier);
+>>> wrap after =>
+receiver.firstMethod().next(() => veryveryveryverylongIdentifier == veryLongIdentifier);
+<<<
+receiver.firstMethod().next(() =>
+    veryveryveryverylongIdentifier ==
+        veryLongIdentifier);
+>>> wrap at nested binary operator
+receiver.firstMethod().next(longIdentifier == veryLongIdentifier);
+<<<
+receiver.firstMethod().next(
+    longIdentifier ==
+        veryLongIdentifier);
+>>> list inside separable TODO(rnystrom): Is this what we want?
+receiver.first([listItem, secondItem, thirdItem]).second();
+<<<
+receiver
+    .first([
+  listItem,
+  secondItem,
+  thirdItem
+])
+    .second();
+>>> binary operators in ascending precedence
+{
+  b___________________ || a______________ && a______________ == a______________ > a______________ + a______________;
+}
+<<<
+{
+  b___________________ ||
+      a______________ &&
+          a______________ ==
+              a______________ >
+                  a______________ +
+                      a______________;
+}
+>>> binary operators in descending precedence
+{
+  b___________________ + a______________ > a______________ == a______________ && a______________ || a______________;
+}
+<<<
+{
+  b___________________ +
+                      a______________ >
+                  a______________ ==
+              a______________ &&
+          a______________ ||
+      a______________;
+}
+>>> mixed multiplicative operators
+longName * longName / longName % longName ~/ longName;
+<<<
+longName *
+    longName /
+    longName %
+    longName ~/
+    longName;
+>>> mixed additive operators
+longName + longName - longName + longName - longName;
+<<<
+longName +
+    longName -
+    longName +
+    longName -
+    longName;
+>>> mixed shift operators
+longName >> longName << longName >> longName << longName;
+<<<
+longName >>
+    longName <<
+    longName >>
+    longName <<
+    longName;
+>>> mixture of same and different precedence
+veryLongIdentifier + veryLongIdentifier / veryLongIdentifier *
+veryLongIdentifier - veryLongIdentifier * veryLongIdentifier +
+veryLongIdentifier / veryLongIdentifier - veryLongIdentifier;
+<<<
+veryLongIdentifier +
+    veryLongIdentifier /
+        veryLongIdentifier *
+        veryLongIdentifier -
+    veryLongIdentifier *
+        veryLongIdentifier +
+    veryLongIdentifier /
+        veryLongIdentifier -
+    veryLongIdentifier;
+>>> choose extra nesting if it leads to better solution
+longIdentifier +
+    (longIdentifier ? 0 :
+        1) == identifier;
+<<<
+longIdentifier +
+        (longIdentifier ? 0 : 1) ==
+    identifier;

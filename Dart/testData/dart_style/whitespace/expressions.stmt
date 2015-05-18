@@ -1,0 +1,83 @@
+40 columns                              |
+>>> arithmetic operators
+var a=1+2/(3*-b~/4);
+<<<
+var a = 1 + 2 / (3 * -b ~/ 4);
+>>> conditional operator
+var c=!condition==a>b;
+<<<
+var c = !condition == a > b;
+>>>
+var d=condition?b:obj.foo(a, b);
+<<<
+var d = condition ? b : obj.foo(a, b);
+>>> is!
+var d=obj is!SomeType;
+<<<
+var d = obj is! SomeType;
+>>> generic list literal
+< int  >[1,2,(3+4)];
+<<<
+<int>[1, 2, (3 + 4)];
+>>>
+x &&
+    y;
+<<<
+x && y;
+>>> empty map literal (dartbug.com/16382)
+var m = { };
+<<<
+var m = {};
+>>>
+var m = {};
+<<<
+var m = {};
+>>> generic map literal
+<   int,int  >{   };
+<<<
+<int, int>{};
+>>> unqualified symbol
+var x = #foo;
+<<<
+var x = #foo;
+>>> qualified symbol
+var y=#foo.bar.baz;
+<<<
+var y = #foo.bar.baz;
+>>> long string literal
+throw new FormatException("This is a long exception message.");
+<<<
+throw new FormatException(
+    "This is a long exception message.");
+>>>
+assert(false);
+<<<
+assert(false);
+>>> DON'T indent lines that are continued with a function expression.
+new Future(new Duration(1), () {
+      print('I am a callback');
+    });
+<<<
+new Future(new Duration(1), () {
+  print('I am a callback');
+});
+>>> DO use a space after : in named arguments.
+new ListBox(showScrollbars :true);
+<<<
+new ListBox(showScrollbars: true);
+>>> multiple prefix operators
+-  ~  !  foo;
+<<<
+-~!foo;
+>>> sequential "-" operators are not joined
+-  -  -  -foo;
+<<<
+- - - -foo;
+>>> a "-" operator before a negative integer is not joined
+-  -1;
+<<<
+- -1;
+>>> a "-" operator before a negative floating point number is not joined
+-  -1.2;
+<<<
+- -1.2;

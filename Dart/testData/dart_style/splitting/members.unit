@@ -1,0 +1,10 @@
+40 columns                              |
+>>> prefers to wrap at => before params
+class Foo {
+  Stream methodName(AssetId id) => methodBodyHereItIs;
+}
+<<<
+class Foo {
+  Stream methodName(AssetId id) =>
+      methodBodyHereItIs;
+}

@@ -1,0 +1,80 @@
+40 columns                              |
+>>> discard newlines before library
+
+
+library a;
+<<<
+library a;
+>>> discard newlines before first import
+
+
+import 'a.dart';
+<<<
+import 'a.dart';
+>>> discard newlines before first export
+
+
+export 'a.dart';
+<<<
+export 'a.dart';
+>>> discard newlines before first class
+
+
+class A {}
+<<<
+class A {}
+>>> discard newlines before first variable
+
+
+var a = 1;
+<<<
+var a = 1;
+>>> discard newlines before first function
+
+
+foo() {}
+<<<
+foo() {}
+>>> collapse extra newlines between declarations
+
+
+
+class A {}
+
+
+
+class B = Base with Mixin;
+
+
+
+var c = 1;
+
+
+d() {}
+
+
+<<<
+class A {}
+
+class B = Base with Mixin;
+
+var c = 1;
+
+d() {}
+>>> require at least a single newline between declarations
+class A {} class B = Base with Mixin; var c = 1; d() {}
+<<<
+class A {}
+class B = Base with Mixin;
+var c = 1;
+d() {}
+>>> force two newlines between directives and declarations
+library a; var b;
+<<<
+library a;
+
+var b;
+>>> dartbug.com/15912
+abstract class A = B with C<E>;
+<<<
+abstract class A = B with C<E>;
