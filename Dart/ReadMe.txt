@@ -4,8 +4,8 @@ Prerequisites:
 - Oracle JDK 1.6 or later (1.6 is preferred as we still must be compatible with its API)
 - Git command line client
 - IntelliJ IDEA Ultimate installed. The following bundled plugins are enabled:
-  UI Designer, Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support.
-  Additionally install 'Grammar-Kit' and 'Polymer & Web Components' plugins:
+  Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support, UI Designer.
+  Additionally install 'Dart', 'Grammar-Kit', and 'Polymer & Web Components' plugins:
   start IntelliJ IDEA, on Welcome screen click Configure | Plugins.
   Press 'Browse repositories...', find plugins and install them. Restart IDE.
 
@@ -34,17 +34,28 @@ Prerequisites:
    intellij-plugins/Dart/.idea/workspace.xml file and intellij-plugins/Dart/out folder. You may simply delete these files
    or add to Settings (Preferences) | Version Control | Ignored Files.
 
-6. Project is ready to use. There are 2 preconfigured run configurations for Dart plugin developers:
+6. Open Setting (Preferences) | Language & Frameworks | Dart. Click the checkbox to enable Dart support
+   then set the paths for Dart SDK and Dartium. If you don't have a Dart SDK installed you can download it from
+   https://www.dartlang.org/downloads/ and dartium can be dowloaded from
+   https://www.dartlang.org/downloads/archive/
+
+7. Project is ready to use. There are 2 preconfigured run configurations for Dart plugin developers:
    IDEA - to start IntelliJ IDEA + Dart Plugin from sources,
    Dart tests - it runs all JUnit tests in the Dart plugin module
 
-7. Important! In order to be able to run a single test class ot test method you need to do the following:
+8. Important! In order to be able to run a single test class or test method you need to do the following:
    - open Run | Edit Configurations, select 'Dart tests' run configuration, copy its VM Options to clipboard
    - in the same dialog (Run/Debug Configurations) expand Defaults node, find JUnit under it and paste VM Options
      to the corresponding field
    - repeat the same with Working directory field - it must point to intellij-community/bin
 
-8. Enjoy! All tests should pass. All functionality (except debugging in browser) should work.
+9. [Optional] To enable internal developer actions add "idea.is.internal=true"
+   to the [IDE installation]/bin/idea.properties (on Mac: [IDE
+   installation]/Contents/bin/idea.properties) file. The menu actions Tools ->
+   View PSI Structure... as well as the Tools -> Internal Actions should be
+   visible after restarting.
+
+10. Enjoy! All tests should pass. All functionality (except debugging in browser) should work.
    Zero mandatory local changes in intellij-plugins repository.
    Only 3 files locally changed in intellij-community repository, just keep them in a separate '~never commit' changelist
    and do not worry about them:
