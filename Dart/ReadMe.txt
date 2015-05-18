@@ -12,7 +12,8 @@ Prerequisites:
 1. Clone the following 2 repositories to neighbor folders:
      - git clone https://github.com/JetBrains/intellij-plugins,
      - git clone https://github.com/JetBrains/intellij-community,
-   run intellij-community/getPlugins.sh (getPlugins.bat on Win)
+   Run intellij-community/getPlugins.sh (getPlugins.bat on Win). If that fails because the
+   repos have already been cloned you can just update both of them using 'get pull'.
 
 2. Start IntelliJ Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
    click [+] and add JDK. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
@@ -25,7 +26,8 @@ Prerequisites:
 
 4. Open intellij-community project, compile it.
    Open File | Project Structure | Modules | [+] | Import Module, select intellij-plugins/Dart/Dart-community.iml.
-   In the same Project Structure dialog open community-main module, add dependency on Dart-community module.
+   In the same Project Structure dialog open the Dependencies tab of the community-main module,
+   click [+] at the bottom (Mac) or right (Win/Linux) to add a module dependency on the Dart-community module.
 
 5. Open Settings (Preferences) | Version Control and make sure that intellij-plugins is configured as a 4th Git root.
    If you previously worked with a single-module Dart-plugin project you may have unversioned
