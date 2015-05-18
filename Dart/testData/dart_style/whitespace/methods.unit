@@ -1,0 +1,37 @@
+40 columns                              |
+>>>
+class A {void x(){}}
+<<<
+class A {
+  void x() {}
+}
+>>>
+class A{static bool x(){return true;}}
+<<<
+class A {
+  static bool x() {
+    return true;
+  }
+}
+>>>
+class A{int x()=>42+3;}
+<<<
+class A {
+  int x() => 42 + 3;
+}
+>>> method body
+class A {
+  foo(path) {
+    var buffer = new StringBuffer();
+    var file = new File(path);
+    return file;
+  }
+}
+<<<
+class A {
+  foo(path) {
+    var buffer = new StringBuffer();
+    var file = new File(path);
+    return file;
+  }
+}

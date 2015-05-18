@@ -1,0 +1,65 @@
+40 columns                              |
+>>> do not split before first clause
+for (extremelyReallyQuiteVeryLongFirstClause; second; third) {}
+<<<
+for (extremelyReallyQuiteVeryLongFirstClause;
+    second;
+    third) {}
+>>> split after first clause
+for (veryLongFirstClause; veryLongSecondClause; third) {}
+<<<
+for (veryLongFirstClause;
+    veryLongSecondClause;
+    third) {}
+>>> split after second clause
+for (longFirstClause; longSecondClause; third) {}
+<<<
+for (longFirstClause;
+    longSecondClause;
+    third) {}
+>>> unsplit multiple variable declarations
+for (var a = 1, b = 2; 3; 4) {}
+<<<
+for (var a = 1, b = 2; 3; 4) {}
+>>> split multiple variable declarations
+for (var first = initializer, second = initializer; 1; 2) {}
+<<<
+for (var first = initializer,
+        second = initializer;
+    1;
+    2) {}
+>>> unsplit updaters
+for (foo; bar; a++, b++) {}
+<<<
+for (foo; bar; a++, b++) {}
+>>> split between updaters splits everything
+for (foo; bar; first = 1, second = 2, third = 3) {}
+<<<
+for (foo;
+    bar;
+    first = 1,
+    second = 2,
+    third = 3) {}
+>>> nest wrapped initializer
+for (very + long + initialization + expression; a; b) {}
+<<<
+for (very +
+        long +
+        initialization +
+        expression;
+    a;
+    b) {}
+>>> split in for-in loop
+for (var identifier in iteratableExpression) {}
+<<<
+for (var identifier
+    in iteratableExpression) {}
+>>> split in while condition
+while (aLongConditionExpressionThatWraps) {
+  ;
+}
+<<<
+while (
+    aLongConditionExpressionThatWraps) {
+  ;
+}

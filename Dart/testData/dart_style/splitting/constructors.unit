@@ -1,0 +1,60 @@
+40 columns                              |
+>>> Single initializers can be on one line
+class Foo extends Bar {
+  final int b;
+  Foo(int a, this.b) : super(a);
+}
+<<<
+class Foo extends Bar {
+  final int b;
+  Foo(int a, this.b) : super(a);
+}
+>>> (or not)
+class Foo extends Bar {
+  final int b;
+  Foo(int a, this.b): super(aLongIdentifier);
+}
+<<<
+class Foo extends Bar {
+  final int b;
+  Foo(int a, this.b)
+      : super(aLongIdentifier);
+}
+>>> Multiple initializers are one per line
+class Foo extends Bar {
+  final int b;
+  Foo(int a, int b) : super(a), this.b = b == null ? 0 : b;
+}
+<<<
+class Foo extends Bar {
+  final int b;
+  Foo(int a, int b)
+      : super(a),
+        this.b = b == null ? 0 : b;
+}
+>>> try to keep constructor call together
+var longIdentifier = new Thing(
+    argument, argument);
+<<<
+var longIdentifier =
+    new Thing(argument, argument);
+>>> splits before ":" if the parameter list does not fit on one line
+class Foo {
+  Foo(int longArg1, int longArg2, int longArg3) : this._(longArg1);
+}
+<<<
+class Foo {
+  Foo(int longArg1, int longArg2,
+      int longArg3)
+      : this._(longArg1);
+}
+>>> indent parameters more if body is a wrapped =>
+class Foo {
+  Foo(firstArgument, secondArgument, third) => "very long body that must wrap";
+}
+<<<
+class Foo {
+  Foo(firstArgument, secondArgument,
+          third) =>
+      "very long body that must wrap";
+}

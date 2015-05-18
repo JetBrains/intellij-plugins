@@ -1,0 +1,26 @@
+40 columns                              |
+>>> single-line assert
+assert("some short string");
+<<<
+assert("some short string");
+>>> wrapped assert
+assert("some very long string that wraps");
+<<<
+assert(
+    "some very long string that wraps");
+>>> split in do-while condition
+do {} while ("some long string that wraps");
+<<<
+do {} while (
+    "some long string that wraps");
+>>> split in switch value
+switch ("a long string that must wrap") {
+  case 0:
+    return "ok";
+}
+<<<
+switch (
+    "a long string that must wrap") {
+  case 0:
+    return "ok";
+}

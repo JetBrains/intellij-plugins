@@ -1,0 +1,103 @@
+40 columns                              |
+>>> many arguments
+method(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
+    tenth, eleventh, twelfth) {
+  print('42');
+}
+<<<
+method(first, second, third, fourth,
+    fifth, sixth, seventh, eighth,
+    ninth, tenth, eleventh, twelfth) {
+  print('42');
+}
+>>> wrap before first argument
+longFunctionIsLoooooooooooooong(argument, argument);
+<<<
+longFunctionIsLoooooooooooooong(
+    argument, argument);
+>>> wrap with just one argument
+print('a very very long string literal');
+<<<<
+print(
+    'a very very long string literal');
+>>>
+printNumbers(000000000000000000000, 111);
+<<<
+printNumbers(
+    000000000000000000000, 111);
+>>> force multi-line because of contained block
+method(first,() {"fn";},third,fourth, fifth, sixth, seventh, eighth);
+<<<
+method(first, () {
+  "fn";
+}, third, fourth, fifth, sixth, seventh,
+    eighth);
+>>>
+function(firstArg * second, third * fourthAndLongest);
+<<<
+function(firstArg * second,
+    third * fourthAndLongest);
+>>> arguments, nested
+someFunctionOne(someArgument,
+someFunctionTwo(argument, argument, argument),
+someFunctionTwo(argument, argument, argument),
+someArgument, someArgument);
+<<<
+someFunctionOne(someArgument,
+    someFunctionTwo(
+        argument, argument, argument),
+    someFunctionTwo(
+        argument, argument, argument),
+    someArgument, someArgument);
+>>> hard split inside argument list
+foo(argument, argument, argument, argument, () { fn; }, argument, argument,
+    argument, argument);
+<<<
+foo(argument, argument, argument,
+    argument, () {
+  fn;
+}, argument, argument, argument,
+    argument);
+>>> do not split empty argument list
+foo___________________________________();
+<<<
+foo___________________________________();
+>>> do split empty argument list if it contains a comment
+foo___________________________________(/* */);
+<<<
+foo___________________________________(
+    /* */);
+>>> keep positional and named on first line
+foo(arg, arg, foo: 1, bar: 2);
+<<<
+foo(arg, arg, foo: 1, bar: 2);
+>>> move just named to second line even though all fit on second
+reallyLongMethod(
+    argument, foo: first, bar: second);
+<<<
+reallyLongMethod(argument,
+    foo: first, bar: second);
+>>> split named and keep positional on first
+reallyLongMethod(argument, argument, foo: first, bar: second, baz: third);
+<<<
+reallyLongMethod(argument, argument,
+    foo: first,
+    bar: second,
+    baz: third);
+>>> only named arguments and move to second line
+reallyLongMethod(foo: first, bar: second, ba: third);
+<<<
+reallyLongMethod(
+    foo: first, bar: second, ba: third);
+>>> only named arguments and split
+reallyLongMethod(foo: first, bar: second, baz: third);
+<<<
+reallyLongMethod(
+    foo: first,
+    bar: second,
+    baz: third);
+>>> avoid splitting before single positional argument
+someLongReceiver.veryLongMethod(argument);
+<<<
+someLongReceiver
+    .veryLongMethod(argument);
