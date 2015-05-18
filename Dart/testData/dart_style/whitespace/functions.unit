@@ -1,0 +1,78 @@
+40 columns                              |
+>>> external
+ external
+void
+printToConsole(line);
+<<<
+external void printToConsole(line);
+>>> nested functions
+x(){y(){z(){}}}
+<<<
+x() {
+  y() {
+    z() {}
+  }
+}
+>>> named parameters
+int a(var x, {optional: null}) => null;
+<<<
+int a(var x, {optional: null}) => null;
+>>> optional parameters
+int a(var x, [optional = null]) => null;
+<<<
+int a(var x, [optional = null]) => null;
+>>> async
+main()
+    async  {
+  var x = ()   async=> 1;
+  y()async  {}
+  var z = ()
+ async
+     {};
+}
+<<<
+main() async {
+  var x = () async => 1;
+  y() async {}
+  var z = () async {};
+}
+>>>
+fish() => []
+  ..add(1)
+  ..add(2);
+<<<
+fish() => []..add(1)..add(2);
+>>>
+fish() => []..add(1);
+<<<
+fish() => []..add(1);
+>>> empty function bodies are a single line
+void main() { }
+<<<
+void main() {}
+>>>
+void main() {
+
+}
+<<<
+void main() {}
+>>> DO use a space after : in named parameters
+foo({showScrollbars :false}) {}
+<<<
+foo({showScrollbars: false}) {}
+>>> DO use a spaces around = in optional positional parameters.
+listen([int port=80]) {}
+<<<
+listen([int port = 80]) {}
+>>> async*
+main()async  *{var lambda = ()async *{};}
+<<<
+main() async* {
+  var lambda = () async* {};
+}
+>>> sync* functions
+main()sync  *{var lambda = ()sync *{};}
+<<<
+main() sync* {
+  var lambda = () sync* {};
+}

@@ -1,0 +1,56 @@
+40 columns                              |
+>>> long single-line
+"this string is longer than forty characters";
+<<<
+"this string is longer than forty characters";
+>>> short one line multi-line
+"""not too long""";
+<<<
+"""not too long""";
+>>> multi-line with short lines
+"""
+not too long
+or this one
+""";
+<<<
+"""
+not too long
+or this one
+""";
+>>> multi-line with long lines
+"""
+this string is longer than forty characters
+this one is also is longer than forty characters
+""";
+<<<
+"""
+this string is longer than forty characters
+this one is also is longer than forty characters
+""";
+>>> only indent the first line of multiline strings
+{
+"""
+multiline
+""";
+}
+<<<
+{
+  """
+multiline
+""";
+}
+>>> do not wrap the first line if not needed
+someMethod("""first line fits in here
+more stuff down here too that is long
+""");
+<<<
+someMethod("""first line fits in here
+more stuff down here too that is long
+""");
+>>> wrap first line if needed
+someMethod("""first line does not fits here
+""");
+<<<
+someMethod(
+    """first line does not fits here
+""");

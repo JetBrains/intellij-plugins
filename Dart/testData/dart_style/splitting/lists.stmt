@@ -1,0 +1,89 @@
+40 columns                              |
+>>> empty list
+[];
+<<<
+[];
+>>> exactly 40 characters
+[first, second, third, fourth, seventh];
+<<<
+[first, second, third, fourth, seventh];
+>>>
+[first, second, third, fourth, fifth, sixth];
+<<<
+[
+  first,
+  second,
+  third,
+  fourth,
+  fifth,
+  sixth
+];
+>>> nested unsplit list
+[[first], [], [
+    second,third, fourth]  ];
+<<<
+[[first], [], [second, third, fourth]];
+>>> nested split list
+[first, [second, third, fourth], fifth, [sixth, seventh, eighth, nine, tenth,
+    eleventh]];
+<<<
+[
+  first,
+  [second, third, fourth],
+  fifth,
+  [
+    sixth,
+    seventh,
+    eighth,
+    nine,
+    tenth,
+    eleventh
+  ]
+];
+>>> force multi-line because of contained block
+[first, () {"fn";},third,fourth];
+<<<
+[
+  first,
+  () {
+    "fn";
+  },
+  third,
+  fourth
+];
+>>> spaces between items
+[1,2,3,4];
+<<<
+[1, 2, 3, 4];
+>>> dangling comma
+[1 , ];
+<<<
+[1,];
+>>> dangling comma multiline
+[first, second, third, fourth, fifth, sixth  , ];
+<<<
+[
+  first,
+  second,
+  third,
+  fourth,
+  fifth,
+  sixth,
+];
+>>> nested lists are forced to split
+[[[[[argument, argument, argument, argument]]]]];
+<<<
+[
+  [
+    [
+      [
+        [
+          argument,
+          argument,
+          argument,
+          argument
+        ]
+      ]
+    ]
+  ]
+];

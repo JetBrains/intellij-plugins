@@ -1,0 +1,6 @@
+40 columns                              |
+>>> do not split after "("
+doSomethingWithFn((argument) => functionBodyTooLong());
+<<<
+doSomethingWithFn((argument) =>
+    functionBodyTooLong());

@@ -1,0 +1,65 @@
+40 columns                              |
+>>> split all chained calls if they don't fit on one line
+compiler.something().something().something();
+<<<
+compiler
+    .something()
+    .something()
+    .something();
+>>> do not split chained calls if not needed
+compiler.something().something().some();
+<<<
+compiler.something().something().some();
+>>> don't split before implicit receiver
+return
+     call({'type': type, 'id': id})
+    .then(deserializeAsset);
+<<<
+return call({'type': type, 'id': id})
+    .then(deserializeAsset);
+>>> allows chained calls on one line with multi-line last argument list
+compiler
+    .run(script)
+    .then((_) {
+  body;
+});
+<<<
+compiler.run(script).then((_) {
+  body;
+});
+>>> allow inline chains before and after a hard newline
+compiler.a().b((_) {
+  body;
+}).c().d();
+<<<
+compiler.a().b((_) {
+  body;
+}).c().d();
+>>> allow an inline chain before a hard newline but not after
+compiler.a().b((_) {
+  body;
+}).somethingLong().somethingLong().somethingLong();
+<<<
+compiler.a().b((_) {
+  body;
+})
+    .somethingLong()
+    .somethingLong()
+    .somethingLong();
+>>> allow an inline chain after a hard newline but not before
+compiler.somethingLong().somethingLong().somethingLong((_) {
+  body;
+}).a().b();
+<<<
+compiler
+    .somethingLong()
+    .somethingLong()
+    .somethingLong((_) {
+  body;
+}).a().b();
+>>> nest calls one more than target
+someVeryLongExpression = someVeryLongExpression.someLongMethod();
+<<<
+someVeryLongExpression =
+    someVeryLongExpression
+        .someLongMethod();

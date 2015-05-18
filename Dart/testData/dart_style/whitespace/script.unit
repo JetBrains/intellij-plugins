@@ -1,0 +1,65 @@
+40 columns                              |
+>>> one line between script and library
+#!script
+library foo;
+<<<
+#!script
+library foo;
+>>> multiple lines between script and library
+#!script
+
+
+
+library foo;
+<<<
+#!script
+
+library foo;
+>>> one line between script and import
+#!script
+import 'foo';
+<<<
+#!script
+import 'foo';
+>>> multiple lines between script and import
+#!script
+
+
+
+import 'foo';
+<<<
+#!script
+
+import 'foo';
+>>> one line between script and line comment
+#!script
+// comment
+<<<
+#!script
+// comment
+>>> multiple lines between script and line comment
+#!script
+
+
+
+// comment
+<<<
+#!script
+
+// comment
+>>> one line between script and block comment
+#!script
+/* comment */
+<<<
+#!script
+/* comment */
+>>> multiple lines between script and block comment
+#!script
+
+
+
+/* comment */
+<<<
+#!script
+
+/* comment */

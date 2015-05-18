@@ -1,0 +1,63 @@
+40 columns                              |
+>>> indentation
+class A {
+var z;
+inc(int x) => ++x;
+foo(int x) {
+if (x == 0) {
+return true;
+}}}
+<<<
+class A {
+  var z;
+  inc(int x) => ++x;
+  foo(int x) {
+    if (x == 0) {
+      return true;
+    }
+  }
+}
+>>> trailing space inside body
+class A {
+  }
+<<<
+class A {}
+>>> leading space before "class"
+  class A {
+}
+<<<
+class A {}
+>>>
+class A  { int meaningOfLife() => 42; }
+<<<
+class A {
+  int meaningOfLife() => 42;
+}
+>>>
+class      A  {
+  }
+<<<
+class A {}
+>>>
+class A{var z;inc(int x) => ++x;}
+<<<
+class A {
+  var z;
+  inc(int x) => ++x;
+}
+>>> eats newlines
+abstract
+
+class
+
+
+A{}
+<<<
+abstract class A {}
+>>> native class
+class A extends B
+native
+"Zapp" {
+}
+<<<
+class A extends B native "Zapp" {}

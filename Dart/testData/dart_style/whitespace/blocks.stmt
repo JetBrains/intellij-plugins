@@ -1,0 +1,57 @@
+40 columns                              |
+>>> require at least one newline between statements
+{a();b();c();}
+<<<
+{
+  a();
+  b();
+  c();
+}
+>>> allow an extra newline between statements
+{
+  a();
+
+  b();
+  c();
+}
+<<<
+{
+  a();
+
+  b();
+  c();
+}
+>>> collapse any other newlines
+{
+
+
+  a();
+
+
+
+  b();
+
+
+
+  c();
+
+
+}
+<<<
+{
+  a();
+
+  b();
+
+  c();
+}
+>>> dartbug.com/16810
+{
+  var a;;;
+}
+<<<
+{
+  var a;
+  ;
+  ;
+}

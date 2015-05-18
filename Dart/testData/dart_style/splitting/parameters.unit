@@ -1,0 +1,16 @@
+40 columns                              |
+>>> long parameters list, this.field
+class Foo {
+  Foo(this.first, this.second, this.third, this.fourth);
+}
+<<<
+class Foo {
+  Foo(this.first, this.second,
+      this.third, this.fourth);
+}
+>>> indent parameters more if body is a wrapped =>
+method(int firstArgument, int argumentTwo) => "very long body that must wrap";
+<<<
+method(int firstArgument,
+        int argumentTwo) =>
+    "very long body that must wrap";
