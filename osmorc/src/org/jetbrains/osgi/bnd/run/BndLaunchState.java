@@ -78,7 +78,8 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
       myLauncher.prepare();
     }
     catch (Exception e) {
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.invalid", runFile), e);
+      LOG.info(e);
+      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
 
     myBundleStamps = ContainerUtil.newHashMap();

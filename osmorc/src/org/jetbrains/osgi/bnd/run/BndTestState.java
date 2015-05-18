@@ -84,7 +84,8 @@ public class BndTestState extends JavaCommandLineState {
       myTester = Workspace.getRun(runFile).getProjectTester();
     }
     catch (Exception e) {
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.invalid", runFile), e);
+      LOG.info(e);
+      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
 
     //noinspection InstanceofIncompatibleInterface
@@ -98,14 +99,16 @@ public class BndTestState extends JavaCommandLineState {
       ((EclipseJUnitTester)myTester).setPort(mySocket.getLocalPort());
     }
     catch (Exception e) {
-      throw new CantRunException(OsmorcBundle.message("bnd.test.cannot.run", e.getMessage()), e);
+      LOG.info(e);
+      throw new CantRunException(OsmorcBundle.message("bnd.test.cannot.run", e.getMessage()));
     }
 
     try {
       myTester.prepare();
     }
     catch (Exception e) {
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.invalid", runFile), e);
+      LOG.info(e);
+      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
   }
 
