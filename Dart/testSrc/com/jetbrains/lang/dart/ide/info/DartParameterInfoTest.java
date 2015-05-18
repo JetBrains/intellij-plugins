@@ -10,9 +10,6 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
@@ -144,5 +141,4 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
   public void testParamInfo_fieldFormal_named() throws Throwable {
     doTest("int a, {double b}", 0);
   }
-
 }

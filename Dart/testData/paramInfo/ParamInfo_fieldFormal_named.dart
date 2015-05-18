@@ -1,5 +1,5 @@
 class Test {
-  double b;
+  double c, b;
   Test(int a, {this.b});
 }
 

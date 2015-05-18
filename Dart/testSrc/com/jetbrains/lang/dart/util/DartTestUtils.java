@@ -36,6 +36,10 @@ public class DartTestUtils {
   public static final String SDK_HOME_PATH = BASE_TEST_DATA_PATH + "/sdk";
 
   private static String findTestDataPath() {
+    if (new File(PathManager.getHomePath() + "/contrib").isDirectory()) {
+      // started from IntelliJ IDEA Ultimate project
+      return FileUtil.toSystemIndependentName(PathManager.getHomePath() + "/contrib/Dart/testData");
+    }
 
     final File f = new File("testData");
     if (f.isDirectory()) {
@@ -52,11 +56,10 @@ public class DartTestUtils {
 
     if (new File(parentPath + "/contrib").isDirectory()) {
       // started from IntelliJ IDEA Community + Dart Plugin project
-      FileUtil.toSystemIndependentName(parentPath + "/contrib/Dart/testData");
+      return FileUtil.toSystemIndependentName(parentPath + "/contrib/Dart/testData");
     }
 
-    // started from IntelliJ IDEA Ultimate project
-    return FileUtil.toSystemIndependentName(PathManager.getHomePath() + "/contrib/Dart/testData");
+    return "";
   }
 
   public static void configureDartSdk(final @NotNull Module module, @NotNull Disposable disposable) {

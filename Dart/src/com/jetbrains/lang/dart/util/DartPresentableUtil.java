@@ -112,17 +112,20 @@ public class DartPresentableUtil {
     }
     else if (fieldFormalParameter != null) {
       DartType type = fieldFormalParameter.getType();
+
       if (type == null) {
-        PsiElement fieldName = fieldFormalParameter.getReferenceExpression().resolve();
-        if (fieldName != null) {
-          DartVarAccessDeclaration fieldDecl = PsiTreeUtil.getParentOfType(fieldName, DartVarAccessDeclaration.class);
-          type = PsiTreeUtil.getChildOfType(fieldDecl, DartType.class);
+        final PsiElement resolve = fieldFormalParameter.getReferenceExpression().resolve();
+        DartVarDeclarationList varDeclarationList = PsiTreeUtil.getParentOfType(resolve, DartVarDeclarationList.class);
+        if (varDeclarationList != null) {
+          type = varDeclarationList.getVarAccessDeclaration().getType();
         }
       }
+
       if (type != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
         result.append(SPACE);
       }
+
       result.append(fieldFormalParameter.getReferenceExpression().getText());
     }
     else if (simpleFormalParameter != null) {
