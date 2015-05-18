@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.validation.fixes;
 
+import com.google.common.io.Files;
 import com.google.dart.server.generated.types.*;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -17,6 +18,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -190,10 +192,11 @@ public final class DartServerFixIntention implements IntentionAction {
     // Create the file if it does not exist.
     if (fileEdit.getFileStamp() == -1) {
       try {
-        final File ioFile = new File(filePath);
-        if (!ioFile.exists()) {
-          FileUtil.writeToFile(ioFile, "");
-          LocalFileSystem.getInstance().refreshAndFindFileByIoFile(ioFile);
+        final String directoryPath = VfsUtil.getParentDir(filePath);
+        final VirtualFile directory = VfsUtil.createDirectoryIfMissing(directoryPath);
+        if (directory != null) {
+          final String fileName = VfsUtil.extractFileName(filePath);
+          directory.createChildData(this, fileName);
         }
       }
       catch (IOException e) {
