@@ -67,6 +67,12 @@ class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
     assertManifest(myCache.getManifest(myModule))
   }
 
+  fun testModuleBndImplicitBSN() {
+    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd)
+    myFixture.addFileToProject(myConfiguration.getBndFileLocation(), "Bundle-Version: 1.0.0\n")
+    assertManifest(myCache.getManifest(myModule))
+  }
+
   fun testModuleCacheUpdate() {
     myConfiguration.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled)
     assertNotNull(myCache.getManifest(myModule))
@@ -84,6 +90,6 @@ class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
 
   private fun assertManifest(manifest: BundleManifest?) {
     assertNotNull(manifest)
-    assertFalse(StringUtil.isEmptyOrSpaces(manifest!!.getBundleSymbolicName()))
+    assertTrue(StringUtil.isNotEmpty(manifest!!.getBundleSymbolicName()))
   }
 }

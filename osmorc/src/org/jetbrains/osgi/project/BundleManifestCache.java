@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.JdkOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,6 +40,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SoftHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 
@@ -220,6 +222,17 @@ public class BundleManifestCache {
       for (Object key : properties.keySet()) {
         String name = key.toString();
         map.put(name, properties.getProperty(name));
+      }
+      if (map.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
+        VirtualFile file = propertiesFile.getVirtualFile();
+        if (file != null) {
+          if (!BndProjectImporter.BND_FILE.equals(file.getName())) {
+            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtil.getNameWithoutExtension(file.getName()));
+          }
+          else if (file.getParent() != null) {
+            map.put(Constants.BUNDLE_SYMBOLICNAME, file.getParent().getName());
+          }
+        }
       }
       return new BundleManifest(map, propertiesFile);
     }
