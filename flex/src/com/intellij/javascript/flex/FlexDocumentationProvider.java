@@ -148,7 +148,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
         protected String convertReference(String root, String href) {
           if (StringUtil.startsWithChar(href, '#')) {
-            return DocumentationManagerProtocol.DOC_ELEMENT_PROTOCOL + root + href;
+            return root + href;
           }
 
           if (root.startsWith("file://") && SystemInfo.isWindows) {
