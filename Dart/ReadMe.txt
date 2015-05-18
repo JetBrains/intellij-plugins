@@ -12,7 +12,8 @@ Prerequisites:
 1. Clone the following 2 repositories to neighbor folders:
      - git clone https://github.com/JetBrains/intellij-plugins,
      - git clone https://github.com/JetBrains/intellij-community,
-   run intellij-community/getPlugins.sh (getPlugins.bat on Win)
+   Run intellij-community/getPlugins.sh (getPlugins.bat on Win). If that fails because the
+   repos have already been cloned you can just update both of them using 'get pull'.
 
 2. Start IntelliJ Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
    click [+] and add JDK. Add [JDK]/lib/tools.jar to the SDK Classpath if it is not there. Rename SDK to 'IDEA jdk'.
