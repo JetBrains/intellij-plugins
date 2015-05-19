@@ -12,32 +12,32 @@ import java.util.*;
 
 public class DartListPackageDirsLibraryProperties extends LibraryProperties<DartListPackageDirsLibraryProperties> {
 
-  private @NotNull Map<String, Set<String>> myPackageNameToDirsMap;
+  private @NotNull Map<String, List<String>> myPackageNameToDirsMap;
 
   public DartListPackageDirsLibraryProperties() {
-    myPackageNameToDirsMap = new TreeMap<String, Set<String>>();
+    myPackageNameToDirsMap = new TreeMap<String, List<String>>();
   }
 
   @NotNull
   @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false)
-  public Map<String, Set<String>> getPackageNameToDirsMap() {
+  public Map<String, List<String>> getPackageNameToDirsMap() {
     return myPackageNameToDirsMap;
   }
 
-  public void setPackageNameToDirsMap(@NotNull final Map<String, Set<String>> packageNameToDirsMap) {
+  public void setPackageNameToDirsMap(@NotNull final Map<String, List<String>> packageNameToDirsMap) {
     myPackageNameToDirsMap = packageNameToDirsMap;
   }
 
   public void setPackageNameToFileDirsMap(@NotNull final Map<String, List<File>> packageNameToFileDirsMap) {
-    myPackageNameToDirsMap = new TreeMap<String, Set<String>>();
+    myPackageNameToDirsMap = new TreeMap<String, List<String>>();
     for (Map.Entry<String, List<File>> entry : packageNameToFileDirsMap.entrySet()) {
-      Set<String> stringSet = myPackageNameToDirsMap.get(entry.getKey());
-      if (stringSet == null) {
-        stringSet = new TreeSet<String>();
-        myPackageNameToDirsMap.put(entry.getKey(), stringSet);
+      List<String> stringList = myPackageNameToDirsMap.get(entry.getKey());
+      if (stringList == null) {
+        stringList = new ArrayList<String>();
+        myPackageNameToDirsMap.put(entry.getKey(), stringList);
       }
       for (File file : entry.getValue()) {
-        stringSet.add(FileUtil.toSystemIndependentName(file.getPath()));
+        stringList.add(FileUtil.toSystemIndependentName(file.getPath()));
       }
     }
   }
