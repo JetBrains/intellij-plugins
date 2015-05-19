@@ -144,5 +144,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Dart SDK" level="application" />
   </component>
 </module>
