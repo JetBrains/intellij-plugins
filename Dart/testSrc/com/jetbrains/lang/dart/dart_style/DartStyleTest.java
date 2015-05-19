@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.dart_style;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
@@ -27,41 +28,189 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("comments");
   }
 
-  //public void testEnums() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testExpressions() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testFunctions() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testLists() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testMaps() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testMixed() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testStatements() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
-  //
-  //public void testTop_level() throws Exception {
-  //  runTestInDirectory("comments");
-  //}
+  public void testEnums() throws Exception {
+    runTestInDirectory("comments");
+  }
 
-  //public void test1() throws Exception {
-  //  runTestInDirectory("selections");
-  //}
+  public void testExpressions() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testFunctions() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testLists() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testMaps() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testMixed() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testStatements() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testTop_level() throws Exception {
+    runTestInDirectory("comments");
+  }
+
+  public void testSelections() throws Exception {
+    runTestInDirectory("selections");
+  }
+
+  public void testArguments() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testArrows() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testAssignments() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testClasses2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testConstructors2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testEnums2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testExports() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testExpressions2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testImports() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testInvocations() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testLists2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void test1Loops() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testMaps2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testMembers() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testMixed2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testParameters() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testStatements2() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testStrings() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testVariables() throws Exception {
+    runTestInDirectory("splitting");
+  }
+
+  public void testBlocks() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testCascades() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testClasses3() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testCompilation_unit() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testConstructors() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testDirectives() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testDo() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testEnums3() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testExpressions3() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testFor() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testFunctions3() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testIf() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testMetadata() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testMethods() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testScript() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testSwitch() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testTry() throws Exception {
+    runTestInDirectory("whitespace");
+  }
+
+  public void testWhile() throws Exception {
+    runTestInDirectory("whitespace");
+  }
 
   /**
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>name</code>.
@@ -95,16 +244,9 @@ public class DartStyleTest extends FormatterTestCase {
         int leadingIndent = 0;
         Matcher matcher = indentPattern.matcher(description);
         if (matcher.matches()) {
-          // The test specifies it in spaces, but the formatter expects levels.
-          leadingIndent = Integer.parseInt(matcher.group(1)) / 2;
+          // The leadingIndent is only used by some tests in 'regression'.
+          leadingIndent = Integer.parseInt(matcher.group(1));
           description = description.substring(matcher.end());
-        }
-
-        if (description == "") {
-          description = "line " + (i + 1);
-        }
-        else {
-          description = "line " + (i + 1) + ": " + description;
         }
 
         String input = "";
@@ -122,6 +264,7 @@ public class DartStyleTest extends FormatterTestCase {
         SourceCode expected = extractSelection(expectedOutput, isCompilationUnit);
         final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
         settings.RIGHT_MARGIN = pageWidth;
+        myTextRange = new TextRange(inputCode.selectionStart, inputCode.selectionEnd());
         doTextTest(inputCode.text, expected.text);
       }
     }
@@ -142,10 +285,10 @@ public class DartStyleTest extends FormatterTestCase {
     int end = source.indexOf("›");
     source = source.replaceAll("›", "");
 
-    return new SourceCode(source, isCompilationUnit, start == -1 ? 0 : start, end == -1 ? 0 : end - start);
+    return new SourceCode(source, isCompilationUnit, start == -1 ? 0 : start, end == -1 ? source.length() : end - start);
   }
 
-  static class SourceCode {
+  private static class SourceCode {
     String text;
     boolean isCompilationUnit;
     int selectionStart, selectionLength;
@@ -155,6 +298,10 @@ public class DartStyleTest extends FormatterTestCase {
       this.isCompilationUnit = isCU;
       this.selectionStart = start;
       this.selectionLength = len;
+    }
+
+    int selectionEnd() {
+      return selectionStart + selectionLength;
     }
   }
 }
