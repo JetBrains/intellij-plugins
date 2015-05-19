@@ -12,6 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
