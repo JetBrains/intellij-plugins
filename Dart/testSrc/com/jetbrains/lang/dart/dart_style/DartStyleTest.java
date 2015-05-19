@@ -23,19 +23,61 @@ public class DartStyleTest extends FormatterTestCase {
     return "dart_style";
   }
 
-  public void test1() throws Exception {
-    runTestsInDirectory("comments");
+  public void testClasses() throws Exception {
+    runTestInDirectory("comments");
   }
 
-  /// Run tests defined in "*.unit" and "*.stmt" files inside directory [name].
-  void runTestsInDirectory(String name) throws Exception {
+  //public void testEnums() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testExpressions() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testFunctions() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testLists() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testMaps() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testMixed() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testStatements() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+  //
+  //public void testTop_level() throws Exception {
+  //  runTestInDirectory("comments");
+  //}
+
+  //public void test1() throws Exception {
+  //  runTestInDirectory("selections");
+  //}
+
+  /**
+   * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>name</code>.
+   */
+  private void runTestInDirectory(String dirName) throws Exception {
     Pattern indentPattern = Pattern.compile("^\\(indent (\\d+)\\)\\s*");
 
-    File dir = new File(new File(getTestDataPath(), getBasePath()), name);
-    for (File entry : dir.listFiles()) {
-      if (!entry.getName().endsWith(".stmt") && !entry.getName().endsWith(".unit")) {
+    String testName = getTestName(true);
+    File dir = new File(new File(getTestDataPath(), getBasePath()), dirName);
+    boolean found = false;
+    for (String ext : new String[] {".stmt", ".unit"}) {
+      File entry = new File(dir, testName + ext);
+      if (!entry.exists()) {
         continue;
       }
+      found = true;
       String[] lines = FileUtil.loadLines(entry).toArray(new String[0]);
 
       // The first line may have a "|" to indicate the page width.
@@ -60,7 +102,8 @@ public class DartStyleTest extends FormatterTestCase {
 
         if (description == "") {
           description = "line " + (i + 1);
-        } else {
+        }
+        else {
           description = "line " + (i + 1) + ": " + description;
         }
 
@@ -82,11 +125,16 @@ public class DartStyleTest extends FormatterTestCase {
         doTextTest(inputCode.text, expected.text);
       }
     }
+    if (!found) {
+      fail("No test data for " + testName);
+    }
   }
 
-  /// Given a source string that contains ‹ and › to indicate a selection, returns
-  /// a [SourceCode] with the text (with the selection markers removed) and the
-  /// correct selection range.
+  /*
+   * Given a source string that contains ‹ and › to indicate a selection, returns
+   * a <code>SourceCode</code> with the text (with the selection markers removed)
+   * and the correct selection range.
+   */
   private SourceCode extractSelection(String source, boolean isCompilationUnit) {
     int start = source.indexOf("‹");
     source = source.replaceAll("‹", "");
