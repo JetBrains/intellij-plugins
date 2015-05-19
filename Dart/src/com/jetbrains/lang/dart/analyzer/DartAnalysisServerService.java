@@ -614,7 +614,7 @@ public class DartAnalysisServerService {
           public void run() {
             server.analysis_updateOptions(new AnalysisOptions(true, true, true, false, false, true, false));
           }
-        }, "analysis_updateOptions(true, true, true, false, true, false)", SEND_REQUEST_TIMEOUT);
+        }, "analysis_updateOptions(true, true, true, false, false, true, false)", SEND_REQUEST_TIMEOUT);
 
         if (!ok) {
           stopServer();
