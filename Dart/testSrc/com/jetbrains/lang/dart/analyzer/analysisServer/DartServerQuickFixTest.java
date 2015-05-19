@@ -68,6 +68,26 @@ public abstract class DartServerQuickFixTest extends CodeInsightFixtureTestCase 
     doQuickFixTest("Create class 'A'");
   }
 
+  public void testCreatePartFile() throws Throwable {
+    myFixture.configureByFile(getTestName(false) + ".dart");
+
+    final IntentionAction quickFix = myFixture.findSingleIntention("Create file 'CreatePartFile_part.dart'");
+    assertEquals(true, quickFix.isAvailable(getProject(), getEditor(), getFile()));
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        quickFix.invoke(getProject(), getEditor(), getFile());
+      }
+    });
+
+    final VirtualFile newFile = myFixture.findFileInTempDir("CreatePartFile_part.dart");
+    assertNotNull(newFile);
+    myFixture.openFileInEditor(newFile);
+
+    myFixture.checkResultByFile("CreatePartFile_part.after.dart");
+  }
+
   public void testUseEqEqNull() throws Throwable {
     doQuickFixTest("Use == null instead of 'is Null'");
   }
