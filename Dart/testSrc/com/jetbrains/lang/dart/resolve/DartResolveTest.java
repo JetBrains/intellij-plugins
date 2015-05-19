@@ -424,6 +424,31 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
            "}");
   }
 
+  public void testNamedParameter_constructorDefaultInvocaiton() throws Exception {
+    doTest("class A {\n" +
+           "  A({test});\n" +
+           "}\n" +
+           "main() {\n" +
+           "  new A(te<caret expected='file.dart -> A -> A -> test'>st: 0);\n" +
+           "}");
+  }
+
+  public void testNamedParameter_constructorNamedInvocaiton() throws Exception {
+    doTest("class A {\n" +
+           "  A.named({test});\n" +
+           "}\n" +
+           "main() {\n" +
+           "  new A.named(te<caret expected='file.dart -> A -> named -> test'>st: 0);\n" +
+           "}");
+  }
+
+  public void testNamedParameter_functionInvocaiton() throws Exception {
+    doTest("f({test}) {}\n" +
+           "main() {\n" +
+           "  f(te<caret expected='file.dart -> f -> test'>st: 0);\n" +
+           "}");
+  }
+
   public void testFromPartToPartViaPackageUrl() throws Exception {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     myFixture.addFileToProject("lib/lib.dart", "library libName;\n" +
