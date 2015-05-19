@@ -34,7 +34,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
   @Nullable private final VirtualFile myPubspecYamlFile;
   @Nullable private VirtualFile myPackageRoot;
   @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<String, VirtualFile>();
-  @NotNull private final Map<String, Set<String>> myPubListPackageDirsMap = new THashMap<String, Set<String>>();
+  @NotNull private final Map<String, List<String>> myPubListPackageDirsMap = new THashMap<String, List<String>>();
 
   DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
@@ -70,7 +70,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     final VirtualFile dir = myLivePackageNameToDirMap.get(packageName);
     if (dir != null) return dir;
 
-    final Set<String> dirPaths = myPubListPackageDirsMap.get(packageName);
+    final List<String> dirPaths = myPubListPackageDirsMap.get(packageName);
     if (dirPaths != null) {
       VirtualFile notNullPackageDir = null;
 
@@ -119,7 +119,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
         }
       }
 
-      final Set<String> packageDirs = myPubListPackageDirsMap.get(packageName);
+      final List<String> packageDirs = myPubListPackageDirsMap.get(packageName);
       if (packageDirs != null) {
         for (String packageDirPath : packageDirs) {
           final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(packageDirPath + "/" + pathRelToPackageDir);
@@ -205,8 +205,8 @@ class DartUrlResolverImpl extends DartUrlResolver {
 
   @Nullable
   private static String getUrlIfFileFromPubListPackageDirs(final @NotNull VirtualFile file,
-                                                           final @NotNull Map<String, Set<String>> pubListPackageDirsMap) {
-    for (Map.Entry<String, Set<String>> mapEntry : pubListPackageDirsMap.entrySet()) {
+                                                           final @NotNull Map<String, List<String>> pubListPackageDirsMap) {
+    for (Map.Entry<String, List<String>> mapEntry : pubListPackageDirsMap.entrySet()) {
       for (String dirPath : mapEntry.getValue()) {
         if (file.getPath().startsWith(dirPath + "/")) {
           final String packageName = mapEntry.getKey();
