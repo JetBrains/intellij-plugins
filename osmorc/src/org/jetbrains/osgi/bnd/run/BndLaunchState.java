@@ -53,6 +53,8 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   private static final Logger LOG = Logger.getInstance(BndLaunchState.class);
   private static final Pair<Long, Long> MISSING_BUNDLE = pair(0l, 0l);
 
+  private static final Map<String, NotificationGroup> ourNotificationGroups = ContainerUtil.newHashMap();
+
   private final BndRunConfigurationBase.Launch myConfiguration;
   private final Project myProject;
   private final NotificationGroup myNotifications;
@@ -65,8 +67,14 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
     myConfiguration = configuration;
     myProject = myConfiguration.getProject();
 
-    String name = BndRunConfigurationType.getInstance().getDisplayName();
-    myNotifications = NotificationGroup.toolWindowGroup(name, environment.getExecutor().getToolWindowId());
+    String toolWindowId = environment.getExecutor().getToolWindowId();
+    NotificationGroup notificationGroup = ourNotificationGroups.get(toolWindowId);
+    if (notificationGroup == null) {
+      String name = BndRunConfigurationType.getInstance().getDisplayName() + " (" + toolWindowId + ")";
+      notificationGroup = NotificationGroup.toolWindowGroup(name, toolWindowId);
+      ourNotificationGroups.put(toolWindowId, notificationGroup);
+    }
+    myNotifications = notificationGroup;
 
     File runFile = new File(myConfiguration.bndRunFile);
     if (!runFile.isFile()) {
@@ -78,7 +86,8 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
       myLauncher.prepare();
     }
     catch (Exception e) {
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.invalid", runFile), e);
+      LOG.info(e);
+      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
 
     myBundleStamps = ContainerUtil.newHashMap();
