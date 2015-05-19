@@ -13,8 +13,9 @@ import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.NullableFunction;
@@ -38,8 +39,8 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
   };
 
   public static boolean isActionScriptFile(File file) {
-    String extension = FileUtilRt.getExtension(file.getName());
-    return JavaScriptSupportLoader.ECMA_SCRIPT_L4.equals(JavaScriptSupportLoader.getLanguageDialect(extension));
+    final FileType fileType = FileTypeRegistry.getInstance().findFileTypeByName(file.getName());
+    return fileType == JavaScriptSupportLoader.ECMA_SCRIPT_L4;
   }
 
   @NotNull

@@ -1,10 +1,9 @@
 package com.intellij.javascript.flex.copyright;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.maddyhome.idea.copyright.CopyrightProfile;
 import com.maddyhome.idea.copyright.psi.UpdateCopyright;
@@ -30,8 +29,7 @@ public class UpdateActionScriptCopyrightsProvider extends UpdateCopyrightsProvid
     }
 
     protected boolean accept() {
-      return JavaScriptSupportLoader.getLanguageDialect(FileUtilRt.getExtension(getFile().getName())) ==
-             JavaScriptSupportLoader.ECMA_SCRIPT_L4;
+      return DialectDetector.isActionScript(getFile());
     }
   }
 }

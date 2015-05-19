@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.ide.util.projectWizard.importSources.util.CommonSourceRootDetectionUtil;
+import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector;
@@ -52,10 +53,8 @@ class FlexSourcesRootDetector extends RootDetector {
         progressIndicator.checkCanceled();
         progressIndicator.setText2(file.getPresentableUrl());
 
-        String extension;
-        if (!file.isDirectory() &&
-            ((extension = file.getExtension()) != null)) {
-          if (JavaScriptSupportLoader.ECMA_SCRIPT_L4.equals(JavaScriptSupportLoader.getLanguageDialect(extension))) {
+        if (!file.isDirectory()) {
+          if (file.getFileType() == ActionScriptFileType.INSTANCE) {
 
             Pair<VirtualFile, String> root =
               CommonSourceRootDetectionUtil.VIRTUAL_FILE
