@@ -4,11 +4,16 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
+import com.intellij.testFramework.exceptionCases.AssertionErrorCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
+import junit.framework.AssertionFailedError;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.*;
 
@@ -108,7 +113,7 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("splitting");
   }
 
-  public void test1Loops() throws Exception {
+  public void testLoops() throws Exception {
     runTestInDirectory("splitting");
   }
 
@@ -212,6 +217,13 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("whitespace");
   }
 
+  public void test25() throws Exception {
+    // Verify leadingIndent is working.
+    runTestInDirectory("regression");
+  }
+
+  // TODO Add more of the tests in 'regression'. Currently, they just clutter the results.
+
   /**
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>name</code>.
    */
@@ -219,8 +231,14 @@ public class DartStyleTest extends FormatterTestCase {
     Pattern indentPattern = Pattern.compile("^\\(indent (\\d+)\\)\\s*");
 
     String testName = getTestName(true);
+    if (Character.isLetter(testName.charAt(0)) && Character.isDigit(testName.charAt(testName.length() - 1))) {
+      testName = testName.substring(0, testName.length() - 1);
+    }
     File dir = new File(new File(getTestDataPath(), getBasePath()), dirName);
     boolean found = false;
+    int rightMargin = 0, count = 0;
+    List<Error> errors = new ArrayList();
+    List<String> descriptions = new ArrayList();
     for (String ext : new String[] {".stmt", ".unit"}) {
       File entry = new File(dir, testName + ext);
       if (!entry.exists()) {
@@ -228,14 +246,17 @@ public class DartStyleTest extends FormatterTestCase {
       }
       found = true;
       String[] lines = FileUtil.loadLines(entry).toArray(new String[0]);
+      boolean isCompilationUnit = entry.getName().endsWith(".unit");
 
       // The first line may have a "|" to indicate the page width.
-      int pageWidth = 0;
+      int pageWidth = 80;
       int i = 0;
       if (lines[0].endsWith("|")) {
+        // As it happens, this is always 40 except for some files in 'regression'
         pageWidth = lines[0].indexOf("|");
         i = 1;
       }
+      rightMargin = pageWidth;
       while (i < lines.length) {
         String description = lines[i++].replaceAll(">>>", "").trim();
 
@@ -250,26 +271,60 @@ public class DartStyleTest extends FormatterTestCase {
         }
 
         String input = "";
+        // If the input isn't a top-level form, wrap everything in a function.
+        // The formatter fails horribly otherwise.
+        if (!isCompilationUnit) input += "m() {\n";
         while (!lines[i].startsWith("<<<")) {
-          input += lines[i++] + "\n";
+          String line = lines[i++];
+          if (leadingIndent > 0) line = line.substring(leadingIndent);
+          if (!isCompilationUnit) line = "  " + line;
+          input += line + "\n";
         }
+        if (!isCompilationUnit) input += "}\n";
 
         String expectedOutput = "";
-        while (++i < lines.length && !lines[i].startsWith(">>>")) {
-          expectedOutput += lines[i] + "\n";
+        if (!isCompilationUnit) expectedOutput += "m() {\n";
+        i++;
+        while (i < lines.length && !lines[i].startsWith(">>>")) {
+          String line = lines[i++];
+          if (leadingIndent > 0) line = line.substring(leadingIndent);
+          if (!isCompilationUnit) line = "  " + line;
+          expectedOutput += line + "\n";
         }
+        if (!isCompilationUnit) expectedOutput += "}\n";
 
-        boolean isCompilationUnit = entry.getName().endsWith(".unit");
         SourceCode inputCode = extractSelection(input, isCompilationUnit);
         SourceCode expected = extractSelection(expectedOutput, isCompilationUnit);
         final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
         settings.RIGHT_MARGIN = pageWidth;
         myTextRange = new TextRange(inputCode.selectionStart, inputCode.selectionEnd());
-        doTextTest(inputCode.text, expected.text);
+        try {
+          count++;
+          doTextTest(inputCode.text, expected.text);
+        } catch (AssertionFailedError failure) {
+          errors.add(failure);
+          descriptions.add(description);
+        }
       }
     }
     if (!found) {
       fail("No test data for " + testName);
+    }
+    if (!errors.isEmpty()) {
+      StringBuffer buf = new StringBuffer();
+      String test = dirName + "/" + testName;
+      buf.append("Found " + errors.size() + " failures of " + count + " tests in " + test + ". Right margin is " + rightMargin + ".\n");
+      int n = 0;
+      for (Error ex : errors) {
+        String msg = ex.getMessage();
+        buf.append("\nTEST: ");
+        buf.append(descriptions.get(n++)).append('\n');
+        buf.append(msg).append('\n');
+      }
+      // Print all the problems in the file.
+      System.out.println(buf.toString());
+      // Then re-throw the first to get the handy comparison clicky.
+      throw errors.get(0);
     }
   }
 
