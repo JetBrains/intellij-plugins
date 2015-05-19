@@ -3,16 +3,14 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.Function;
@@ -38,9 +36,11 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_CORE_URI;
 
 public class DartResolveUtil {
-
   public static final String OBJECT = "Object";
 
+  private static final Key<DartComponentName> DART_IMPORT_PREFIX_KEY = Key.create("DART_IMPORT_PREFIX");
+
+  @NotNull
   public static List<PsiElement> findDartRoots(@Nullable final PsiFile psiFile) {
     if (psiFile instanceof XmlFile) {
       return findDartRootsInXml((XmlFile)psiFile);
@@ -214,23 +214,37 @@ public class DartResolveUtil {
     return result;
   }
 
+  @Nullable
+  public static DartComponentName getImportPrefixName(DartReference importReference) {
+    return importReference.getUserData(DART_IMPORT_PREFIX_KEY);
+  }
+
   public static boolean processDeclarationsInImportedFileByImportPrefix(@NotNull final PsiElement context,
-                                                                        @NotNull final String importPrefix,
+                                                                        @NotNull final DartReference importReference,
                                                                         @NotNull final DartPsiScopeProcessor processor,
                                                                         @Nullable final String componentNameHint) {
+    final String importPrefix = importReference.getCanonicalText();
     final Project project = context.getProject();
 
-    for (VirtualFile virtualFile : findLibrary(context.getContainingFile())) {
-      for (DartImportOrExportInfo importOrExportInfo : DartImportAndExportIndex.getImportAndExportInfos(project, virtualFile)) {
-        if (importOrExportInfo.getKind() == Kind.Import && importPrefix.equals(importOrExportInfo.getImportPrefix())) {
-          final VirtualFile importedFile = getImportedFile(project, virtualFile, importOrExportInfo.getUri());
-          if (importedFile != null) {
-            processor.importedFileProcessingStarted(importedFile, importOrExportInfo);
-            final boolean continueProcessing = processTopLevelDeclarations(context, processor, importedFile, componentNameHint);
-            processor.importedFileProcessingFinished(importedFile);
+    for (VirtualFile libraryVirtualFile : findLibrary(context.getContainingFile())) {
+      final PsiFile libraryFile = context.getManager().findFile(libraryVirtualFile);
+      for (PsiElement dartRoot : findDartRoots(libraryFile)) {
+        final DartImportStatement[] importStatements = PsiTreeUtil.getChildrenOfType(dartRoot, DartImportStatement.class);
+        if (importStatements != null) {
+          for (DartImportStatement importStatement : importStatements) {
+            DartImportOrExportInfo importOrExportInfo = DartIndexUtil.createImportOrExportInfo(importStatement);
+            if (importPrefix.equals(importOrExportInfo.getImportPrefix())) {
+              final VirtualFile importedFile = getImportedFile(project, libraryVirtualFile, importOrExportInfo.getUri());
+              if (importedFile != null) {
+                processor.importedFileProcessingStarted(importedFile, importOrExportInfo);
+                final boolean continueProcessing = processTopLevelDeclarations(context, processor, importedFile, componentNameHint);
+                processor.importedFileProcessingFinished(importedFile);
 
-            if (!continueProcessing) {
-              return false;
+                if (!continueProcessing) {
+                  importReference.putUserData(DART_IMPORT_PREFIX_KEY, importStatement.getImportPrefix());
+                  return false;
+                }
+              }
             }
           }
         }

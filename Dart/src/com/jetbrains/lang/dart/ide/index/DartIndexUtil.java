@@ -13,6 +13,7 @@ import com.jetbrains.lang.dart.util.DartControlFlowUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,6 +107,22 @@ public class DartIndexUtil {
 
   private static void processImportOrExportStatement(final @NotNull DartFileIndexData result,
                                                      final @NotNull DartImportOrExportStatement importOrExportStatement) {
+    final String importPrefix = getImportPrefix(importOrExportStatement);
+    final DartImportOrExportInfo importOrExportInfo = createImportOrExportInfo(importOrExportStatement);
+    result.addImportInfo(importOrExportInfo);
+    result.addComponentInfo(importPrefix, new DartComponentInfo(DartComponentType.LABEL, null));
+  }
+
+  @Nullable
+  private static String getImportPrefix(final @NotNull DartImportOrExportStatement importOrExportStatement) {
+    final DartComponentName importPrefixComponent = importOrExportStatement instanceof DartImportStatement
+                                                    ? ((DartImportStatement)importOrExportStatement).getImportPrefix()
+                                                    : null;
+    return importPrefixComponent != null ? importPrefixComponent.getName() : null;
+  }
+
+  @NotNull
+  public static DartImportOrExportInfo createImportOrExportInfo(final @NotNull DartImportOrExportStatement importOrExportStatement) {
     final String uri = importOrExportStatement.getUriString();
 
     final Set<String> showComponentNames = new THashSet<String>();
@@ -128,14 +145,10 @@ public class DartIndexUtil {
       }
     }
 
-    final DartComponentName importPrefixComponent = importOrExportStatement instanceof DartImportStatement
-                                                    ? ((DartImportStatement)importOrExportStatement).getImportPrefix()
-                                                    : null;
-    final String importPrefix = importPrefixComponent != null ? importPrefixComponent.getName() : null;
+    final String importPrefix = getImportPrefix(importOrExportStatement);
 
     final Kind kind = importOrExportStatement instanceof DartImportStatement ? Kind.Import : Kind.Export;
-    result.addImportInfo(new DartImportOrExportInfo(kind, uri, importPrefix, showComponentNames, hideComponentNames));
-    result.addComponentInfo(importPrefix, new DartComponentInfo(DartComponentType.LABEL, null));
+    return new DartImportOrExportInfo(kind, uri, importPrefix, showComponentNames, hideComponentNames);
   }
 
   private static List<PsiElement> findDartRoots(PsiFile psiFile) {
