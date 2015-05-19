@@ -1,7 +1,7 @@
 package com.jetbrains.lang.dart.validation.fixes;
 
-import com.google.common.io.Files;
 import com.google.dart.server.generated.types.*;
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -22,13 +22,15 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -186,24 +188,32 @@ public final class DartServerFixIntention implements IntentionAction {
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     final SourceFileEdit fileEdit = myChange.getEdits().get(0);
-    final String filePath = fileEdit.getFile();
+    final String filePath = FileUtil.toSystemIndependentName(fileEdit.getFile());
     final SourceEdit sourceEdit = fileEdit.getEdits().get(0);
+
+    final VirtualFile virtualFile;
 
     // Create the file if it does not exist.
     if (fileEdit.getFileStamp() == -1) {
       try {
-        final String directoryPath = VfsUtil.getParentDir(filePath);
+        final String directoryPath = PathUtil.getParentPath(filePath);
+        if (directoryPath.isEmpty()) throw new IOException("empty folder path");
+
         final VirtualFile directory = VfsUtil.createDirectoryIfMissing(directoryPath);
-        if (directory != null) {
-          final String fileName = VfsUtil.extractFileName(filePath);
-          directory.createChildData(this, fileName);
-        }
+        if (directory == null) throw new IOException("failed to create folder " + FileUtil.toSystemDependentName(directoryPath));
+
+        virtualFile = directory.createChildData(this, PathUtil.getFileName(filePath));
       }
       catch (IOException e) {
+        final String message = DartBundle.message("failed.to.create.file.0.1", FileUtil.toSystemDependentName(filePath), e.getMessage());
+        CommonRefactoringUtil.showErrorHint(project, editor, message, CommonBundle.getErrorTitle(), null);
+        return;
       }
     }
+    else {
+      virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    }
 
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(filePath));
     if (virtualFile == null) return;
 
     if (!FileModificationService.getInstance().prepareVirtualFilesForWrite(project, Collections.singletonList(virtualFile))) return;
