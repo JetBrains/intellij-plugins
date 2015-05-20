@@ -1,6 +1,7 @@
 package org.angularjs;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 import static org.junit.Assert.assertTrue;
@@ -22,5 +23,9 @@ public class AngularTestUtil {
     int pos = psiFile.getText().indexOf(signature);
     assertTrue(pos >= 0);
     return pos + caretOffset;
+  }
+
+  public static String getDirectiveDefinitionText(PsiElement resolve) {
+    return resolve.getParent().getText();
   }
 }

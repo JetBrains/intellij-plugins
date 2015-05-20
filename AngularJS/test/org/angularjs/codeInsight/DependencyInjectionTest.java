@@ -2,7 +2,8 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -33,7 +34,7 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
     assertNotNull(ref);
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
-    assertInstanceOf(JSResolveUtil.unwrapProxy(resolve), JSProperty.class);
+    assertInstanceOf(resolve, JSProperty.class);
   }
 
   public void testInjectedStaticResolve() {
@@ -43,6 +44,46 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
     assertNotNull(ref);
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
-    assertInstanceOf(JSResolveUtil.unwrapProxy(resolve), JSDefinitionExpression.class);
+    assertInstanceOf(resolve, JSDefinitionExpression.class);
+  }
+
+  public void testInjectedParameterCompletion() {
+    myFixture.testCompletion("parameter.js", "parameter.after.js", "angular.js");
+  }
+
+  public void testInjectedParameterResolve() {
+    myFixture.configureByFiles("parameter.resolve.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("function (my<caret>Service)", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertInstanceOf(resolve, JSImplicitElement.class);
+    assertEquals("'myService'", AngularTestUtil.getDirectiveDefinitionText(resolve));
+  }
+
+  public void testInjectedParameterToVarResolve() {
+    myFixture.configureByFiles("parameterToVar.resolve.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("function (my<caret>Service)", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertInstanceOf(resolve, JSVariable.class);
+  }
+
+  public void testInjectedNamedParameterCompletion() {
+    myFixture.testCompletion("namedParameter.js", "namedParameter.after.js", "angular.js");
+  }
+
+  public void testInjectedNamedParameterResolve() {
+    myFixture.configureByFiles("namedParameter.resolve.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("function (my<caret>Service)", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertInstanceOf(resolve, JSImplicitElement.class);
+    assertEquals("'myService'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 }

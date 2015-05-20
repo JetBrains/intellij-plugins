@@ -154,11 +154,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             final String argumentText = StringUtil.unquoteString(argument.getText());
             addImplicitElements(argument, command, index, argumentText, data, outIndexingData);
           }
-        }
-
-        // INTERESTING_METHODS are contained in INJECTABLE_METHODS
-        
-        if (INJECTABLE_METHODS.contains(command)) {
+        } else if (INJECTABLE_METHODS.contains(command)) { // INTERESTING_METHODS are contained in INJECTABLE_METHODS
           if (argument.isQuotedLiteral()) {
             generateNamespace(argument, command, outIndexingData);
           }
@@ -223,7 +219,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           sink.occurrence(AngularSymbolIndex.KEY, element.getName());
         }
       }
-      return true;
     }
     return false;
   }
@@ -307,7 +302,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
     JSImplicitElementImpl.Builder elementBuilder =
       new JSImplicitElementImpl.Builder(qName, argument)
-        .setType(JSImplicitElement.Type.Class);
+        .setType(JSImplicitElement.Type.Class).setUserString("asi");
     final JSImplicitElementImpl implicitElement = elementBuilder.toImplicitElement();
     outData.addImplicitElement(implicitElement);
     // TODO fix

@@ -1,8 +1,7 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
@@ -15,6 +14,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
-  private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
-    PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+  private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN = PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
         if (element instanceof JSLiteralExpression) {
@@ -47,6 +46,17 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return true;
       }
     }));
+  public static final PsiElementPattern.Capture<JSParameter> DI_PATTERN = PlatformPatterns.psiElement(JSParameter.class).and(new FilterPattern(new ElementFilter() {
+    @Override
+    public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+      return AngularJSIndexingHandler.isInjectable(context);
+    }
+
+    @Override
+    public boolean isClassAcceptable(Class hintClass) {
+      return true;
+    }
+  }));
 
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
@@ -54,6 +64,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(TEMPLATE_PATTERN, templateProvider);
     registrar.registerReferenceProvider(NG_INCLUDE_PATTERN, templateProvider);
     registrar.registerReferenceProvider(CONTROLLER_PATTERN, new AngularJSControllerReferencesProvider());
+    registrar.registerReferenceProvider(DI_PATTERN, new AngularJSDIReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {

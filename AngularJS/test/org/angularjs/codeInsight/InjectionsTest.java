@@ -113,7 +113,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgControllerAliasCompletion() {
-    myFixture.testCompletion("ngControllerAlias.html", "ngControllerAlias.after.html", "angular.js", "custom.js");
+    myFixture.testCompletionTyping("ngControllerAlias.html", "\n", "ngControllerAlias.after.html", "angular.js", "custom.js");
   }
 
   public void testNgControllerAliasHighlighting() {

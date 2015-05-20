@@ -2,6 +2,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionResult;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
@@ -22,6 +23,8 @@ import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -35,8 +38,8 @@ public class AngularJSCompletionContributor extends CompletionContributor {
 
     if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {
       final PsiElement parent = ((JSReferenceExpressionImpl)ref).getParent();
-      if (addFilterVariants(result, ref, parent)) return;
-      if (addControllerVariants(result, ref, parent)) return;
+      if (addFilterVariants(result, parameters, ref, parent)) return;
+      if (addControllerVariants(result, parameters, ref, parent)) return;
       AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSNamedElement>() {
         @Override
         public void consume(JSNamedElement element) {
@@ -46,28 +49,38 @@ public class AngularJSCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static boolean addControllerVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
+  private static boolean addControllerVariants(CompletionResultSet result, CompletionParameters parameters, PsiReference ref, PsiElement parent) {
     if (AngularJSAsExpression.isAsControllerRef(ref, parent)) {
-      for (String controller : AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, parent.getProject())) {
-        result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
-      }
+      addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, parent.getProject()));
       return true;
     }
     return false;
   }
 
-
-  private static boolean addFilterVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
+  private static boolean addFilterVariants(final CompletionResultSet result, CompletionParameters parameters, PsiReference ref, PsiElement parent) {
     if (AngularJSFilterExpression.isFilterNameRef(ref, parent)) {
-      for (String filter : AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject())) {
-        result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, filter, NG_VARIABLE_PRIORITY, false, false));
-      }
+      addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject()));
       return true;
     }
     return false;
   }
 
-  private static Language getElementLanguage(final CompletionParameters parameters) {
+  static void addResults(final CompletionResultSet result, CompletionParameters parameters, final Collection<String> keys) {
+    for (String controller : keys) {
+      result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
+    }
+    result.runRemainingContributors(parameters, new Consumer<CompletionResult>() {
+      @Override
+      public void consume(CompletionResult result1) {
+        final String string = result1.getLookupElement().getLookupString();
+        if (!keys.contains(string)) {
+          result.passResult(result1);
+        }
+      }
+    });
+  }
+
+  static Language getElementLanguage(final CompletionParameters parameters) {
     final AccessToken l = ReadAction.start();
     try {
       return PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset());

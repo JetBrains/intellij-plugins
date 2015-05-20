@@ -102,7 +102,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", getDirectiveDefinitionText(resolve));
+    assertEquals("'myCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testCustomTagsResolve20TypeScript() throws Exception {
@@ -121,7 +121,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
                      "    properties: {\n" +
                      "        'id':'dependency'\n" +
                      "    }\n" +
-                     "})", getDirectiveDefinitionText(resolve));
+                     "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
       }
     });
   }
@@ -139,13 +139,9 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
         assertEquals("custom2.js", resolve.getContainingFile().getName());
         assertEquals("new angular.ComponentAnnotation({\n" +
                      "    selector: 'my-customer'\n" +
-                     "  })", getDirectiveDefinitionText(resolve));
+                     "  })", AngularTestUtil.getDirectiveDefinitionText(resolve));
       }
     });
-  }
-
-  private static String getDirectiveDefinitionText(PsiElement resolve) {
-    return resolve.getParent().getText();
   }
 
   public void testCustomTagsViaFunctionResolve() {
@@ -156,7 +152,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'functionCustomer'", getDirectiveDefinitionText(resolve));
+    assertEquals("'functionCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testCustomTagsViaFunctionForwardResolve() {
@@ -167,7 +163,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'greatCustomer'", getDirectiveDefinitionText(resolve));
+    assertEquals("'greatCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
 
@@ -179,7 +175,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'arrayCustomer'", getDirectiveDefinitionText(resolve));
+    assertEquals("'arrayCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testCustomTagsArrayResolve() {
@@ -190,7 +186,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'herCustomer'", getDirectiveDefinitionText(resolve));
+    assertEquals("'herCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testOverride() {
@@ -217,7 +213,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", getDirectiveDefinitionText(resolve));
+    assertEquals("'myCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNoCompletionInXml() {
