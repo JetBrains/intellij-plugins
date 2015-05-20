@@ -4,27 +4,28 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
-import com.intellij.testFramework.exceptionCases.AssertionErrorCase;
+import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import junit.framework.AssertionFailedError;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DartStyleTest extends FormatterTestCase {
 
   protected String getFileExtension() {
     return DartFileType.DEFAULT_EXTENSION;
   }
+
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;
   }
+
   protected String getBasePath() {
     return "dart_style";
   }
@@ -234,29 +235,34 @@ public class DartStyleTest extends FormatterTestCase {
     if (Character.isLetter(testName.charAt(0)) && Character.isDigit(testName.charAt(testName.length() - 1))) {
       testName = testName.substring(0, testName.length() - 1);
     }
+
     File dir = new File(new File(getTestDataPath(), getBasePath()), dirName);
     boolean found = false;
     int rightMargin = 0, count = 0;
-    List<Error> errors = new ArrayList();
-    List<String> descriptions = new ArrayList();
-    for (String ext : new String[] {".stmt", ".unit"}) {
+    List<Error> errors = new ArrayList<Error>();
+    List<String> descriptions = new ArrayList<String>();
+
+    for (String ext : new String[]{".stmt", ".unit"}) {
       File entry = new File(dir, testName + ext);
       if (!entry.exists()) {
         continue;
       }
+
       found = true;
-      String[] lines = FileUtil.loadLines(entry).toArray(new String[0]);
+      String[] lines = ArrayUtil.toStringArray(FileUtil.loadLines(entry));
       boolean isCompilationUnit = entry.getName().endsWith(".unit");
 
       // The first line may have a "|" to indicate the page width.
       int pageWidth = 80;
       int i = 0;
+
       if (lines[0].endsWith("|")) {
         // As it happens, this is always 40 except for some files in 'regression'
         pageWidth = lines[0].indexOf("|");
         i = 1;
       }
       rightMargin = pageWidth;
+
       while (i < lines.length) {
         String description = lines[i++].replaceAll(">>>", "").trim();
 
@@ -264,6 +270,7 @@ public class DartStyleTest extends FormatterTestCase {
         // regression tests which often come from a chunk of nested code.
         int leadingIndent = 0;
         Matcher matcher = indentPattern.matcher(description);
+
         if (matcher.matches()) {
           // The leadingIndent is only used by some tests in 'regression'.
           leadingIndent = Integer.parseInt(matcher.group(1));
@@ -274,55 +281,70 @@ public class DartStyleTest extends FormatterTestCase {
         // If the input isn't a top-level form, wrap everything in a function.
         // The formatter fails horribly otherwise.
         if (!isCompilationUnit) input += "m() {\n";
+
         while (!lines[i].startsWith("<<<")) {
           String line = lines[i++];
           if (leadingIndent > 0) line = line.substring(leadingIndent);
           if (!isCompilationUnit) line = "  " + line;
           input += line + "\n";
         }
+
         if (!isCompilationUnit) input += "}\n";
 
         String expectedOutput = "";
         if (!isCompilationUnit) expectedOutput += "m() {\n";
+
         i++;
-        while (i < lines.length && !lines[i].startsWith(">>>")) {
+
+        while (i < lines.length && !lines[i].startsWith(">>>"))   {
           String line = lines[i++];
           if (leadingIndent > 0) line = line.substring(leadingIndent);
           if (!isCompilationUnit) line = "  " + line;
           expectedOutput += line + "\n";
         }
+
         if (!isCompilationUnit) expectedOutput += "}\n";
 
         SourceCode inputCode = extractSelection(input, isCompilationUnit);
         SourceCode expected = extractSelection(expectedOutput, isCompilationUnit);
+
         final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
         settings.RIGHT_MARGIN = pageWidth;
+
         myTextRange = new TextRange(inputCode.selectionStart, inputCode.selectionEnd());
+
         try {
           count++;
           doTextTest(inputCode.text, expected.text);
-        } catch (AssertionFailedError failure) {
+        }
+        catch (AssertionFailedError failure) {
           errors.add(failure);
           descriptions.add(description);
         }
       }
     }
+
     if (!found) {
       fail("No test data for " + testName);
     }
+
     if (!errors.isEmpty()) {
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
       String test = dirName + "/" + testName;
-      buf.append("Found " + errors.size() + " failures of " + count + " tests in " + test + ". Right margin is " + rightMargin + ".\n");
+      buf.append("Found ").append(errors.size()).append(" failures of ").append(count).append(" tests in ").append(test)
+        .append(". Right margin is ").append(rightMargin).append(".\n");
       int n = 0;
+
       for (Error ex : errors) {
         String msg = ex.getMessage();
         buf.append("\nTEST: ");
         buf.append(descriptions.get(n++)).append('\n');
         buf.append(msg).append('\n');
       }
+
       // Print all the problems in the file.
       System.out.println(buf.toString());
+
       // Then re-throw the first to get the handy comparison clicky.
       throw errors.get(0);
     }
@@ -333,7 +355,7 @@ public class DartStyleTest extends FormatterTestCase {
    * a <code>SourceCode</code> with the text (with the selection markers removed)
    * and the correct selection range.
    */
-  private SourceCode extractSelection(String source, boolean isCompilationUnit) {
+  private static SourceCode extractSelection(String source, boolean isCompilationUnit) {
     int start = source.indexOf("‹");
     source = source.replaceAll("‹", "");
 
