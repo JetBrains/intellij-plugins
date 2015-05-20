@@ -27,6 +27,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.problems.Problem;
+import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
@@ -172,20 +174,20 @@ public class DartAnalysisServerService {
 
     ApplicationManager.getApplication().getMessageBus().connect()
       .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerAdapter() {
-                   @Override
-                   public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                     if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
-                       DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
-                     }
-                   }
+        @Override
+        public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+          if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
+            DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
+          }
+        }
 
-                   @Override
-                   public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                     if (isDartOrHtmlFile(file)) {
-                       removePriorityFile(file);
-                     }
-                   }
-                 });
+        @Override
+        public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+          if (isDartOrHtmlFile(file)) {
+            removePriorityFile(file);
+          }
+        }
+      });
   }
 
   @NotNull
@@ -318,8 +320,10 @@ public class DartAnalysisServerService {
         for (final Project project : myRootsHandler.getTrackedProjects()) {
           if (project.isDisposed()) continue;
 
+          final WolfTheProblemSolver wolf = WolfTheProblemSolver.getInstance(project);
           if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
             DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
+            wolf.weHaveGotProblems(vFile, convertToProblemList(wolf, vFile, errors));
           }
           else {
             DartProblemsViewImpl.getInstance(project).removeErrorsForFile(filePath);
@@ -327,6 +331,20 @@ public class DartAnalysisServerService {
         }
       }
     });
+  }
+
+  @NotNull
+  private static List<Problem> convertToProblemList(@NotNull final WolfTheProblemSolver wolf,
+                                                    @NotNull final VirtualFile vFile,
+                                                    @NotNull final List<AnalysisError> errors) {
+    final List<Problem> problems = new ArrayList<Problem>();
+    for (final AnalysisError error : errors) {
+      if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) {
+        final Location location = error.getLocation();
+        problems.add(wolf.convertToProblem(vFile, location.getStartLine(), location.getStartColumn(), new String[]{error.getMessage()}));
+      }
+    }
+    return problems;
   }
 
   @Nullable
