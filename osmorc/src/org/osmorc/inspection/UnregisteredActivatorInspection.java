@@ -24,7 +24,6 @@
  */
 package org.osmorc.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -47,35 +46,38 @@ import org.osmorc.util.OsgiPsiUtil;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class UnregisteredActivatorInspection extends LocalInspectionTool {
+public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
   @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    final OsmorcFacet facet = OsmorcFacet.getInstance(holder.getFile());
-    return facet == null ? PsiElementVisitor.EMPTY_VISITOR : new JavaElementVisitor() {
+  protected PsiElementVisitor buildVisitor(final OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
+    return new JavaElementVisitor() {
       @Override
-      public void visitClass(PsiClass psiClass) {
-        if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT)) {
-          Project project = psiClass.getProject();
-          PsiClass activator = OsgiPsiUtil.getActivatorClass(project);
-          if (activator != null && psiClass.isInheritor(activator, true)) {
-            String className = psiClass.getQualifiedName();
-            if (className != null) {
-              BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(facet.getModule());
-              if (manifest != null && !className.equals(manifest.getBundleActivator())) {
-                LocalQuickFix[] fixes = LocalQuickFix.EMPTY_ARRAY;
+      public void visitFile(PsiFile file) {
+        if (file instanceof PsiClassOwner) {
+          for (PsiClass psiClass : ((PsiClassOwner)file).getClasses()) {
+            if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT)) {
+              Project project = psiClass.getProject();
+              PsiClass activator = OsgiPsiUtil.getActivatorClass(project);
+              if (activator != null && psiClass.isInheritor(activator, true)) {
+                String className = psiClass.getQualifiedName();
+                if (className != null) {
+                  BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(facet.getModule());
+                  if (manifest != null && !className.equals(manifest.getBundleActivator())) {
+                    LocalQuickFix[] fixes = LocalQuickFix.EMPTY_ARRAY;
 
-                OsmorcFacetConfiguration configuration = facet.getConfiguration();
-                if (configuration.isManifestManuallyEdited()) {
-                  fixes = new LocalQuickFix[]{new RegisterInManifestQuickfix(className)};
-                }
-                else if (configuration.isOsmorcControlsManifest()) {
-                  fixes = new LocalQuickFix[]{new RegisterInConfigurationQuickfix(className, configuration)};
-                }
+                    OsmorcFacetConfiguration configuration = facet.getConfiguration();
+                    if (configuration.isManifestManuallyEdited()) {
+                      fixes = new LocalQuickFix[]{new RegisterInManifestQuickfix(className)};
+                    }
+                    else if (configuration.isOsmorcControlsManifest()) {
+                      fixes = new LocalQuickFix[]{new RegisterInConfigurationQuickfix(className, configuration)};
+                    }
 
-                PsiIdentifier identifier = psiClass.getNameIdentifier();
-                if (identifier != null) {
-                  holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fixes);
+                    PsiElement identifier = unwrap(psiClass.getNameIdentifier());
+                    if (identifier != null) {
+                      holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fixes);
+                    }
+                  }
                 }
               }
             }

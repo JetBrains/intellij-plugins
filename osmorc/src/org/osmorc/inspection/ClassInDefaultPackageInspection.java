@@ -24,7 +24,6 @@
  */
 package org.osmorc.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -37,20 +36,19 @@ import org.osmorc.i18n.OsmorcBundle;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class ClassInDefaultPackageInspection extends LocalInspectionTool {
+public class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
   @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    OsmorcFacet facet = OsmorcFacet.getInstance(holder.getFile());
-    return facet == null ? PsiElementVisitor.EMPTY_VISITOR : new JavaElementVisitor() {
+  protected PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
+    return new PsiElementVisitor() {
       @Override
-      public void visitJavaFile(PsiJavaFile file) {
-        if (file.getPackageName().isEmpty()) {
-          PsiClass[] classes = file.getClasses();
+      public void visitFile(PsiFile file) {
+        if (file instanceof PsiClassOwner && ((PsiClassOwner)file).getPackageName().isEmpty()) {
+          PsiClass[] classes = ((PsiClassOwner)file).getClasses();
           if (classes.length > 0) {
-            PsiIdentifier nameIdentifier = classes[0].getNameIdentifier();
-            if (nameIdentifier != null) {
-              holder.registerProblem(nameIdentifier, OsmorcBundle.message("ClassInDefaultPackageInspection.message"));
+            PsiElement identifier = unwrap(classes[0].getNameIdentifier());
+            if (identifier != null && identifier.isPhysical()) {
+              holder.registerProblem(identifier, OsmorcBundle.message("ClassInDefaultPackageInspection.message"));
             }
           }
         }

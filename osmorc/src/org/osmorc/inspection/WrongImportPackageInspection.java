@@ -15,11 +15,12 @@
  */
 package org.osmorc.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
@@ -35,12 +36,11 @@ import org.osmorc.util.OsgiPsiUtil;
 /**
  * @author Vladislav.Soroka
  */
-public class WrongImportPackageInspection extends LocalInspectionTool {
+public class WrongImportPackageInspection extends AbstractOsgiVisitor {
   @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    final OsmorcFacet facet = OsmorcFacet.getInstance(holder.getFile());
-    return facet == null ? PsiElementVisitor.EMPTY_VISITOR : new PsiElementVisitor() {
+  protected PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
+    return new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
         if (OsgiPsiUtil.isHeader(element, Constants.IMPORT_PACKAGE)) {

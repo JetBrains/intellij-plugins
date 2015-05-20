@@ -28,13 +28,15 @@ import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.packageDependencies.DependenciesBuilder;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.packageDependencies.DependencyVisitorFactory;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,8 +70,7 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
   @Nullable
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
-    if (file.getViewProvider().getPsi(JavaLanguage.INSTANCE) == null ||
-        !checkTests && ProjectRootsUtil.isInTestSource(file)) {
+    if (!checkTests && ProjectRootsUtil.isInTestSource(file)) {
       return null;
     }
 
@@ -82,14 +83,14 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
     DependenciesBuilder.analyzeFileDependencies(file, new DependenciesBuilder.DependencyProcessor() {
       @Override
       public void process(PsiElement place, PsiElement dependency) {
-        if (dependency instanceof PsiClass && PsiTreeUtil.getParentOfType(place, PsiImportList.class) == null) {
+        if (dependency instanceof PsiClass) {
           Problem problem = checkAccessibility((PsiClass)dependency, facet);
           if (problem != null) {
             problems.add(manager.createProblemDescriptor(place, problem.message, isOnTheFly, problem.fixes, problem.type));
           }
         }
       }
-    });
+    }, DependencyVisitorFactory.VisitorOptions.SKIP_IMPORTS);
     return problems.isEmpty() ? null : problems.toArray(new ProblemDescriptor[problems.size()]);
   }
 
