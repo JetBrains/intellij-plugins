@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class DartStyleTest extends FormatterTestCase {
+public  class DartStyleTest extends FormatterTestCase {
 
   protected String getFileExtension() {
     return DartFileType.DEFAULT_EXTENSION;
@@ -260,7 +260,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
         i = 1;
       }
 
-      System.out.println("Right margin: " + pageWidth);
+      System.out.println("\nTest: " + dirName + "/" + testName + ext + ", Right margin: " + pageWidth);
       final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
       settings.RIGHT_MARGIN = pageWidth;
 
