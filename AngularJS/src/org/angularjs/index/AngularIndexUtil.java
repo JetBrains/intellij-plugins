@@ -6,9 +6,12 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -108,10 +111,32 @@ public class AngularIndexUtil {
     public CachedValueProvider.Result<Collection<String>> compute(final Pair<Project, ID<String, ?>> projectAndIndex) {
       final Project project = projectAndIndex.first;
       final ID<String, ?> id = projectAndIndex.second;
+      final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+      final FileBasedIndex fileIndex = FileBasedIndex.getInstance();
+      final StubIndex stubIndex = StubIndex.getInstance();
       final Collection<String> allKeys =
-        id instanceof StubIndexKey ? StubIndex.getInstance().getAllKeys((StubIndexKey<String, ?>)id, project) :
-        FileBasedIndex.getInstance().getAllKeys(id, project);
-      return CachedValueProvider.Result.create(allKeys, PsiManager.getInstance(project).getModificationTracker());
+        id instanceof StubIndexKey ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project) :
+        fileIndex.getAllKeys(id, project);
+
+      return CachedValueProvider.Result.<Collection<String>>create(ContainerUtil.filter(allKeys, new Condition<String>() {
+        @Override
+        public boolean value(String key) {
+          return id instanceof StubIndexKey ?
+                 !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
+                                            new Processor<PsiElement>() {
+                                              @Override
+                                              public boolean process(PsiElement element) {
+                                                return false;
+                                              }
+                                            }) :
+                 !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
+                   @Override
+                   public boolean process(VirtualFile file, Object value) {
+                     return false;
+                   }
+                 }, scope);
+        }
+      }), PsiManager.getInstance(project).getModificationTracker());
     }
   }
 }
