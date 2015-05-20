@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public  class DartStyleTest extends FormatterTestCase {
+public abstract class DartStyleTest extends FormatterTestCase {
 
   protected String getFileExtension() {
     return DartFileType.DEFAULT_EXTENSION;
