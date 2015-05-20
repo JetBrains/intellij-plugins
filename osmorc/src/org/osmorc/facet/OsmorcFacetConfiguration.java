@@ -179,12 +179,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
     setBundleSymbolicName(element.getAttributeValue(BUNDLE_SYMBOLIC_NAME));
     setBundleVersion(element.getAttributeValue(BUNDLE_VERSION));
     setIgnoreFilePattern(element.getAttributeValue(IGNORE_FILE_PATTERN));
-    setUseProjectDefaultManifestFileLocation(Boolean.parseBoolean(element.getAttributeValue(
-      USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION, "true")));
-    setAlwaysRebuildBundleJAR(Boolean.parseBoolean(element.getAttributeValue(
-      ALWAYS_REBUILD_BUNDLE_JAR, "false")));
-    setDoNotSynchronizeWithMaven(Boolean.parseBoolean(element.getAttributeValue(
-      DO_NOT_SYNCHRONIZE_WITH_MAVEN, "false")));
+    setUseProjectDefaultManifestFileLocation(Boolean.parseBoolean(element.getAttributeValue(USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION, "true")));
+    setAlwaysRebuildBundleJAR(Boolean.parseBoolean(element.getAttributeValue(ALWAYS_REBUILD_BUNDLE_JAR, "false")));
+    setDoNotSynchronizeWithMaven(Boolean.parseBoolean(element.getAttributeValue(DO_NOT_SYNCHRONIZE_WITH_MAVEN, "false")));
 
     Element props = element.getChild(ADDITIONAL_PROPERTIES);
     if (props != null) {
@@ -231,10 +228,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
     element.setAttribute(BUNDLE_SYMBOLIC_NAME, getBundleSymbolicName());
     element.setAttribute(BUNDLE_VERSION, getBundleVersion());
     element.setAttribute(IGNORE_FILE_PATTERN, getIgnoreFilePattern());
-    element.setAttribute(USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION,
-                         String.valueOf(isUseProjectDefaultManifestFileLocation()));
-    element.setAttribute(ALWAYS_REBUILD_BUNDLE_JAR,
-                         String.valueOf(isAlwaysRebuildBundleJAR()));
+    element.setAttribute(USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION, String.valueOf(isUseProjectDefaultManifestFileLocation()));
+    element.setAttribute(ALWAYS_REBUILD_BUNDLE_JAR, String.valueOf(isAlwaysRebuildBundleJAR()));
     element.setAttribute(DO_NOT_SYNCHRONIZE_WITH_MAVEN, String.valueOf(myDoNotSynchronizeWithMaven));
 
     Element props = new Element(ADDITIONAL_PROPERTIES);
