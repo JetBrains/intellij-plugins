@@ -8,11 +8,9 @@ import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
-import junit.framework.AssertionFailedError;
+import junit.framework.ComparisonFailure;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -226,7 +224,7 @@ public class DartStyleTest extends FormatterTestCase {
   // TODO Add more of the tests in 'regression'. Currently, they just clutter the results.
 
   /**
-   * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>name</code>.
+   * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
    */
   private void runTestInDirectory(String dirName) throws Exception {
     Pattern indentPattern = Pattern.compile("^\\(indent (\\d+)\\)\\s*");
@@ -238,9 +236,9 @@ public class DartStyleTest extends FormatterTestCase {
 
     File dir = new File(new File(getTestDataPath(), getBasePath()), dirName);
     boolean found = false;
-    int rightMargin = 0, count = 0;
-    List<Error> errors = new ArrayList<Error>();
-    List<String> descriptions = new ArrayList<String>();
+
+    final StringBuilder combinedActualResult = new StringBuilder();
+    final StringBuilder combinedExpectedResult = new StringBuilder();
 
     for (String ext : new String[]{".stmt", ".unit"}) {
       File entry = new File(dir, testName + ext);
@@ -261,7 +259,10 @@ public class DartStyleTest extends FormatterTestCase {
         pageWidth = lines[0].indexOf("|");
         i = 1;
       }
-      rightMargin = pageWidth;
+
+      System.out.println("Right margin: " + pageWidth);
+      final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+      settings.RIGHT_MARGIN = pageWidth;
 
       while (i < lines.length) {
         String description = lines[i++].replaceAll(">>>", "").trim();
@@ -296,7 +297,7 @@ public class DartStyleTest extends FormatterTestCase {
 
         i++;
 
-        while (i < lines.length && !lines[i].startsWith(">>>"))   {
+        while (i < lines.length && !lines[i].startsWith(">>>")) {
           String line = lines[i++];
           if (leadingIndent > 0) line = line.substring(leadingIndent);
           if (!isCompilationUnit) line = "  " + line;
@@ -308,18 +309,15 @@ public class DartStyleTest extends FormatterTestCase {
         SourceCode inputCode = extractSelection(input, isCompilationUnit);
         SourceCode expected = extractSelection(expectedOutput, isCompilationUnit);
 
-        final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
-        settings.RIGHT_MARGIN = pageWidth;
-
         myTextRange = new TextRange(inputCode.selectionStart, inputCode.selectionEnd());
 
         try {
-          count++;
           doTextTest(inputCode.text, expected.text);
+          System.out.println("TEST PASSED: " + (description.isEmpty() ? "(unnamed)" : description));
         }
-        catch (AssertionFailedError failure) {
-          errors.add(failure);
-          descriptions.add(description);
+        catch (ComparisonFailure failure) {
+          combinedExpectedResult.append("TEST: ").append(description).append("\n").append(failure.getExpected()).append("\n");
+          combinedActualResult.append("TEST: ").append(description).append("\n").append(failure.getActual()).append("\n");
         }
       }
     }
@@ -328,26 +326,7 @@ public class DartStyleTest extends FormatterTestCase {
       fail("No test data for " + testName);
     }
 
-    if (!errors.isEmpty()) {
-      StringBuilder buf = new StringBuilder();
-      String test = dirName + "/" + testName;
-      buf.append("Found ").append(errors.size()).append(" failures of ").append(count).append(" tests in ").append(test)
-        .append(". Right margin is ").append(rightMargin).append(".\n");
-      int n = 0;
-
-      for (Error ex : errors) {
-        String msg = ex.getMessage();
-        buf.append("\nTEST: ");
-        buf.append(descriptions.get(n++)).append('\n');
-        buf.append(msg).append('\n');
-      }
-
-      // Print all the problems in the file.
-      System.out.println(buf.toString());
-
-      // Then re-throw the first to get the handy comparison clicky.
-      throw errors.get(0);
-    }
+    assertEquals(combinedExpectedResult.toString(), combinedActualResult.toString());
   }
 
   /*
