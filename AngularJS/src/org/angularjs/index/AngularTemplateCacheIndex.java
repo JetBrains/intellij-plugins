@@ -4,7 +4,7 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.XmlRecursiveElementVisitor;
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -84,7 +84,7 @@ public class AngularTemplateCacheIndex extends ScalarIndexExtension<String> {
 
   public static void processTemplates(final PsiFile psiFile, final Processor<XmlAttribute> processor) {
     if (psiFile instanceof XmlFile) {
-      psiFile.accept(new XmlRecursiveElementVisitor() {
+      psiFile.accept(new XmlRecursiveElementWalkingVisitor() {
         @Override
         public void visitXmlTag(XmlTag tag) {
           if (HtmlUtil.isScriptTag(tag) && "text/ng-template".equals(tag.getAttributeValue("type"))) {

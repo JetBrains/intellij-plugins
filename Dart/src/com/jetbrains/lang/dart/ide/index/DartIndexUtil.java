@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.ide.index;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.XmlRecursiveElementVisitor;
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.indexing.FileContent;
@@ -147,7 +147,7 @@ public class DartIndexUtil {
 
   private static List<PsiElement> findDartRootsInXml(XmlFile xmlFile) {
     final List<PsiElement> result = new ArrayList<PsiElement>();
-    xmlFile.acceptChildren(new XmlRecursiveElementVisitor() {
+    xmlFile.acceptChildren(new XmlRecursiveElementWalkingVisitor() {
       @Override
       public void visitElement(PsiElement element) {
         if (element instanceof DartEmbeddedContent) {

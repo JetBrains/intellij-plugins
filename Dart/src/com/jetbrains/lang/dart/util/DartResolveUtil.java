@@ -50,7 +50,7 @@ public class DartResolveUtil {
 
   private static List<PsiElement> findDartRootsInXml(XmlFile xmlFile) {
     final List<PsiElement> result = new ArrayList<PsiElement>();
-    xmlFile.acceptChildren(new XmlRecursiveElementVisitor() {
+    xmlFile.acceptChildren(new XmlRecursiveElementWalkingVisitor() {
       @Override
       public void visitElement(PsiElement element) {
         if (element instanceof DartEmbeddedContent) {
