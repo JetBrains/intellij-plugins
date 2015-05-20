@@ -1,12 +1,13 @@
 package org.angularjs.codeInsight.refs;
 
-import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularSymbolIndex;
@@ -20,11 +21,11 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] { new AngularJSDIReference((JSElement)element) };
+    return new PsiReference[] { new AngularJSDIReference((JSParameter)element) };
   }
 
-  public static class AngularJSDIReference extends AngularJSReferenceBase<JSElement> {
-    public AngularJSDIReference(JSElement element) {
+  public static class AngularJSDIReference extends AngularJSReferenceBase<JSParameter> {
+    public AngularJSDIReference(JSParameter element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 
@@ -54,6 +55,11 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
     @Override
     public Object[] getVariants() {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    }
+
+    @Override
+    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+      return getElement().setName(newElementName);
     }
   }
 }
