@@ -277,16 +277,14 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   }
 
   private void updateGui() {
+    myJarOutputPathChooser.setEnabled(myPlaceInThisPathRadioButton.isSelected());
+
     Boolean bnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
     Boolean bundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY);
     boolean useExternalTool = Boolean.TRUE.equals(bnd) || Boolean.TRUE.equals(bundlor);
-
-    myJarOutputPathChooser.setEnabled(myPlaceInThisPathRadioButton.isSelected());
     myAdditionalJARContentsTable.setEnabled(!useExternalTool);
-    myIgnoreFilePatternTextField.setEnabled(!useExternalTool);
-    myAdditionalJARContentsTable.setEnabled(!useExternalTool);
-    myAlwaysRebuildBundleJARCheckBox.setEnabled(!useExternalTool);
     myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
+    myIgnoreFilePatternTextField.setEnabled(!useExternalTool);
     myFileIgnorePatternLabel.setEnabled(!useExternalTool);
 
     myValidatorsManager.validate();

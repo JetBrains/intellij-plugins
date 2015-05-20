@@ -48,7 +48,9 @@ public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuil
                     @NotNull DirtyFilesHolder<BuildRootDescriptor, OsmorcBuildTarget> holder,
                     @NotNull BuildOutputConsumer outputConsumer,
                     @NotNull CompileContext context) throws ProjectBuildException, IOException {
-    if (holder.hasDirtyFiles() || holder.hasRemovedFiles() || JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) {
+    if (target.getExtension().isAlwaysRebuildBundleJar() ||
+        JavaBuilderUtil.isForcedRecompilationAllJavaModules(context) ||
+        holder.hasDirtyFiles() || holder.hasRemovedFiles()) {
       new OsgiBuildSession().build(target, context);
     }
   }
