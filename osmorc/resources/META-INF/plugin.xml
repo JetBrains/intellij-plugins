@@ -113,15 +113,15 @@
 
     <localInspection bundle="messages.OsmorcBundle" key="UnregisteredActivatorInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
-                     language="JAVA" enabledByDefault="true" level="ERROR"
+                     enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.UnregisteredActivatorInspection"/>
     <localInspection bundle="messages.OsmorcBundle" key="ClassInDefaultPackageInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
-                     language="JAVA" enabledByDefault="true" level="ERROR"
+                     enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
     <localInspection bundle="messages.OsmorcBundle" key="PackageAccessibilityInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
-                     language="JAVA" enabledByDefault="true" level="ERROR"
+                     enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
 
     <localInspection bundle="messages.OsmorcBundle" key="WrongImportPackageInspection.name"
