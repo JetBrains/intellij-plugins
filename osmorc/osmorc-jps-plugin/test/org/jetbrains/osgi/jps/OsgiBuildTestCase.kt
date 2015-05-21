@@ -15,12 +15,14 @@
  */
 package org.jetbrains.osgi.jps
 
+import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.osgi.jps.build.OsmorcBuilder
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
@@ -62,6 +64,11 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     properties.myBundleSymbolicName = "main"
     properties.myBundleVersion = "1.0.0"
     properties.myAdditionalProperties = mapOf("Export-Package" to "main")
+  }
+
+  fun BuildResult.assertBundleCompiled(module: JpsModule) {
+    assertSuccessful()
+    assertCompiled(OsmorcBuilder.ID, "${module.getName()}/${extension(module).getProperties().myJarFileLocation}")
   }
 
   fun assertJar(module: JpsModule, expected: Set<String>) {

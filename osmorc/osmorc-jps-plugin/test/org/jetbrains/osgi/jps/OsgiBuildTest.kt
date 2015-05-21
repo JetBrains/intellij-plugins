@@ -15,7 +15,9 @@
  */
 package org.jetbrains.osgi.jps
 
+import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.osgi.jps.build.OsmorcBuilder
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
 import kotlin.properties.Delegates
 
@@ -84,12 +86,12 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    makeAll().assertSuccessful()
+    makeAll().assertBundleCompiled(myModule)
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
     makeAll().assertUpToDate()
 
     changeFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }\n")
-    makeAll().assertSuccessful()
+    makeAll().assertBundleCompiled(myModule)
     makeAll().assertUpToDate()
 
     changeFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.1\nExport-Package: main")
@@ -98,5 +100,9 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
     rebuildAll()
     makeAll().assertUpToDate()
+
+    extension(myModule).getProperties().myAlwaysRebuildBundleJar = true
+    makeAll().assertBundleCompiled(myModule)
+    makeAll().assertBundleCompiled(myModule)
   }
 }
