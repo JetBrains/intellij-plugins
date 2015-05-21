@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author vnikolaenko
@@ -59,15 +60,22 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   public void endDocument() throws SAXException {
   }
 
+  private final Pattern myPattern = Pattern.compile("\\s{2,}");
   @Override
   public void characters(char[] ch, int start, int length) throws SAXException {
+    if (!myIsTagHelpSection && !myIsFunctionHelpSection) return;
     String description = new String(ch, start, length);
-    description = description.replaceAll("\\s*", " ");
+    description = myPattern.matcher(description).replaceAll(" ");
+
     if (myIsTagHelpSection && myCurrentTag != null) {
-      myCurrentTag.setDescription(description);
+      String previousDescription = myCurrentTag.getDescription();
+      myCurrentTag.setDescription(
+        StringUtil.isEmpty(previousDescription) ?description:previousDescription + "\n" + description);
     }
     else if (myIsFunctionHelpSection && myCurrentFunction != null) {
-      myCurrentFunction.setDescription(description);
+      String previousDescription = myCurrentFunction.getDescription();
+      myCurrentFunction.setDescription(
+        StringUtil.isEmpty(previousDescription) ?description:previousDescription + "\n" + description);
     }
   }
 
