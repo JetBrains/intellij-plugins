@@ -44,6 +44,7 @@
     <runConfigurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRunConfigurationProducer"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
     <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
+<!--
     <localInspection groupPath="JavaScript"
                      groupName="JsTestDriver"
                      displayName="Add JsTestDriver assertion framework support"
@@ -76,6 +77,7 @@
                      level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JsTestDriverTestCaseWithoutTestsInspection"
         />
+-->
 
     <languageInjector implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdFixtureHtmlLanguageInjector"/>
     <codeInsight.lineMarkerProvider language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkLineMarkerProvider"/>
