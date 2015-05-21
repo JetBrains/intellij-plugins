@@ -13,5 +13,6 @@
     <orderEntry type="library" name="Home" level="project" />
     <orderEntry type="library" name="javafx-mx" level="project" />
     <orderEntry type="library" name="javafx-src" level="project" />
+    <orderEntry type="library" name="shortcutter" level="project" />
   </component>
 </module>
