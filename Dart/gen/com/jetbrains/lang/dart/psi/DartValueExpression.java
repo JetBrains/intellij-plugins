@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartValueExpression extends DartExpression {
 
-  @Nullable
-  DartExpression getExpression();
+  @NotNull
+  List<DartExpression> getExpressionList();
 
 }

@@ -443,31 +443,32 @@ Dart File
             ARGUMENTS
               PsiElement(()('(')
               ARGUMENT_LIST
-                CASCADE_REFERENCE_EXPRESSION
+                VALUE_EXPRESSION
                   LIST_LITERAL_EXPRESSION
                     PsiElement([)('[')
                     PsiElement(])(']')
-                  PsiElement(..)('..')
-                  CALL_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('addAll')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      ARGUMENT_LIST
-                        LIST_LITERAL_EXPRESSION
-                          PsiElement([)('[')
-                          EXPRESSION_LIST
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('1')
-                            PsiElement(,)(',')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('2')
-                            PsiElement(,)(',')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('3')
-                          PsiElement(])(']')
-                      PsiElement())(')')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('addAll')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        ARGUMENT_LIST
+                          LIST_LITERAL_EXPRESSION
+                            PsiElement([)('[')
+                            EXPRESSION_LIST
+                              LITERAL_EXPRESSION
+                                PsiElement(NUMBER)('1')
+                              PsiElement(,)(',')
+                              LITERAL_EXPRESSION
+                                PsiElement(NUMBER)('2')
+                              PsiElement(,)(',')
+                              LITERAL_EXPRESSION
+                                PsiElement(NUMBER)('3')
+                            PsiElement(])(']')
+                        PsiElement())(')')
               PsiElement())(')')
           PsiElement(;)(';')
         PsiElement(})('}')

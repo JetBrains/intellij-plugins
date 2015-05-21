@@ -468,12 +468,14 @@ public class DartResolveUtil {
     }
     DartReference reference = PsiTreeUtil.getParentOfType(node, DartReference.class, false);
     while (reference != null) {
-      final PsiElement parent = reference.getParent();
+      PsiElement parent = reference.getParent();
       if (parent instanceof DartCascadeReferenceExpression) {
-        DartReference[] references = PsiTreeUtil.getChildrenOfType(parent, DartReference.class);
-        DartReference result = references != null && references.length == 2 ? references[0] : null;
-        // if not starts with node
-        return !PsiTreeUtil.isAncestor(result, node, false) ? result : null;
+        parent = parent.getParent();
+        if (parent instanceof DartValueExpression) {
+          return (DartReference) parent.getFirstChild();
+        }
+        // Invalid tree shape
+        return null;
       }
       else if (parent instanceof DartReference && parent.getFirstChild() == reference) {
         reference = (DartReference)parent;

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartCascadeReferenceExpression extends DartExpression, DartReference {
 
-  @NotNull
-  List<DartExpression> getExpressionList();
+  @Nullable
+  DartExpression getExpression();
 
 }

@@ -530,17 +530,17 @@ Dart File
                   PsiElement(IDENTIFIER)('foo')
             VAR_INIT
               PsiElement(=)('=')
-              CASCADE_REFERENCE_EXPRESSION
+              VALUE_EXPRESSION
+                NEW_EXPRESSION
+                  PsiElement(new)('new')
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Foo')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
                 CASCADE_REFERENCE_EXPRESSION
-                  NEW_EXPRESSION
-                    PsiElement(new)('new')
-                    TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Foo')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      PsiElement())(')')
                   PsiElement(..)('..')
                   REFERENCE_EXPRESSION
                     ID
@@ -549,27 +549,28 @@ Dart File
                     PsiElement(=)('=')
                     LITERAL_EXPRESSION
                       PsiElement(NUMBER)('239')
-                PsiElement(..)('..')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('baz')
-                        PsiElement(.)('.')
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('getBar')
-                      ARGUMENTS
-                        PsiElement(()('(')
-                        PsiElement())(')')
-                    PsiElement(.)('.')
+                CASCADE_REFERENCE_EXPRESSION
+                  PsiElement(..)('..')
+                  CALL_EXPRESSION
                     REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('getBaz')
-                  ARGUMENTS
-                    PsiElement(()('(')
-                    PsiElement())(')')
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('baz')
+                          PsiElement(.)('.')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('getBar')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          PsiElement())(')')
+                      PsiElement(.)('.')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('getBaz')
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      PsiElement())(')')
           PsiElement(;)(';')
         PsiElement(})('}')

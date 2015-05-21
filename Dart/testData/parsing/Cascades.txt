@@ -18,17 +18,17 @@ Dart File
                   PsiElement(IDENTIFIER)('person')
             VAR_INIT
               PsiElement(=)('=')
-              CASCADE_REFERENCE_EXPRESSION
+              VALUE_EXPRESSION
+                NEW_EXPRESSION
+                  PsiElement(new)('new')
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Person')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
                 CASCADE_REFERENCE_EXPRESSION
-                  NEW_EXPRESSION
-                    PsiElement(new)('new')
-                    TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Person')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      PsiElement())(')')
                   PsiElement(..)('..')
                   REFERENCE_EXPRESSION
                     ID
@@ -39,16 +39,16 @@ Dart File
                       PsiElement(OPEN_QUOTE)(''')
                       PsiElement(REGULAR_STRING_PART)('Bob Smith')
                       PsiElement(CLOSING_QUOTE)(''')
-                PsiElement(..)('..')
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('address')
-                VAR_INIT
-                  PsiElement(=)('=')
-                  PARENTHESIZED_EXPRESSION
-                    PsiElement(()('(')
-                    CASCADE_REFERENCE_EXPRESSION
-                      CASCADE_REFERENCE_EXPRESSION
+                CASCADE_REFERENCE_EXPRESSION
+                  PsiElement(..)('..')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('address')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    PARENTHESIZED_EXPRESSION
+                      PsiElement(()('(')
+                      VALUE_EXPRESSION
                         NEW_EXPRESSION
                           PsiElement(new)('new')
                           TYPE
@@ -58,27 +58,29 @@ Dart File
                           ARGUMENTS
                             PsiElement(()('(')
                             PsiElement())(')')
-                        PsiElement(..)('..')
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('city')
-                        VAR_INIT
-                          PsiElement(=)('=')
-                          STRING_LITERAL_EXPRESSION
-                            PsiElement(OPEN_QUOTE)(''')
-                            PsiElement(REGULAR_STRING_PART)('Springfield')
-                            PsiElement(CLOSING_QUOTE)(''')
-                      PsiElement(..)('..')
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('zip')
-                      VAR_INIT
-                        PsiElement(=)('=')
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)(''')
-                          PsiElement(REGULAR_STRING_PART)('99999')
-                          PsiElement(CLOSING_QUOTE)(''')
-                    PsiElement())(')')
+                        CASCADE_REFERENCE_EXPRESSION
+                          PsiElement(..)('..')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('city')
+                          VAR_INIT
+                            PsiElement(=)('=')
+                            STRING_LITERAL_EXPRESSION
+                              PsiElement(OPEN_QUOTE)(''')
+                              PsiElement(REGULAR_STRING_PART)('Springfield')
+                              PsiElement(CLOSING_QUOTE)(''')
+                        CASCADE_REFERENCE_EXPRESSION
+                          PsiElement(..)('..')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('zip')
+                          VAR_INIT
+                            PsiElement(=)('=')
+                            STRING_LITERAL_EXPRESSION
+                              PsiElement(OPEN_QUOTE)(''')
+                              PsiElement(REGULAR_STRING_PART)('99999')
+                              PsiElement(CLOSING_QUOTE)(''')
+                      PsiElement())(')')
           PsiElement(;)(';')
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
@@ -88,17 +90,17 @@ Dart File
                   PsiElement(IDENTIFIER)('map')
             VAR_INIT
               PsiElement(=)('=')
-              CASCADE_REFERENCE_EXPRESSION
+              VALUE_EXPRESSION
+                NEW_EXPRESSION
+                  PsiElement(new)('new')
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Map')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
                 CASCADE_REFERENCE_EXPRESSION
-                  NEW_EXPRESSION
-                    PsiElement(new)('new')
-                    TYPE
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('Map')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      PsiElement())(')')
                   PsiElement(..)('..')
                   PsiElement([)('[')
                   LITERAL_EXPRESSION
@@ -108,17 +110,18 @@ Dart File
                     PsiElement(=)('=')
                     LITERAL_EXPRESSION
                       PsiElement(NUMBER)('1')
-                PsiElement(..)('..')
-                PsiElement([)('[')
-                LITERAL_EXPRESSION
-                  PsiElement(NUMBER)('2')
-                PsiElement(])(']')
-                VAR_INIT
-                  PsiElement(=)('=')
+                CASCADE_REFERENCE_EXPRESSION
+                  PsiElement(..)('..')
+                  PsiElement([)('[')
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('2')
+                  PsiElement(])(']')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
           PsiElement(;)(';')
-          CASCADE_REFERENCE_EXPRESSION
+          VALUE_EXPRESSION
             AS_EXPRESSION
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -137,14 +140,15 @@ Dart File
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('CCC')
-            PsiElement(..)('..')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('ddd')
-              ARGUMENTS
-                PsiElement(()('(')
-                PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('ddd')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
           PsiElement(;)(';')
         PsiElement(})('}')
   CLASS_DEFINITION
@@ -662,267 +666,267 @@ Dart File
                       PsiElement(NUMBER)('2')
                   PsiElement())(')')
           PsiElement(;)(';')
-          CASCADE_REFERENCE_EXPRESSION
+          VALUE_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('a')
             CASCADE_REFERENCE_EXPRESSION
-              CASCADE_REFERENCE_EXPRESSION
-                CASCADE_REFERENCE_EXPRESSION
-                  CASCADE_REFERENCE_EXPRESSION
-                    CASCADE_REFERENCE_EXPRESSION
-                      CASCADE_REFERENCE_EXPRESSION
-                        CASCADE_REFERENCE_EXPRESSION
-                          CASCADE_REFERENCE_EXPRESSION
-                            CASCADE_REFERENCE_EXPRESSION
-                              CASCADE_REFERENCE_EXPRESSION
-                                CASCADE_REFERENCE_EXPRESSION
-                                  CASCADE_REFERENCE_EXPRESSION
-                                    CASCADE_REFERENCE_EXPRESSION
-                                      CASCADE_REFERENCE_EXPRESSION
-                                        CASCADE_REFERENCE_EXPRESSION
-                                          CASCADE_REFERENCE_EXPRESSION
-                                            CASCADE_REFERENCE_EXPRESSION
-                                              CASCADE_REFERENCE_EXPRESSION
-                                                CASCADE_REFERENCE_EXPRESSION
-                                                  REFERENCE_EXPRESSION
-                                                    ID
-                                                      PsiElement(IDENTIFIER)('a')
-                                                  PsiElement(..)('..')
-                                                  CALL_EXPRESSION
-                                                    REFERENCE_EXPRESSION
-                                                      ID
-                                                        PsiElement(IDENTIFIER)('check')
-                                                    ARGUMENTS
-                                                      PsiElement(()('(')
-                                                      ARGUMENT_LIST
-                                                        LITERAL_EXPRESSION
-                                                          PsiElement(NUMBER)('1')
-                                                        PsiElement(,)(',')
-                                                        LITERAL_EXPRESSION
-                                                          PsiElement(NUMBER)('2')
-                                                      PsiElement())(')')
-                                                PsiElement(..)('..')
-                                                CALL_EXPRESSION
-                                                  REFERENCE_EXPRESSION
-                                                    ID
-                                                      PsiElement(IDENTIFIER)('swap')
-                                                  ARGUMENTS
-                                                    PsiElement(()('(')
-                                                    PsiElement())(')')
-                                              PsiElement(..)('..')
-                                              CALL_EXPRESSION
-                                                REFERENCE_EXPRESSION
-                                                  ID
-                                                    PsiElement(IDENTIFIER)('check')
-                                                ARGUMENTS
-                                                  PsiElement(()('(')
-                                                  ARGUMENT_LIST
-                                                    LITERAL_EXPRESSION
-                                                      PsiElement(NUMBER)('2')
-                                                    PsiElement(,)(',')
-                                                    LITERAL_EXPRESSION
-                                                      PsiElement(NUMBER)('1')
-                                                  PsiElement())(')')
-                                            PsiElement(..)('..')
-                                            REFERENCE_EXPRESSION
-                                              ID
-                                                PsiElement(IDENTIFIER)('x')
-                                            VAR_INIT
-                                              PsiElement(=)('=')
-                                              LITERAL_EXPRESSION
-                                                PsiElement(NUMBER)('4')
-                                          PsiElement(..)('..')
-                                          REFERENCE_EXPRESSION
-                                            ID
-                                              PsiElement(IDENTIFIER)('y')
-                                          VAR_INIT
-                                            PsiElement(=)('=')
-                                            LITERAL_EXPRESSION
-                                              PsiElement(NUMBER)('9')
-                                        PsiElement(..)('..')
-                                        CALL_EXPRESSION
-                                          REFERENCE_EXPRESSION
-                                            ID
-                                              PsiElement(IDENTIFIER)('check')
-                                          ARGUMENTS
-                                            PsiElement(()('(')
-                                            ARGUMENT_LIST
-                                              LITERAL_EXPRESSION
-                                                PsiElement(NUMBER)('4')
-                                              PsiElement(,)(',')
-                                              LITERAL_EXPRESSION
-                                                PsiElement(NUMBER)('9')
-                                            PsiElement())(')')
-                                      PsiElement(..)('..')
-                                      CALL_EXPRESSION
-                                        REFERENCE_EXPRESSION
-                                          ID
-                                            PsiElement(IDENTIFIER)('setX')
-                                        ARGUMENTS
-                                          PsiElement(()('(')
-                                          ARGUMENT_LIST
-                                            LITERAL_EXPRESSION
-                                              PsiElement(NUMBER)('10')
-                                          PsiElement())(')')
-                                    PsiElement(..)('..')
-                                    CALL_EXPRESSION
-                                      REFERENCE_EXPRESSION
-                                        ID
-                                          PsiElement(IDENTIFIER)('check')
-                                      ARGUMENTS
-                                        PsiElement(()('(')
-                                        ARGUMENT_LIST
-                                          LITERAL_EXPRESSION
-                                            PsiElement(NUMBER)('10')
-                                          PsiElement(,)(',')
-                                          LITERAL_EXPRESSION
-                                            PsiElement(NUMBER)('9')
-                                        PsiElement())(')')
-                                  PsiElement(..)('..')
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('y')
-                                  VAR_INIT
-                                    PsiElement(=)('=')
-                                    LITERAL_EXPRESSION
-                                      PsiElement(NUMBER)('5')
-                                PsiElement(..)('..')
-                                CALL_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    ID
-                                      PsiElement(IDENTIFIER)('check')
-                                  ARGUMENTS
-                                    PsiElement(()('(')
-                                    ARGUMENT_LIST
-                                      LITERAL_EXPRESSION
-                                        PsiElement(NUMBER)('10')
-                                      PsiElement(,)(',')
-                                      LITERAL_EXPRESSION
-                                        PsiElement(NUMBER)('5')
-                                    PsiElement())(')')
-                              PsiElement(..)('..')
-                              CALL_EXPRESSION
-                                CALL_EXPRESSION
-                                  CALL_EXPRESSION
-                                    REFERENCE_EXPRESSION
-                                      ID
-                                        PsiElement(IDENTIFIER)('swap')
-                                    ARGUMENTS
-                                      PsiElement(()('(')
-                                      PsiElement())(')')
-                                  ARGUMENTS
-                                    PsiElement(()('(')
-                                    PsiElement())(')')
-                                ARGUMENTS
-                                  PsiElement(()('(')
-                                  PsiElement())(')')
-                            PsiElement(..)('..')
-                            CALL_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                ID
-                                  PsiElement(IDENTIFIER)('check')
-                              ARGUMENTS
-                                PsiElement(()('(')
-                                ARGUMENT_LIST
-                                  LITERAL_EXPRESSION
-                                    PsiElement(NUMBER)('5')
-                                  PsiElement(,)(',')
-                                  LITERAL_EXPRESSION
-                                    PsiElement(NUMBER)('10')
-                                PsiElement())(')')
-                          PsiElement(..)('..')
-                          CALL_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('check')
-                            ARGUMENTS
-                              PsiElement(()('(')
-                              ARGUMENT_LIST
-                                LITERAL_EXPRESSION
-                                  PsiElement(NUMBER)('2')
-                                PsiElement(,)(',')
-                                LITERAL_EXPRESSION
-                                  PsiElement(NUMBER)('10')
-                              PsiElement())(')')
-                        PsiElement(..)('..')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            CALL_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                ID
-                                  PsiElement(IDENTIFIER)('setX')
-                              ARGUMENTS
-                                PsiElement(()('(')
-                                ARGUMENT_LIST
-                                  LITERAL_EXPRESSION
-                                    PsiElement(NUMBER)('10')
-                                PsiElement())(')')
-                            PsiElement(.)('.')
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('setY')
-                          ARGUMENTS
-                            PsiElement(()('(')
-                            ARGUMENT_LIST
-                              LITERAL_EXPRESSION
-                                PsiElement(NUMBER)('3')
-                            PsiElement())(')')
-                      PsiElement(..)('..')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('check')
-                        ARGUMENTS
-                          PsiElement(()('(')
-                          ARGUMENT_LIST
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('10')
-                            PsiElement(,)(',')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('3')
-                          PsiElement())(')')
-                    PsiElement(..)('..')
-                    CALL_EXPRESSION
-                      ARRAY_ACCESS_EXPRESSION
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('setX')
-                          ARGUMENTS
-                            PsiElement(()('(')
-                            ARGUMENT_LIST
-                              LITERAL_EXPRESSION
-                                PsiElement(NUMBER)('7')
-                            PsiElement())(')')
-                        PsiElement([)('[')
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('swap')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(])(']')
-                      ARGUMENTS
-                        PsiElement(()('(')
-                        PsiElement())(')')
-                  PsiElement(..)('..')
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('1')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('swap')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('1')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('x')
+              VAR_INIT
+                PsiElement(=)('=')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('4')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('y')
+              VAR_INIT
+                PsiElement(=)('=')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('9')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('4')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('9')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('setX')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('10')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('10')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('9')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('y')
+              VAR_INIT
+                PsiElement(=)('=')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('5')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('10')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('5')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                CALL_EXPRESSION
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       ID
-                        PsiElement(IDENTIFIER)('check')
+                        PsiElement(IDENTIFIER)('swap')
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('5')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('10')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('10')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('setX')
                     ARGUMENTS
                       PsiElement(()('(')
                       ARGUMENT_LIST
                         LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('3')
-                        PsiElement(,)(',')
+                          PsiElement(NUMBER)('10')
+                      PsiElement())(')')
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('setY')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('3')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('10')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('3')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                ARRAY_ACCESS_EXPRESSION
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('setX')
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      ARGUMENT_LIST
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('7')
                       PsiElement())(')')
-                PsiElement(..)('..')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(import)('import')
-                  ARGUMENTS
-                    PsiElement(()('(')
-                    PsiElement())(')')
+                  PsiElement([)('[')
+                  STRING_LITERAL_EXPRESSION
+                    PsiElement(OPEN_QUOTE)('"')
+                    PsiElement(REGULAR_STRING_PART)('swap')
+                    PsiElement(CLOSING_QUOTE)('"')
+                  PsiElement(])(']')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('3')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('7')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(import)('import')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
               PsiElement(..)('..')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -937,20 +941,21 @@ Dart File
                     LITERAL_EXPRESSION
                       PsiElement(NUMBER)('7')
                   PsiElement())(')')
-            PsiElement(..)('..')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('check')
-              ARGUMENTS
-                PsiElement(()('(')
-                ARGUMENT_LIST
-                  LITERAL_EXPRESSION
-                    PsiElement(NUMBER)('7')
-                  PsiElement(,)(',')
-                  LITERAL_EXPRESSION
-                    PsiElement(NUMBER)('4')
-                PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('check')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  ARGUMENT_LIST
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('7')
+                    PsiElement(,)(',')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('4')
+                  PsiElement())(')')
           PsiElement(;)(';')
         PsiElement(})('}')
   VAR_DECLARATION_LIST
@@ -961,7 +966,7 @@ Dart File
           PsiElement(IDENTIFIER)('BANG')
     VAR_INIT
       PsiElement(=)('=')
-      CASCADE_REFERENCE_EXPRESSION
+      VALUE_EXPRESSION
         NEW_EXPRESSION
           PsiElement(new)('new')
           TYPE
@@ -971,32 +976,34 @@ Dart File
           ARGUMENTS
             PsiElement(()('(')
             PsiElement())(')')
-        PsiElement(..)('..')
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('x')
-        VAR_INIT
-          PsiElement(=)('=')
-          LIST_LITERAL_EXPRESSION
-            PsiElement([)('[')
-            EXPRESSION_LIST
-              CASCADE_REFERENCE_EXPRESSION
-                STRING_LITERAL_EXPRESSION
-                  PsiElement(OPEN_QUOTE)('"')
-                  PsiElement(REGULAR_STRING_PART)('foo')
-                  PsiElement(CLOSING_QUOTE)('"')
-                PsiElement(..)('..')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('padLeft')
-                  ARGUMENTS
-                    PsiElement(()('(')
-                    ARGUMENT_LIST
-                      LITERAL_EXPRESSION
-                        PsiElement(NUMBER)('1')
-                    PsiElement())(')')
-            PsiElement(])(']')
+        CASCADE_REFERENCE_EXPRESSION
+          PsiElement(..)('..')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('x')
+          VAR_INIT
+            PsiElement(=)('=')
+            LIST_LITERAL_EXPRESSION
+              PsiElement([)('[')
+              EXPRESSION_LIST
+                VALUE_EXPRESSION
+                  STRING_LITERAL_EXPRESSION
+                    PsiElement(OPEN_QUOTE)('"')
+                    PsiElement(REGULAR_STRING_PART)('foo')
+                    PsiElement(CLOSING_QUOTE)('"')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('padLeft')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        ARGUMENT_LIST
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('1')
+                        PsiElement())(')')
+              PsiElement(])(']')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
@@ -1006,63 +1013,66 @@ Dart File
           PsiElement(IDENTIFIER)('BANG2')
     VAR_INIT
       PsiElement(=)('=')
-      CASCADE_REFERENCE_EXPRESSION
+      VALUE_EXPRESSION
+        NEW_EXPRESSION
+          PsiElement(new)('new')
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('B')
+          ARGUMENTS
+            PsiElement(()('(')
+            PsiElement())(')')
         CASCADE_REFERENCE_EXPRESSION
-          NEW_EXPRESSION
-            PsiElement(new)('new')
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('B')
-            ARGUMENTS
-              PsiElement(()('(')
-              PsiElement())(')')
           PsiElement(..)('..')
           REFERENCE_EXPRESSION
             ID
               PsiElement(IDENTIFIER)('x')
-        PsiElement(..)('..')
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('y')
-        VAR_INIT
-          PsiElement(=)('=')
-          MAP_LITERAL_EXPRESSION
-            PsiElement({)('{')
-            MAP_LITERAL_ENTRY
-              CASCADE_REFERENCE_EXPRESSION
-                STRING_LITERAL_EXPRESSION
-                  PsiElement(OPEN_QUOTE)('"')
-                  PsiElement(REGULAR_STRING_PART)('bar')
-                  PsiElement(CLOSING_QUOTE)('"')
-                PsiElement(..)('..')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('padLeft')
-                  ARGUMENTS
-                    PsiElement(()('(')
-                    ARGUMENT_LIST
-                      LITERAL_EXPRESSION
-                        PsiElement(NUMBER)('1')
-                    PsiElement())(')')
-              PsiElement(:)(':')
-              CASCADE_REFERENCE_EXPRESSION
-                CASCADE_REFERENCE_EXPRESSION
+        CASCADE_REFERENCE_EXPRESSION
+          PsiElement(..)('..')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('y')
+          VAR_INIT
+            PsiElement(=)('=')
+            MAP_LITERAL_EXPRESSION
+              PsiElement({)('{')
+              MAP_LITERAL_ENTRY
+                VALUE_EXPRESSION
+                  STRING_LITERAL_EXPRESSION
+                    PsiElement(OPEN_QUOTE)('"')
+                    PsiElement(REGULAR_STRING_PART)('bar')
+                    PsiElement(CLOSING_QUOTE)('"')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('padLeft')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        ARGUMENT_LIST
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('1')
+                        PsiElement())(')')
+                PsiElement(:)(':')
+                VALUE_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('baz')
-                  PsiElement(..)('..')
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('q')
-                PsiElement(..)('..')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('w')
-                  ARGUMENTS
-                    PsiElement(()('(')
-                    PsiElement())(')')
-            PsiElement(})('}')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('q')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('w')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+              PsiElement(})('}')
   PsiElement(;)(';')

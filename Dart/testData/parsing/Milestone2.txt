@@ -427,20 +427,20 @@ Dart File
                 PsiElement(IDENTIFIER)('f')
           VAR_INIT
             PsiElement(=)('=')
-            CASCADE_REFERENCE_EXPRESSION
+            VALUE_EXPRESSION
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('g')
               CASCADE_REFERENCE_EXPRESSION
-                CASCADE_REFERENCE_EXPRESSION
+                PsiElement(..)('..')
+                CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('g')
-                  PsiElement(..)('..')
-                  CALL_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('m1')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      PsiElement())(')')
+                      PsiElement(IDENTIFIER)('m1')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
+              CASCADE_REFERENCE_EXPRESSION
                 PsiElement(..)('..')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
@@ -449,15 +449,16 @@ Dart File
                   ARGUMENTS
                     PsiElement(()('(')
                     PsiElement())(')')
-              PsiElement(..)('..')
-              REFERENCE_EXPRESSION
+              CASCADE_REFERENCE_EXPRESSION
+                PsiElement(..)('..')
                 REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('f')
-                PsiElement(.)('.')
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('f')
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
         PsiElement(;)(';')
       PsiElement(})('}')
   CLASS_DEFINITION
@@ -521,11 +522,11 @@ Dart File
                   PsiElement(()('(')
                   PsiElement())(')')
           PsiElement(;)(';')
-          CASCADE_REFERENCE_EXPRESSION
+          VALUE_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('a')
             CASCADE_REFERENCE_EXPRESSION
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('a')
               PsiElement(..)('..')
               REFERENCE_EXPRESSION
                 ID
@@ -545,14 +546,15 @@ Dart File
                     PsiElement(OPEN_QUOTE)(''')
                     PsiElement(REGULAR_STRING_PART)('false')
                     PsiElement(CLOSING_QUOTE)(''')
-            PsiElement(..)('..')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('foo')
-              ARGUMENTS
-                PsiElement(()('(')
-                PsiElement())(')')
+            CASCADE_REFERENCE_EXPRESSION
+              PsiElement(..)('..')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('foo')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
           PsiElement(;)(';')
           FUNCTION_DECLARATION_WITH_BODY
             RETURN_TYPE

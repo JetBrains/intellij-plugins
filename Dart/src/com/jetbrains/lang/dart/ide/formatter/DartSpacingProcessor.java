@@ -370,7 +370,12 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(true);
     }
 
-    if (type1 != DOT && type2 == DOT_DOT && elementType == CASCADE_REFERENCE_EXPRESSION) {
+    if (elementType == VALUE_EXPRESSION && type2 == CASCADE_REFERENCE_EXPRESSION) {
+      //if (type1 == CASCADE_REFERENCE_EXPRESSION) {
+      //  if (((AbstractBlock)child1).getNode().getLastChildNode().getElementType() == CALL_EXPRESSION) {
+      //    // TODO if child1 message name == child2 message name, do not add line break
+      //  }
+      //}
       return addLineBreak();
     }
 

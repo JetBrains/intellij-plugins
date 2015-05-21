@@ -1038,12 +1038,12 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(b, l, "cascadeReferenceExpression")) return false;
     if (!nextTokenIs(b, DOT_DOT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _LEFT_, null);
+    Marker m = enter_section_(b);
     r = consumeToken(b, DOT_DOT);
     r = r && cascadeStopper(b, l + 1);
     r = r && cascadeReferenceExpression_2(b, l + 1);
     r = r && varInitWrapper(b, l + 1);
-    exit_section_(b, l, m, CASCADE_REFERENCE_EXPRESSION, r, false, null);
+    exit_section_(b, m, CASCADE_REFERENCE_EXPRESSION, r);
     return r;
   }
 
