@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,8 +56,15 @@ public class DartAnalysisServerGlobalInspectionContext
     if (analysisScope == null) return;
 
     final GlobalSearchScope scope = GlobalSearchScope.EMPTY_SCOPE.union(analysisScope.toSearchScope());
+
     updateIndicator("Looking for Dart files...", -1);
-    final Collection<VirtualFile> dartFiles = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope);
+
+    final Collection<VirtualFile> dartFiles = ApplicationManager.getApplication().runReadAction(new Computable<Collection<VirtualFile>>() {
+      @Override
+      public Collection<VirtualFile> compute() {
+        return FileTypeIndex.getFiles(DartFileType.INSTANCE, scope);
+      }
+    });
 
     double index = 0.0;
     final int size = dartFiles.size();
