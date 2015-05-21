@@ -20,6 +20,7 @@ import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.reference.SoftReference;
 import com.intellij.util.text.LineReader;
@@ -38,9 +39,8 @@ import java.util.Map;
  */
 public class CfmlLangInfo {
   private final Project myProject;
-  private Reference<CfmlLangDictionary> myCF8Dictionary;
-  private Reference<CfmlLangDictionary> myCF9Dictionary;
-  private Reference<CfmlLangDictionary> myRailoDictionary;
+  private Reference<CfmlLangDictionary> myCFDictionary;
+  private String myCFDictionaryLevel;
 
   public static CfmlLangInfo getInstance(Project project) {
     return ServiceManager.getService(project, CfmlLangInfo.class);
@@ -84,42 +84,21 @@ public class CfmlLangInfo {
   private CfmlLangDictionary getProjectDictionary() {
     String languageLevel = getLanguageLevel();
     CfmlLangDictionary dictionary;
-    if (languageLevel.equals(CfmlLanguage.CF8)) {
-      dictionary = SoftReference.dereference(myCF8Dictionary);
-      if (dictionary == null) {
-        synchronized (CfmlLangInfo.class) {
-          dictionary = SoftReference.dereference(myCF8Dictionary);
-          if (dictionary == null) {
-            dictionary = new CfmlLangDictionary("scopes.txt", "cf8_tags.xml");
-            myCF8Dictionary = new SoftReference<CfmlLangDictionary>(dictionary);
-          }
-        }
+
+    if (Comparing.equal(myCFDictionaryLevel, languageLevel)) {
+      dictionary = SoftReference.dereference(myCFDictionary);
+      if (dictionary != null) return dictionary;
+    }
+
+    synchronized (CfmlLangInfo.class) {
+      dictionary = SoftReference.dereference(myCFDictionary);
+      if (dictionary == null || !Comparing.equal(myCFDictionaryLevel, languageLevel)) {
+        dictionary = new CfmlLangDictionary("scopes.txt", languageLevel);
+        myCFDictionary = new SoftReference<CfmlLangDictionary>(dictionary);
+        myCFDictionaryLevel = languageLevel;
       }
     }
-    else if (languageLevel.equals(CfmlLanguage.RAILO)) {
-      dictionary = SoftReference.dereference(myRailoDictionary);
-      if (dictionary == null) {
-        synchronized (CfmlLangInfo.class) {
-          dictionary = SoftReference.dereference(myRailoDictionary);
-          if (dictionary == null) {
-            dictionary = new CfmlLangDictionary("scopes.txt", "Railo_tags.xml");
-            myRailoDictionary = new SoftReference<CfmlLangDictionary>(dictionary);
-          }
-        }
-      }
-    }
-    else /*if (languageLevel.equals(CfmlLanguage.CF9))*/ {
-      dictionary = SoftReference.dereference(myCF9Dictionary);
-      if (dictionary == null) {
-        synchronized (CfmlLangInfo.class) {
-          dictionary = SoftReference.dereference(myCF9Dictionary);
-          if (dictionary == null) {
-            dictionary = new CfmlLangDictionary("scopes.txt", "tags.xml");
-            myCF9Dictionary = new SoftReference<CfmlLangDictionary>(dictionary);
-          }
-        }
-      }
-    }
+
     return dictionary;
   }
 
