@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
+import shortcutter.WrongShortcutException;
 
 /**
  * Created by karashevich on 15/04/15.
@@ -21,7 +22,11 @@ public class BigBrother{
 
     public BigBrother() {
         if (mySmallLog == null)
-            mySmallLog = new SmallLog();
+            try {
+                mySmallLog = new SmallLog();
+            } catch (WrongShortcutException e) {
+                e.printStackTrace();
+            }
         ActionManager.getInstance().addAnActionListener(new AnActionListener() {
 
             @Override

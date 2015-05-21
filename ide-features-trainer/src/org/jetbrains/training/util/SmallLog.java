@@ -1,13 +1,12 @@
 package org.jetbrains.training.util;
 
 import com.intellij.ui.components.JBScrollPane;
+import shortcutter.Shortcutter;
+import shortcutter.WrongShortcutException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -30,7 +29,7 @@ public class SmallLog extends JFrame{
 
     private SemiTransparentPanel semiTransparentPanel;
 
-    public SmallLog(){
+    public SmallLog() throws WrongShortcutException {
         super("SmallLog");
 
         setAlwaysOnTop(true);
@@ -65,13 +64,12 @@ public class SmallLog extends JFrame{
         private SmallLog smallLog;
         private int lastClicked = -1;
         private int pivot = -1;
-        private boolean shiftPressed = false;
 
         //clickLabels
         private final ArrayList<ClickLabel> clickLabels = new ArrayList<ClickLabel>();
         private final java.util.Queue<Character> charBuffer = new ArrayBlockingQueue<Character>(1000);
 
-        public SemiTransparentPanel(Dimension dimension1, SmallLog smallLog){
+        public SemiTransparentPanel(Dimension dimension1, SmallLog smallLog) throws WrongShortcutException {
             this.smallLog = smallLog;
             setSize(dimension1);
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -79,94 +77,93 @@ public class SmallLog extends JFrame{
 
             this.setFocusable(true);
             this.requestFocus();
-            this.addKeyListener(new KeyAdapter() {
 
+            //clear all selection if user pressed ESCAPE
+            Shortcutter.register(this, "_ESCAPE", new Runnable() {
                 @Override
-                public void keyPressed(KeyEvent ke) {
-                    //multiple selection if user pressed SHIFT
-                    if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        shiftPressed = true;
-                        System.out.println("Shift pressed. Last clicked:" + lastClicked);
+                public void run() {
+                    for (ClickLabel cl : clickLabels) {
+                        if (cl.selected) flip(cl);
                     }
-                    //delete clickLabel if user pressed DEL ot BACKSPACE
-                    if ((ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) || (ke.getKeyCode() == KeyEvent.VK_DELETE)) {
-                        if (pivot != -1) {
-                            if (clickLabels.size() > pivot) {
-                                int deleted = pivot;
-                                deleteClickLabel(clickLabels.get(pivot));
-                                //init pivot again
-                                pivot = -1;
-                                if (deleted == clickLabels.size()) movePivot(clickLabels.size() - 1);
-                                else movePivot(deleted);
-                                update();
-                            }
-                        }
-                    }
-                    //clear all selection if user pressed ESCAPE
-                    if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                        for (ClickLabel cl : clickLabels) {
-                            if (cl.selected) flip(cl);
-                        }
-                        movePivot(-1);
-                    }
-                    //move pivot UP
-                    if (ke.getKeyCode() == KeyEvent.VK_UP) {
-                        if (shiftPressed) {
-                            if (pivot == -1) {
-                                if (clickLabels != null) {
-                                    flip(clickLabels.get(clickLabels.size() - 1));
-                                    movePivot(clickLabels.size() - 1);
-                                }
-                            } else {
-                                if (pivot == 0) {
-                                    flip(clickLabels.get(0));
-                                    movePivot(-1);
-                                } else {
-                                    flip(clickLabels.get(pivot));
-                                    movePivot(pivot - 1);
-                                }
-                            }
-                        } else {
-                            if (pivot == -1) {
-                                if (clickLabels != null) {
-                                    movePivot(clickLabels.size() - 1);
-                                }
-                            } else {
-                                if (pivot == 0) movePivot(-1);
-                                else movePivot(pivot - 1);
-                            }
-                        }
-                    }
-                    //move pivot DOWN
-                    if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-                        if (shiftPressed) {
-                            if (pivot == -1) {
-                                if (clickLabels != null) movePivot(0);
-                            } else {
-                                if (pivot == clickLabels.size() - 1) {
-                                    flip(clickLabels.get(clickLabels.size() - 1));
-                                    movePivot(-1);
-                                } else {
-                                    flip(clickLabels.get(pivot));
-                                    movePivot(pivot + 1);
-                                }
-                            }
-                        } else {
-                            if (pivot == -1) {
-                                if (clickLabels != null) movePivot(0);
-                            } else {
-                                if (pivot == clickLabels.size() - 1) movePivot(-1);
-                                else movePivot(pivot + 1);
-                            }
+                    movePivot(-1);
+                }
+            });
+
+            Runnable deleteAction = new Runnable() {
+                @Override
+                public void run() {
+
+                    if (pivot != -1) {
+                        if (clickLabels.size() > pivot) {
+                            int deleted = pivot;
+                            deleteClickLabel(clickLabels.get(pivot));
+                            //init pivot again
+                            pivot = -1;
+                            if (deleted == clickLabels.size()) movePivot(clickLabels.size() - 1);
+                            else movePivot(deleted);
+                            update();
                         }
                     }
                 }
+            };
 
+            //delete clickLabel if user pressed DEL ot BACKSPACE
+            Shortcutter.register(this, "_DELETE", deleteAction);
+//            Shortcutter.register(this, "_BACKSPACE", deleteAction);
+
+            Shortcutter.register(this, "_UP", new Runnable() {
                 @Override
-                public void keyReleased(KeyEvent ke) {
-                    if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        shiftPressed = false;
-                        System.out.println("Shift released. Last clicked:" + lastClicked);
+                public void run() {
+                    if (Shortcutter.isShiftPressed) {
+                        if (pivot == -1) {
+                            if (clickLabels != null) {
+                                flip(clickLabels.get(clickLabels.size() - 1));
+                                movePivot(clickLabels.size() - 1);
+                            }
+                        } else {
+                            if (pivot == 0) {
+                                flip(clickLabels.get(0));
+                                movePivot(-1);
+                            } else {
+                                flip(clickLabels.get(pivot));
+                                movePivot(pivot - 1);
+                            }
+                        }
+                    } else {
+                        if (pivot == -1) {
+                            if (clickLabels != null) {
+                                movePivot(clickLabels.size() - 1);
+                            }
+                        } else {
+                            if (pivot == 0) movePivot(-1);
+                            else movePivot(pivot - 1);
+                        }
+                    }
+                }
+            });
+
+            Shortcutter.register(this, "_DOWN", new Runnable() {
+                @Override
+                public void run() {
+                    if (Shortcutter.isShiftPressed) {
+                        if (pivot == -1) {
+                            if (clickLabels != null) movePivot(0);
+                        } else {
+                            if (pivot == clickLabels.size() - 1) {
+                                flip(clickLabels.get(clickLabels.size() - 1));
+                                movePivot(-1);
+                            } else {
+                                flip(clickLabels.get(pivot));
+                                movePivot(pivot + 1);
+                            }
+                        }
+                    } else {
+                        if (pivot == -1) {
+                            if (clickLabels != null) movePivot(0);
+                        } else {
+                            if (pivot == clickLabels.size() - 1) movePivot(-1);
+                            else movePivot(pivot + 1);
+                        }
                     }
                 }
             });
@@ -269,7 +266,7 @@ public class SmallLog extends JFrame{
                         });
                     } else {
                         e.consume();
-                        if (shiftPressed && lastClicked != -1){
+                        if (Shortcutter.isShiftPressed && lastClicked != -1){
                             int current = clickLabels.indexOf(clickLabel);
                             int last = lastClicked;
                             if (last > current) {
