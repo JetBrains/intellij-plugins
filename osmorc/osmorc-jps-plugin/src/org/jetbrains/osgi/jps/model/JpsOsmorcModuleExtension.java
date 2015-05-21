@@ -34,6 +34,9 @@ public interface JpsOsmorcModuleExtension extends JpsElement {
   @NotNull
   String getJarFileLocation();
 
+  @Nullable
+  File getBundleDescriptorFile();
+
   boolean isUseBndFile();
 
   boolean isUseBundlorFile();

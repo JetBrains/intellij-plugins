@@ -15,6 +15,7 @@
  */
 package org.jetbrains.osgi.jps.model.impl;
 
+import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,23 @@ import java.util.jar.JarFile;
  */
 public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModuleExtensionImpl> implements JpsOsmorcModuleExtension {
   private final OsmorcModuleExtensionProperties myProperties;
+  private final NullableLazyValue<File> myDescriptorFile = new NullableLazyValue<File>() {
+    @Override
+    protected File compute() {
+      if (myProperties.myManifestGenerationMode == ManifestGenerationMode.Bnd) {
+        return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBndFileLocation());
+      }
+      else if (myProperties.myManifestGenerationMode == ManifestGenerationMode.Bundlor) {
+        return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBundlorFileLocation());
+      }
+      else if (myProperties.myManifestGenerationMode == ManifestGenerationMode.Manually) {
+        return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getManifestLocation());
+      }
+      else {
+        return null;
+      }
+    }
+  };
 
   public JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties properties) {
     myProperties = properties;
@@ -85,6 +103,12 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
       default:
         return nullSafeLocation;
     }
+  }
+
+  @Nullable
+  @Override
+  public File getBundleDescriptorFile() {
+    return myDescriptorFile.getValue();
   }
 
   @Override

@@ -95,7 +95,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     makeAll().assertUpToDate()
 
     changeFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.1\nExport-Package: main")
-    makeAll().assertSuccessful()
+    makeAll().assertBundleCompiled(myModule)
     makeAll().assertUpToDate()
 
     rebuildAll()
@@ -104,5 +104,20 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     extension(myModule).getProperties().myAlwaysRebuildBundleJar = true
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertBundleCompiled(myModule)
+  }
+
+  fun testRebuildOnDependencyChange() {
+    bndBuild(myModule)
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
+    createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return Sub.GREET; } }")
+    val subModule = module("sub", false)
+    createFile("sub/src/main/Sub.java", "package main;\npublic interface Sub { String GREET = \"Hello\"; }")
+    myModule.getDependenciesList().addModuleDependency(subModule)
+    makeAll().assertBundleCompiled(myModule)
+    makeAll().assertUpToDate()
+
+    changeFile("sub/src/main/Sub.java", "package main;\npublic interface Sub { String GREET = \"Hi\"; }")
+    makeAll().assertBundleCompiled(myModule)
+    makeAll().assertUpToDate()
   }
 }
