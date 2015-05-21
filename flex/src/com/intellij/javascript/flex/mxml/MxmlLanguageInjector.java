@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.MxmlLanguage;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.util.TextRange;
@@ -38,7 +39,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement host) {
-    if (!JavaScriptSupportLoader.isFlexMxmFile(host.getContainingFile())) {
+    if (!host.getContainingFile().getLanguage().isKindOf(MxmlLanguage.INSTANCE)) {
       return;
     }
 
