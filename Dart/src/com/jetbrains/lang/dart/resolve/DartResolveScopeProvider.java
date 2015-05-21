@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.ResolveScopeProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
@@ -117,11 +118,16 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
     });
   }
 
+  @Nullable
   private static GlobalSearchScope getDartResolveScope(@NotNull final Module module,
                                                        @NotNull final VirtualFile pubspecFile,
                                                        @Nullable final VirtualFile contextSubdir) {
     final Project project = module.getProject();
-    final UserDataHolder dataHolder = contextSubdir != null ? contextSubdir : pubspecFile;
+    final UserDataHolder dataHolder = contextSubdir != null ? PsiManager.getInstance(project).findDirectory(contextSubdir)
+                                                            : PsiManager.getInstance(project).findFile(pubspecFile);
+    if (dataHolder == null) {
+      return null; // unlikely as contextSubdir and pubspecFile are checked to be in project
+    }
 
     return CachedValuesManager.getManager(project).getCachedValue(dataHolder, new CachedValueProvider<GlobalSearchScope>() {
       @Override
