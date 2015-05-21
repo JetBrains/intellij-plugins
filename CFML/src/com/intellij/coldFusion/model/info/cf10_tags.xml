@@ -16,9 +16,313 @@
   -->
 <dictionary>
     <tags>
-        <!--
-    cfabort
-        showError = "error_message"
+      <tag endtagrequired="true" name="cfexchangeconversation" single="false"
+           xmlstyle="false">
+        <help><![CDATA[
+        Helps users organize and manage conversations from a Microsoft Exchange account. The following actions are supported:
+
+    Finds the required conversations in folder/subfolders based on filters.
+    Status of the conversation; if read
+    Copy, move, or delete conversation
+    ]]></help>
+        <parameter name="action" required="true" type="String">
+          <help><![CDATA[
+            The action to take. Must be one of the following values:
+    get
+    setReadState
+    copy
+    move
+    delete
+        ]]></help>
+          <values>
+            <value option="get"/>
+            <value option="setReadState"/>
+            <value option="copy"/>
+            <value option="move"/>
+            <value option="delete"/>
+          </values>
+        </parameter>
+        <parameter name="connection" required="true" type="String">
+          <help><![CDATA[
+                    The name of the connection to the Exchange server, as specified in the {{cfexchangeconnection}}tag.
+If you omit this attribute, create a temporary connection by specifying cfexchangeconnection}}tag connection {{open action attributes in the {{cfexchangecontact}}tag.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="name" required="false" type="String">
+          <help><![CDATA[
+                    The name of the ColdFusion query variable that contains the returned conversation information. Required for "get" action.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="folderID" required="true" type="String">
+          <help><![CDATA[
+                    A case-sensitive Exchange UID value that uniquely identifies the folder.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="UID" required="true" type="String">
+          <help><![CDATA[
+                    If yes, marks the conversation as read.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="isRead" required="false" type="String">
+          <help><![CDATA[
+                    Indicates the status of the conversation, if read or not. Required for state=setReadState
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="destinationFolderID" required="false" type="String">
+          <help><![CDATA[
+                    A case-sensitive Exchange UID value that uniquely identifies the destination folder. Required for action="copy" or "move".
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="deleteType" required="false" type="String">
+          <help><![CDATA[
+          Required for action="delete".
+                        hardDelete: Removes a folder permanently from the store.
+    softDelete: Removes a folder to the dumpster, if dumpster is enabled.
+    moveToDeletedItems: Moves a folder to the deleted items folder.
+                    ]]></help>
+          <values default="moveToDeletedItems">
+            <value option="moveToDeletedItems"/>
+            <value option="softDelete"/>
+            <value option="hardDelete"/>
+          </values>
+        </parameter>
+      </tag>
+<!--<cfexchangefolder
+    action = "getExtendedInfo"
+    folderID = "Exchange folder UID"
+    connection = "connection_ID"
+    name = "query_name"/>  -->
+      <tag endtagrequired="false" name="cfexchangefolder" single="true"
+           xmlstyle="true">
+        <help><![CDATA[
+        Lets you perform various actions on the mail folder, such as get folder information, find folders, or create, copy, modify, move, delete, and empty the contents of a folder.
+    ]]></help>
+        <parameter name="action" required="true" type="String">
+          <help><![CDATA[
+            The action to take. Must be one of the following values:
+
+    getInfo
+    getExtendedInfo
+    findSubFolders
+    create
+    copy
+    delete
+    move
+    modify
+    empty
+        ]]></help>
+          <values>
+            <value option="getInfo"/>
+            <value option="getExtendedInfo"/>
+            <value option="findSubFolders"/>
+            <value option="create"/>
+            <value option="copy"/>
+            <value option="delete"/>
+            <value option="move"/>
+            <value option="modify"/>
+            <value option="empty"/>
+          </values>
+        </parameter>
+        <parameter name="uid" required="false" type="String">
+          <help><![CDATA[
+                    UID that is used to identify the folder in which the actions are performed. Required for action="getExtendedInfo" and "getInfo", if no folder path is specified.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="name" required="false" type="String">
+          <help><![CDATA[
+                    The name of the ColdFusion query variable that contains the returned information about the folder. Required for action="getExtendedInfo" / "getInfo" / "findSubFolders"
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="folderID" required="false" type="String">
+          <help><![CDATA[
+                    UID that is used to identify the folder in which the actions are performed. Requried for action="findSubFolders" / "delete" / "modify" / "empty" and "getExtendedInfo" / "getInfo" (if folder path is not specified)
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="folderPath" required="false" type="String">
+          <help><![CDATA[
+                    Full path to the folder where the action has to be performed.
+If you do not specify the path delimiter, / is taken by default. Not required if folderID is specified.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="pathDelimiter" required="false" type="String">
+          <help><![CDATA[
+                    Lets you specify the delimiter that is used to separate the folders. Default is "/", applied for action="getExtendedInfo" / "getInfo"
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="parentFolderId" required="false" type="String">
+          <help><![CDATA[
+                    UID that is used to identify the folder in which you create subfolders. Required for action="create"
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="connection" required="true" type="String">
+          <help><![CDATA[
+                    The name of the connection to the Exchange server, as specified in the cfexchangeconnection tag. If you omit this attribute, create a temporary connection by specifying cfexchangeconnection tag connection openaction attributes in the cfexchangecontact tag.
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="result" required="false" type="String">
+          <help><![CDATA[
+                    A query variable that contains the result returned from the exchange server when one of the action is performed. Required for action="create" / "copy" / "move"
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="destinationFolderId" required="false" type="String">
+          <help><![CDATA[
+                    A case-sensitive Exchange UID value that uniquely identifies the destination folder. Required for action="copy" / "move"
+                    ]]></help>
+          <values />
+        </parameter>
+
+        <parameter name="sourceFolderId" required="false" type="String">
+          <help><![CDATA[
+                    The UID that is used to identify the folder from which you copy or move folders to the destination folder. Required for action="copy" / "move"
+                    ]]></help>
+          <values />
+        </parameter>
+        <parameter name="deleteType" required="false" type="String">
+          <help><![CDATA[
+                        hardDelete: Removes a folder permanently from the Exchange server.
+    softDelete: Moves a folder to the dumpster in Exchange server, if dumpster is enabled.
+    moveToDeletedItems: Moves a folder to the deleted items folder. Required for action="delete" / "move"
+                    ]]></help>
+          <values default="moveToDeletedItems">
+            <value option="moveToDeletedItems"/>
+            <value option="softDelete"/>
+            <value option="hardDelete"/>
+          </values>
+        </parameter>
+        <parameter name="deleteSubFolders" required="false" type="boolean">
+        <help><![CDATA[
+                    If true, deletes the subfolder. Required for action="empty"
+                    ]]></help>
+          <values default="false">
+            <value option="true"/>
+            <value option="false"/>
+          </values>
+      </parameter>
+        <parameter name="folder" required="false" type="String">
+          <help><![CDATA[
+                    A struct that contains the required information of the folder that has to be created or modified, such as display name and folder class. Required for action="create" or "modify"
+                    ]]></help>
+          <values />
+        </parameter>
+      </tag>
+
+      <!--
+      <cfwebsocket
+          name="websocketName"
+          onMessage="JavaScript function name"
+          onOpen="JavaScript function name"
+          onClose="JavaScript function name"
+          onError="JavaScript function name"
+          useCfAuth=true|false
+          subscribeTo="channel_list"
+          secure="true|false">
+          -->
+      <tag endtagrequired="false" name="cfwebsocket" single="true"
+           xmlstyle="false">
+        <help><![CDATA[
+        Lets you create the WebSocket object in your CFM template. The tag creates a reference to the WebSocket JavaScript object at the client-side
+    ]]></help>
+        <parameter name="name" required="true" type="String">
+          <help><![CDATA[
+            The name of the WebSocket object. This is the reference to the JavaScript objects that are used to call WebSocket JavaScript functions.
+        ]]></help>
+          <values/>
+        </parameter>
+        <parameter name="onMessage" required="true" type="String">
+          <help><![CDATA[
+                    The JavaScript function that is called when the WebSocket receives a message from the server. The following are the two supported arguments:
+
+    aEvent: The WebSocket event that is dispatched from the server.
+    aToken: Used to get data received from the server.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="onOpen" required="false" type="String">
+          <help><![CDATA[
+                    The JavaScript function that is called when the WebSocket establishes a connection.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="onClose" required="false" type="String">
+          <help><![CDATA[
+                    The JavaScript function that is called when the WebSocket closes a connection.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="onError" required="false" type="String">
+          <help><![CDATA[
+                    The JavaScript function that is called if there is an error while performing an action over the WebSocket connection.
+                    ]]></help>
+          <values/>
+        </parameter>
+
+        <parameter name="usecfAuth" required="false" type="boolean">
+          <help><![CDATA[
+                    If set to true (default), users need not authenticate for WebSocket connection (provided they have already logged in to the application). This is the default value.
+If false, users have to specify the credentials for the WebSocket connection.
+                    ]]></help>
+          <values default="true">
+            <value option="true"/>
+            <value option="false"/>
+          </values>
+        </parameter>
+
+        <parameter name="subscribeTo" required="false" type="String">
+          <help><![CDATA[
+                    Comma-separated list of channels to subscribe to. You can specify any or all channels set in the Application.cfc.
+                    ]]></help>
+          <values default="true">
+            <value option="true"/>
+            <value option="false"/>
+          </values>
+        </parameter>
+
+        <parameter name="secure" required="false" type="boolean">
+          <help><![CDATA[
+                    If true, the web socket communication will happen over SSL.
+                    ]]></help>
+          <values default="false">
+            <value option="true"/>
+            <value option="false"/>
+          </values>
+        </parameter>
+      </tag>
+
+
+      <!--
+  cfabort
+      showError = "error_message"
 -->
         <tag endtagrequired="false" name="cfabort" single="true"
              xmlstyle="false">
@@ -2525,7 +2829,7 @@ Action to perform
     />
 
 -->
-        <tag endtagrequired="false" name="cfdiv" single="true"
+        <tag endtagrequired="false" name="cfdiv" single="false"
              xmlstyle="true">
             <help><![CDATA[
                 Creates an HTML tag with specified contents and lets you to use bind expressions to
@@ -20934,7 +21238,105 @@ ColdFusion ignores this attribute if you do not set the x attribute.
         </tag>
     </tags>
     <functions>
-        <function name="abs" returns="Numeric" >
+      <function name="arraySlice" returns="Array" >
+        <help><![CDATA[
+        Returns part of an array with only the elements you need.
+    ]]></help>
+        <parameter name="array" required="true" type="Array">
+          <help><![CDATA[
+          Name of the array that you want to slice.
+        ]]></help>
+        </parameter>
+        <parameter name="offset" required="true" type="Numeric">
+          <help><![CDATA[
+          Specifies the position from which to slice the array. Negative value indicates that the array is sliced, with sequence starting from array's end.
+        ]]></help>
+        </parameter>
+        <parameter name="length" required="true" type="Numeric">
+          <help><![CDATA[
+          Element count from offset.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="arrayEach" returns="void" >
+        <help><![CDATA[
+        Used to loop over an array. Syntax: <pre>
+arrayEach(array,function(any currentObj) {});</pre>
+    ]]></help>
+        <parameter name="array" required="true" type="Array">
+          <help><![CDATA[
+        Name of the array object.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Callback executed for each element in the array.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="arrayFilter" returns="Array" >
+        <help><![CDATA[
+        Used to filter the elements of an array. Syntax: <pre>
+arrayFilter(array,function(arrayElement){return true|false;});</pre>
+    ]]></help>
+        <parameter name="array" required="true" type="Array">
+          <help><![CDATA[
+Name of the array object.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Inline function executed for each element in the array. Returns true if the array element has to be included in the resultant array.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="arrayFindAll" returns="Array" >
+        <help><![CDATA[
+        Searches an array for all positions of a specified object. The function searches for simple objects such as strings and numbers or for complex objects such as structures. When the second parameter is a simple object, string searches are case-sensitive. This function does not support searches for COM and CORBA objects. Syntax: <pre>
+ArrayFindAll(array, object)
+ArrayFindAll(array, function(arrayElement) {return true|false;})</pre>Array of indices in which the object was found.
+    ]]></help>
+        <parameter name="array" required="true" type="Array">
+          <help><![CDATA[
+           Array to search in.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="false" type="Function">
+          <help><![CDATA[
+          Inline function executed for each element in the array. Returns true if the array elements match the search criterion.
+        ]]></help>
+        </parameter>
+        <parameter name="object" required="false" type="Object">
+          <help><![CDATA[
+          Object to search for.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="arrayFindAllNoCase" returns="Array" >
+        <help><![CDATA[
+        Description: Searches an array for all positions of a specified object. The function searches for simple objects such as strings and numbers or for complex objects such as structures. When the second parameter is a simple object, string searches are not case-sensitive. This function does not support searches for COM and CORBA objects.
+
+Note that ArrayFindAllNoCase() behaves identically to ArrayFindAll(), except in the special cases where the second parameter is a function or you are searching for a string in an array of strings. When the second parameter is a function, ArrayFindAll() executes the function for each element in the array and ArrayFindAllNoCase() searches the array for the function.
+Syntax: <pre>
+ArrayFindAllNoCase(array, object)</pre> Returns array of indices in which the object was found.
+    ]]></help>
+        <parameter name="array" required="true" type="Array">
+          <help><![CDATA[
+          Array to search in.
+        ]]></help>
+        </parameter>
+        <parameter name="object" required="true" type="Function">
+          <help><![CDATA[
+          Object to search for.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="abs" returns="Numeric" >
             <help><![CDATA[
         Absolute-value function. The absolute value of a number is
         the number without its sign.

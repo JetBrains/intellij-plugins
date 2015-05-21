@@ -15,7 +15,7 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,6 +33,11 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testHighlightCfmlMixedWithJavascript() throws Exception {
+    doTest();
+  }
+
+  public void testHighlightCfml10Tags() throws Exception {
+    myFixture.enableInspections(new CfmlReferenceInspection());
     doTest();
   }
 
