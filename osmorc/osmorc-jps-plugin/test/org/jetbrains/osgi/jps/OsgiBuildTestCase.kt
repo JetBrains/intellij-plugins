@@ -34,7 +34,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 abstract class OsgiBuildTestCase : JpsBuildTestCase() {
-  fun module(name: String): JpsModule {
+  fun module(name: String, osgi: Boolean = true): JpsModule {
     val module = addModule(name)
 
     val contentRoot = JpsPathUtil.pathToUrl(getAbsolutePath(name))
@@ -43,9 +43,11 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     module.addSourceRoot("${contentRoot}/res", JavaResourceRootType.RESOURCE)
     JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(module).setOutputUrl("${contentRoot}/out")
 
-    val extension = JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties())
-    extension.getProperties().myJarFileLocation = "${name}.jar"
-    module.getContainer().setChild(JpsOsmorcModuleExtension.ROLE, extension)
+    if (osgi) {
+      val extension = JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties())
+      extension.getProperties().myJarFileLocation = "${name}.jar"
+      module.getContainer().setChild(JpsOsmorcModuleExtension.ROLE, extension)
+    }
 
     return module
   }
