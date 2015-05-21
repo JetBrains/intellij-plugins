@@ -24,6 +24,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
@@ -34,7 +35,6 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
-import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -42,6 +42,7 @@ import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -77,24 +78,42 @@ public class OsgiBuildSession implements Reporter {
   private BndWrapper myBndWrapper;
   private String mySourceToReport = null;
 
-  public void build(@NotNull OsmorcBuildTarget target, @NotNull CompileContext context) {
+  public void build(@NotNull OsmorcBuildTarget target, @NotNull CompileContext context) throws IOException {
     myContext = context;
     myExtension = target.getExtension();
     myModule = target.getModule();
     myMessagePrefix = "[" + myModule.getName() + "] ";
 
     progress("Building OSGi bundle");
+
     try {
       prepare();
       doBuild();
-      context.processMessage(DoneSomethingNotification.INSTANCE);
     }
     catch (OsgiBuildException e) {
       error(e.getMessage(), e.getCause(), e.getSourcePath());
+      return;
     }
+
+    if (!myOutputJarFile.exists()) {
+      error("Bundle was not built", null, null);
+      return;
+    }
+
+    ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
+    if (logger.isEnabled()) {
+      logger.logCompiledFiles(Collections.singleton(myOutputJarFile), OsmorcBuilder.ID, "Built OSGi bundles:");
+    }
+
+    context.processMessage(DoneSomethingNotification.INSTANCE);
   }
 
   private void prepare() throws OsgiBuildException {
+    myModuleOutputDir = JpsJavaExtensionService.getInstance().getOutputDirectory(myModule, false);
+    if (myModuleOutputDir == null) {
+      throw new OsgiBuildException("Unable to determine the compiler output path for the module.");
+    }
+
     String jarFileLocation = myExtension.getJarFileLocation();
     if (jarFileLocation.isEmpty()) {
       throw new OsgiBuildException("Bundle path is empty - please check OSGi facet settings.");
@@ -108,19 +127,12 @@ public class OsgiBuildSession implements Reporter {
       throw new OsgiBuildException("Cannot create directory for bundle file '" + myOutputJarFile + "'.");
     }
 
-    String moduleOutputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(myModule, false);
-    if (moduleOutputUrl == null) {
-      throw new OsgiBuildException("Unable to determine the compiler output path for the module.");
-    }
-
     mySources = ContainerUtil.map2Array(myModule.getSourceRoots(), File.class, new Function<JpsModuleSourceRoot, File>() {
       @Override
       public File fun(JpsModuleSourceRoot root) {
         return root.getFile();
       }
     });
-
-    myModuleOutputDir = JpsPathUtil.urlToFile(moduleOutputUrl);
     myOutputDir = BndWrapper.getOutputDir(myModuleOutputDir);
     myBndWrapper = new BndWrapper(this);
   }
