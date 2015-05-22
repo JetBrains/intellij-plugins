@@ -109,6 +109,8 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
     "try" { return CfscriptTokenTypes.TRY_KEYWORD; }
     "catch" { return CfscriptTokenTypes.CATCH_KEYWORD; }
     "finally" { return CfscriptTokenTypes.FINALLY_KEYWORD; }
+    "rethrow" { return CfscriptTokenTypes.RETHROW_KEYWORD; }
+
     "else" { return CfscriptTokenTypes.ELSE_KEYWORD; }
     "var"/({WHITE_SPACE_CHAR} {IDENTIFIER}) { return CfscriptTokenTypes.VAR_KEYWORD; }
     "for"/({WHITE_SPACE_CHAR_A} "(" {WHITE_SPACE_CHAR_A} ("var" {WHITE_SPACE_CHAR_A})? {IDENTIFIER} {WHITE_SPACE_CHAR_A} {IN_KW})
@@ -161,7 +163,6 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
 
     /*
     "abort" { return CfscriptTokenTypes.ABORT_KEYWORD; }
-    "finally" { return CfscriptTokenTypes.FINALLY_KEYWORD; }
     "include" { return CfscriptTokenTypes.INCLUDE_KEYWORD; }
     "location" { return CfscriptTokenTypes.LOCATION_KEYWORD; }
     "lock" { return CfscriptTokenTypes.LOCK_KEYWORD; }
@@ -169,9 +170,8 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
     "param" { return CfscriptTokenTypes.PARAM_KEYWORD; }
     "pageencoding" { return CfscriptTokenTypes.PARAM_KEYWORD; }
     "property" { return CfscriptTokenTypes.PROPERTY_KEYWORD; }
-    "rethrow" { return CfscriptTokenTypes.RETHROW_KEYWORD; }
     "thread" { return CfscriptTokenTypes.THREAD_KEYWORD; }
-    "throw" { return CfscriptTokenTypes.THREAD_KEYWORD; }
+    "throw" { return CfscriptTokenTypes.THROW_KEYWORD; }
     "trace" { return CfscriptTokenTypes.TRACE_KEYWORD; }
     "transaction" { return CfscriptTokenTypes.TRANSACTION_KEYWORD; }
     */

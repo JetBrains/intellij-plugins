@@ -745,6 +745,9 @@ public class CfscriptParser {
       }
       else if (myBuilder.getTokenType() == SWITCH_KEYWORD) {
         parseSwitchExpression(myBuilder);
+      } else if (myBuilder.getTokenType() == RETHROW_KEYWORD) {
+        myBuilder.advanceLexer();
+        eatSemicolon(myBuilder);
       }
       else if (myBuilder.getTokenType() == RETURN_KEYWORD) {
         parseReturnStatement(myBuilder);
