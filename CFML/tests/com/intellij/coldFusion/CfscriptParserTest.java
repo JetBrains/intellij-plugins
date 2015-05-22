@@ -22,7 +22,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -225,6 +224,14 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
   public void testImplicitArrayOrStruct() throws Throwable { doTest(); }
 
   public void testForInWithArray() throws Throwable {
+    doTest();
+  }
+
+  public void testForInWithField() throws Throwable {
+    doTest();
+  }
+
+  public void testStruct_cf10() throws Throwable {
     doTest();
   }
 

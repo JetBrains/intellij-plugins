@@ -4,7 +4,7 @@ CfmlFile:forInWithArray.cfml
     PsiElement(CF_TAG_NAME)('cfscript')
     PsiElement(R_ANGLEBRACKET)('>')
     FOREXPRESSION
-      PsiElement(FOR_IN_KEYWORD)('for')
+      PsiElement(FOR_KEYWORD)('for')
       PsiElement(L_BRACKET)('(')
       FORVARIABLE
         ReferenceExpression

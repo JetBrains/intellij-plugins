@@ -72,19 +72,22 @@ public class CfmlExpressionParser {
   }
   */
   public boolean parseExpression() {
+    if (myBuilder.getTokenType() == FUNCTION_KEYWORD) {
+      new CfscriptParser().parseFunctionExpression(myBuilder, true);
+    }
     PsiBuilder.Marker expr = myBuilder.mark();
     if (!parseBinaryExpression()) {
       expr.drop();
       return false;
     }
-    if (getTokenType() == CfscriptTokenTypes.QUESTION) {
+    if (getTokenType() == QUESTION) {
       advance();
       if (!parseExpression()) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.expression.expected"));
         expr.drop();
         return true;
       }
-      if (getTokenType() == CfscriptTokenTypes.DOTDOT) {
+      if (getTokenType() == DOTDOT) {
         advance();
         if (!parseExpression()) {
           myBuilder.error(CfmlBundle.message("cfml.parsing.expression.expected"));
@@ -184,7 +187,7 @@ public class CfmlExpressionParser {
 
   private boolean parseAssignmentIfValid() {
     PsiBuilder.Marker marker = myBuilder.mark();
-    if (!parseAssignmentExpression()) {
+    if (!parseAssignmentExpression(false)) {
       marker.rollbackTo();
       return false;
     }
@@ -209,7 +212,7 @@ public class CfmlExpressionParser {
     }
   }
 
-  private boolean parseAssignmentExpression() {
+  private boolean parseAssignmentExpression(boolean allowDotDot) {
     PsiBuilder.Marker statementMarker = myBuilder.mark();
     int statementMarkerPosition = myBuilder.getCurrentOffset();
     if (getTokenType() == VAR_KEYWORD) {
@@ -221,7 +224,7 @@ public class CfmlExpressionParser {
       return false;
     }
     IElementType tokenType = getTokenType();
-    if (tokenType != CfmlTokenTypes.ASSIGN) {
+    if (tokenType != CfmlTokenTypes.ASSIGN && (!allowDotDot || tokenType != DOTDOT)) {
       statementMarker.done(CfmlElementTypes.SCRIPT_EXPRESSION);
       myBuilder.error(CfmlBundle.message("cfml.parsing.assignment.expected"));
       return false;
@@ -266,7 +269,7 @@ public class CfmlExpressionParser {
   }
 
   public void parsePrefixOperationExpression() {
-    if (!CfscriptTokenTypes.PREFIX_OPERATIONS.contains(getTokenType())) {
+    if (!PREFIX_OPERATIONS.contains(getTokenType())) {
       return;
     }
     PsiBuilder.Marker prefixExpressionMarker = myBuilder.mark();
@@ -289,14 +292,14 @@ public class CfmlExpressionParser {
     }
     int offset = myBuilder.getCurrentOffset();
     // parse prefix operation with value
-    if (CfscriptTokenTypes.PREFIX_OPERATIONS.contains(getTokenType())) {
+    if (PREFIX_OPERATIONS.contains(getTokenType())) {
       parsePrefixOperationExpression();
       return;
     }
     PsiBuilder.Marker statementMarker = myBuilder.mark();
     if (getTokenType() == VAR_KEYWORD) {
       // advance();
-      parseAssignmentExpression();
+      parseAssignmentExpression(false);
       statementMarker.drop();
       return;
     }
@@ -308,14 +311,14 @@ public class CfmlExpressionParser {
 
     boolean isClearAssign = false;
     boolean isProbableVariableDef = false;
-    if (CfscriptTokenTypes.POSTFIX_OPERATIONS.contains(getTokenType())) {
+    if (POSTFIX_OPERATIONS.contains(getTokenType())) {
       advance();
       statementMarker.done(CfmlElementTypes.NONE);
       return;
     }
-    else if (!CfscriptTokenTypes.ASSIGN_OPERATORS.contains(getTokenType())) {
+    else if (!ASSIGN_OPERATORS.contains(getTokenType())) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.statement.expected"));
-      if (CfscriptTokenTypes.OPERATIONS.contains(getTokenType())) {
+      if (OPERATIONS.contains(getTokenType())) {
         advance();
         myBuilder.error(CfmlBundle.message("cfml.parsing.assignment.expected"));
         // TODO: test code
@@ -428,7 +431,7 @@ public class CfmlExpressionParser {
   public void parseComponentReference() {
     assert myBuilder.getTokenType() == IDENTIFIER;
     PsiBuilder.Marker componentReferenceMarker = myBuilder.mark();
-    while (myBuilder.getTokenType() == IDENTIFIER || CfscriptTokenTypes.KEYWORDS.contains(myBuilder.getTokenType())) {
+    while (myBuilder.getTokenType() == IDENTIFIER || KEYWORDS.contains(myBuilder.getTokenType())) {
       myBuilder.advanceLexer();
       if (myBuilder.getTokenType() != POINT) {
         break;
@@ -601,14 +604,14 @@ public class CfmlExpressionParser {
   }
 
   /*
-     ASSIGNLIST := LVALUE = EXPRESSION, ASSIGNLIST | LVALUE = EXPRESSION
+     ASSIGNLIST := LVALUE (=|:) EXPRESSION, ASSIGNLIST | LVALUE (=|:) EXPRESSION
   */
 
   private void parseAssignsList() {
-    parseAssignmentExpression();
-    if (getTokenType() == COMMA) {
+    while(true) {
+      parseAssignmentExpression(true);
+      if (getTokenType() != COMMA) break;
       advance();
-      parseAssignsList();
     }
   }
 

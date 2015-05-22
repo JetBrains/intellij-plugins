@@ -131,7 +131,7 @@ gfhfghf
         b = 'sdf';
     }
 // Script-based structure loop
-    for (cname in cookie) {
+    for(cname in cookie) {
         if(cname != "cfid" && cname != "cftoken") {
             writeoutput (cname & "<br>");
         }
