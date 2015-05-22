@@ -23,9 +23,9 @@ public class DartValueExpressionImpl extends DartExpressionImpl implements DartV
   }
 
   @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  @NotNull
+  public List<DartExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
 }
