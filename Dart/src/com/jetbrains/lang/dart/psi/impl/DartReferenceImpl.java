@@ -142,9 +142,10 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     if (this instanceof DartCascadeReferenceExpression) {
       PsiElement parent = this.getParent();
       if (parent instanceof DartValueExpression) {
-        DartReference child = (DartReference) parent.getFirstChild();
-        if (child != null) {
-          return child.resolveDartClass();
+        final List<DartExpression> expressionList = ((DartValueExpression)parent).getExpressionList();
+        final DartExpression firstExpression = expressionList.isEmpty() ? null : expressionList.get(0);
+        if (firstExpression instanceof DartReference) {
+          return ((DartReference)firstExpression).resolveDartClass();
         }
       }
     }

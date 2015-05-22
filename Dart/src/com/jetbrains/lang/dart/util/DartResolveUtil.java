@@ -472,7 +472,11 @@ public class DartResolveUtil {
       if (parent instanceof DartCascadeReferenceExpression) {
         parent = parent.getParent();
         if (parent instanceof DartValueExpression) {
-          return (DartReference) parent.getFirstChild();
+          final List<DartExpression> expressionList = ((DartValueExpression)parent).getExpressionList();
+          final DartExpression firstExpression = expressionList.isEmpty() ? null : expressionList.get(0);
+          if (firstExpression instanceof DartReference) {
+            return (DartReference)firstExpression;
+          }
         }
         // Invalid tree shape
         return null;
