@@ -17,6 +17,8 @@ CfmlFile:finally.cfml
         PsiElement(R_BRACKET)(')')
       BLOCK_OF_STATEMENTS
         PsiElement(L_CURLYBRACKET)('{')
+        PsiElement(RETHROW_KEYWORD)('rethrow')
+        PsiElement(SEMICOLON)(';')
         PsiElement(R_CURLYBRACKET)('}')
       PsiElement(FINALLY_KEYWORD)('finally')
       BLOCK_OF_STATEMENTS
