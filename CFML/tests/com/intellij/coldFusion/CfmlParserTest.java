@@ -139,6 +139,10 @@ public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testClosure() throws Throwable {
+    doTest();
+  }
+
   public void testStructureInStringDefinition() throws Throwable {
     doTest();
   }

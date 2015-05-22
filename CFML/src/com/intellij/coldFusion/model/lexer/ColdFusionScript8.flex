@@ -111,8 +111,6 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
     "finally" { return CfscriptTokenTypes.FINALLY_KEYWORD; }
     "else" { return CfscriptTokenTypes.ELSE_KEYWORD; }
     "var"/({WHITE_SPACE_CHAR} {IDENTIFIER}) { return CfscriptTokenTypes.VAR_KEYWORD; }
-    "for"/({WHITE_SPACE_CHAR_A} "(" {WHITE_SPACE_CHAR_A} ("var" {WHITE_SPACE_CHAR_A})? {IDENTIFIER} {WHITE_SPACE_CHAR_A} {IN_KW})
-     {return CfscriptTokenTypes.FOR_IN_KEYWORD;}
     "for" { return CfscriptTokenTypes.FOR_KEYWORD; }
     "continue" { return CfscriptTokenTypes.CONTINUE_KEYWORD; }
     "return" { return CfscriptTokenTypes.RETURN_KEYWORD; }

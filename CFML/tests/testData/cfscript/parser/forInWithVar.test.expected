@@ -12,7 +12,7 @@ CfmlFile:forInWithVar.cfml
         BLOCK_OF_STATEMENTS
           PsiElement(L_CURLYBRACKET)('{')
           FOREXPRESSION
-            PsiElement(FOR_IN_KEYWORD)('for')
+            PsiElement(FOR_KEYWORD)('for')
             PsiElement(L_BRACKET)('(')
             PsiElement(VAR_KEYWORD)('var')
             FORVARIABLE

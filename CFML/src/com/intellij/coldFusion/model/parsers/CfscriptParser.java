@@ -18,7 +18,6 @@ package com.intellij.coldFusion.model.parsers;
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
-import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
@@ -52,7 +51,7 @@ public class CfscriptParser {
       myBuilder.advanceLexer();
       if (myBuilder.getTokenType() == CfmlTokenTypes.ASSIGN) {
         propertyBodyMarker.rollbackTo();
-        CfmlParser.parseAttributes(myBuilder, "cfproperty", CfscriptTokenTypes.IDENTIFIER, true);
+        CfmlParser.parseAttributes(myBuilder, "cfproperty", IDENTIFIER, true);
         return true;
       }
       else if (myBuilder.getTokenType() == IDENTIFIER) {
@@ -61,7 +60,7 @@ public class CfscriptParser {
         if (myBuilder.getTokenType() == CfmlTokenTypes.ASSIGN) {
           attributesMarker.rollbackTo();
           propertyBodyMarker.drop();
-          CfmlParser.parseAttributes(myBuilder, "cfproperty", CfscriptTokenTypes.IDENTIFIER, true);
+          CfmlParser.parseAttributes(myBuilder, "cfproperty", IDENTIFIER, true);
           return true;
         }
         else {
@@ -71,7 +70,7 @@ public class CfscriptParser {
         }
       }
       //try to parse type in "property type name;" expression//
-      else if (myBuilder.getTokenType() == CfscriptTokenTypes.POINT) {
+      else if (myBuilder.getTokenType() == POINT) {
         if (!parseType(myBuilder) || myBuilder.getTokenType() != IDENTIFIER) {
           propertyBodyMarker.rollbackTo();
           return false;
@@ -251,10 +250,10 @@ public class CfscriptParser {
     */
     if (myBuilder.getTokenType() == FUNCTION_KEYWORD) {
       componentMarker.rollbackTo();
-      parseFunctionExpression(myBuilder);
+      parseFunctionExpression(myBuilder, false);
       return;
     }
-    CfmlParser.parseAttributes(myBuilder, isComponent ? "cfcomponent" : "cfinterface", CfscriptTokenTypes.IDENTIFIER, true);
+    CfmlParser.parseAttributes(myBuilder, isComponent ? "cfcomponent" : "cfinterface", IDENTIFIER, true);
     if (myBuilder.getTokenType() != L_CURLYBRACKET) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.open.curly.bracket.expected"));
       componentMarker.drop();
@@ -348,52 +347,6 @@ public class CfscriptParser {
     }
   }
 
-  private void parseForInExpression(PsiBuilder myBuilder) {
-    if (myBuilder.getTokenType() != FOR_IN_KEYWORD) {
-      return;
-    }
-    PsiBuilder.Marker forExpressionMarker = myBuilder.mark();
-    // eat for keyword
-    myBuilder.advanceLexer();
-
-    // eat opening bracket
-    if (myBuilder.getTokenType() != L_BRACKET) {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.close.bracket.expected"));
-      forExpressionMarker.drop();
-      return;
-    }
-    myBuilder.advanceLexer();
-
-    if (myBuilder.getTokenType() == CfscriptTokenTypes.VAR_KEYWORD) {
-      myBuilder.advanceLexer();
-    }
-    PsiBuilder.Marker definitionMarker = myBuilder.mark();
-    if (!(new CfmlExpressionParser(myBuilder)).parseReference(false)) {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.close.bracket.expected"));
-      definitionMarker.drop();
-    }
-    else {
-      definitionMarker.done(CfmlElementTypes.FORVARIABLE);
-    }
-    if (myBuilder.getTokenType() != IN_L) {
-      forExpressionMarker.drop();
-      return;
-    }
-    myBuilder.advanceLexer();
-
-    if (!(new CfmlExpressionParser(myBuilder)).parseReference(false)) {
-      (new CfmlExpressionParser(myBuilder)).parseArrayDefinition();
-    }
-    if (myBuilder.getTokenType() != R_BRACKET) {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.close.bracket.expected"));
-    }
-    else {
-      myBuilder.advanceLexer();
-    }
-    parseScript(myBuilder, false);
-    forExpressionMarker.done(CfmlElementTypes.FOREXPRESSION);
-  }
-
   private void parseForExpression(PsiBuilder myBuilder) {
     if (myBuilder.getTokenType() != FOR_KEYWORD) {
       return;
@@ -409,12 +362,14 @@ public class CfscriptParser {
     }
     myBuilder.advanceLexer();
 
-    parseStatement(myBuilder);
+    if (!tryParseForIn(myBuilder)) {
+      parseStatement(myBuilder);
 
-    parseCondition(myBuilder);
-    eatSemicolon(myBuilder);
+      parseCondition(myBuilder);
+      eatSemicolon(myBuilder);
 
-    (new CfmlExpressionParser(myBuilder)).parseStatement();
+      (new CfmlExpressionParser(myBuilder)).parseStatement();
+    }
     if (myBuilder.getTokenType() != R_BRACKET) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.close.bracket.expected"));
       forExpressionMarker.done(CfmlElementTypes.FOREXPRESSION);
@@ -425,6 +380,33 @@ public class CfscriptParser {
     parseScript(myBuilder, false);
 
     forExpressionMarker.done(CfmlElementTypes.FOREXPRESSION);
+  }
+
+  private static boolean tryParseForIn(PsiBuilder myBuilder) {
+    PsiBuilder.Marker startMarker = myBuilder.mark();
+
+    if (myBuilder.getTokenType() == VAR_KEYWORD) {
+      myBuilder.advanceLexer();
+    }
+    PsiBuilder.Marker definitionMarker = myBuilder.mark();
+    if (!(new CfmlExpressionParser(myBuilder)).parseReference(false)) {
+      startMarker.rollbackTo();
+      return false;
+    }
+    else {
+      definitionMarker.done(CfmlElementTypes.FORVARIABLE);
+    }
+    if (myBuilder.getTokenType() != IN_L) {
+      startMarker.rollbackTo();
+      return false;
+    }
+    myBuilder.advanceLexer();
+
+    if (!(new CfmlExpressionParser(myBuilder)).parseReference(false)) {
+      (new CfmlExpressionParser(myBuilder)).parseArrayDefinition();
+    }
+    startMarker.drop();
+    return true;
   }
 
   private void parseFunctionBody(PsiBuilder myBuilder) {
@@ -488,13 +470,15 @@ public class CfscriptParser {
     argumentsList.done(CfmlElementTypes.PARAMETERS_LIST);
   }
 
-  private void parseFunctionExpression(PsiBuilder myBuilder) {
+  void parseFunctionExpression(PsiBuilder myBuilder, boolean anonymous) {
     PsiBuilder.Marker functionMarker = myBuilder.mark();
-    if (CfscriptTokenTypes.ACCESS_KEYWORDS.contains(myBuilder.getTokenType())) {
-      myBuilder.advanceLexer();
-    }
-    if (myBuilder.getTokenType() != FUNCTION_KEYWORD) {
-      parseType(myBuilder);
+    if (!anonymous) {
+      if (ACCESS_KEYWORDS.contains(myBuilder.getTokenType())) {
+        myBuilder.advanceLexer();
+      }
+      if (myBuilder.getTokenType() != FUNCTION_KEYWORD) {
+        parseType(myBuilder);
+      }
     }
     if (myBuilder.getTokenType() != FUNCTION_KEYWORD) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.function.expected"));
@@ -503,14 +487,14 @@ public class CfscriptParser {
     }
     myBuilder.advanceLexer();
     if (myBuilder.getTokenType() != IDENTIFIER &&
-        !(myBuilder.getTokenType() == DEFAULT_KEYWORD)) {
+        !(myBuilder.getTokenType() == DEFAULT_KEYWORD) && !anonymous) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.identifier.expected"));
     }
     else {
-      myBuilder.advanceLexer();
+      if (!anonymous) myBuilder.advanceLexer();
     }
     parseParametersListInBrackets(myBuilder);
-    CfmlParser.parseAttributes(myBuilder, "cffunction", CfscriptTokenTypes.IDENTIFIER, true);
+    CfmlParser.parseAttributes(myBuilder, "cffunction", IDENTIFIER, true);
     parseFunctionBody(myBuilder);
     functionMarker.done(CfmlElementTypes.FUNCTION_DEFINITION);
   }
@@ -715,14 +699,14 @@ public class CfscriptParser {
                myBuilder.getTokenType() == INTERFACE_KEYWORD) {
         parseComponentOrInterface(myBuilder);
       }
-      else if (CfscriptTokenTypes.ACCESS_KEYWORDS.contains(myBuilder.getTokenType()) ||
+      else if (ACCESS_KEYWORDS.contains(myBuilder.getTokenType()) ||
                myBuilder.getTokenType() == FUNCTION_KEYWORD
         ) {
-        parseFunctionExpression(myBuilder);
+        parseFunctionExpression(myBuilder, false);
       }
-      else if (CfscriptTokenTypes.TYPE_KEYWORDS.contains(myBuilder.getTokenType())) {
+      else if (TYPE_KEYWORDS.contains(myBuilder.getTokenType())) {
         if (!tryParseStatement(myBuilder)) {
-          parseFunctionExpression(myBuilder);
+          parseFunctionExpression(myBuilder, false);
         }
       }
       else if (myBuilder.getTokenType() == VAR_KEYWORD) {
@@ -739,9 +723,6 @@ public class CfscriptParser {
       }
       else if (myBuilder.getTokenType() == FOR_KEYWORD) {
         parseForExpression(myBuilder);
-      }
-      else if (myBuilder.getTokenType() == FOR_IN_KEYWORD) {
-        parseForInExpression(myBuilder);
       }
       else if (myBuilder.getTokenType() == SWITCH_KEYWORD) {
         parseSwitchExpression(myBuilder);
@@ -785,7 +766,7 @@ public class CfscriptParser {
       else if (myBuilder.getTokenType() == TRY_KEYWORD) {
         parseTryCatchExpression(myBuilder);
       }
-      else if (CfscriptTokenTypes.KEYWORDS.contains(myBuilder.getTokenType())) {
+      else if (KEYWORDS.contains(myBuilder.getTokenType())) {
         if (myBuilder.getTokenType() == VAR_KEYWORD || myBuilder.getTokenType() == SCOPE_KEYWORD) {
           parseStatement(myBuilder);
         }
@@ -805,7 +786,7 @@ public class CfscriptParser {
         PsiBuilder.Marker marker = myBuilder.mark();
         if (parseType(myBuilder) && myBuilder.getTokenType() == FUNCTION_KEYWORD) {
           marker.rollbackTo();
-          parseFunctionExpression(myBuilder);
+          parseFunctionExpression(myBuilder, false);
         }
         else {
           marker.rollbackTo();
