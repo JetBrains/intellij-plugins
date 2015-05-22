@@ -37,6 +37,20 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
     assertInstanceOf(resolve, JSProperty.class);
   }
 
+  public void testInjectedConstantCompletion() {
+    myFixture.testCompletionTyping("constant.js", "\n", "constant.after.js", "angular.js");
+  }
+
+  public void testInjectedConstantResolve() {
+    myFixture.configureByFiles("constant.resolve.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("myService.fo<caret>o();", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertInstanceOf(resolve, JSProperty.class);
+  }
+
   public void testInjectedStaticResolve() {
     myFixture.configureByFiles("static.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("DomUtils.createSVG<caret>ElementTemplate(", myFixture.getFile());

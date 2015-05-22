@@ -67,7 +67,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
 
     INJECTABLE_METHODS.addAll(INTERESTING_METHODS);
-    Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, MODULE);
+    Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, MODULE, "config", "run");
 
     INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.KEY);
     NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
