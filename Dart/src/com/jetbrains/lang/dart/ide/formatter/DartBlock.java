@@ -3,14 +3,19 @@ package com.jetbrains.lang.dart.ide.formatter;
 import com.intellij.formatting.*;
 import com.intellij.formatting.templateLanguages.BlockWithParent;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.CachedValue;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
+import com.jetbrains.lang.dart.psi.DartCascadeReferenceExpression;
+import com.jetbrains.lang.dart.psi.DartValueExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +35,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
   private static final TokenSet LAST_TOKENS_IN_SWITCH_CASE = TokenSet.create(
     BREAK_STATEMENT, CONTINUE_STATEMENT, RETURN_STATEMENT
   );
+  private static final Key<DartBlock> DART_RECEIVER_KEY = Key.create("DART_RECEIVER_KEY");
+  private static final Key<DartBlock> DART_CASCADE_KEY = Key.create("DART_CASCADE_KEY");
 
   private final DartIndentProcessor myIndentProcessor;
   private final DartSpacingProcessor mySpacingProcessor;
@@ -70,11 +77,43 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
       return EMPTY;
     }
     final ArrayList<Block> tlChildren = new ArrayList<Block>();
-    for (ASTNode childNode = getNode().getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
-      if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
-      final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
-      childBlock.setParent(this);
-      tlChildren.add(childBlock);
+    ASTNode parent = getNode();
+    if (parent.getElementType() == VALUE_EXPRESSION) {
+      DartBlock receiverBlock = null;
+      for (ASTNode childNode = parent.getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
+        if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
+        DartBlock childBlock;
+        if (childNode.getElementType() == CASCADE_REFERENCE_EXPRESSION) {
+          childBlock = new DartCascadeBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
+          childNode.putUserData(DART_CASCADE_KEY, childBlock);
+          childNode.putUserData(DART_RECEIVER_KEY, receiverBlock);
+        } else {
+          childBlock = new DartReceiverBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
+          receiverBlock = childBlock;
+          childBlock.setParent(this);
+        }
+        tlChildren.add(childBlock);
+      }
+    } else {
+      if (parent.getElementType() == CASCADE_REFERENCE_EXPRESSION) {
+        // Swizzle tree structure to make this block a child of the receiver block.
+        DartBlock receiver = parent.getUserData(DART_RECEIVER_KEY);
+        DartBlock cascade = parent.getUserData(DART_CASCADE_KEY);
+        if (receiver != null && cascade != null) {
+          cascade.setParent(receiver);
+          receiver.getSubBlocks().add(cascade);
+        } else {
+          throw new NullPointerException(); // TODO Remove after debugging.
+        }
+        parent.putUserData(DART_RECEIVER_KEY, null);
+        parent.putUserData(DART_CASCADE_KEY, null);
+      }
+      for (ASTNode childNode = parent.getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
+        if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
+        final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
+        childBlock.setParent(this);
+        tlChildren.add(childBlock);
+      }
     }
     return tlChildren;
   }
@@ -183,5 +222,17 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
   @Override
   public void setParent(BlockWithParent newParent) {
     myParent = newParent;
+  }
+
+  private static class DartCascadeBlock extends DartBlock {
+    protected DartCascadeBlock(ASTNode node, Wrap wrap, Alignment alignment, CodeStyleSettings settings) {
+      super(node, wrap, alignment, settings);
+    }
+  }
+
+  private static class DartReceiverBlock extends DartBlock {
+    protected DartReceiverBlock(ASTNode node, Wrap wrap, Alignment alignment, CodeStyleSettings settings) {
+      super(node, wrap, alignment, settings);
+    }
   }
 }
