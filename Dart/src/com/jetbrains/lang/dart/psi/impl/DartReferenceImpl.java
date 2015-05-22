@@ -140,9 +140,12 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
       }
     }
     if (this instanceof DartCascadeReferenceExpression) {
-      DartReference[] children = PsiTreeUtil.getChildrenOfType(this, DartReference.class);
-      if (children != null && children.length == 2) {
-        return children[0].resolveDartClass();
+      PsiElement parent = this.getParent();
+      if (parent instanceof DartValueExpression) {
+        DartReference child = (DartReference) parent.getFirstChild();
+        if (child != null) {
+          return child.resolveDartClass();
+        }
       }
     }
     return DartResolveUtil.getDartClassResolveResult(resolve(), tryGetLeftResolveResult(this).getSpecialization());

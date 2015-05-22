@@ -207,18 +207,19 @@ Dart File
                     PsiElement(case)('case')
                     PARENTHESIZED_EXPRESSION
                       PsiElement(()('(')
-                      CASCADE_REFERENCE_EXPRESSION
+                      VALUE_EXPRESSION
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('a')
-                        PsiElement(..)('..')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('b')
-                          ARGUMENTS
-                            PsiElement(()('(')
-                            PsiElement())(')')
+                        CASCADE_REFERENCE_EXPRESSION
+                          PsiElement(..)('..')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('b')
+                            ARGUMENTS
+                              PsiElement(()('(')
+                              PsiElement())(')')
                       PsiElement())(')')
                     PsiElement(:)(':')
                     STATEMENTS

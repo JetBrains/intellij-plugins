@@ -11,21 +11,21 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartCascadeReferenceExpressionImpl extends DartReferenceImpl implements DartCascadeReferenceExpression {
+public class DartValueExpressionImpl extends DartExpressionImpl implements DartValueExpression {
 
-  public DartCascadeReferenceExpressionImpl(ASTNode node) {
+  public DartValueExpressionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCascadeReferenceExpression(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitValueExpression(this);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  @NotNull
+  public List<DartExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
 }
