@@ -56,7 +56,7 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
         return PsiReference.EMPTY_ARRAY;
       }
 
-      final String text = FileUtil.toSystemIndependentName(value.getText());
+      final String text = StringUtil.trimTrailing(FileUtil.toSystemIndependentName(value.getText()));
       final boolean quoted = StringUtil.isQuotedString(text);
       final int startInElement = value.getStartOffsetInParent() + (quoted ? 1 : 0);
 
