@@ -57,7 +57,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     private final XmlFile myFile;
 
     public FlexStructureViewElement(final JSClass clazz, final XmlFile file, final boolean includeInherited) {
-      super(clazz, includeInherited);
+      super(clazz, includeInherited, true);
       myFile = file;
     }
 
@@ -69,7 +69,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
       final ResolveProcessor processor = new ResolveProcessor(null) {
         @Override
         public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
-          result.add(new JSStructureViewElement(element, true));
+          result.add(new JSStructureViewElement(element, true, true));
           return true;
         }
       };

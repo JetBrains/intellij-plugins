@@ -61,7 +61,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
           JSStructureViewElement structureViewElement =
             parentElement instanceof XmlBackedJSClassImpl
             ? new FlexStructureViewElement(((XmlBackedJSClassImpl)parentElement), (XmlFile)parentElement.getContainingFile(), false)
-            : new JSStructureViewElement(parentElement, false);
+            : new JSStructureViewElement(parentElement, false, true);
           StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren();
           for (final StructureViewTreeElement structureViewChild : structureViewChildren) {
             if (structureViewChild instanceof JSStructureViewElement) {
