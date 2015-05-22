@@ -19,6 +19,7 @@ dependencies:
 dev_dependencies:
   other_project2:
     path: other_project_2
+    path: other_project_2  # comment
     path: other_project_2/<error descr="Cannot resolve file 'incorrect'">incorrect</error>
     path: "other_project_2/<error descr="Cannot resolve directory 'incorrect'">incorrect</error>/foo"
     path: <warning>'other_project_2/lib'</warning>
