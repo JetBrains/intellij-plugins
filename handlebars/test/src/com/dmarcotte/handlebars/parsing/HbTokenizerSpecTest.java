@@ -5,7 +5,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 /**
  * Java representation of the validations in the spec/tokenizer.js revision which corresponds
  * to the revision of handlesbars.l that our lexer is based on
- * (https://github.com/wycats/handlebars.js/blob/b09333db7946d20ba7dbc6d32d5496ab8295b8e1/spec/tokenizer.js)
+ * (https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/spec/tokenizer.js)
  * <p/>
  * All the tests should be nearly identical except that we generate whitespace tokens to give IDEA a better picture
  * of the text, vs. the actual Handlebars lexer which can just toss whitespace out
@@ -498,5 +498,22 @@ public class HbTokenizerSpecTest extends HbLexerTest {
   public void testTokenizesNestedSubexpressionLiterals() {
     TokenizerResult result = tokenize("{{foo (bar (lol true) false) (baz 1) (blah 'b') (blorg \"c\")}}");
     result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, OPEN_SEXPR, ID,  WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, BOOLEAN, CLOSE_SEXPR, WHITE_SPACE, BOOLEAN, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, NUMBER, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, STRING, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, STRING, CLOSE_SEXPR, CLOSE);
+  }
+
+  /**
+   * tokenizes block params
+   */
+  public void testTokenizesBlockParams() {
+    TokenizerResult result = tokenize("{{#foo as |bar|}}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, ID, CLOSE_BLOCK_PARAMS, CLOSE);
+
+    result = tokenize("{{#foo as |bar baz|}}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, ID, WHITE_SPACE, ID, CLOSE_BLOCK_PARAMS, CLOSE);
+
+    result = tokenize("{{#foo as | bar baz |}}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_BLOCK_PARAMS, CLOSE);
+
+    result = tokenize("{{#foo as as | bar baz |}}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, ID, WHITE_SPACE, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_BLOCK_PARAMS, CLOSE);
   }
 }

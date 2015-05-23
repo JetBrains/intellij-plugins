@@ -11,7 +11,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/eee2c4d4f29e233280907bc89a32556de66fe783/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
@@ -295,7 +295,7 @@ public class HbParsing {
 
   /**
    * openBlock
-   * : OPEN_BLOCK sexpr CLOSE { $$ = new yy.MustacheNode($2[0], $2[1]); }
+   * : OPEN_BLOCK sexpr blockParams? CLOSE { $$ = new yy.MustacheNode($2[0], $2[1]); }
    * ;
    */
   private boolean parseOpenBlock(PsiBuilder builder) {
@@ -306,6 +306,7 @@ public class HbParsing {
     }
 
     if (parseSexpr(builder)) {
+      parseBlockParams(builder);
       parseLeafTokenGreedy(builder, CLOSE);
     }
 
@@ -337,7 +338,7 @@ public class HbParsing {
 
   /**
    * openInverse
-   * : OPEN_INVERSE sexpr CLOSE
+   * : OPEN_INVERSE sexpr blockParams? CLOSE
    * ;
    */
   private boolean parseOpenInverse(PsiBuilder builder) {
@@ -348,6 +349,7 @@ public class HbParsing {
     }
 
     if (parseSexpr(builder)) {
+      parseBlockParams(builder);
       parseLeafTokenGreedy(builder, CLOSE);
     }
 
@@ -771,6 +773,33 @@ public class HbParsing {
 
     partialNameMarker.error(HbBundle.message("hb.parsing.expected.partial.name"));
     return false;
+  }
+
+  /**
+   * blockParams
+   * OPEN_BLOCK_PARAMS ID+ CLOSE_BLOCK_PARAMS
+   */
+  private boolean parseBlockParams(PsiBuilder builder) {
+    PsiBuilder.Marker blockParamsMarker = builder.mark();
+    if (parseLeafToken(builder, OPEN_BLOCK_PARAMS)) {
+      blockParamsMarker.drop();
+      parseLeafToken(builder, ID);
+      // parse any additional IDs
+      while (true) {
+        PsiBuilder.Marker optionalIdMarker = builder.mark();
+        if (parseLeafToken(builder, ID)) {
+          optionalIdMarker.drop();
+        } else {
+          optionalIdMarker.rollbackTo();
+          break;
+        }
+      }
+      parseLeafToken(builder, CLOSE_BLOCK_PARAMS);
+      return true;
+    } else {
+      blockParamsMarker.rollbackTo();
+      return false;
+    }
   }
 
   /**

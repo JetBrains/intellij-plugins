@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/blob/14b7ef9066d107dc83deedc8e6791947811cc764/src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -150,7 +150,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
   "{{"\~? { return HbTokenTypes.OPEN; }
   "=" { return HbTokenTypes.EQUALS; }
-  "."/[\~\}\t \n\x0B\f\r] { return HbTokenTypes.ID; }
+  "."/[\~\}\t| \n\x0B\f\r] { return HbTokenTypes.ID; }
   ".." { return HbTokenTypes.ID; }
   [\/.] { return HbTokenTypes.SEP; }
   [\t \n\x0B\f\r]* { return HbTokenTypes.WHITE_SPACE; }
@@ -163,6 +163,8 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "true"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
   "false"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
   \-?[0-9]+(\.[0-9]+)?/[}\)\t \n\x0B\f\r]  { return HbTokenTypes.NUMBER; }
+  "as"[\t \n\x0B\f\r]+"|" { return HbTokenTypes.OPEN_BLOCK_PARAMS; }
+  "|" { return HbTokenTypes.CLOSE_BLOCK_PARAMS; }
   /*
     ID is the inverse of control characters.
     Control characters ranges:
@@ -172,7 +174,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
       [\[-\^`]      [, \, ], ^, `,                          Exceptions in range: _
       [\{-~]        {, |, }, ~
     */
-  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[\~=}\)\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
+  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[\~=}\)|\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
   // TODO handlesbars.l extracts the id from within the square brackets.  Fix it to match handlebars.l?
   "["[^\]]*"]" { return HbTokenTypes.ID; }
 }
