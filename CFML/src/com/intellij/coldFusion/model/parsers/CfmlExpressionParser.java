@@ -101,6 +101,14 @@ public class CfmlExpressionParser {
         return true;
       }
       expr.done(CfmlElementTypes.TERNARY_EXPRESSION);
+    } else if (myBuilder.getTokenType() == ELVIS) {
+      advance();
+      if (!parseExpression()) {
+        myBuilder.error(CfmlBundle.message("cfml.parsing.expression.expected"));
+        expr.drop();
+        return true;
+      }
+      expr.done(CfmlElementTypes.BINARY_EXPRESSION);
     }
     else {
       expr.drop();
