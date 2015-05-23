@@ -159,6 +159,7 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
     "xml" { return CfscriptTokenTypes.XML_TYPE; }
 
     "import" { return CfscriptTokenTypes.IMPORT_KEYWORD; }
+    "?:" { return CfscriptTokenTypes.ELVIS; }
 
     /*
     "abort" { return CfscriptTokenTypes.ABORT_KEYWORD; }

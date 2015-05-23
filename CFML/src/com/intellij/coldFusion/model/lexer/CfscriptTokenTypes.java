@@ -38,6 +38,7 @@ public interface CfscriptTokenTypes {
   IElementType SEMICOLON = new CfmlElementType("SEMICOLON"); // ;
 
   IElementType QUESTION = new CfmlElementType("QUESTION");
+  IElementType ELVIS = new CfmlElementType("ELVIS");
   IElementType COMMA = new CfmlElementType("COMMA");
   IElementType POINT = new CfmlElementType("POINT");
   IElementType DOTDOT = new CfmlElementType("DOTDOT");
@@ -124,7 +125,7 @@ public interface CfscriptTokenTypes {
   TokenSet SYMBOL_BINARY_OPERATIONS = TokenSet
     .create(CfmlTokenTypes.ASSIGN, ADD, ADD_EQ, MINUS, MINUS_EQ, MUL, MUL_EQ, DEV, DEV_EQ, MOD, INT_DEV, POW, AND, OR, CONCAT, CONCAT_EQ,
             EQEQ, NEQ,
-            LT, LTE, GT, GTE);
+            LT, LTE, GT, GTE, ELVIS);
   TokenSet SYMBOL_PREFIX_OPERATIONS = TokenSet.create(MINUS, ADD, INC, DEC, NOT);
   TokenSet SYMBOL_POSTFIX_OPERATIONS = TokenSet.create(INC, DEC);
 

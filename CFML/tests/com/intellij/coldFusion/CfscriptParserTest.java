@@ -235,6 +235,10 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testElvis_cf11() throws Throwable {
+    doTest();
+  }
+
   private void doTest() throws IOException {
     doTest("");
   }
