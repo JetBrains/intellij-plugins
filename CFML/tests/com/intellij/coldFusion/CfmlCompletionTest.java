@@ -292,7 +292,7 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   }
 
   public void testScopedVariableCompletion() throws Throwable {
-    doTestCompletionVariants("request.user", "request.some", "reque");
+    doTestCompletionVariants("removeCachedQuery", "request.user", "request.some", "reque");
   }
 
   public void testAttributeValuesCompletion() throws Throwable {
