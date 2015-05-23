@@ -21336,6 +21336,945 @@ ArrayFindAllNoCase(array, object)</pre> Returns array of indices in which the ob
         </parameter>
       </function>
 
+      <function name="CacheIdExists" returns="Boolean" >
+        <help><![CDATA[
+        Used to find if a cached object exists in the cache region. The region can be the default cache region (either at server or application level) or the custom region you specify. Returns True, if the cached object exists in the specified cache region.
+    ]]></help>
+        <parameter name="id" required="true" type="Numeric">
+          <help><![CDATA[
+          The ID of the cached object.
+        ]]></help>
+        </parameter>
+        <parameter name="region" required="false" type="String">
+          <help><![CDATA[
+          The cache region where you check for the cached object.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="cacheRegionNew" returns="Object" >
+        <help><![CDATA[
+        Creates a new custom cache region (if no cache region exists).
+    ]]></help>
+        <parameter name="name" required="true" type="String">
+          <help><![CDATA[
+          Name of the new cache region to be created.
+        ]]></help>
+        </parameter>
+        <parameter name="properties" required="false" type="Object">
+          <help><![CDATA[
+           Struct that contains the cache region properties.
+        ]]></help>
+        </parameter>
+        <parameter name="throwOnError" required="false" type="boolean">
+          <help><![CDATA[
+           A Boolean value specifying if to throw an exception if the cache region name you specify already exists. The default value is true.
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="CacheRegionRemove" returns="void" >
+        <help><![CDATA[
+        Removes a specified cache region.
+    ]]></help>
+        <parameter name="region" required="true" type="String">
+          <help><![CDATA[
+          Name of the cache region that has to be removed.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="cacheRegionExists" returns="Boolean" >
+        <help><![CDATA[
+        Checks if the cache region exists. Returns True if the cache region exists.
+    ]]></help>
+        <parameter name="region" required="true" type="String">
+          <help><![CDATA[
+          Name of the cache region.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="CacheRemoveAll" returns="void" >
+        <help><![CDATA[
+        Removes all stored objects in a cache region. If no cache region is specified, objects in the default region are removed.
+    ]]></help>
+        <parameter name="region" required="false" type="String">
+          <help><![CDATA[
+          Name of the cache region.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="Canonicalize" returns="String" >
+        <help><![CDATA[
+        Canonicalize or decode the input string.
+
+Cross-site Scripting (XSS) is the most prevalent web application security flaw. This occurs when the user-supplied-data is sent to the browser without being properly validated. Canonicalization is the process of reducing a possibly encoded string down to its simplest form. Before validating any data, you must canonicalize the data. The canonicalize method can decode HTML entities, URL (Percent) encodings, and JavaScript encodings. Returns decoded form of input string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+          The string to be encode.
+        ]]></help>
+        </parameter>
+        <parameter name="restrictMultiple" required="true" type="Boolean">
+          <help><![CDATA[
+           If set to true, multiple encoding is restricted.
+
+This argument can be set to true to restrict the input if multiple or nested encoding is detected. If this argument is set to true, and the given input is multiple or nested encoded using one encoding scheme an error will be thrown.
+        ]]></help>
+        </parameter>
+        <parameter name="restrictMixed" required="true" type="Boolean">
+          <help><![CDATA[
+           If set to true, mixed encoding is restricted.
+
+This argument can be set to true to restrict the input if mixed encoding is detected. If this argument is set to true, and the given input is encoded using mixed encoding, an error will be thrown.
+        ]]></help>
+        </parameter>
+        <parameter name="throwOnError" required="false" type="Boolean">
+          <help><![CDATA[
+           Default value is false. If the value of this argument is true, and if restrictMultiple or restrictMixed is true and the given input contains mixed or multiple encoded strings, an exception will be thrown. If the value of this argument is false, an empty string will be returned instead of an exception.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="CallStackDump" returns="String" >
+        <help><![CDATA[
+        Similar to the function callStackGet except that it returns a string representation of the call stack.
+    ]]></help>
+        <parameter name="destination" required="false" type="String">
+          <help><![CDATA[
+          Optional parameter that takes one of the following values:
+
+    console
+    browser: This is the default destination.
+    file: If you do not provide the complete path to the file, the file is written to the temp directory as determined by the function getTempDirectory.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="CallStackGet" returns="Array" >
+        <help><![CDATA[
+        Returns an array of structs. Each struct contains template name, line number, and if applicable the function name.
+    ]]></help>
+      </function>
+
+      <function name="CSRFGenerateToken" returns="Object" >
+        <help><![CDATA[
+        Provides a random token and stores it in the session. You can also provide a specific key to store in the session.
+    ]]></help>
+        <parameter name="key" required="false" type="String">
+          <help><![CDATA[
+          A random token is generated based on the key provided. This key is stored in the session.
+        ]]></help>
+        </parameter>
+        <parameter name="forceNew" required="false" type="Boolean">
+          <help><![CDATA[
+          If set to true, a new token is generated every time the method is called. If false, in case a token exists for the key, the same key is returned.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="CSRFVerifyToken" returns="Boolean" >
+        <help><![CDATA[
+        Validates the given token against the same stored in the session for a specific key.
+    ]]></help>
+        <parameter name="token" required="true" type="Object">
+          <help><![CDATA[
+          Token that to be validated against the token stored in the session.
+        ]]></help>
+        </parameter>
+        <parameter name="key" required="false" type="String">
+          <help><![CDATA[
+          The key against which the token be searched.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="DateTimeFormat" returns="String" >
+        <help><![CDATA[
+        Formats date and time values using locale-specific date and time formatting conventions. Returns a formatted date and time value.
+    ]]></help>
+        <parameter name="date" required="true" type="DateTime">
+          <help><![CDATA[
+            A date/time object, in the range 100 AD-9999 AD.
+        ]]></help>
+        </parameter>
+        <parameter name="mask" required="false" type="String">
+          <help><![CDATA[
+             Characters that show how ColdFusion displays a date:
+
+        d: Day of the month as digits; no leading zero for single-digit days.
+        dd: Day of the month as digits; leading zero for single-digit days.
+        EEE: Day of the week as a three-letter abbreviation.
+        EEEE: Day of the week as its full name.
+        m: Month as digits; no leading zero for single-digit months.
+        mm: Month as digits; leading zero for single-digit months.
+        mmm: Month as a three-letter abbreviation.
+        mmmm: Month as its full name.
+        yy: Year as last two digits; leading zero for years less than 10.
+        yyyy: Year represented by four digits.
+        G: Period/era string. (e.g. BC, AD)
+        h: hours; no leading zero for single-digit hours (12-hour clock)
+        hh: hours; leading zero for single-digit hours (12-hour clock)
+        H: hours; no leading zero for single-digit hours (24-hour clock)
+        HH: hours; leading zero for single-digit hours (24-hour clock)
+        n: minutes; no leading zero for single-digit minutes
+        nn: minutes; a leading zero for single-digit minutes
+        s: seconds; no leading zero for single-digit seconds
+        ss: seconds; leading zero for single-digit seconds
+        l or L: milliseconds, with no leading zeros
+        t: one-character time marker string, such as A or P
+        tt: multiple-character time marker string, such as AM or PM
+
+The following masks tell how to format the full date and time and cannot be combined with other masks:
+
+    short: equivalent to m/d/y h:nn tt
+    medium: equivalent to mmm d, yyyy h:mm:ss tt
+    long: medium with full month name rather than abbreviation, followed by three-letter time zone; as in, mmmm d, yyyy h:mm:ss tt EST
+    full: equivalent to EEEE, mmmm d, yyyy h:mm:ss tt EST
+
+The function also follows Java date time mask, see http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html.
+        ]]></help>
+        </parameter>
+        <parameter name="timeZone" required="false" type="String">
+          <help><![CDATA[
+            The time-zone information. You can specify in either of the following formats:
+
+    Abbreviation such as GMT or PST
+    Full name such as Europe/Dublin
+    By default, this is the time-zone followed by the system.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="DecodeForHTML" returns="String" >
+        <help><![CDATA[
+        Decodes an HTML encoded string. Returns decoded HTML string.
+    ]]></help>
+        <parameter name="encodedInput" required="true" type="String">
+          <help><![CDATA[
+            The encoded string to decode.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="DecodeFromURL" returns="String" >
+        <help><![CDATA[
+        Decodes an encoded HTML URL string. Returns decoded HTML URL string.
+    ]]></help>
+        <parameter name="encodedInput" required="true" type="String">
+          <help><![CDATA[
+            The encoded URL string to decode.
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="DirectoryCopy" returns="void" >
+        <help><![CDATA[
+        Copies the contents of a directory to a destination directory.
+    ]]></help>
+        <parameter name="source" required="true" type="String">
+          <help><![CDATA[
+            Absolute pathname of directory from which you copy content.
+        ]]></help>
+        </parameter>
+
+        <parameter name="destination" required="true" type="String">
+          <help><![CDATA[
+            Path of the destination directory. If not an absolute path, it is relative to the source directory.
+        ]]></help>
+        </parameter>
+
+        <parameter name="recurse" required="false" type="Boolean">
+          <help><![CDATA[
+            By default, false. If true, copies the subdirectories.
+        ]]></help>
+        </parameter>
+
+        <parameter name="filter" required="false" type="String">
+          <help><![CDATA[
+            File extension filter applied, for example, *.cfm.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="EncodeForHTML" returns="String" >
+        <help><![CDATA[
+        Encodes the input string for use in HTML. Returns encoded string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+            The string to encode.
+        ]]></help>
+        </parameter>
+        <parameter name="canonicalize" required="false" type="Boolean">
+          <help><![CDATA[
+            If set to true, canonicalization happens before encoding. If set to false, the given input string will just be encoded. The default value for canonicalize is false. When this parameter is not specified, canonicalization will not happen. By default, when canonicalization is performed, both mixed and multiple encodings will be allowed. To use any other combinations you should canonicalize using canonicalize method and then do encoding.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="EncodeForCSS" returns="String" >
+        <help><![CDATA[
+        Encodes the input string for use in CSS. Returns encoded string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+            The string to encode.
+        ]]></help>
+        </parameter>
+        <parameter name="canonicalize" required="false" type="Boolean">
+          <help><![CDATA[
+            If set to true, canonicalization happens before encoding. If set to false, the given input string will just be encoded. The default value for canonicalize is false. When this parameter is not specified, canonicalization will not happen. By default, when canonicalization is performed, both mixed and multiple encodings will be allowed. To use any other combinations you should canonicalize using canonicalize method and then do encoding.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="EncodeForHTMLAttribute" returns="String" >
+        <help><![CDATA[
+        Encodes the input string for use in HTML attribute, such as table width or image height. Returns encoded string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+            The string to encode.
+        ]]></help>
+        </parameter>
+        <parameter name="canonicalize" required="false" type="Boolean">
+          <help><![CDATA[
+            If set to true, canonicalization happens before encoding. If set to false, the given input string will just be encoded. The default value for canonicalize is false. When this parameter is not specified, canonicalization will not happen. By default, when canonicalization is performed, both mixed and multiple encodings will be allowed. To use any other combinations you should canonicalize using canonicalize method and then do encoding.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="EncodeForJavascript" returns="String" >
+        <help><![CDATA[
+        Encodes the input string for use in JavaScript. Returns encoded string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+            The string to encode.
+        ]]></help>
+        </parameter>
+        <parameter name="canonicalize" required="false" type="Boolean">
+          <help><![CDATA[
+            If set to true, canonicalization happens before encoding. If set to false, the given input string will just be encoded. The default value for canonicalize is false. When this parameter is not specified, canonicalization will not happen. By default, when canonicalization is performed, both mixed and multiple encodings will be allowed. To use any other combinations you should canonicalize using canonicalize method and then do encoding.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="EncodeForURL" returns="String" >
+        <help><![CDATA[
+        Encodes the input string for use in URLs. Returns encoded string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+            The string to encode.
+        ]]></help>
+        </parameter>
+        <parameter name="canonicalize" required="false" type="Boolean">
+          <help><![CDATA[
+            If set to true, canonicalization happens before encoding. If set to false, the given input string will just be encoded. The default value for canonicalize is false. When this parameter is not specified, canonicalization will not happen. By default, when canonicalization is performed, both mixed and multiple encodings will be allowed. To use any other combinations you should canonicalize using canonicalize method and then do encoding.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="EncodeForXML" returns="String" >
+        <help><![CDATA[
+        Encodes the input string for use in XML. Returns encoded string.
+    ]]></help>
+        <parameter name="inputString" required="true" type="String">
+          <help><![CDATA[
+            The string to encode.
+        ]]></help>
+        </parameter>
+        <parameter name="canonicalize" required="false" type="Boolean">
+          <help><![CDATA[
+            If set to true, canonicalization happens before encoding. If set to false, the given input string will just be encoded. The default value for canonicalize is false. When this parameter is not specified, canonicalization will not happen. By default, when canonicalization is performed, both mixed and multiple encodings will be allowed. To use any other combinations you should canonicalize using canonicalize method and then do encoding.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="FileGetMimeType" returns="String" >
+        <help><![CDATA[
+        Gets the MIME type for the file path/file object you have specified.
+    ]]></help>
+        <parameter name="pathOrFileObject" required="true" type="String">
+          <help><![CDATA[
+            Full path on disk to the file if strict is set to true.
+If you do not specify the full path, the file is assumed to be present in the temp directory, as returned by the function getTempDirectory.
+Alternatively name of the file object.
+        ]]></help>
+        </parameter>
+        <parameter name="strict" required="false" type="Boolean">
+          <help><![CDATA[
+            If false, determines the file type by extension. The default value is true.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="GetApplicationMetadata" returns="Object" >
+        <help><![CDATA[
+        Returns the application settings that you have specified in the application, either in the Application.cfc or Application.cfm. For details, see Application Variables section in CFML Reference.
+    ]]></help>
+      </function>
+
+      <function name="GetCPUUsage" returns="Numeric" >
+        <help><![CDATA[
+        Gets the CPU usage with default or custom snapshot interval. The default interval is 1000 milli-seconds.
+    ]]></help>
+        <parameter name="ms" required="false" type="long">
+          <help><![CDATA[
+          Time in milli-seconds. This is the time delay between two snapshots.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="getFreeSpace" returns="Numeric" >
+        <help><![CDATA[
+        Gets information about free hard disk space or free in-memory VFS space. Returns the free space in bytes.
+    ]]></help>
+        <parameter name="path" required="true" type="String">
+          <help><![CDATA[
+          Path to the
+
+    Hard disk drive, for example C: }}for Windows or {{/ for UNIX. Note that for Windows, you have to explicitly use colon (:) and not just C. Only the space of the entire hard disk drive is returned. If you mention a directory in the path, for example, /opt/, it is ignored and only {{/ }}is considered.
+    For in-memory file system, the path is ram:.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="getTotalSpace" returns="Numeric" >
+        <help><![CDATA[
+        Returns the total hard disk space or in-memory space available for an application. Returns total space in bytes
+    ]]></help>
+        <parameter name="path" required="true" type="String">
+          <help><![CDATA[
+          Path to the
+
+    Hard disk drive, for example C: for Windows or / }}for UNIX. Note that for Windows, you have to explicitly use colon ({{:) and not just C. Only the space of the entire hard disk drive is returned. If you mention a directory in the path, for example, /opt/, it is ignored and only {{/ }}is considered.
+    For in-memory file system, the path is ram:.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="getSystemFreeMemory" returns="Numeric" >
+        <help><![CDATA[
+        Gets details of free memory. Returns memory, in bytes, that is currently free.
+    ]]></help>
+      </function>
+
+      <function name="GetSystemTotalMemory" returns="Numeric" >
+        <help><![CDATA[
+        Gets details of the memory that is available for the operating system, in bytes. Returns Memory that is available in bytes.
+    ]]></help>
+      </function>
+
+      <function name="HMac" returns="String" >
+        <help><![CDATA[
+        Creates Hash-based Message Authentication Code for the given string based on the algorithm and encoding. Hash-based Message Authentication Code (HMAC) is used to verify the data integrity and authenticity of a message transmitted. It involves a cryptographic hash function in combination with a secret key. The cryptographic hash function can be Message Digest 5 (MD5), Secure Hash Algorithm (SHA), and so on. Returns and encoded string.
+    ]]></help>
+        <parameter name="message" required="true" type="String or byte Array">
+          <help><![CDATA[
+          The message to transmit. The message can be a String or a byte array.
+        ]]></help>
+        </parameter>
+        <parameter name="key" required="true" type="String or byte array">
+          <help><![CDATA[
+          The secret key to create HMAC. The key can be a String or a byte array.
+        ]]></help>
+        </parameter>
+        <parameter name="algorithm" required="false" type="String">
+          <help><![CDATA[
+          Algorithm used.
+        ]]></help>
+        </parameter>
+        <parameter name="encoding" required="false" type="String">
+          <help><![CDATA[
+Encoding to be used.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="imageCreateCaptcha" returns="Image" >
+        <help><![CDATA[
+        Create a Completely Automated Public Turing test to tell Computers and Humans Apart (CAPTCHA) image, a distorted text image that is human-readable, but not machine-readable, used in a challenge-response test for preventing spam.
+    ]]></help>
+        <parameter name="height" required="true" type="Numeric">
+          <help><![CDATA[
+          Height in pixels of the image.
+        ]]></help>
+        </parameter>
+        <parameter name="width" required="true" type="Numeric">
+          <help><![CDATA[
+          Width in pixels of the image.
+        ]]></help>
+        </parameter>
+        <parameter name="text" required="true" type="String">
+          <help><![CDATA[
+          Text string displayed in the CAPTCHA image. Use capital letters for better readability. Do not include spaces because users cannot detect them in the resulting CAPTCHA image.
+        ]]></help>
+        </parameter>
+        <parameter name="difficulty" required="false" type="String">
+          <help><![CDATA[
+        Optional. Level of complexity of the CAPTCHA text. Specify one of the following levels of text distortion:
+    low
+    medium
+    high
+        ]]></help>
+        </parameter>
+        <parameter name="font" required="false" type="String">
+          <help><![CDATA[
+          One or more valid fonts to use for the CAPTCHA text. Separate multiple fonts with commas. ColdFusion supports only the system fonts that the JDK can recognize. For example, TTF fonts in the Windows directory are supported on Windows.
+        ]]></help>
+        </parameter>
+        <parameter name="fontsize" required="true" type="Numeric">
+          <help><![CDATA[
+          Font size of the text in the CAPTCHA image. The value must be an integer.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="imageMakeColorTransparent" returns="Image" >
+        <help><![CDATA[
+        Creates an image and sets a transparent color.
+    ]]></help>
+        <parameter name="img" required="true" type="Image">
+          <help><![CDATA[
+           The ColdFusion image on which this operation is performed.
+        ]]></help>
+        </parameter>
+        <parameter name="color" required="true" type="Numeric or String">
+          <help><![CDATA[
+          The transparent color:
+
+    Hexadecimal value of RGB color. For example, specify the color white as "##FFFFFF" or "FFFFFF".
+    String value of color (for example, "black", "red", "green").
+    The default value of the transparent color is "black".List of three numbers for (R,G,B) values. Each value must be in the range 0-255.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="imageMakeTranslucent" returns="Image" >
+        <help><![CDATA[
+        Create a new translucent image with given percentage of translucence.
+    ]]></help>
+        <parameter name="img" required="true" type="Image">
+          <help><![CDATA[
+            The ColdFusion image on which this operation is performed.
+        ]]></help>
+        </parameter>
+        <parameter name="percentage" required="true" type="Numeric">
+          <help><![CDATA[
+          The percent of translucence:
+    0 = opaque
+    100 = transparent
+    Decimal values are supported.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="invoke" returns="Image" >
+        <help><![CDATA[
+        Does either of the following:
+
+    Invokes a component method from within a ColdFusion page or component
+    Invokes a method on an instantiated web service object
+    invokes a method on Java/.NET/COM/Corba object
+
+    Returns what is returned by the invoked method.
+    ]]></help>
+        <parameter name="instance" required="true" type="Object">
+          <help><![CDATA[
+            For CFC : String or component object; a reference to a component, or component name/path to instantiate. Can be an empty string when invoking a method within the same ColdFusion page or component.
+
+For webservice/Java/.NET/COM/Corba : object instance
+        ]]></help>
+        </parameter>
+        <parameter name="method" required="true" type="String">
+          <help><![CDATA[
+          Name of a method. For a web service, the name of an operation.
+        ]]></help>
+        </parameter>
+
+        <parameter name="arguments" required="false" type="Arguments">
+          <help><![CDATA[
+          Arguments to pass to the method.
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="isClosure" returns="boolean" >
+        <help><![CDATA[
+        Determines whether a value or expression references a function defined via a function expression, as opposed to a function statement. Returns True, if the value represents a function expression; otherwise False.
+    ]]></help>
+        <parameter name="value" required="true" type="Object">
+          <help><![CDATA[
+            A value.
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="LSDateTimeFormat" returns="String" >
+        <help><![CDATA[
+        Formats date and time values using locale-specific date and time formatting conventions. Returns a formatted date and time value.
+    ]]></help>
+        <parameter name="date" required="true" type="DateTime">
+          <help><![CDATA[
+            A date/time object, in the range 100 AD-9999 AD.
+        ]]></help>
+        </parameter>
+        <parameter name="mask" required="false" type="String">
+          <help><![CDATA[
+            Mask that has to be used for formatting. See DateTimeFormat.
+        ]]></help>
+        </parameter>
+        <parameter name="timeZone" required="false" type="String">
+          <help><![CDATA[
+            The time-zone information. You can specify in either of the following formats:
+
+    Abbreviation such as GMT or PST
+    Full name such as Europe/Dublin
+    By default, this is the time-zone followed by the system.
+        ]]></help>
+        </parameter>
+        <parameter name="locale" required="false" type="String">
+          <help><![CDATA[
+            Locale to use instead of the locale of the page when processing the function.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="listFilter" returns="List" >
+        <help><![CDATA[
+        Used to filter the elements in list. Returns a new list. Syntax: <pre>listFilter(list,function(listElement){return true|false;});</pre>
+    ]]></help>
+        <parameter name="list" required="true" type="List">
+          <help><![CDATA[
+            Name of the list object.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+            Inline function executed for each element in the list. Returns true if the list element has to be included in the resultant list.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="ListRemoveDuplicates" returns="List" >
+        <help><![CDATA[
+        Removes duplicate values (if they exist) in a list.
+    ]]></help>
+        <parameter name="list" required="true" type="List">
+          <help><![CDATA[
+            Name of the list object.
+        ]]></help>
+        </parameter>
+        <parameter name="delimiter" required="false" type="Character">
+          <help><![CDATA[
+            Character(s) that separate list elements. The default value is comma. .
+        ]]></help>
+        </parameter>
+        <parameter name="ignoreCase" required="false" type="Boolean">
+          <help><![CDATA[
+             If true, ignores the case of strings in the list. By default the value is set to false.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="ORMIndex" returns="void" >
+        <help><![CDATA[
+        Performs offline indexing.
+    ]]></help>
+        <parameter name="entityNameList" required="false" type="String">
+          <help><![CDATA[
+            Comma-separated list of entity names for indexing.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="ORMIndexPurge" returns="void" >
+        <help><![CDATA[
+        Clears all indexed data for all entities or specified entities in the current application scope.
+History
+    ]]></help>
+        <parameter name="entityNameList" required="false" type="String">
+          <help><![CDATA[
+            Comma-separated list of entity names for purging.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="ORMSearch" returns="Object" >
+        <help><![CDATA[
+        Searches for given text in specific properties or entities. Returns a struct that contains the following: <pre>
+
+    An array of structs (with the entity and score being the keys) in the following format:
+    data -[{entity: entity1, score: entity1_score}, {entity: entity2, score: entity2_score}, ..... ]
+    maxTotalRecord (number of possible results) </pre>
+    ]]></help>
+        <parameter name="query_text" required="true" type="String">
+          <help><![CDATA[
+            The text to be searched for or a complete Lucene query.In the case of ORMSearch("query_text", "entityName"), only Lucene query is supported.For details of Lucene query, see http://lucene.apache.org/core/old_versioned_docs/versions/3_0_0/queryparsersyntax.html
+        ]]></help>
+        </parameter>
+        <parameter name="entityName" required="true" type="String">
+          <help><![CDATA[
+            Name of the entity to be searched.
+        ]]></help>
+        </parameter>
+
+        <parameter name="fields" required="false" type="Object">
+          <help><![CDATA[
+            Fields in which search has to be performed. This can be an array of strings.If you are performing a Lucene query, you need not specify this field. In other words, if you do not specify this value, a Lucene query is performed.Field name is case-sensitive.
+        ]]></help>
+        </parameter>
+
+        <parameter name="optionMap" required="false" type="Map">
+          <help><![CDATA[
+            Extra options that can be passed while executing Lucene query.The options are: <pre>
+
+    sort: Sorts based on indexfieldname you specified.
+    offSet: Specifies the position from which to retrieve the objects.
+    maxResults: Specifies the maximum number of objects to be retrieved.  </pre>
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="ORMSearchOffline" returns="Object" >
+        <help><![CDATA[
+        Performs search on the indexed properties but returns only the stored fields.For this function to work, specify indexStore=true on the properties on which you want to perform the search. Returns a struct that contains the following: <pre>
+
+        An array of structs (with the entity and scorebeing the keys) in the following format:
+    data -[{entity: entity1, score: entity1_score}, {entity: entity2, score: entity2_score}, ..... ]
+    maxTotalRecord (number of possible results)
+    fields_to_be_selected as keys.</pre>
+    ]]></help>
+        <parameter name="query_text" required="true" type="String">
+          <help><![CDATA[
+            The text to be searched for or a complete Lucene query.For details of Lucene query, see http://lucene.apache.org/core/old_versioned_docs/versions/.
+        ]]></help>
+        </parameter>
+        <parameter name="entityName" required="true" type="String">
+          <help><![CDATA[
+            Name of the entity to be searched.
+        ]]></help>
+        </parameter>
+
+        <parameter name="fieldsToBeSelected" required="true" type="String">
+          <help><![CDATA[
+            Fields to be returned as keys in the resultant struct.
+        ]]></help>
+        </parameter>
+        <parameter name="fields" required="false" type="Object">
+          <help><![CDATA[
+            Fields in which search has to be performed.
+        ]]></help>
+        </parameter>
+
+        <parameter name="optionMap" required="false" type="Map">
+          <help><![CDATA[
+            Extra options that can be passed while executing Lucene query. The options can be: <pre>
+
+    sort: Sorts based on indexfieldname you specified.
+    offSet: Specifies the position from which to retrieve the objects.
+    maxResults: Specifies the maximum number of objects to be retrieved. </pre>
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="ReEscape" returns="String" >
+        <help><![CDATA[
+        Takes a string and escapes characters that match regular expression control characters. Returns string appended with the escape characters
+    ]]></help>
+        <parameter name="string" required="true" type="String">
+          <help><![CDATA[
+            The string in which you have to escape characters that match regular expression characters.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="RestInitApplication" returns="void" >
+        <help><![CDATA[
+        Registers the directory path with the service mapping provided. If no service mapping is provided, the application name is used. If the rest application is already registered, it is refreshed.
+    ]]></help>
+        <parameter name="dirPath" required="true" type="String">
+          <help><![CDATA[
+            Path to the directory to be registered.
+        ]]></help>
+        </parameter>
+
+        <parameter name="serviceMapping" required="false" type="String">
+          <help><![CDATA[
+            Alternate string to be used for application name while calling the REST service.
+        ]]></help>
+        </parameter>
+        <parameter name="options" required="false" type="String">
+          <help><![CDATA[
+            Additional options passed for initializing the application.<pre>
+
+    "host" - The application will be registered for the particular host.
+    "useHost" - true/false - The application will extract the host from the URL and it will be used as the host name.
+    "isdefault" - Specifies whether the application should be registered as a default application or not. For accessing a default application, the URL should not contain the application name. </pre>
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="removeCachedQuery" returns="void" >
+        <help><![CDATA[
+        Removes the query with the details you provide from query cache.
+    ]]></help>
+        <parameter name="SQL" required="true" type="String">
+          <help><![CDATA[
+The query SQL.
+        ]]></help>
+        </parameter>
+        <parameter name="datasource" required="true" type="String">
+          <help><![CDATA[
+            The datasource you ran the query on.
+        ]]></help>
+        </parameter>
+        <parameter name="params" required="false" type="Array">
+          <help><![CDATA[
+            Array of parameter values passed to SQL.
+        ]]></help>
+        </parameter>
+        <parameter name="region" required="false" type="String">
+          <help><![CDATA[
+            Specifies the cache region where you can place the cache object
+        ]]></help>
+        </parameter>
+
+      </function>
+
+      <function name="RestDeleteApplication" returns="void" >
+        <help><![CDATA[
+        Unregisters the directory path if it is already registered.
+    ]]></help>
+        <parameter name="dirPath" required="true" type="String">
+          <help><![CDATA[
+            Path to the directory to be unregistered. If the path is not valid, it results in an error.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="RestSetResponse" returns="void" >
+        <help><![CDATA[
+        Sets the custom responses.
+    ]]></help>
+        <parameter name="response" required="true" type="Object">
+          <help><![CDATA[
+            A struct that contains the response details.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="SessionRotate" returns="void" >
+        <help><![CDATA[
+        Renews the session when started. For example, you want to generate a new session after a successful login. It prevents session attacks, because the session before and after a successful authentication is different.The method, <pre>
+
+    Creates a session
+    Copies the data from the old session to the new session
+    Invalidates the old session
+    Invalidates or overwrites the old session cookies
+    Creates new session cookies if the old session cookies are invalidated
+    Copies and updates client storage data to new session keys </pre>
+    ]]></help>
+      </function>
+
+      <function name="SessionGetMetaData" returns="Object" >
+        <help><![CDATA[
+        Returns meta data structure related to the current session. Meta data structure contains starttime field - the start time of the current session.
+    ]]></help>
+      </function>
+
+      <function name="SessionInvalidate" returns="void" >
+        <help><![CDATA[
+        Invalidates or cleans up the current session.
+    ]]></help>
+      </function>
+
+      <function name="StructEach" returns="void" >
+        <help><![CDATA[
+        Used to loop over elements in a structure by accessing key-value pairs. Syntax: <pre>structEach(struct,function(key, value) {});</pre>
+    ]]></help>
+        <parameter name="struct" required="true" type="Object">
+          <help><![CDATA[
+            Name of the structure object.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Inline function executed for each key - value pair in the struct.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="StructFilter" returns="Object" >
+        <help><![CDATA[
+        Used to filter the key value pairs in a struct. Return new struct. Syntax: <pre>structFilter(struct,function(key, value){return true|false;});</pre>
+    ]]></help>
+        <parameter name="struct" required="true" type="Object">
+          <help><![CDATA[
+            Name of the structure object.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+Inline function executed for each element in the array. Returns true if the key value pair in the struct has to be included in the resultant struct.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="WSGetAllChannels" returns="Array" >
+        <help><![CDATA[
+        Retrieves array of channel names.
+    ]]></help>
+        <parameter name="channelName" required="false" type="String">
+          <help><![CDATA[
+If specified, returns all sub-channels listed under the entered channel name. If left unspecified, the function returns all channels registered under the current application.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="WSGetSubscribers" returns="Array" >
+        <help><![CDATA[
+        Returns an array of struct with clientID and subscriberInfo as the keys.
+    ]]></help>
+        <parameter name="channelName" required="false" type="String">
+          <help><![CDATA[
+Channel whose list of subscribers you wish to retrieve.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="WSPublish" returns="void" >
+        <help><![CDATA[
+        Sends messages to a specific channel based on the filter criteria (which is a struct).
+    ]]></help>
+        <parameter name="channel" required="true" type="String">
+          <help><![CDATA[
+Specific channel to which the server publishes its response.
+        ]]></help>
+        </parameter>
+        <parameter name="message" required="true" type="Object">
+          <help><![CDATA[
+Response sent by the server to all clients subscribed to a specific channel.
+        ]]></help>
+        </parameter>
+        <parameter name="filterCriteria" required="false" type="String">
+          <help><![CDATA[
+Conditions to filter eligible clients that need to be notified for a given channel.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="WSSendMessage" returns="void" >
+        <help><![CDATA[
+        Sends messages to a specific client that invokes the method. This can be included as a part of the function that is called by the invoke WebSocket JavaScript method.
+    ]]></help>
+        <parameter name="message" required="true" type="Object">
+          <help><![CDATA[
+The message object. This can be of type Any.
+        ]]></help>
+        </parameter>
+      </function>
+
       <function name="abs" returns="Numeric" >
             <help><![CDATA[
         Absolute-value function. The absolute value of a number is
