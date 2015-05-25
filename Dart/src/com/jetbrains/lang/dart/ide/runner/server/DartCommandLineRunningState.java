@@ -10,6 +10,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.filters.UrlFilter;
+import com.intellij.execution.process.ColoredProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -100,7 +101,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
-    final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
+    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
     return processHandler;
   }
