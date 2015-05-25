@@ -104,6 +104,8 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
       }
     });
 
+    myTemplatesList.setEmptyText(DartBundle.message("set.sdk.to.see.sample.content.options"));
+
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
     myErrorLabel.setVisible(false);
 
