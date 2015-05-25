@@ -195,11 +195,6 @@ public class DartColorAnnotator implements Annotator {
       final DartType type = newExpression.getType();
       createInfoAnnotation(holder, type, DartSyntaxHighlighterColors.DART_CONSTRUCTOR_CALL);
     }
-    else if (element instanceof DartConstConstructorExpression) {
-      final DartConstConstructorExpression constConstructorExpression = (DartConstConstructorExpression)element;
-      final DartType type = constConstructorExpression.getType();
-      createInfoAnnotation(holder, type, DartSyntaxHighlighterColors.DART_CONSTRUCTOR_CALL);
-    }
     else if (element instanceof DartNamedConstructorDeclaration) {
       final DartNamedConstructorDeclaration decl = (DartNamedConstructorDeclaration)element;
       final PsiElement child = decl.getFirstChild();

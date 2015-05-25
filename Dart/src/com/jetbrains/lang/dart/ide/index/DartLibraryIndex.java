@@ -151,19 +151,19 @@ const Map<String, LibraryInfo> LIBRARIES = const {
         final List<DartExpression> expressions = mapLiteralEntry.getExpressionList();
         if (expressions.size() != 2 ||
             !(expressions.get(0) instanceof DartStringLiteralExpression) ||
-            !(expressions.get(1) instanceof DartConstConstructorExpression)) {
+            !(expressions.get(1) instanceof DartNewExpression)) {
           return;
         }
 
         final DartStringLiteralExpression keyExpression = (DartStringLiteralExpression)expressions.get(0);
-        final DartConstConstructorExpression constructorExpression = (DartConstConstructorExpression)expressions.get(1);
+        final DartNewExpression newExpression = (DartNewExpression)expressions.get(1);
 
         final String libraryName = StringUtil.unquoteString(keyExpression.getText());
 
-        final DartType dartType = constructorExpression.getType();
+        final DartType dartType = newExpression.getType();
         if (dartType == null || !"LibraryInfo".equals(dartType.getText())) return;
 
-        final DartArguments arguments = constructorExpression.getArguments();
+        final DartArguments arguments = newExpression.getArguments();
         final DartArgumentList argumentList = arguments != null ? arguments.getArgumentList() : null;
         final List<DartExpression> expressionList = argumentList != null ? argumentList.getExpressionList() : null;
         final DartExpression firstExpression = expressionList == null || expressionList.isEmpty() ? null : expressionList.get(0);

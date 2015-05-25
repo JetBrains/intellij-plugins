@@ -539,8 +539,7 @@ left asExpression ::= 'as' type
 
 private primary ::=  literalExpression |
                      functionExpression |
-                     newExpression |
-                     constConstructorExpression |
+                     newExpression | // constant object expression is also parsed as newExpression
                      refOrThisOrSuperOrParenExpression |
                      throwExpression
 
@@ -577,10 +576,12 @@ thisExpression ::= 'this'
 superExpression ::= 'super'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-newExpression ::= 'new' type ('.' referenceExpression)? arguments
-{pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-constConstructorExpression ::= 'const' type ('.' referenceExpression)? arguments
-{pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+newExpression ::= ('new' | 'const') type ('.' referenceExpression)? arguments {
+  pin=1
+  mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl"
+  implements="com.jetbrains.lang.dart.psi.DartReference"
+  methods=[isConstantObjectExpression]
+}
 
 throwExpression ::= 'throw' expression
 

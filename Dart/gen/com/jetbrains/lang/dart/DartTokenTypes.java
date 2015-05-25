@@ -30,7 +30,6 @@ public interface DartTokenTypes {
   IElementType CLASS_MEMBERS = new DartElementType("CLASS_MEMBERS");
   IElementType COMPARE_EXPRESSION = new DartElementType("COMPARE_EXPRESSION");
   IElementType COMPONENT_NAME = new DartElementType("COMPONENT_NAME");
-  IElementType CONST_CONSTRUCTOR_EXPRESSION = new DartElementType("CONST_CONSTRUCTOR_EXPRESSION");
   IElementType CONTINUE_STATEMENT = new DartElementType("CONTINUE_STATEMENT");
   IElementType DEFAULT_CASE = new DartElementType("DEFAULT_CASE");
   IElementType DEFAULT_FORMAL_NAMED_PARAMETER = new DartElementType("DEFAULT_FORMAL_NAMED_PARAMETER");
@@ -326,9 +325,6 @@ public interface DartTokenTypes {
       }
       else if (type == COMPONENT_NAME) {
         return new DartComponentNameImpl(node);
-      }
-      else if (type == CONST_CONSTRUCTOR_EXPRESSION) {
-        return new DartConstConstructorExpressionImpl(node);
       }
       else if (type == CONTINUE_STATEMENT) {
         return new DartContinueStatementImpl(node);

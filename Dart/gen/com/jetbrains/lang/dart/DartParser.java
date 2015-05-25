@@ -88,9 +88,6 @@ public class DartParser implements PsiParser {
     else if (t == COMPONENT_NAME) {
       r = componentName(b, 0);
     }
-    else if (t == CONST_CONSTRUCTOR_EXPRESSION) {
-      r = constConstructorExpression(b, 0);
-    }
     else if (t == CONTINUE_STATEMENT) {
       r = continueStatement(b, 0);
     }
@@ -425,13 +422,13 @@ public class DartParser implements PsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION,
       AWAIT_EXPRESSION, BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION,
-      COMPARE_EXPRESSION, CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION,
-      IS_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION,
-      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
-      NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
-      REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
-      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
-      THROW_EXPRESSION, VALUE_EXPRESSION),
+      COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
+      LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION,
+      LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION,
+      PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION,
+      SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION, SUPER_EXPRESSION,
+      SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, THROW_EXPRESSION,
+      VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -1322,40 +1319,6 @@ public class DartParser implements PsiParser {
     Marker m = enter_section_(b, l, _NONE_, "<component name>");
     r = nonStrictID(b, l + 1);
     exit_section_(b, l, m, COMPONENT_NAME, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // 'const' type ('.' referenceExpression)? arguments
-  public static boolean constConstructorExpression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constConstructorExpression")) return false;
-    if (!nextTokenIs(b, CONST)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
-    r = consumeToken(b, CONST);
-    p = r; // pin = 1
-    r = r && report_error_(b, type(b, l + 1));
-    r = p && report_error_(b, constConstructorExpression_2(b, l + 1)) && r;
-    r = p && arguments(b, l + 1) && r;
-    exit_section_(b, l, m, CONST_CONSTRUCTOR_EXPRESSION, r, p, null);
-    return r || p;
-  }
-
-  // ('.' referenceExpression)?
-  private static boolean constConstructorExpression_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constConstructorExpression_2")) return false;
-    constConstructorExpression_2_0(b, l + 1);
-    return true;
-  }
-
-  // '.' referenceExpression
-  private static boolean constConstructorExpression_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constConstructorExpression_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, DOT);
-    r = r && referenceExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -4125,19 +4088,30 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'new' type ('.' referenceExpression)? arguments
+  // ('new' | 'const') type ('.' referenceExpression)? arguments
   public static boolean newExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "newExpression")) return false;
-    if (!nextTokenIs(b, NEW)) return false;
+    if (!nextTokenIs(b, "<new expression>", CONST, NEW)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
-    r = consumeToken(b, NEW);
+    Marker m = enter_section_(b, l, _COLLAPSE_, "<new expression>");
+    r = newExpression_0(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, type(b, l + 1));
     r = p && report_error_(b, newExpression_2(b, l + 1)) && r;
     r = p && arguments(b, l + 1) && r;
     exit_section_(b, l, m, NEW_EXPRESSION, r, p, null);
     return r || p;
+  }
+
+  // 'new' | 'const'
+  private static boolean newExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpression_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, NEW);
+    if (!r) r = consumeToken(b, CONST);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // ('.' referenceExpression)?
@@ -4628,8 +4602,7 @@ public class DartParser implements PsiParser {
   /* ********************************************************** */
   // literalExpression |
   //                      functionExpression |
-  //                      newExpression |
-  //                      constConstructorExpression |
+  //                      newExpression | // constant object expression is also parsed as newExpression
   //                      refOrThisOrSuperOrParenExpression |
   //                      throwExpression
   static boolean primary(PsiBuilder b, int l) {
@@ -4639,7 +4612,6 @@ public class DartParser implements PsiParser {
     r = literalExpression(b, l + 1);
     if (!r) r = functionExpression(b, l + 1);
     if (!r) r = newExpression(b, l + 1);
-    if (!r) r = constConstructorExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
     if (!r) r = throwExpression(b, l + 1);
     exit_section_(b, m, null, r);
