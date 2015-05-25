@@ -97,7 +97,7 @@ Dart File
                 PsiElement(IDENTIFIER)('defaultLogger')
           VAR_INIT
             PsiElement(=)('=')
-            CONST_CONSTRUCTOR_EXPRESSION
+            NEW_EXPRESSION
               PsiElement(const)('const')
               TYPE
                 REFERENCE_EXPRESSION

@@ -16,4 +16,6 @@ public interface DartNewExpression extends DartExpression, DartReference {
   @Nullable
   DartType getType();
 
+  boolean isConstantObjectExpression();
+
 }

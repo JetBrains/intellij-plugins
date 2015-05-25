@@ -124,7 +124,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
       final DartClass dartClass = PsiTreeUtil.getParentOfType(this, DartClass.class);
       return dartClass == null ? DartClassResolveResult.EMPTY : dartClass.getSuperClassResolvedOrObjectClass();
     }
-    if (this instanceof DartNewExpression || this instanceof DartConstConstructorExpression) {
+    if (this instanceof DartNewExpression) {
       final DartClassResolveResult result = DartResolveUtil.resolveClassByType(PsiTreeUtil.getChildOfType(this, DartType.class));
       result.specialize(this);
       return result;

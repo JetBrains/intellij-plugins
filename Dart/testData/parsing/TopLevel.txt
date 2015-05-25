@@ -199,7 +199,7 @@ Dart File
           PsiElement(IDENTIFIER)('topLevelInitializedVariable2')
     VAR_INIT
       PsiElement(=)('=')
-      CONST_CONSTRUCTOR_EXPRESSION
+      NEW_EXPRESSION
         PsiElement(const)('const')
         TYPE
           REFERENCE_EXPRESSION

@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.util.*;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
 import org.jetbrains.annotations.NotNull;
@@ -183,5 +184,10 @@ public class DartPsiImplUtil {
   @Nullable
   public static DartBlock getBlock(DartFunctionBody functionBody) {
     return PsiTreeUtil.getChildOfType(functionBody, DartBlock.class);
+  }
+
+  public static boolean isConstantObjectExpression(@NotNull final DartNewExpression newExpression) {
+    final PsiElement child = newExpression.getFirstChild();
+    return child != null && child.getNode().getElementType() == DartTokenTypes.CONST;
   }
 }
