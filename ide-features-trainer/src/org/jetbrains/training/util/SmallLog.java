@@ -109,7 +109,7 @@ public class SmallLog extends JFrame{
 
             //delete clickLabel if user pressed DEL ot BACKSPACE
             Shortcutter.register(this, "_DELETE", deleteAction);
-//            Shortcutter.register(this, "_BACKSPACE", deleteAction);
+            Shortcutter.register(this, "_BACK_SPACE", deleteAction);
 
             Shortcutter.register(this, "_UP", new Runnable() {
                 @Override
@@ -141,6 +141,30 @@ public class SmallLog extends JFrame{
                     }
                 }
             });
+
+            Runnable multippleDelete = new Runnable() {
+                @Override
+                public void run() {
+
+                    //build set of marked clicklabels
+                    final ArrayList<ClickLabel> markedClickLabels = new ArrayList<ClickLabel>();
+                    for (ClickLabel clickLabel: clickLabels) if(clickLabel.selected) markedClickLabels.add(clickLabel);
+
+                    for (ClickLabel clickLabel: markedClickLabels) {
+                        deleteClickLabel(clickLabel);
+                    }
+                    while(!markedClickLabels.isEmpty()) {
+                        markedClickLabels.remove(0);
+                    }
+
+                    movePivot(-1);
+                    update();
+                }
+            };
+
+
+            Shortcutter.register(this, "SHIFT_BACK_SPACE", multippleDelete);
+            Shortcutter.register(this, "SHIFT_DELETE", multippleDelete);
 
             Shortcutter.register(this, "_DOWN", new Runnable() {
                 @Override
@@ -318,6 +342,7 @@ public class SmallLog extends JFrame{
         }
 
         private void movePivot(int position){
+            if (pivot >= clickLabels.size()) pivot = -1;
             if(pivot == -1) {
                 pivot = position;
                 if (position != -1) {
@@ -380,5 +405,57 @@ public class SmallLog extends JFrame{
             return ("<html>" + in + "</html>");
         }
 
+    }
+
+    private  class Pivot {
+        private ClickLabel pivotClickLabel;
+        private int p;
+
+        public Pivot(int p, ClickLabel pivotClickLabel) {
+            this.p = p;
+            this.pivotClickLabel = pivotClickLabel;
+        }
+
+        public void move(ArrayList<ClickLabel> clickLabels, int position){
+            //check current position
+            if (pivotClickLabel !=null && clickLabels.contains(pivotClickLabel)) {
+                unmark(pivotClickLabel);
+                if (position >= clickLabels.size() || position < 0) {
+                    pivotClickLabel = null;
+                    p = -1;
+                } else {
+                    p = position;
+                    pivotClickLabel = clickLabels.get(p);
+                    mark(pivotClickLabel);
+                }
+            } else {
+                if (position >= clickLabels.size() || position < 0) {
+                    pivotClickLabel = null;
+                    p = -1;
+                } else {
+                    p = position;
+                    pivotClickLabel = clickLabels.get(p);
+                    mark(pivotClickLabel);
+                }
+            }
+        }
+
+        public void move_and_select(ArrayList<ClickLabel> clickLabels, int position){
+            if (position < clickLabels.size() && position >= 0) {
+                move(clickLabels, position);
+                clickLabels.get(position).selected = true;
+            }
+        }
+
+        private void mark(ClickLabel clickLabel){
+            clickLabel.setBackground(clickLabel.pivotColor);
+        }
+
+        private void unmark(ClickLabel clickLabel){
+            if (clickLabel.selected)
+                clickLabel.setBackground(clickLabel.selectedColor);
+            else
+                clickLabel.setBackground(bck);
+        }
     }
 }
