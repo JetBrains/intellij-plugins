@@ -121,15 +121,14 @@ public class SmallLog extends JFrame{
                     if (Shortcutter.isShiftPressed) {
                         if (pivot.getPosition() == -1) {
                             if (clickLabels != null) {
-//                                flip(clickLabels.get(clickLabels.size() - 1));
                                 pivot.move(clickLabels.size() - 1);
                             }
                         } else {
                             if (pivot.getPosition() == 0) {
-//                                flip(clickLabels.get(0));
+                                flip(clickLabels.get(0));
                                 pivot.move(-1);
                             } else {
-//                                flip(clickLabels.get(pivot));
+                                flip(clickLabels.get(pivot.getPosition()));
                                 pivot.move(pivot.getPosition() - 1);
                             }
                         }
@@ -176,13 +175,14 @@ public class SmallLog extends JFrame{
                 public void run() {
                     if (Shortcutter.isShiftPressed) {
                         if (pivot.getPosition() == -1) {
-                            if (clickLabels != null) pivot.move(0);
+                            if (clickLabels != null)
+                                pivot.move(0);
                         } else {
                             if (pivot.getPosition() == clickLabels.size() - 1) {
-//                                flip(clickLabels.get(clickLabels.size() - 1));
+                                flip(clickLabels.get(clickLabels.size() - 1));
                                 pivot.move(-1);
                             } else {
-//                                flip(clickLabels.get(pivot));
+                                flip(clickLabels.get(pivot.getPosition()));
 //                                movePivot(pivot + 1);
                                 pivot.move(pivot.getPosition() + 1);
                             }
@@ -190,8 +190,7 @@ public class SmallLog extends JFrame{
                     } else {
                         if (pivot.getPosition() == -1) {
                             if (clickLabels != null)
-//                                movePivot(0);
-                            pivot.move(0);
+                                pivot.move(0);
                         } else {
                             if (pivot.getPosition() == clickLabels.size() - 1)
                                 pivot.move(-1);
