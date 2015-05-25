@@ -48,3 +48,12 @@ class NastyConstructor {
 class MappedIterable<S, T> {
   MappedIterable._(this._iterable, T this._f(S element));
 }
+
+main() {
+  const a;
+  const a<b> c;
+  const a();
+  const a.b();
+  const a<b>();
+  const a<b>.c();
+}
