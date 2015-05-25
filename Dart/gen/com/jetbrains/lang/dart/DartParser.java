@@ -6004,7 +6004,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName)
+  // metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName <<failIfItLooksLikeConstantObjectExpression>> | type componentName | 'var' componentName)
   public static boolean varAccessDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration")) return false;
     boolean r;
@@ -6035,7 +6035,7 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName
+  // finalOrConst type componentName | finalOrConst componentName <<failIfItLooksLikeConstantObjectExpression>> | type componentName | 'var' componentName
   private static boolean varAccessDeclaration_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_2")) return false;
     boolean r;
@@ -6060,13 +6060,14 @@ public class DartParser implements PsiParser {
     return r;
   }
 
-  // finalOrConst componentName
+  // finalOrConst componentName <<failIfItLooksLikeConstantObjectExpression>>
   private static boolean varAccessDeclaration_2_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_2_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = finalOrConst(b, l + 1);
     r = r && componentName(b, l + 1);
+    r = r && failIfItLooksLikeConstantObjectExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

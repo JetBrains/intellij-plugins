@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
@@ -102,5 +103,11 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     }
     marker_.collapse(GT_GT);
     return true;
+  }
+
+  public static boolean failIfItLooksLikeConstantObjectExpression(PsiBuilder builder_, int level_) {
+    // need to fail varAccessDeclaration parsing if this looks like constant object expression (it will be parsed later by DartNewExpression)
+    final IElementType type = builder_.getTokenType();
+    return type != DOT && type != LPAREN && type != LT;
   }
 }

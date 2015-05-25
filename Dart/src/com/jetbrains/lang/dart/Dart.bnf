@@ -215,7 +215,7 @@ metadata ::= '@' simpleQualifiedReferenceExpression arguments?
 
 uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"}
 
-varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName)
+varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName <<failIfItLooksLikeConstantObjectExpression>> | type componentName | 'var' componentName)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
