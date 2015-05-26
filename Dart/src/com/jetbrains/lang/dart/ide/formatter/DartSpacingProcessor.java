@@ -6,6 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.common.AbstractBlock;
+import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
@@ -40,6 +41,9 @@ public class DartSpacingProcessor {
     DEFERRED,
     AS
   );
+
+  private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
+  private static final TokenSet ID_SET = TokenSet.create(ID);
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -371,15 +375,35 @@ public class DartSpacingProcessor {
     }
 
     if (elementType == VALUE_EXPRESSION && type2 == CASCADE_REFERENCE_EXPRESSION) {
-      //if (type1 == CASCADE_REFERENCE_EXPRESSION) {
-      //  if (((AbstractBlock)child1).getNode().getLastChildNode().getElementType() == CALL_EXPRESSION) {
-      //    // TODO if child1 message name == child2 message name, do not add line break
-      //  }
-      //}
+      if (type1 == CASCADE_REFERENCE_EXPRESSION) {
+        ASTNode call1 = ((AbstractBlock)child1).getNode().getLastChildNode();
+        if (call1.getElementType() == CALL_EXPRESSION) {
+          ASTNode call2 = ((AbstractBlock)child2).getNode().getLastChildNode();
+          if (call2.getElementType() == CALL_EXPRESSION) {
+            String name1 = getImmediateCallName(call1);
+            if (name1 != null) {
+              String name2 = getImmediateCallName(call2);
+              if (name1.equals(name2)) {
+                return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+              }
+            }
+          }
+        }
+      }
       return addLineBreak();
     }
 
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+  }
+
+  private String getImmediateCallName(ASTNode callNode) {
+    ASTNode[] childs = callNode.getChildren(REFERENCE_EXPRESSION_SET);
+    if (childs.length != 1) return null;
+    ASTNode child = childs[0];
+    childs = child.getChildren(ID_SET);
+    if (childs.length != 1) return null;
+    child = childs[0];
+    return child.getText();
   }
 
   private Spacing addLineBreak() {

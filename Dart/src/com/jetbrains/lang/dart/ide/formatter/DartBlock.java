@@ -102,8 +102,6 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
         if (receiver != null && cascade != null) {
           cascade.setParent(receiver);
           receiver.getSubBlocks().add(cascade);
-        } else {
-          throw new NullPointerException(); // TODO Remove after debugging.
         }
         parent.putUserData(DART_RECEIVER_KEY, null);
         parent.putUserData(DART_CASCADE_KEY, null);
