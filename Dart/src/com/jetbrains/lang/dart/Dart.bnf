@@ -332,11 +332,11 @@ private binaryOperator ::= multiplicativeOperator |
 
 multiplicativeOperator ::= '*' | '/' | '%' | '~/'
 additiveOperator ::= '+' | '-'
-shiftOperator ::= '<<' | <<collapseShiftRight>>
-relationalOperator ::= '>=' | '>' | '<=' | '<'
+shiftOperator ::= '<<' | <<gtGt>>
+relationalOperator ::= <<gtEq>> | '>' | '<=' | '<'
 bitwiseOperator ::= '&' | '^' | '|'
 
-assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
+assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|='
 equalityOperator ::= '==' | '!='
 
 formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
@@ -478,7 +478,7 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
-                                 '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
+                                 '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | '?' | '@' | '[' |
                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |

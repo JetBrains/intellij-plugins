@@ -1,6 +1,12 @@
+class A<A>= Object with M;
+class A<A extends B<E>>= Object with M;
+
 class Object {
   var x;
   int foo() {
+    a >= 1;
+    a >>= 1;
+    a >> 1;
     bar().baz();
     return 42;
   }

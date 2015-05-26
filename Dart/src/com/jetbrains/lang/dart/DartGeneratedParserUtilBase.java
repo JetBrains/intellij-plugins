@@ -99,7 +99,7 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return result;
   }
 
-  public static boolean collapseShiftRight(PsiBuilder builder_, int level_) {
+  public static boolean gtGt(PsiBuilder builder_, int level_) {
     final PsiBuilder.Marker marker_ = builder_.mark();
     if (!consumeToken(builder_, GT)) {
       marker_.rollbackTo();
@@ -110,6 +110,38 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
       return false;
     }
     marker_.collapse(GT_GT);
+    return true;
+  }
+
+  public static boolean gtEq(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, EQ)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_EQ);
+    return true;
+  }
+
+  public static boolean gtGtEq(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, EQ)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_GT_EQ);
     return true;
   }
 
