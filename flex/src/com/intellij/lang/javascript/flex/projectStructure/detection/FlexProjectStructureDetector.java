@@ -10,10 +10,10 @@ import com.intellij.ide.util.projectWizard.importSources.ProjectFromSourcesBuild
 import com.intellij.ide.util.projectWizard.importSources.ProjectStructureDetector;
 import com.intellij.ide.util.projectWizard.importSources.util.CommonSourceRootDetectionUtil;
 import com.intellij.lang.LanguageParserDefinitions;
+import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,8 +39,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
   };
 
   public static boolean isActionScriptFile(File file) {
-    final FileType fileType = FileTypeRegistry.getInstance().findFileTypeByName(file.getName());
-    return fileType == JavaScriptSupportLoader.ECMA_SCRIPT_L4;
+    return FileTypeRegistry.getInstance().getFileTypeByFileName(file.getName()) == ActionScriptFileType.INSTANCE;
   }
 
   @NotNull
