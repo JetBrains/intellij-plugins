@@ -77,12 +77,12 @@ fun8(){
   await a;
   await for(a in a);
   await for(;;);
-  var a = b * -await c[1];
-  b = await baz() * 6;
+  var a = b * -await() + c[1];
+  b = await[0] + baz() * 6;
 }
-fun9(){async a;}
-fun10(){yield a;}
-fun11(){sync a;}
+fun9(){async a; async() await()}
+fun10(){yield a; yield()}
+fun11(){sync a; sync()}
 fun12(){
   yield a;
   yield*a*b;

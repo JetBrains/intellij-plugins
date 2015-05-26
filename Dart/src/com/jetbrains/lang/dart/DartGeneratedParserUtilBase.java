@@ -110,4 +110,8 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     final IElementType type = builder_.getTokenType();
     return type != DOT && type != LPAREN && type != LT;
   }
+
+  public static boolean isInsideSyncOrAsyncFunction(PsiBuilder builder_, int level_) {
+    return builder_.getUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION) == Boolean.TRUE;
+  }
 }

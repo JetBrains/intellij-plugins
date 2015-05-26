@@ -1126,25 +1126,33 @@ Dart File
                   PsiElement(IDENTIFIER)('a')
             VAR_INIT
               PsiElement(=)('=')
-              MULTIPLICATIVE_EXPRESSION
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('b')
-                MULTIPLICATIVE_OPERATOR
-                  PsiElement(*)('*')
-                PREFIX_EXPRESSION
-                  PREFIX_OPERATOR
-                    PsiElement(-)('-')
-                  AWAIT_EXPRESSION
-                    PsiElement(await)('await')
-                    ARRAY_ACCESS_EXPRESSION
+              ADDITIVE_EXPRESSION
+                MULTIPLICATIVE_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('b')
+                  MULTIPLICATIVE_OPERATOR
+                    PsiElement(*)('*')
+                  PREFIX_EXPRESSION
+                    PREFIX_OPERATOR
+                      PsiElement(-)('-')
+                    CALL_EXPRESSION
                       REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('c')
-                      PsiElement([)('[')
-                      LITERAL_EXPRESSION
-                        PsiElement(NUMBER)('1')
-                      PsiElement(])(']')
+                          PsiElement(await)('await')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                ADDITIVE_OPERATOR
+                  PsiElement(+)('+')
+                ARRAY_ACCESS_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('c')
+                  PsiElement([)('[')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                  PsiElement(])(']')
           PsiElement(;)(';')
           ASSIGN_EXPRESSION
             REFERENCE_EXPRESSION
@@ -1152,9 +1160,18 @@ Dart File
                 PsiElement(IDENTIFIER)('b')
             ASSIGNMENT_OPERATOR
               PsiElement(=)('=')
-            MULTIPLICATIVE_EXPRESSION
-              AWAIT_EXPRESSION
-                PsiElement(await)('await')
+            ADDITIVE_EXPRESSION
+              ARRAY_ACCESS_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(await)('await')
+                PsiElement([)('[')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('0')
+                PsiElement(])(']')
+              ADDITIVE_OPERATOR
+                PsiElement(+)('+')
+              MULTIPLICATIVE_EXPRESSION
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     ID
@@ -1162,10 +1179,10 @@ Dart File
                   ARGUMENTS
                     PsiElement(()('(')
                     PsiElement())(')')
-              MULTIPLICATIVE_OPERATOR
-                PsiElement(*)('*')
-              LITERAL_EXPRESSION
-                PsiElement(NUMBER)('6')
+                MULTIPLICATIVE_OPERATOR
+                  PsiElement(*)('*')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('6')
           PsiElement(;)(';')
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
@@ -1189,6 +1206,24 @@ Dart File
                 ID
                   PsiElement(IDENTIFIER)('a')
           PsiElement(;)(';')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(async)('async')
+            ARGUMENTS
+              PsiElement(()('(')
+              PsiElement())(')')
+          PsiErrorElement:';' expected, got 'await'
+            <empty list>
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(await)('await')
+            ARGUMENTS
+              PsiElement(()('(')
+              PsiElement())(')')
+          PsiErrorElement:';' expected, got '}'
+            <empty list>
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
@@ -1211,6 +1246,15 @@ Dart File
                 ID
                   PsiElement(IDENTIFIER)('a')
           PsiElement(;)(';')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(yield)('yield')
+            ARGUMENTS
+              PsiElement(()('(')
+              PsiElement())(')')
+          PsiErrorElement:';' expected, got '}'
+            <empty list>
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
@@ -1233,6 +1277,15 @@ Dart File
                 ID
                   PsiElement(IDENTIFIER)('a')
           PsiElement(;)(';')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(sync)('sync')
+            ARGUMENTS
+              PsiElement(()('(')
+              PsiElement())(')')
+          PsiErrorElement:';' expected, got '}'
+            <empty list>
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME

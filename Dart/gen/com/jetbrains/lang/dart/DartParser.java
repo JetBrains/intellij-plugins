@@ -804,15 +804,15 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'await' prefixExpression
+  // <<isInsideSyncOrAsyncFunction>> 'await' prefixExpression
   public static boolean awaitExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "awaitExpression")) return false;
-    if (!nextTokenIs(b, AWAIT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, AWAIT);
+    Marker m = enter_section_(b, l, _NONE_, "<await expression>");
+    r = isInsideSyncOrAsyncFunction(b, l + 1);
+    r = r && consumeToken(b, AWAIT);
     r = r && prefixExpression(b, l + 1);
-    exit_section_(b, m, AWAIT_EXPRESSION, r);
+    exit_section_(b, l, m, AWAIT_EXPRESSION, r, false, null);
     return r;
   }
 
