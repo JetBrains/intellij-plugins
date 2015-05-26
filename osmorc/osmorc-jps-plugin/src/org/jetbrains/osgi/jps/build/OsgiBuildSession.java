@@ -35,10 +35,8 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
-import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
-import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
-import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
-import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
+import org.jetbrains.osgi.jps.model.*;
+import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
@@ -187,7 +185,7 @@ public class OsgiBuildSession implements Reporter {
         }
       }
     }
-    else {
+    else if (myExtension.isManifestManuallyEdited() || myExtension.isOsmorcControlsManifest()) {
       Map<String, String> buildProperties = getBuildProperties();
       if (LOG.isDebugEnabled()) {
         LOG.debug("build properties: " + buildProperties);
@@ -205,82 +203,81 @@ public class OsgiBuildSession implements Reporter {
       progress("Bundling non-OSGi libraries");
       bundlifyLibraries();
     }
+    else {
+      ManifestGenerationMode mode = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties().myManifestGenerationMode;
+      throw new OsgiBuildException("Internal error: unknown build method: " + mode);
+    }
   }
 
   @NotNull
   private Map<String, String> getBuildProperties() throws OsgiBuildException {
-    if (myExtension.isManifestManuallyEdited() || myExtension.isOsmorcControlsManifest()) {
-      Map<String, String> properties = ContainerUtil.newHashMap();
+    Map<String, String> properties = ContainerUtil.newHashMap();
 
-      // defaults (similar to Maven)
+    // defaults (similar to Maven)
 
-      properties.put(Constants.IMPORT_PACKAGE, "*");
-      properties.put(Constants.REMOVEHEADERS, Constants.INCLUDE_RESOURCE + ',' + Constants.PRIVATE_PACKAGE);
-      properties.put(Constants.CREATED_BY, "IntelliJ IDEA / OSGi Plugin");
+    properties.put(Constants.IMPORT_PACKAGE, "*");
+    properties.put(Constants.REMOVEHEADERS, Constants.INCLUDE_RESOURCE + ',' + Constants.PRIVATE_PACKAGE);
+    properties.put(Constants.CREATED_BY, "IntelliJ IDEA / OSGi Plugin");
 
-      // user settings
+    // user settings
 
-      if (myExtension.isOsmorcControlsManifest()) {
-        properties.putAll(myExtension.getAdditionalProperties());
+    if (myExtension.isOsmorcControlsManifest()) {
+      properties.putAll(myExtension.getAdditionalProperties());
 
-        properties.put(Constants.BUNDLE_SYMBOLICNAME, myExtension.getBundleSymbolicName());
-        properties.put(Constants.BUNDLE_VERSION, myExtension.getBundleVersion());
+      properties.put(Constants.BUNDLE_SYMBOLICNAME, myExtension.getBundleSymbolicName());
+      properties.put(Constants.BUNDLE_VERSION, myExtension.getBundleVersion());
 
-        String activator = myExtension.getBundleActivator();
-        if (!StringUtil.isEmptyOrSpaces(activator)) {
-          properties.put(Constants.BUNDLE_ACTIVATOR, activator);
-        }
+      String activator = myExtension.getBundleActivator();
+      if (!StringUtil.isEmptyOrSpaces(activator)) {
+        properties.put(Constants.BUNDLE_ACTIVATOR, activator);
       }
-      else {
-        File manifestFile = myExtension.getManifestFile();
-        if (manifestFile == null) {
-          throw new OsgiBuildException("Manifest file '" + myExtension.getManifestLocation() + "' missing - please check OSGi facet settings.");
-        }
-        properties.put(Constants.MANIFEST, manifestFile.getAbsolutePath());
-      }
-
-      // resources
-
-      StringBuilder pathBuilder = new StringBuilder(myModuleOutputDir.getPath());
-      for (OsmorcJarContentEntry contentEntry : myExtension.getAdditionalJarContents()) {
-        pathBuilder.append(',').append(contentEntry.myDestination).append('=').append(contentEntry.mySource);
-      }
-
-      StringBuilder includedResources;
-      if (myExtension.isOsmorcControlsManifest()) {
-        includedResources = new StringBuilder();
-        String resources = properties.get(Constants.INCLUDE_RESOURCE);
-        if (resources != null) includedResources.append(resources).append(',');
-        includedResources.append(pathBuilder);
-      }
-      else {
-        includedResources = pathBuilder;
-      }
-      properties.put(Constants.INCLUDE_RESOURCE, includedResources.toString());
-
-      String pattern = myExtension.getIgnoreFilePattern();
-      if (!StringUtil.isEmptyOrSpaces(pattern)) {
-        try {
-          //noinspection ResultOfMethodCallIgnored
-          Pattern.compile(pattern);
-        }
-        catch (PatternSyntaxException e) {
-          throw new OsgiBuildException("The file ignore pattern is invalid - please check OSGi facet settings.");
-        }
-        properties.put(Constants.DONOTCOPY, pattern);
-      }
-
-      if (myExtension.isOsmorcControlsManifest()) {
-        // support the {local-packages} instruction
-        progress("Calculating local packages");
-        LocalPackageCollector.addLocalPackages(myModuleOutputDir, properties);
-      }
-
-      return properties;
     }
     else {
-      throw new OsgiBuildException("Bundle creation method not specified - please check OSGi facet settings.");
+      File manifestFile = myExtension.getManifestFile();
+      if (manifestFile == null) {
+        throw new OsgiBuildException("Manifest file '" + myExtension.getManifestLocation() + "' missing - please check OSGi facet settings.");
+      }
+      properties.put(Constants.MANIFEST, manifestFile.getAbsolutePath());
     }
+
+    // resources
+
+    StringBuilder pathBuilder = new StringBuilder(myModuleOutputDir.getPath());
+    for (OsmorcJarContentEntry contentEntry : myExtension.getAdditionalJarContents()) {
+      pathBuilder.append(',').append(contentEntry.myDestination).append('=').append(contentEntry.mySource);
+    }
+
+    StringBuilder includedResources;
+    if (myExtension.isOsmorcControlsManifest()) {
+      includedResources = new StringBuilder();
+      String resources = properties.get(Constants.INCLUDE_RESOURCE);
+      if (resources != null) includedResources.append(resources).append(',');
+      includedResources.append(pathBuilder);
+    }
+    else {
+      includedResources = pathBuilder;
+    }
+    properties.put(Constants.INCLUDE_RESOURCE, includedResources.toString());
+
+    String pattern = myExtension.getIgnoreFilePattern();
+    if (!StringUtil.isEmptyOrSpaces(pattern)) {
+      try {
+        //noinspection ResultOfMethodCallIgnored
+        Pattern.compile(pattern);
+      }
+      catch (PatternSyntaxException e) {
+        throw new OsgiBuildException("The file ignore pattern is invalid - please check OSGi facet settings.");
+      }
+      properties.put(Constants.DONOTCOPY, pattern);
+    }
+
+    if (myExtension.isOsmorcControlsManifest()) {
+      // support the {local-packages} instruction
+      progress("Calculating local packages");
+      LocalPackageCollector.addLocalPackages(myModuleOutputDir, properties);
+    }
+
+    return properties;
   }
 
   private String getSourceFileToReport() {
