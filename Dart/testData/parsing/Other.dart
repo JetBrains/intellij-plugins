@@ -2,6 +2,9 @@
 
 class AssignableSyntax {
   test(a) {
+    a as B<C<D,E>>;
+    a as;
+
     a[0] ? "a" : "b";
     return a[0] ? "a" : "b";
   }
