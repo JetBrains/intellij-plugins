@@ -83,11 +83,19 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   }
 
   public static boolean blockBodyWrapper(PsiBuilder builder_, int level_) {
+    final Boolean cascadeData = builder_.getUserData(WITHOUT_CASCADE);
+    builder_.putUserData(WITHOUT_CASCADE, null);
+
     final Boolean wasSyncOrAsync = builder_.getUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION);
     final boolean syncOrAsync = nextTokenIs(builder_, "", ASYNC, SYNC);
     builder_.putUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION, syncOrAsync ? Boolean.TRUE : null);
+
     final boolean result = DartParser.blockBody(builder_, level_);
+
     builder_.putUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION, wasSyncOrAsync);
+
+    builder_.putUserData(WITHOUT_CASCADE, cascadeData);
+
     return result;
   }
 
