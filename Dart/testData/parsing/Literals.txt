@@ -385,18 +385,12 @@ Dart File
                       PsiElement([)('[')
                       PsiElement(])(']')
                 PsiElement(;)(';')
-                ASSIGN_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('x')
-                  ASSIGNMENT_OPERATOR
+                SYMBOL_LITERAL_EXPRESSION
+                  PsiElement(#)('#')
+                  USER_DEFINABLE_OPERATOR
+                    PsiElement([)('[')
+                    PsiElement(])(']')
                     PsiElement(=)('=')
-                  SYMBOL_LITERAL_EXPRESSION
-                    PsiElement(#)('#')
-                    USER_DEFINABLE_OPERATOR
-                      PsiElement([)('[')
-                      PsiElement(])(']')
-                      PsiElement(=)('=')
                 PsiElement(;)(';')
                 ASSIGN_EXPRESSION
                   REFERENCE_EXPRESSION
@@ -530,17 +524,11 @@ Dart File
                       RELATIONAL_OPERATOR
                         PsiElement(<=)('<=')
                 PsiElement(;)(';')
-                ASSIGN_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('x')
-                  ASSIGNMENT_OPERATOR
-                    PsiElement(=)('=')
-                  SYMBOL_LITERAL_EXPRESSION
-                    PsiElement(#)('#')
-                    USER_DEFINABLE_OPERATOR
-                      RELATIONAL_OPERATOR
-                        PsiElement(<)('<')
+                SYMBOL_LITERAL_EXPRESSION
+                  PsiElement(#)('#')
+                  USER_DEFINABLE_OPERATOR
+                    RELATIONAL_OPERATOR
+                      PsiElement(<)('<')
                 PsiElement(;)(';')
                 ASSIGN_EXPRESSION
                   REFERENCE_EXPRESSION
@@ -590,37 +578,35 @@ Dart File
                       ID
                         PsiElement(IDENTIFIER)('name')
                 PsiElement(;)(';')
-                ASSIGN_EXPRESSION
+                SYMBOL_LITERAL_EXPRESSION
+                  PsiElement(#)('#')
                   REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('x')
-                  ASSIGNMENT_OPERATOR
-                    PsiElement(=)('=')
-                  SYMBOL_LITERAL_EXPRESSION
-                    PsiElement(#)('#')
                     REFERENCE_EXPRESSION
                       REFERENCE_EXPRESSION
                         REFERENCE_EXPRESSION
                           REFERENCE_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('q')
-                            PsiElement(.)('.')
-                            REFERENCE_EXPRESSION
-                              ID
-                                PsiElement(IDENTIFIER)('n')
+                            ID
+                              PsiElement(IDENTIFIER)('q')
                           PsiElement(.)('.')
                           REFERENCE_EXPRESSION
                             ID
-                              PsiElement(IDENTIFIER)('a')
+                              PsiElement(IDENTIFIER)('n')
                         PsiElement(.)('.')
                         REFERENCE_EXPRESSION
                           ID
-                            PsiElement(IDENTIFIER)('m')
+                            PsiElement(IDENTIFIER)('a')
                       PsiElement(.)('.')
                       REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('e')
+                          PsiElement(IDENTIFIER)('m')
+                    PsiElement(.)('.')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('e')
+                PsiElement(;)(';')
+                SYMBOL_LITERAL_EXPRESSION
+                  PsiElement(#)('#')
+                  PsiElement(void)('void')
                 PsiElement(;)(';')
               PsiElement(})('}')
       PsiElement(})('}')

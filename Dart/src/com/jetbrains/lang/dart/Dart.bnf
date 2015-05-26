@@ -484,7 +484,7 @@ private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrap
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
-                                  FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
+                                  FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
                                   SHORT_TEMPLATE_ENTRY_START | TRUE)
 
@@ -589,7 +589,7 @@ throwExpression ::= 'throw' expression
 literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<mapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-symbolLiteralExpression ::= HASH (userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
+symbolLiteralExpression ::= '#' ('void' | userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
 
 stringLiteralExpression ::= (RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | stringTemplate)+
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}

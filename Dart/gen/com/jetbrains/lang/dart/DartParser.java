@@ -1697,7 +1697,7 @@ public class DartParser implements PsiParser {
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
   //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
   //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
-  //                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
+  //                                   FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
   //                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
   //                                   SHORT_TEMPLATE_ENTRY_START | TRUE)
   static boolean expression_recover(PsiBuilder b, int l) {
@@ -1717,7 +1717,7 @@ public class DartParser implements PsiParser {
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
   //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
   //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
-  //                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
+  //                                   FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
   //                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
   //                                   SHORT_TEMPLATE_ENTRY_START | TRUE
   private static boolean expression_recover_0(PsiBuilder b, int l) {
@@ -1822,7 +1822,6 @@ public class DartParser implements PsiParser {
     if (!r) r = consumeToken(b, INT_DIV_EQ);
     if (!r) r = consumeToken(b, CLOSING_QUOTE);
     if (!r) r = consumeToken(b, FALSE);
-    if (!r) r = consumeToken(b, HASH);
     if (!r) r = consumeToken(b, HEX_NUMBER);
     if (!r) r = consumeToken(b, LONG_TEMPLATE_ENTRY_END);
     if (!r) r = consumeToken(b, LONG_TEMPLATE_ENTRY_START);
@@ -5499,7 +5498,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // HASH (userDefinableOperator | simpleQualifiedReferenceExpression)
+  // '#' ('void' | userDefinableOperator | simpleQualifiedReferenceExpression)
   public static boolean symbolLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "symbolLiteralExpression")) return false;
     if (!nextTokenIs(b, HASH)) return false;
@@ -5512,12 +5511,13 @@ public class DartParser implements PsiParser {
     return r || p;
   }
 
-  // userDefinableOperator | simpleQualifiedReferenceExpression
+  // 'void' | userDefinableOperator | simpleQualifiedReferenceExpression
   private static boolean symbolLiteralExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "symbolLiteralExpression_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = userDefinableOperator(b, l + 1);
+    r = consumeToken(b, VOID);
+    if (!r) r = userDefinableOperator(b, l + 1);
     if (!r) r = simpleQualifiedReferenceExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
