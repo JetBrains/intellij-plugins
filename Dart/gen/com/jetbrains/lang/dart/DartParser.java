@@ -742,9 +742,6 @@ public class DartParser implements PsiParser {
   // assignmentOperator ternaryExpressionWrapper
   public static boolean assignExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignExpression")) return false;
-    if (!nextTokenIs(b, "<assign expression>", REM_EQ, AND_EQ,
-      MUL_EQ, PLUS_EQ, MINUS_EQ, DIV_EQ, LT_LT_EQ, EQ,
-      GT_GT_EQ, XOR_EQ, OR_EQ, INT_DIV_EQ)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _LEFT_, "<assign expression>");
     r = assignmentOperator(b, l + 1);
@@ -779,12 +776,9 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
+  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|='
   public static boolean assignmentOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignmentOperator")) return false;
-    if (!nextTokenIs(b, "<assignment operator>", REM_EQ, AND_EQ,
-      MUL_EQ, PLUS_EQ, MINUS_EQ, DIV_EQ, LT_LT_EQ, EQ,
-      GT_GT_EQ, XOR_EQ, OR_EQ, INT_DIV_EQ)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<assignment operator>");
     r = consumeToken(b, EQ);
@@ -795,7 +789,7 @@ public class DartParser implements PsiParser {
     if (!r) r = consumeToken(b, PLUS_EQ);
     if (!r) r = consumeToken(b, MINUS_EQ);
     if (!r) r = consumeToken(b, LT_LT_EQ);
-    if (!r) r = consumeToken(b, GT_GT_EQ);
+    if (!r) r = gtGtEq(b, l + 1);
     if (!r) r = consumeToken(b, AND_EQ);
     if (!r) r = consumeToken(b, XOR_EQ);
     if (!r) r = consumeToken(b, OR_EQ);
@@ -1266,8 +1260,6 @@ public class DartParser implements PsiParser {
   // (relationalOperator | equalityOperator) bitwiseExpressionWrapper
   public static boolean compareExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "compareExpression")) return false;
-    if (!nextTokenIs(b, "<compare expression>", NEQ, LT,
-      LT_EQ, EQ_EQ, GT, GT_EQ)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, "<compare expression>");
     r = compareExpression_0(b, l + 1);
@@ -1691,7 +1683,7 @@ public class DartParser implements PsiParser {
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
-  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | '?' | '@' | '[' |
   //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
@@ -1711,7 +1703,7 @@ public class DartParser implements PsiParser {
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
-  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | '?' | '@' | '[' |
   //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
@@ -1758,8 +1750,9 @@ public class DartParser implements PsiParser {
     if (!r) r = consumeToken(b, EQ_EQ);
     if (!r) r = consumeToken(b, EXPRESSION_BODY_DEF);
     if (!r) r = consumeToken(b, GT);
-    if (!r) r = consumeToken(b, GT_EQ);
-    if (!r) r = consumeToken(b, GT_GT_EQ);
+    if (!r) r = gtGt(b, l + 1);
+    if (!r) r = gtEq(b, l + 1);
+    if (!r) r = gtGtEq(b, l + 1);
     if (!r) r = consumeToken(b, QUEST);
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, LBRACKET);
@@ -4690,13 +4683,12 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '>=' | '>' | '<=' | '<'
+  // <<gtEq>> | '>' | '<=' | '<'
   public static boolean relationalOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "relationalOperator")) return false;
-    if (!nextTokenIs(b, "<relational operator>", LT, LT_EQ, GT, GT_EQ)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<relational operator>");
-    r = consumeToken(b, GT_EQ);
+    r = gtEq(b, l + 1);
     if (!r) r = consumeToken(b, GT);
     if (!r) r = consumeToken(b, LT_EQ);
     if (!r) r = consumeToken(b, LT);
@@ -4929,13 +4921,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '<<' | <<collapseShiftRight>>
+  // '<<' | <<gtGt>>
   public static boolean shiftOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shiftOperator")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<shift operator>");
     r = consumeToken(b, LT_LT);
-    if (!r) r = collapseShiftRight(b, l + 1);
+    if (!r) r = gtGt(b, l + 1);
     exit_section_(b, l, m, SHIFT_OPERATOR, r, false, null);
     return r;
   }

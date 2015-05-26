@@ -3,6 +3,71 @@ Dart File
     PsiElement(class)('class')
     COMPONENT_NAME
       ID
+        PsiElement(IDENTIFIER)('A')
+    TYPE_PARAMETERS
+      PsiElement(<)('<')
+      TYPE_PARAMETER
+        COMPONENT_NAME
+          ID
+            PsiElement(IDENTIFIER)('A')
+      PsiElement(>)('>')
+    MIXIN_APPLICATION
+      PsiElement(=)('=')
+      TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('Object')
+      MIXINS
+        PsiElement(with)('with')
+        TYPE_LIST
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('M')
+      PsiElement(;)(';')
+  CLASS_DEFINITION
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('A')
+    TYPE_PARAMETERS
+      PsiElement(<)('<')
+      TYPE_PARAMETER
+        COMPONENT_NAME
+          ID
+            PsiElement(IDENTIFIER)('A')
+        PsiElement(extends)('extends')
+        TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('B')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('E')
+            PsiElement(>)('>')
+      PsiElement(>)('>')
+    MIXIN_APPLICATION
+      PsiElement(=)('=')
+      TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('Object')
+      MIXINS
+        PsiElement(with)('with')
+        TYPE_LIST
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('M')
+      PsiElement(;)(';')
+  CLASS_DEFINITION
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
         PsiElement(IDENTIFIER)('Object')
     CLASS_BODY
       PsiElement({)('{')
@@ -30,6 +95,33 @@ Dart File
             BLOCK
               PsiElement({)('{')
               STATEMENTS
+                COMPARE_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  RELATIONAL_OPERATOR
+                    PsiElement(>=)('>=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(>>=)('>>=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
+                SHIFT_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  SHIFT_OPERATOR
+                    PsiElement(>>)('>>')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     CALL_EXPRESSION
