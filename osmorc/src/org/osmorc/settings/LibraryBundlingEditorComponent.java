@@ -26,12 +26,14 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 
 import javax.swing.*;
@@ -44,6 +46,7 @@ import java.util.List;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class LibraryBundlingEditorComponent {
+  private final Project myProject;
   private JPanel myMainPanel;
   private JPanel myRulesPanel;
   private JBList myRulesList;
@@ -55,7 +58,8 @@ public class LibraryBundlingEditorComponent {
   private final CollectionListModel<LibraryBundlificationRule> myRulesModel;
   private int myLastSelected = -1;
 
-  public LibraryBundlingEditorComponent() {
+  public LibraryBundlingEditorComponent(@NotNull Project project) {
+    myProject = project;
     GuiUtils.replaceJSplitPaneWithIDEASplitter(myMainPanel);
     ((JBSplitter)myMainPanel.getComponent(0)).setProportion(0.4f);
 
@@ -137,7 +141,7 @@ public class LibraryBundlingEditorComponent {
   }
 
   private void createUIComponents() {
-    myManifestEditor = new ManifestEditor(null, "");
+    myManifestEditor = new ManifestEditor(myProject, "");
   }
 
   private void updateFields() {

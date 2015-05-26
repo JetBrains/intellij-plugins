@@ -31,7 +31,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
 
 /**
@@ -42,7 +42,7 @@ import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
 public class ManifestEditor extends EditorTextField implements Disposable {
   private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
-  public ManifestEditor(@Nullable Project project, final String text) {
+  public ManifestEditor(@NotNull Project project, final String text) {
     super("", project, ManifestFileTypeFactory.MANIFEST);
     addDocumentListener(listener);
     UIUtil.invokeLaterIfNeeded(new Runnable() {
