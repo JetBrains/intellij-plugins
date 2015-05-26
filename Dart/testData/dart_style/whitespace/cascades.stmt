@@ -15,6 +15,10 @@ list
   ..add("bar");
 <<<
 list..add("baz")..add("bar");
+>>> multiple cascades get the same line when the method names are the same
+list..add("baz")..add("bar");
+<<<
+list..add("baz")..add("bar");
 >>> cascades indent contained blocks (and force multi-line) multiple cascades get their own line when method names are different
 foo..fooBar()..toString();
 <<<
