@@ -144,7 +144,7 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
     }
 
     BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(requestorModule);
-    if (manifest != null && manifest.isPrivatePackage(packageName)) {
+    if (manifest != null && (manifest.isPrivatePackage(packageName) || manifest.getExportedPackage(packageName) != null)) {
       return null;
     }
 
