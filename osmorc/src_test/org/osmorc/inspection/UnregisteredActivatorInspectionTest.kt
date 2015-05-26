@@ -15,12 +15,13 @@
  */
 package org.osmorc.inspection
 
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.LightOsgiFixtureTestCase
 import org.osmorc.i18n.OsmorcBundle
 import kotlin.test.assertEquals
 
 class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
-  fun testPositive() {
+  fun testUnregistered() {
     doTest("""
         package pkg;
         import org.osgi.framework.*;
@@ -30,7 +31,7 @@ class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
         }""")
   }
 
-  fun testNegative() {
+  fun testRegistered() {
     doTest("""
         package pkg;
         import org.osgi.framework.*;
@@ -39,6 +40,18 @@ class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
           public void stop(BundleContext context) throws Exception { }
         }""",
         "Bundle-Activator: pkg.C\n")
+  }
+
+  fun testRegisteredBnd() {
+    myFixture.addFileToProject("bnd.bnd", "Bundle-Activator: pkg.C")
+    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd)
+    doTest("""
+        package pkg;
+        import org.osgi.framework.*;
+        public class C implements BundleActivator {
+          public void start(BundleContext context) throws Exception { }
+          public void stop(BundleContext context) throws Exception { }
+        }""")
   }
 
   fun testAbstract() {
