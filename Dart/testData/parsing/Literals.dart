@@ -46,13 +46,13 @@ class SymbolLiterals {
         #name, #q.n.a.m.e
     );
     x = #~;
-    x = #[]; x = #[]=;
+    x = #[]; #[]=;
     x = #*; x = #/; x = #%; x = #~/;
     x = #+; x = #-;
     x = #<<; x = #>>;
-    x = #>=; x = #>; x = #<=; x = #<;
+    x = #>=; x = #>; x = #<=; #<;
     x = #&; x = #^; x = #|;
-    x = #name; x = #q.n.a.m.e;
+    x = #name; #q.n.a.m.e; #void;
   }
 }
 
