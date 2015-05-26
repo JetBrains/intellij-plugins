@@ -14,34 +14,12 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartSpacingProcessor {
-  private static final TokenSet TOKENS_WITH_SPACE_AFTER = TokenSet.create(
-    VAR,
-    FINAL,
-    STATIC,
-    EXTERNAL,
-    ABSTRACT,
-    GET,
-    SET,
-    FACTORY,
-    OPERATOR,
-    PART,
-    EXPORT,
-    DEFERRED,
-    AS,
-    SHOW,
-    HIDE,
-    RETURN_TYPE
-  );
+  private static final TokenSet TOKENS_WITH_SPACE_AFTER = TokenSet
+    .create(VAR, FINAL, STATIC, EXTERNAL, ABSTRACT, GET, SET, FACTORY, OPERATOR, PART, EXPORT, DEFERRED, AS, SHOW, HIDE, RETURN_TYPE);
 
-  private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(
-    GET,
-    SET,
-    EXTENDS,
-    IMPLEMENTS,
-    DEFERRED,
-    AS
-  );
+  private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(GET, SET, EXTENDS, IMPLEMENTS, DEFERRED, AS);
 
+  private static final TokenSet CASCADE_REFERENCE_EXPRESSION_SET = TokenSet.create(CASCADE_REFERENCE_EXPRESSION);
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
   private static final TokenSet ID_SET = TokenSet.create(ID);
 
@@ -203,21 +181,18 @@ public class DartSpacingProcessor {
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_CATCH_PARENTHESES);
       }
       else if (elementType == FORMAL_PARAMETER_LIST) {
-        final boolean newLineNeeded = type1 == LPAREN ?
-                                      mySettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE :
-                                      mySettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE;
+        final boolean newLineNeeded =
+          type1 == LPAREN ? mySettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE : mySettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE;
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_METHOD_PARENTHESES, newLineNeeded);
       }
       else if (elementType == ARGUMENTS) {
-        final boolean newLineNeeded = type1 == LPAREN ?
-                                      mySettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE :
-                                      mySettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE;
+        final boolean newLineNeeded =
+          type1 == LPAREN ? mySettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE : mySettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE;
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_METHOD_CALL_PARENTHESES, newLineNeeded);
       }
       else if (mySettings.BINARY_OPERATION_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP && elementType == PARENTHESIZED_EXPRESSION) {
-        final boolean newLineNeeded = type1 == LPAREN ?
-                                      mySettings.PARENTHESES_EXPRESSION_LPAREN_WRAP :
-                                      mySettings.PARENTHESES_EXPRESSION_RPAREN_WRAP;
+        final boolean newLineNeeded =
+          type1 == LPAREN ? mySettings.PARENTHESES_EXPRESSION_LPAREN_WRAP : mySettings.PARENTHESES_EXPRESSION_RPAREN_WRAP;
         return addSingleSpaceIf(false, newLineNeeded);
       }
     }
@@ -280,8 +255,7 @@ public class DartSpacingProcessor {
     //
     // Spacing around  additive operators ( +, -, etc.)
     //
-    if ((type1 == ADDITIVE_OPERATOR || type2 == ADDITIVE_OPERATOR) &&
-        elementType != PREFIX_EXPRESSION) {
+    if ((type1 == ADDITIVE_OPERATOR || type2 == ADDITIVE_OPERATOR) && elementType != PREFIX_EXPRESSION) {
       return addSingleSpaceIf(mySettings.SPACE_AROUND_ADDITIVE_OPERATORS);
     }
     //
@@ -376,34 +350,41 @@ public class DartSpacingProcessor {
 
     if (elementType == VALUE_EXPRESSION && type2 == CASCADE_REFERENCE_EXPRESSION) {
       if (type1 == CASCADE_REFERENCE_EXPRESSION) {
-        ASTNode call1 = ((AbstractBlock)child1).getNode().getLastChildNode();
-        if (call1.getElementType() == CALL_EXPRESSION) {
-          ASTNode call2 = ((AbstractBlock)child2).getNode().getLastChildNode();
-          if (call2.getElementType() == CALL_EXPRESSION) {
-            String name1 = getImmediateCallName(call1);
-            if (name1 != null) {
-              String name2 = getImmediateCallName(call2);
-              if (name1.equals(name2)) {
-                return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-              }
-            }
-          }
+        if (cascadesAreSameMethod(((AbstractBlock)child1).getNode(), ((AbstractBlock)child2).getNode())) {
+          return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+      }
+      else if (type1 == REFERENCE_EXPRESSION) {
+        CompositeElement elem = (CompositeElement)myNode;
+        ASTNode[] childs = elem.getChildren(CASCADE_REFERENCE_EXPRESSION_SET);
+        if (childs.length == 1 || allCascadesAreSameMethod(childs)) {
+          return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
       }
       return addLineBreak();
     }
 
-    return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-  }
+    if (type1 == CLOSING_QUOTE && type2 == OPEN_QUOTE && elementType == STRING_LITERAL_EXPRESSION) {
+      ASTNode sib = node1;
+      int preserveNewline = 0;
+      // Adjacent strings on the same line should not be split.
+      while ((sib = sib.getTreeNext()) != null) {
+        // Comments are handled elsewhere.
+        if (sib.getElementType() == WHITE_SPACE) {
+          String ws = sib.getText();
+          if (ws.contains("\n") || ws.contains("\r")) {
+            preserveNewline++;
+            break;
+          }
+          continue;
+        }
+        break;
+      }
+      // Adjacent strings on separate lines should not include blank lines.
+      return Spacing.createSpacing(0, 1, preserveNewline, true, 0);
+    }
 
-  private String getImmediateCallName(ASTNode callNode) {
-    ASTNode[] childs = callNode.getChildren(REFERENCE_EXPRESSION_SET);
-    if (childs.length != 1) return null;
-    ASTNode child = childs[0];
-    childs = child.getChildren(ID_SET);
-    if (childs.length != 1) return null;
-    child = childs[0];
-    return child.getText();
+    return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
   private Spacing addLineBreak() {
@@ -428,9 +409,47 @@ public class DartSpacingProcessor {
       return Spacing.createDependentLFSpacing(spaces, spaces, textRange, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     else {
-      final int lineBreaks = braceStyleSetting == CommonCodeStyleSettings.END_OF_LINE ||
-                             braceStyleSetting == CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED ? 0 : 1;
+      final int lineBreaks =
+        braceStyleSetting == CommonCodeStyleSettings.END_OF_LINE || braceStyleSetting == CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED
+        ? 0
+        : 1;
       return Spacing.createSpacing(spaces, spaces, lineBreaks, false, 0);
     }
+  }
+
+  private boolean allCascadesAreSameMethod(ASTNode[] children) {
+    for (int i = 1; i < children.length; i++) {
+      if (!cascadesAreSameMethod(children[i - 1], children[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private boolean cascadesAreSameMethod(ASTNode child1, ASTNode child2) {
+    ASTNode call1 = child1.getLastChildNode();
+    if (call1.getElementType() == CALL_EXPRESSION) {
+      ASTNode call2 = child2.getLastChildNode();
+      if (call2.getElementType() == CALL_EXPRESSION) {
+        String name1 = getImmediateCallName(call1);
+        if (name1 != null) {
+          String name2 = getImmediateCallName(call2);
+          if (name1.equals(name2)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  private String getImmediateCallName(ASTNode callNode) {
+    ASTNode[] childs = callNode.getChildren(REFERENCE_EXPRESSION_SET);
+    if (childs.length != 1) return null;
+    ASTNode child = childs[0];
+    childs = child.getChildren(ID_SET);
+    if (childs.length != 1) return null;
+    child = childs[0];
+    return child.getText();
   }
 }

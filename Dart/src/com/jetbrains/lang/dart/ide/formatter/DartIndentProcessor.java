@@ -128,6 +128,9 @@ public class DartIndentProcessor {
     if (elementType == CASCADE_REFERENCE_EXPRESSION) {
       return Indent.getNormalIndent();
     }
+    if (elementType == OPEN_QUOTE && prevSiblingType == CLOSING_QUOTE && parentType == STRING_LITERAL_EXPRESSION) {
+      return Indent.getContinuationIndent();
+    }
     return Indent.getNoneIndent();
   }
 
