@@ -40,6 +40,7 @@ public class MarkdownParserAdapter implements PsiParser {
 
     assert builder.getCurrentOffset() == 0;
     new PsiBuilderFillingVisitor(builder).visitNode(parsedTree);
+    assert builder.eof();
 
     rootMarker.done(root);
 
