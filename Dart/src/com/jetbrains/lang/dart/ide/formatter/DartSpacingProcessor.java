@@ -417,7 +417,7 @@ public class DartSpacingProcessor {
     }
   }
 
-  private boolean allCascadesAreSameMethod(ASTNode[] children) {
+  private static boolean allCascadesAreSameMethod(ASTNode[] children) {
     for (int i = 1; i < children.length; i++) {
       if (!cascadesAreSameMethod(children[i - 1], children[i])) {
         return false;
@@ -426,7 +426,7 @@ public class DartSpacingProcessor {
     return true;
   }
 
-  private boolean cascadesAreSameMethod(ASTNode child1, ASTNode child2) {
+  private static boolean cascadesAreSameMethod(ASTNode child1, ASTNode child2) {
     ASTNode call1 = child1.getLastChildNode();
     if (call1.getElementType() == CALL_EXPRESSION) {
       ASTNode call2 = child2.getLastChildNode();
@@ -443,7 +443,7 @@ public class DartSpacingProcessor {
     return false;
   }
 
-  private String getImmediateCallName(ASTNode callNode) {
+  private static String getImmediateCallName(ASTNode callNode) {
     ASTNode[] childs = callNode.getChildren(REFERENCE_EXPRESSION_SET);
     if (childs.length != 1) return null;
     ASTNode child = childs[0];

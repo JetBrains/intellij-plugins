@@ -43,6 +43,17 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 2;
+    defaultSettings.RIGHT_MARGIN = 80;
+    defaultSettings.WRAP_LONG_LINES = true;
+    defaultSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED; // TODO Remove if not needed.
+    defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
+    defaultSettings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
     return defaultSettings;
   }
 
@@ -114,6 +125,8 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
                                    "ALIGN_MULTILINE_BINARY_OPERATION",
                                    "BINARY_OPERATION_WRAP",
                                    "BINARY_OPERATION_SIGN_ON_NEXT_LINE",
+                                   "ASSIGNMENT_WRAP", // TODO Remove if not needed.
+                                   "PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE", // TODO Remove if not needed.
                                    "TERNARY_OPERATION_WRAP",
                                    "TERNARY_OPERATION_SIGNS_ON_NEXT_LINE",
                                    "PARENTHESES_EXPRESSION_LPAREN_WRAP",

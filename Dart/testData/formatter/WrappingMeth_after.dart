@@ -8,8 +8,8 @@ class Foo {
     var x = (
         "" + argA
     ) +
-    argB + argC + argD +
-    argE + argF + argG + argH;
+        argB + argC + argD +
+        argE + argF + argG + argH;
     try {
       this.fTwo(
           argA, argB, argC, this.fThree(
