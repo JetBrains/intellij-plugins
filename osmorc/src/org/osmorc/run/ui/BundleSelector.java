@@ -35,6 +35,7 @@ import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.tree.TreeUtil;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
 
@@ -65,14 +68,14 @@ public class BundleSelector extends DialogWrapper {
   private JPanel myContentPane;
   private SimpleTree myBundleTree;
 
-  public BundleSelector(@NotNull Project project, @Nullable FrameworkInstanceDefinition instance, @NotNull List<SelectedBundle> toHide) {
+  public BundleSelector(@NotNull Project project, @Nullable FrameworkInstanceDefinition instance, @NotNull List<SelectedBundle> selected) {
     super(project);
 
     setTitle(OsmorcBundle.message("bundle.selector.title"));
     setModal(true);
 
     myContentPane.setPreferredSize(JBUI.size(600, 400));
-    myBundleTree.setModel(createModel(project, instance, toHide));
+    myBundleTree.setModel(createModel(project, instance, selected));
     myBundleTree.setCellRenderer(new BundleTreeRenderer());
     myBundleTree.addTreeSelectionListener(new TreeSelectionListener() {
       @Override
@@ -80,13 +83,14 @@ public class BundleSelector extends DialogWrapper {
         setOKActionEnabled(myBundleTree.getSelectionCount() > 0);
       }
     });
-    for (int i = 0; i < myBundleTree.getRowCount(); i++) myBundleTree.expandRow(i);
+    TreeUtil.expandAll(myBundleTree);
     TreeUIHelper.getInstance().installTreeSpeedSearch(myBundleTree);
 
     init();
   }
 
-  private static TreeModel createModel(Project project, FrameworkInstanceDefinition instance, List<SelectedBundle> toHide) {
+  private static TreeModel createModel(Project project, FrameworkInstanceDefinition instance, Collection<SelectedBundle> selectedList) {
+    Set<SelectedBundle> selected = ContainerUtil.newHashSet(selectedList);
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
     // all the modules
@@ -95,7 +99,7 @@ public class BundleSelector extends DialogWrapper {
     for (Module module : modules) {
       if (OsmorcFacet.hasOsmorcFacet(module)) {
         SelectedBundle bundle = new SelectedBundle(SelectedBundle.BundleType.Module, module.getName(), null);
-        if (!toHide.contains(bundle)) {
+        if (!selected.contains(bundle)) {
           moduleNode.add(new DefaultMutableTreeNode(bundle));
         }
       }
@@ -108,7 +112,7 @@ public class BundleSelector extends DialogWrapper {
       if (integrator != null) {
         DefaultMutableTreeNode frameworkNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.framework"));
         for (SelectedBundle bundle : integrator.getFrameworkInstanceManager().getFrameworkBundles(instance, FrameworkBundleType.OTHER)) {
-          if (!toHide.contains(bundle)) {
+          if (!selected.contains(bundle)) {
             frameworkNode.add(new DefaultMutableTreeNode(bundle));
           }
         }
@@ -119,19 +123,16 @@ public class BundleSelector extends DialogWrapper {
     // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
     DefaultMutableTreeNode libraryNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.libraries"));
     List<String> paths = OrderEnumerator.orderEntries(project)
-      .withoutSdk()
-      .withoutModuleSourceEntries()
-      .withoutDepModules()
+      .librariesOnly()
       .productionOnly()
       .runtimeOnly()
       .classes()
       .getPathsList().getPathList();
-
     for (String path : paths) {
       String displayName = CachingBundleInfoProvider.getBundleSymbolicName(path);
       if (displayName != null) {
         SelectedBundle bundle = new SelectedBundle(SelectedBundle.BundleType.StartLibrary, displayName, path);
-        if (!toHide.contains(bundle)) {
+        if (!selected.contains(bundle)) {
           libraryNode.add(new DefaultMutableTreeNode(bundle));
         }
       }
@@ -174,7 +175,7 @@ public class BundleSelector extends DialogWrapper {
 
   private static class BundleTreeRenderer extends ColoredTreeCellRenderer {
     @Override
-    public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
       if (value instanceof DefaultMutableTreeNode) {
         Object object = ((DefaultMutableTreeNode)value).getUserObject();
         if (object instanceof SelectedBundle) {
