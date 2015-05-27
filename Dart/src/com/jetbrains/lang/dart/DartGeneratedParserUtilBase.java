@@ -83,15 +83,23 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   }
 
   public static boolean blockBodyWrapper(PsiBuilder builder_, int level_) {
+    final Boolean cascadeData = builder_.getUserData(WITHOUT_CASCADE);
+    builder_.putUserData(WITHOUT_CASCADE, null);
+
     final Boolean wasSyncOrAsync = builder_.getUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION);
     final boolean syncOrAsync = nextTokenIs(builder_, "", ASYNC, SYNC);
     builder_.putUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION, syncOrAsync ? Boolean.TRUE : null);
+
     final boolean result = DartParser.blockBody(builder_, level_);
+
     builder_.putUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION, wasSyncOrAsync);
+
+    builder_.putUserData(WITHOUT_CASCADE, cascadeData);
+
     return result;
   }
 
-  public static boolean collapseShiftRight(PsiBuilder builder_, int level_) {
+  public static boolean gtGt(PsiBuilder builder_, int level_) {
     final PsiBuilder.Marker marker_ = builder_.mark();
     if (!consumeToken(builder_, GT)) {
       marker_.rollbackTo();
@@ -105,9 +113,45 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return true;
   }
 
+  public static boolean gtEq(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, EQ)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_EQ);
+    return true;
+  }
+
+  public static boolean gtGtEq(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, EQ)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_GT_EQ);
+    return true;
+  }
+
   public static boolean failIfItLooksLikeConstantObjectExpression(PsiBuilder builder_, int level_) {
     // need to fail varAccessDeclaration parsing if this looks like constant object expression (it will be parsed later by DartNewExpression)
     final IElementType type = builder_.getTokenType();
     return type != DOT && type != LPAREN && type != LT;
+  }
+
+  public static boolean isInsideSyncOrAsyncFunction(PsiBuilder builder_, int level_) {
+    return builder_.getUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION) == Boolean.TRUE;
   }
 }

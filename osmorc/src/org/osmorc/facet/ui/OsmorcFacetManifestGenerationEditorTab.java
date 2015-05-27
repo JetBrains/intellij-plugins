@@ -27,24 +27,22 @@ package org.osmorc.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.ide.util.ClassFilter;
 import com.intellij.ide.util.TreeJavaClassChooserDialog;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ManifestEditor;
+import org.osmorc.util.OsgiPsiUtil;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,28 +55,31 @@ import java.awt.event.ActionListener;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
-  public OsmorcFacetManifestGenerationEditorTab(FacetEditorContext editorContext) {
-    _editorContext = editorContext;
-    // create the editor
-    _additionalProperties = new ManifestEditor(_editorContext.getProject(), "");
-    _additionalProperties.setPreferredSize(_additionalProperties.getComponent().getPreferredSize());
-    _editorPanel.add(_additionalProperties, BorderLayout.CENTER);
+  private final FacetEditorContext myEditorContext;
+  private JPanel myRootPanel;
+  private JTextField myBundleSymbolicName;
+  private TextFieldWithBrowseButton myBundleActivator;
+  private JTextField myBundleVersion;
+  private JPanel myEditorPanel;
+  private ManifestEditor myAdditionalPropertiesEditor;
+  private boolean myModified;
 
-    ChangeListener listener = new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        updateGui();
-      }
-    };
+  public OsmorcFacetManifestGenerationEditorTab(FacetEditorContext editorContext) {
+    myEditorContext = editorContext;
+
+    myAdditionalPropertiesEditor = new ManifestEditor(myEditorContext.getProject(), "");
+    myAdditionalPropertiesEditor.setPreferredSize(myAdditionalPropertiesEditor.getComponent().getPreferredSize());
+    myEditorPanel.add(myAdditionalPropertiesEditor, BorderLayout.CENTER);
 
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(new UserActivityListener() {
       public void stateChanged() {
-        _modified = true;
+        myModified = true;
       }
     });
+    watcher.register(myRootPanel);
 
-    watcher.register(_root);
-    _bundleActivator.addActionListener(new ActionListener() {
+    myBundleActivator.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onBundleActivatorSelect();
       }
@@ -86,71 +87,62 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
   }
 
   private void updateGui() {
-    Boolean manuallyEdited = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY);
-    boolean isManuallyEdited = manuallyEdited != null ? manuallyEdited : true;
-    Boolean bnd = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
-    Boolean bundlor = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY);
-    boolean isUseExternalTool = (bnd != null && bnd) || (bundlor != null && bundlor);
+    boolean isManuallyEdited = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY) == Boolean.TRUE;
+    boolean isBnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY) == Boolean.TRUE;
+    boolean isBundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY) == Boolean.TRUE;
+    boolean isUiEnabled = !(isManuallyEdited || isBnd || isBundlor);
 
-    _bundleActivatorLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _bundleActivator.setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _bundleSymbolicName.setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _bundleSymbolicNameLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _bundleVersionLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _bundleVersion.setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _additionalProperties.getComponent().setEnabled(!isManuallyEdited && !isUseExternalTool);
-    _additionalPropertiesLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
+    myBundleSymbolicName.setEnabled(isUiEnabled);
+    myBundleActivator.setEnabled(isUiEnabled);
+    myBundleVersion.setEnabled(isUiEnabled);
+    myAdditionalPropertiesEditor.getComponent().setEnabled(isUiEnabled);
   }
 
   private void onBundleActivatorSelect() {
-    Project project = _editorContext.getProject();
-    GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesScope(_editorContext.getModule());
-    // show a class selector for descendants of BundleActivator
-    PsiClass psiClass = JavaPsiFacade.getInstance(project)
-      .findClass("org.osgi.framework.BundleActivator", GlobalSearchScope.allScope(project));
-    TreeJavaClassChooserDialog dialog =
-      new TreeJavaClassChooserDialog(OsmorcBundle.message("facet.editor.select.bundle.activator"),
-                                     project, searchScope, new TreeJavaClassChooserDialog.InheritanceJavaClassFilterImpl(
-        psiClass, false, true,
-        null), null);
+    Project project = myEditorContext.getProject();
+    PsiClass activatorClass = OsgiPsiUtil.getActivatorClass(project);
+    ClassFilter filter = new TreeJavaClassChooserDialog.InheritanceJavaClassFilterImpl(activatorClass, false, true, null);
+    GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesScope(myEditorContext.getModule());
+    TreeJavaClassChooserDialog dialog = new TreeJavaClassChooserDialog(OsmorcBundle.message("facet.editor.select.bundle.activator"), project, scope, filter, null);
     dialog.showDialog();
-    PsiClass clazz = dialog.getSelected();
-    if (clazz != null) {
-      _bundleActivator.setText(clazz.getQualifiedName());
+    PsiClass psiClass = dialog.getSelected();
+    if (psiClass != null) {
+      myBundleActivator.setText(psiClass.getQualifiedName());
     }
   }
 
-
-  @Nls
+  @Override
   public String getDisplayName() {
     return "Manifest Generation";
   }
 
   @NotNull
+  @Override
   public JComponent createComponent() {
-    return _root;
+    return myRootPanel;
   }
 
+  @Override
   public boolean isModified() {
-    return _modified;
+    return myModified;
   }
 
+  @Override
   public void apply() {
-    OsmorcFacetConfiguration configuration =
-      (OsmorcFacetConfiguration)_editorContext.getFacet().getConfiguration();
-    configuration.setBundleActivator(_bundleActivator.getText());
-    configuration.setBundleSymbolicName(_bundleSymbolicName.getText());
-    configuration.setBundleVersion(_bundleVersion.getText());
-    configuration.setAdditionalProperties(_additionalProperties.getText());
+    OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
+    configuration.setBundleActivator(myBundleActivator.getText());
+    configuration.setBundleSymbolicName(myBundleSymbolicName.getText());
+    configuration.setBundleVersion(myBundleVersion.getText());
+    configuration.setAdditionalProperties(myAdditionalPropertiesEditor.getText());
   }
 
+  @Override
   public void reset() {
-    OsmorcFacetConfiguration configuration =
-      (OsmorcFacetConfiguration)_editorContext.getFacet().getConfiguration();
-    _bundleActivator.setText(configuration.getBundleActivator());
-    _bundleSymbolicName.setText(configuration.getBundleSymbolicName());
-    _bundleVersion.setText(configuration.getBundleVersion());
-    _additionalProperties.setText(configuration.getAdditionalProperties());
+    OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
+    myBundleActivator.setText(configuration.getBundleActivator());
+    myBundleSymbolicName.setText(configuration.getBundleSymbolicName());
+    myBundleVersion.setText(configuration.getBundleVersion());
+    myAdditionalPropertiesEditor.setText(configuration.getAdditionalProperties());
     updateGui();
   }
 
@@ -160,25 +152,13 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     updateGui();
   }
 
+  @Override
   public void disposeUIResources() {
-    Disposer.dispose(_additionalProperties);
+    Disposer.dispose(myAdditionalPropertiesEditor);
   }
 
   @Override
   public String getHelpTopic() {
     return "reference.settings.module.facet.osgi";
   }
-
-  private JPanel _root;
-  private JTextField _bundleSymbolicName;
-  private TextFieldWithBrowseButton _bundleActivator;
-  private JLabel _bundleSymbolicNameLabel;
-  private JLabel _bundleActivatorLabel;
-  private JTextField _bundleVersion;
-  private JLabel _bundleVersionLabel;
-  private final ManifestEditor _additionalProperties;
-  private JLabel _additionalPropertiesLabel;
-  private JPanel _editorPanel;
-  private boolean _modified;
-  private final FacetEditorContext _editorContext;
 }

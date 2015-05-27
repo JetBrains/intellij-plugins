@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab">
-  <grid id="bbf5b" binding="_root" layout-manager="FormLayout">
+  <grid id="bbf5b" binding="myRootPanel" layout-manager="FormLayout">
     <rowspec value="center:271px:grow"/>
     <colspec value="fill:d:grow"/>
     <constraints>
@@ -32,7 +32,7 @@
         </clientProperties>
         <border type="none" title="Bundle Settings"/>
         <children>
-          <component id="bc774" class="javax.swing.JLabel" binding="_bundleSymbolicNameLabel">
+          <component id="bc774" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -42,7 +42,7 @@
               <text value="&amp;Symbolic name:"/>
             </properties>
           </component>
-          <component id="6c86c" class="javax.swing.JTextField" binding="_bundleSymbolicName">
+          <component id="6c86c" class="javax.swing.JTextField" binding="myBundleSymbolicName">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -50,11 +50,8 @@
               <forms defaultalign-horz="false"/>
             </constraints>
             <properties/>
-            <clientProperties>
-              <caretAspectRatio class="java.lang.Float" value="0.04"/>
-            </clientProperties>
           </component>
-          <component id="a87be" class="javax.swing.JLabel" binding="_bundleActivatorLabel">
+          <component id="a87be" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -63,14 +60,14 @@
               <text value="Bundle &amp;activator:"/>
             </properties>
           </component>
-          <component id="a0ab1" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bundleActivator">
+          <component id="a0ab1" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myBundleActivator">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties/>
           </component>
-          <component id="8a01" class="javax.swing.JLabel" binding="_bundleVersionLabel">
+          <component id="8a01" class="javax.swing.JLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -80,7 +77,7 @@
               <text value="&amp;Bundle version:"/>
             </properties>
           </component>
-          <component id="6949d" class="javax.swing.JTextField" binding="_bundleVersion">
+          <component id="6949d" class="javax.swing.JTextField" binding="myBundleVersion">
             <constraints>
               <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -88,11 +85,8 @@
               <forms defaultalign-horz="false"/>
             </constraints>
             <properties/>
-            <clientProperties>
-              <caretAspectRatio class="java.lang.Float" value="0.04"/>
-            </clientProperties>
           </component>
-          <component id="c9fa0" class="javax.swing.JLabel" binding="_additionalPropertiesLabel">
+          <component id="c9fa0" class="javax.swing.JLabel">
             <constraints>
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
               <forms defaultalign-vert="false"/>
@@ -103,7 +97,7 @@
               <verticalTextPosition value="0"/>
             </properties>
           </component>
-          <grid id="777c4" binding="_editorPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="777c4" binding="myEditorPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
               <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>

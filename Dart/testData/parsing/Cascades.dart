@@ -57,6 +57,14 @@ class A {
 }
 
 main() {
+  juggler.transition()
+    ..onComplete = () {
+      juggler.transition()
+        ..onComplete = () {
+          print('complete');
+      };
+    };
+
   A a = new A(1, 2);
   a..check(1, 2)
    ..swap()..check(2, 1)
