@@ -9,11 +9,6 @@ import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.web.WebView;
 import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.html.HtmlGenerator;
@@ -24,19 +19,17 @@ import org.intellij.markdown.parser.TokensCache;
 import org.intellij.markdown.parser.dialects.commonmark.CommonMarkMarkerProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lobobrowser.html.gui.HtmlPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
-  private final static long PARSING_CALL_TIMEOUT_MS = 100L;
+  private final static long PARSING_CALL_TIMEOUT_MS = 50L;
   @NotNull
-  private final JFXPanel myPanel;
-  @Nullable
-  private WebView myBrowser;
+  private final HtmlPanel myPanel;
   @NotNull
   private final VirtualFile myFile;
   @Nullable
@@ -63,7 +56,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       }, this);
     }
 
-    myPanel = new JFXPanel();
+    myPanel = new HtmlPanel();
     myPanel.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
@@ -71,27 +64,14 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       }
     });
 
-    Platform.setImplicitExit(false);
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        initWebViewInComponent(myPanel);
-      }
-    });
+    initWebViewInComponent(myPanel);
   }
 
-  private void initWebViewInComponent(@NotNull JFXPanel panel) {
-    Group group = new Group();
-    Scene scene = new Scene(group);
-    panel.setScene(scene);
+  private void initWebViewInComponent(@NotNull HtmlPanel panel) {
 
-    myBrowser = new WebView();
+    panel.setHtml("<html></html>", "", new MarkdownHtmlRendererContext(panel));
 
-    group.getChildren().add(myBrowser);
-    myBrowser.setContextMenuEnabled(false);
     adjustBrowserSize();
-
-    myBrowser.getEngine().loadContent("<html></html>");
   }
 
   @NotNull
@@ -145,19 +125,10 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   }
 
   private void adjustBrowserSize() {
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        final Dimension size = myPanel.getSize();
-        if (myBrowser != null) {
-          myBrowser.setPrefSize(size.getWidth(), size.getHeight());
-        }
-      }
-    });
   }
 
   private void updateHtml() {
-    if (!myFile.isValid() || myBrowser == null || myDocument == null) {
+    if (!myFile.isValid() || myDocument == null) {
       return;
     }
 
@@ -167,13 +138,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       .parse(MarkdownElementTypes.MARKDOWN_FILE, tokensCache);
     final String html = new HtmlGenerator(text, parsedTree).generateHtml();
 
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        myBrowser.getEngine().getLoadWorker().cancel();
-        myBrowser.getEngine().loadContent("<html>" + html + "</html>");
-      }
-    });
+    myPanel.setHtml("<html>" + html + "</html>", "", new MarkdownHtmlRendererContext(myPanel));
   }
 
   @Override
