@@ -44,7 +44,6 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 2;
     defaultSettings.RIGHT_MARGIN = 80;
-    defaultSettings.WRAP_LONG_LINES = true;
     defaultSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     defaultSettings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
@@ -53,7 +52,6 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     defaultSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     defaultSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
-    defaultSettings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
     return defaultSettings;
   }
 

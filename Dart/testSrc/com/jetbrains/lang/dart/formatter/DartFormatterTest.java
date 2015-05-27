@@ -82,7 +82,7 @@ public class DartFormatterTest extends FormatterTestCase {
   }
 
   public void testStrings() throws Exception {
-    //doTest();
+    doTest();
   }
 
   public void testAdjacentStrings() throws Exception {
@@ -90,7 +90,7 @@ public class DartFormatterTest extends FormatterTestCase {
   }
 
   public void testAdjacentStringsLong() throws Exception {
-    //doTest();
+    doTest();
   }
 
   public void testSpaceAroundOperators() throws Exception {
@@ -206,6 +206,12 @@ public class DartFormatterTest extends FormatterTestCase {
 
   public void testMapAndListLiterals() throws Exception {
     doTest();
+  }
+
+  public void testTernary1() throws Exception {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.RIGHT_MARGIN = 40;
+    //doTest();
   }
 }
 

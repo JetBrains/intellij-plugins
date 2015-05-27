@@ -41,7 +41,7 @@ class Foo {
     (true)
       return strC;
     if (strA == 'one' ||
-    strB == 'two') {
+        strB == 'two') {
       return strA + strB;
     }
     else if (true) return strD;

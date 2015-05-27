@@ -131,7 +131,10 @@ public class DartIndentProcessor {
     if (elementType == OPEN_QUOTE && prevSiblingType == CLOSING_QUOTE && parentType == STRING_LITERAL_EXPRESSION) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == ADDITIVE_EXPRESSION && prevSibling != null) {
+    if (BINARY_EXPRESSIONS.contains(parentType) && prevSibling != null) {
+      return Indent.getContinuationIndent();
+    }
+    if (parentType == TERNARY_EXPRESSION && elementType == QUEST || elementType == COLON) {
       return Indent.getContinuationIndent();
     }
     return Indent.getNoneIndent();
