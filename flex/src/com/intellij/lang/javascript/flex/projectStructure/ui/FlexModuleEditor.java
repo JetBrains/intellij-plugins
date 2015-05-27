@@ -7,11 +7,11 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ui.configuration.CommonContentEntriesEditor;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.util.List;
 
 /**
@@ -33,7 +33,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
         return entries;
       }
     };
-    myEntriesEditor.getComponent().setBorder(new EmptyBorder(0, 0, 0, 0));
+    myEntriesEditor.getComponent().setBorder(JBUI.Borders.empty());
   }
 
   @Nls
