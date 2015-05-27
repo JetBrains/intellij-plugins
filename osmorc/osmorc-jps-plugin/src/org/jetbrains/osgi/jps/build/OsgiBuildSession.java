@@ -205,13 +205,15 @@ public class OsgiBuildSession implements Reporter {
     }
     else {
       ManifestGenerationMode mode = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties().myManifestGenerationMode;
-      throw new OsgiBuildException("Internal error: unknown build method: " + mode);
+      throw new OsgiBuildException("Internal error (unknown build method `" + mode + "`)");
     }
   }
 
   @NotNull
   private Map<String, String> getBuildProperties() throws OsgiBuildException {
     Map<String, String> properties = ContainerUtil.newHashMap();
+
+    boolean isMaven = OsgiBuildUtil.getMavenProjectPath(myContext, myModule) != null;
 
     // defaults (similar to Maven)
 
@@ -242,22 +244,26 @@ public class OsgiBuildSession implements Reporter {
 
     // resources
 
-    StringBuilder pathBuilder = new StringBuilder(myModuleOutputDir.getPath());
-    for (OsmorcJarContentEntry contentEntry : myExtension.getAdditionalJarContents()) {
-      pathBuilder.append(',').append(contentEntry.myDestination).append('=').append(contentEntry.mySource);
+    List<String> resources = ContainerUtil.newSmartList();
+
+    if (myExtension.isOsmorcControlsManifest()) {
+      String custom = properties.get(Constants.INCLUDE_RESOURCE);
+      if (custom != null) {
+        resources.add(custom);
+      }
     }
 
-    StringBuilder includedResources;
-    if (myExtension.isOsmorcControlsManifest()) {
-      includedResources = new StringBuilder();
-      String resources = properties.get(Constants.INCLUDE_RESOURCE);
-      if (resources != null) includedResources.append(resources).append(',');
-      includedResources.append(pathBuilder);
+    for (OsmorcJarContentEntry contentEntry : myExtension.getAdditionalJarContents()) {
+      resources.add(contentEntry.myDestination + '=' + contentEntry.mySource);
     }
-    else {
-      includedResources = pathBuilder;
+
+    if (isMaven && myExtension.isOsmorcControlsManifest()) {
+      resources.add(myModuleOutputDir.getPath());
     }
-    properties.put(Constants.INCLUDE_RESOURCE, includedResources.toString());
+
+    if (!resources.isEmpty()) {
+      properties.put(Constants.INCLUDE_RESOURCE, StringUtil.join(resources, ","));
+    }
 
     String pattern = myExtension.getIgnoreFilePattern();
     if (!StringUtil.isEmptyOrSpaces(pattern)) {
@@ -271,7 +277,7 @@ public class OsgiBuildSession implements Reporter {
       properties.put(Constants.DONOTCOPY, pattern);
     }
 
-    if (myExtension.isOsmorcControlsManifest()) {
+    if (isMaven && myExtension.isOsmorcControlsManifest()) {
       // support the {local-packages} instruction
       progress("Calculating local packages");
       LocalPackageCollector.addLocalPackages(myModuleOutputDir, properties);

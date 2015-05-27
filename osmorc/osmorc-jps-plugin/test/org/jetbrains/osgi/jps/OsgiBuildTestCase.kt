@@ -15,8 +15,10 @@
  */
 package org.jetbrains.osgi.jps
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.JpsBuildTestCase
+import org.jetbrains.jps.maven.model.impl.MavenProjectConfiguration
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -28,8 +30,8 @@ import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
+import java.io.File
 import java.util.Enumeration
-import java.util.HashSet
 import java.util.jar.JarFile
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -67,6 +69,21 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     properties.myBundleSymbolicName = "main"
     properties.myBundleVersion = "1.0.0"
     properties.myAdditionalProperties = mapOf("Export-Package" to "main")
+  }
+
+  fun createMavenConfig(module: JpsModule) {
+    val file = File(myDataStorageRoot, MavenProjectConfiguration.CONFIGURATION_FILE_RELATIVE_PATH)
+    FileUtil.writeToFile(file, """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <maven-project-configuration>
+          <resource-processing>
+            <maven-module name="${module.getName()}">
+              <MavenModuleResourceConfiguration>
+                <directory>${JpsPathUtil.urlToOsPath(module.getContentRootsList().getUrls()[0])}</directory>
+              </MavenModuleResourceConfiguration>
+            </maven-module>
+          </resource-processing>
+        </maven-project-configuration>""".trim())
   }
 
   fun BuildResult.assertBundleCompiled(module: JpsModule) {
