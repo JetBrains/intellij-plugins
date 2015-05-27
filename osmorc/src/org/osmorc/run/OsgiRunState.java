@@ -101,6 +101,7 @@ public class OsgiRunState extends JavaCommandLineState {
           Set<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
           // the bundles are module names, by now we try to find jar files in the output directory which we can then install
           ModuleManager moduleManager = ModuleManager.getInstance(myRunConfiguration.getProject());
+          BundleCompiler bundleCompiler = new BundleCompiler(progressIndicator);
           int bundleCount = myRunConfiguration.getBundlesToDeploy().size();
           for (int i = 0; i < bundleCount; i++) {
             progressIndicator.setFraction((double)i / bundleCount);
@@ -120,7 +121,7 @@ public class OsgiRunState extends JavaCommandLineState {
               selectedBundle.setBundlePath(facet.getConfiguration().getJarFileLocation());
               selectedBundles.add(selectedBundle);
               // add all the library dependencies of the bundle
-              List<String> paths = new BundleCompiler().bundlifyLibraries(module, progressIndicator);
+              List<String> paths = bundleCompiler.bundlifyLibraries(module);
               for (String path : paths) {
                 selectedBundles.add(new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "Dependency", path));
               }

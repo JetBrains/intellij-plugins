@@ -28,17 +28,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderEnumerator;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.build.BndWrapper;
-import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.jetbrains.osgi.jps.build.OsgiBuildException;
 import org.jetbrains.osgi.jps.build.Reporter;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -56,24 +52,11 @@ import java.util.List;
 public class BundleCompiler implements Reporter {
   private static final Logger LOG = Logger.getInstance(BundleCompiler.class);
 
-  /**
-   * Condition which matches order entries that are not representing a framework library.
-   */
-  public static final Condition<OrderEntry> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<OrderEntry>() {
-    @Override
-    public boolean value(OrderEntry entry) {
-      if ((entry instanceof LibraryOrderEntry)) {
-        LibraryOrderEntry libEntry = (LibraryOrderEntry)entry;
-        if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(libEntry.getLibraryLevel())) {
-          String libraryName = libEntry.getLibraryName();
-          if (libraryName != null && libraryName.startsWith("Osmorc:")) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-  };
+  private final ProgressIndicator myIndicator;
+
+  public BundleCompiler(@NotNull ProgressIndicator indicator) {
+    myIndicator = indicator;
+  }
 
   /**
    * Bundlifies all libraries that belong to the given module and that are not bundles.
@@ -81,8 +64,8 @@ public class BundleCompiler implements Reporter {
    * Returns a string array containing paths of the bundlified libraries.
    */
   @NotNull
-  public List<String> bundlifyLibraries(@NotNull Module module, @NotNull ProgressIndicator indicator) throws OsgiBuildException {
-    indicator.setText("Bundling non-OSGi libraries for module '" + module.getName() + "'");
+  public List<String> bundlifyLibraries(@NotNull Module module) throws OsgiBuildException {
+    myIndicator.setText("Bundling non-OSGi libraries for module '" + module.getName() + "'");
 
     File outputDir = BndWrapper.getOutputDir(getModuleOutputDir(module));
     List<LibraryBundlificationRule> libRules = ApplicationSettings.getInstance().getLibraryBundlificationRules();
@@ -95,30 +78,17 @@ public class BundleCompiler implements Reporter {
       .runtimeOnly()
       .recursively()
       .exportedOnly()
-      .satisfying(NOT_FRAMEWORK_LIBRARY_CONDITION)
       .classes()
       .getPathsList().getPathList();
 
-    BndWrapper wrapper = new BndWrapper(this);
-    List<String> result = ContainerUtil.newArrayList();
-    for (String path : paths) {
-      if (CachingBundleInfoProvider.canBeBundlified(path)) {
-        indicator.setText2(path);
-        try {
-          File bundledDependency = wrapper.wrapLibrary(new File(path), outputDir, libRules);
-          if (bundledDependency != null) {
-            result.add(bundledDependency.getPath());
-          }
-        }
-        catch (OsgiBuildException e) {
-          warning(e.getMessage(), e.getCause(), e.getSourcePath());
-        }
+    List<File> files = ContainerUtil.map(paths, new Function<String, File>() {
+      @Override
+      public File fun(String path) {
+        return new File(path);
       }
-      else if (CachingBundleInfoProvider.isBundle(path)) {
-        result.add(path);
-      }
-    }
-    return result;
+    });
+
+    return new BndWrapper(this).bundlifyLibraries(files, outputDir, libRules);
   }
 
   private static File getModuleOutputDir(@NotNull Module module) throws OsgiBuildException {
@@ -135,6 +105,7 @@ public class BundleCompiler implements Reporter {
   @Override
   public void progress(@NotNull String message) {
     LOG.debug(message);
+    myIndicator.setText2(message);
   }
 
   @Override

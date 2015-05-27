@@ -44,7 +44,6 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.make.BundleCompiler;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -125,7 +124,6 @@ public class BundleSelector extends DialogWrapper {
       .withoutDepModules()
       .productionOnly()
       .runtimeOnly()
-      .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION)
       .classes()
       .getPathsList().getPathList();
 

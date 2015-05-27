@@ -37,6 +37,7 @@ import org.jetbrains.osgi.jps.util.OrderedProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -58,11 +59,38 @@ public class BndWrapper {
   }
 
   /**
-   * Wraps an existing .jar file using Bnd analyzer.
-   * Uses bundlification rules for the library that have been set in Settings/OSGi/Library Bundling.
+   * Wraps .jar files using Bnd analyzer. Uses bundlification rules defined in Settings/OSGi/Library Bundling.
    */
+  @NotNull
+  public List<String> bundlifyLibraries(@NotNull Collection<File> dependencies,
+                                        @NotNull File outputDir,
+                                        @NotNull List<LibraryBundlificationRule> rules) {
+    List<String> result = ContainerUtil.newArrayListWithCapacity(dependencies.size());
+
+    for (File dependency : dependencies) {
+      String path = dependency.getPath();
+      if (CachingBundleInfoProvider.canBeBundlified(path)) {
+        myReporter.progress(path);
+        try {
+          File bundledDependency = wrap(dependency, outputDir, rules);
+          if (bundledDependency != null) {
+            result.add(bundledDependency.getPath());
+          }
+        }
+        catch (OsgiBuildException e) {
+          myReporter.warning(e.getMessage(), e.getCause(), e.getSourcePath());
+        }
+      }
+      else if (CachingBundleInfoProvider.isBundle(path)) {
+        result.add(path);
+      }
+    }
+
+    return result;
+  }
+
   @Nullable
-  public File wrapLibrary(@NotNull File sourceFile, @NotNull File outputDir, @NotNull List<LibraryBundlificationRule> rules) throws OsgiBuildException {
+  private File wrap(@NotNull File sourceFile, @NotNull File outputDir, @NotNull List<LibraryBundlificationRule> rules) throws OsgiBuildException {
     if (!sourceFile.isFile()) {
       throw new OsgiBuildException("The library '" + sourceFile + "' does not exist - please check module dependencies.");
     }
@@ -92,9 +120,7 @@ public class BndWrapper {
     return targetFile;
   }
 
-  /**
-   * Internal function which does the actual wrapping. 90% borrowed from the Bnd source code.
-   */
+  // internal function which does the actual wrapping. 90% borrowed from the Bnd source code.
   private void doWrap(@NotNull File inputJar, @NotNull File outputJar, @NotNull Map<String, String> properties) throws OsgiBuildException {
     if (!FileUtil.delete(outputJar)) {
       throw new OsgiBuildException("Can't delete outdated bundle '" + outputJar + "'");

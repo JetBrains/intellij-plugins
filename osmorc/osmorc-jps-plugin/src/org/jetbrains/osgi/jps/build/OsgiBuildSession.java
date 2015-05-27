@@ -17,7 +17,6 @@ package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
@@ -31,8 +30,6 @@ import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.DoneSomethingNotification;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.module.JpsDependencyElement;
-import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.osgi.jps.model.*;
@@ -47,23 +44,6 @@ import java.util.regex.PatternSyntaxException;
 
 public class OsgiBuildSession implements Reporter {
   private static final Logger LOG = Logger.getInstance(OsgiBuildSession.class);
-
-  /**
-   * Condition which matches order entries that are not representing a framework library.
-   */
-  private static final Condition<JpsDependencyElement> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<JpsDependencyElement>() {
-    @Override
-    public boolean value(JpsDependencyElement entry) {
-      if (entry instanceof JpsLibraryDependency) {
-        JpsLibraryDependency libEntry = (JpsLibraryDependency)entry;
-        String libraryName = libEntry.getLibraryReference().getLibraryName();
-        if (libraryName.startsWith("Osmorc:")) {
-          return false;
-        }
-      }
-      return true;
-    }
-  };
 
   private CompileContext myContext;
   private JpsOsmorcModuleExtension myExtension;
@@ -319,29 +299,10 @@ public class OsgiBuildSession implements Reporter {
       .runtimeOnly()
       .recursively()
       .exportedOnly()
-      .satisfying(NOT_FRAMEWORK_LIBRARY_CONDITION)
       .classes()
       .getRoots();
 
-    List<String> result = ContainerUtil.newArrayList();
-    for (File dependency : dependencies) {
-      String path = dependency.getPath();
-      if (CachingBundleInfoProvider.canBeBundlified(path)) {
-        try {
-          File bundledDependency = myBndWrapper.wrapLibrary(dependency, myOutputDir, libRules);
-          if (bundledDependency != null) {
-            result.add(bundledDependency.getPath());
-          }
-        }
-        catch (OsgiBuildException e) {
-          warning(e.getMessage(), e.getCause(), e.getSourcePath());
-        }
-      }
-      else if (CachingBundleInfoProvider.isBundle(path)) {
-        result.add(path);
-      }
-    }
-    return result;
+    return myBndWrapper.bundlifyLibraries(dependencies, myOutputDir, libRules);
   }
 
   @Override
