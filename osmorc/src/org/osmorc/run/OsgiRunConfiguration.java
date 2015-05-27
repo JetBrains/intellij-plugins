@@ -154,7 +154,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         type = SelectedBundle.BundleType.Module;
       }
 
-      SelectedBundle selectedBundle = new SelectedBundle(type, name, VfsUtilCore.urlToPath(url));
+      String path = url != null ? VfsUtilCore.urlToPath(url) : null;
+      SelectedBundle selectedBundle = new SelectedBundle(type, name, path);
 
       if (startLevel != null) {
         try {
