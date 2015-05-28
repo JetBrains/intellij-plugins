@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.formatter;
 
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
 import com.jetbrains.lang.dart.DartFileType;
@@ -71,6 +70,26 @@ public class DartFormatterTest extends FormatterTestCase {
   }
 
   public void testWEB_7058() throws Exception {
+    doTest();
+  }
+
+  public void testCascades() throws Exception {
+    doTest();
+  }
+
+  public void testCascadeSame() throws Exception {
+    doTest();
+  }
+
+  public void testStrings() throws Exception {
+    doTest();
+  }
+
+  public void testAdjacentStrings() throws Exception {
+    doTest();
+  }
+
+  public void testAdjacentStringsLong() throws Exception {
     doTest();
   }
 
@@ -187,6 +206,12 @@ public class DartFormatterTest extends FormatterTestCase {
 
   public void testMapAndListLiterals() throws Exception {
     doTest();
+  }
+
+  public void testTernary1() throws Exception {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.RIGHT_MARGIN = 40;
+    //doTest();
   }
 }
 

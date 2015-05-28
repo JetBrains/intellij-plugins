@@ -8,8 +8,8 @@ class Foo {
     var x = (
         "" + argA
     ) +
-    argB + argC + argD +
-    argE + argF + argG + argH;
+        argB + argC + argD +
+        argE + argF + argG + argH;
     try {
       this.fTwo(
           argA, argB, argC, this.fThree(
@@ -41,7 +41,7 @@ class Foo {
     (true)
       return strC;
     if (strA == 'one' ||
-    strB == 'two') {
+        strB == 'two') {
       return strA + strB;
     }
     else if (true) return strD;

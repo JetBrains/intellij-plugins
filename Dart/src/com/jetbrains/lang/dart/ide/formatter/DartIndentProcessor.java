@@ -125,8 +125,17 @@ public class DartIndentProcessor {
         (prevSiblingType == RPAREN || (prevSiblingType == ELSE && elementType != IF_STATEMENT))) {
       return Indent.getNormalIndent();
     }
-    if (prevSiblingType != DOT && elementType == DOT_DOT && parentType == CASCADE_REFERENCE_EXPRESSION) {
+    if (elementType == CASCADE_REFERENCE_EXPRESSION) {
       return Indent.getNormalIndent();
+    }
+    if (elementType == OPEN_QUOTE && prevSiblingType == CLOSING_QUOTE && parentType == STRING_LITERAL_EXPRESSION) {
+      return Indent.getContinuationIndent();
+    }
+    if (BINARY_EXPRESSIONS.contains(parentType) && prevSibling != null) {
+      return Indent.getContinuationIndent();
+    }
+    if (parentType == TERNARY_EXPRESSION && elementType == QUEST || elementType == COLON) {
+      return Indent.getContinuationIndent();
     }
     return Indent.getNoneIndent();
   }

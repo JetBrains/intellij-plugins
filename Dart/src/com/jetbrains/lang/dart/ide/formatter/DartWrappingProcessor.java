@@ -103,8 +103,9 @@ public class DartWrappingProcessor {
     if (elementType == TERNARY_EXPRESSION) {
       if (myNode.getFirstChildNode() != child) {
         if (mySettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE) {
-          if (!FormatterUtil.isPrecededBy(child, QUEST) &&
-              !FormatterUtil.isPrecededBy(child, COLON)) {
+          //if (!FormatterUtil.isPrecededBy(child, QUEST) &&
+          //    !FormatterUtil.isPrecededBy(child, COLON)) {
+          if (childType == QUEST || childType == COLON) {
             return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.TERNARY_OPERATION_WRAP), true);
           }
         }
