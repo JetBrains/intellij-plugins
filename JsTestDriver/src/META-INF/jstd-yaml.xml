@@ -17,7 +17,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="yaml" implementationClass="com.google.jstestdriver.idea.config.JstdConfigFileCompletionContributor"/>
-    <psi.referenceContributor implementation="com.google.jstestdriver.idea.config.JstdConfigFileReferenceContributor"/>
+    <psi.referenceContributor language="yaml" implementation="com.google.jstestdriver.idea.config.JstdConfigFileReferenceContributor"/>
     <annotator language="yaml" implementationClass="com.google.jstestdriver.idea.config.JstdConfigFileAnnotator"/>
   </extensions>
 
