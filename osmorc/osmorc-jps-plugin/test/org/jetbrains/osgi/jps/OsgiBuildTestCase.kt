@@ -101,14 +101,17 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun assertManifest(module: JpsModule, expected: Set<String>) {
     val instrumental = setOf("Bnd-LastModified", "Tool", "Created-By")
     val required = setOf("Manifest-Version", "Bundle-ManifestVersion", "Require-Capability")
+    val sorting = setOf("Export-Package", "Import-Package")
 
     JarFile(extension(module).getJarFileLocation()).use {
       val actual = it.getManifest()!!.getMainAttributes()!!.filter {
         if (it.key.toString() in instrumental) false
-        else if (it.key.toString() in required) {
-          assertNotNull(it.getValue()); false }
+        else if (it.key.toString() in required) { assertNotNull(it.getValue()); false }
         else true
-      }.map { "${it.key}=${it.value}" }.toSet()
+      }.map {
+        val str = it.value.toString()
+        "${it.key}=${if (it.key in sorting) str.split(',').sort().join(",") else str}"
+      }.toSet()
       assertEquals(expected, actual)
     }
   }
