@@ -1,3 +1,3 @@
 m(list) {
-  list.add("first").add("second");
+  list..add("first")..add("second");
 }
