@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -41,6 +42,8 @@ public class SmallLog extends JFrame{
         semiTransparentPanel.addLine("Initial message");
         semiTransparentPanel.addLine("Let's start log here!");
         semiTransparentPanel.addLine(ACTION + "Some action here");
+        semiTransparentPanel.addLine(ACTION + "Some action here 2");
+        semiTransparentPanel.addLine(ACTION + "Some action here 3");
 
         JBScrollPane jbScrollPane = new JBScrollPane(semiTransparentPanel);
 
@@ -182,7 +185,7 @@ public class SmallLog extends JFrame{
                                 flip(clickLabels.get(clickLabels.size() - 1));
                                 pivot.move(-1);
                             } else {
-                                flip(clickLabels.get(pivot.getPosition()));
+                                flip(clickLabels.get(pivot.getPosition()) );
 //                                movePivot(pivot + 1);
                                 pivot.move(pivot.getPosition() + 1);
                             }
@@ -235,9 +238,6 @@ public class SmallLog extends JFrame{
                 clickLabels.add(cLabel1);
                 setClickable(cLabel1);
                 this.add(cLabel1);
-                final Component rigidArea = Box.createRigidArea(new Dimension(0, V_GAP));
-                cLabel1.setVerticalSpace(rigidArea);
-                this.add(rigidArea);
                 update();
                 smallLog.repaint();
 
@@ -246,10 +246,9 @@ public class SmallLog extends JFrame{
                 ClickLabel cLabel = new ClickLabel(smallLog, PROMPT + colorizeCommand(line, ACTION, "red"));
                 clickLabels.add(cLabel);
                 setClickable(cLabel);
+                setDraggable(cLabel);
+
                 this.add(cLabel);
-                final Component rigidArea = Box.createRigidArea(new Dimension(0, V_GAP));
-                cLabel.setVerticalSpace(rigidArea);
-                this.add(rigidArea);
                 this.revalidate();
                 this.repaint();
                 smallLog.repaint();
@@ -258,9 +257,6 @@ public class SmallLog extends JFrame{
                 clickLabels.add(cLabel);
                 setClickable(cLabel);
                 this.add(cLabel);
-                final Component rigidArea = Box.createRigidArea(new Dimension(0, V_GAP));
-                cLabel.setVerticalSpace(rigidArea);
-                this.add(rigidArea);
                 this.repaint();
                 this.revalidate();
                 smallLog.repaint();
@@ -284,7 +280,6 @@ public class SmallLog extends JFrame{
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2 && !e.isConsumed()) {
-                        e.consume();
                         final String text = clickLabel.getText();
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
@@ -298,30 +293,121 @@ public class SmallLog extends JFrame{
                             }
                         });
                     } else {
-                        e.consume();
+                        //shift
                         if (Shortcutter.isShiftPressed && lastClicked != -1){
                             int current = clickLabels.indexOf(clickLabel);
                             int last = lastClicked;
                             if (last > current) {
-                                for(int i = last - 1; i >= current; i-- ){
-                                    flip(clickLabels.get(i));
+                                for(int i = last - 1; i > current; i-- ){
+                                    flip(clickLabels.get(i), true);
                                 }
+                                pivot.move(current);
                             } else if (last < current) {
-                                for(int i = last + 1; i <= current; i++ ){
-                                    flip(clickLabels.get(i));
+                                for(int i = last + 1; i < current; i++ ){
+                                    flip(clickLabels.get(i), true);
                                 }
+                                pivot.move(current);
                             }
                         } else {
-                            e.consume();
                             flip(clickLabel);
                         }
                     }
                 }
+
+                @Override
+                public void mouseReleased(MouseEvent mouseEvent) {
+                    System.out.println("mouse released");
+//                    System.out.println(Arrays.toString(clickLabel.getParent().getComponents()));
+                    for (Component component : clickLabel.getParent().getComponents()) {
+                        if(component instanceof ClickLabel && !component.equals(clickLabel)) {
+                            Point p = new Point((int) (mouseEvent.getLocationOnScreen().getX() - clickLabel.getParent().getLocationOnScreen().getX()), (int) (mouseEvent.getLocationOnScreen().getY() - clickLabel.getParent().getLocationOnScreen().getY()));
+                            Rectangle r = component.getBounds();
+                            if (r.contains(p)) {
+                                System.out.println(((ClickLabel) component).getText());
+                                clickLabel.getParent().add(clickLabel, clickLabels.indexOf(((ClickLabel) component)));
+
+                                //swap clickLabels in the model
+                                int i = clickLabels.indexOf(clickLabel);
+                                int j = clickLabels.indexOf(((ClickLabel) component));
+                                if (j > i) {
+                                    clickLabels.add(clickLabels.indexOf(((ClickLabel) component)) + 1, clickLabel);
+                                    clickLabels.remove(i);
+                                    System.out.println("remove i:" + i);
+                                }
+                                else {
+                                    clickLabels.add(clickLabels.indexOf(((ClickLabel) component)), clickLabel);
+                                    clickLabels.remove(i + 1);
+                                    System.out.println("remove (i + 1):" + (i + 1));
+                                }
+
+                                System.out.println("--------------");
+                                for (ClickLabel label : clickLabels) {
+                                    System.out.println(label.getText());
+                                }
+                                System.out.println("+++++++++++++++++");
+                            }
+
+                        }
+                        update();
+                    }
+
+                }
+            });
+
+
+        }
+
+        private void setDraggable(final ClickLabel clickLabel){
+            clickLabel.addMouseMotionListener(new MouseMotionListener() {
+                @Override
+                public void mouseDragged(MouseEvent mouseEvent) {
+//                    System.out.println("===[ClickLabel:" + clickLabel.getText() + "]===(Event" + mouseEvent.toString() + ")");
+//                    System.out.println("X: " + mouseEvent.getX());
+//                    System.out.println("Y: " + mouseEvent.getY());
+//                    System.out.println("---------------");
+//                    System.out.println("X (on screen):" + mouseEvent.getXOnScreen());
+//                    System.out.println("Y (on screen): " + mouseEvent.getYOnScreen());
+//                    System.out.println("==============");
+
+//                    clickLabel.setLocation(new Point(mouseEvent.getX(), mouseEvent.getY()));
+                    clickLabel.setBounds((int) (mouseEvent.getXOnScreen() - clickLabel.getParent().getLocationOnScreen().getX()), (int) (mouseEvent.getYOnScreen() - clickLabel.getParent().getLocationOnScreen().getY()), clickLabel.getWidth(), clickLabel.getHeight());
+                    clickLabel.invalidate();
+                    clickLabel.repaint();
+                }
+
+                @Override
+                public void mouseMoved(MouseEvent mouseEvent) {
+                }
+
+
             });
         }
 
         public void flip(ClickLabel cl){
             if(!cl.selected) {
+                cl.setBackground(cl.selectedColor);
+                repaint();
+                smallLog.repaint();
+                cl.selected = true;
+                if (clickLabels != null) {
+                    lastClicked = clickLabels.indexOf(cl);
+                    pivot.move(lastClicked);
+                }
+            } else {
+                cl.setBackground(bck);
+                repaint();
+                smallLog.repaint();
+                cl.selected = false;
+//                if (pivot == clickLabels.indexOf(cl)) movePivot(-1);
+                if (clickLabels != null) {
+                    lastClicked = clickLabels.indexOf(cl);
+                    pivot.move(lastClicked);
+                }
+            }
+        }
+
+        public void flip(ClickLabel cl, boolean flip_to_selected){
+            if(flip_to_selected) {
                 cl.setBackground(cl.selectedColor);
                 repaint();
                 smallLog.repaint();
