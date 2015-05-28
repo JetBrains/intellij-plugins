@@ -104,14 +104,15 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     val sorting = setOf("Export-Package", "Import-Package")
 
     JarFile(extension(module).getJarFileLocation()).use {
-      val actual = it.getManifest()!!.getMainAttributes()!!.filter {
-        if (it.key.toString() in instrumental) false
-        else if (it.key.toString() in required) { assertNotNull(it.getValue()); false }
-        else true
-      }.map {
-        val str = it.value.toString()
-        "${it.key}=${if (it.key in sorting) str.split(',').sort().join(",") else str}"
-      }.toSet()
+      val actual = it.getManifest()!!.getMainAttributes()!!
+          .map { Pair(it.key.toString(), it.value.toString()) }
+          .filter {
+            if (it.first in instrumental) false
+            else if (it.first in required) { assertNotNull(it.second); false }
+            else true
+          }
+          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sort().join(",") else it.second}" }
+          .toSet()
       assertEquals(expected, actual)
     }
   }
