@@ -158,11 +158,11 @@ public class BndWrapper {
   /**
    * Builds the .jar file for the given module.
    */
-  public void build(@NotNull Map<String, String> properties, @NotNull File classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws Exception {
+  public void build(@NotNull Map<String, String> properties, @NotNull File[] classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws Exception {
     Builder builder = new ReportingBuilder(myReporter);
     builder.setProperties(OrderedProperties.fromMap(properties));
     builder.setPedantic(false);
-    builder.setClasspath(new File[]{classPath});
+    builder.setClasspath(classPath);
     builder.setSourcepath(srcPath);
 
     doBuild(builder, outputFile);
@@ -171,7 +171,7 @@ public class BndWrapper {
   /**
    * Builds the .jar file for the given module.
    */
-  public void build(@NotNull File bndFile, @NotNull File classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws Exception {
+  public void build(@NotNull File bndFile, @NotNull File[] classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws Exception {
     Builder builder;
 
     Workspace workspace = Workspace.findWorkspace(bndFile);
@@ -184,7 +184,7 @@ public class BndWrapper {
       builder = new ReportingBuilder(myReporter);
       builder.setProperties(bndFile);
       builder.setPedantic(false);
-      builder.setClasspath(new File[]{classPath});
+      builder.setClasspath(classPath);
       builder.setSourcepath(srcPath);
     }
 

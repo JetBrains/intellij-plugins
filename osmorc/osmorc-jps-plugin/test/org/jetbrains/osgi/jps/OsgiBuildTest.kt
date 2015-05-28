@@ -82,6 +82,20 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
+  fun testCompositeBundle() {
+    bndBuild(myModule)
+    val subModule = module("util", false)
+    myModule.getDependenciesList().addModuleDependency(subModule)
+
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nPrivate-Package: main,util")
+    createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return util.Util.GREET; } }")
+    createFile("util/src/util/Util.java", "package util;\npublic interface Util { String GREET = \"Hello\"; }")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Private-Package=main,util"))
+  }
+
   fun testRebuild() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
@@ -108,11 +122,12 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
   fun testRebuildOnDependencyChange() {
     bndBuild(myModule)
-    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
-    createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return Sub.GREET; } }")
     val subModule = module("sub", false)
-    createFile("sub/src/main/Sub.java", "package main;\npublic interface Sub { String GREET = \"Hello\"; }")
     myModule.getDependenciesList().addModuleDependency(subModule)
+
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main;-split-package:=merge-first")
+    createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return Sub.GREET; } }")
+    createFile("sub/src/main/Sub.java", "package main;\npublic interface Sub { String GREET = \"Hello\"; }")
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertUpToDate()
 

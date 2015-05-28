@@ -31,10 +31,7 @@ import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.DoneSomethingNotification;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.module.JpsDependencyElement;
-import org.jetbrains.jps.model.module.JpsLibraryDependency;
-import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.model.module.*;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -74,6 +71,7 @@ public class OsgiBuildSession implements Reporter {
   private File myOutputJarFile;
   private File myModuleOutputDir;
   private File myOutputDir;
+  private File[] myClasses;
   private File[] mySources;
   private BndWrapper myBndWrapper;
   private String mySourceToReport = null;
@@ -127,6 +125,20 @@ public class OsgiBuildSession implements Reporter {
       throw new OsgiBuildException("Cannot create directory for bundle file '" + myOutputJarFile + "'.");
     }
 
+    List<File> classes = ContainerUtil.newSmartList(myModuleOutputDir);
+    for (JpsDependencyElement dependency : myModule.getDependenciesList().getDependencies()) {
+      if (dependency instanceof JpsModuleDependency) {
+        JpsModule module = ((JpsModuleDependency)dependency).getModule();
+        if (module != null && JpsOsmorcExtensionService.getExtension(module) == null) {
+          File outputDir = JpsJavaExtensionService.getInstance().getOutputDirectory(module, false);
+          if (outputDir != null) {
+            classes.add(outputDir);
+          }
+        }
+      }
+    }
+    myClasses = classes.toArray(new File[classes.size()]);
+
     mySources = ContainerUtil.map2Array(myModule.getSourceRoots(), File.class, new Function<JpsModuleSourceRoot, File>() {
       @Override
       public File fun(JpsModuleSourceRoot root) {
@@ -149,7 +161,7 @@ public class OsgiBuildSession implements Reporter {
 
       mySourceToReport = bndFile.getAbsolutePath();
       try {
-        myBndWrapper.build(bndFile, myModuleOutputDir, mySources, myOutputJarFile);
+        myBndWrapper.build(bndFile, myClasses, mySources, myOutputJarFile);
       }
       catch (Exception e) {
         throw new OsgiBuildException("Unexpected build error", e, null);
@@ -167,7 +179,7 @@ public class OsgiBuildSession implements Reporter {
 
       try {
         Map<String, String> properties = Collections.singletonMap(Constants.CREATED_BY, "IntelliJ IDEA / OSGi Plugin");
-        myBndWrapper.build(properties, myModuleOutputDir, mySources, tempFile);
+        myBndWrapper.build(properties, myClasses, mySources, tempFile);
       }
       catch (Exception e) {
         throw new OsgiBuildException("Unexpected build error", e, null);
@@ -195,7 +207,7 @@ public class OsgiBuildSession implements Reporter {
 
       mySourceToReport = getSourceFileToReport();
       try {
-        myBndWrapper.build(buildProperties, myModuleOutputDir, mySources, myOutputJarFile);
+        myBndWrapper.build(buildProperties, myClasses, mySources, myOutputJarFile);
       }
       catch (Exception e) {
         throw new OsgiBuildException("Unexpected build error", e, null);
