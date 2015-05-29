@@ -105,6 +105,7 @@ public class DartWrappingProcessor {
         if (mySettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE) {
           //if (!FormatterUtil.isPrecededBy(child, QUEST) &&
           //    !FormatterUtil.isPrecededBy(child, COLON)) {
+          // TODO Allow ? and : to align on two continuation lines.
           if (childType == QUEST || childType == COLON) {
             return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.TERNARY_OPERATION_WRAP), true);
           }

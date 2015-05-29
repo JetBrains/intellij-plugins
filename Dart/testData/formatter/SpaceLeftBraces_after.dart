@@ -42,7 +42,7 @@ class Foo {
   }
 
   Foo(int n, int m){
-    tmp = new Array<Array<Int> >();
+    tmp = new Array<Array<Int>>();
     for (int i; i < 10; ++i)
       tmp.push(new Array<Int>());
   }

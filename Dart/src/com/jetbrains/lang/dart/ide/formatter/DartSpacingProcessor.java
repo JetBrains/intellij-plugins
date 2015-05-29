@@ -306,6 +306,9 @@ public class DartSpacingProcessor {
       return addLineBreak();
     }
 
+    if (type1 == LBRACKET && type2 == RBRACKET) {
+      return noSpace();
+    }
     if (type1 == COMMA &&
         (elementType == FORMAL_PARAMETER_LIST || elementType == ARGUMENT_LIST || elementType == NORMAL_FORMAL_PARAMETER)) {
       return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA_IN_TYPE_ARGUMENTS);
@@ -385,6 +388,25 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(0, 1, preserveNewline, true, 0);
     }
 
+    if (elementType == NAMED_ARGUMENT) {
+      if (type1 == COLON) {
+        return addSingleSpaceIf(true);
+      }
+      if (type2 == COLON) {
+        return noSpace();
+      }
+    }
+    if (elementType == TYPE_ARGUMENTS && type1 == LT || type2 == GT) {
+      return noSpace();
+    }
+    if (elementType == IS_EXPRESSION) {
+      if (type1 == NOT) {
+        return addSingleSpaceIf(true);
+      }
+      if (type2 == NOT) {
+        return noSpace();
+      }
+    }
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
@@ -400,6 +422,10 @@ public class DartSpacingProcessor {
     final int spaces = condition ? 1 : 0;
     final int lines = linesFeed ? 1 : 0;
     return Spacing.createSpacing(spaces, spaces, lines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+  }
+
+  private Spacing noSpace() {
+    return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, 0);
   }
 
   private Spacing setBraceSpace(boolean needSpaceSetting,
