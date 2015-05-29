@@ -45,13 +45,11 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:97  conditional operands are nested");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:107  index expressions can split after \"[\"");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:112  index arguments nest");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:14  is!");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:18  generic list literal");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:22");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:27  empty map literal (dartbug.com/16382)");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:35  generic map literal");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:47  long string literal");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:64  DO use a space after : in named arguments.");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:72  sequential \"-\" operators are not joined");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:76  a \"-\" operator before a negative integer is not joined");
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:80  a \"-\" operator before a negative floating point number is not joined");
