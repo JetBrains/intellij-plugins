@@ -64,7 +64,11 @@
     <lang.rearranger language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.arrangement.ActionScriptRearranger"/>
     <structureViewBuilder key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfStructureViewBuilderProvider"/>
 
-    <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
+    <psi.referenceContributor language="XML" implementation="com.intellij.javascript.flex.FlexConfigXmlReferenceContributor"/>
+    <psi.referenceContributor language="CSS" implementation="com.intellij.javascript.flex.FlexCssReferenceContributor"/>
+    <psi.referenceContributor language="ECMA Script Level 4" implementation="com.intellij.javascript.flex.ActionScriptReferenceContributor"/>
+    <psi.referenceContributor language="Mxml" implementation="com.intellij.javascript.flex.MxmlReferenceContributor"/>
+
     <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.flex.FlexFileReferenceHelper"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
     <codeInsight.overrideMethod language="Mxml"
