@@ -20,17 +20,16 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,13 +77,14 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
   @NonNls
   @NotNull
   public String getDemoText() {
-    final URL resourceUrl = getClass().getResource("SampleDocument.md");
-    if (resourceUrl != null) {
-      try {
-        return FileUtil.loadFile(new File(resourceUrl.toURI()));
-      } catch (IOException ignored) {
-      } catch (URISyntaxException ignored) {
-      }
+    final InputStream stream = getClass().getResourceAsStream("SampleDocument.md");
+
+    try {
+      final String result = StreamUtil.readText(stream, CharsetToolkit.UTF8);
+      stream.close();
+      return result;
+    }
+    catch (IOException ignored) {
     }
 
     return "*error loading text*";
