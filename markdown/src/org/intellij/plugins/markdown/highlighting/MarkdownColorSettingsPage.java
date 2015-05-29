@@ -21,6 +21,7 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.jetbrains.annotations.NonNls;
@@ -82,7 +83,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
     try {
       final String result = StreamUtil.readText(stream, CharsetToolkit.UTF8);
       stream.close();
-      return result;
+      return StringUtil.convertLineSeparators(result);
     }
     catch (IOException ignored) {
     }
