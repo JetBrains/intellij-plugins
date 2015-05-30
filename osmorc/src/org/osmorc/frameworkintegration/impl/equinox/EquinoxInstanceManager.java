@@ -24,6 +24,7 @@
  */
 package org.osmorc.frameworkintegration.impl.equinox;
 
+import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
@@ -44,11 +45,11 @@ public class EquinoxInstanceManager extends AbstractFrameworkInstanceManager {
   @NotNull
   @Override
   public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
-    if (type == FrameworkBundleType.SHELL) {
+    if (type == FrameworkBundleType.SHELL && VersionComparatorUtil.compare(instance.getVersion(), "3.8") < 0) {
       return Collections.singleton(new SelectedBundle(SelectedBundle.BundleType.FrameworkBundle, "Equinox built-in console", null));
     }
     else {
-      return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, EquinoxRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 0);
+      return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, EquinoxRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 3);
     }
   }
 }

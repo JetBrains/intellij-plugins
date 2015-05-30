@@ -28,6 +28,7 @@ import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
@@ -85,7 +86,9 @@ public class EquinoxRunner extends AbstractFrameworkRunner {
 
     if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
       vmParameters.addProperty("osgi.console");
-      vmParameters.addProperty("osgi.console.enable.builtin", "true");
+      if (VersionComparatorUtil.compare(myInstance.getVersion(), "3.8") < 0) {
+        vmParameters.addProperty("osgi.console.enable.builtin", "true");
+      }
     }
 
     vmParameters.addProperty("osgi.clean", "true");
