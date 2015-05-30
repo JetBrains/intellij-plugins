@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/*
+ * $Id: dcc87462b393fad83bf5cd7bfcb09c42950e5fd7 $
+ * 
+ * Copyright (c) OSGi Alliance (2005, 2008). All Rights Reserved.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.osgi.org/xmlns/scr/v1.0.0"
+        xmlns:scr="http://www.osgi.org/xmlns/scr/v1.0.0"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified">
+
+  <annotation>
+    <documentation xml:lang="en">
+      This is the XML Schema for component descriptions used by the Service Component Runtime (SCR).
+      Component description documents may be embedded in other XML documents. The SCR will
+      process all XML documents listed in the Service-Component manifest header of a bundle.
+      XML documents containing component descriptions may contain a single, root component
+      element or one or more component elements embedded in a larger document. Use of the
+      namespace is optional if the document only contains a root component element. In this
+      case, the scr namespace is assumed. Otherwise the namespace must be used.
+    </documentation>
+  </annotation>
+
+  <element name="component" type="scr:Tcomponent"/>
+
+  <complexType name="Tcomponent">
+    <annotation>
+      <documentation xml:lang="en">
+        Implementations of SCR must not require component descriptions to specify the subelements
+        of the component element in the order as required by the schema. SCR implementations must
+        allow other orderings since arbitrary orderings do not affect the meaning of the component
+        description. Only the relative ordering of property and properties element have meaning.
+      </documentation>
+    </annotation>
+    <sequence>
+      <element name="implementation" type="scr:Timplementation" minOccurs="1" maxOccurs="1"/>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element name="property" type="scr:Tproperty"/>
+        <element name="properties" type="scr:Tproperties"/>
+      </choice>
+      <element name="service" type="scr:Tservice" minOccurs="0" maxOccurs="1"/>
+      <element name="reference" type="scr:Treference" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="enabled" type="boolean" default="true" use="optional"/>
+    <attribute name="name" type="token" use="required"/>
+    <attribute name="factory" type="string" use="optional"/>
+    <attribute name="immediate" type="boolean" use="optional"/>
+  </complexType>
+
+  <complexType name="Timplementation">
+    <attribute name="class" type="token" use="required"/>
+  </complexType>
+
+  <complexType name="Tproperty">
+    <simpleContent>
+      <extension base="string">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="optional"/>
+        <attribute name="type" type="scr:Tjava-types" default="String" use="optional"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+  <complexType name="Tproperties">
+    <attribute name="entry" type="string" use="required"/>
+  </complexType>
+
+  <complexType name="Tservice">
+    <sequence>
+      <element name="provide" type="scr:Tprovide" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="servicefactory" type="boolean" default="false" use="optional"/>
+  </complexType>
+
+  <complexType name="Tprovide">
+    <attribute name="interface" type="token" use="required"/>
+  </complexType>
+
+  <complexType name="Treference">
+    <attribute name="name" type="NMTOKEN" use="required"/>
+    <attribute name="interface" type="token" use="required"/>
+    <attribute name="cardinality" type="scr:Tcardinality" default="1..1" use="optional"/>
+    <attribute name="policy" type="scr:Tpolicy" default="static" use="optional"/>
+    <attribute name="target" type="string" use="optional"/>
+    <attribute name="bind" type="token" use="optional"/>
+    <attribute name="unbind" type="token" use="optional"/>
+  </complexType>
+
+  <simpleType name="Tjava-types">
+    <restriction base="string">
+      <enumeration value="String"/>
+      <enumeration value="Long"/>
+      <enumeration value="Double"/>
+      <enumeration value="Float"/>
+      <enumeration value="Integer"/>
+      <enumeration value="Byte"/>
+      <enumeration value="Character"/>
+      <enumeration value="Boolean"/>
+      <enumeration value="Short"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="Tcardinality">
+    <restriction base="string">
+      <enumeration value="0..1"/>
+      <enumeration value="0..n"/>
+      <enumeration value="1..1"/>
+      <enumeration value="1..n"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="Tpolicy">
+    <restriction base="string">
+      <enumeration value="static"/>
+      <enumeration value="dynamic"/>
+    </restriction>
+  </simpleType>
+
+</schema>

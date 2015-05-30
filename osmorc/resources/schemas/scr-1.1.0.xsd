@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * $Id: 6c6652ac32830af915993ec9c289e3442ccf2249 $
+ *
+ * Copyright (c) OSGi Alliance (2005, 2009). All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+        targetNamespace="http://www.osgi.org/xmlns/scr/v1.1.0"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="1.1.0">
+
+  <annotation>
+    <documentation xml:lang="en">
+      This is the XML Schema for component descriptions used by
+      the Service Component Runtime (SCR). Component description
+      documents may be embedded in other XML documents. SCR will
+      process all XML documents listed in the Service-Component
+      manifest header of a bundle. XML documents containing
+      component descriptions may contain a single, root component
+      element or one or more component elements embedded in a
+      larger document. Use of the namespace for component
+      descriptions is mandatory. The attributes and subelements
+      of a component element are always unqualified.
+    </documentation>
+  </annotation>
+  <element name="component" type="scr:Tcomponent"/>
+  <complexType name="Tcomponent">
+    <sequence>
+      <annotation>
+        <documentation xml:lang="en">
+          Implementations of SCR must not require component
+          descriptions to specify the subelements of the component
+          element in the order as required by the schema. SCR
+          implementations must allow other orderings since
+          arbitrary orderings do not affect the meaning of the
+          component description. Only the relative ordering of
+          property and properties element have meaning.
+        </documentation>
+      </annotation>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element name="property" type="scr:Tproperty"/>
+        <element name="properties" type="scr:Tproperties"/>
+      </choice>
+      <element name="service" type="scr:Tservice" minOccurs="0"
+               maxOccurs="1"/>
+      <element name="reference" type="scr:Treference"
+               minOccurs="0" maxOccurs="unbounded"/>
+      <element name="implementation" type="scr:Timplementation"
+               minOccurs="1" maxOccurs="1"/>
+      <any namespace="##any" processContents="lax" minOccurs="0"
+           maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="enabled" type="boolean" default="true"
+               use="optional"/>
+    <attribute name="name" type="token" use="optional">
+      <annotation>
+        <documentation xml:lang="en">
+          The default value of this attribute is the value of
+          the class attribute of the nested implementation
+          element. If multiple component elements use the same
+          value for the class attribute of their nested
+          implementation element, then using the default value
+          for this attribute will result in duplicate names.
+          In this case, this attribute must be specified with
+          a unique value.
+        </documentation>
+      </annotation>
+    </attribute>
+    <attribute name="factory" type="string" use="optional"/>
+    <attribute name="immediate" type="boolean" use="optional"/>
+    <attribute name="configuration-policy"
+               type="scr:Tconfiguration-policy" default="optional" use="optional"/>
+    <attribute name="activate" type="token" use="optional"
+               default="activate"/>
+    <attribute name="deactivate" type="token" use="optional"
+               default="deactivate"/>
+    <attribute name="modified" type="token" use="optional"/>
+    <anyAttribute/>
+  </complexType>
+  <complexType name="Timplementation">
+    <sequence>
+      <any namespace="##any" processContents="lax" minOccurs="0"
+           maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="class" type="token" use="required"/>
+    <anyAttribute/>
+  </complexType>
+  <complexType name="Tproperty">
+    <simpleContent>
+      <extension base="string">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="optional"/>
+        <attribute name="type" type="scr:Tjava-types"
+                   default="String" use="optional"/>
+        <anyAttribute/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="Tproperties">
+    <sequence>
+      <any namespace="##any" processContents="lax" minOccurs="0"
+           maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="entry" type="string" use="required"/>
+    <anyAttribute/>
+  </complexType>
+  <complexType name="Tservice">
+    <sequence>
+      <element name="provide" type="scr:Tprovide" minOccurs="1"
+               maxOccurs="unbounded"/>
+      <!-- It is non-deterministic, per W3C XML Schema 1.0:
+      http://www.w3.org/TR/xmlschema-1/#cos-nonambig
+      to use name space="##any" below. -->
+      <any namespace="##other" processContents="lax" minOccurs="0"
+           maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="servicefactory" type="boolean" default="false"
+               use="optional"/>
+    <anyAttribute/>
+  </complexType>
+  <complexType name="Tprovide">
+    <sequence>
+      <any namespace="##any" processContents="lax" minOccurs="0"
+           maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="interface" type="token" use="required"/>
+    <anyAttribute/>
+  </complexType>
+  <complexType name="Treference">
+    <sequence>
+      <any namespace="##any" processContents="lax" minOccurs="0"
+           maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="name" type="token" use="optional">
+      <annotation>
+        <documentation xml:lang="en">
+          The default value of this attribute is the value of
+          the interface attribute of this element. If multiple
+          instances of this element within a component element
+          use the same value for the interface attribute, then
+          using the default value for this attribute will result
+          in duplicate names. In this case, this attribute
+          must be specified with a unique value.
+        </documentation>
+      </annotation>
+    </attribute>
+    <attribute name="interface" type="token" use="required"/>
+    <attribute name="cardinality" type="scr:Tcardinality"
+               default="1..1" use="optional"/>
+    <attribute name="policy" type="scr:Tpolicy" default="static"
+               use="optional"/>
+    <attribute name="target" type="string" use="optional"/>
+    <attribute name="bind" type="token" use="optional"/>
+    <attribute name="unbind" type="token" use="optional"/>
+    <anyAttribute/>
+  </complexType>
+  <simpleType name="Tjava-types">
+    <restriction base="string">
+      <enumeration value="String"/>
+      <enumeration value="Long"/>
+      <enumeration value="Double"/>
+      <enumeration value="Float"/>
+      <enumeration value="Integer"/>
+      <enumeration value="Byte"/>
+      <enumeration value="Character"/>
+      <enumeration value="Boolean"/>
+      <enumeration value="Short"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="Tcardinality">
+    <restriction base="string">
+      <enumeration value="0..1"/>
+      <enumeration value="0..n"/>
+      <enumeration value="1..1"/>
+      <enumeration value="1..n"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="Tpolicy">
+    <restriction base="string">
+      <enumeration value="static"/>
+      <enumeration value="dynamic"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="Tconfiguration-policy">
+    <restriction base="string">
+      <enumeration value="optional"/>
+      <enumeration value="require"/>
+      <enumeration value="ignore"/>
+    </restriction>
+  </simpleType>
+  <attribute name="must-understand" type="boolean">
+    <annotation>
+      <documentation xml:lang="en">
+        This attribute should be used by extensions to documents
+        to require that the document consumer understand the
+        extension. This attribute must be qualified when used.
+      </documentation>
+    </annotation>
+  </attribute>
+</schema>
