@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -91,7 +91,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
 
   @Override
   public Sdk getSdk() {
-    final Sdk sdk = super.getSdk();
+    final Sdk sdk = IdeaTestUtil.getMockJdk18();
     if (webXmlUrl != null) {
       IdeaTestUtil.addWebJarsTo(sdk);
     }
