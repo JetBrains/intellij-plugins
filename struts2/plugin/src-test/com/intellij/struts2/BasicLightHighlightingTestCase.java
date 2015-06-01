@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -101,15 +101,18 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   @Override
   protected final void tearDown() throws Exception {
-
-    performTearDown();
-    // clear existing StrutsFacet configuration before running next test
-    final StrutsFacet existing = StrutsFacet.getInstance(myModule);
-    if (existing != null) {
-      existing.getConfiguration().getFileSets().clear();
+    try {
+      performTearDown();
     }
+    finally {
+      // clear existing StrutsFacet configuration before running next test
+      final StrutsFacet existing = StrutsFacet.getInstance(myModule);
+      if (existing != null) {
+        existing.getConfiguration().getFileSets().clear();
+      }
 
-    super.tearDown();
+      super.tearDown();
+    }
   }
 
   /**
