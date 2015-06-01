@@ -97,7 +97,7 @@ public class ConvertToLocalFix implements LocalQuickFix {
     else {
       newDeclaration = anchorBlock.addBefore(varStatement, anchorElement);
     }
-    CodeStyleManager.getInstance(project).reformat(anchorBlock);
+    CodeStyleManager.getInstance(project).reformatNewlyAddedElement(anchorBlock.getParent().getNode(), anchorBlock.getNode());
 
     if (newDeclaration != null) {
       PsiFile psiFile = myField.getContainingFile();
