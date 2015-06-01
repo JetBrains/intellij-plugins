@@ -16,6 +16,7 @@
 package org.intellij.plugins.markdown.lang;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import icons.MarkdownIcons;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +51,6 @@ public class MarkdownFileType extends LanguageFileType {
   @Nullable
   @Override
   public Icon getIcon() {
-    return null;
+    return MarkdownIcons.MarkdownPlugin;
   }
 }
