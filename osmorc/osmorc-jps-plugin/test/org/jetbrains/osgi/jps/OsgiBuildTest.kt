@@ -38,6 +38,17 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
+  fun testBndProjectNotSpecified() {
+    bndBuild(myModule)
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/res/skipped.txt", "(empty)")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))
+  }
+
   fun testBndtoolsProject() {
     bndBuild(myModule)
     createFile("cnf/build.bnd", "src=src\nbin=out")
@@ -57,6 +68,17 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+  }
+
+  fun testIdeaProjectNotSpecified() {
+    ideaBuild(myModule)
+    extension(myModule).getProperties().myAdditionalProperties = emptyMap()
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/res/skipped.txt", "(empty)")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))
   }
 
   fun testIdeaProjectWithImpl() {
@@ -103,6 +125,18 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     makeAll().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class", "readme.txt"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+  }
+
+  fun testEmptyMavenProjectNotSpecified() {
+    ideaBuild(myModule)
+    extension(myModule).getProperties().myAdditionalProperties = emptyMap()
+    createMavenConfig(myModule)
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/res/readme.txt", "Hiya there.")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "readme.txt"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
