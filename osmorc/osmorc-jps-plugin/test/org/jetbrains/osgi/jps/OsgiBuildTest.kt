@@ -121,10 +121,9 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     createMavenConfig(myModule)
     createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
     createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
-    createFile("main/res/readme.txt", "Hiya there.")
     makeAll().assertSuccessful()
 
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class", "readme.txt"))
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
@@ -133,10 +132,9 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     extension(myModule).getProperties().myAdditionalProperties = emptyMap()
     createMavenConfig(myModule)
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    createFile("main/res/readme.txt", "Hiya there.")
     makeAll().assertSuccessful()
 
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "readme.txt"))
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
@@ -146,12 +144,24 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     extension(myModule).getProperties().myAdditionalProperties = mapOf("Private-Package" to "util")
     createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
     createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
-    createFile("main/res/readme.txt", "Hiya there.")
     makeAll().assertSuccessful()
 
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class", "readme.txt"))
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0",
         "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\""))
+  }
+
+  fun testMavenResources() {
+    ideaBuild(myModule)
+    createMavenConfig(myModule)
+    extension(myModule).getProperties().myAdditionalProperties = mapOf("Include-Resource" to "included.txt=${getAbsolutePath("main/res/included.txt")}")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/res/included.txt", "")
+    createFile("main/res/excluded.txt", "")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "included.txt"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
   fun testCompositeBundle() {

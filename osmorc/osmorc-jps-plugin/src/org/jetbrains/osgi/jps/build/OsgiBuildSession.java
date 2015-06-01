@@ -254,10 +254,6 @@ public class OsgiBuildSession implements Reporter {
       resources.add(contentEntry.myDestination + '=' + contentEntry.mySource);
     }
 
-    if (isMaven && myExtension.isOsmorcControlsManifest()) {
-      resources.add(myModuleOutputDir.getPath());
-    }
-
     if (!resources.isEmpty()) {
       properties.put(Constants.INCLUDE_RESOURCE, StringUtil.join(resources, ","));
     }
