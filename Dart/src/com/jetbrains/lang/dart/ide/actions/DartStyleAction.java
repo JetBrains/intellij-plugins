@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -44,7 +43,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DartStyleAction extends AnAction implements DumbAware {
@@ -92,6 +90,7 @@ public class DartStyleAction extends AnAction implements DumbAware {
     if (editor != null) {
       final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
       // visible for any Dart file, but enabled for applicable only
+      presentation.setText(DartBundle.message("dart.style.action.name"));
       presentation.setVisible(psiFile != null && psiFile.getFileType() == DartFileType.INSTANCE);
       presentation.setEnabled(isApplicableFile(psiFile));
       return;
@@ -102,6 +101,8 @@ public class DartStyleAction extends AnAction implements DumbAware {
       presentation.setEnabledAndVisible(false);
       return;
     }
+
+    presentation.setText(DartBundle.message("dart.style.action.name.ellipsis")); // because with dialog
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     presentation.setEnabledAndVisible(sdk != null &&
@@ -266,12 +267,9 @@ public class DartStyleAction extends AnAction implements DumbAware {
       Messages.showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("dart.style.action.name"));
       return;
     }
-    final List<String> dartFilePaths = new ArrayList<String>(dartFiles.size());
-    for (VirtualFile virtualFile : dartFiles) {
-      dartFilePaths.add(FileUtil.toSystemDependentName(virtualFile.getPath()));
-    }
-    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", StringUtil.join(dartFilePaths, ", \n")),
-                                    DartBundle.message("dart.style.action.name"), DartIcons.Dart_16) != Messages.OK) {
+
+    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", dartFiles.size()),
+                                    DartBundle.message("dart.style.action.name"), null) != Messages.OK) {
       return;
     }
 
@@ -296,7 +294,6 @@ public class DartStyleAction extends AnAction implements DumbAware {
             document.setText(sourceEdit.getReplacement());
           }
         }
-        FileDocumentManager.getInstance().saveAllDocuments();
       }
     };
 
