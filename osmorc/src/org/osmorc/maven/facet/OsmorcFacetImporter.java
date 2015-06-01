@@ -165,7 +165,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     }
 
     // now post-process the settings, to make Embed-Dependency work
-    ImporterUtil.postProcessAdditionalProperties(props, mavenProject);
+    ImporterUtil.postProcessAdditionalProperties(props, mavenProject, module.getProject());
 
     // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
     conf.importAdditionalProperties(props, true);

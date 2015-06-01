@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.maven.facet;
 
 import aQute.bnd.header.Parameters;
@@ -5,6 +20,7 @@ import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Constants;
 import aQute.bnd.header.OSGiHeader;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +30,7 @@ import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.osgi.jps.build.FakeAnalyzer;
 import org.osmorc.OsmorcProjectComponent;
+import org.osmorc.i18n.OsmorcBundle;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -149,34 +166,29 @@ public class ImporterUtil {
 
   /**
    * Postprocessing step which handles Embed-Dependency and replaces placeholders on Import-Resources etc.
-   *
-   * @param props   the properties
-   * @param project the maven project.
    */
-  static void postProcessAdditionalProperties(@NotNull Map<String, String> props, @NotNull MavenProject project) {
+  static void postProcessAdditionalProperties(@NotNull Map<String, String> props,
+                                              @NotNull MavenProject mavenProject,
+                                              @NotNull Project project) {
     Analyzer myFakeAnalyzer = new FakeAnalyzer(props);
-    Collection<MavenArtifact> dependencies = collectDependencies(props, project);
+    Collection<MavenArtifact> dependencies = collectDependencies(props, mavenProject);
 
     DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
     try {
       embedder.processHeaders(myFakeAnalyzer);
     }
     catch (DependencyEmbedderException e) {
-      OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
-        .createNotification("Error when processing Embed-Dependency directive in " + project.getPath() + ": " + e.getMessage(),
-                            NotificationType.ERROR).notify(null);
+      String message = OsmorcBundle.message("maven.import.embed.error", mavenProject.getPath(), e.getMessage());
+      OsmorcProjectComponent.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.ERROR).notify(project);
     }
-    ResourceCollector.includeMavenResources(project, myFakeAnalyzer);
+    ResourceCollector.includeMavenResources(mavenProject, myFakeAnalyzer);
 
-    // finally postprocess the Include-Resources header to account for backslashes and relative paths
-    sanitizeIncludedResources(props, project);
+    // finally post-process the Include-Resources header to account for backslashes and relative paths
+    sanitizeIncludedResources(props, mavenProject);
   }
 
   /**
    * Sanitizes the Include-Resource header by resolving relative paths to the maven project's root and converting backslashes to slashes.
-   *
-   * @param props   the properties with the headers from the maven project.
-   * @param project the maven project.
    */
   private static void sanitizeIncludedResources(@NotNull Map<String, String> props, @NotNull MavenProject project) {
     String includeResourceHeader = props.get(Constants.INCLUDE_RESOURCE);

@@ -66,7 +66,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcProjectComponent implements ProjectComponent {
-  public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION =
+  public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
   private final Application myApplication;

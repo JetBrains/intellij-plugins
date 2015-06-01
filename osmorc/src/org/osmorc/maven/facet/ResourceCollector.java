@@ -22,14 +22,12 @@ package org.osmorc.maven.facet;
 
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Constants;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenResource;
 import org.jetbrains.idea.maven.project.MavenProject;
-import org.osmorc.OsmorcProjectComponent;
 
 import java.io.File;
 import java.util.*;
@@ -41,14 +39,14 @@ public class ResourceCollector {
   private static final String MAVEN_RESOURCES = "{maven-resources}";
   private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
-  public static void includeMavenResources(@NotNull MavenProject currentProject, @NotNull Analyzer analyzer) {
+  public static void includeMavenResources(@NotNull MavenProject mavenProject, @NotNull Analyzer analyzer) {
     // pass maven resource paths onto BND analyzer
-    final String mavenResourcePaths = getMavenResourcePaths(currentProject);
-    final String includeResource = analyzer.getProperty(Constants.INCLUDE_RESOURCE);
+    String includeResource = analyzer.getProperty(Constants.INCLUDE_RESOURCE);
     if (includeResource != null) {
       if (includeResource.contains(MAVEN_RESOURCES)) {
         // if there is no maven resource path, we do a special treatment and replace
         // every occurrence of MAVEN_RESOURCES and a following comma with an empty string
+        String mavenResourcePaths = getMavenResourcePaths(mavenProject);
         if (mavenResourcePaths.length() == 0) {
           String cleanedResource = ImporterUtil.removeTagFromInstruction(includeResource, MAVEN_RESOURCES);
           if (cleanedResource.length() > 0) {
@@ -63,15 +61,12 @@ public class ResourceCollector {
           analyzer.setProperty(Constants.INCLUDE_RESOURCE, combinedResource);
         }
       }
-      else if (mavenResourcePaths.length() > 0) {
-        OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
-          .createNotification(Constants.INCLUDE_RESOURCE + ": overriding " + mavenResourcePaths + " with " + includeResource
-                              + " (add " + MAVEN_RESOURCES + " if you want to include the maven resources)", MessageType.WARNING)
-          .notify(null);
-      }
     }
-    else if (mavenResourcePaths.length() > 0) {
-      analyzer.setProperty(Constants.INCLUDE_RESOURCE, mavenResourcePaths);
+    else {
+      String mavenResourcePaths = getMavenResourcePaths(mavenProject);
+      if (mavenResourcePaths.length() > 0) {
+        analyzer.setProperty(Constants.INCLUDE_RESOURCE, mavenResourcePaths);
+      }
     }
   }
 

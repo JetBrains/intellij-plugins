@@ -154,9 +154,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
         setManifestGenerationMode(ManifestGenerationMode.Manually);
       }
       else {
-        OsmorcProjectComponent.IMPORTANT_ERROR_NOTIFICATION
-          .createNotification("The configuration at least one OSGi facet is invalid and has been reset. Please check your facet settings!",
-                              NotificationType.WARNING).notify(null);
+        String message = "The configuration at least one OSGi facet is invalid and has been reset. Please check your facet settings!";
+        OsmorcProjectComponent.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
       }
     }
     else {
