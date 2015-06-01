@@ -17,7 +17,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -25,12 +24,14 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.ui.LightweightHint;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
@@ -68,8 +69,12 @@ public class DartStyleAction extends AnAction implements DumbAware {
       runDartStyleOverEditor(project, editor);
     }
     else {
-      final VirtualFile[] files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-      final List<VirtualFile> vFiles = getApplicableVirtualFiles(project, files);
+      final DartSdk sdk = DartSdk.getDartSdk(project);
+      final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+
+      if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk) || filesAndDirs == null) return;
+
+      final List<VirtualFile> vFiles = getApplicableVirtualFiles(project, sdk, filesAndDirs);
       runDartStyleOverVirtualFiles(project, vFiles);
     }
   }
@@ -92,19 +97,16 @@ public class DartStyleAction extends AnAction implements DumbAware {
       return;
     }
 
-    final VirtualFile[] files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-    if (files == null) {
+    final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+    if (filesAndDirs == null) {
       presentation.setEnabledAndVisible(false);
       return;
     }
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk) || !mayHaveApplicableVirtualFiles(files)) {
-      presentation.setEnabledAndVisible(false);
-      return;
-    }
-
-    presentation.setEnabledAndVisible(true);
+    presentation.setEnabledAndVisible(sdk != null &&
+                                      DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk) &&
+                                      mayHaveApplicableDartFiles(project, sdk, filesAndDirs));
   }
 
   private static boolean isApplicableFile(@Nullable final PsiFile psiFile) {
@@ -123,43 +125,70 @@ public class DartStyleAction extends AnAction implements DumbAware {
     return true;
   }
 
-  private static boolean mayHaveApplicableVirtualFiles(@NotNull final VirtualFile[] files) {
-    for (VirtualFile file : files) {
-      if (file.isDirectory() || file.getFileType() == DartFileType.INSTANCE) {
+  private static boolean isApplicableFile(@NotNull final Project project, @NotNull final DartSdk dartSdk, @NotNull final VirtualFile file) {
+    if (file.getFileType() != DartFileType.INSTANCE) return false;
+
+    final Module module = ModuleUtilCore.findModuleForFile(file, project);
+    if (module == null) return false;
+
+    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, dartSdk.getGlobalLibName())) return false;
+
+    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(project, file)) return false;
+
+    return true;
+  }
+
+  private static boolean mayHaveApplicableDartFiles(@NotNull final Project project,
+                                                    @NotNull final DartSdk dartSdk,
+                                                    @NotNull final VirtualFile[] files) {
+    for (VirtualFile fileOrDir : files) {
+      if (!fileOrDir.isDirectory() && isApplicableFile(project, dartSdk, fileOrDir)) {
         return true;
       }
     }
+
+    for (VirtualFile fileOrDir : files) {
+      if (fileOrDir.isDirectory() &&
+          FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScopesCore.directoryScope(project, fileOrDir, true))) {
+        return true;
+      }
+    }
+
     return false;
   }
 
   @NotNull
-  private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project, @Nullable final VirtualFile[] files) {
-    final List<VirtualFile> dartFiles = new ArrayList<VirtualFile>();
-    if (files == null) return dartFiles;
+  private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project,
+                                                             @NotNull final DartSdk dartSdk,
+                                                             @NotNull final VirtualFile[] filesAndDirs) {
+    final List<VirtualFile> result = new SmartList<VirtualFile>();
 
-    for (VirtualFile virtualFile : files) {
-      VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor() {
-        @NotNull
-        @Override
-        public Result visitFileEx(@NotNull VirtualFile file) {
-          if (file.isDirectory() || file.getFileType() != DartFileType.INSTANCE) return CONTINUE;
+    GlobalSearchScope dirScope = null;
 
-          final Module module = ModuleUtilCore.findModuleForFile(file, project);
-          if (module == null) return CONTINUE;
-
-          final DartSdk sdk = DartSdk.getDartSdk(project);
-          if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk)) return CONTINUE;
-
-          if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return CONTINUE;
-
-          if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(project, file)) return CONTINUE;
-
-          dartFiles.add(file);
-          return CONTINUE;
+    for (VirtualFile fileOrDir : filesAndDirs) {
+      if (fileOrDir.isDirectory()) {
+        if (dirScope == null) {
+          dirScope = GlobalSearchScopesCore.directoryScope(project, fileOrDir, true);
         }
-      });
+        else {
+          dirScope = dirScope.union(GlobalSearchScopesCore.directoryScope(project, fileOrDir, true));
+        }
+      }
+      else if (isApplicableFile(project, dartSdk, fileOrDir)) {
+        result.add(fileOrDir);
+      }
     }
-    return dartFiles;
+
+    if (dirScope != null) {
+      for (VirtualFile file : FileTypeIndex.getFiles(DartFileType.INSTANCE,
+                                                     GlobalSearchScope.projectScope(project).intersectWith(dirScope))) {
+        if (isApplicableFile(project, dartSdk, file)) {
+          result.add(file);
+        }
+      }
+    }
+
+    return result;
   }
 
   private static void runDartStyleOverEditor(@NotNull final Project project, @NotNull final Editor editor) {

@@ -209,6 +209,7 @@
             text="Reformat with Dart Style" description="Format your Dart code using the dart_style formatter">
       <add-to-group group-id="CodeFormatGroup" anchor="last"/>
       <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu1" anchor="after"/>
+      <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="before" relative-to-action="$Delete"/>
     </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
             text="Constructor">
