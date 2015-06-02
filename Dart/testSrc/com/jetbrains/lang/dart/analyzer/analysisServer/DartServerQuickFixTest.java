@@ -43,7 +43,7 @@ public abstract class DartServerQuickFixTest extends CodeInsightFixtureTestCase 
     if (!fixAvailable) return;
 
     if (fileUpdatedByFix != null) {
-      // todo This is a workaround because BaseCreateFix.navigate() that is called in DartServerFixIntention.invoke() behaves differently in test environment.
+      // todo This is a workaround because DartServerFixIntention.navigate() behaves differently in test environment.
       // Would be great to remove this code and instead check that correct editor becomes open after fix.invoke()
       myFixture.openFileInEditor(fileUpdatedByFix);
     }

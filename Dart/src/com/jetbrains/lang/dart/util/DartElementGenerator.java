@@ -90,12 +90,6 @@ public class DartElementGenerator {
   }
 
   @Nullable
-  public static DartPartStatement createPartStatementFromPath(Project myProject, String path) {
-    final PsiFile dummyFile = createDummyFile(myProject, "part '" + path + "';");
-    return PsiTreeUtil.getChildOfType(dummyFile, DartPartStatement.class);
-  }
-
-  @Nullable
   public static PsiElement createTopLevelStatementFromText(Project myProject, String text) {
     final PsiFile file = createDummyFile(myProject, text);
     return file.getFirstChild();

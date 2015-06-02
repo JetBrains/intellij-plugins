@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.validation.fixes;
+package com.jetbrains.lang.dart.fixes;
 
 import com.google.dart.server.generated.types.*;
 import com.intellij.CommonBundle;
@@ -12,7 +12,8 @@ import com.intellij.codeInsight.template.*;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -243,7 +244,7 @@ public final class DartServerFixIntention implements IntentionAction {
 
     addContents(template, sourceEdit);
 
-    final Editor targetEditor = BaseCreateFix.navigate(project, virtualFile, sourceEdit.getOffset());
+    final Editor targetEditor = navigate(project, virtualFile, sourceEdit.getOffset());
     if (targetEditor != null) {
       templateManager.startTemplate(targetEditor, template);
     }
@@ -286,5 +287,15 @@ public final class DartServerFixIntention implements IntentionAction {
       }
     }
     return info;
+  }
+
+  @Nullable
+  private static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
+    final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file, offset);
+    descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
+    descriptor.navigate(true);
+
+    final FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file);
+    return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
   }
 }
