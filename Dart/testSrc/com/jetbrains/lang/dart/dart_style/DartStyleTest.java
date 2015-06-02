@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.dart_style;
 
+import com.intellij.idea.Bombed;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -12,6 +13,7 @@ import gnu.trove.THashSet;
 import junit.framework.ComparisonFailure;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -406,6 +408,8 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("comments");
   }
 
+  @Bombed(year = 2015, month = Calendar.NOVEMBER, day = 12, user = "alexander.doroshko",
+    description = "The test behaves completely different on build server compared to local run")
   public void testSelections() throws Exception {
     runTestInDirectory("selections");
   }
