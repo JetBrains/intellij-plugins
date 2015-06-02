@@ -180,7 +180,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     } else {
       fqnPendingException = "cucumber.runtime.PendingException";
     }
-    StringBuilder snippet = escapePattern( generator.getSnippet(cucumberStep).replace("PendingException", fqnPendingException));
+    StringBuilder snippet = escapePattern( generator.getSnippet(cucumberStep, null).replace("PendingException", fqnPendingException));
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
   }

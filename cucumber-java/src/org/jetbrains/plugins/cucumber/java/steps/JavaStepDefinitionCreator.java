@@ -24,7 +24,9 @@ import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.util.CreateClassUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
-import cucumber.runtime.java.JavaSnippet;
+import cucumber.runtime.snippets.CamelCaseConcatenator;
+import cucumber.runtime.snippets.FunctionNameGenerator;
+import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
@@ -34,6 +36,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Andrey.Vokin
@@ -105,10 +108,10 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
   @Override
   public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String name) {
-    if(name.length() == 0) return false;
-    if (! Character.isJavaIdentifierStart(name.charAt(0))) return false;
+    if (name.length() == 0) return false;
+    if (!Character.isJavaIdentifierStart(name.charAt(0))) return false;
     for (int i = 1; i < name.length(); i++) {
-      if (! Character.isJavaIdentifierPart(name.charAt(i))) return false;
+      if (!Character.isJavaIdentifierPart(name.charAt(i))) return false;
     }
     return true;
   }
@@ -197,7 +200,9 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     String methodAnnotation = String.format("@%s.", annotationPackage);
 
     final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
-    final String snippet = new SnippetGenerator(new JavaSnippet()).getSnippet(cucumberStep)
+    final SnippetGenerator generator = new SnippetGenerator(new JavaSnippet());
+
+    final String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()))
       .replace("PendingException", CucumberJavaUtil.getCucumberPendingExceptionFqn(step))
       .replaceFirst("@", methodAnnotation)
       .replaceAll("\\\\\\\\", "\\\\")
@@ -206,4 +211,42 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
     return factory.createMethodFromText(snippet, step);
   }
+
+  private static class JavaSnippet implements Snippet {
+    public JavaSnippet() {}
+
+    public String arguments(List<Class<?>> argumentTypes) {
+      StringBuilder result = new StringBuilder();
+      for (int i = 0; i < argumentTypes.size(); i++) {
+        Class<?> arg = argumentTypes.get(i);
+        if (i > 0) {
+          result.append(", ");
+        }
+        result.append(arg.getSimpleName()).append(" arg").append(i);
+      }
+
+      return result.toString();
+    }
+
+    public String template() {
+      return "@{0}(\"{1}\")\npublic void {2}({3}) throws Throwable \'{\'\n    // {4}\n{5}    throw new PendingException();\n\'}\'\n";
+    }
+
+    public String tableHint() {
+      return "";
+    }
+
+    public String namedGroupStart() {
+      return null;
+    }
+
+    public String namedGroupEnd() {
+      return null;
+    }
+
+    public String escapePattern(String pattern) {
+      return pattern.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+  }
 }
+
