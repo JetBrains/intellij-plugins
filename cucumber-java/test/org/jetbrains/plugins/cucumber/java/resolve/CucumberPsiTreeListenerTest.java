@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
   public void testCreationOfStepDefinition() throws Exception {
-    doTestCreation("treeListener", "I p<caret>ay 25", "@cucumber.annotation.en.When(\"^I pay (\\\\d+)$\")\npublic void i_pay(int amount) {}");
+    doTestCreation("treeListener", "I p<caret>ay 25", "@cucumber.api.java.en.When(\"^I pay (\\\\d+)$\")\npublic void i_pay(int amount) {}");
   }
 
   public void testDeletionOfStepDefinition() throws Exception {

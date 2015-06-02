@@ -1,6 +1,6 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.annotation.en.Given;
+import cucumber.api.java.en.Given;
 
 public class CreateAllStepDefs {
     @Given("^step$")

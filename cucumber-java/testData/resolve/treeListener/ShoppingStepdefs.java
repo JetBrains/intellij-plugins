@@ -1,4 +1,4 @@
-import cucumber.annotation.en.Then;
+import cucumber.api.java.en.Then;
 
 public class ShoppingStepdefs {
   @Then("^my change should be (\\d+)$")

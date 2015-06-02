@@ -10,7 +10,7 @@ public abstract class CucumberJavaBaseInspectionTest extends JavaCodeInsightFixt
   public void setUp() throws Exception {
     super.setUp();
 
-    myFixture.addClass("package cucumber.annotation.en;\n" +
+    myFixture.addClass("package cucumber.api.java.en;\n" +
                        "\n" +
                        "import java.lang.annotation.ElementType;\n" +
                        "import java.lang.annotation.Retention;\n" +

@@ -18,7 +18,9 @@ public class CucumberJavaTestUtil {
     return new DefaultLightProjectDescriptor() {
       @Override
       public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-        PsiTestUtil.addLibrary(module, model, "cucumber-java", PathManager.getHomePath() + "/community/lib", "cucumber-java-1.0.14.jar");
+        PsiTestUtil.addLibrary(module, model, "cucumber-java", PathManager.getHomePath() + "/community/lib", "cucumber-java-1.2.2.jar");
+        PsiTestUtil.addLibrary(module, model, "cucumber-core", PathManager.getHomePath() + "/community/lib", "cucumber-core-1.2.2.jar");
+        PsiTestUtil.addLibrary(module, model, "cucumber-jvm-deps", PathManager.getHomePath() + "/community/lib", "cucumber-jvm-deps-1.0.3.jar");
       }
     };
   }
