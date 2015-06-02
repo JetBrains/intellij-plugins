@@ -48,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
@@ -251,27 +252,31 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       });
 
-    final THashSet<String> newExcludedUrls = collectFoldersToExclude(module, pubspecYamlFile);
+    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(module, pubspecYamlFile, true);
 
     if (oldExcludedUrls.size() != newExcludedUrls.size() || !newExcludedUrls.containsAll(oldExcludedUrls)) {
       ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedUrls, newExcludedUrls);
     }
   }
 
-  private static THashSet<String> collectFoldersToExclude(final Module module, final VirtualFile pubspecYamlFile) {
+  public static Set<String> collectFolderUrlsToExclude(@NotNull final Module module,
+                                                       @NotNull final VirtualFile pubspecYamlFile,
+                                                       final boolean withDotPubAndBuild) {
     final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
 
-    // java.io.File is used here because exclusion is done before FS refresh (in order not to trigger indexing of files that are going to be excluded)
-    final File pubFolder = new File(root.getPath() + "/.pub");
-    if (pubFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild(".pub") != null) {
-      newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
-    }
+    if (withDotPubAndBuild) {
+      // java.io.File is used here because exclusion is done before FS refresh (in order not to trigger indexing of files that are going to be excluded)
+      final File pubFolder = new File(root.getPath() + "/.pub");
+      if (pubFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild(".pub") != null) {
+        newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
+      }
 
-    final File buildFolder = new File(root.getPath() + "/build");
-    if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
-      newExcludedPackagesUrls.add(root.getUrl() + "/build");
+      final File buildFolder = new File(root.getPath() + "/build");
+      if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
+        newExcludedPackagesUrls.add(root.getUrl() + "/build");
+      }
     }
 
     final VirtualFile binFolder = root.findChild("bin");
