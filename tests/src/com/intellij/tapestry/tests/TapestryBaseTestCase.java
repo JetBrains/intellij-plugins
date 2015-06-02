@@ -73,10 +73,14 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    myFixture.tearDown();
-    myFixture = null;
-    myModule = null;
-    super.tearDown();
+    try {
+      myFixture.tearDown();
+    }
+    finally {
+      myFixture = null;
+      myModule = null;
+      super.tearDown();
+    }
   }
 
   protected TapestryFacet createFacet() {
