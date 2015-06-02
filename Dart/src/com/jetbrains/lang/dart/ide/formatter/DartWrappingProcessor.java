@@ -38,9 +38,10 @@ public class DartWrappingProcessor {
           return createWrap(true); // Allow first arg to wrap.
         }
         if (!mySettings.PREFER_PARAMETERS_WRAP && childWrap != null) {
+          // Not used; PREFER_PARAMETERS_WRAP cannot be changed in the UI.
           return Wrap.createChildWrap(childWrap, WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), true);
         }
-        return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), true);
+        return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), false);
       }
     }
 
@@ -56,7 +57,18 @@ public class DartWrappingProcessor {
       }
     }
 
-    if (elementType == CALL_EXPRESSION) {
+    //
+    // Wrap after arrows.
+    //
+    if (elementType == FUNCTION_BODY) {
+      if (FormatterUtil.isPrecededBy(child, EXPRESSION_BODY_DEF)) {
+        return createWrap(true);
+      }
+    }
+    if (childType == CALL_EXPRESSION) {
+      if (FormatterUtil.isPrecededBy(child, EXPRESSION_BODY_DEF)) {
+        return createWrap(true);
+      }
       if (mySettings.CALL_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
         if (childType == RPAREN) {
           return createWrap(mySettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE);
@@ -116,6 +128,11 @@ public class DartWrappingProcessor {
       }
       return Wrap.createWrap(WrapType.NONE, true);
     }
+
+    if (childType == HIDE_COMBINATOR || childType == SHOW_COMBINATOR) {
+      return createWrap(true);
+    }
+
     return defaultWrap;
   }
 

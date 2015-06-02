@@ -46,18 +46,12 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:97  conditional operands are nested");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:107  index expressions can split after \"[\"");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:112  index arguments nest");
-    KNOWN_TO_FAIL.add("splitting/exports.unit:6  export keeps shows on one line");
-    KNOWN_TO_FAIL.add("splitting/exports.unit:10  export moves all shows to next line");
     KNOWN_TO_FAIL.add("splitting/exports.unit:15  export moves all shows each to their own line");
-    KNOWN_TO_FAIL.add("splitting/exports.unit:27  export keeps hides on one line");
-    KNOWN_TO_FAIL.add("splitting/exports.unit:31  export moves hides to next line");
     KNOWN_TO_FAIL.add("splitting/exports.unit:36  export moves hides each to their own line");
-    KNOWN_TO_FAIL.add("splitting/exports.unit:48  single line both");
     KNOWN_TO_FAIL.add("splitting/exports.unit:52  multiline first");
     KNOWN_TO_FAIL.add("splitting/exports.unit:64  multiline second");
     KNOWN_TO_FAIL.add("splitting/exports.unit:76  multiline both");
     KNOWN_TO_FAIL.add("splitting/exports.unit:94  multiline both");
-    KNOWN_TO_FAIL.add("splitting/exports.unit:112  double line both");
     KNOWN_TO_FAIL.add("splitting/exports.unit:118  force both keywords to split even if first would fit on first line");
     KNOWN_TO_FAIL.add("splitting/exports.unit:124  force split in list");
     KNOWN_TO_FAIL.add("whitespace/for.stmt:2  DO place spaces around in, and after each ; in a loop.");
@@ -126,9 +120,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/statements.stmt:14  continue with line comment");
     KNOWN_TO_FAIL.add("comments/statements.stmt:32  do with line comment");
     KNOWN_TO_FAIL.add("regression/25.stmt:1");
-    KNOWN_TO_FAIL.add("regression/25.stmt:7  (indent 8)");
     KNOWN_TO_FAIL.add("regression/25.stmt:13  (indent 8)");
-    KNOWN_TO_FAIL.add("regression/25.stmt:19  (indent 2)");
     KNOWN_TO_FAIL.add("whitespace/do.stmt:2  empty");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:34  single-expression then body");
@@ -205,7 +197,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/functions.unit:106  before \"}\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:110  after \"{\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:114");
-    KNOWN_TO_FAIL.add("splitting/members.unit:2  prefers to wrap at => before params");
     KNOWN_TO_FAIL.add("whitespace/methods.unit:2");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:12  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:17  initializer fits one line");
@@ -216,7 +207,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:44  multiple variables get their own line if any has an initializer #16849");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:49");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:58  dartbug.com/16379");
-    KNOWN_TO_FAIL.add("whitespace/cascades.stmt:2  single cascades on same line");
+    KNOWN_TO_FAIL.add("whitespace/cascades.stmt:6  long single cascade forces multi-line");
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:30  cascades indent contained blocks (and force multi-line)");
     KNOWN_TO_FAIL.add("comments/top_level.unit:8");
     KNOWN_TO_FAIL.add("comments/top_level.unit:17");
@@ -245,8 +236,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:24  initializer doesn't fit one line, cannot be split");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:29  long function call initializer");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:34  long binary expression initializer");
-    KNOWN_TO_FAIL.add("splitting/arrows.stmt:2  do not split after \"(\"");
-    KNOWN_TO_FAIL.add("splitting/arrows.unit:2");
     KNOWN_TO_FAIL.add("whitespace/blocks.stmt:10  allow an extra newline between statements");
     KNOWN_TO_FAIL.add("whitespace/blocks.stmt:24  collapse any other newlines");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:6  wrapped assert");
@@ -278,22 +267,15 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/lists.stmt:62  dangling comma multiline");
     KNOWN_TO_FAIL.add("splitting/lists.stmt:73  nested lists are forced to split");
     KNOWN_TO_FAIL.add("splitting/imports.unit:6  wrap import at as");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:11  import keeps shows on one line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:15  import moves all shows to next line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:20  import moves all shows each to their own line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:32  import keeps hides on one line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:36  import moves hides to next line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:41  import moves hides each to their own line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:53  single line both");
     KNOWN_TO_FAIL.add("splitting/imports.unit:57  multiline first");
     KNOWN_TO_FAIL.add("splitting/imports.unit:69  multiline second");
     KNOWN_TO_FAIL.add("splitting/imports.unit:81  multiline both");
     KNOWN_TO_FAIL.add("splitting/imports.unit:99  multiline both");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:117  double line both");
     KNOWN_TO_FAIL.add("splitting/imports.unit:123  force both keywords to split even if first would fit on first line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:129  force split in list");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:7  prefers to wrap before \".\"");
-    KNOWN_TO_FAIL.add("splitting/mixed.stmt:14");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:19  nested expression indentation");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:26  does not extra indent when multiple levels of nesting happen on one line");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:33  forces extra indent and lines, if later line needs it");
@@ -384,7 +366,7 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("comments");
   }
 
-  @Bombed(year = 2015, month = Calendar.NOVEMBER, day = 12, user = "alexander.doroshko",
+  @Bombed(year = 2015, month = Calendar.MAY, day = 12, user = "alexander.doroshko",
     description = "The test behaves completely different on build server compared to local run")
   public void testSelections() throws Exception {
     runTestInDirectory("selections");
@@ -549,7 +531,7 @@ public class DartStyleTest extends FormatterTestCase {
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
    */
   private void runTestInDirectory(String dirName) throws Exception {
-    Pattern indentPattern = Pattern.compile("^\\(indent (\\d+)\\)\\s*");
+    Pattern indentPattern = Pattern.compile("^.*\\s\\(indent (\\d+)\\)\\s*");
 
     String testName = getTestName(true);
     if (Character.isLetter(testName.charAt(0)) && Character.isDigit(testName.charAt(testName.length() - 1))) {
@@ -583,7 +565,7 @@ public class DartStyleTest extends FormatterTestCase {
         i = 1;
       }
 
-      System.out.println("\nTest: " + dirName + "/" + testFileName + ext + ", Right margin: " + pageWidth);
+      System.out.println("\nTest: " + dirName + "/" + testFileName + ", Right margin: " + pageWidth);
       final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
       settings.RIGHT_MARGIN = pageWidth;
       settings.KEEP_LINE_BREAKS = false; // TODO Decide whether this should be the default -- risky!
@@ -599,13 +581,13 @@ public class DartStyleTest extends FormatterTestCase {
         if (matcher.matches()) {
           // The leadingIndent is only used by some tests in 'regression'.
           leadingIndent = Integer.parseInt(matcher.group(1));
-          description = description.substring(matcher.end());
+          settings.RIGHT_MARGIN = pageWidth - leadingIndent;
         }
 
         String input = "";
         // If the input isn't a top-level form, wrap everything in a function.
         // The formatter fails horribly otherwise.
-        if (!isCompilationUnit) input += "m() {\n";
+        if (!isCompilationUnit)  input += "m() {\n";
 
         while (!lines[i].startsWith("<<<")) {
           String line = lines[i++];
