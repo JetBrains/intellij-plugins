@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+  <artifact version="1.0.3" name="cucumber-jvm-deps" urlPrefix="http://central.maven.org/maven2/info/cukes/cucumber-jvm-deps/1.0.3/">
+    <item url="cucumber-jvm-deps-1.0.3.jar"/>
+  </artifact>
+</artifacts>
