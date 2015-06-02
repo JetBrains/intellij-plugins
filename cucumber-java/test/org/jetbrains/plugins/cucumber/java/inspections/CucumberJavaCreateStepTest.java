@@ -39,7 +39,7 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
       myFixture.launchAction(quickFix);
       VirtualFile expectedFile = myFixture.findFileInTempDir("CreateAllStepDefs.java");
       myFixture.openFileInEditor(expectedFile);
-      myFixture.checkResultByFile("createStep/CreateAllStepDefs_fixed.java");
+      myFixture.checkResultByFile("createStep/CreateAllStepDefs_fixed.txt");
     }
   }
 
