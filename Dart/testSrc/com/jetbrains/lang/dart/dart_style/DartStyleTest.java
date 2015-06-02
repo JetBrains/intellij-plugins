@@ -35,7 +35,6 @@ public class DartStyleTest extends FormatterTestCase {
   private static final Set<String> KNOWN_TO_FAIL = new THashSet<String>();
 
   static {
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:2  space-separated adjacent strings are not split");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:18  conditions, same operator");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:26  conditions, different operators");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:33  split conditional because then doesn't fit");
@@ -47,14 +46,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:97  conditional operands are nested");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:107  index expressions can split after \"[\"");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:112  index arguments nest");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:18  generic list literal");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:22");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:27  empty map literal (dartbug.com/16382)");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:35  generic map literal");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:47  long string literal");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:72  sequential \"-\" operators are not joined");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:76  a \"-\" operator before a negative integer is not joined");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:80  a \"-\" operator before a negative floating point number is not joined");
     KNOWN_TO_FAIL.add("splitting/exports.unit:6  export keeps shows on one line");
     KNOWN_TO_FAIL.add("splitting/exports.unit:10  export moves all shows to next line");
     KNOWN_TO_FAIL.add("splitting/exports.unit:15  export moves all shows each to their own line");
@@ -74,9 +65,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/for.stmt:56");
     KNOWN_TO_FAIL.add("whitespace/for.stmt:76  async");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:2  many arguments");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:13  wrap before first argument");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:18  wrap with just one argument");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:23");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:28  force multi-line because of contained block");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:35");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:40  arguments, nested");
@@ -107,7 +95,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/loops.stmt:43  nest wrapped initializer");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:52  split in for-in loop");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:57  split in while condition");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:2  empty map");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:10");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:18  nested unsplit map");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:23  nested split map");
@@ -146,7 +133,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:34  single-expression then body");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:44  single-expression else body");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:2  external");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:8  nested functions");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:24  async");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:39");
@@ -158,7 +144,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/functions.unit:67  async*");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:73  sync* functions");
     KNOWN_TO_FAIL.add("whitespace/directives.unit:18  collapse any other newlines");
-    KNOWN_TO_FAIL.add("whitespace/directives.unit:34  deferred");
     KNOWN_TO_FAIL.add("whitespace/directives.unit:49  no spaces between library identifiers");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:2  trailing line comment after split");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:9  trailing line comment after non-split");
@@ -198,7 +183,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:138  multiple member annotations always get their own line");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:148  parameter annotations are inline");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:158  type parameter annotations are inline");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:176  comment between metadata");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:193  metadata on parameters");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:205  metadata on function-typed formal parameter");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:213  metadata on default formal parameter");
@@ -223,7 +207,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/functions.unit:114");
     KNOWN_TO_FAIL.add("splitting/members.unit:2  prefers to wrap at => before params");
     KNOWN_TO_FAIL.add("whitespace/methods.unit:2");
-    KNOWN_TO_FAIL.add("splitting/variables.stmt:6  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:12  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:17  initializer fits one line");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:22  initializer doesn't fit one line, cannot be split");
@@ -234,8 +217,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:49");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:58  dartbug.com/16379");
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:2  single cascades on same line");
-    KNOWN_TO_FAIL.add("whitespace/cascades.stmt:6  long single cascade forces multi-line");
-    KNOWN_TO_FAIL.add("whitespace/cascades.stmt:12  multiple cascades get the same line when the method names are the same");
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:30  cascades indent contained blocks (and force multi-line)");
     KNOWN_TO_FAIL.add("comments/top_level.unit:8");
     KNOWN_TO_FAIL.add("comments/top_level.unit:17");
@@ -258,7 +239,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/top_level.unit:172  block comment after \".\" in library");
     KNOWN_TO_FAIL.add("comments/top_level.unit:176  line comment before \".\" in library");
     KNOWN_TO_FAIL.add("comments/top_level.unit:182  line comment after \".\" in library");
-    KNOWN_TO_FAIL.add("splitting/assignments.stmt:2  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:8  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:13  wrapped initializer fits one line");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:18  initializer doesn't fit one line, name too long");
@@ -269,7 +249,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/arrows.unit:2");
     KNOWN_TO_FAIL.add("whitespace/blocks.stmt:10  allow an extra newline between statements");
     KNOWN_TO_FAIL.add("whitespace/blocks.stmt:24  collapse any other newlines");
-    KNOWN_TO_FAIL.add("whitespace/blocks.stmt:48  dartbug.com/16810");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:6  wrapped assert");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:11  split in do-while condition");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:16  split in switch value");
@@ -313,7 +292,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/imports.unit:117  double line both");
     KNOWN_TO_FAIL.add("splitting/imports.unit:123  force both keywords to split even if first would fit on first line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:129  force split in list");
-    KNOWN_TO_FAIL.add("splitting/mixed.stmt:2  keeps map on one line if possible");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:7  prefers to wrap before \".\"");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:14");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:19  nested expression indentation");
@@ -322,7 +300,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:39  function inside a collection");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:51  wrap before =>");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:57  wrap after =>");
-    KNOWN_TO_FAIL.add("splitting/mixed.stmt:63  wrap at nested binary operator");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:69  list inside separable TODO(rnystrom): Is this what we want?");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:79  binary operators in ascending precedence");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:92  binary operators in descending precedence");
@@ -332,7 +309,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:143  choose extra nesting if it leads to better solution");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:2  split all chained calls if they don't fit on one line");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:13  don't split before implicit receiver");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:20  allows chained calls on one line with multi-line last argument list");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:38  allow an inline chain before a hard newline but not after");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:49  allow an inline chain after a hard newline but not before");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:60  nest calls one more than target");
@@ -610,6 +586,7 @@ public class DartStyleTest extends FormatterTestCase {
       System.out.println("\nTest: " + dirName + "/" + testFileName + ext + ", Right margin: " + pageWidth);
       final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
       settings.RIGHT_MARGIN = pageWidth;
+      settings.KEEP_LINE_BREAKS = false; // TODO Decide whether this should be the default -- risky!
 
       while (i < lines.length) {
         String description = (dirName + "/" + testFileName + ":" + (i + 1) + " " + lines[i++].replaceAll(">>>", "")).trim();

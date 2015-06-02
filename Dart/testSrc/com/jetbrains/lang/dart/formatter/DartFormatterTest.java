@@ -93,6 +93,13 @@ public class DartFormatterTest extends FormatterTestCase {
     doTest();
   }
 
+  public void testExpressions() throws Exception {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.RIGHT_MARGIN = 40;
+    settings.KEEP_LINE_BREAKS = false; // TODO Decide whether this should be the default -- risky!
+    doTest();
+  }
+
   public void testSpaceAroundOperators() throws Exception {
     final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
     settings.KEEP_LINE_BREAKS = false;

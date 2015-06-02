@@ -61,6 +61,9 @@ public class DartIndentProcessor {
       if (elementType == LBRACE || elementType == RBRACE || elementType == LBRACKET || elementType == RBRACKET) {
         return Indent.getNoneIndent();
       }
+      if (elementType == TYPE_ARGUMENTS) {
+        return Indent.getNoneIndent();
+      }
       return Indent.getNormalIndent();
     }
 

@@ -22,6 +22,7 @@ public class DartSpacingProcessor {
   private static final TokenSet CASCADE_REFERENCE_EXPRESSION_SET = TokenSet.create(CASCADE_REFERENCE_EXPRESSION);
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
   private static final TokenSet ID_SET = TokenSet.create(ID);
+  private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -43,7 +44,16 @@ public class DartSpacingProcessor {
     final ASTNode node2 = ((AbstractBlock)child2).getNode();
     final IElementType type2 = node2.getElementType();
 
-    if (SEMICOLON == type2) return Spacing.createSpacing(0, 0, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    if (type1 == SINGLE_LINE_COMMENT) {
+      // This is only an issue if !mySettings.KEEP_LINE_BREAKS but since we have to check...
+      return addSingleSpaceIf(false, true);
+    }
+    if (SEMICOLON == type2) {
+      if (type1 == SEMICOLON && elementType == STATEMENTS) {
+        return addSingleSpaceIf(false, true); // Empty statement on new line.
+      }
+      return Spacing.createSpacing(0, 0, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
     if (AT == type1) return Spacing.createSpacing(0, 0, 0, false, 0);
     if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
 
@@ -265,6 +275,15 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(mySettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS);
     }
     //
+    // Spacing between successive unary operators ( -, + )
+    //
+    if (type1 == PREFIX_OPERATOR && type2 == PREFIX_EXPRESSION) {
+      ASTNode[] childs = node2.getChildren(PREFIX_OPERATOR_SET);
+      if (childs.length > 0) {
+        return addSingleSpaceIf(isSpaceNeededBetweenPrefixOps(node1, childs[0]));
+      }
+    }
+    //
     // Spacing around  unary operators ( NOT, ++, etc.)
     //
     if (type1 == PREFIX_OPERATOR || type2 == PREFIX_OPERATOR) {
@@ -396,8 +415,10 @@ public class DartSpacingProcessor {
         return noSpace();
       }
     }
-    if (elementType == TYPE_ARGUMENTS && type1 == LT || type2 == GT) {
-      return noSpace();
+    if (elementType == TYPE_ARGUMENTS) {
+      if (type1 == LT || type2 == GT) {
+        return noSpace(); // Might want a user setting to control space within type
+      }
     }
     if (elementType == IS_EXPRESSION) {
       if (type1 == NOT) {
@@ -406,6 +427,13 @@ public class DartSpacingProcessor {
       if (type2 == NOT) {
         return noSpace();
       }
+    }
+    // No space in empty list initializer. Blocks are handled elsewhere.
+    if (type1 == LBRACE && type2 == RBRACE) {
+      return noSpace();
+    }
+    if (type1 == TYPE_ARGUMENTS && (type2 == LBRACKET || type2 == LBRACE)) {
+      return noSpace(); // Might want a user setting to control space before/after type
     }
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
@@ -478,5 +506,11 @@ public class DartSpacingProcessor {
     if (childs.length != 1) return null;
     child = childs[0];
     return child.getText();
+  }
+
+  private static boolean isSpaceNeededBetweenPrefixOps(ASTNode node1, ASTNode node2) {
+    String op1 = node1.getText();
+    String op2 = node2.getText();
+    return op1.endsWith(op2.substring(op2.length() - 1));
   }
 }
