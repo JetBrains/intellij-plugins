@@ -5,6 +5,7 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -60,7 +61,8 @@ abstract public class CreateVariableActionBase extends BaseCreateFix {
       return;
     }
 
-    final Editor openedEditor = navigate(project, anchor.getTextOffset(), anchor.getContainingFile().getVirtualFile());
+    VirtualFile file = anchor.getContainingFile().getVirtualFile();
+    final Editor openedEditor = file == null ? null : navigate(project, file, anchor.getTextOffset());
     if (openedEditor != null) {
       templateManager.startTemplate(openedEditor, template);
     }

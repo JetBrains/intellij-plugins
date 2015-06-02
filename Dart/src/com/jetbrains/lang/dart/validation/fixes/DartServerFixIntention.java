@@ -243,7 +243,7 @@ public final class DartServerFixIntention implements IntentionAction {
 
     addContents(template, sourceEdit);
 
-    final Editor targetEditor = BaseCreateFix.navigate(project, sourceEdit.getOffset(), virtualFile);
+    final Editor targetEditor = BaseCreateFix.navigate(project, virtualFile, sourceEdit.getOffset());
     if (targetEditor != null) {
       templateManager.startTemplate(targetEditor, template);
     }

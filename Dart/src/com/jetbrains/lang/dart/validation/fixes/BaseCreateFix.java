@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseCreateFix extends FixAndIntentionAction {
@@ -18,19 +19,13 @@ public abstract class BaseCreateFix extends FixAndIntentionAction {
   }
 
   @Nullable
-  protected static Editor navigate(Project project, int offset, @Nullable VirtualFile vfile) {
-    if (vfile == null) {
-      return null;
-    }
-    new OpenFileDescriptor(project, vfile, offset).navigate(true); // properly contributes to editing history
-    FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(vfile);
-    if (fileEditor instanceof TextEditor) {
-      final Editor editor = ((TextEditor)fileEditor).getEditor();
-      editor.getCaretModel().moveToOffset(offset);
-      editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
-      return editor;
-    }
-    return null;
+  protected static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
+    final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file, offset);
+    descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
+    descriptor.navigate(true);
+
+    final FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file);
+    return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
   }
 
   @Nullable
