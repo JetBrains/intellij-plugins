@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -101,6 +102,13 @@ public class DartIndentProcessor {
     if (parentType == ARGUMENTS && elementType == ARGUMENT_LIST) {
       return Indent.getContinuationIndent();
     }
+    if (parentType == ARGUMENT_LIST) {
+      // TODO In order to handle some dart_style examples we need to set indent for each arg.
+      // However, it conflicts with the previous statement, causing too much indent.
+      // Removing the previous statement in favor of this one is actually a
+      // net win, but breaks existing tests.
+      //return Indent.getContinuationIndent();
+    }
     if (parentType == FORMAL_PARAMETER_LIST) {
       return Indent.getContinuationIndent();
     }
@@ -140,7 +148,23 @@ public class DartIndentProcessor {
     if (parentType == TERNARY_EXPRESSION && elementType == QUEST || elementType == COLON) {
       return Indent.getContinuationIndent();
     }
-    return Indent.getNoneIndent();
+    if (elementType == NAMED_ARGUMENT) {
+      return Indent.getContinuationIndent();
+    }
+    if (elementType == HIDE_COMBINATOR || elementType == SHOW_COMBINATOR) {
+      return Indent.getContinuationIndent();
+    }
+    if (parentType == FUNCTION_BODY) {
+      if (FormatterUtil.isPrecededBy(node, EXPRESSION_BODY_DEF)) {
+        return Indent.getContinuationIndent();
+      }
+    }
+    if (elementType == CALL_EXPRESSION) {
+      if (FormatterUtil.isPrecededBy(node, EXPRESSION_BODY_DEF)) {
+        return Indent.getContinuationIndent();
+      }
+    }
+      return Indent.getNoneIndent();
   }
 
   private static boolean isBetweenBraces(@NotNull final ASTNode node) {

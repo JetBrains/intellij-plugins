@@ -17,7 +17,7 @@ public class DartSpacingProcessor {
   private static final TokenSet TOKENS_WITH_SPACE_AFTER = TokenSet
     .create(VAR, FINAL, STATIC, EXTERNAL, ABSTRACT, GET, SET, FACTORY, OPERATOR, PART, EXPORT, DEFERRED, AS, SHOW, HIDE, RETURN_TYPE);
 
-  private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(GET, SET, EXTENDS, IMPLEMENTS, DEFERRED, AS);
+  private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(GET, SET, EXTENDS, IMPLEMENTS, DEFERRED, AS, SHOW_COMBINATOR, HIDE_COMBINATOR);
 
   private static final TokenSet CASCADE_REFERENCE_EXPRESSION_SET = TokenSet.create(CASCADE_REFERENCE_EXPRESSION);
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
@@ -376,7 +376,7 @@ public class DartSpacingProcessor {
           return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
       }
-      else if (type1 == REFERENCE_EXPRESSION) {
+      else if (type1 == REFERENCE_EXPRESSION || isSimpleLiteral(type1)) {
         CompositeElement elem = (CompositeElement)myNode;
         ASTNode[] childs = elem.getChildren(CASCADE_REFERENCE_EXPRESSION_SET);
         if (childs.length == 1 || allCascadesAreSameMethod(childs)) {
@@ -512,5 +512,10 @@ public class DartSpacingProcessor {
     String op1 = node1.getText();
     String op2 = node2.getText();
     return op1.endsWith(op2.substring(op2.length() - 1));
+  }
+
+  private static boolean isSimpleLiteral(IElementType node) {
+    // Literals that can be cascade receivers, excluding map and list.
+    return node == STRING_LITERAL_EXPRESSION || node == NUMBER || node == TRUE || node == FALSE || node == NULL || node == THIS;
   }
 }
