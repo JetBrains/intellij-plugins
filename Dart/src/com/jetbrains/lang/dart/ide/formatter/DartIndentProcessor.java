@@ -164,7 +164,7 @@ public class DartIndentProcessor {
         return Indent.getContinuationIndent();
       }
     }
-      return Indent.getNoneIndent();
+    return Indent.getNoneIndent();
   }
 
   private static boolean isBetweenBraces(@NotNull final ASTNode node) {

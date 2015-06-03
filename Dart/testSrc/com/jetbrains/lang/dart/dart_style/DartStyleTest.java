@@ -366,7 +366,7 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("comments");
   }
 
-  @Bombed(year = 2015, month = Calendar.MAY, day = 12, user = "alexander.doroshko",
+  @Bombed(year = 2015, month = Calendar.NOVEMBER, day = 12, user = "alexander.doroshko",
     description = "The test behaves completely different on build server compared to local run")
   public void testSelections() throws Exception {
     runTestInDirectory("selections");
@@ -587,7 +587,7 @@ public class DartStyleTest extends FormatterTestCase {
         String input = "";
         // If the input isn't a top-level form, wrap everything in a function.
         // The formatter fails horribly otherwise.
-        if (!isCompilationUnit)  input += "m() {\n";
+        if (!isCompilationUnit) input += "m() {\n";
 
         while (!lines[i].startsWith("<<<")) {
           String line = lines[i++];
