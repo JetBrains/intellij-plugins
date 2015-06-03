@@ -7,6 +7,8 @@ import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -16,10 +18,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.ComponentWithBrowseButton;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.*;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
@@ -79,6 +78,7 @@ public class DartConfigurable implements SearchableConfigurable {
   private JBLabel myVersionLabel;
   private JBCheckBox myCheckSdkUpdateCheckBox;
   private ComboBox mySdkUpdateChannelCombo;
+  private JButton myCheckSdkUpdateButton;
 
   private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
   private JButton myDartiumSettingsButton;
@@ -166,6 +166,7 @@ public class DartConfigurable implements SearchableConfigurable {
       public void actionPerformed(ActionEvent e) {
         final boolean enabled = myCheckSdkUpdateCheckBox.isSelected() && myCheckSdkUpdateCheckBox.isEnabled();
         mySdkUpdateChannelCombo.setEnabled(enabled);
+        myCheckSdkUpdateButton.setEnabled(enabled);
 
         if (enabled) {
           IdeFocusManager.getInstance(myProject).requestFocus(mySdkUpdateChannelCombo, true);
@@ -180,6 +181,67 @@ public class DartConfigurable implements SearchableConfigurable {
         setText(value.getPresentableName());
       }
     });
+
+    myCheckSdkUpdateButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        final Runnable runnable = new Runnable() {
+          @Override
+          public void run() {
+            checkSdkUpdate();
+          }
+        };
+        ApplicationManagerEx.getApplicationEx()
+          .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
+      }
+    });
+  }
+
+  private void checkSdkUpdate() {
+    final String sdkHomePath = mySdkPathTextWithBrowse.getText().trim();
+    final String currentSdkVersion = myVersionLabel.getText();
+    final String currentRevisionString = sdkHomePath.isEmpty() ? "" : DartSdkUtil.readSdkRevision(sdkHomePath);
+
+    int currentRevision = 0;
+    if (currentRevisionString != null) {
+      try {
+        currentRevision = Integer.parseInt(currentRevisionString);
+      }
+      catch (NumberFormatException e) {/* ignore */}
+    }
+
+    final DartSdkUpdateChecker.SdkUpdateInfo sdkUpdateInfo =
+      DartSdkUpdateChecker.getSdkUpdateInfo((DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem());
+
+    final int finalCurrentRevision = currentRevision;
+
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if (sdkUpdateInfo == null) {
+          Messages.showErrorDialog(myProject,
+                                   DartBundle.message("dart.sdk.update.check.failed"),
+                                   DartBundle.message("dart.sdk.update.title"));
+        }
+        else if (finalCurrentRevision > sdkUpdateInfo.myRevision) {
+          Messages.showInfoMessage(myProject,
+                                   DartBundle.message("dart.sdk.current.is.later.than.latest", currentSdkVersion),
+                                   DartBundle.message("dart.sdk.update.title"));
+        }
+        else if (finalCurrentRevision == sdkUpdateInfo.myRevision) {
+          Messages.showInfoMessage(myProject,
+                                   DartBundle.message("dart.sdk.current.is.latest", currentSdkVersion),
+                                   DartBundle.message("dart.sdk.update.title"));
+        }
+        else {
+          Messages.showInfoMessage(myProject,
+                                   DartBundle.message("new.dart.sdk.available.for.dialog",
+                                                      sdkUpdateInfo.myPresentableVersion,
+                                                      sdkUpdateInfo.myDownloadUrl),
+                                   DartBundle.message("dart.sdk.update.title"));
+        }
+      }
+    }, ModalityState.defaultModalityState(), myProject.getDisposed());
   }
 
   private void initCustomPackageRootPanel() {

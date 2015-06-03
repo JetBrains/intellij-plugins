@@ -61,16 +61,27 @@ public class DartSdkUpdateChecker {
       public void run() {
         if (!project.isDisposed()) {
           PropertiesComponent.getInstance().setValue(DART_LAST_SDK_CHECK_KEY, String.valueOf(System.currentTimeMillis()));
-          doCheckForSdkUpdate(project, sdk.getVersion(), currentRevision, option);
+
+          final String currentSdkVersion = sdk.getVersion();
+          final SdkUpdateInfo sdkUpdateInfo = getSdkUpdateInfo(option);
+
+          if (sdkUpdateInfo != null &&
+              sdkUpdateInfo.myRevision > currentRevision &&
+              compareVersionsDigitsAndDotsOnly(sdkUpdateInfo.myPresentableVersion, currentSdkVersion) >= 0) {
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myPresentableVersion, sdkUpdateInfo.myDownloadUrl);
+              }
+            }, ModalityState.NON_MODAL, project.getDisposed());
+          }
         }
       }
     });
   }
 
-  private static void doCheckForSdkUpdate(@NotNull final Project project,
-                                          @NotNull final String currentSdkVersion,
-                                          final int currentRevision,
-                                          @NotNull final DartSdkUpdateOption updateOption) {
+  @Nullable
+  static SdkUpdateInfo getSdkUpdateInfo(@NotNull final DartSdkUpdateOption updateOption) {
     boolean checkForStable = updateOption == DartSdkUpdateOption.Stable || updateOption == DartSdkUpdateOption.StableAndDev;
     boolean checkForDev = updateOption == DartSdkUpdateOption.StableAndDev;
 
@@ -91,16 +102,7 @@ public class DartSdkUpdateChecker {
       sdkUpdateInfo = stableSdkInfo;
     }
 
-    if (sdkUpdateInfo != null &&
-        sdkUpdateInfo.myRevision > currentRevision &&
-        compareVersionsDigitsAndDotsOnly(sdkUpdateInfo.myPresentableVersion, currentSdkVersion) >= 0) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myPresentableVersion, sdkUpdateInfo.myDownloadUrl);
-        }
-      }, ModalityState.NON_MODAL, project.getDisposed());
-    }
+    return sdkUpdateInfo;
   }
 
   private static int compareVersionsDigitsAndDotsOnly(@NotNull final String version1, @NotNull final String version2) {
@@ -126,7 +128,8 @@ public class DartSdkUpdateChecker {
                                                @NotNull final String availableSdkVersion,
                                                @NotNull final String downloadUrl) {
     final String title = DartBundle.message("dart.sdk.update.title");
-    final String message = DartBundle.message("new.dart.sdk.available", availableSdkVersion, currentSdkVersion);
+    final String message = DartBundle.message("new.dart.sdk.available.for.notification", availableSdkVersion, currentSdkVersion);
+
     UpdateChecker.NOTIFICATIONS.createNotification(title, message, NotificationType.INFORMATION, new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
@@ -206,10 +209,10 @@ public class DartSdkUpdateChecker {
     }
   }
 
-  private static class SdkUpdateInfo {
-    @NotNull private final String myDownloadUrl;
-    @NotNull private final String myPresentableVersion;
-    private final int myRevision;
+  static class SdkUpdateInfo {
+    @NotNull final String myDownloadUrl;
+    @NotNull final String myPresentableVersion;
+    final int myRevision;
 
     public SdkUpdateInfo(@NotNull final String downloadUrl, @NotNull final String presentableVersion, final int revision) {
       myDownloadUrl = downloadUrl;
