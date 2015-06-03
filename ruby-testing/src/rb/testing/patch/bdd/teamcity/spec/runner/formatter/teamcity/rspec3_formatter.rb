@@ -132,11 +132,10 @@ module Spec
 
           # Start capturing...
           std_files = capture_output_start_external
-          started_at_ms = get_time_in_ms(example.execution_result.started_at)
 
           debug_log('Output capturing started.')
 
-          put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, '', started_at_ms, *std_files))
+          put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, '', *std_files))
         end
 
         def example_passed(example_notification)
@@ -325,13 +324,14 @@ module Spec
         def close_test_block(example)
           example_data = remove_data_from_storage(example)
           finished_at_ms = get_time_in_ms(example.execution_result.finished_at)
-          duration = finished_at_ms - example_data.start_time_in_ms
+          started_at_ms = get_time_in_ms(example.execution_result.started_at)
+          duration = finished_at_ms - started_at_ms
 
           additional_flowid_suffix = example_data.additional_flowid_suffix
           running_example_full_name = example_data.full_name
 
           debug_log("Example finishing... full example name = [#{running_example_full_name}], duration = #{duration} ms, additional flowid suffix=[#{additional_flowid_suffix}]")
-          diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" + ", f/s=(#{finished_at_ms}, #{example_data.start_time_in_ms}), duration=#{duration}, time.now=#{Time.now.to_s}, raw[:started_at]=#{example.execution_result.started_at.to_s}, raw[:finished_at]=#{example.execution_result.finished_at.to_s}, raw[:run_time]=#{example.execution_result.run_time.to_s}"
+          diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" + ", f/s=(#{finished_at_ms}, #{started_at_ms}), duration=#{duration}, time.now=#{Time.now.to_s}, raw[:started_at]=#{example.execution_result.started_at.to_s}, raw[:finished_at]=#{example.execution_result.finished_at.to_s}, raw[:run_time]=#{example.execution_result.run_time.to_s}"
 
           log(@message_factory.create_test_finished(running_example_full_name, duration, ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info))
         end
@@ -419,17 +419,15 @@ module Spec
           attr_reader :full_name # full task name, example name in build log
           #          TODO: Remove!
           attr_reader :additional_flowid_suffix # to support concurrently running examples
-          attr_reader :start_time_in_ms # start time of example
           attr_reader :stdout_file_old # before capture
           attr_reader :stderr_file_old # before capture
           attr_reader :stdout_file_new #current capturing storage
           attr_reader :stderr_file_new # current capturing storage
 
-          def initialize(full_name, additional_flowid_suffix, start_time_in_ms, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
+          def initialize(full_name, additional_flowid_suffix, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
             @full_name = full_name
 #          TODO: Remove!
             @additional_flowid_suffix = additional_flowid_suffix
-            @start_time_in_ms = start_time_in_ms
             @stdout_file_old = stdout_file_old
             @stderr_file_old = stderr_file_old
             @stdout_file_new = stdout_file_new
