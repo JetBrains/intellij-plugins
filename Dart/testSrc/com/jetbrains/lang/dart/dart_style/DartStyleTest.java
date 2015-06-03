@@ -366,8 +366,6 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("comments");
   }
 
-  @Bombed(year = 2015, month = Calendar.NOVEMBER, day = 12, user = "alexander.doroshko",
-    description = "The test behaves completely different on build server compared to local run")
   public void testSelections() throws Exception {
     runTestInDirectory("selections");
   }
@@ -552,7 +550,7 @@ public class DartStyleTest extends FormatterTestCase {
       }
 
       found = true;
-      String[] lines = ArrayUtil.toStringArray(FileUtil.loadLines(entry));
+      String[] lines = ArrayUtil.toStringArray(FileUtil.loadLines(entry, "UTF-8"));
       boolean isCompilationUnit = entry.getName().endsWith(".unit");
 
       // The first line may have a "|" to indicate the page width.
