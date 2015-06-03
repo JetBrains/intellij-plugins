@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.manifest.lang;
 
 import com.intellij.psi.PsiFile;
@@ -381,34 +396,15 @@ public class OsgiManifestParserTest extends LightIdeaTestCase {
            "        HeaderValuePart\n" +
            "          ManifestToken:HEADER_VALUE_PART_TOKEN('attr')\n" +
            "          ManifestToken:NEWLINE_TOKEN('\\n')\n" +
-           "    PsiErrorElement:Header expected\n" +
-           "      PsiElement(BAD_CHARACTER)('=')\n" +
-           "      PsiElement(BAD_CHARACTER)('a')\n" +
-           "      PsiElement(BAD_CHARACTER)('t')\n" +
-           "      PsiElement(BAD_CHARACTER)('t')\n" +
-           "      PsiElement(BAD_CHARACTER)('r')\n" +
-           "      PsiElement(BAD_CHARACTER)('_')\n" +
-           "      PsiElement(BAD_CHARACTER)('v')\n" +
-           "      PsiElement(BAD_CHARACTER)('a')\n" +
-           "      PsiElement(BAD_CHARACTER)('l')\n" +
-           "      PsiElement(BAD_CHARACTER)('u')\n" +
-           "      PsiElement(BAD_CHARACTER)('e')\n" +
-           "      PsiElement(BAD_CHARACTER)(';')\n" +
-           "      PsiElement(BAD_CHARACTER)('d')\n" +
-           "      PsiElement(BAD_CHARACTER)('i')\n" +
-           "      PsiElement(BAD_CHARACTER)('r')\n" +
-           "      PsiElement(BAD_CHARACTER)(':')\n" +
-           "      PsiElement(BAD_CHARACTER)('=')\n" +
-           "      PsiElement(BAD_CHARACTER)('d')\n" +
-           "      PsiElement(BAD_CHARACTER)('i')\n" +
-           "      PsiElement(BAD_CHARACTER)('r')\n" +
-           "      PsiElement(BAD_CHARACTER)('_')\n" +
-           "      PsiElement(BAD_CHARACTER)('v')\n" +
-           "      PsiElement(BAD_CHARACTER)('a')\n" +
-           "      PsiElement(BAD_CHARACTER)('l')\n" +
-           "      PsiElement(BAD_CHARACTER)('u')\n" +
-           "      PsiElement(BAD_CHARACTER)('e')\n" +
-           "      ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           "    Header:=attr_value;dir\n" +
+           "      ManifestToken:HEADER_NAME_TOKEN('=attr_value;dir')\n" +
+           "      ManifestToken:COLON_TOKEN(':')\n" +
+           "      PsiErrorElement:Whitespace expected\n" +
+           "        <empty list>\n" +
+           "      HeaderValuePart\n" +
+           "        ManifestToken:EQUALS_TOKEN('=')\n" +
+           "        ManifestToken:HEADER_VALUE_PART_TOKEN('dir_value')\n" +
+           "        ManifestToken:NEWLINE_TOKEN('\\n')\n");
   }
 
   public void testTwoClauses() {
