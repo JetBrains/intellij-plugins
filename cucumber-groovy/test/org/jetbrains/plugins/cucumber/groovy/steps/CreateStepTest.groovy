@@ -24,8 +24,8 @@ import cucumber.runtime.PendingException
 this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 
-Given(~'^a commit \\'fix\\'$') { ->
-    // Express the Regexp above with the code you wish you had
+Given(~/^a commit 'fix'$/) { ->
+    // Write code here that turns the phrase above into concrete actions
     throw new PendingException()
 }\
 ''')
@@ -42,8 +42,8 @@ import cucumber.runtime.PendingException
 this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 
-Given(~'^a commit \\'fix\\' (\\\\d+)$') { int arg1 ->
-    // Express the Regexp above with the code you wish you had
+Given(~/^a commit 'fix' (\\d+)$/) { int arg1 ->
+    // Write code here that turns the phrase above into concrete actions
     throw new PendingException()
 }\
 ''')
