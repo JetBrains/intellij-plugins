@@ -182,7 +182,7 @@
           </grid>
           <component id="93cdd" class="com.intellij.openapi.ui.ComboBox" binding="mySdkUpdateChannelCombo">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <model>
@@ -219,6 +219,14 @@
               <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
+          </component>
+          <component id="9fabb" class="javax.swing.JButton" binding="myCheckSdkUpdateButton">
+            <constraints>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Check no&amp;w"/>
+            </properties>
           </component>
         </children>
       </grid>
