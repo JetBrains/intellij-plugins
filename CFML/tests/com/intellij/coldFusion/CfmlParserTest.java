@@ -43,13 +43,14 @@ public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
 
   public void testRailoCfadminTag() throws Throwable {
     CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
+    final String languageLevel = currentState.getLanguageLevel();
     try {
       currentState.setLanguageLevel(CfmlLanguage.RAILO);
       CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
       doTest();
     }
     finally {
-      currentState.setLanguageLevel(CfmlLanguage.CF9);
+      currentState.setLanguageLevel(languageLevel);
       CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
     }
   }
