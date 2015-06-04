@@ -1,8 +1,7 @@
 package com.intellij.tapestry.core.model.externalizable.toclasschain;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import org.apache.commons.chain.impl.ChainBase;
 
 /**
@@ -10,7 +9,7 @@ import org.apache.commons.chain.impl.ChainBase;
  */
 public class ExternalizeToClassChain extends ChainBase {
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(ExternalizeToClassChain.class);
+    private static final Logger _logger = Logger.getInstance(ExternalizeToClassChain.class);
 
     private static final ExternalizeToClassChain _me = new ExternalizeToClassChain();
 

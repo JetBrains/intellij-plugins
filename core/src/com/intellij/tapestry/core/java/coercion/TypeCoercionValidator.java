@@ -1,15 +1,14 @@
 package com.intellij.tapestry.core.java.coercion;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.AssignableToAll;
 import com.intellij.tapestry.core.java.IJavaType;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.apache.commons.chain.Chain;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ChainBase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -18,7 +17,7 @@ import java.util.HashMap;
  */
 public class TypeCoercionValidator {
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(TypeCoercionValidator.class);
+    private static final Logger _logger = Logger.getInstance(TypeCoercionValidator.class);
 
     private static final Chain _chain = new ChainBase();
 
@@ -31,7 +30,7 @@ public class TypeCoercionValidator {
 
     public static boolean canCoerce(@NotNull TapestryProject project,
     								@NotNull IJavaType sourceType,
-    								@Nullable String sourceValue, 
+    								@Nullable String sourceValue,
     								@Nullable IJavaType targetType) {
         if (targetType == null)
             return false;
@@ -54,9 +53,9 @@ public class TypeCoercionValidator {
 
 @SuppressWarnings("unchecked")
 class CoercionContext extends HashMap implements Context {
-	
+
 	private static final long serialVersionUID = -185552759258249364L;
-	
+
 	private static final String PROJECT_KEY 		= "project";
     private static final String SOURCE_KEY 			= "source";
     private static final String SOURCE_VALUE_KEY 	= "source-value";
@@ -64,7 +63,7 @@ class CoercionContext extends HashMap implements Context {
     private static final String RESULT_KEY 			= "result";
 
     public CoercionContext(TapestryProject project, IJavaType sourceType, String sourceValue, IJavaType targetType) {
-    	
+
         put(PROJECT_KEY, project);
         put(SOURCE_KEY, sourceType);
         put(SOURCE_VALUE_KEY, sourceValue);
@@ -94,5 +93,5 @@ class CoercionContext extends HashMap implements Context {
     public boolean canCoerce() {
         return get(RESULT_KEY) != null && (Boolean) get(RESULT_KEY);
     }//canCoerce
-    
+
 }//CoercionContext

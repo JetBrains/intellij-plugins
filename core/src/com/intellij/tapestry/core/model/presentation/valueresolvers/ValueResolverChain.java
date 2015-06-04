@@ -1,9 +1,8 @@
 package com.intellij.tapestry.core.model.presentation.valueresolvers;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.property.PropResolver;
 import org.apache.commons.chain.impl.ChainBase;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ValueResolverChain extends ChainBase {
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(ValueResolverChain.class);
+    private static final Logger _logger = Logger.getInstance(ValueResolverChain.class);
 
     private static final ValueResolverChain _me = new ValueResolverChain();
 

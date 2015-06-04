@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.externalizable.documentation.generationchain;
 
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
@@ -14,7 +13,7 @@ import java.util.Map;
  */
 public abstract class AbstractDocumentationGenerator implements Command {
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(AbstractDocumentationGenerator.class);
+    private static final Logger _logger = Logger.getInstance(AbstractDocumentationGenerator.class);
 
     private static final String BASE_PATH = "/documentation/";
     private static final URL LOGO = AbstractDocumentationGenerator.class.getResource("/com/intellij/tapestry/core/icons/g5004.png");

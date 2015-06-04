@@ -119,12 +119,6 @@
     </group>
   </actions>
 
-  <application-components>
-    <component>
-      <implementation-class>com.intellij.tapestry.intellij.TapestryApplicationSupportLoader</implementation-class>
-    </component>
-  </application-components>
-
   <project-components>
     <component>
       <implementation-class>com.intellij.tapestry.intellij.TapestryListenersSupportLoader</implementation-class>

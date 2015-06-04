@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -10,8 +11,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToClass;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToTemplate;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
@@ -32,7 +31,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 public class ViewTransferHandler extends TransferHandler {
 
     private static final long serialVersionUID = -6485912040308583746L;
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(ViewTransferHandler.class);
+    private static final Logger _logger = Logger.getInstance(ViewTransferHandler.class);
 
     private final transient TapestryProjectViewPane _tapestryProjectViewPane;
 

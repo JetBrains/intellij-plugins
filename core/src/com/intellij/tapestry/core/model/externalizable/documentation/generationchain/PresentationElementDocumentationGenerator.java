@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.externalizable.documentation.generationchain;
 
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import org.apache.commons.chain.Context;
 
@@ -12,7 +11,7 @@ public abstract class PresentationElementDocumentationGenerator extends Abstract
 
     static final String VELOCITY_TEMPLATE = "/documentation/presentation-element.vm";
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(PresentationElementDocumentationGenerator.class);
+    private static final Logger _logger = Logger.getInstance(PresentationElementDocumentationGenerator.class);
 
     private DocumentationGenerationContext _context;
     private PresentationLibraryElement _element;

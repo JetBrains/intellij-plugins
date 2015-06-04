@@ -2,6 +2,7 @@ package com.intellij.tapestry.intellij.lang.completion;
 
 import com.intellij.codeInsight.completion.CompletionContext;
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
@@ -13,8 +14,6 @@ import com.intellij.psi.xml.XmlToken;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
@@ -33,7 +32,7 @@ import java.util.*;
  */
 public class ParameterValueContextGetter implements ContextGetter {
 
-  private static final Logger _logger = LoggerFactory.getInstance().getLogger(ParameterValueContextGetter.class);
+  private static final Logger _logger = Logger.getInstance(ParameterValueContextGetter.class);
 
   /**
    * {@inheritDoc}

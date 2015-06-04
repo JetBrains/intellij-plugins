@@ -2,16 +2,15 @@ package com.intellij.tapestry.intellij.lang.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.java.coercion.TypeCoercionValidator;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
@@ -30,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements Annotator {
 
-  private static final Logger _logger = LoggerFactory.getInstance().getLogger(TemplateTagAnnotator.class);
+  private static final Logger _logger = Logger.getInstance(TemplateTagAnnotator.class);
 
   private AnnotationHolder annotationHolder;
 

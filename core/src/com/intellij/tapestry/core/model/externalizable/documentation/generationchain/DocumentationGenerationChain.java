@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.externalizable.documentation.generationchain;
 
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
 import org.apache.commons.chain.impl.ChainBase;
 
 /**
@@ -9,7 +8,7 @@ import org.apache.commons.chain.impl.ChainBase;
  */
 public class DocumentationGenerationChain extends ChainBase {
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(DocumentationGenerationChain.class);
+    private static final Logger _logger = Logger.getInstance(DocumentationGenerationChain.class);
 
     private static final DocumentationGenerationChain _me = new DocumentationGenerationChain();
 

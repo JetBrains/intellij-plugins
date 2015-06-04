@@ -12,8 +12,6 @@ import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class IntellijJavaClassType extends IntellijJavaType implements IJavaClassType {
-
-  private static final Logger ourLogger = LoggerFactory.getInstance().getLogger(IntellijJavaClassType.class);
   @NotNull
   private final String _classFilePath;
   private PsiClassType _psiClassType;

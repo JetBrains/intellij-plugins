@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -10,8 +11,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.tapestry.core.TapestryConstants;
-import com.intellij.tapestry.core.log.Logger;
-import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.maven.MavenConfiguration;
 import com.intellij.tapestry.core.maven.MavenUtils;
 import com.intellij.tapestry.core.maven.RemoteRepositoryDescription;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 
 public class AddTapestrySupportUtil {
 
-  private static final Logger _logger = LoggerFactory.getInstance().getLogger(AddTapestrySupportUtil.class);
+  private static final Logger _logger = Logger.getInstance(AddTapestrySupportUtil.class);
 
   public static void addSupportInWriteCommandAction(@NotNull final Module module,
                                                     @NotNull final TapestryFacetConfiguration configuration,
@@ -55,7 +54,7 @@ public class AddTapestrySupportUtil {
   private static void generatePom(final Module module, TapestryFacetConfiguration configuration) throws IOException {
     ModuleRootManager rootModel = ModuleRootManager.getInstance(module);
     VirtualFile[] contentRoots = rootModel.getContentRoots();
-    
+
     if (contentRoots.length == 0) {
       _logger.warn("Couldn't generate pom because it wasn't possible to determine the module content root.");
       return;
