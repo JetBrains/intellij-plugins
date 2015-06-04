@@ -10,18 +10,19 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
-import com.intellij.openapi.util.text.CharFilter;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.HttpRequests;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DartSdkUpdateChecker {
 
@@ -35,6 +36,8 @@ public class DartSdkUpdateChecker {
   private static final String DART_LAST_SDK_CHECK_KEY = "DART_LAST_SDK_CHECK_KEY";
   private static final long CHECK_INTERVAL = TimeUnit.DAYS.toMillis(1);
 
+  private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-\\+\\.]*)");
+
   public static void mayBeCheckForSdkUpdate(@NotNull final Project project) {
     final DartSdkUpdateOption option = DartSdkUpdateOption.getDartSdkUpdateOption();
     if (option == DartSdkUpdateOption.DoNotCheck) return;
@@ -45,17 +48,6 @@ public class DartSdkUpdateChecker {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) return;
 
-    final String currentRevisionString = DartSdkUtil.readSdkRevision(sdk.getHomePath());
-    if (currentRevisionString == null) return;
-
-    final int currentRevision;
-    try {
-      currentRevision = Integer.parseInt(currentRevisionString);
-    }
-    catch (NumberFormatException e) {
-      return;
-    }
-
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
@@ -65,13 +57,11 @@ public class DartSdkUpdateChecker {
           final String currentSdkVersion = sdk.getVersion();
           final SdkUpdateInfo sdkUpdateInfo = getSdkUpdateInfo(option);
 
-          if (sdkUpdateInfo != null &&
-              sdkUpdateInfo.myRevision > currentRevision &&
-              compareVersionsDigitsAndDotsOnly(sdkUpdateInfo.myPresentableVersion, currentSdkVersion) >= 0) {
+          if (sdkUpdateInfo != null && compareDartSdkVersions(sdkUpdateInfo.myVersion, currentSdkVersion) > 0) {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
               @Override
               public void run() {
-                notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myPresentableVersion, sdkUpdateInfo.myDownloadUrl);
+                notifySdkUpdateAvailable(project, currentSdkVersion, sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
               }
             }, ModalityState.NON_MODAL, project.getDisposed());
           }
@@ -95,7 +85,7 @@ public class DartSdkUpdateChecker {
     else if (devSdkInfo == null) {
       sdkUpdateInfo = stableSdkInfo;
     }
-    else if (devSdkInfo.myRevision > stableSdkInfo.myRevision) {
+    else if (compareDartSdkVersions(devSdkInfo.myVersion, stableSdkInfo.myVersion) > 0) {
       sdkUpdateInfo = devSdkInfo;
     }
     else {
@@ -105,22 +95,41 @@ public class DartSdkUpdateChecker {
     return sdkUpdateInfo;
   }
 
-  private static int compareVersionsDigitsAndDotsOnly(@NotNull final String version1, @NotNull final String version2) {
-    final CharFilter filter = new CharFilter() {
-      @Override
-      public boolean accept(char ch) {
-        return ch != '.' && (ch < '0' || ch > '9');
-      }
-    };
+  public static int compareDartSdkVersions(@NotNull final String version1, @NotNull final String version2) {
+    // Dart SDK follows Semantic Versioning. There are 3 kind of versions:
+    // stable release like "1.11.0"
+    // dev preview like "1.11.0-dev.3.0"
+    // bleeding edge (nightly build) like "1.11.0-edge.131801"
+    // According to spec: "1.11.0" > "1.11.0-edge.131801" > "1.11.0-dev.3.0"
 
-    final int index1 = StringUtil.findFirst(version1, filter);
-    final int index2 = StringUtil.findFirst(version2, filter);
+    final Couple<String> version1Parts = getMajorMinorPatchAndRemainder(version1);
+    final Couple<String> version2Parts = getMajorMinorPatchAndRemainder(version2);
 
-    if (index1 > 0 && index2 > 0) {
-      return StringUtil.compareVersionNumbers(version1.substring(0, index1), version2.substring(0, index2));
+    if (version1Parts == null || version2Parts == null) {
+      // spec violation
+      return StringUtil.compareVersionNumbers(version1, version2);
     }
 
-    return StringUtil.compareVersionNumbers(version1, version2);
+    final String majorMinorPatch1 = version1Parts.first;
+    final String remainder1 = version1Parts.second;
+    final String majorMinorPatch2 = version2Parts.first;
+    final String remainder2 = version2Parts.second;
+
+    final int result = StringUtil.compareVersionNumbers(majorMinorPatch1, majorMinorPatch2);
+    if (result != 0 || Comparing.equal(remainder1, remainder2)) return result;
+
+    if (remainder1.isEmpty()) return 1;
+    if (remainder2.isEmpty()) return -1;
+    return StringUtil.compareVersionNumbers(remainder1, remainder2);
+  }
+
+  @Nullable
+  private static Couple<String> getMajorMinorPatchAndRemainder(@NotNull final String semanticVersion) {
+    final Matcher matcher = SEMANTIC_VERSION_PATTERN.matcher(semanticVersion);
+    if (matcher.matches()) {
+      return Couple.of(matcher.group(1), matcher.group(2));
+    }
+    return null;
   }
 
   private static void notifySdkUpdateAvailable(@NotNull final Project project,
@@ -128,7 +137,7 @@ public class DartSdkUpdateChecker {
                                                @NotNull final String availableSdkVersion,
                                                @NotNull final String downloadUrl) {
     final String title = DartBundle.message("dart.sdk.update.title");
-    final String message = DartBundle.message("new.dart.sdk.available.for.notification", availableSdkVersion, currentSdkVersion);
+    final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
     UpdateChecker.NOTIFICATIONS.createNotification(title, message, NotificationType.INFORMATION, new NotificationListener() {
       @Override
@@ -148,12 +157,13 @@ public class DartSdkUpdateChecker {
   @Nullable
   private static SdkUpdateInfo getSdkUpdateInfo(@NotNull final String updateCheckUrl, @NotNull final String sdkDownloadUrl) {
     try {
+      // { "date"     : "2015-05-28",
+      //   "version"  : "1.11.0-dev.3.0",
+      //   "revision" : "6072062d4185614c32bf96c3ba833dcc18ab4348" }
       final String versionFileContents = HttpRequests.request(updateCheckUrl).readString(null);
-      final String revisionString = parseRevisionNumberFromJSON(versionFileContents);
-      final String presentableVersion = parsePresentableVersionFromJSON(versionFileContents);
-
-      if (revisionString != null && presentableVersion != null) {
-        return new SdkUpdateInfo(sdkDownloadUrl, presentableVersion, Integer.parseInt(revisionString));
+      final String version = new JSONObject(versionFileContents).optString("version", null);
+      if (version != null) {
+        return new SdkUpdateInfo(sdkDownloadUrl, version);
       }
     }
     catch (Exception e) {/* unlucky */}
@@ -161,63 +171,13 @@ public class DartSdkUpdateChecker {
     return null;
   }
 
-  /**
-   * Parse the revision number from a JSON string.
-   * <p>
-   * Sample payload:
-   * </p>
-   * <p/>
-   * <pre>
-   * {
-   *   "revision" : "9826",
-   *   "version"  : "0.0.1_v2012070961811",
-   *   "date"     : "2012-07-09"
-   * }
-   * </pre>
-   *
-   * @param versionJSON the json
-   * @return a revision number or <code>null</code> if none can be found
-   * @throws IOException
-   */
-  @Nullable
-  private static String parseRevisionNumberFromJSON(final @NotNull String versionJSON) {
-    try {
-      final JSONObject obj = new JSONObject(versionJSON);
-      return obj.optString("revision", null);
-    }
-    catch (JSONException e) {
-      throw null;
-    }
-  }
-
-  @Nullable
-  private static String parsePresentableVersionFromJSON(final @NotNull String versionJSON) {
-    try {
-      final JSONObject obj = new JSONObject(versionJSON);
-      final String version = obj.optString("version", null);
-      if (version == null) {
-        return null;
-      }
-      final String revision = obj.optString("revision", null);
-      if (revision == null) {
-        return version; // Shouldn't happen
-      }
-      return version + "_r" + revision;
-    }
-    catch (JSONException e) {
-      throw null;
-    }
-  }
-
   static class SdkUpdateInfo {
     @NotNull final String myDownloadUrl;
-    @NotNull final String myPresentableVersion;
-    final int myRevision;
+    @NotNull final String myVersion;
 
-    public SdkUpdateInfo(@NotNull final String downloadUrl, @NotNull final String presentableVersion, final int revision) {
+    public SdkUpdateInfo(@NotNull final String downloadUrl, @NotNull final String version) {
       myDownloadUrl = downloadUrl;
-      myPresentableVersion = presentableVersion;
-      myRevision = revision;
+      myVersion = version;
     }
   }
 }

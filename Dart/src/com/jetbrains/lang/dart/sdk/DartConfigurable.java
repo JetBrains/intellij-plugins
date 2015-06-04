@@ -198,22 +198,10 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void checkSdkUpdate() {
-    final String sdkHomePath = mySdkPathTextWithBrowse.getText().trim();
     final String currentSdkVersion = myVersionLabel.getText();
-    final String currentRevisionString = sdkHomePath.isEmpty() ? "" : DartSdkUtil.readSdkRevision(sdkHomePath);
-
-    int currentRevision = 0;
-    if (currentRevisionString != null) {
-      try {
-        currentRevision = Integer.parseInt(currentRevisionString);
-      }
-      catch (NumberFormatException e) {/* ignore */}
-    }
 
     final DartSdkUpdateChecker.SdkUpdateInfo sdkUpdateInfo =
       DartSdkUpdateChecker.getSdkUpdateInfo((DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem());
-
-    final int finalCurrentRevision = currentRevision;
 
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
@@ -223,22 +211,20 @@ public class DartConfigurable implements SearchableConfigurable {
                                    DartBundle.message("dart.sdk.update.check.failed"),
                                    DartBundle.message("dart.sdk.update.title"));
         }
-        else if (finalCurrentRevision > sdkUpdateInfo.myRevision) {
-          Messages.showInfoMessage(myProject,
-                                   DartBundle.message("dart.sdk.current.is.later.than.latest", currentSdkVersion),
-                                   DartBundle.message("dart.sdk.update.title"));
-        }
-        else if (finalCurrentRevision == sdkUpdateInfo.myRevision) {
-          Messages.showInfoMessage(myProject,
-                                   DartBundle.message("dart.sdk.current.is.latest", currentSdkVersion),
-                                   DartBundle.message("dart.sdk.update.title"));
-        }
         else {
-          Messages.showInfoMessage(myProject,
-                                   DartBundle.message("new.dart.sdk.available.for.dialog",
-                                                      sdkUpdateInfo.myPresentableVersion,
-                                                      sdkUpdateInfo.myDownloadUrl),
-                                   DartBundle.message("dart.sdk.update.title"));
+          final String message;
+          if (currentSdkVersion.isEmpty()) {
+            message = DartBundle.message("dart.sdk.0.available.for.download", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
+          }
+          else if (DartSdkUpdateChecker.compareDartSdkVersions(currentSdkVersion, sdkUpdateInfo.myVersion) >= 0) {
+            message = DartBundle.message("dart.sdk.0.is.up.to.date", currentSdkVersion);
+          }
+          else {
+            message =
+              DartBundle.message("new.dart.sdk.0.available.for.download..dialog", sdkUpdateInfo.myVersion, sdkUpdateInfo.myDownloadUrl);
+          }
+
+          Messages.showInfoMessage(myProject, message, DartBundle.message("dart.sdk.update.title"));
         }
       }
     }, ModalityState.defaultModalityState(), myProject.getDisposed());
