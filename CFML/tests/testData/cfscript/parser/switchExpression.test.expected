@@ -50,17 +50,18 @@ CfmlFile:switchExpression.cfml
           PsiElement(BREAK_KEYWORD)('break')
           PsiElement(SEMICOLON)(';')
           PsiElement(R_CURLYBRACKET)('}')
-      PsiElement(DEFAULT_KEYWORD)('default')
-      PsiElement(DOTDOT)(':')
-      FunctionCallExpression
-        ReferenceExpression
-          PsiElement(IDENTIFIER)('g')
-        ArgumentList
-          PsiElement(L_BRACKET)('(')
-          PsiElement(R_BRACKET)(')')
-      PsiElement(SEMICOLON)(';')
-      PsiElement(BREAK_KEYWORD)('break')
-      PsiElement(SEMICOLON)(';')
+      CASEEXPRESSION
+        PsiElement(DEFAULT_KEYWORD)('default')
+        PsiElement(DOTDOT)(':')
+        FunctionCallExpression
+          ReferenceExpression
+            PsiElement(IDENTIFIER)('g')
+          ArgumentList
+            PsiElement(L_BRACKET)('(')
+            PsiElement(R_BRACKET)(')')
+        PsiElement(SEMICOLON)(';')
+        PsiElement(BREAK_KEYWORD)('break')
+        PsiElement(SEMICOLON)(';')
       PsiElement(R_CURLYBRACKET)('}')
     PsiElement(LSLASH_ANGLEBRACKET)('</')
     PsiElement(CF_TAG_NAME)('cfscript')

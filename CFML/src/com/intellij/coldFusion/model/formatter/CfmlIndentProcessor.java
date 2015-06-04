@@ -123,7 +123,7 @@ public class CfmlIndentProcessor extends CfmlFormatterUtil {
                  myType == CfmlElementTypes.WHILEEXPRESSION ||
                  myType == CfmlElementTypes.CASEEXPRESSION ||
                  myType == CfmlElementTypes.DOWHILEEXPRESSION ||
-                 myType == CfscriptTokenTypes.DEFAULT_KEYWORD ||
+                 myType == CfscriptTokenTypes.BREAK_KEYWORD ||
                  myType == CfmlElementTypes.TRYCATCHEXPRESSION ||
                  myType == CfmlElementTypes.FUNCTION_DEFINITION ||
                  myType == CfscriptTokenTypes.RETURN_KEYWORD ||

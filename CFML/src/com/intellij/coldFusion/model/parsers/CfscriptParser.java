@@ -577,8 +577,10 @@ public class CfscriptParser {
       parseCaseExpression(myBuilder);
     }
     if (myBuilder.getTokenType() == DEFAULT_KEYWORD) {
+      PsiBuilder.Marker caseExpressionMarker = myBuilder.mark();
       myBuilder.advanceLexer();
       parseDOTDOTAndScript(myBuilder);
+      caseExpressionMarker.done(CfmlElementTypes.CASEEXPRESSION);
     }
     while (myBuilder.getTokenType() == CASE_KEYWORD) {
       parseCaseExpression(myBuilder);
