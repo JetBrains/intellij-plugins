@@ -63,18 +63,6 @@ public class DartSdkUtil {
     return null;
   }
 
-  @Nullable
-  static String readSdkRevision(final @NotNull String sdkHomePath) {
-    final File revisionFile = new File(sdkHomePath + "/revision");
-    if (revisionFile.isFile() && revisionFile.length() < 100) {
-      try {
-        return FileUtil.loadFile(revisionFile).trim();
-      }
-      catch (IOException ignore) {/* unlucky */}
-    }
-    return null;
-  }
-
   @Contract("null->false")
   public static boolean isDartSdkHome(final String path) {
     return path != null && !path.isEmpty() && new File(path + "/lib/core/core.dart").isFile();
