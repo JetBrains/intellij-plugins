@@ -10,8 +10,7 @@ class Foo {
       this.fTwo(
           argA, argB, argC, this.fThree(
               "", argE, argF, argG, argH));
-    } catch (error, stack) {
-    }
+    } catch (error, stack) {}
     var z = argA == 'Some string' ?
             'yes' : 'no';
     var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];
