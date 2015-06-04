@@ -43,10 +43,8 @@ public class DartSdkUtil {
 
     final String version = readVersionFile(sdkHomePath);
     if (version != null) {
-      final String revision = readSdkRevision(sdkHomePath);
-      final String versionWithRevision = revision == null || version.endsWith(revision) ? version : version + "_r" + revision;
-      ourVersions.put(Pair.create(versionFile, versionFile.lastModified()), versionWithRevision);
-      return versionWithRevision;
+      ourVersions.put(Pair.create(versionFile, versionFile.lastModified()), version);
+      return version;
     }
 
     return null;
