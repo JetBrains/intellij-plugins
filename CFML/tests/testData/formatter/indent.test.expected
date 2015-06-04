@@ -93,12 +93,12 @@ gfhfghf
             switch (rejectCode[applicant]) {
                 case "score":
                     WriteOutput("Reject reason: Score was too low.<br>");
-                        break;
+                    break;
                 case "late":
                     WriteOutput("Reject reason: Application was late.<br>");
-                        break;
+                    break;
                 default:
-                WriteOutput("Rejected with invalid reason code.<br>");
+                    WriteOutput("Rejected with invalid reason code.<br>");
             } //end switch
         } //end if
         else {
@@ -139,10 +139,10 @@ gfhfghf
     switch (expression) {
         case "value1":
             t = 'd';
-                break;
+            break;
         case "value2":
             t = 'd';
-                break;
+            break;
         default: t = 'd';
     }
     function myFunction(arg1, arg2) {

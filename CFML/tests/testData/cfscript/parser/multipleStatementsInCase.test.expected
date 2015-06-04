@@ -77,15 +77,16 @@ CfmlFile:multipleStatementsInCase.cfml
           PsiElement(IDENTIFIER)('cmd')
         PsiElement(INC)('++')
         PsiElement(SEMICOLON)(';')
-      PsiElement(DEFAULT_KEYWORD)('default')
-      PsiElement(DOTDOT)(':')
-      Assignment
-        ReferenceExpression
-          PsiElement(IDENTIFIER)('a')
-        PsiElement(ASSIGN)('=')
-        IntegerLiteral
-          PsiElement(INTEGER)('0')
-      PsiElement(SEMICOLON)(';')
+      CASEEXPRESSION
+        PsiElement(DEFAULT_KEYWORD)('default')
+        PsiElement(DOTDOT)(':')
+        Assignment
+          ReferenceExpression
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(ASSIGN)('=')
+          IntegerLiteral
+            PsiElement(INTEGER)('0')
+        PsiElement(SEMICOLON)(';')
       PsiElement(R_CURLYBRACKET)('}')
     Assignment
       ReferenceExpression
