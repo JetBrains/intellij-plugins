@@ -9,8 +9,7 @@ import '../../lib/romlogging.dart';
 import '../../lib/components.dart';
 import '../../lib/map.dart' as map;
 
-add(Foo foo, {Bar param}) {
-}
+add(Foo foo, {Bar param}) {}
 
 class AClass extends Object with Mixin {
 }

@@ -17,8 +17,7 @@ class Foo {
           )
       );
     }
-    catch (e, s) {
-    }
+    catch (e, s) {}
     var z =
     argA == 'Some string' ?
     'yes' : 'no';

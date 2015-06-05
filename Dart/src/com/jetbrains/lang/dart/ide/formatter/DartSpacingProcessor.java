@@ -24,6 +24,7 @@ public class DartSpacingProcessor {
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
   private static final TokenSet ID_SET = TokenSet.create(ID);
   private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
+  private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS);
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -77,6 +78,24 @@ public class DartSpacingProcessor {
         }
         else {
           lineFeeds = 2;
+        }
+      } else if (type1 == LBRACE && type2 == RBRACE) {
+        if (parentType == ON_PART && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == FUNCTION_BODY) {
+          if ((myNode.getTreeParent().getTreeParent() != null) &&
+              (myNode.getTreeParent().getTreeParent().getElementType() == METHOD_DECLARATION) &&
+              mySettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE) {
+            lineFeeds = 0; // Empty method.
+          } else if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+            lineFeeds = 0; // Empty function, either top-level or statement.
+          }
+        } else if (parentType == IF_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == FOR_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
         }
       }
       return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
@@ -318,6 +337,12 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(1, 1, mySettings.SPECIAL_ELSE_IF_TREATMENT ? 0 : 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
+    if (type1 == LBRACE && type2 == RBRACE) {
+      // Empty class.
+      if (elementType == CLASS_BODY && mySettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE) return noSpace();
+      // Empty MAP_LITERAL_EXPRESSION or LIST_LITERAL_EXPRESSION.
+      if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) return noSpace();
+    }
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
     if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
         BLOCKS.contains(type1) ||
@@ -429,13 +454,10 @@ public class DartSpacingProcessor {
         return noSpace();
       }
     }
-    // No space in empty list initializer. Blocks are handled elsewhere.
-    if (type1 == LBRACE && type2 == RBRACE) {
-      return noSpace();
-    }
     if (type1 == TYPE_ARGUMENTS && (type2 == LBRACKET || type2 == LBRACE)) {
       return noSpace(); // Might want a user setting to control space before/after type
     }
+
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
@@ -515,8 +537,8 @@ public class DartSpacingProcessor {
     return op1.endsWith(op2.substring(op2.length() - 1));
   }
 
-  private static boolean isSimpleLiteral(IElementType node) {
+  private static boolean isSimpleLiteral(IElementType nodeType) {
     // Literals that can be cascade receivers, excluding map and list.
-    return node == STRING_LITERAL_EXPRESSION || node == NUMBER || node == TRUE || node == FALSE || node == NULL || node == THIS;
+    return SIMPLE_LITERAL_SET.contains(nodeType);
   }
 }

@@ -1,5 +1,4 @@
-@Foo0 fun() {
-}
+@Foo0 fun() {}
 
 @Foo1 var bar1;
 @Foo2() String bar2 = "";
@@ -17,6 +16,5 @@ String bar3;
   var a3;
   var a4;
 
-  fun(@Foo13 param) {
-  }
+  fun(@Foo13 param) {}
 }

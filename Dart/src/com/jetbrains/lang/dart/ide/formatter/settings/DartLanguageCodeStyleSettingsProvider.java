@@ -50,8 +50,12 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     defaultSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     defaultSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED; // TODO Remove if not needed.
     defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    defaultSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM;
     defaultSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
+    defaultSettings.ALIGN_MULTILINE_TERNARY_OPERATION = false;
+    defaultSettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = true;
+    defaultSettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE = true;
+    defaultSettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE = true;
     return defaultSettings;
   }
 
@@ -130,6 +134,9 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
                                    "PARENTHESES_EXPRESSION_LPAREN_WRAP",
                                    "PARENTHESES_EXPRESSION_RPAREN_WRAP",
                                    "ALIGN_MULTILINE_TERNARY_OPERATION",
+                                   "KEEP_SIMPLE_BLOCKS_IN_ONE_LINE",
+                                   "KEEP_SIMPLE_METHODS_IN_ONE_LINE",
+                                   "KEEP_SIMPLE_CLASSES_IN_ONE_LINE",
                                    "SPECIAL_ELSE_IF_TREATMENT");
     }
   }

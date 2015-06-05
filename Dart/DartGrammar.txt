@@ -1,3 +1,6 @@
+This file is obsolete.
+See https://github.com/chalin/dart-spec-and-grammar
+
 Dart grammar extracted from:
 Dart Programming Language Specification
 ECMA-408, 2nd Edition, 21 Nov 2014
