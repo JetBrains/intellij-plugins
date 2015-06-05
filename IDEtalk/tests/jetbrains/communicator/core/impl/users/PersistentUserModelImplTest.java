@@ -16,8 +16,8 @@
 package jetbrains.communicator.core.impl.users;
 
 import com.intellij.openapi.util.io.FileUtil;
-import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.TestFactory;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserEvent;
 import jetbrains.communicator.mock.MockIDEFacade;
@@ -144,10 +144,10 @@ public class PersistentUserModelImplTest extends BaseTestCase {
 
     Collection<Thread> threads = new ArrayList<Thread>();
     for(int i = 0; i < 20; i ++) {
-      threads.add(new Thread(createCycle(createGroupCommand)));
-      threads.add(new Thread(createCycle(createUserCommand)));
-      threads.add(new Thread(createCycle(removeUserCommand)));
-      threads.add(new Thread(createCycle(removeGroupCommand)));
+      threads.add(new Thread(createCycle(createGroupCommand), "create group"));
+      threads.add(new Thread(createCycle(createUserCommand), "create user"));
+      threads.add(new Thread(createCycle(removeUserCommand), "remove user"));
+      threads.add(new Thread(createCycle(removeGroupCommand), "remove group"));
     }
     for (Thread thread : threads) {
       thread.start();

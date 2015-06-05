@@ -120,7 +120,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
           stop();
         }
       }
-    });
+    }, "Obr search");
     t.start();
   }
 
