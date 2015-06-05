@@ -4,9 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.KeyDescriptor;
+import com.intellij.util.io.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
@@ -50,18 +48,18 @@ public class DartPartUriIndex extends FileBasedIndexExtension<String, List<Strin
     return new DataExternalizer<List<String>>() {
       @Override
       public void save(@NotNull DataOutput out, List<String> value) throws IOException {
-        out.writeInt(value.size());
+        DataInputOutputUtil.writeINT(out, value.size());
         for (String path : value) {
-          out.writeUTF(path);
+          IOUtil.writeUTF(out, path);
         }
       }
 
       @Override
       public List<String> read(@NotNull DataInput in) throws IOException {
-        final int size = in.readInt();
+        final int size = DataInputOutputUtil.readINT(in);
         final List<String> result = new ArrayList<String>(size);
         for (int i = 0; i < size; ++i) {
-          result.add(in.readUTF());
+          result.add(IOUtil.readUTF(in));
         }
         return result;
       }

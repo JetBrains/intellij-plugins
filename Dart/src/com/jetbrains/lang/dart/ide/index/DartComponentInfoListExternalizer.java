@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.DataInputOutputUtil;
+import com.intellij.util.io.IOUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,26 +21,26 @@ public class DartComponentInfoListExternalizer implements DataExternalizer<List<
     for (DartComponentInfo componentInfo : infos) {
       final DartComponentType dartComponentType = componentInfo.getComponentType();
       final int key = dartComponentType == null ? -1 : dartComponentType.getKey();
-      out.writeInt(key);
+      DataInputOutputUtil.writeINT(out, key);
       final String libraryName = componentInfo.getLibraryName();
       out.writeBoolean(libraryName != null);
       if (libraryName != null) {
-        out.writeUTF(libraryName);
+        IOUtil.writeUTF(out, libraryName);
       }
     }
   }
 
   @Override
   public List<DartComponentInfo> read(@NotNull DataInput in) throws IOException {
-    int size = in.readInt();
+    int size = DataInputOutputUtil.readINT(in);
     if (size == 0) return Collections.emptyList();
 
     List<DartComponentInfo> result = new ArrayList<DartComponentInfo>(size);
 
     for (int i = 0; i < size; i++) {
-      final int componentTypeKey = in.readInt();
+      final int componentTypeKey = DataInputOutputUtil.readINT(in);
       final boolean hasLibraryName = in.readBoolean();
-      final String libraryName = hasLibraryName ? in.readUTF() : null;
+      final String libraryName = hasLibraryName ? IOUtil.readUTF(in) : null;
       result.add(new DartComponentInfo(DartComponentType.valueOf(componentTypeKey), libraryName));
     }
 

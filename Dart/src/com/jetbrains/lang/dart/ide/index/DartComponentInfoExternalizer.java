@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.DataInputOutputUtil;
+import com.intellij.util.io.IOUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,19 +16,19 @@ public class DartComponentInfoExternalizer implements DataExternalizer<DartCompo
   public void save(@NotNull final DataOutput out, @NotNull final DartComponentInfo componentInfo) throws IOException {
     final DartComponentType dartComponentType = componentInfo.getComponentType();
     final int key = dartComponentType == null ? -1 : dartComponentType.getKey();
-    out.writeInt(key);
+    DataInputOutputUtil.writeINT(out, key);
     final String libraryName = componentInfo.getLibraryName();
     out.writeBoolean(libraryName != null);
     if (libraryName != null) {
-      out.writeUTF(libraryName);
+      IOUtil.writeUTF(out, libraryName);
     }
   }
 
   @Override
   public DartComponentInfo read(@NotNull DataInput in) throws IOException {
-    final int componentTypeKey = in.readInt();
+    final int componentTypeKey = DataInputOutputUtil.readINT(in);
     final boolean hasLibraryName = in.readBoolean();
-    final String libraryName = hasLibraryName ? in.readUTF() : null;
+    final String libraryName = hasLibraryName ? IOUtil.readUTF(in) : null;
     return new DartComponentInfo(DartComponentType.valueOf(componentTypeKey), libraryName);
   }
 }
