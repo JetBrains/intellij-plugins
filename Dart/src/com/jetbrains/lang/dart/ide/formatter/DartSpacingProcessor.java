@@ -60,8 +60,9 @@ public class DartSpacingProcessor {
     if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
 
     if (FUNCTION_DEFINITION.contains(type2)) {
-      final int lineFeeds = COMMENTS.contains(type1) ? 1 : 2;
-      return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      boolean needsBlank = needsBlankLineBeforeFunction(elementType);
+      final int lineFeeds = COMMENTS.contains(type1) || !needsBlank ? 1 : 2;
+      return Spacing.createSpacing(0, 0, lineFeeds, needsBlank, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (DOC_COMMENT_CONTENTS.contains(type2)) {
       return Spacing.createSpacing(0, Integer.MAX_VALUE, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
@@ -95,6 +96,14 @@ public class DartSpacingProcessor {
         } else if (parentType == FOR_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
           lineFeeds = 0;
         } else if (parentType == WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == TRY_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == FINALLY_PART && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == FUNCTION_EXPRESSION_BODY && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        } else if (parentType == STATEMENTS && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
           lineFeeds = 0;
         }
       }
@@ -168,6 +177,9 @@ public class DartSpacingProcessor {
       }
       else if (elementType == ON_PART) {
         return setBraceSpace(mySettings.SPACE_BEFORE_CATCH_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+      }
+      else if (elementType == FINALLY_PART) {
+        return setBraceSpace(mySettings.SPACE_BEFORE_FINALLY_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
       }
     }
 
@@ -327,6 +339,9 @@ public class DartSpacingProcessor {
     }
     if (type2 == ON_PART) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_KEYWORD, mySettings.CATCH_ON_NEW_LINE);
+    }
+    if (type2 == FINALLY_PART) {
+      return addSingleSpaceIf(mySettings.SPACE_BEFORE_FINALLY_KEYWORD, mySettings.CATCH_ON_NEW_LINE);
     }
 
     //
@@ -540,5 +555,12 @@ public class DartSpacingProcessor {
   private static boolean isSimpleLiteral(IElementType nodeType) {
     // Literals that can be cascade receivers, excluding map and list.
     return SIMPLE_LITERAL_SET.contains(nodeType);
+  }
+
+  private boolean needsBlankLineBeforeFunction(IElementType elementType) {
+    return mySettings.KEEP_LINE_BREAKS &&
+           (elementType == DART_FILE ||
+            elementType == CLASS_MEMBERS ||
+            elementType instanceof DartEmbeddedContentElementType);
   }
 }

@@ -215,6 +215,10 @@ public class DartFormatterTest extends FormatterTestCase {
     doTest();
   }
 
+  public void testEmptyBlocks() throws Exception {
+    doTest();
+  }
+
   public void testTernary1() throws Exception {
     final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
     settings.RIGHT_MARGIN = 40;
