@@ -45,7 +45,6 @@
     <orderEntry type="module" module-name="css-api" />
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
-    <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="properties" />
     <orderEntry type="module" module-name="compiler-openapi" />
@@ -60,6 +59,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="properties-psi-api" />
+    <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
   </component>
 </module>
-
