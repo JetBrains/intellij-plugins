@@ -23,11 +23,8 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.KeyDescriptor;
+import com.intellij.util.io.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +42,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   public static final ID<String, Set<FlexStyleIndexInfo>> INDEX_ID = ID.create("js.style.index");
 
-  private static final int VERSION = 17;
+  private static final int VERSION = 18;
 
   private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 
@@ -53,7 +50,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
     @Override
     public void save(@NotNull DataOutput out, Set<FlexStyleIndexInfo> value) throws IOException {
-      out.writeInt(value.size());
+      DataInputOutputUtil.writeINT(out, value.size());
       for (FlexStyleIndexInfo info : value) {
         writeUTF(out, info.getClassOrFileName());
         writeUTF(out, info.getAttributeName());
@@ -68,7 +65,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
     @Override
     public Set<FlexStyleIndexInfo> read(@NotNull DataInput in) throws IOException {
-      int size = in.readInt();
+      int size = DataInputOutputUtil.readINT(in);
       Set<FlexStyleIndexInfo> result = ContainerUtil.newLinkedHashSet();
       for (int i = 0; i < size; i++) {
         String className = readUTF(in);
@@ -96,12 +93,12 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   @Nullable
   private static String readUTF(@NotNull DataInput in) throws IOException {
-    String s = in.readUTF();
-    return s == null || s.length() == 0 ? null : s;
+    String s = IOUtil.readUTF(in);
+    return s.length() == 0 ? null : s;
   }
 
   private static void writeUTF(@NotNull DataOutput out, @Nullable String s) throws IOException {
-    out.writeUTF(s != null ? s : "");
+    IOUtil.writeUTF(out, s != null ? s : "");
   }
 
   private static <TKey, TValue> void addElement(Map<TKey, Set<TValue>> map, TKey key, TValue value) {
