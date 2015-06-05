@@ -190,7 +190,7 @@ public class BndTestState extends JavaCommandLineState {
     }
 
     private void startProtocolListener() {
-      new Thread() {
+      new Thread("Bnd test state") {
         @Override
         public void run() {
           try {

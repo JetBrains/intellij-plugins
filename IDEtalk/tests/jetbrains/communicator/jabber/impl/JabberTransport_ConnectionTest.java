@@ -791,7 +791,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
         } catch (XMPPException e) {
           throw new RuntimeException(e);
         } finally{
-          new Thread() {
+          new Thread("jabber conn test") {
             @Override
             public void run() {
               conn.close();
