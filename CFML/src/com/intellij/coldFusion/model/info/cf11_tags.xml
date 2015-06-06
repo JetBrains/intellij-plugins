@@ -16,6 +16,277 @@
   -->
 <dictionary>
     <tags>
+      <!-- <cfhtmltopdf
+    encryption = "AES_128|RC4_40|RC4_128|RC4_128M|None"
+    source = "URL|pathname absolute or relative to web root"
+    destination = "filename"
+    marginBottom = "number"
+    marginLeft = "number"
+    marginRight = "number"
+    marginTop = "number"
+    name = "output variable name"
+    orientation = "portrait|landscape"
+    overwrite = "yes|no"
+    ownerPassword = "password"
+    pageHeight = "page height in inches(default)"
+    pageType = "page type"
+    pageWidth = "page width in inches(default)"
+    permissions = "permission list"
+    saveAsName = "PDF filename"
+    unit = "in|cm"
+    userPassword = "password"
+
+    HTML and CFML code
+</cfhtmltopdf> -->
+      <tag endtagrequired="true" name="cfhtmltopdf" single="false"
+           xmlstyle="false">
+        <help><![CDATA[
+        <cfhtmltopdf> creates high quality PDF output from a text block containing CFML and HTML using the PDF Service Manager.
+    ]]></help>
+
+      </tag>
+
+      <!-- <cfhtmltopdfitem
+  type = header/footer/pagebreak
+  isBase64 = "yes|no"
+  showonprint = "yes|no"
+  align = "left|right|center"
+  marginleft = "number"
+  marginright = "number"
+  margintop = "number"
+  mmarginbottom = "number"
+  opacity = "number”
+  numberformat = "LOWERCASEROMAN|NUMERIC|UPPERCASEROMAN"
+  image = " URL|pathname absolute or relative to web root"
+</cfhtmltopdfitem> -->
+      <tag endtagrequired="true" name="cfhtmltopdfitem" single="false"
+           xmlstyle="false">
+        <help><![CDATA[
+        <cfhtmltopdfitem> specifies the action items for a PDF document created by the <cfhtmltopdf> tag.  The type attribute takes the following values:<pre>
+    header
+    footer
+    pagebreak </pre>
+    ]]></help>
+
+      </tag>
+
+      <!-- <cfimapfilter
+    name = "filter type"
+    value = "filter value">
+
+OR
+
+<cfimapfilter
+    name = "filter type"
+    from = "date/time"
+    to = "date/time"> -->
+      <tag endtagrequired="false" name="cfimapfilter" single="true"
+           xmlstyle="false">
+        <help><![CDATA[
+        Specifies filter parameters that control the actions of cfimap, get operations.
+    ]]></help>
+        <parameter name="name" required="true" type="string">
+          <help><![CDATA[
+            The type of filter to use.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="from" required="false" type="string">
+          <help><![CDATA[
+            The start date or date/time combination of the range to use for filtering. Cannot be used with the value attribute. If you specify a from attribute without a to attribute, the filter selects for all entries on or after the specified date or time.
+The value can be in any date/time format recognized by ColdFusion, but must correspond to a value that is appropriate for the filter type.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="to" required="false" type="string">
+          <help><![CDATA[
+            The end date or date/time combination for the range used for filtering. Cannot be used with the value attribute. If you specify a to attribute without a from attribute, the filter selects for all entries on or before the specified date or time.
+The value can be in any date/time format recognized by ColdFusion, but must correspond to a value that is appropriate for the filter type.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="value" required="false" type="string">
+          <help><![CDATA[
+            The filter value for all filters that do not take a date or time range. Cannot be used with the from and to attributes.ColdFusion generates an error if you specify this attribute with an empty contents. Therefore, you cannot use the empty string to search for empty values.
+If you set this attribute to the empty string (""), ColdFusion searches for entries where the specified field is empty. 6.07
+        ]]></help>
+          <values />
+        </parameter>
+      </tag>
+
+      <!-- <cfoauth
+         type = ""
+         clientid = ""
+         scope = ""
+         state = ""
+         authendpoint = ""
+         secretkey = ""
+         accesstokenendpoint = ""
+         result = ""
+         redirecturi = ""
+         urlparams = ""
+ > -->
+      <tag endtagrequired="false" name="cfoauth" single="true"
+           xmlstyle="false">
+        <help><![CDATA[
+        The <cfoauth> tag allows you to easily integrate third-party OAuth 2 authentication providers in your application. This tag currently supports Facebook and Google authentication. Also, this tag supports OAuth providers that support the OAuth 2 protocols. For instance, Microsoft and Github.
+    ]]></help>
+        <parameter name="type" required="false" type="string">
+          <help><![CDATA[
+            Currently supported values are Facebook and Google. Implicitly supports the authentication workflow of Facebook and Google. One of the following is required:
+
+type or
+accesstokenendpoint and authendpoint combination
+
+Either type can be specified or endpoints combination but not both
+        ]]></help>
+          <values> <value option="facebook" /> <value option="google" /> </values>
+        </parameter>
+        <parameter name="clientid" required="true" type="string">
+          <help><![CDATA[
+            Unique ID generated while registering your application with the OAuth provider.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="scope" required="false" type="string">
+          <help><![CDATA[
+            Scopes are the permissions that a developer seeks from the users. These are usually comma separated values of permissions. For Google, they are space separated.
+
+Refer to the Oauth provider's documentations for more information.
+
+For example, after Facebook authentication, if a developer wants to access an email address and then the friend lists of a user, the developer will use: scope="email,read_friendlists".
+
+For another example, after Google authentication, if a developer wants read-only access to the contacts and calendars of a user, the developer will use: scope="https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/calendar.readonly".
+
+Note: The scope name varies for different OAuth providers. For Facebook: No default. Facebook defaults to public_profile when scope is not specified.
+
+For Google: https://www.googleapis.com/auth/userinfo.profile+profile
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="state" required="false" type="string">
+          <help><![CDATA[
+            The state variable is used to pass back any information to your web application after the authentication and redirection are completed. Any value passed to this attribute is returned to the web application after authentication. This is useful for CSRF (Cross-site request forgery) protection. You can use ColdFusion’s security-related CSRF functions for this attribute.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="authendpoint" required="false" type="string">
+          <help><![CDATA[
+            If type is not specified, this will be used as end point URL to be invoked for user authentication. One of the following is required:
+
+type or
+accesstokenendpoint and authendpoint combination
+
+Either type can be specified or endpoints combination but not both. Default: For Facebook: https://www.facebook.com/dialog/oauth
+
+For Google: https://accounts.google.com/o/oauth2/auth
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="secretkey" required="false" type="string">
+          <help><![CDATA[
+            Parameter is the App Secret as displayed in your social media app's settings.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="accesstokenendpoint" required="false" type="string">
+          <help><![CDATA[
+             If type is not specified this will be used as end point URL to be invoked for app authentication. One of the following is required:
+
+type or
+accesstokenendpoint and authendpoint combination
+
+Either type can be specified or endpoints combination but not both
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="result" required="false" type="Struct">
+          <help><![CDATA[
+A struct which will have login info of the user including login success/failure, failure reason, user name, user id.
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="redirecturi" required="false" type="string">
+          <help><![CDATA[
+            To redirect once user authentication is done. This will default to the URL which is executing the code.
+So if in OAuth settings user has given app URL as :
+
+http://domainname/appname
+
+And the file executing the code is :
+
+http://domainname/appname/login.cfm
+
+The redirect URI will be : http://domainname/appname/login.cfm
+        ]]></help>
+          <values />
+        </parameter>
+        <parameter name="urlparams" required="false" type="string">
+          <help><![CDATA[
+            Extra options which will be passed as URL query string to authendpoint.
+        ]]></help>
+          <values />
+        </parameter>
+      </tag>
+
+      <!-- cf_socialplugin -->
+      <tag endtagrequired="false" name="cf_socialplugin" single="true"
+           xmlstyle="false">
+        <help><![CDATA[
+        ColdFusion has introduced the support for dynamically generating Like button, Tweet button, and Comment box for social media sites. The supported widgets are:<pre>
+
+    Like button
+    Tweet button
+    Facebook comment box
+    Google Plus button
+    Facebook subscribe button
+    Like box
+    Activity feed
+    Follow </pre>
+    ]]></help>
+
+      </tag>
+      <!-- <cfclientsettings
+    enableDeviceAPI = "true|false"
+    detectDevice = "true|false"
+    deviceTimeout = Number > -->
+      <tag endtagrequired="false" name="cfclientsettings" single="true"
+           xmlstyle="false">
+        <help><![CDATA[
+        This tag is similar to cfprocessingdirective and acts as a compiler directive to include plugins for various features (device detection and device API). You can use this tag to load all the required device plugins and device detection plugins.
+    ]]></help>
+        <parameter name="enableDeviceAPI" required="false" type="boolean">
+          <help><![CDATA[
+            Enable/disable the device API.
+        ]]></help>
+          <values default="false"> <value option="false" /> <value option="true" /> </values>
+        </parameter>
+        <parameter name="enableDevice" required="false" type="boolean">
+          <help><![CDATA[
+            Enable/disable the device detection plugin.
+        ]]></help>
+          <values default="false"> <value option="false" /> <value option="true" /> </values>
+        </parameter>
+        <parameter name="deviceTimeout" required="false" type="int">
+          <help><![CDATA[
+                    The timeout for loading the plugins (in seconds).
+
+If the plug-in takes more than 10 seconds (default timeout value) to load, you will get an error. Try increasing the timeout to avoid this problem.
+
+If you have specified enableDeviceAPI as "true", the device plugins will be loaded. After the device plugins are loaded, ColdFusion waits for an event "DeviceReady" to be triggered. Once the DeviceReady event is triggered successfully, the execution of CFML starts. In a desktop browser, the DeviceReady event will not be triggered. However, for a mobile application (shell application or packaged application), the event is triggered.
+So if you are trying to run a CFM where the device APIs are enabled on a desktop browser you will get a blank page and in the console you can see an error message about deviceTimeout.
+                    ]]></help>
+          <values default="10"/>
+        </parameter>
+      </tag>
+
+      <tag endtagrequired="true" name="cfclient" single="false"
+           xmlstyle="false">
+        <help><![CDATA[
+        The <cfclient> tag is a marker tag that instructs ColdFusion to generate client-side code (JavaScript) for ColdFusion code. This tag does not have any attribute.
+    ]]></help>
+      </tag>
+
       <tag endtagrequired="true" name="cfexchangeconversation" single="false"
            xmlstyle="false">
         <help><![CDATA[
@@ -21427,6 +21698,326 @@ The supported algorithms are PBKDF2WithHmacSHA1, PBKDF2WithSHA1, PBKDF2WithSHA22
         <parameter name="throwOnError" required="false" type="Boolean">
           <help><![CDATA[
             If set to true, exception is thrown.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="ImageGetMetadata" returns="Object" >
+        <help><![CDATA[
+        You can use this function to retrieve all metadata about the image including exif, IPTC, camera-specific information. A structure containing information about the image.
+    ]]></help>
+        <parameter name="image" required="true" type="Image">
+          <help><![CDATA[
+            The ColdFusion image on which this operation is performed.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="InvalidateOauthAccesstoken" returns="void" >
+        <help><![CDATA[
+        Invalidates the access token generated by the OAUTH servers.
+    ]]></help>
+        <parameter name="token" required="true" type="String">
+          <help><![CDATA[
+            The access token to invalidate.
+        ]]></help>
+        </parameter>
+        <parameter name="type" required="true" type="String">
+          <help><![CDATA[
+            The type of the OAUTH server (facebook/google).
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="IsValidOauthAccesstoken" returns="boolean" >
+        <help><![CDATA[
+        Invalidates the access token generated by the OAUTH servers.
+    ]]></help>
+        <parameter name="token" required="true" type="String">
+          <help><![CDATA[
+            The access token to check.
+        ]]></help>
+        </parameter>
+        <parameter name="type" required="true" type="String">
+          <help><![CDATA[
+            The type of the OAUTH server (facebook/google).
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="listEach" returns="void" >
+        <help><![CDATA[
+        Iterates over every element of a List object and can call a UDF function, passed as the second argument. Syntax: <pre>
+ListEach(String str, UDFMethod function [, String delim, boolean includeEmptyFields]);</pre>
+    ]]></help>
+        <parameter name="str" required="true" type="List">
+          <help><![CDATA[
+        An input list object.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          UDF or closure object.
+        ]]></help>
+        </parameter>
+
+        <parameter name="delim" required="false" type="String">
+          <help><![CDATA[
+          A list delimiter to be used. The default value is comma (,).
+        ]]></help>
+        </parameter>
+
+        <parameter name="includeEmptyFields" required="false" type="Boolean">
+          <help><![CDATA[
+          Whether to allow empty fields. Default is false.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="listMap" returns="List" >
+        <help><![CDATA[
+        Iterates over every entry of the List and calls the closure function to work on the item of the list. The returned value will be set at the same index in a new list and the new list will be returned.
+        Syntax: <pre>ListMap(list, function(item [,index, list]) [,delimiter, includeEmptyFields)</pre>
+    ]]></help>
+        <parameter name="list" required="true" type="List">
+          <help><![CDATA[
+          The input list.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Closure or a function reference that will be called for each of the iteration. The arguments passed to the callback are: <pre>
+
+    item: value
+    index : current index for the iteration
+    list : reference of the original list </pre>
+        ]]></help>
+        </parameter>
+        <parameter name="delim" required="false" type="String">
+          <help><![CDATA[
+          A list delimiter to be used. The default value is comma (,).
+        ]]></help>
+        </parameter>
+
+        <parameter name="includeEmptyFields" required="false" type="Boolean">
+          <help><![CDATA[
+          Whether to allow empty fields. Default is false.
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="listReduce" returns="any" >
+        <help><![CDATA[
+        Iterates over each item of the list and calls the closure to work on the item. This function will reduce the list to a single value and will return the value. Syntax: <pre>ListReduce(list, function(result, item [,index, list]) [,initialValue, delimiter, includeEmptyFields])</pre>
+    ]]></help>
+        <parameter name="list" required="true" type="List">
+          <help><![CDATA[
+          The input list.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Closure or a function reference that will be called for each of the iteration. The arguments passed to the callback are:<pre>
+
+    item: value
+    index : current index for the iteration
+    list : reference of the original list </pre>
+        ]]></help>
+        </parameter>
+        <parameter name="initialValue" required="false" type="any">
+          <help><![CDATA[
+          Initial value which will be used for the reduce operation. The type is any.
+        ]]></help>
+        </parameter>
+        <parameter name="delim" required="false" type="String">
+          <help><![CDATA[
+          A list delimiter to be used. The default value is comma (,).
+        ]]></help>
+        </parameter>
+
+        <parameter name="includeEmptyFields" required="false" type="Boolean">
+          <help><![CDATA[
+          Whether to allow empty fields. Default is false.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="QueryExecute" returns="Object" >
+        <help><![CDATA[
+        Apart from the generic script syntax for the tag, there is another script alternative to cfquery tag, provided by the QueryExecute function. This function simplifies the query execution in the CFScript block.
+
+This function lets you pass unnamed parameters to the query. Use '?' (question mark) as the place-holder for the parameters. The values to the parameters should be passed as an array toparams.
+
+For more information on using the unnamed parameters, see this document.
+
+Note that the following points are applicable:
+
+    If there are any Query parameters, they must be passed as the second argument of the function. It can be either a struct or an array.
+    If you need to provide additional attribute as a Query parameter (like CFSQLType, list, and separator), you can pass these as struct against that column name.
+    The Query and datasource properties will be passed as the third argument.
+
+ The Query tag is also available as a ColdFusion function apart from the generic script syntax for the CFQuery tag. This function simplifies the query execution in the CFScript block.
+    ]]></help>
+        <parameter name="sql_str" required="true" type="String">
+          <help><![CDATA[
+          SQL to be executed.
+        ]]></help>
+        </parameter>
+        <parameter name="queryParams" required="false" type="Map">
+          <help><![CDATA[
+          Params map for the query
+        ]]></help>
+        </parameter>
+        <parameter name="queryOptions" required="false" type="Map">
+          <help><![CDATA[
+
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="QueryGetRow" returns="Object" >
+        <help><![CDATA[
+        A new function, QueryGetRow, has been introduced in ColdFusion 11. This function returns a struct having all the columns as keys and their corresponding values:
+    ]]></help>
+        <parameter name="query" required="true" type="Query">
+          <help><![CDATA[
+          Reference to query
+        ]]></help>
+        </parameter>
+        <parameter name="rowNumber" required="true" type="Int">
+          <help><![CDATA[
+          row number
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="structMap" returns="Struct" >
+        <help><![CDATA[
+        Iterates over every entry of the Struct and calls the closure function to work on the key value pair of the struct. The returned value will be set for the same key in a new struct and the new struct will be returned. Syntax: <pre>StructMap(struct, function(key, value [,struct]))</pre>
+    ]]></help>
+        <parameter name="struct" required="true" type="Struct">
+          <help><![CDATA[
+           	The input struct.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Closure or a function reference that will be called for each of the iteration. The arguments passed to the callback are: <pre>
+
+    key: key for the current iteration
+    value: the value for the current iteration
+    struct: a reference of the original struct</pre>
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="structReduce" returns="any" >
+        <help><![CDATA[
+        Iterates over every entry of the struct and calls the closure to work on the key value pair of the struct. This function will reduce the struct to a single value and will return the value. Syntax: <pre> StructReduce(struct, function(result, key, value [,struct]), initialVal) </pre>
+    ]]></help>
+        <parameter name="struct" required="true" type="Struct">
+          <help><![CDATA[
+          The input struct.
+        ]]></help>
+        </parameter>
+        <parameter name="function" required="true" type="Function">
+          <help><![CDATA[
+          Closure or a function reference that will be called for each of the iteration. The arguments passed to the callback are: <pre>
+
+    result: the result of the reduce operation after the previous iteration
+    key: key for the current iteration
+    value: the value for the current iteration
+    struct: a reference of the original struct </pre>
+        ]]></help>
+        </parameter>
+        <parameter name="initialValue" required="false" type="any">
+          <help><![CDATA[
+          Initial value which will be used for the reduce operation. The type is any.
+        ]]></help>
+        </parameter>
+        <parameter name="delim" required="false" type="String">
+          <help><![CDATA[
+          A list delimiter to be used. The default value is comma (,).
+        ]]></help>
+        </parameter>
+
+        <parameter name="includeEmptyFields" required="false" type="Boolean">
+          <help><![CDATA[
+          Whether to allow empty fields. Default is false.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="serialize" returns="String" >
+        <help><![CDATA[
+        Serializes the object to a specified type. For more information see REST Enhancements in ColdFusion 11.
+    ]]></help>
+        <parameter name="objToBeSerialized" required="true" type="Object">
+          <help><![CDATA[
+          An object to be serialized.
+        ]]></help>
+        </parameter>
+        <parameter name="type" required="true" type="String">
+          <help><![CDATA[
+          	A type to which the object will be serialized. ColdFusion, by default supports XML and JSON formats. You can also implement support for other types in the CustomSerializer CFC.
+        ]]></help>
+        </parameter>
+        <parameter name="useCustomSerializer" required="false" type="boolean">
+          <help><![CDATA[
+          Whether to use the custom serializer or not. The default value is true. The custom serializer will be always used for XML deserialization. If false, the XML/JSON deserialization will be done using the default ColdFusion behavior. If any other type is passed with useCustomSerializer as false, then TypeNotSupportedException will be thrown.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="serializeXML" returns="String" >
+        <help><![CDATA[
+        Serializes a ColdFusion object to XML.
+    ]]></help>
+        <parameter name="objToBeSerialized" required="true" type="Object">
+          <help><![CDATA[
+          An object to be serialized.
+        ]]></help>
+        </parameter>
+
+        <parameter name="useCustomSerializer" required="false" type="boolean">
+          <help><![CDATA[
+          Whether to use the custom serializer or not. The default value is true. The custom serializer will be always used for XML deserialization. If false, the XML/JSON deserialization will be done using the default ColdFusion behavior. If any other type is passed with useCustomSerializer as false, then TypeNotSupportedException will be thrown.
+        ]]></help>
+        </parameter>
+      </function>
+
+      <function name="SpreadSheetAddAutofilter" returns="void" >
+        <help><![CDATA[
+        A function to add auto filters to the spreadsheet.
+    ]]></help>
+        <parameter name="spreadsheetObj" required="true" type="Object">
+          <help><![CDATA[
+          The Excel spreadsheet object to which to add auto filter.
+        ]]></help>
+        </parameter>
+
+        <parameter name="useCustomSerializer" required="true" type="String">
+          <help><![CDATA[
+          The Excel filter that needs to be applied to the sheet. Note that the value should not contain spaces or invalid characters.
+        ]]></help>
+        </parameter>
+      </function>
+      <function name="SpreadSheetAddPagebreaks" returns="void" >
+        <help><![CDATA[
+        A function to add page breaks for rows and columns.
+    ]]></help>
+        <parameter name="spreadsheetObj" required="true" type="Object">
+          <help><![CDATA[
+          The Excel spreadsheet object to which to add the column.
+        ]]></help>
+        </parameter>
+        <parameter name="rowbreaks" required="true" type="String">
+          <help><![CDATA[
+          Comma-delimited row numbers where the page breaks will be applied.
+        ]]></help>
+        </parameter>
+
+        <parameter name="colbreaks" required="true" type="String">
+          <help><![CDATA[
+          Comma-delimited column numbers where the page breaks will be applied.
         ]]></help>
         </parameter>
       </function>
