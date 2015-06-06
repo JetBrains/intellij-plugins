@@ -47,7 +47,7 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
     return new DataExternalizer<List<DartImportOrExportInfo>>() {
       @Override
       public void save(final @NotNull DataOutput out, final @NotNull List<DartImportOrExportInfo> value) throws IOException {
-        out.writeInt(value.size());
+        DataInputOutputUtil.writeINT(out, value.size());
         for (DartImportOrExportInfo importOrExportInfo : value) {
           IOUtil.writeUTF(out, importOrExportInfo.getKind().name());
           IOUtil.writeUTF(out, importOrExportInfo.getUri());
