@@ -16,6 +16,9 @@
 package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
+import com.intellij.coldFusion.model.CfmlLanguage;
+
+import java.util.concurrent.Callable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,6 +43,23 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
     myFixture.enableInspections(new CfmlReferenceInspection());
     doTest();
   }
+
+  public void testHighlightCfml11Tags() throws Exception {
+    myFixture.enableInspections(new CfmlReferenceInspection());
+    Util.runTestWithLanguageLevel(new Callable<Void>() {
+
+      @Override
+      public Void call() throws Exception {
+        doTest();
+        return null;
+      }
+    }, CfmlLanguage.CF11, getProject());
+  }
+
+  //public void testSyntaxError() throws Exception {
+  //  myFixture.enableInspections(new CfmlReferenceInspection());
+  //  doTest();
+  //}
 
   @Override
   protected String getBasePath() {

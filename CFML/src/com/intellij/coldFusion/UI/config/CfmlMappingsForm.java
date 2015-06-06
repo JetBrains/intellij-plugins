@@ -116,6 +116,9 @@ public class CfmlMappingsForm {
         else if (CfmlLanguage.CF10.equals(value)) {
           setText("ColdFusion 10");
         }
+        else if (CfmlLanguage.CF11.equals(value)) {
+          setText("ColdFusion 11");
+        }
         else if (CfmlLanguage.RAILO.equals(value)) {
           //noinspection SpellCheckingInspection
           setText("Railo");
@@ -125,6 +128,7 @@ public class CfmlMappingsForm {
     myLanguageLevel.addItem(CfmlLanguage.CF8);
     myLanguageLevel.addItem(CfmlLanguage.CF9);
     myLanguageLevel.addItem(CfmlLanguage.CF10);
+    myLanguageLevel.addItem(CfmlLanguage.CF11);
     myLanguageLevel.addItem(CfmlLanguage.RAILO);
 
     myMessageLabel.setIcon(UIUtil.getBalloonWarningIcon());

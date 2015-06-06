@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko
@@ -308,17 +309,13 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
   }
 
   public void testAttributeCfloopArrayCompletionInCf8() throws Throwable {
-    CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
-    final String languageLevel = currentState.getLanguageLevel();
-    try {
-      currentState.setLanguageLevel(CfmlLanguage.CF8);
-      CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
-      doTest();
-    }
-    finally {
-      currentState.setLanguageLevel(languageLevel);
-      CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
-    }
+    Util.runTestWithLanguageLevel(new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        doTest();
+        return null;
+      }
+    }, CfmlLanguage.CF8, getProject());
   }
 
   public void testAttributeCompletionWhenTagUppercased() throws Throwable {
@@ -675,11 +672,11 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     myFixture.testCompletionVariants(inputDataFileName, items);
   }
 
-  private void doTest() throws Throwable {
+  private void doTest() throws Exception {
     doTest("");
   }
 
-  private void doTest(final String type) throws Throwable {
+  private void doTest(final String type) throws Exception {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     String expectedResultFileName = Util.getExpectedDataFileName(getTestName(true));
     String[] input = {inputDataFileName};

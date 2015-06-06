@@ -15,7 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -25,6 +24,8 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import junit.framework.Assert;
+
+import java.util.concurrent.Callable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -149,18 +150,13 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testAlignment3() throws Exception {
-    CfmlProjectConfiguration projectConfiguration = CfmlProjectConfiguration.getInstance(getProject());
-    CfmlProjectConfiguration.State state = projectConfiguration.getState();
-    String level = state.getLanguageLevel();
-
-    state.setLanguageLevel(CfmlLanguage.RAILO);
-    projectConfiguration.loadState(state);
-    try {
-      doTest();
-    } finally {
-      state.setLanguageLevel(level);
-      projectConfiguration.loadState(state);
-    }
+    Util.runTestWithLanguageLevel(new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        doTest();
+        return null;
+      }
+    }, CfmlLanguage.RAILO, getProject());
   }
 
   public void testBracePlacement1() throws Exception {

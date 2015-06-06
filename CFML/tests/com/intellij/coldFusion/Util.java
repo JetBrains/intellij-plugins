@@ -15,13 +15,15 @@
  */
 package com.intellij.coldFusion;
 
+import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko
@@ -64,5 +66,19 @@ public class Util {
             System.out.println(filePath);
             throw new RuntimeException(e);
         }
+    }
+
+    public static void runTestWithLanguageLevel(Callable<Void> callable, String testLanguageLevel, Project project) throws Exception {
+      CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
+      final String languageLevel = currentState.getLanguageLevel();
+      try {
+        currentState.setLanguageLevel(testLanguageLevel);
+        CfmlProjectConfiguration.getInstance(project).loadState(currentState);
+        callable.call();
+      }
+      finally {
+        currentState.setLanguageLevel(languageLevel);
+        CfmlProjectConfiguration.getInstance(project).loadState(currentState);
+      }
     }
 }

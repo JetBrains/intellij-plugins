@@ -15,7 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -25,6 +24,7 @@ import com.intellij.psi.impl.DebugUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko
@@ -42,17 +42,13 @@ public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testRailoCfadminTag() throws Throwable {
-    CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
-    final String languageLevel = currentState.getLanguageLevel();
-    try {
-      currentState.setLanguageLevel(CfmlLanguage.RAILO);
-      CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
-      doTest();
-    }
-    finally {
-      currentState.setLanguageLevel(languageLevel);
-      CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
-    }
+    Util.runTestWithLanguageLevel(new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        doTest();
+        return null;
+      }
+    }, CfmlLanguage.RAILO, getProject());
   }
 
   public void testOpenCloseTag() throws Throwable {
