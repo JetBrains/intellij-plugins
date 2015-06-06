@@ -94,7 +94,7 @@ public interface CfscriptTokenTypes {
 
   IElementType MOD = new CfmlElementType("MOD");
   IElementType INT_DEV = new CfmlElementType("INT_DEV");
-  IElementType POW = new CfmlElementType("POW");
+  IElementType POW = new CfmlOperatorTokenType("POW", MULTIPLICATIVE_CALCULATOR);
 
   IElementType IN_L = new CfmlElementType("IN_L");
 
