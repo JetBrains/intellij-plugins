@@ -68,7 +68,7 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     properties.myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled
     properties.myBundleSymbolicName = "main"
     properties.myBundleVersion = "1.0.0"
-    properties.myAdditionalProperties = mapOf("Export-Package" to "main")
+    properties.myAdditionalProperties = hashMapOf("Export-Package" to "main")
   }
 
   fun createMavenConfig(module: JpsModule) {
