@@ -69,7 +69,7 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
         final int size = DataInputOutputUtil.readINT(in);
         final List<DartImportOrExportInfo> result = new ArrayList<DartImportOrExportInfo>(size);
         for (int i = 0; i < size; ++i) {
-          final DartImportOrExportInfo.Kind kind = DartImportOrExportInfo.Kind.valueOf(in.readUTF());
+          final DartImportOrExportInfo.Kind kind = DartImportOrExportInfo.Kind.valueOf(IOUtil.readUTF(in));
           final String uri = IOUtil.readUTF(in);
           final String prefix = IOUtil.readUTF(in);
           final int showSize = DataInputOutputUtil.readINT(in);
