@@ -527,6 +527,7 @@ prefixExpression ::= (prefixOperator prefixExpression) | awaitExpression | suffi
 prefixOperator ::= '-' | '+' | '--' | '++' | '!' | '~'
 
 awaitExpression ::= <<isInsideSyncOrAsyncFunction>> 'await' prefixExpression
+{mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 private suffixExpressionWrapper ::= valueExpression suffixExpression*
 left suffixExpression ::= ('--' | '++')

@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartAwaitExpression extends DartExpression {
+public interface DartAwaitExpression extends DartExpression, DartReference {
 
   @NotNull
   DartExpression getExpression();

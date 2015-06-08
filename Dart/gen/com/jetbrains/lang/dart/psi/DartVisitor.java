@@ -48,6 +48,7 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitAwaitExpression(@NotNull DartAwaitExpression o) {
     visitExpression(o);
+    // visitReference(o);
   }
 
   public void visitBitwiseExpression(@NotNull DartBitwiseExpression o) {
