@@ -17,7 +17,7 @@ public class DartComponentInfoListExternalizer implements DataExternalizer<List<
 
   @Override
   public void save(@NotNull final DataOutput out, @NotNull final List<DartComponentInfo> infos) throws IOException {
-    out.writeInt(infos.size());
+    DataInputOutputUtil.writeINT(out, infos.size());
     for (DartComponentInfo componentInfo : infos) {
       final DartComponentType dartComponentType = componentInfo.getComponentType();
       final int key = dartComponentType == null ? -1 : dartComponentType.getKey();
