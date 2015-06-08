@@ -83,16 +83,13 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/loops.stmt:52  split in for-in loop");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:57  split in while condition");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:10");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:18  nested unsplit map");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:23  nested split map");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:37  force multi-line because of contained block");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:47  containing comments");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:54  const");
-    KNOWN_TO_FAIL.add("splitting/maps.stmt:61  dangling comma");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:65  dangling comma multiline");
     KNOWN_TO_FAIL.add("comments/mixed.unit:2  block comment");
     KNOWN_TO_FAIL.add("comments/mixed.unit:32  mixed doc and line comments");
-    KNOWN_TO_FAIL.add("comments/mixed.unit:48  mixed comments");
     KNOWN_TO_FAIL.add("comments/maps.stmt:10  line comment on opening line");
     KNOWN_TO_FAIL.add("comments/maps.stmt:25  block comment with trailing newline");
     KNOWN_TO_FAIL.add("comments/maps.stmt:39  inline block comment");
@@ -113,7 +110,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/statements.stmt:32  do with line comment");
     KNOWN_TO_FAIL.add("regression/25.stmt:1");
     KNOWN_TO_FAIL.add("regression/25.stmt:13  (indent 8)");
-    KNOWN_TO_FAIL.add("whitespace/do.stmt:2  empty");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:34  single-expression then body");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:44  single-expression else body");
@@ -125,7 +121,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/functions.unit:63  DO use a spaces around = in optional positional parameters.");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:67  async*");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:73  sync* functions");
-    KNOWN_TO_FAIL.add("whitespace/directives.unit:18  collapse any other newlines");
     KNOWN_TO_FAIL.add("whitespace/directives.unit:49  no spaces between library identifiers");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:2  trailing line comment after split");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:9  trailing line comment after non-split");
@@ -133,7 +128,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/expressions.stmt:23  inside argument list");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:31  space on left between block comment and \",\"");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:35  space between block comment and other tokens");
-    KNOWN_TO_FAIL.add("comments/expressions.stmt:39  preserve space before comment in expression");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:61  hard line caused by a comment before a nested line");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:2  parameters fit but ) does not");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:11  parameters fit but } does not");
@@ -182,8 +176,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:27  long function call initializer");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:32  long binary expression initializer");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:37  lots of variables with no initializers");
-    KNOWN_TO_FAIL.add("splitting/variables.stmt:44  multiple variables get their own line if any has an initializer #16849");
-    KNOWN_TO_FAIL.add("splitting/variables.stmt:49");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:58  dartbug.com/16379");
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:6  long single cascade forces multi-line");
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:30  cascades indent contained blocks (and force multi-line)");
@@ -209,7 +201,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:24  initializer doesn't fit one line, cannot be split");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:29  long function call initializer");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:34  long binary expression initializer");
-    KNOWN_TO_FAIL.add("whitespace/blocks.stmt:10  allow an extra newline between statements");
     KNOWN_TO_FAIL.add("whitespace/blocks.stmt:24  collapse any other newlines");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:6  wrapped assert");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:11  split in do-while condition");
@@ -262,15 +253,8 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:38  allow an inline chain before a hard newline but not after");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:49  allow an inline chain after a hard newline but not before");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:60  nest calls one more than target");
-    KNOWN_TO_FAIL.add("whitespace/script.unit:8  multiple lines between script and library");
-    KNOWN_TO_FAIL.add("whitespace/script.unit:24  multiple lines between script and import");
-    KNOWN_TO_FAIL.add("whitespace/script.unit:40  multiple lines between script and line comment");
-    KNOWN_TO_FAIL.add("whitespace/script.unit:56  multiple lines between script and block comment");
-    KNOWN_TO_FAIL.add("whitespace/switch.stmt:11  allow an extra newline between statements in a case");
     KNOWN_TO_FAIL.add("whitespace/switch.stmt:26  collapse any other newlines in a case");
-    KNOWN_TO_FAIL.add("whitespace/switch.stmt:60  allow an extra newline between statements in a default");
     KNOWN_TO_FAIL.add("whitespace/switch.stmt:75  collapse any other newlines in a default");
-    KNOWN_TO_FAIL.add("whitespace/switch.stmt:109  allow an extra newline between cases");
     KNOWN_TO_FAIL.add("whitespace/switch.stmt:123  collapse any other newlines in a case");
     KNOWN_TO_FAIL.add("selections/selections.stmt:22  includes added whitespace");
     KNOWN_TO_FAIL.add("selections/selections.stmt:26  inside comment");
@@ -286,7 +270,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("selections/selections.unit:34  in soft space split whitespace");
     KNOWN_TO_FAIL.add("selections/selections.unit:43  in hard split whitespace");
     KNOWN_TO_FAIL.add("selections/selections.unit:53  across lines that get split separately");
-    KNOWN_TO_FAIL.add("selections/selections.unit:74  only whitespace in double newline selected");
     KNOWN_TO_FAIL.add("splitting/strings.stmt:50  wrap first line if needed");
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:64  require at least a single newline between declarations");
@@ -531,6 +514,7 @@ public class DartStyleTest extends FormatterTestCase {
       final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
       settings.RIGHT_MARGIN = pageWidth;
       settings.KEEP_LINE_BREAKS = false; // TODO Decide whether this should be the default -- risky!
+      settings.KEEP_BLANK_LINES_IN_CODE = 1;
 
       while (i < lines.length) {
         String description = (dirName + "/" + testFileName + ":" + (i + 1) + " " + lines[i++].replaceAll(">>>", "")).trim();
@@ -554,7 +538,7 @@ public class DartStyleTest extends FormatterTestCase {
         while (!lines[i].startsWith("<<<")) {
           String line = lines[i++];
           if (leadingIndent > 0) line = line.substring(leadingIndent);
-          if (!isCompilationUnit) line = "  " + line;
+          if (!isCompilationUnit && !line.isEmpty()) line = "  " + line;
           input += line + "\n";
         }
 
@@ -568,7 +552,7 @@ public class DartStyleTest extends FormatterTestCase {
         while (i < lines.length && !lines[i].startsWith(">>>")) {
           String line = lines[i++];
           if (leadingIndent > 0) line = line.substring(leadingIndent);
-          if (!isCompilationUnit) line = "  " + line;
+          if (!isCompilationUnit && !line.isEmpty()) line = "  " + line;
           expectedOutput += line + "\n";
         }
 

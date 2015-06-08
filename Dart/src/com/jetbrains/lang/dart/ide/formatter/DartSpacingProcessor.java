@@ -97,6 +97,8 @@ public class DartSpacingProcessor {
           lineFeeds = 0;
         } else if (parentType == WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
           lineFeeds = 0;
+        } else if (parentType == DO_WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
         } else if (parentType == TRY_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
           lineFeeds = 0;
         } else if (parentType == FINALLY_PART && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
@@ -375,7 +377,7 @@ public class DartSpacingProcessor {
     }
 
     if (type1 == COMMA) {
-      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA);
+      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA && type2 != RBRACE);
     }
 
     if (type2 == COMMA) {
@@ -471,6 +473,10 @@ public class DartSpacingProcessor {
     }
     if (type1 == TYPE_ARGUMENTS && (type2 == LBRACKET || type2 == LBRACE)) {
       return noSpace(); // Might want a user setting to control space before/after type
+    }
+
+    if (type2 == RBRACE && type1 == MAP_LITERAL_ENTRY) {
+      return  noSpace();
     }
 
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);

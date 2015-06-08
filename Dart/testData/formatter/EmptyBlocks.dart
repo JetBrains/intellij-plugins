@@ -9,6 +9,7 @@ f(){
   try{}catch(e){}finally{}
   var l=[];
   var m={};
+  do{}while(x);
 }
 class Q{
   m(){
