@@ -124,11 +124,13 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
       final DartClass dartClass = PsiTreeUtil.getParentOfType(this, DartClass.class);
       return dartClass == null ? DartClassResolveResult.EMPTY : dartClass.getSuperClassResolvedOrObjectClass();
     }
+
     if (this instanceof DartNewExpression) {
       final DartClassResolveResult result = DartResolveUtil.resolveClassByType(PsiTreeUtil.getChildOfType(this, DartType.class));
       result.specialize(this);
       return result;
     }
+
     if (this instanceof DartCallExpression) {
       final DartExpression expression = ((DartCallExpression)this).getExpression();
       final DartClassResolveResult leftResult = tryGetLeftResolveResult(expression);
@@ -139,6 +141,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
         return result;
       }
     }
+
     if (this instanceof DartCascadeReferenceExpression) {
       PsiElement parent = this.getParent();
       if (parent instanceof DartValueExpression) {
@@ -149,6 +152,22 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
         }
       }
     }
+
+    if (this instanceof DartAwaitExpression) {
+      final DartExpression expression = ((DartAwaitExpression)this).getExpression();
+      if (expression instanceof DartReference) {
+        final DartClassResolveResult result = ((DartReference)expression).resolveDartClass();
+        final DartClass resolvedClass = result.getDartClass();
+        if (resolvedClass != null && "Future".equals(resolvedClass.getName())) {
+          final DartClassResolveResult unwrappedFuture = result.getSpecialization().get(resolvedClass, "T");
+          return unwrappedFuture == null ? DartClassResolveResult.EMPTY : unwrappedFuture;
+        }
+        else {
+          return result;
+        }
+      }
+    }
+
     return DartResolveUtil.getDartClassResolveResult(resolve(), tryGetLeftResolveResult(this).getSpecialization());
   }
 

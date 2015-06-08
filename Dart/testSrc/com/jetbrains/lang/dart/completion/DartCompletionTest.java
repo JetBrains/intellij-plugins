@@ -211,4 +211,13 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
            "  for(var i in <caret completionIncludes='array' completionExcludes='length'>)\n" +
            "}");
   }
+
+  public void testUnwrapFutureInAwaitExpression() throws Exception {
+    doTest("import 'dart:async';\n" +
+           "Future<int> foo()  async => 1;\n" +
+           "Future main() async {\n" +
+           "  (foo()).<caret completionIncludes='asStream,then' completionExcludes='abs,ceil'>x;\n" +
+           "  (await foo()).<caret completionIncludes='abs,ceil' completionExcludes='asStream,then'>\n" +
+           "}");
+  }
 }
