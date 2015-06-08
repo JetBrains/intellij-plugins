@@ -10,7 +10,6 @@ class Foo {
         action = Action.LEFT;
     }
     new Foo(x, 2);
-
     int absSum(int a, int b) {
       int value = a + b;
       return value > 0 ? value : -value;
