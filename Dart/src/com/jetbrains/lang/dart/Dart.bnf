@@ -435,9 +435,9 @@ returnStatement ::= 'return' expression? ';' {pin=1}
 rethrowStatement ::= 'rethrow' ';' {pin=1}
 
 forLoopPartsInBraces::= '(' forLoopParts ')'
-forLoopParts::= varDeclarationList ';' expression? ';' expressionList?
-              | forInPart
-              | expressionList? ';' expression? ';' expressionList?
+forLoopParts::= forInPart
+              | varDeclarationList (';' expression? (';' expressionList?)?)?
+              | expressionList? (';' expression? (';' expressionList?)?)?
               {recoverWhile="for_loops_parts_recover"}
 
 forInPart ::= (varAccessDeclaration | componentName) 'in' expression
