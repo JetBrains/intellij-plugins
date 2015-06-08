@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartAwaitExpressionImpl extends DartExpressionImpl implements DartAwaitExpression {
+public class DartAwaitExpressionImpl extends DartReferenceImpl implements DartAwaitExpression {
 
   public DartAwaitExpressionImpl(ASTNode node) {
     super(node);
