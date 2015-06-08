@@ -8,37 +8,34 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartClassResolveResult implements Cloneable {
   public static final DartClassResolveResult EMPTY = new DartClassResolveResult(null);
 
-  @Nullable
-  private final DartClass dartClass;
-  private final DartGenericSpecialization specialization;
+  private final @Nullable DartClass myDartClass;
+  private final @NotNull DartGenericSpecialization mySpecialization;
 
-  protected DartClassResolveResult(@Nullable DartClass aClass) {
+  protected DartClassResolveResult(@Nullable final DartClass aClass) {
     this(aClass, new DartGenericSpecialization());
   }
 
-  protected DartClassResolveResult(@Nullable DartClass aClass, DartGenericSpecialization specialization) {
-    dartClass = aClass;
-    this.specialization = specialization;
+  protected DartClassResolveResult(@Nullable final DartClass aClass, @NotNull final DartGenericSpecialization specialization) {
+    myDartClass = aClass;
+    mySpecialization = specialization;
   }
 
   @Override
   public DartClassResolveResult clone() {
-    return new DartClassResolveResult(dartClass, specialization.clone());
+    return new DartClassResolveResult(myDartClass, mySpecialization.clone());
   }
 
   @NotNull
-  public static DartClassResolveResult create(@Nullable DartClass dartClass) {
+  public static DartClassResolveResult create(@Nullable final DartClass dartClass) {
     return create(dartClass, new DartGenericSpecialization());
   }
 
   @NotNull
-  public static DartClassResolveResult create(@Nullable DartClass dartClass, DartGenericSpecialization specialization) {
+  public static DartClassResolveResult create(@Nullable final DartClass dartClass,
+                                              @NotNull final DartGenericSpecialization specialization) {
     if (dartClass == null) {
       return new DartClassResolveResult(null);
     }
@@ -67,31 +64,32 @@ public class DartClassResolveResult implements Cloneable {
     return clone;
   }
 
-  private void merge(DartGenericSpecialization otherSpecializations) {
+  private void merge(@NotNull final DartGenericSpecialization otherSpecializations) {
     for (String key : otherSpecializations.map.keySet()) {
-      specialization.map.put(key, otherSpecializations.map.get(key));
+      mySpecialization.map.put(key, otherSpecializations.map.get(key));
     }
   }
 
-  private void softMerge(DartGenericSpecialization otherSpecializations) {
+  private void softMerge(@NotNull final DartGenericSpecialization otherSpecializations) {
     for (String key : otherSpecializations.map.keySet()) {
-      if (!specialization.map.containsKey(key)) {
-        specialization.map.put(key, otherSpecializations.map.get(key));
+      if (!mySpecialization.map.containsKey(key)) {
+        mySpecialization.map.put(key, otherSpecializations.map.get(key));
       }
     }
   }
 
   @Nullable
   public DartClass getDartClass() {
-    return dartClass;
+    return myDartClass;
   }
 
+  @NotNull
   public DartGenericSpecialization getSpecialization() {
-    return specialization;
+    return mySpecialization;
   }
 
-  public void specialize(@Nullable PsiElement element) {
-    if (element == null || dartClass == null || !dartClass.isGeneric()) {
+  public void specialize(@Nullable final PsiElement element) {
+    if (element == null || myDartClass == null || !myDartClass.isGeneric()) {
       return;
     }
     if (element instanceof DartNewExpression) {
@@ -102,11 +100,11 @@ public class DartClassResolveResult implements Cloneable {
     }
   }
 
-  public void specializeByParameters(@Nullable DartTypeArguments typeArguments) {
-    if (typeArguments == null || dartClass == null || !dartClass.isGeneric()) {
+  public void specializeByParameters(@Nullable final DartTypeArguments typeArguments) {
+    if (typeArguments == null || myDartClass == null || !myDartClass.isGeneric()) {
       return;
     }
-    final DartTypeParameters parameters = dartClass.getTypeParameters();
+    final DartTypeParameters parameters = myDartClass.getTypeParameters();
     assert parameters != null;
     final List<DartType> typeList = typeArguments.getTypeList().getTypeList();
     for (int i = 0, size = parameters.getTypeParameterList().size(); i < size; i++) {
@@ -114,14 +112,14 @@ public class DartClassResolveResult implements Cloneable {
       DartComponentName componentName = dartTypeParameter == null ? null : dartTypeParameter.getComponentName();
       final DartType specializedType = typeList.get(i);
       if (componentName == null || specializedType == null) continue;
-      specialization.put(dartClass, componentName.getText(), DartResolveUtil.getDartClassResolveResult(specializedType,
-                                                                                                       specialization));
+      mySpecialization.put(myDartClass, componentName.getText(), DartResolveUtil.getDartClassResolveResult(specializedType,
+                                                                                                           mySpecialization));
     }
 
-    specializeSupers(dartClass, specialization);
+    specializeSupers(myDartClass, mySpecialization);
   }
 
-  private static void specializeSupers(DartClass dartClass, DartGenericSpecialization specialization) {
+  private static void specializeSupers(@Nullable final DartClass dartClass, @NotNull final DartGenericSpecialization specialization) {
     if (dartClass == null) {
       return;
     }
@@ -135,7 +133,9 @@ public class DartClassResolveResult implements Cloneable {
     }
   }
 
-  private static void specializeSuperType(DartClass dartClass, DartGenericSpecialization specialization, DartType type) {
+  private static void specializeSuperType(@Nullable final DartClass dartClass,
+                                          @NotNull final DartGenericSpecialization specialization,
+                                          @NotNull final DartType type) {
     final DartTypeArguments targetTypeArguments = type.getTypeArguments();
     if (targetTypeArguments == null || dartClass == null || dartClass.getTypeParameters() == null) {
       return;
