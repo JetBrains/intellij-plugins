@@ -200,4 +200,15 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
            "var b = Foo.<caret completionEquals='Foo1,Foo2,values'>i;\n" +
            "var c = Foo.Foo1.<caret completionEquals='index,toString,hashCode,runtimeType,noSuchMethod'>");
   }
+
+  public void testInForHeader() throws Exception {
+    doTest("foo(List array){\n" +
+           "  for(i = <caret completionIncludes='array' completionExcludes='length'>)\n" +
+           "  for(i = array.<caret completionIncludes='length' completionExcludes='array'>)\n" +
+           "  for(i = 0; <caret completionIncludes='array' completionExcludes='length'>)\n" +
+           "  for(i = 0; array.<caret completionIncludes='length' completionExcludes='array'>)\n" +
+           "  for(;;<caret completionIncludes='array' completionExcludes='length'>)\n" +
+           "  for(var i in <caret completionIncludes='array' completionExcludes='length'>)\n" +
+           "}");
+  }
 }

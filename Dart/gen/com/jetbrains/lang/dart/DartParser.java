@@ -2200,58 +2200,89 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // varDeclarationList ';' expression? ';' expressionList?
-  //               | forInPart
-  //               | expressionList? ';' expression? ';' expressionList?
+  // forInPart
+  //               | varDeclarationList (';' expression? (';' expressionList?)?)?
+  //               | expressionList? (';' expression? (';' expressionList?)?)?
   public static boolean forLoopParts(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "forLoopParts")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<for loop parts>");
-    r = forLoopParts_0(b, l + 1);
-    if (!r) r = forInPart(b, l + 1);
+    r = forInPart(b, l + 1);
+    if (!r) r = forLoopParts_1(b, l + 1);
     if (!r) r = forLoopParts_2(b, l + 1);
     exit_section_(b, l, m, FOR_LOOP_PARTS, r, false, for_loops_parts_recover_parser_);
     return r;
   }
 
-  // varDeclarationList ';' expression? ';' expressionList?
-  private static boolean forLoopParts_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "forLoopParts_0")) return false;
+  // varDeclarationList (';' expression? (';' expressionList?)?)?
+  private static boolean forLoopParts_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = varDeclarationList(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    r = r && forLoopParts_0_2(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    r = r && forLoopParts_0_4(b, l + 1);
+    r = r && forLoopParts_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (';' expression? (';' expressionList?)?)?
+  private static boolean forLoopParts_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1_1")) return false;
+    forLoopParts_1_1_0(b, l + 1);
+    return true;
+  }
+
+  // ';' expression? (';' expressionList?)?
+  private static boolean forLoopParts_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, SEMICOLON);
+    r = r && forLoopParts_1_1_0_1(b, l + 1);
+    r = r && forLoopParts_1_1_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // expression?
-  private static boolean forLoopParts_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "forLoopParts_0_2")) return false;
+  private static boolean forLoopParts_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1_1_0_1")) return false;
     expression(b, l + 1);
     return true;
   }
 
+  // (';' expressionList?)?
+  private static boolean forLoopParts_1_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1_1_0_2")) return false;
+    forLoopParts_1_1_0_2_0(b, l + 1);
+    return true;
+  }
+
+  // ';' expressionList?
+  private static boolean forLoopParts_1_1_0_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1_1_0_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, SEMICOLON);
+    r = r && forLoopParts_1_1_0_2_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   // expressionList?
-  private static boolean forLoopParts_0_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "forLoopParts_0_4")) return false;
+  private static boolean forLoopParts_1_1_0_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_1_1_0_2_0_1")) return false;
     expressionList(b, l + 1);
     return true;
   }
 
-  // expressionList? ';' expression? ';' expressionList?
+  // expressionList? (';' expression? (';' expressionList?)?)?
   private static boolean forLoopParts_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "forLoopParts_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = forLoopParts_2_0(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    r = r && forLoopParts_2_2(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    r = r && forLoopParts_2_4(b, l + 1);
+    r = r && forLoopParts_2_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2263,16 +2294,53 @@ public class DartParser implements PsiParser {
     return true;
   }
 
+  // (';' expression? (';' expressionList?)?)?
+  private static boolean forLoopParts_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_2_1")) return false;
+    forLoopParts_2_1_0(b, l + 1);
+    return true;
+  }
+
+  // ';' expression? (';' expressionList?)?
+  private static boolean forLoopParts_2_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_2_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, SEMICOLON);
+    r = r && forLoopParts_2_1_0_1(b, l + 1);
+    r = r && forLoopParts_2_1_0_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   // expression?
-  private static boolean forLoopParts_2_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "forLoopParts_2_2")) return false;
+  private static boolean forLoopParts_2_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_2_1_0_1")) return false;
     expression(b, l + 1);
     return true;
   }
 
+  // (';' expressionList?)?
+  private static boolean forLoopParts_2_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_2_1_0_2")) return false;
+    forLoopParts_2_1_0_2_0(b, l + 1);
+    return true;
+  }
+
+  // ';' expressionList?
+  private static boolean forLoopParts_2_1_0_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_2_1_0_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, SEMICOLON);
+    r = r && forLoopParts_2_1_0_2_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   // expressionList?
-  private static boolean forLoopParts_2_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "forLoopParts_2_4")) return false;
+  private static boolean forLoopParts_2_1_0_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forLoopParts_2_1_0_2_0_1")) return false;
     expressionList(b, l + 1);
     return true;
   }
