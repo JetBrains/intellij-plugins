@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.osmorc.inspection
+package org.jetbrains.osgi.highlighting
 
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.LightOsgiFixtureTestCase
 import org.osmorc.i18n.OsmorcBundle
+import org.osmorc.inspection.UnregisteredActivatorInspection
 import kotlin.test.assertEquals
 
 class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
@@ -81,7 +82,7 @@ class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
     myFixture.enableInspections(UnregisteredActivatorInspection())
     myFixture.addFileToProject("META-INF/MANIFEST.MF", manifestText)
     myFixture.configureByText(fileName, classText)
-    myFixture.checkHighlighting(true, false, false)
+    myFixture.checkHighlighting()
   }
 
   private fun doTestFix(text: String, expected: String) {

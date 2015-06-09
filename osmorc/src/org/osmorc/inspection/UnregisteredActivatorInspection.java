@@ -55,29 +55,23 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
       public void visitFile(PsiFile file) {
         if (file instanceof PsiClassOwner) {
           for (PsiClass psiClass : ((PsiClassOwner)file).getClasses()) {
-            if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT)) {
-              Project project = psiClass.getProject();
-              PsiClass activator = OsgiPsiUtil.getActivatorClass(project);
-              if (activator != null && psiClass.isInheritor(activator, true)) {
-                String className = psiClass.getQualifiedName();
-                if (className != null) {
-                  BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(facet.getModule());
-                  if (manifest != null && !className.equals(manifest.getBundleActivator())) {
-                    LocalQuickFix[] fixes = LocalQuickFix.EMPTY_ARRAY;
+            String className = psiClass.getQualifiedName();
+            if (OsgiPsiUtil.isActivator(psiClass) && className != null) {
+              BundleManifest manifest = BundleManifestCache.getInstance(psiClass.getProject()).getManifest(facet.getModule());
+              if (manifest != null && !className.equals(manifest.getBundleActivator())) {
+                LocalQuickFix[] fixes = LocalQuickFix.EMPTY_ARRAY;
 
-                    OsmorcFacetConfiguration configuration = facet.getConfiguration();
-                    if (configuration.isManifestManuallyEdited()) {
-                      fixes = new LocalQuickFix[]{new RegisterInManifestQuickfix(className)};
-                    }
-                    else if (configuration.isOsmorcControlsManifest()) {
-                      fixes = new LocalQuickFix[]{new RegisterInConfigurationQuickfix(className, configuration)};
-                    }
+                OsmorcFacetConfiguration configuration = facet.getConfiguration();
+                if (configuration.isManifestManuallyEdited()) {
+                  fixes = new LocalQuickFix[]{new RegisterInManifestQuickfix(className)};
+                }
+                else if (configuration.isOsmorcControlsManifest()) {
+                  fixes = new LocalQuickFix[]{new RegisterInConfigurationQuickfix(className, configuration)};
+                }
 
-                    PsiElement identifier = unwrap(psiClass.getNameIdentifier());
-                    if (identifier != null) {
-                      holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fixes);
-                    }
-                  }
+                PsiElement identifier = unwrap(psiClass.getNameIdentifier());
+                if (identifier != null) {
+                  holder.registerProblem(identifier, OsmorcBundle.message("UnregisteredActivatorInspection.message"), fixes);
                 }
               }
             }

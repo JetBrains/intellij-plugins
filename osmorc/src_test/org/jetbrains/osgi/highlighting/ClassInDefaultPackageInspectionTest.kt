@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.osmorc.inspection
+package org.jetbrains.osgi.highlighting
 
 import org.osmorc.LightOsgiFixtureTestCase
+import org.osmorc.inspection.ClassInDefaultPackageInspection
 
 class ClassInDefaultPackageInspectionTest : LightOsgiFixtureTestCase() {
   fun testNegative() {
@@ -33,6 +34,6 @@ class ClassInDefaultPackageInspectionTest : LightOsgiFixtureTestCase() {
   private fun doTest(text: String, fileName: String = "C.java") {
     myFixture.enableInspections(ClassInDefaultPackageInspection())
     myFixture.configureByText(fileName, text)
-    myFixture.checkHighlighting(true, false, false)
+    myFixture.checkHighlighting()
   }
 }

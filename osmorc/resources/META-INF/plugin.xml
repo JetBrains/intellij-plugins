@@ -124,6 +124,8 @@
                      language="Manifest" enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
 
+    <deadCode implementation="org.jetbrains.osgi.highlighting.OsgiEntryPoint"/>
+
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
     <frameworkSupport implementation="org.osmorc.facet.OsgiFrameworkSupportProvider"/>

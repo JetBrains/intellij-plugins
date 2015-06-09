@@ -33,6 +33,7 @@ import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.jetbrains.lang.manifest.psi.Section;
 import org.osgi.framework.BundleActivator;
+import org.osmorc.facet.OsmorcFacet;
 
 import java.util.List;
 
@@ -40,6 +41,20 @@ import static com.intellij.openapi.util.text.StringUtil.trimTrailing;
 
 public class OsgiPsiUtil {
   private OsgiPsiUtil() { }
+
+  public static boolean isActivator(@Nullable PsiElement element) {
+    if (element instanceof PsiClass) {
+      PsiClass psiClass = (PsiClass)element;
+      if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT) && OsmorcFacet.getInstance(psiClass) != null) {
+        PsiClass activator = getActivatorClass(psiClass.getProject());
+        if (activator != null && psiClass.isInheritor(activator, true)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 
   @Nullable
   public static PsiClass getActivatorClass(@NotNull final Project project) {
