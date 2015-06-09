@@ -26,6 +26,14 @@
     <annotator language="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
 
     <fileEditorProvider implementation="org.intellij.plugins.markdown.preview.MarkdownPreviewFileEditorProvider"/>
+
+    <applicationConfigurable id="Settings.Markdown.Css"
+                             bundle="org.intellij.plugins.markdown.bundle.MarkdownBundle"
+                             groupId="language"
+                             nonDefaultProject="true"
+                             key="settings.markdown.css.name"
+                             instance="org.intellij.plugins.markdown.settings.MarkdownCssConfigurable" />
+    <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings" />
   </extensions>
 
 </idea-plugin>

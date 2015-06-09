@@ -13,6 +13,8 @@ public final class MarkdownHtmlPanel {
   private final HtmlPanel myPanel;
   @NotNull
   private final MarkdownHtmlRendererContext myHtmlRendererContext;
+  @NotNull
+  private String myLastRenderedHtml = "";
   @Nullable
   private String myCssFileUri = null;
   @Nullable
@@ -45,8 +47,13 @@ public final class MarkdownHtmlPanel {
   }
 
   public void setHtml(@NotNull String html) {
-    final String htmlWithStyles = html.replace("<head>", "<head>" + getCssLines());
-    myPanel.setHtml(htmlWithStyles, "file://a.html", myHtmlRendererContext);
+    myLastRenderedHtml = html;
+    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines());
+    myPanel.setHtml(htmlToRender, "file://a.html", myHtmlRendererContext);
+  }
+
+  public void refresh() {
+    setHtml(myLastRenderedHtml);
   }
 
   @NotNull
