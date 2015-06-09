@@ -521,7 +521,9 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          logError("edit_format()", filePath, error);
+          if (!"FORMAT_WITH_ERRORS".equals(error.getCode())) {
+            logError("edit_format()", filePath, error);
+          }
           semaphore.up();
         }
       };
