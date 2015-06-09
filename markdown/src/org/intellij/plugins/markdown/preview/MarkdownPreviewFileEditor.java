@@ -19,17 +19,14 @@ import org.intellij.markdown.parser.TokensCache;
 import org.intellij.markdown.parser.dialects.commonmark.CommonMarkMarkerProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lobobrowser.html.gui.HtmlPanel;
 
 import javax.swing.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
   @NotNull
-  private final HtmlPanel myPanel;
+  private final MarkdownHtmlPanel myPanel;
   @NotNull
   private final VirtualFile myFile;
   @Nullable
@@ -56,34 +53,20 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       }, this);
     }
 
-    myPanel = new HtmlPanel();
-    myPanel.addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent e) {
-        adjustBrowserSize();
-      }
-    });
-
-    initWebViewInComponent(myPanel);
-  }
-
-  private void initWebViewInComponent(@NotNull HtmlPanel panel) {
-
-    panel.setHtml("<html></html>", "", new MarkdownHtmlRendererContext(panel));
-
-    adjustBrowserSize();
+    myPanel = new MarkdownHtmlPanel();
+    myPanel.setHtml("<html></html>");
   }
 
   @NotNull
   @Override
   public JComponent getComponent() {
-    return myPanel;
+    return myPanel.getComponent();
   }
 
   @Nullable
   @Override
   public JComponent getPreferredFocusedComponent() {
-    return myPanel;
+    return myPanel.getComponent();
   }
 
   @NotNull
@@ -121,10 +104,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       public void run() {
       }
     }, 0);
-
-  }
-
-  private void adjustBrowserSize() {
   }
 
   private void updateHtml() {
@@ -138,7 +117,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       .parse(MarkdownElementTypes.MARKDOWN_FILE, tokensCache);
     final String html = new HtmlGenerator(text, parsedTree).generateHtml();
 
-    myPanel.setHtml("<html>" + html + "</html>", "", new MarkdownHtmlRendererContext(myPanel));
+    myPanel.setHtml("<html><head></head>" + html + "</html>");
   }
 
   @Override
