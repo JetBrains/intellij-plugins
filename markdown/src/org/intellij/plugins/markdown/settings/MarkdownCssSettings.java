@@ -1,7 +1,12 @@
 package org.intellij.plugins.markdown.settings;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Attribute;
+import org.intellij.plugins.markdown.util.MarkdownPluginUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public final class MarkdownCssSettings {
   public static final MarkdownCssSettings DEFAULT = new MarkdownCssSettings();
@@ -18,7 +23,7 @@ public final class MarkdownCssSettings {
   private String myStylesheetText;
 
   private MarkdownCssSettings() {
-    this(false, "", false, "");
+    this(true, getPredefinedCssURI(), false, "");
   }
 
   public MarkdownCssSettings(boolean uriEnabled, @NotNull String stylesheetUri, boolean textEnabled, @NotNull String stylesheetText) {
@@ -59,6 +64,17 @@ public final class MarkdownCssSettings {
     if (!myStylesheetText.equals(settings.myStylesheetText)) return false;
 
     return true;
+  }
+
+  private static String getPredefinedCssURI() {
+    try {
+      final String path = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib/default.css";
+      return new File(path).toURI().toString();
+    }
+    catch (FileNotFoundException e) {
+      Logger.getInstance(MarkdownCssSettings.class).error(e);
+      return "";
+    }
   }
 
   @Override
