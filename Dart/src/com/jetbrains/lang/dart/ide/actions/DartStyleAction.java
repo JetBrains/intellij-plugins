@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -17,6 +18,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -38,12 +41,14 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
 
 public class DartStyleAction extends AnAction implements DumbAware {
 
@@ -273,36 +278,58 @@ public class DartStyleAction extends AnAction implements DumbAware {
       return;
     }
 
+    final Map<VirtualFile, String> fileToNewContentMap = new THashMap<VirtualFile, String>();
+
     final Runnable runnable = new Runnable() {
       public void run() {
-        CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
-        DartAnalysisServerService.getInstance().updateFilesContent();
-
+        double fraction = 0.0;
         for (final VirtualFile virtualFile : dartFiles) {
+          fraction += 1.0;
+          final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+          if (indicator != null) {
+            indicator.checkCanceled();
+            indicator.setFraction(fraction / dartFiles.size());
+            indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
+          }
+
           final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-          final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-          if (document == null) continue;
-
-          int textLength = document.getTextLength();
-          if (textLength == 0) continue;
-
-          DartAnalysisServerService.FormatResult formatResult =
-            DartAnalysisServerService.getInstance().edit_format(path, 0, 1);
-
+          final DartAnalysisServerService.FormatResult formatResult = DartAnalysisServerService.getInstance().edit_format(path, 0, 0);
           if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
-            final SourceEdit sourceEdit = formatResult.getEdits().get(0);
-            document.setText(sourceEdit.getReplacement());
+            fileToNewContentMap.put(virtualFile, formatResult.getEdits().get(0).getReplacement());
           }
         }
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(
-      new Runnable() {
+    DartAnalysisServerService.getInstance().updateFilesContent();
+
+    final boolean ok = ApplicationManagerEx.getApplicationEx()
+      .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.style.action.name"), true, project);
+
+    if (ok) {
+      final Runnable onSuccessRunnable = new Runnable() {
         @Override
         public void run() {
-          CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null);
+          CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
+
+          for (Map.Entry<VirtualFile, String> entry : fileToNewContentMap.entrySet()) {
+            final VirtualFile file = entry.getKey();
+            final Document document = FileDocumentManager.getInstance().getDocument(file);
+            final String newContent = entry.getValue();
+
+            if (document != null && newContent != null) {
+              document.setText(newContent);
+            }
+          }
+        }
+      };
+
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          CommandProcessor.getInstance().executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null);
         }
       });
+    }
   }
 }
