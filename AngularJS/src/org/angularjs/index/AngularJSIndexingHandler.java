@@ -104,7 +104,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("asi", AngularSymbolIndex.KEY);
 
     for (String key : INDEXES.keySet()) {
-      JSImplicitElement.UserStringsRegistry.registerUserString(key);
+      JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
   }
 
