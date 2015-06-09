@@ -164,6 +164,9 @@ public class DartIndentProcessor {
         return Indent.getContinuationIndent();
       }
     }
+    if (elementType == VAR_DECLARATION_LIST_PART) {
+      return Indent.getContinuationIndent();
+    }
     return Indent.getNoneIndent();
   }
 

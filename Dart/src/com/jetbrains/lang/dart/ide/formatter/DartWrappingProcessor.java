@@ -133,6 +133,26 @@ public class DartWrappingProcessor {
       return createWrap(true);
     }
 
+    if (childType == VAR_DECLARATION_LIST && elementType != FOR_LOOP_PARTS) {
+      if (varDeclListContainsVarInit(child)) {
+        return Wrap.createWrap(WrapType.ALWAYS, true);
+      } else {
+        return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+      }
+    }
+    if (childType == VAR_DECLARATION_LIST_PART) {
+      ASTNode parent = myNode.getTreeParent();
+      if (parent != null && parent.getElementType() == FOR_LOOP_PARTS) {
+        return Wrap.createWrap(WrapType.NORMAL, true);
+      } else {
+        if (varDeclListContainsVarInit(myNode)) {
+          return Wrap.createWrap(WrapType.ALWAYS, true);
+        } else {
+          return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+        }
+      }
+    }
+
     return defaultWrap;
   }
 
@@ -161,5 +181,15 @@ public class DartWrappingProcessor {
       return Wrap.createWrap(WrapType.ALWAYS, true);
     }
     return Wrap.createWrap(WrapType.NONE, true);
+  }
+
+  private static boolean varDeclListContainsVarInit(ASTNode decl) {
+    if (decl.findChildByType(VAR_INIT) != null) return true;
+    ASTNode child = decl.getFirstChildNode();
+    while (child != null) {
+      if (child.findChildByType(VAR_INIT) != null) return true;
+      child = child.getTreeNext();
+    }
+    return false;
   }
 }
