@@ -40,6 +40,7 @@ module Rake
 
       CUSTOM_MSG_TYPES = {
           :started => 'testStarted',
+          :finished => 'testFinished',
           :failed => 'testFailed'
       }
 
