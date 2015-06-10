@@ -152,7 +152,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
         }
 
         final GlobalSearchScope scopeWithLibs =
-          scope.intersectWith(module.getModuleContentScope()).union(getModuleLibrariesClassesScope(module));
+          scope.intersectWith(GlobalSearchScope.projectScope(project)).union(getModuleLibrariesClassesScope(module));
         return new Result<GlobalSearchScope>(scopeWithLibs, PsiModificationTracker.MODIFICATION_COUNT);
       }
     });
