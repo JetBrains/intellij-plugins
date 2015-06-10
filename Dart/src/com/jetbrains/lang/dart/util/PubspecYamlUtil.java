@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairConsumer;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Dumper;
@@ -23,6 +24,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 public class PubspecYamlUtil {
 
@@ -62,20 +64,33 @@ public class PubspecYamlUtil {
     return name instanceof String ? (String)name : null;
   }
 
-  public static void processPathPackages(@NotNull final VirtualFile pubspecYamlFile,
-                                         @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
+  public static void processInProjectPathPackagesRecursively(@NotNull final Project project,
+                                                             @NotNull final VirtualFile pubspecYamlFile,
+                                                             @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
+
+    processInProjectPathPackagesRecursively(project, pubspecYamlFile, new THashSet<VirtualFile>(), pathPackageNameAndDirConsumer);
+  }
+
+  private static void processInProjectPathPackagesRecursively(@NotNull final Project project,
+                                                              @NotNull final VirtualFile pubspecYamlFile,
+                                                              @NotNull final Set<VirtualFile> processedPubspecs,
+                                                              @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
+    if (!processedPubspecs.add(pubspecYamlFile)) return;
+
     final VirtualFile baseDir = pubspecYamlFile.getParent();
     final Map<String, Object> yamlInfo = getPubspecYamlInfo(pubspecYamlFile);
     if (baseDir == null || yamlInfo == null) return;
 
-    processYamlDeps(pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCIES));
-    processYamlDeps(pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEV_DEPENDENCIES));
+    processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCIES));
+    processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEV_DEPENDENCIES));
   }
 
   // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
-  private static void processYamlDeps(@NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
-                                      @NotNull final VirtualFile baseDir,
-                                      @Nullable final Object yamlDep) {
+  private static void processYamlDepsRecursively(@NotNull final Project project,
+                                                 @NotNull final Set<VirtualFile> processedPubspecs,
+                                                 @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
+                                                 @NotNull final VirtualFile baseDir,
+                                                 @Nullable final Object yamlDep) {
     // see com.google.dart.tools.core.pub.PubspecModel#processDependencies
     if (!(yamlDep instanceof Map)) return;
 
@@ -88,8 +103,15 @@ public class PubspecYamlUtil {
         final Object pathObj = ((Map)packageEntryValue).get(PATH);
         if (pathObj instanceof String) {
           final VirtualFile packageFolder = VfsUtilCore.findRelativeFile(pathObj + "/" + LIB_DIR_NAME, baseDir);
-          if (packageFolder != null && packageFolder.isDirectory()) {
+          if (packageFolder != null &&
+              packageFolder.isDirectory() &&
+              ProjectRootManager.getInstance(project).getFileIndex().isInContent(packageFolder)) {
             pathPackageNameAndRelPathConsumer.consume(packageName, packageFolder);
+
+            final VirtualFile otherPubspecYaml = packageFolder.getParent().findChild(PUBSPEC_YAML);
+            if (otherPubspecYaml != null && !otherPubspecYaml.isDirectory()) {
+              processInProjectPathPackagesRecursively(project, otherPubspecYaml, processedPubspecs, pathPackageNameAndRelPathConsumer);
+            }
           }
         }
       }

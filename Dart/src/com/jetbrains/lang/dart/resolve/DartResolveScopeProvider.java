@@ -132,7 +132,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
     return CachedValuesManager.getManager(project).getCachedValue(dataHolder, new CachedValueProvider<GlobalSearchScope>() {
       @Override
       public Result<GlobalSearchScope> compute() {
-        final Collection<VirtualFile> pathPackageRoots = getPathPackageRoots(pubspecFile);
+        final Collection<VirtualFile> pathPackageRoots = getPathPackageRoots(module.getProject(), pubspecFile);
 
         final VirtualFile dartRoot = pubspecFile.getParent();
 
@@ -158,10 +158,10 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
     });
   }
 
-  private static Collection<VirtualFile> getPathPackageRoots(final VirtualFile pubspecFile) {
+  private static Collection<VirtualFile> getPathPackageRoots(@NotNull final Project project, @NotNull final VirtualFile pubspecFile) {
     final Collection<VirtualFile> result = new SmartList<VirtualFile>();
 
-    PubspecYamlUtil.processPathPackages(pubspecFile, new PairConsumer<String, VirtualFile>() {
+    PubspecYamlUtil.processInProjectPathPackagesRecursively(project, pubspecFile, new PairConsumer<String, VirtualFile>() {
       @Override
       public void consume(final String packageName, final VirtualFile packageDir) {
         result.add(packageDir);
