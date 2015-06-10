@@ -83,13 +83,19 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
       final VirtualFile inContent = myFixture.addFileToProject("inContentOutsideDartRoot.dart", "").getVirtualFile();
 
-      myFixture.addFileToProject("DartProject2/pubspec.yaml", "name: ProjectName2\n");
+      final VirtualFile inProject3Web = myFixture.addFileToProject("DartProject3/web/inProject3Web.dart", "").getVirtualFile();
+      final VirtualFile inProject3Lib = myFixture.addFileToProject("DartProject3/lib/inProject3Lib.dart", "").getVirtualFile();
+
+      myFixture.addFileToProject("DartProject2/pubspec.yaml", "name: DartProject2\n" +
+                                                              "dependencies:\n" +
+                                                              "  DartProject3:\n" +
+                                                              "    path: ../DartProject3\n");
       final VirtualFile inProject2Web = myFixture.addFileToProject("DartProject2/web/inProject2Web.dart", "").getVirtualFile();
       final VirtualFile inProject2Lib = myFixture.addFileToProject("DartProject2/lib/inProject2Lib.dart", "").getVirtualFile();
 
-      final VirtualFile pubspec = myFixture.addFileToProject("DartProject1/pubspec.yaml", "name: ProjectName1\n" +
+      final VirtualFile pubspec = myFixture.addFileToProject("DartProject1/pubspec.yaml", "name: DartProject1\n" +
                                                                                           "dependencies:\n" +
-                                                                                          "  PathPackage:\n" +
+                                                                                          "  DartProject2:\n" +
                                                                                           "    path: ../DartProject2\n").getVirtualFile();
       final VirtualFile inProject1Root = myFixture.addFileToProject("DartProject1/inProject1Root.dart", "").getVirtualFile();
       final VirtualFile inLib = myFixture.addFileToProject("DartProject1/lib/inLib.dart", "").getVirtualFile();
@@ -105,40 +111,43 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       doTestDartScope(inExcluded, null, null, true);
       doTestDartScope(new VirtualFile[]{inSdk1, inSdk2},
                       new VirtualFile[]{inSdk1, inSdk2},
-                      new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
+                      new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web, inProject3Lib,
                         inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
       doTestDartScope(new VirtualFile[]{inIdeLib1, inIdeLib2},
                       new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
-                      new VirtualFile[]{inContent, inProject2Web, inProject2Lib,
+                      new VirtualFile[]{inContent, inProject2Web, inProject2Lib, inProject3Web, inProject3Lib,
                         inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
       doTestDartScope(new VirtualFile[]{inContent},
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
-                        inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web,
+                        inProject3Lib, inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
                       new VirtualFile[]{inExcluded});
       doTestDartScope(inLib,
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
-                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, inPackages},
+                      new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest,
+                        inExample},
                       true);
       doTestDartScope(new VirtualFile[]{inPackages},
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
-                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample});
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, inPackages},
+                      new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest,
+                        inExample});
       doTestDartScope(new VirtualFile[]{inWeb, inWebSub},
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inWeb, inWebSub},
-                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inExample},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, inPackages, inWeb,
+                        inWebSub},
+                      new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inTest, inExample},
                       true);
       doTestDartScope(inExample,
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inExample},
-                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inWeb, inWebSub},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib, inLib, inPackages, inExample},
+                      new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded, inProject1Root, inTest, inWeb, inWebSub},
                       true);
       doTestDartScope(new VirtualFile[]{inProject1Root, inTest},
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib,
                         inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
-                      new VirtualFile[]{inContent, inProject2Web, inExcluded},
+                      new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded},
                       true);
       doTestDartScope(new VirtualFile[]{inProject1Root, inLib, inWeb, inWebSub, inTest, inExample},
-                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inProject3Lib,
                         inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
-                      new VirtualFile[]{inContent, inProject2Web, inExcluded},
+                      new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded},
                       false);
     }
     finally {
@@ -511,5 +520,32 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
            "var b = prefix.Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;\n" +
            "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;\n" +
            "var d = Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;");
+  }
+
+  public void testTransitivePathPackageDependencies() {
+    myFixture.addFileToProject("project1/pubspec.yaml", "name: project1\n" +
+                                                        "dependencies:\n" +
+                                                        "  project2:\n" +
+                                                        "    path: ../project2\n");
+    myFixture.addFileToProject("project2/pubspec.yaml", "name: project2\n" +
+                                                        "dependencies:\n" +
+                                                        "  project1:\n" +
+                                                        "    path: ../project1\n" +
+                                                        "  project3:\n" +
+                                                        "    path: ../project3\n");
+    myFixture.addFileToProject("project3/pubspec.yaml", "");
+
+    myFixture.addFileToProject("project2/lib/in_lib2.dart", "inLib2(){}");
+    myFixture.addFileToProject("project3/lib/in_lib3.dart", "inLib3(){}");
+
+    final PsiFile psiFile = myFixture.addFileToProject("project1/lib/foo.dart",
+                                                       "import 'package:project2/in_lib2.dart';\n" +
+                                                       "import 'package:project3/in_lib3.dart';\n" +
+                                                       "main(){\n" +
+                                                       "  inLib2<caret expected='project2/lib/in_lib2.dart -> inLib2'>();\n" +
+                                                       "  inLib3<caret expected='project3/lib/in_lib3.dart -> inLib3'>();\n" +
+                                                       "}");
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
+    doTest();
   }
 }

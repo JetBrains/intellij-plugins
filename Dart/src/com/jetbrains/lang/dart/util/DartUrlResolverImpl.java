@@ -4,7 +4,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -25,7 +28,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 class DartUrlResolverImpl extends DartUrlResolver {
 
@@ -249,14 +255,10 @@ class DartUrlResolverImpl extends DartUrlResolver {
       myLivePackageNameToDirMap.put(name, libFolder);
     }
 
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
-
-    PubspecYamlUtil.processPathPackages(myPubspecYamlFile, new PairConsumer<String, VirtualFile>() {
+    PubspecYamlUtil.processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile, new PairConsumer<String, VirtualFile>() {
       @Override
       public void consume(@NotNull final String packageName, @NotNull final VirtualFile packageDir) {
-        if (fileIndex.isInContent(packageDir)) {
-          myLivePackageNameToDirMap.put(packageName, packageDir);
-        }
+        myLivePackageNameToDirMap.put(packageName, packageDir);
       }
     });
   }
