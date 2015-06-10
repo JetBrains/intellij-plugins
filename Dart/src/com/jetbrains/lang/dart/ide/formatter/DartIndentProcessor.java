@@ -163,6 +163,13 @@ public class DartIndentProcessor {
       if (FormatterUtil.isPrecededBy(node, EXPRESSION_BODY_DEF)) {
         return Indent.getContinuationIndent();
       }
+      if (FormatterUtil.isPrecededBy(node, ASSIGNMENT_OPERATOR)) {
+        return Indent.getContinuationIndent();
+      }
+    }
+    if ((elementType == REFERENCE_EXPRESSION || BINARY_EXPRESSIONS.contains(elementType)) &&
+        FormatterUtil.isPrecededBy(node, ASSIGNMENT_OPERATOR)) {
+      return Indent.getContinuationIndent();
     }
     if (elementType == VAR_DECLARATION_LIST_PART) {
       return Indent.getContinuationIndent();

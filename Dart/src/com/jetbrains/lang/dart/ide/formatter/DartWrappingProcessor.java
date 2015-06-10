@@ -34,9 +34,9 @@ public class DartWrappingProcessor {
     //
     if (elementType == ARGUMENT_LIST) {
       if (mySettings.CALL_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
-        if (myNode.getFirstChildNode() == child) {
-          return createWrap(true); // Allow first arg to wrap.
-        }
+        //if (myNode.getFirstChildNode() == child) {
+        //  return createWrap(true); // Allow first arg to wrap.
+        //}
         if (!mySettings.PREFER_PARAMETERS_WRAP && childWrap != null) {
           // Not used; PREFER_PARAMETERS_WRAP cannot be changed in the UI.
           return Wrap.createChildWrap(childWrap, WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), true);
