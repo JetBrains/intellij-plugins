@@ -3,7 +3,6 @@ main() {
   for (i in [0, 1, 2, 3]) {
     for (var j = 0; i < arr.length; ++j) {
       var o = arr[j];
-
     }
   }
 }

@@ -53,7 +53,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/exports.unit:124  force split in list");
     KNOWN_TO_FAIL.add("whitespace/for.stmt:2  DO place spaces around in, and after each ; in a loop.");
     KNOWN_TO_FAIL.add("whitespace/for.stmt:56");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:2  many arguments");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:28  force multi-line because of contained block");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:35");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:40  arguments, nested");
@@ -73,7 +72,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/lists.stmt:62  line comment between items");
     KNOWN_TO_FAIL.add("comments/lists.stmt:70  line comments after last item");
     KNOWN_TO_FAIL.add("comments/lists.stmt:79  line comments after trailing comma");
-    KNOWN_TO_FAIL.add("comments/lists.stmt:88  space on left between block comment and \",\"");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:2  do not split before first clause");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:8  split after first clause");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:14  split after second clause");
@@ -89,7 +87,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/maps.stmt:54  const");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:65  dangling comma multiline");
     KNOWN_TO_FAIL.add("comments/mixed.unit:2  block comment");
-    KNOWN_TO_FAIL.add("comments/mixed.unit:32  mixed doc and line comments");
     KNOWN_TO_FAIL.add("comments/maps.stmt:10  line comment on opening line");
     KNOWN_TO_FAIL.add("comments/maps.stmt:25  block comment with trailing newline");
     KNOWN_TO_FAIL.add("comments/maps.stmt:39  inline block comment");
@@ -103,9 +100,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/constructors.unit:28  constructor initialization list");
     KNOWN_TO_FAIL.add("whitespace/constructors.unit:40  DO format constructor initialization lists with each field on its own line.");
     KNOWN_TO_FAIL.add("whitespace/constructors.unit:52  DO format constructor initialization lists with each field on its own line.");
-    KNOWN_TO_FAIL.add("comments/statements.stmt:2  inline after \"var\"");
     KNOWN_TO_FAIL.add("comments/statements.stmt:6  trailing line comment");
-    KNOWN_TO_FAIL.add("comments/statements.stmt:10  multiple variable declaration list");
     KNOWN_TO_FAIL.add("comments/statements.stmt:14  continue with line comment");
     KNOWN_TO_FAIL.add("comments/statements.stmt:32  do with line comment");
     KNOWN_TO_FAIL.add("regression/25.stmt:1");
@@ -125,19 +120,10 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/expressions.stmt:2  trailing line comment after split");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:9  trailing line comment after non-split");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:16  inside list literal");
-    KNOWN_TO_FAIL.add("comments/expressions.stmt:23  inside argument list");
-    KNOWN_TO_FAIL.add("comments/expressions.stmt:31  space on left between block comment and \",\"");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:35  space between block comment and other tokens");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:61  hard line caused by a comment before a nested line");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:2  parameters fit but ) does not");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:11  parameters fit but } does not");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:20  many parameters");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:33  no split after \"(\" in lambda");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:51  move just optional positional to second line even though all fit on second");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:56  move just named to second line even though all fit on second");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:61  avoid splitting in function type parameters");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:66");
-    KNOWN_TO_FAIL.add("splitting/parameters.stmt:71  allow splitting in function type parameters");
     KNOWN_TO_FAIL.add("splitting/parameters.unit:11  indent parameters more if body is a wrapped =>");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:12  (or not)");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:23  Multiple initializers are one per line");
@@ -153,23 +139,18 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:148  parameter annotations are inline");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:158  type parameter annotations are inline");
     KNOWN_TO_FAIL.add("comments/classes.unit:39  inline block comment");
-    KNOWN_TO_FAIL.add("comments/classes.unit:43  multiple comments on opening line");
     KNOWN_TO_FAIL.add("comments/classes.unit:50  multiple inline block comments");
     KNOWN_TO_FAIL.add("comments/classes.unit:74  block comment");
     KNOWN_TO_FAIL.add("comments/classes.unit:82  block comment");
     KNOWN_TO_FAIL.add("comments/functions.unit:39  inline block comment");
     KNOWN_TO_FAIL.add("comments/functions.unit:43  multiple comments on opening line");
     KNOWN_TO_FAIL.add("comments/functions.unit:50  multiple inline block comments");
-    KNOWN_TO_FAIL.add("comments/functions.unit:74  before \",\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:78  after \",\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:82  before \"[\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:86  after \"[\" in param list");
-    KNOWN_TO_FAIL.add("comments/functions.unit:90  before \"]\" in param list");
-    KNOWN_TO_FAIL.add("comments/functions.unit:94  after \"]\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:98  before \"{\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:102  after \"{\" in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:106  before \"}\" in param list");
-    KNOWN_TO_FAIL.add("comments/functions.unit:110  after \"{\" in param list");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:12  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:17  initializer fits one line");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:22  initializer doesn't fit one line, cannot be split");
@@ -180,28 +161,13 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:6  long single cascade forces multi-line");
     KNOWN_TO_FAIL.add("whitespace/cascades.stmt:30  cascades indent contained blocks (and force multi-line)");
     KNOWN_TO_FAIL.add("comments/top_level.unit:8");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:17");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:21");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:80");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:87");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:96");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:105");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:114");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:143  two lines between library and import");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:150  two lines between library and export");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:157  two lines between library and part");
+    KNOWN_TO_FAIL.add("comments/top_level.unit:133");
     KNOWN_TO_FAIL.add("comments/top_level.unit:164  before library name");
     KNOWN_TO_FAIL.add("comments/top_level.unit:168  block comment before \".\" in library");
     KNOWN_TO_FAIL.add("comments/top_level.unit:172  block comment after \".\" in library");
     KNOWN_TO_FAIL.add("comments/top_level.unit:176  line comment before \".\" in library");
     KNOWN_TO_FAIL.add("comments/top_level.unit:182  line comment after \".\" in library");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:8  initializer doesn't fit one line, wrap inside, keep name");
-    KNOWN_TO_FAIL.add("splitting/assignments.stmt:13  wrapped initializer fits one line");
-    KNOWN_TO_FAIL.add("splitting/assignments.stmt:18  initializer doesn't fit one line, name too long");
-    KNOWN_TO_FAIL.add("splitting/assignments.stmt:24  initializer doesn't fit one line, cannot be split");
-    KNOWN_TO_FAIL.add("splitting/assignments.stmt:29  long function call initializer");
-    KNOWN_TO_FAIL.add("splitting/assignments.stmt:34  long binary expression initializer");
-    KNOWN_TO_FAIL.add("whitespace/blocks.stmt:24  collapse any other newlines");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:6  wrapped assert");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:11  split in do-while condition");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:16  split in switch value");
@@ -509,6 +475,7 @@ public class DartStyleTest extends FormatterTestCase {
         pageWidth = lines[0].indexOf("|");
         i = 1;
       }
+      if (!isCompilationUnit) pageWidth += 2; // Adjust for indent in case test is near margin.
 
       System.out.println("\nTest: " + dirName + "/" + testFileName + ", Right margin: " + pageWidth);
       final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);

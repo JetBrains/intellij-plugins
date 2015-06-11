@@ -32,7 +32,6 @@ public class DartFormatterTest extends FormatterTestCase {
     settings.ALIGN_MULTILINE_PARAMETERS = true;
     settings.ALIGN_MULTILINE_BINARY_OPERATION = true;
     settings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
-    settings.ALIGN_MULTILINE_BINARY_OPERATION = true;
     settings.KEEP_LINE_BREAKS = true;
     doTest();
   }
@@ -219,13 +218,19 @@ public class DartFormatterTest extends FormatterTestCase {
     doTest();
   }
 
-  public void testTernary1() throws Exception {
-    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
-    settings.RIGHT_MARGIN = 40;
-    //doTest();
-  }
+  //public void testTernary1() throws Exception {
+  //  final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+  //  settings.RIGHT_MARGIN = 40;
+  //  doTest();
+  //}
 
   public void testVarDecl() throws Exception {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.RIGHT_MARGIN = 40;
+    doTest();
+  }
+
+  public void testFileComments() throws Exception {
     final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
     settings.RIGHT_MARGIN = 40;
     doTest();
