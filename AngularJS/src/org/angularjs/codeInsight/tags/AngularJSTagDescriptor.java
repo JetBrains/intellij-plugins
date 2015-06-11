@@ -1,6 +1,5 @@
 package org.angularjs.codeInsight.tags;
 
-import com.intellij.html.impl.RelaxedHtmlFromSchemaElementDescriptor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
@@ -73,7 +72,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     }
 
     final XmlAttributeDescriptor[] commonAttributes = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
-    return RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets(context, ArrayUtil.mergeArrays(result, commonAttributes));
+    return ArrayUtil.mergeArrays(result, commonAttributes);
   }
 
   @Nullable
