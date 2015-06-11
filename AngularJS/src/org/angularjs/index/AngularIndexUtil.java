@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -77,12 +78,13 @@ public class AngularIndexUtil {
       @Override
       public Result<Integer> compute() {
         int version = -1;
-        if (resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-messages") != null) {
+        PsiElement resolve;
+        if ((resolve = resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-messages")) != null) {
           version = 13;
-        } else if (resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null) {
+        } else if ((resolve = resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model")) != null) {
           version = 12;
         }
-        return Result.create(version, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+        return Result.create(version, resolve != null ? resolve.getContainingFile() : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
       }
     });
   }
