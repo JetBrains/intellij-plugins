@@ -342,7 +342,7 @@ equalityOperator ::= '==' | '!='
 formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
                       | '(' namedFormalParameters? ')'
 
-fieldFormalParameter ::= metadata* finalConstVarOrType? 'this' '.' referenceExpression formalParameterList?
+fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
 
 namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ']' |
                           '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* '}'
@@ -364,7 +364,7 @@ private declaredIdentifier ::= metadata* finalConstVarOrTypeAndComponentName;
 
 returnType ::= 'void' | type
 
-private finalConstVarOrType ::= 'final' type? | 'const' type? | 'var' | type // Be careful on using it! It may erroneously consume 'type?'. See finalConstVarOrTypeAndComponentName
+private finalConstVarVoidOrType ::= 'final' type? | 'const' type? | 'var' | 'void' | type // Be careful on using it! It may erroneously consume 'type?'. See finalConstVarOrTypeAndComponentName
 private finalConstVarOrTypeAndComponentName ::= 'final' type componentName |
                                                 'final'      componentName |
                                                 'const' type componentName |
