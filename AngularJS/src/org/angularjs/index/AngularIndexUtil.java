@@ -86,14 +86,15 @@ public class AngularIndexUtil {
       @Override
       public Result<Integer> compute() {
         int version = -1;
-        if (resolve(project, AngularDirectivesIndex.KEY, "non-bindable") != null) {
+        PsiElement resolve;
+        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "non-bindable")) != null) {
           version = 20;
-        } else if (resolve(project, AngularDirectivesIndex.KEY, "ng-messages") != null) {
+        } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
           version = 13;
-        } else if (resolve(project, AngularDirectivesIndex.KEY, "ng-model") != null) {
+        } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
           version = 12;
         }
-        return Result.create(version, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+        return Result.create(version, resolve != null ? resolve.getContainingFile() : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
       }
     });
   }
