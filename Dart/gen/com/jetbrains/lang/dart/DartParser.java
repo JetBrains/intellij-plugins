@@ -1935,7 +1935,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* finalConstVarOrType? 'this' '.' referenceExpression formalParameterList?
+  // metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
   public static boolean fieldFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter")) return false;
     boolean r;
@@ -1962,10 +1962,10 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // finalConstVarOrType?
+  // finalConstVarVoidOrType?
   private static boolean fieldFormalParameter_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter_1")) return false;
-    finalConstVarOrType(b, l + 1);
+    finalConstVarVoidOrType(b, l + 1);
     return true;
   }
 
@@ -2007,56 +2007,6 @@ public class DartParser implements PsiParser {
     r = r && consumeToken(b, DOT);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  /* ********************************************************** */
-  // 'final' type? | 'const' type? | 'var' | type
-  static boolean finalConstVarOrType(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarOrType")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = finalConstVarOrType_0(b, l + 1);
-    if (!r) r = finalConstVarOrType_1(b, l + 1);
-    if (!r) r = consumeToken(b, VAR);
-    if (!r) r = type(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // 'final' type?
-  private static boolean finalConstVarOrType_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarOrType_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, FINAL);
-    r = r && finalConstVarOrType_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // type?
-  private static boolean finalConstVarOrType_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarOrType_0_1")) return false;
-    type(b, l + 1);
-    return true;
-  }
-
-  // 'const' type?
-  private static boolean finalConstVarOrType_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarOrType_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, CONST);
-    r = r && finalConstVarOrType_1_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // type?
-  private static boolean finalConstVarOrType_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarOrType_1_1")) return false;
-    type(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -2146,6 +2096,57 @@ public class DartParser implements PsiParser {
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // 'final' type? | 'const' type? | 'var' | 'void' | type
+  static boolean finalConstVarVoidOrType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = finalConstVarVoidOrType_0(b, l + 1);
+    if (!r) r = finalConstVarVoidOrType_1(b, l + 1);
+    if (!r) r = consumeToken(b, VAR);
+    if (!r) r = consumeToken(b, VOID);
+    if (!r) r = type(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'final' type?
+  private static boolean finalConstVarVoidOrType_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, FINAL);
+    r = r && finalConstVarVoidOrType_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // type?
+  private static boolean finalConstVarVoidOrType_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_0_1")) return false;
+    type(b, l + 1);
+    return true;
+  }
+
+  // 'const' type?
+  private static boolean finalConstVarVoidOrType_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CONST);
+    r = r && finalConstVarVoidOrType_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // type?
+  private static boolean finalConstVarVoidOrType_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_1_1")) return false;
+    type(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

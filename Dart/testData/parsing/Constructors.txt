@@ -26,6 +26,40 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
+              FIELD_FORMAL_PARAMETER
+                PsiElement(void)('void')
+                PsiElement(this)('this')
+                PsiElement(.)('.')
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('a')
+                FORMAL_PARAMETER_LIST
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            PsiElement(,)(',')
+            NORMAL_FORMAL_PARAMETER
+              FIELD_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+                PsiElement(this)('this')
+                PsiElement(.)('.')
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('b')
+                FORMAL_PARAMETER_LIST
+                  PsiElement(()('(')
+                  PsiElement())(')')
+            PsiElement())(')')
+          PsiElement(;)(';')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('ConstructorSyntax')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
               SIMPLE_FORMAL_PARAMETER
                 COMPONENT_NAME
                   ID

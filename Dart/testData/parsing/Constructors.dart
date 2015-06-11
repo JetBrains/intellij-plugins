@@ -1,6 +1,7 @@
 import 'Reference7Helper.dart' as helper;
 
 class ConstructorSyntax {
+  ConstructorSyntax(void this.a(), int this.b());
   ConstructorSyntax(x, y) : super(), this.x = x, this.y = y {}
   ConstructorSyntax.a(x, y) : x = x, super(), y = x {}
   ConstructorSyntax.b(x, y) : this.x = y, this.y = x, super() {}
