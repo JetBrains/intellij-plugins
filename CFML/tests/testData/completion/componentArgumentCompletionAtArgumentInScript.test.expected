@@ -1,0 +1,3 @@
+<cfscript>
+  function validateFoo( required folder.subfolder.<caret> foo ) {}
+</cfscript>

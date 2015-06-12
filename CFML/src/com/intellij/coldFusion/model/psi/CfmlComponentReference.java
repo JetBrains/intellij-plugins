@@ -43,12 +43,13 @@ import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -338,20 +339,26 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   @NotNull
   public Object[] getVariants() {
     // final CfmlIndex cfmlIndex = CfmlIndex.getInstance(getProject());
-    Collection<Object> variants = new LinkedList<Object>();
+    return buildVariants(getText(), getContainingFile(), getProject(), this, true);
+  }
 
-    String text = getText();
+  @NotNull
+  public static Object[] buildVariants(String text, PsiFile containingFile, final Project project,
+                                       @Nullable CfmlComponentReference reference,
+                                       final boolean forceQualify
+                                       ) {
+    Collection<Object> variants = new THashSet<Object>();
 
     String directoryName = "";
     if (text.contains(".")) {
       int i = text.lastIndexOf(".");
       directoryName = text.substring(0, i);
     }
-    CfmlProjectConfiguration.State state = CfmlProjectConfiguration.getInstance(getProject()).getState();
+    CfmlProjectConfiguration.State state = CfmlProjectConfiguration.getInstance(project).getState();
     CfmlMappingsConfig mappings = state != null ? state.getMapps().clone() : new CfmlMappingsConfig();
 
-    adjustMappingsIfEmpty(mappings, getProject());
-    addFakeMappingsForImports(mappings);
+    adjustMappingsIfEmpty(mappings, project);
+    if (reference != null) addFakeMappingsForImports(reference, mappings);
 
     List<String> realPossiblePaths = mappings.mapVirtualToReal(directoryName);
 
@@ -364,7 +371,6 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
         variants.add(value.replace('\\', '.').replace('/', '.').substring(1));
       }
     }
-    PsiFile containingFile = getContainingFile();
     containingFile = containingFile == null ? null : containingFile.getOriginalFile();
     if (containingFile != null && containingFile instanceof CfmlFile) {
       CfmlFile cfmlContainingFile = (CfmlFile)containingFile;
@@ -382,7 +388,6 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
 
     final String finalDirectoryName = directoryName;
 
-    final Project project = getProject();
     return ContainerUtil.map2Array(variants, new Function<Object, Object>() {
       class DotInsertHandler implements InsertHandler<LookupElement> {
         @Override
@@ -397,7 +402,11 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       public Object fun(final Object object) {
         if (object instanceof VirtualFile) {
           VirtualFile element = (VirtualFile)object;
-          String name = finalDirectoryName + (finalDirectoryName.length() == 0 ? "" : ".") + element.getNameWithoutExtension();
+          String elementNameWithoutExtension = element.getNameWithoutExtension();
+          String name = forceQualify ?
+                        finalDirectoryName + (finalDirectoryName.length() == 0 ? "" : ".") + elementNameWithoutExtension :
+                        elementNameWithoutExtension;
+          if (name.length() == 0) name = element.getName();
           if (element.isDirectory()) {
             return LookupElementBuilder.create(name).withIcon(DIRECTORY_CLOSED_ICON)
               .withInsertHandler(new DotInsertHandler()).withCaseSensitivity(false);
@@ -405,11 +414,11 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
           else {
             Icon icon = CLASS_ICON;
             // choosing correct icon (class or interface)
-            if (CfmlIndex.getInstance(project).getComponentsByNameInScope(element.getNameWithoutExtension(), GlobalSearchScope
+            if (CfmlIndex.getInstance(project).getComponentsByNameInScope(elementNameWithoutExtension, GlobalSearchScope
               .fileScope(project, element)).size() == 1) {
               icon = CLASS_ICON;
             }
-            else if (CfmlIndex.getInstance(project).getInterfacesByNameInScope(element.getNameWithoutExtension(), GlobalSearchScope
+            else if (CfmlIndex.getInstance(project).getInterfacesByNameInScope(elementNameWithoutExtension, GlobalSearchScope
               .fileScope(project, element)).size() == 1) {
               icon = INTERFACE_ICON;
             }
@@ -434,16 +443,17 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     }
   }
 
-  private void addFakeMappingsForImports(CfmlMappingsConfig mappings) {
-    if (PsiTreeUtil.getParentOfType(this, CfmlImport.class) != null) {
+  private static void addFakeMappingsForImports(CfmlComponentReference ref, CfmlMappingsConfig mappings) {
+    if (PsiTreeUtil.getParentOfType(ref, CfmlImport.class) != null) {
       // create fake mappings for imports
-      Collection<String> importStrings = getContainingFile().getImportStrings();
+      CfmlFile file = ref.getContainingFile();
+      Collection<String> importStrings = file.getImportStrings();
       for (String importString : importStrings) {
         final int index = importString.lastIndexOf('.');
         if (index == -1) {
           continue;
         }
-        final String leftMapping = getComponentQualifiedName(importString).substring(0, index);
+        final String leftMapping = file.getComponentQualifiedName(importString).substring(0, index);
         if (!StringUtil.isEmpty(leftMapping)) {
           mappings.putToServerMappings("", leftMapping);
         }
@@ -451,7 +461,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     }
   }
 
-  private void addVariantsFromPath(Collection<Object> variants, String directoryName, String realPath) {
+  private static void addVariantsFromPath(Collection<Object> variants, String directoryName, String realPath) {
     VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(realPath);
     if (fileByUrl != null) {
       if (fileByUrl.isDirectory()) {

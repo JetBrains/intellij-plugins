@@ -25,15 +25,15 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.CfmlAttribute;
 import com.intellij.coldFusion.model.psi.CfmlComponent;
+import com.intellij.coldFusion.model.psi.CfmlComponentReference;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
-import com.intellij.coldFusion.model.psi.impl.CfmlFunctionImpl;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.StdLanguages;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.FormatterUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -62,7 +62,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
         && context.getFile().findReferenceAt(offset) != null) {
       context.setDummyIdentifier("");
     }
-    else {/*
+    /*else {
             final CharSequence chars = context.getEditor().getDocument().getCharsSequence();
             if (offset < 1) {
                 return;
@@ -74,8 +74,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
                     ((offset >= 2 && chars.charAt(offset - 2) == '<') || ((offset >= 3 && chars.charAt(offset - 2) == '/' && chars.charAt(offset - 3) == '<')))) {
                 context.setFileCopyPatcher(new DummyIdentifierPatcher("f"));
             }
-            */
-    }
+    }*/
   }
 
   @Override
@@ -88,47 +87,56 @@ public class CfmlCompletionContributor extends CompletionContributor {
 
     // tag names completion in template data, in open and close constructions in cfml data
     CfmlTagNamesCompletionProvider tagNamesCompletionProvider = new CfmlTagNamesCompletionProvider();
-    extend(BASIC, PlatformPatterns.psiElement().afterLeaf(psiElement().withText("<")).withLanguage(StdLanguages.XML),
+    extend(BASIC, psiElement().afterLeaf(psiElement().withText("<")).withLanguage(StdLanguages.XML),
            tagNamesCompletionProvider);
-    extend(BASIC, PlatformPatterns.psiElement().afterLeaf(psiElement().withText("<")).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().afterLeaf(psiElement().withText("<")).withLanguage(CfmlLanguage.INSTANCE),
            tagNamesCompletionProvider);
-    extend(BASIC, PlatformPatterns.psiElement().afterLeaf(psiElement().withText("</")).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().afterLeaf(psiElement().withText("</")).withLanguage(CfmlLanguage.INSTANCE),
            tagNamesCompletionProvider);
     extend(BASIC, psiElement().inside(xmlTag()), tagNamesCompletionProvider);
 
     // attributes completion
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfmlTokenTypes.ATTRIBUTE).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().withElementType(CfmlTokenTypes.ATTRIBUTE).withLanguage(CfmlLanguage.INSTANCE),
            new CfmlAttributeNamesCompletionProvider());
     // attributes completion in script based components
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withParent(CfmlAttribute.class).withLanguage(
+    extend(BASIC, psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withParent(CfmlAttribute.class).withLanguage(
       CfmlLanguage.INSTANCE),
            new CfmlAttributeNamesCompletionProvider());
     // attribute completion for script property
     extend(BASIC,
-           PlatformPatterns.psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withParent(CfmlProperty.class).withLanguage(
+           psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withParent(CfmlProperty.class).withLanguage(
              CfmlLanguage.INSTANCE),
            new CfmlAttributeNamesCompletionProvider());
     //return type completion in script function definition
+    final PatternCondition<PsiElement> withinTypeCondition = new PatternCondition<PsiElement>("") {
+      public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
+        return (psiElement.getParent() != null && psiElement.getParent().getNode().getElementType() == CfmlElementTypes.TYPE);
+      }
+    };
     extend(BASIC,
-           PlatformPatterns.psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withSuperParent(2, CfmlFunctionImpl.class)
-             .withLanguage(
-               CfmlLanguage.INSTANCE).with(
-             new PatternCondition<PsiElement>("") {
-               public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
-                 return (psiElement.getParent() != null && psiElement.getParent().getNode().getElementType() == CfmlElementTypes.TYPE);
-               }
-             }),
+           psiElement().withParent(psiElement(CfmlElementTypes.TYPE))
+             .withLanguage(CfmlLanguage.INSTANCE),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
-               String[] attributeValues = CfmlUtil.getAttributeValues("cffunction", "returntype", parameters.getPosition().getProject());
-               Set lookupResult = ContainerUtil.map2Set(attributeValues, new Function<String, LookupElement>() {
+               PsiElement position = parameters.getPosition();
+               String text = position.getParent().getText();
+               String[] attributeValues = text.indexOf('.') == -1 ?
+                                          CfmlUtil.getAttributeValues("cffunction", "returntype", position.getProject()):
+                                          ArrayUtil.EMPTY_STRING_ARRAY;
+               Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, new Function<String, LookupElement>() {
                  public LookupElementBuilder fun(final String argumentValue) {
                    return LookupElementBuilder.create(argumentValue).withCaseSensitivity(false);
                  }
                });
+
+               Object[] objects =
+                 CfmlComponentReference.buildVariants(text, position.getContainingFile(), position.getProject(), null, false);
+               for(Object o:objects) {
+                 result.addElement((LookupElement)o);
+               }
                result.addAllElements(lookupResult);
              }
            });
@@ -146,30 +154,31 @@ public class CfmlCompletionContributor extends CompletionContributor {
              }
            });
     //attribute completion for script property without any attributes and ';' character//
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER),
+    extend(BASIC, psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER),
            new CfmlAttributeNamesCompletionProvider());
     //  cfml createObject attribute completion
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfmlTokenTypes.STRING_TEXT).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().withElementType(CfmlTokenTypes.STRING_TEXT).withLanguage(CfmlLanguage.INSTANCE),
            new CfmlArgumentValuesCompletionProvider());
     // predefined attributes values completion
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfmlTokenTypes.STRING_TEXT).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().withElementType(CfmlTokenTypes.STRING_TEXT).withLanguage(CfmlLanguage.INSTANCE),
            new CfmlAttributeValuesCompletionProvider());
     // java class names completion
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfmlTokenTypes.STRING_TEXT).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().withElementType(CfmlTokenTypes.STRING_TEXT).withLanguage(CfmlLanguage.INSTANCE),
            new CfmlJavaClassNamesCompletion());
     // predefined and user defined function names completion
-    extend(BASIC, PlatformPatterns.psiElement().
-      withLanguage(CfmlLanguage.INSTANCE).
+    extend(BASIC, psiElement().
       withElementType(CfscriptTokenTypes.IDENTIFIER).
+      withLanguage(CfmlLanguage.INSTANCE).
       with(new PatternCondition<PsiElement>("") {
         public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
+          if (withinTypeCondition.accepts(psiElement, context)) return false;
           return !(psiElement.getParent() instanceof CfmlAttribute) && (psiElement.getPrevSibling() == null ||
                                                                         psiElement.getPrevSibling().getNode().getElementType() !=
                                                                         CfscriptTokenTypes.POINT);
         }
       }), new CfmlFunctionNamesCompletionProvider());
     // predefined variables completion
-    extend(BASIC, PlatformPatterns.psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withLanguage(CfmlLanguage.INSTANCE),
+    extend(BASIC, psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withLanguage(CfmlLanguage.INSTANCE),
            new CfmlPredefinedVariablesCompletion());
   }
 

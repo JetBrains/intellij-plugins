@@ -1,0 +1,5 @@
+<cffunction name="validateFoo">
+
+  <cfargument name="foo" type="folder.subfolder." />
+
+</cffunction>

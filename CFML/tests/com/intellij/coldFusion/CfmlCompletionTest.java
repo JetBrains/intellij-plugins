@@ -567,6 +567,30 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testComponentArgumentCompletionAtArgument() throws Throwable {
+    addOneComponentTo(myFixture);
+    doTest();
+  }
+
+  public void testComponentArgumentCompletionAtReturnType() throws Throwable {
+    addOneComponentTo(myFixture);
+    doTest();
+  }
+
+  public void testNoFunctionCompletionAtReturnType() throws Throwable {
+    doTest();
+  }
+
+  public void testComponentArgumentCompletionAtReturnTypeInScript() throws Throwable {
+    addOneComponentTo(myFixture);
+    doTest();
+  }
+
+  public void testComponentArgumentCompletionAtArgumentInScript() throws Throwable {
+    addOneComponentTo(myFixture);
+    doTest();
+  }
+
   public void testPredefinedVariablesForTagCompletion() throws Throwable {
     doTestCompletionContainsVariants("recordcount", "columnlist", "currentrow");
   }
