@@ -5,6 +5,7 @@ import com.intellij.formatting.Spacing;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.IElementType;
@@ -25,6 +26,7 @@ public class DartSpacingProcessor {
   private static final TokenSet ID_SET = TokenSet.create(ID);
   private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
   private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS);
+  private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -62,6 +64,9 @@ public class DartSpacingProcessor {
     if (type1 == LIBRARY_STATEMENT && !embeddedComment(type2, child2)) {
       return Spacing.createSpacing(0, 0, 2, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
+    if (parentType == LIBRARY_STATEMENT) {
+      return noSpace();
+    }
     if (SEMICOLON == type2) {
       if (type1 == SEMICOLON && elementType == STATEMENTS) {
         return addSingleSpaceIf(false, true); // Empty statement on new line.
@@ -95,39 +100,52 @@ public class DartSpacingProcessor {
         else {
           lineFeeds = 2;
         }
-      } else if (type1 == LBRACE && type2 == RBRACE) {
+      }
+      else if (type1 == LBRACE && type2 == RBRACE) {
         if (parentType == ON_PART && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
           lineFeeds = 0;
-        } else if (parentType == FUNCTION_BODY) {
+        }
+        else if (parentType == FUNCTION_BODY) {
           if ((myNode.getTreeParent().getTreeParent() != null) &&
               (myNode.getTreeParent().getTreeParent().getElementType() == METHOD_DECLARATION) &&
               mySettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE) {
             lineFeeds = 0; // Empty method.
-          } else if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          }
+          else if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
             lineFeeds = 0; // Empty function, either top-level or statement.
           }
-        } else if (parentType == IF_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == FOR_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == DO_WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == TRY_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == FINALLY_PART && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == FUNCTION_EXPRESSION_BODY && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
-          lineFeeds = 0;
-        } else if (parentType == STATEMENTS && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+        }
+        else if (parentType == IF_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
           lineFeeds = 0;
         }
-      } else if (topLevel && COMMENTS.contains(type2)) {
+        else if (parentType == FOR_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+        else if (parentType == WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+        else if (parentType == DO_WHILE_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+        else if (parentType == TRY_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+        else if (parentType == FINALLY_PART && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+        else if (parentType == FUNCTION_EXPRESSION_BODY && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+        else if (parentType == STATEMENTS && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
+          lineFeeds = 0;
+        }
+      }
+      else if (topLevel && COMMENTS.contains(type2)) {
         lineFeeds = 0;
         spaces = 1;
         keepBreaks = true;
-      } else if ((type1 == LBRACE && type2 == STATEMENTS) || (type2 == RBRACE && type1 == STATEMENTS)) {
+      }
+      else if ((type1 == LBRACE && type2 == STATEMENTS) || (type2 == RBRACE && type1 == STATEMENTS)) {
         lineFeeds = 1;
         keepBreaks = false;
         blanks = 0;
@@ -144,7 +162,12 @@ public class DartSpacingProcessor {
       return addLineBreak();
     }
     if (type1 == CLASS_MEMBERS || type2 == CLASS_MEMBERS) {
-      return addSingleSpaceIf(false, true);
+      if (type1 == MULTI_LINE_COMMENT) {
+        return addSingleSpaceIf(true, false);
+      }
+      else {
+        return addSingleSpaceIf(false, true);
+      }
     }
 
     if (type1 == CLASS_MEMBERS) {
@@ -220,8 +243,14 @@ public class DartSpacingProcessor {
       return setBraceSpace(mySettings.SPACE_BEFORE_METHOD_LBRACE, mySettings.METHOD_BRACE_STYLE, child1.getTextRange());
     }
 
-    if (elementType == CLASS_DEFINITION && type2 == CLASS_BODY) {
-      return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+    if (elementType == CLASS_DEFINITION) {
+      if (type2 == CLASS_BODY) {
+        return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+      }
+      return Spacing.createSpacing(1, 1, 0, false, 0);
+    }
+    if (elementType == MIXIN_APPLICATION) {
+      return Spacing.createSpacing(1, 1, 0, false, 0);
     }
 
     if (elementType == ENUM_DEFINITION && type2 == LBRACE) {
@@ -443,6 +472,10 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(true);
     }
 
+    if (elementType == FOR_LOOP_PARTS && type1 == SEMICOLON) {
+      return addSingleSpaceIf(true);
+    }
+
     if (elementType == VALUE_EXPRESSION && type2 == CASCADE_REFERENCE_EXPRESSION) {
       if (type1 == CASCADE_REFERENCE_EXPRESSION) {
         if (cascadesAreSameMethod(((AbstractBlock)child1).getNode(), ((AbstractBlock)child2).getNode())) {
@@ -478,6 +511,15 @@ public class DartSpacingProcessor {
       }
       // Adjacent strings on separate lines should not include blank lines.
       return Spacing.createSpacing(0, 1, preserveNewline, true, 0);
+    }
+
+    // Put the constructor colon on the next line unless only one initializer.
+    if (type2 == INITIALIZERS) {
+      if (hasMultipleInitializers(node2)) {
+        return addSingleSpaceIf(false, true);
+      } else {
+        return addSingleSpaceIf(true, false);
+      }
     }
 
     if (elementType == NAMED_ARGUMENT) {
@@ -594,10 +636,9 @@ public class DartSpacingProcessor {
   }
 
   private boolean needsBlankLineBeforeFunction(IElementType elementType) {
-    return mySettings.KEEP_LINE_BREAKS &&
-           (elementType == DART_FILE ||
-            elementType == CLASS_MEMBERS ||
-            elementType instanceof DartEmbeddedContentElementType);
+    return mySettings.KEEP_LINE_BREAKS && (elementType == DART_FILE ||
+                                           elementType == CLASS_MEMBERS ||
+                                           elementType instanceof DartEmbeddedContentElementType);
   }
 
   private static boolean embeddedComment(IElementType type, Block block) {
@@ -608,7 +649,7 @@ public class DartSpacingProcessor {
     // The child is a line comment whose parent is the DART_FILE.
     // Return true if it is (or will be) at the beginning of the line, or
     // following a block comment that is at the beginning of the line.
-    ASTNode node = ((DartBlock) child).getNode();
+    ASTNode node = ((DartBlock)child).getNode();
     while ((node = node.getTreePrev()) != null) {
       if (node.getElementType() == WHITE_SPACE) {
         if (node.getText().contains("\n")) return true;
@@ -627,11 +668,15 @@ public class DartSpacingProcessor {
 
   private static boolean isScriptTag(Block child) {
     // The VM accepts any kind of whtespace prior to #! even though unix shells do not.
-    ASTNode node = ((DartBlock) child).getNode();
+    ASTNode node = ((DartBlock)child).getNode();
     if (!node.getText().trim().startsWith("#!")) return false;
     while ((node = node.getTreePrev()) != null) {
       if (node.getElementType() != WHITE_SPACE) return false;
     }
     return true;
+  }
+
+  public static boolean hasMultipleInitializers(ASTNode node) {
+    return FormatterUtil.isPrecededBy(node.getLastChildNode(), SUPER_CALL_OR_FIELD_INITIALIZER, SKIP_COMMA);
   }
 }

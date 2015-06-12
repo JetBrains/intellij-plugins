@@ -9,8 +9,7 @@ import com.intellij.psi.formatter.WrappingUtil;
 import com.intellij.psi.tree.IElementType;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.BINARY_EXPRESSIONS;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.BINARY_OPERATORS;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 /**
  * @author: Fedor.Korotkov
@@ -54,6 +53,15 @@ public class DartWrappingProcessor {
           return createWrap(mySettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE);
         }
         return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.METHOD_PARAMETERS_WRAP), true);
+      }
+    }
+
+    if (elementType == INITIALIZERS) {
+      if (childType != COLON && isNotFirstInitializer(child)) {
+        return Wrap.createWrap(WrapType.ALWAYS, true);
+      }
+      if (childType == COLON && !DartSpacingProcessor.hasMultipleInitializers(child)) {
+        return Wrap.createWrap(WrapType.NORMAL, true);
       }
     }
 
@@ -153,6 +161,15 @@ public class DartWrappingProcessor {
       }
     }
 
+    if (elementType == CLASS_DEFINITION) {
+      if (childType == SUPERCLASS || childType == INTERFACES || childType == MIXINS) {
+        return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+      }
+    }
+    if (elementType == MIXIN_APPLICATION && childType == MIXINS) {
+      return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+    }
+
     return defaultWrap;
   }
 
@@ -191,5 +208,19 @@ public class DartWrappingProcessor {
       child = child.getTreeNext();
     }
     return false;
+  }
+
+  private static boolean isNotFirstInitializer(ASTNode child) {
+    ASTNode prev = child;
+    boolean isFirst = false;
+    while ((prev = prev.getTreePrev()) != null) {
+      if (prev.getElementType() == COLON) {
+        return isFirst;
+      }
+      if (prev.getElementType() != WHITE_SPACE && !COMMENTS.contains(prev.getElementType())) {
+        isFirst = true;
+      }
+    }
+    return isFirst;
   }
 }
