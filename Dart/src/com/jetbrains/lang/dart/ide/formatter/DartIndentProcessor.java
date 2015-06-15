@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,16 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartIndentProcessor {
+
+  private static final TokenSet EXPRESSIONS = TokenSet
+    .create(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION, AWAIT_EXPRESSION, BITWISE_EXPRESSION,
+            CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION, COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
+            LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION,
+            MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION,
+            PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
+            SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, THROW_EXPRESSION,
+            VALUE_EXPRESSION);
+
   private final CommonCodeStyleSettings settings;
 
   public DartIndentProcessor(CommonCodeStyleSettings settings) {
@@ -108,6 +119,9 @@ public class DartIndentProcessor {
       // Removing the previous statement in favor of this one is actually a
       // net win, but breaks existing tests.
       //return Indent.getContinuationIndent();
+      if (EXPRESSIONS.contains(elementType)) {
+        return Indent.getContinuationWithoutFirstIndent();
+      }
     }
     if (parentType == FORMAL_PARAMETER_LIST) {
       return Indent.getContinuationIndent();
@@ -172,6 +186,22 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
     if (elementType == VAR_DECLARATION_LIST_PART) {
+      return Indent.getContinuationIndent();
+    }
+
+    if (elementType == SUPER_CALL_OR_FIELD_INITIALIZER) {
+      return Indent.getContinuationIndent();
+    }
+    if (parentType == SUPER_CALL_OR_FIELD_INITIALIZER && elementType != COLON) {
+      return Indent.getNormalIndent();
+    }
+
+    if (parentType == CLASS_DEFINITION) {
+      if (elementType == SUPERCLASS || elementType == INTERFACES || elementType == MIXINS) {
+        return Indent.getContinuationIndent();
+      }
+    }
+    if (parentType == MIXIN_APPLICATION && elementType == MIXINS) {
       return Indent.getContinuationIndent();
     }
     return Indent.getNoneIndent();
