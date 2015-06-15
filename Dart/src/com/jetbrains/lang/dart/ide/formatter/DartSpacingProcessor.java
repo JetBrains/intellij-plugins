@@ -295,10 +295,16 @@ public class DartSpacingProcessor {
 
     if (elementType == TERNARY_EXPRESSION) {
       if (type2 == QUEST) {
-        return addSingleSpaceIf(mySettings.SPACE_BEFORE_QUEST);
+        //return addSingleSpaceIf(mySettings.SPACE_BEFORE_QUEST);
+        int space = mySettings.SPACE_BEFORE_COLON ? 1 : 0;
+        TextRange range = new TextRange(node2.getTreeNext().getTextRange().getStartOffset(), node2.getTreeParent().getTextRange().getEndOffset());
+        return Spacing.createDependentLFSpacing(space, space, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
       }
       else if (type2 == COLON) {
-        return addSingleSpaceIf(mySettings.SPACE_BEFORE_COLON);
+        //return addSingleSpaceIf(mySettings.SPACE_BEFORE_COLON);
+        int space = mySettings.SPACE_BEFORE_COLON ? 1 : 0;
+        TextRange range = conditionalBranchRange(node1);
+        return Spacing.createDependentLFSpacing(space, space, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
       }
       else if (type1 == QUEST) {
         return addSingleSpaceIf(mySettings.SPACE_AFTER_QUEST);
@@ -518,7 +524,9 @@ public class DartSpacingProcessor {
       if (hasMultipleInitializers(node2)) {
         return addSingleSpaceIf(false, true);
       } else {
-        return addSingleSpaceIf(true, false);
+        TextRange range = node1.getTextRange();
+        // Note: it is possible we may need a list of ranges, one for each parameter, instead of a single range for all.
+        return Spacing.createDependentLFSpacing(1, 1, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
       }
     }
 
@@ -667,7 +675,7 @@ public class DartSpacingProcessor {
   }
 
   private static boolean isScriptTag(Block child) {
-    // The VM accepts any kind of whtespace prior to #! even though unix shells do not.
+    // The VM accepts any kind of whitespace prior to #! even though unix shells do not.
     ASTNode node = ((DartBlock)child).getNode();
     if (!node.getText().trim().startsWith("#!")) return false;
     while ((node = node.getTreePrev()) != null) {
@@ -678,5 +686,19 @@ public class DartSpacingProcessor {
 
   public static boolean hasMultipleInitializers(ASTNode node) {
     return FormatterUtil.isPrecededBy(node.getLastChildNode(), SUPER_CALL_OR_FIELD_INITIALIZER, SKIP_COMMA);
+  }
+
+  public TextRange conditionalBranchRange(ASTNode node) {
+    int end = node.getTextRange().getEndOffset();
+    ASTNode prev = node;
+    while ((prev = prev.getTreePrev()) != null) {
+      if (prev.getElementType() == QUEST) {
+        prev = FormatterUtil.getPreviousNonWhitespaceSibling(prev);
+        int start = prev.getTreeNext().getTextRange().getStartOffset();
+        return new TextRange(start, end);
+      }
+    }
+    // This may be reached if ... ?
+    return node.getTextRange();
   }
 }

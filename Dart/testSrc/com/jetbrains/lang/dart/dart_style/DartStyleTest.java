@@ -116,7 +116,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:11  parameters fit but } does not");
     KNOWN_TO_FAIL.add("splitting/parameters.unit:11  indent parameters more if body is a wrapped =>");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:35  try to keep constructor call together");
-    KNOWN_TO_FAIL.add("splitting/constructors.unit:41  splits before \":\" if the parameter list does not fit on one line");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:51  indent parameters more if body is a wrapped =>");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:2  force newline before directives");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:17  force newline before types");
