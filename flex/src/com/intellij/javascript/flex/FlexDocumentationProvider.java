@@ -5,6 +5,7 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -876,5 +877,11 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
     }
     return getSeeAlsoLinkResolved(element, remainingLineContent);
+  }
+
+  @NotNull
+  @Override
+  protected JSDocumentationBuilder createDocumentationBuilder(PsiElement element, PsiElement _contextElement, boolean showNamedItem) {
+    return new FlexDocumentationBuilder(element, _contextElement, showNamedItem, this);
   }
 }
