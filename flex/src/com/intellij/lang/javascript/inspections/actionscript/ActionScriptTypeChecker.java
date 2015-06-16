@@ -9,7 +9,6 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
-import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
@@ -49,7 +48,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
                                     @Nullable ProblemHighlightType highlightType,
                                     LocalQuickFix... fixes) {
     return myReporter
-      .registerProblem(place, message, highlightType, JSValidateTypesInspection.SHORT_NAME, fixes);
+      .registerProblem(place, message, highlightType, getValidateTypesInspectionId(), fixes);
   }
 
   @Override

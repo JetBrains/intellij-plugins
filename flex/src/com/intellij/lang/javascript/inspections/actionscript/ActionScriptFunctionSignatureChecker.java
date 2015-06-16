@@ -4,7 +4,6 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
-import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
@@ -32,7 +31,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   protected void registerProblem(JSCallExpression callExpression, String message, LocalQuickFix... fixes) {
     PsiElement place = ValidateTypesUtil.getPlaceForSignatureProblem(callExpression, callExpression.getArgumentList());
     myReporter.registerProblem(place, message, ProblemHighlightType.GENERIC_ERROR,
-                                               JSValidateTypesInspection.SHORT_NAME,
+                                               myTypeChecker.getValidateTypesInspectionId(),
                                                fixes);
   }
 
