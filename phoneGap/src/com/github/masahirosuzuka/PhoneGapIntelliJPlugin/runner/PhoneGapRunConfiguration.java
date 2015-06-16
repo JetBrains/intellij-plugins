@@ -26,10 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.*;
@@ -253,7 +250,9 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
       checkExistsSdkWithWarning(PhoneGapAndroidTargets.getAndroidName(), "Cannot detect android SDK in path");
     }
     if (myPlatform.equals(PLATFORM_IOS)) {
-      checkExistsSdkWithWarning(PhoneGapIosTargets.getIosSimName(), "Cannot detect ios-sim in path");
+      checkExistsSdkWithWarning(ContainerUtil.newArrayList(PhoneGapIosTargets.getIosSimName(),
+                                                           PhoneGapIosTargets.getIosDeployName()),
+                                "Cannot detect ios-sim and ios-deploy in path");
     }
   }
 
@@ -319,6 +318,18 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     File file = PathEnvironmentVariableUtil.findInPath(path);
     if (file != null && file.exists()) {
       return;
+    }
+
+    throw new RuntimeConfigurationWarning(error);
+  }
+
+  private static void checkExistsSdkWithWarning(@Nullable List<String> paths, @NotNull String error) throws RuntimeConfigurationWarning {
+    if (paths == null) return;
+    for (String path : paths) {
+      File file = PathEnvironmentVariableUtil.findInPath(path);
+      if (file != null && file.exists()) {
+        return;
+      }
     }
 
     throw new RuntimeConfigurationWarning(error);

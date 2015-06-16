@@ -52,6 +52,10 @@ public class PhoneGapIosTargets extends PhoneGapTargets {
   }
 
   public static String getIosSimName() {
+    return IOS_SIM;
+  }
+
+  public static String getIosDeployName() {
     return IOS_DEPLOY;
   }
 
