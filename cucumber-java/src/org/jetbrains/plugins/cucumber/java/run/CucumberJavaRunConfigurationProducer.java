@@ -129,6 +129,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   @Override
   public boolean isConfigurationFromContext(CucumberJavaRunConfiguration runConfiguration, ConfigurationContext context) {
     final Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
+    if (location == null) {
+      return false;
+    }
 
     final VirtualFile fileToRun = getFileToRun(context);
     if (fileToRun == null) {
