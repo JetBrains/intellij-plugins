@@ -34,8 +34,6 @@ public class DartStyleTest extends FormatterTestCase {
 
   static {
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:18  conditions, same operator");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:33  split conditional because then doesn't fit");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:39  split conditional because else doesn't fit");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:51  split operator chain before block");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:62  split operator chain after block");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:73  indent previous line farther because later line is nested deeper");

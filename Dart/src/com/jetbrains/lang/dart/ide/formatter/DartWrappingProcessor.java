@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.formatter;
 import com.intellij.formatting.Wrap;
 import com.intellij.formatting.WrapType;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.WrappingUtil;
@@ -11,10 +12,10 @@ import com.intellij.psi.tree.IElementType;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartWrappingProcessor {
+
+  private static final Key<Wrap> DART_TERNARY_EXPRESSION_WRAP_KEY = Key.create("TERNARY_EXPRESSION_WRAP_KEY");
+
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
 
@@ -123,11 +124,16 @@ public class DartWrappingProcessor {
     if (elementType == TERNARY_EXPRESSION) {
       if (myNode.getFirstChildNode() != child) {
         if (mySettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE) {
-          //if (!FormatterUtil.isPrecededBy(child, QUEST) &&
-          //    !FormatterUtil.isPrecededBy(child, COLON)) {
-          // TODO Allow ? and : to align on two continuation lines.
-          if (childType == QUEST || childType == COLON) {
-            return Wrap.createWrap(WrappingUtil.getWrapType(mySettings.TERNARY_OPERATION_WRAP), true);
+          if (childType == QUEST) {
+            final Wrap wrap = Wrap.createWrap(WrappingUtil.getWrapType(mySettings.TERNARY_OPERATION_WRAP), true);
+            myNode.putUserData(DART_TERNARY_EXPRESSION_WRAP_KEY, wrap);
+            return wrap;
+          }
+
+          if (childType == COLON) {
+            final Wrap wrap = myNode.getUserData(DART_TERNARY_EXPRESSION_WRAP_KEY);
+            myNode.putUserData(DART_TERNARY_EXPRESSION_WRAP_KEY, null);
+            return wrap != null ? wrap : Wrap.createWrap(WrappingUtil.getWrapType(mySettings.TERNARY_OPERATION_WRAP), true);
           }
         }
         else if (childType != QUEST && childType != COLON) {
@@ -144,7 +150,8 @@ public class DartWrappingProcessor {
     if (childType == VAR_DECLARATION_LIST && elementType != FOR_LOOP_PARTS) {
       if (varDeclListContainsVarInit(child)) {
         return Wrap.createWrap(WrapType.ALWAYS, true);
-      } else {
+      }
+      else {
         return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
       }
     }
@@ -152,10 +159,12 @@ public class DartWrappingProcessor {
       ASTNode parent = myNode.getTreeParent();
       if (parent != null && parent.getElementType() == FOR_LOOP_PARTS) {
         return Wrap.createWrap(WrapType.NORMAL, true);
-      } else {
+      }
+      else {
         if (varDeclListContainsVarInit(myNode)) {
           return Wrap.createWrap(WrapType.ALWAYS, true);
-        } else {
+        }
+        else {
           return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
         }
       }
