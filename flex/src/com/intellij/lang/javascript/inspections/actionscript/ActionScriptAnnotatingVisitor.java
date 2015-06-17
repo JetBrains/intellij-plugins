@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
-import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -1315,7 +1314,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         myProblemReporter.registerProblem(referenceNameElement,
                                           JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
                                           getUnresolvedReferenceHighlightType(methodExpression),
-                                          JSUnresolvedFunctionInspection.SHORT_NAME);
+                                          getUnresolvedFunctionInspectionId());
         return false;
       }
     }

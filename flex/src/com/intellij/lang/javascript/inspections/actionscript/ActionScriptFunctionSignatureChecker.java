@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.inspections.actionscript;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
@@ -47,7 +46,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
           myReporter.registerProblem(
             ValidateTypesUtil.getPlaceForSignatureProblem(node, argumentList),
             JSBundle.message("javascript.invalid.number.of.parameters", "0"),
-            ProblemHighlightType.GENERIC_ERROR, JSCheckFunctionSignaturesInspection.SHORT_NAME,
+            ProblemHighlightType.GENERIC_ERROR, getCheckFunctionSignaturesInspectionId(),
             fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
           return;
         }
