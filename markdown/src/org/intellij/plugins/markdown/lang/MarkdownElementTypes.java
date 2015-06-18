@@ -45,6 +45,8 @@ public interface MarkdownElementTypes {
 
   IElementType STRONG = platformType(org.intellij.markdown.MarkdownElementTypes.STRONG);
 
+  IElementType STRIKETHROUGH = platformType(org.intellij.markdown.MarkdownElementTypes.STRIKETHROUGH);
+
   IElementType LINK_DEFINITION = platformType(org.intellij.markdown.MarkdownElementTypes.LINK_DEFINITION);
   IElementType LINK_LABEL = platformType(org.intellij.markdown.MarkdownElementTypes.LINK_LABEL);
   IElementType LINK_DESTINATION = platformType(org.intellij.markdown.MarkdownElementTypes.LINK_DESTINATION);

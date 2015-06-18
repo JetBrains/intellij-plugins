@@ -49,6 +49,7 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType LINK_ID = platformType(org.intellij.markdown.MarkdownTokenTypes.LINK_ID);
   IElementType ATX_HEADER = platformType(org.intellij.markdown.MarkdownTokenTypes.ATX_HEADER);
   IElementType EMPH = platformType(org.intellij.markdown.MarkdownTokenTypes.EMPH);
+  IElementType TILDE = platformType(org.intellij.markdown.MarkdownTokenTypes.TILDE);
 
   IElementType BACKTICK = platformType(org.intellij.markdown.MarkdownTokenTypes.BACKTICK);
   IElementType ESCAPED_BACKTICKS = platformType(org.intellij.markdown.MarkdownTokenTypes.ESCAPED_BACKTICKS);
@@ -65,6 +66,7 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType CODE_FENCE_END = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE_FENCE_END);
   IElementType LINK_TITLE = platformType(org.intellij.markdown.MarkdownTokenTypes.LINK_TITLE);
 
+  IElementType GFM_AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.GFM_AUTOLINK);
   IElementType AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.AUTOLINK);
   IElementType EMAIL_AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.EMAIL_AUTOLINK);
   IElementType HTML_TAG = platformType(org.intellij.markdown.MarkdownTokenTypes.HTML_TAG);

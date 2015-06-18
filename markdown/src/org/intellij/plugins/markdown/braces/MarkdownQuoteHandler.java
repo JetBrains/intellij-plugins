@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MarkdownQuoteHandler implements QuoteHandler {
     private final static TokenSet QUOTE_TYPES = TokenSet.create(MarkdownTokenTypes.EMPH,
+                                                                MarkdownTokenTypes.TILDE,
                                                                 MarkdownTokenTypes.BACKTICK,
                                                                 MarkdownTokenTypes.SINGLE_QUOTE,
                                                                 MarkdownTokenTypes.DOUBLE_QUOTE,

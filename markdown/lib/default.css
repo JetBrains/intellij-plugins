@@ -663,7 +663,7 @@ kbd {
 }
 
 .task-list-item input {
-    margin: 0 0.35em 0.25em -1.6em;
+    margin: 0 0.35em 0.25em -0.6em;
     vertical-align: middle;
 }
 
@@ -671,4 +671,8 @@ kbd {
     z-index: 1;
     position: relative;
     border-color: #4078c0;
+}
+
+span.user-del {
+    text-decoration: line-through;
 }

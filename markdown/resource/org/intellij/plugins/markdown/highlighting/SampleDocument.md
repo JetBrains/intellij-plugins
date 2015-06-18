@@ -10,6 +10,8 @@ paragraph with bold text. <bold>__This is also some bold text.__</bold>
 Here is another one with italic text. <italic>*This is some italic text.*</italic> Here is
 another one with italic text. <italic>_This is some italic text._</italic>
 
+Here is another one with struckout text. <strike>~~This is some struckout text.~~</strike>
+
 
 <hh2>Links
 -----</hh2>
