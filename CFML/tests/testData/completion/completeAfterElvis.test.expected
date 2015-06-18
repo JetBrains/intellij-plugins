@@ -1,0 +1,4 @@
+<cfscript>
+  bar  = foo ?: "foo";
+  bar.charAt<caret>
+</cfscript>
