@@ -38,7 +38,7 @@ public interface CfscriptTokenTypes {
   IElementType SEMICOLON = new CfmlElementType("SEMICOLON"); // ;
 
   IElementType QUESTION = new CfmlElementType("QUESTION");
-  IElementType ELVIS = new CfmlElementType("ELVIS");
+  IElementType ELVIS = new CfmlOperatorTokenType("ELVIS", PLUS_CALCULATOR);
   IElementType COMMA = new CfmlElementType("COMMA");
   IElementType POINT = new CfmlElementType("POINT");
   IElementType DOTDOT = new CfmlElementType("DOTDOT");
