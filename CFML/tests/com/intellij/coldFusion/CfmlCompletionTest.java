@@ -553,6 +553,10 @@ public class CfmlCompletionTest extends JavaCodeInsightFixtureTestCase {
     doTestCompletionVariants("hint", "default", "required", "type");
   }
 
+  public void testCompleteAfterElvis() throws Throwable {
+    doTest();
+  }
+
   public void testArgumentCompletionAtCreateObject() throws Throwable {
     doTestCompletionContainsVariants("com", "component", "java", "corba", "webservice");
   }
