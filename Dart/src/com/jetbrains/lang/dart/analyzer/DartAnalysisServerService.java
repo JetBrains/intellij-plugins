@@ -7,7 +7,10 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
+import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -19,6 +22,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
@@ -29,6 +33,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -55,6 +60,7 @@ public class DartAnalysisServerService {
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+  private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
@@ -70,6 +76,8 @@ public class DartAnalysisServerService {
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myPriorityFiles = new ArrayList<String>();
 
+  @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
+
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
@@ -81,6 +89,17 @@ public class DartAnalysisServerService {
     public void flushedResults(List<String> files) {
       for (String file : files) {
         updateProblemsView(DartProblemsViewImpl.createGroupName(file), AnalysisError.EMPTY_LIST);
+      }
+    }
+
+    @Override
+    public void computedCompletion(@NotNull final String completionId,
+                                   final int replacementOffset,
+                                   final int replacementLength,
+                                   @NotNull final List<CompletionSuggestion> completions,
+                                   final boolean isLast) {
+      synchronized (myCompletionInfos) {
+        myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, isLast));
       }
     }
 
@@ -115,6 +134,44 @@ public class DartAnalysisServerService {
       });
     }
   };
+
+  public void addCompletions(@NotNull final String completionId, @NotNull final CompletionResultSet resultSet) {
+    while (true) {
+      ProgressManager.checkCanceled();
+
+      synchronized (myCompletionInfos) {
+        // todo in case of several AnalysisServerListenerAdapter.computedCompletion() invocations for one completion (only the last
+        // invocation has isLast==true) it looks like each next List<CompletionSuggestion> also contains all items that were already
+        // given in previous invocations. If it is by design we should optimize cycle and handle only the last in queue.
+
+        CompletionInfo completionInfo;
+        while ((completionInfo = myCompletionInfos.poll()) != null) {
+          if (!completionInfo.myCompletionId.equals(completionId)) continue;
+
+          for (CompletionSuggestion completion : completionInfo.myCompletions) {
+            final LookupElement lookup = LookupElementBuilder.create(completion.getCompletion());
+            // todo: lookup presentable text (e.g. signature for functions, etc.)
+            //       respect priority (may be also emphasize using bold font)
+            //       tail text
+            //       type text
+            //       icon
+            //       strikeout for deprecated
+            //       quick doc preview
+            //       quick definition view
+            //       jump to item declaration
+            //       what to insert except identifier (e.g. parentheses, import directive, update show/hide, etc.)
+            //       caret placement after insertion
+
+            resultSet.consume(lookup);
+          }
+
+          if (completionInfo.isLast) return;
+        }
+      }
+
+      TimeoutUtil.sleep(100);
+    }
+  }
 
   public static class FormatResult {
     @Nullable private final List<SourceEdit> myEdits;
@@ -503,6 +560,55 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
+  public String completion_getSuggestions(@NotNull final String filePath, final int offset) {
+    final Ref<String> resultRef = new Ref<String>();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      final GetSuggestionsConsumer consumer = new GetSuggestionsConsumer() {
+        @Override
+        public void computedCompletionId(@NotNull final String completionId) {
+          resultRef.set(completionId);
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(@NotNull final RequestError error) {
+          // Not a problem. Happens if a file is outside of the project, or server is just not ready yet.
+          semaphore.up();
+        }
+      };
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.completion_getSuggestions(filePath, offset, consumer);
+        }
+      }, "completion_getSuggestions(" + filePath + ", " + offset + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return null;
+      }
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(GET_SUGGESTIONS_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("completion_getSuggestions() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
   public FormatResult edit_format(@NotNull final String filePath, final int selectionOffset, final int selectionLength) {
     final Ref<FormatResult> resultRef = new Ref<FormatResult>();
     final Semaphore semaphore = new Semaphore();
@@ -792,5 +898,24 @@ public class DartAnalysisServerService {
     }
 
     return true;
+  }
+
+  private static class CompletionInfo {
+    @NotNull final String myCompletionId;
+    final int myReplacementOffset;
+    final int myReplacementLength;
+    @NotNull final List<CompletionSuggestion> myCompletions;
+    final boolean isLast;
+
+    public CompletionInfo(@NotNull final String completionId,
+                          final int replacementOffset,
+                          final int replacementLength,
+                          @NotNull final List<CompletionSuggestion> completions, boolean isLast) {
+      this.myCompletionId = completionId;
+      this.myReplacementOffset = replacementOffset;
+      this.myReplacementLength = replacementLength;
+      this.myCompletions = completions;
+      this.isLast = isLast;
+    }
   }
 }
