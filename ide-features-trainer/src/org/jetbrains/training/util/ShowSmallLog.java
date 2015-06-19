@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.training.util.smalllog.SmallLog;
 import shortcutter.WrongShortcutException;
 
 import java.awt.*;
@@ -29,7 +30,7 @@ public class ShowSmallLog extends AnAction{
         return new RelativePoint(editor.getComponent(), point);
     }
 
-    public static void main(String[] args) throws WrongShortcutException {
+    public static void main(String[] args) throws Exception {
         new SmallLog();
     }
 

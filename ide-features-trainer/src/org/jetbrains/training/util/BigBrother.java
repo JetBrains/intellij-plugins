@@ -6,6 +6,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
+import org.jetbrains.training.util.smalllog.SmallLog;
+import org.jetbrains.training.util.smalllog.Type;
 import shortcutter.WrongShortcutException;
 
 /**
@@ -26,6 +28,8 @@ public class BigBrother{
                 mySmallLog = new SmallLog();
             } catch (WrongShortcutException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         ActionManager.getInstance().addAnActionListener(new AnActionListener() {
 
@@ -37,7 +41,11 @@ public class BigBrother{
 //                final String shortcutText = SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId);
                 final String shortcutText = "<shortcut>";
                 if (actionId != null) {
-                    mySmallLog.addLine(SmallLog.ACTION + actionId.toString() + " (" + shortcutText + ")");
+                    try {
+                        mySmallLog.addLine(Type.ACTION, actionId.toString(), shortcutText);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

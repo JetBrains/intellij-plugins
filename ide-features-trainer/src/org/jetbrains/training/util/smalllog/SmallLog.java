@@ -1,16 +1,16 @@
-package org.jetbrains.training.util;
+package org.jetbrains.training.util.smalllog;
 
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.util.smalllog.actions.*;
 import shortcutter.Shortcutter;
 import shortcutter.WrongShortcutException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -19,31 +19,20 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class SmallLog extends JFrame{
 
     private static Dimension dimension = new Dimension(300, 600);
-    private static Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
     private static Color bck = new Color(54, 54 , 55, 255);
     private static Color frg = new Color(230, 230, 230, 230);
     private static Color transparentColor = new Color(0, 0, 0, 0);
 
-
-    final public static String ACTION = "[Action System]";
-    final public static String TYPING = "[Typing]";
-    final public static String PROMPT = "> ";
-
-
     private SemiTransparentPanel semiTransparentPanel;
+    private FrameHolder frameHolder;
 
-    public SmallLog() throws WrongShortcutException {
+    public SmallLog() throws Exception {
         super("SmallLog");
-
+        frameHolder = new FrameHolder();
         setAlwaysOnTop(true);
 
 
         semiTransparentPanel = new SemiTransparentPanel(dimension, this);
-        semiTransparentPanel.addLine("Initial message");
-        semiTransparentPanel.addLine("Let's start log here!");
-        semiTransparentPanel.addLine(ACTION + "Some action here");
-        semiTransparentPanel.addLine(ACTION + "Some action here 2");
-        semiTransparentPanel.addLine(ACTION + "Some action here 3");
 
         JBScrollPane jbScrollPane = new JBScrollPane(semiTransparentPanel);
 
@@ -54,16 +43,32 @@ public class SmallLog extends JFrame{
         setVisible(true);
     }
 
-    public void addLine(String text){
-        semiTransparentPanel.addLine(text);
+    public ArrayList<ClickLabel> getClickLabels(){
+        return (ArrayList<ClickLabel>) semiTransparentPanel.clickLabels;
+    }
+
+    public Pivot getPivot(){
+        return semiTransparentPanel.pivot;
+    }
+
+    public FrameHolder getFrameHolder(){
+        return frameHolder;
+    }
+
+
+    public void addLine(Type type, String text, @Nullable String shortcutText) throws Exception {
+        new AddAction(this, type, text).execute();
     }
 
     public void addChar(char c) {
         semiTransparentPanel.addToCharBuffer(c);
     }
 
+    public SemiTransparentPanel getSemiTransparentPanel(){
+        return semiTransparentPanel;
+    }
 
-    private class SemiTransparentPanel extends JPanel{
+    public class SemiTransparentPanel extends JPanel{
 
         private static final int V_GAP = 2;
         private SmallLog smallLog;
@@ -72,9 +77,14 @@ public class SmallLog extends JFrame{
 
         //clickLabels
         private final ArrayList<ClickLabel> clickLabels = new ArrayList<ClickLabel>();
+
+        public Queue<Character> getCharBuffer() {
+            return charBuffer;
+        }
+
         private final java.util.Queue<Character> charBuffer = new ArrayBlockingQueue<Character>(1000);
 
-        public SemiTransparentPanel(Dimension dimension1, SmallLog smallLog) throws WrongShortcutException {
+        public SemiTransparentPanel(Dimension dimension1, final SmallLog smallLog) throws WrongShortcutException {
 
             pivot = new Pivot(-1, null, clickLabels);
 
@@ -91,32 +101,11 @@ public class SmallLog extends JFrame{
                 @Override
                 public void run() {
                     for (ClickLabel cl : clickLabels) {
-                        if (cl.selected) flip(cl);
+                        if (cl.isSelected()) flip(cl);
                     }
                     pivot.move(-1);
                 }
             });
-
-            Runnable deleteAction = new Runnable() {
-                @Override
-                public void run() {
-
-                    if (pivot.getPosition() != -1) {
-                        if (clickLabels.size() > pivot.getPosition()) {
-                            int deleted = pivot.getPosition();
-                            deleteClickLabel(clickLabels.get(pivot.getPosition()));
-                            //init pivot again
-                            if (deleted == clickLabels.size()) pivot.move(clickLabels.size() - 1);
-                            else pivot.move(deleted);
-                            update();
-                        }
-                    }
-                }
-            };
-
-            //delete clickLabel if user pressed DEL ot BACKSPACE
-            Shortcutter.register(this, "_DELETE", deleteAction);
-            Shortcutter.register(this, "_BACK_SPACE", deleteAction);
 
             Shortcutter.register(this, "_UP", new Runnable() {
                 @Override
@@ -149,30 +138,6 @@ public class SmallLog extends JFrame{
                 }
             });
 
-            Runnable multipleDelete = new Runnable() {
-                @Override
-                public void run() {
-
-                    //build set of marked clicklabels
-                    final ArrayList<ClickLabel> markedClickLabels = new ArrayList<ClickLabel>();
-                    for (ClickLabel clickLabel: clickLabels) if(clickLabel.selected) markedClickLabels.add(clickLabel);
-
-                    for (ClickLabel clickLabel: markedClickLabels) {
-                        deleteClickLabel(clickLabel);
-                    }
-                    while(!markedClickLabels.isEmpty()) {
-                        markedClickLabels.remove(0);
-                    }
-
-                    pivot.move(-1);
-                    update();
-                }
-            };
-
-
-            Shortcutter.register(this, "SHIFT_BACK_SPACE", multipleDelete);
-            Shortcutter.register(this, "SHIFT_DELETE", multipleDelete);
-
             Shortcutter.register(this, "_DOWN", new Runnable() {
                 @Override
                 public void run() {
@@ -203,9 +168,21 @@ public class SmallLog extends JFrame{
                     }
                 }
             });
+
+            Shortcutter.register(this, "_DELETE", new DeleteAction(smallLog).runnable);
+            Shortcutter.register(this, "_BACK_SPACE", new DeleteAction(smallLog).runnable);
+
+            Shortcutter.register(this, "SHIFT_BACK_SPACE", new MultipleDeleteAction(smallLog).runnable);
+            Shortcutter.register(this, "SHIFT_DELETE", new MultipleDeleteAction(smallLog).runnable);
+            Shortcutter.register(this, "SHIFT_E", new ExportAction(smallLog).runnable);
+            Shortcutter.register(this, "SHIFT_Q", new CollapseAction(smallLog).runnable);
+            Shortcutter.register(this, "SHIFT_A", new SelectAllAction(smallLog).runnable);
+
+
         }
 
-        private void update(){
+
+        public void update(){
             this.revalidate();
             this.repaint();
         }
@@ -231,40 +208,8 @@ public class SmallLog extends JFrame{
             return sb.toString();
         }
 
-        public synchronized void addLine(final String line){
-            if (!charBuffer.isEmpty()) {
-                String cb = flushCharBuffer();
-                ClickLabel cLabel1 = new ClickLabel(smallLog, PROMPT + colorizeCommand(TYPING, TYPING, "green") + " " + cb);
-                clickLabels.add(cLabel1);
-                setClickable(cLabel1);
-                this.add(cLabel1);
-                update();
-                smallLog.repaint();
 
-            }
-            if(line.contains(ACTION)){
-                ClickLabel cLabel = new ClickLabel(smallLog, PROMPT + colorizeCommand(line, ACTION, "red"));
-                clickLabels.add(cLabel);
-                setClickable(cLabel);
-                setDraggable(cLabel);
-
-                this.add(cLabel);
-                this.revalidate();
-                this.repaint();
-                smallLog.repaint();
-            } else {
-                ClickLabel cLabel = new ClickLabel(smallLog, PROMPT + line);
-                clickLabels.add(cLabel);
-                setClickable(cLabel);
-                this.add(cLabel);
-                this.repaint();
-                this.revalidate();
-                smallLog.repaint();
-            }
-        }
-
-
-        private String colorizeCommand(String text, String command, String color){
+        public String colorizeCommand(String text, String command, String color){
             if (text.contains(command)){
                 int offset = text.indexOf(command);
                 int length = command.length();
@@ -275,7 +220,7 @@ public class SmallLog extends JFrame{
             }
         }
 
-        private void setClickable(final ClickLabel clickLabel){
+        public void setClickable(final ClickLabel clickLabel){
             clickLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -284,26 +229,26 @@ public class SmallLog extends JFrame{
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
-                                if (!clickLabel.striked){
+                                if (!clickLabel.isStriked()) {
                                     clickLabel.setText(clickLabel.addHtmlTags("<strike>" + clickLabel.takeHtmltags(text) + "</strike>"));
                                     repaint();
                                     smallLog.repaint();
-                                    clickLabel.striked = true;
+                                    clickLabel.setStriked(true);
                                 }
                             }
                         });
                     } else {
                         //shift
-                        if (Shortcutter.isShiftPressed && lastClicked != -1){
+                        if (Shortcutter.isShiftPressed && lastClicked != -1) {
                             int current = clickLabels.indexOf(clickLabel);
                             int last = lastClicked;
                             if (last > current) {
-                                for(int i = last - 1; i > current; i-- ){
+                                for (int i = last - 1; i > current; i--) {
                                     flip(clickLabels.get(i), true);
                                 }
                                 pivot.move(current);
                             } else if (last < current) {
-                                for(int i = last + 1; i < current; i++ ){
+                                for (int i = last + 1; i < current; i++) {
                                     flip(clickLabels.get(i), true);
                                 }
                                 pivot.move(current);
@@ -316,10 +261,9 @@ public class SmallLog extends JFrame{
 
                 @Override
                 public void mouseReleased(MouseEvent mouseEvent) {
-                    System.out.println("mouse released");
 //                    System.out.println(Arrays.toString(clickLabel.getParent().getComponents()));
                     for (Component component : clickLabel.getParent().getComponents()) {
-                        if(component instanceof ClickLabel && !component.equals(clickLabel)) {
+                        if (component instanceof ClickLabel && !component.equals(clickLabel)) {
                             Point p = new Point((int) (mouseEvent.getLocationOnScreen().getX() - clickLabel.getParent().getLocationOnScreen().getX()), (int) (mouseEvent.getLocationOnScreen().getY() - clickLabel.getParent().getLocationOnScreen().getY()));
                             Rectangle r = component.getBounds();
                             if (r.contains(p)) {
@@ -332,19 +276,13 @@ public class SmallLog extends JFrame{
                                 if (j > i) {
                                     clickLabels.add(clickLabels.indexOf(((ClickLabel) component)) + 1, clickLabel);
                                     clickLabels.remove(i);
-                                    System.out.println("remove i:" + i);
-                                }
-                                else {
+                                } else {
                                     clickLabels.add(clickLabels.indexOf(((ClickLabel) component)), clickLabel);
                                     clickLabels.remove(i + 1);
-                                    System.out.println("remove (i + 1):" + (i + 1));
                                 }
 
-                                System.out.println("--------------");
                                 for (ClickLabel label : clickLabels) {
-                                    System.out.println(label.getText());
                                 }
-                                System.out.println("+++++++++++++++++");
                             }
 
                         }
@@ -357,7 +295,7 @@ public class SmallLog extends JFrame{
 
         }
 
-        private void setDraggable(final ClickLabel clickLabel){
+        public void setDraggable(final ClickLabel clickLabel){
             clickLabel.addMouseMotionListener(new MouseMotionListener() {
                 @Override
                 public void mouseDragged(MouseEvent mouseEvent) {
@@ -383,12 +321,13 @@ public class SmallLog extends JFrame{
             });
         }
 
+
         public void flip(ClickLabel cl){
-            if(!cl.selected) {
-                cl.setBackground(cl.selectedColor);
+            if(!cl.isSelected()) {
+                cl.setBackground(cl.getSelectedColor());
                 repaint();
                 smallLog.repaint();
-                cl.selected = true;
+                cl.setSelected(true);
                 if (clickLabels != null) {
                     lastClicked = clickLabels.indexOf(cl);
                     pivot.move(lastClicked);
@@ -397,7 +336,7 @@ public class SmallLog extends JFrame{
                 cl.setBackground(bck);
                 repaint();
                 smallLog.repaint();
-                cl.selected = false;
+                cl.setSelected(false);
 //                if (pivot == clickLabels.indexOf(cl)) movePivot(-1);
                 if (clickLabels != null) {
                     lastClicked = clickLabels.indexOf(cl);
@@ -408,10 +347,10 @@ public class SmallLog extends JFrame{
 
         public void flip(ClickLabel cl, boolean flip_to_selected){
             if(flip_to_selected) {
-                cl.setBackground(cl.selectedColor);
+                cl.setBackground(cl.getSelectedColor());
                 repaint();
                 smallLog.repaint();
-                cl.selected = true;
+                cl.setSelected(true);
                 if (clickLabels != null) {
                     lastClicked = clickLabels.indexOf(cl);
                     pivot.move(lastClicked);
@@ -420,7 +359,7 @@ public class SmallLog extends JFrame{
                 cl.setBackground(bck);
                 repaint();
                 smallLog.repaint();
-                cl.selected = false;
+                cl.setSelected(false);
 //                if (pivot == clickLabels.indexOf(cl)) movePivot(-1);
                 if (clickLabels != null) {
                     lastClicked = clickLabels.indexOf(cl);
@@ -429,120 +368,23 @@ public class SmallLog extends JFrame{
             }
         }
 
+
+
+        public void putClickLabel(int index, ClickLabel cl){
+            clickLabels.add(index, cl);
+            semiTransparentPanel.add(cl, index);
+        }
+
         public void deleteClickLabel(ClickLabel cl){
-            if (cl.getVerticalSpace() != null)
-                this.remove(cl.getVerticalSpace());
             this.remove(cl);
             clickLabels.remove(cl);
         }
 
-    }
-
-
-    private class ClickLabel extends JLabel{
-
-        private boolean striked;
-        private boolean selected;
-        private final Color selectedColor = new Color(34, 132, 255, 255);
-        private final Color pivotColor = new Color(104, 196, 255, 255);
-        private Component verticalSpace = null;
-
-        private SmallLog smallLog;
-
-        public ClickLabel(final SmallLog smallLog, String text){
-            setFont(font);
-            setForeground(Color.white);
-
-            this.setText(addHtmlTags(text));
-            this.smallLog = smallLog;
-            striked = false;
-            selected = false;
-
-            setOpaque(true);
-            setVisible(true);
-            setBackground(bck);
-        }
-
-        public Component getVerticalSpace() {
-            return verticalSpace;
-        }
-
-        public void setVerticalSpace(Component verticalSpace) {
-            this.verticalSpace = verticalSpace;
-        }
-
-        public String takeHtmltags(String in){
-            if(in.length() > 12 && in.substring(0,6).equals("<html>") && in.substring(in.length() - 7).equals("</html>"))
-                return in.substring(6, in.length() - 7);
-            else return in;
-        }
-
-        public String addHtmlTags(String in){
-            return ("<html>" + in + "</html>");
-        }
-
-    }
-
-    private  class Pivot {
-        private ArrayList<ClickLabel> clickLabels;
-        private ClickLabel pivotClickLabel;
-        private int p;
-
-        public Pivot(int p, @Nullable ClickLabel pivotClickLabel, @NotNull ArrayList<ClickLabel> clickLabels) {
-            this.clickLabels = clickLabels;
-            this.p = p;
-            this.pivotClickLabel = pivotClickLabel;
-        }
-
-        public int getPosition(){
-            if (clickLabels.contains(pivotClickLabel)) {
-                p = clickLabels.indexOf(pivotClickLabel);
-                return p;
-            } else {
-                return -1;
-            }
-        }
-
-        public void move(int position){
-            //check current position
-            if (pivotClickLabel !=null && clickLabels.contains(pivotClickLabel)) {
-                unmark(pivotClickLabel);
-                if (position >= clickLabels.size() || position < 0) {
-                    pivotClickLabel = null;
-                    p = -1;
-                } else {
-                    p = position;
-                    pivotClickLabel = clickLabels.get(p);
-                    mark(pivotClickLabel);
-                }
-            } else {
-                if (position >= clickLabels.size() || position < 0) {
-                    pivotClickLabel = null;
-                    p = -1;
-                } else {
-                    p = position;
-                    pivotClickLabel = clickLabels.get(p);
-                    mark(pivotClickLabel);
-                }
-            }
-        }
-
-        public void move_and_select(int position){
-            if (position < clickLabels.size() && position >= 0) {
-                move(position);
-                clickLabels.get(position).selected = true;
-            }
-        }
-
-        private void mark(ClickLabel clickLabel){
-            clickLabel.setBackground(clickLabel.pivotColor);
-        }
-
-        private void unmark(ClickLabel clickLabel){
-            if (clickLabel.selected)
-                clickLabel.setBackground(clickLabel.selectedColor);
-            else
-                clickLabel.setBackground(bck);
+        public void setLastClicked(int lastClicked) {
+            this.lastClicked = lastClicked;
         }
     }
+
+
+
 }
