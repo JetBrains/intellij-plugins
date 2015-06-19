@@ -29,7 +29,7 @@ public class JstdConsoleView extends SMTRunnerConsoleView {
                          @NotNull ExecutionEnvironment env,
                          @Nullable String splitterProperty,
                          @Nullable JstdServer server) {
-    super(consoleProperties, env, splitterProperty);
+    super(consoleProperties);
     myServer = server;
   }
 

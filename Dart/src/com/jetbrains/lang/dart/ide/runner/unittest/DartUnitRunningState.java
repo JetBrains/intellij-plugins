@@ -62,7 +62,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
     final TestConsoleProperties testConsoleProperties = new DartConsoleProperties(runConfiguration, env);
-    final ConsoleView consoleView = SMTestRunnerConnectionUtil.createConsole(DART_FRAMEWORK_NAME, testConsoleProperties, env);
+    final ConsoleView consoleView = SMTestRunnerConnectionUtil.createConsole(DART_FRAMEWORK_NAME, testConsoleProperties);
 
     try {
       final VirtualFile dartFile = runnerParameters.getDartFile();

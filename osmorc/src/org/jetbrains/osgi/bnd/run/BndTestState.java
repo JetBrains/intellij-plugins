@@ -122,7 +122,7 @@ public class BndTestState extends JavaCommandLineState {
   @Override
   protected ConsoleView createConsole(@NotNull Executor executor) throws ExecutionException {
     TestConsoleProperties consoleProperties = new MyTestConsoleProperties(this, executor);
-    return SMTestRunnerConnectionUtil.createConsole(TEST_FRAMEWORK_NAME, consoleProperties, getEnvironment());
+    return SMTestRunnerConnectionUtil.createConsole(TEST_FRAMEWORK_NAME, consoleProperties);
   }
 
   @NotNull
