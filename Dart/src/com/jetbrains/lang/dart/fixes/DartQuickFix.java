@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PathUtil;
@@ -37,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class DartServerFixIntention implements IntentionAction {
+public final class DartQuickFix implements IntentionAction {
 
   private static class SuggestionInfo {
     @NotNull
@@ -80,11 +79,11 @@ public final class DartServerFixIntention implements IntentionAction {
     }
   }
 
-  @SuppressWarnings("UnusedDeclaration")
   enum SuggestionKind {
-
-    METHOD(PlatformIcons.METHOD_ICON), PARAMETER(PlatformIcons.PARAMETER_ICON), TYPE(PlatformIcons.CLASS_ICON), VARIABLE(
-      PlatformIcons.VARIABLE_ICON);
+    METHOD(PlatformIcons.METHOD_ICON),
+    PARAMETER(PlatformIcons.PARAMETER_ICON),
+    TYPE(PlatformIcons.CLASS_ICON),
+    VARIABLE(PlatformIcons.VARIABLE_ICON);
 
     private final Icon myIcon;
 
@@ -137,19 +136,23 @@ public final class DartServerFixIntention implements IntentionAction {
     }
   }
 
-  @NotNull
-  private final SourceChange myChange;
-  private final long myPsiModificationCount;
 
-  public DartServerFixIntention(@NotNull final SourceChange change, long psiModificationCount) {
-    myChange = change;
-    myPsiModificationCount = psiModificationCount;
+  @NotNull private final DartQuickFixSet myQuickFixSet;
+  @Nullable private SourceChange mySourceChange;
+
+  public DartQuickFix(@NotNull final DartQuickFixSet quickFixSet) {
+    myQuickFixSet = quickFixSet;
+  }
+
+  public void setSourceChange(@NotNull final SourceChange sourceChange) {
+    mySourceChange = sourceChange;
   }
 
   @NotNull
   @Override
   public String getText() {
-    return myChange.getMessage();
+    myQuickFixSet.ensureInitialized();
+    return mySourceChange == null ? "" : mySourceChange.getMessage();
   }
 
   @NotNull
@@ -160,11 +163,12 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
-    if (myPsiModificationCount != PsiManager.getInstance(project).getModificationTracker().getModificationCount()) {
-      return false;
-    }
+    if (myQuickFixSet.getPsiModificationCount() != file.getManager().getModificationTracker().getModificationCount()) return false;
 
-    final List<SourceFileEdit> fileEdits = myChange.getEdits();
+    myQuickFixSet.ensureInitialized();
+    if (mySourceChange == null) return false;
+
+    final List<SourceFileEdit> fileEdits = mySourceChange.getEdits();
     if (fileEdits.size() != 1) return false;
 
     final List<SourceEdit> sourceEdits = fileEdits.get(0).getEdits();
@@ -188,7 +192,9 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-    final SourceFileEdit fileEdit = myChange.getEdits().get(0);
+    if (mySourceChange == null) return;
+
+    final SourceFileEdit fileEdit = mySourceChange.getEdits().get(0);
     final String filePath = FileUtil.toSystemIndependentName(fileEdit.getFile());
     final SourceEdit sourceEdit = fileEdit.getEdits().get(0);
 
@@ -242,7 +248,7 @@ public final class DartServerFixIntention implements IntentionAction {
     final Template template = templateManager.createTemplate("", "");
     template.setToReformat(true);
 
-    addContents(template, sourceEdit);
+    addContents(template, sourceEdit, mySourceChange.getLinkedEditGroups());
 
     final Editor targetEditor = navigate(project, virtualFile, sourceEdit.getOffset());
     if (targetEditor != null) {
@@ -250,12 +256,13 @@ public final class DartServerFixIntention implements IntentionAction {
     }
   }
 
-  private void addContents(@NotNull final Template template, @NotNull final SourceEdit edit) {
+  private static void addContents(@NotNull final Template template,
+                                  @NotNull final SourceEdit sourceEdit,
+                                  @NotNull final List<LinkedEditGroup> linkedEditGroups) {
 
-    final String replacementText = edit.getReplacement();
-    final int initialOffset = edit.getOffset();
-
-    final List<SuggestionInfo> suggestions = extractSuggestions(myChange.getLinkedEditGroups());
+    final String replacementText = sourceEdit.getReplacement();
+    final int initialOffset = sourceEdit.getOffset();
+    final List<SuggestionInfo> suggestions = extractSuggestions(linkedEditGroups);
 
     int currentInsertOffset = 0;
 
@@ -265,13 +272,13 @@ public final class DartServerFixIntention implements IntentionAction {
       template.addVariable(new DartLookupExpression(suggestion), true);
       currentInsertOffset += text.length() + suggestion.getDefaultValue().length();
     }
+
     if (currentInsertOffset < replacementText.length()) {
       final String text = replacementText.substring(currentInsertOffset);
       template.addTextSegment(text);
     }
 
     //TODO: use myChange.getSelection() to set an end variable
-
   }
 
   @NotNull

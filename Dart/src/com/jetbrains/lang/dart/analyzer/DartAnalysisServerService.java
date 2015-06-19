@@ -172,20 +172,20 @@ public class DartAnalysisServerService {
 
     ApplicationManager.getApplication().getMessageBus().connect()
       .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerAdapter() {
-                   @Override
-                   public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                     if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
-                       DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
-                     }
-                   }
+        @Override
+        public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+          if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
+            DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
+          }
+        }
 
-                   @Override
-                   public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                     if (isDartOrHtmlFile(file)) {
-                       removePriorityFile(file);
-                     }
-                   }
-                 });
+        @Override
+        public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+          if (isDartOrHtmlFile(file)) {
+            removePriorityFile(file);
+          }
+        }
+      });
   }
 
   @NotNull
@@ -453,10 +453,10 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public List<AnalysisErrorFixes> edit_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
+  public List<AnalysisErrorFixes> edit_getFixes(@NotNull final String _filePath, final int offset) {
     final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
     final Semaphore semaphore = new Semaphore();
-    final String filePath = FileUtil.toSystemDependentName(info.myFilePath);
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
 
     synchronized (myLock) {
       if (myServer == null) return null;

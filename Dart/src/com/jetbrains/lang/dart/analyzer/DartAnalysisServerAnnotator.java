@@ -1,6 +1,10 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.server.generated.types.*;
+import com.google.dart.server.generated.types.AnalysisError;
+import com.google.dart.server.generated.types.AnalysisErrorSeverity;
+import com.google.dart.server.generated.types.AnalysisErrorType;
+import com.google.dart.server.generated.types.Location;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -10,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -19,23 +24,18 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.fixes.DartServerFixIntention;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 public class DartAnalysisServerAnnotator
-  extends ExternalAnnotator<DartAnalysisServerAnnotator.AnnotatorInfo, DartAnalysisServerAnnotator.ServerResult> {
+  extends ExternalAnnotator<DartAnalysisServerAnnotator.AnnotatorInfo, AnalysisError[]> {
 
   public static class AnnotatorInfo {
     @NotNull public final Project myProject;
@@ -53,20 +53,6 @@ public class DartAnalysisServerAnnotator
 
     public boolean isLongerAnalysisTimeout() {
       return myLongerAnalysisTimeout;
-    }
-  }
-
-  static class ServerResult {
-    @NotNull private final Map<AnalysisError, List<AnalysisErrorFixes>> myErrorsAndFixes =
-      new THashMap<AnalysisError, List<AnalysisErrorFixes>>();
-
-    void add(@NotNull final AnalysisError error, @NotNull final List<AnalysisErrorFixes> fixes) {
-      myErrorsAndFixes.put(error, fixes);
-    }
-
-    @NotNull
-    public Map<AnalysisError, List<AnalysisErrorFixes>> getErrorsAndFixes() {
-      return myErrorsAndFixes;
     }
   }
 
@@ -108,46 +94,25 @@ public class DartAnalysisServerAnnotator
 
   @Nullable
   @Override
-  public ServerResult doAnnotate(@NotNull final AnnotatorInfo info) {
-    final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(info);
-    if (errors == null || errors.length == 0) return null;
-
-    final ServerResult result = new ServerResult();
-
-    boolean errorFromGetFixes = false;
-    for (final AnalysisError error : errors) {
-      if (error == null || shouldIgnoreMessageFromDartAnalyzer(error)) continue;
-
-      final List<AnalysisErrorFixes> fixes = errorFromGetFixes
-                                             ? null
-                                             : DartAnalysisServerService.getInstance().edit_getFixes(info, error.getLocation().getOffset());
-      if (!errorFromGetFixes && fixes == null) {
-        errorFromGetFixes = true;
-      }
-
-      result.add(error, fixes != null ? fixes : Collections.<AnalysisErrorFixes>emptyList());
-    }
-
-    return result;
+  public AnalysisError[] doAnnotate(@NotNull final AnnotatorInfo info) {
+    return DartAnalysisServerService.getInstance().analysis_getErrors(info);
   }
 
   @Override
-  public void apply(@NotNull final PsiFile psiFile, @Nullable final ServerResult serverResult, @NotNull final AnnotationHolder holder) {
-    if (serverResult == null || serverResult.getErrorsAndFixes().isEmpty()) return;
+  public void apply(@NotNull final PsiFile psiFile, @Nullable final AnalysisError[] errors, @NotNull final AnnotationHolder holder) {
+    if (errors == null || errors.length == 0) return;
 
-    final Map<AnalysisError, List<AnalysisErrorFixes>> errorsAndFixesMap = serverResult.getErrorsAndFixes();
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
 
-    for (Map.Entry<AnalysisError, List<AnalysisErrorFixes>> entry : errorsAndFixesMap.entrySet()) {
-      final AnalysisError error = entry.getKey();
-      final List<AnalysisErrorFixes> fixes = entry.getValue();
-
+    for (AnalysisError error : errors) {
       final Annotation annotation = annotate(holder, error, psiFile.getTextLength());
-      if (annotation != null && fixes != null && !fixes.isEmpty()) {
-        for (final AnalysisErrorFixes fixList : fixes) {
-          for (final SourceChange change : fixList.getFixes()) {
-            annotation.registerFix(new DartServerFixIntention(change, psiModificationCount));
-          }
+
+      if (annotation != null) {
+        final DartQuickFixSet quickFixSet = new DartQuickFixSet(FileUtil.toSystemIndependentName(error.getLocation().getFile()),
+                                                                error.getLocation().getOffset(),
+                                                                psiModificationCount);
+        for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
+          annotation.registerFix(quickFix);
         }
       }
     }
