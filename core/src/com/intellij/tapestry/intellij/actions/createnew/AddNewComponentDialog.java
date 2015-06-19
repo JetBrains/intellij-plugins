@@ -4,6 +4,7 @@ import com.intellij.javaee.web.WebRoot;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.SourceFolder;
+import com.intellij.openapi.ui.DialogWrapperPeer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
@@ -31,6 +32,7 @@ public class AddNewComponentDialog extends JDialog {
         String newClassesSourceDirectory;
 
         _name.setText(selectedPackage);
+        _name.putClientProperty(DialogWrapperPeer.HAVE_INITIAL_SELECTION, Boolean.FALSE);
 
         if (isPage) {
             newTemplatesSourceDirectory = TapestryModuleSupportLoader.getInstance(module).getState().getNewPagesTemplatesSourceDirectory();
