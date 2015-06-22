@@ -82,7 +82,8 @@ public class CfmlTagComponentImpl extends CfmlTagImpl implements CfmlComponent, 
                                      @NotNull ResolveState state,
                                      PsiElement lastParent,
                                      @NotNull PsiElement place) {
-    if (!CfmlPsiUtil.processDeclarations(processor, state, null, this)) {
+    if ((lastParent == null || lastParent.getParent() != this) &&
+        !CfmlPsiUtil.processDeclarations(processor, state, null, this)) {
       return false;
     }
 

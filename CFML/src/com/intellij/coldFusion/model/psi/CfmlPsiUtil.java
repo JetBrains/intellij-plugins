@@ -371,7 +371,8 @@ public class CfmlPsiUtil {
     try {
       component.accept(new CfmlRecursiveElementVisitor() {
         public void visitCfmlAssignmentExpression(CfmlAssignmentExpression expression) {
-          if (expression.getFirstChild().getNode().getElementType() != CfscriptTokenTypes.VAR_KEYWORD) {
+          if (expression.getFirstChild().getNode().getElementType() != CfscriptTokenTypes.VAR_KEYWORD &&
+              expression.getParent() != lastParent) {
             if (expression.getAssignedVariable() != null && !processor.execute(expression.getAssignedVariable(), state)) {
               throw Stop.DONE;
             }
