@@ -28,7 +28,7 @@ public class SmallLog extends JFrame{
 
     public SmallLog() throws Exception {
         super("SmallLog");
-        frameHolder = new FrameHolder();
+        frameHolder = new FrameHolder(this);
         setAlwaysOnTop(true);
 
 
@@ -68,6 +68,15 @@ public class SmallLog extends JFrame{
         return semiTransparentPanel;
     }
 
+    public void set(ArrayList<ClickLabel> clickLabels) {
+        semiTransparentPanel.removeAll();
+        for (ClickLabel clickLabel : clickLabels) {
+            semiTransparentPanel.add(clickLabel);
+        }
+        semiTransparentPanel.clickLabels = clickLabels;
+        semiTransparentPanel.update();
+    }
+
     public class SemiTransparentPanel extends JPanel{
 
         private static final int V_GAP = 2;
@@ -76,7 +85,7 @@ public class SmallLog extends JFrame{
         private Pivot pivot;
 
         //clickLabels
-        private final ArrayList<ClickLabel> clickLabels = new ArrayList<ClickLabel>();
+        private ArrayList<ClickLabel> clickLabels = new ArrayList<ClickLabel>();
 
         public Queue<Character> getCharBuffer() {
             return charBuffer;
@@ -172,6 +181,12 @@ public class SmallLog extends JFrame{
             Shortcutter.register(this, "_DELETE", new DeleteAction(smallLog).runnable);
             Shortcutter.register(this, "_BACK_SPACE", new DeleteAction(smallLog).runnable);
 
+            Shortcutter.register(this, "META_Z", new Runnable() {
+                        @Override
+                        public void run() {
+                            frameHolder.undo();
+                        }
+                    });
             Shortcutter.register(this, "SHIFT_BACK_SPACE", new MultipleDeleteAction(smallLog).runnable);
             Shortcutter.register(this, "SHIFT_DELETE", new MultipleDeleteAction(smallLog).runnable);
             Shortcutter.register(this, "SHIFT_E", new ExportAction(smallLog).runnable);
@@ -281,10 +296,13 @@ public class SmallLog extends JFrame{
                                     clickLabels.remove(i + 1);
                                 }
 
-                                for (ClickLabel label : clickLabels) {
-                                }
                             }
 
+                        }
+                        try {
+                            //new ResortAction(smallLog).execute();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                         update();
                     }

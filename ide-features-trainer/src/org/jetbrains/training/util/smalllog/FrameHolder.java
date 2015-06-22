@@ -3,7 +3,6 @@ package org.jetbrains.training.util.smalllog;
 import com.intellij.util.containers.BidirectionalMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by karashevich on 17/06/15.
@@ -13,10 +12,18 @@ public class FrameHolder {
     BidirectionalMap<Integer, ClickLabel> map;
     ArrayList<Frame> frames;
     int pivot;
+    private SmallLog smallLog;
 
-    public FrameHolder() {
+    public FrameHolder(SmallLog smallLog) {
         map = new BidirectionalMap<Integer, ClickLabel>();
         frames = new ArrayList<Frame>();
+        this.smallLog = smallLog;
+        pivot = 0;
+        try {
+            snapFrame(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public int addClickLabel(ClickLabel cl) {
@@ -31,51 +38,54 @@ public class FrameHolder {
 
     public void snapFrame(ArrayList<ClickLabel> clickLabels) throws Exception {
             if (frames != null) {
-                if (pivot != frames.size())
-                    if (pivot > frames.size()) throw new Exception();
-                    else
-                        while (pivot > frames.size())
-                            frames.remove(pivot);
-                ArrayList<Integer> uids = new ArrayList<Integer>(clickLabels.size());
-                for (int i = 0; i < clickLabels.size(); i++) {
-                    uids.add(i, addClickLabel(clickLabels.get(i)));
-                }
+                if (clickLabels == null || clickLabels.size() == 0) {
+                    frames.add(new Frame(new ArrayList<Integer>(0)));
+                    frames.get(0).printFrame();
+                    pivot = 1;
+                } else {
+                    if (pivot != frames.size())
+                        if (pivot > frames.size()) throw new Exception();
+                        else
+                            while (pivot < frames.size())
+                                frames.remove(pivot);
+                    ArrayList<Integer> uids = new ArrayList<Integer>(clickLabels.size());
+                    for (int i = 0; i < clickLabels.size(); i++) {
+                        uids.add(i, addClickLabel(clickLabels.get(i)));
+                    }
 
-                final Frame newFrame = new Frame(uids);
-                frames.add(newFrame);
-                pivot = frames.size();
-                printInfographics();
-                newFrame.printFrame();
+                    final Frame newFrame = new Frame(uids);
+                    frames.add(newFrame);
+                    newFrame.printFrame();
+                    pivot = frames.size();
+                }
             }
     }
 
-    public void printInfographics(){
-        System.out.print("FrameHolder:");
-        for (int i = 0; i < (pivot - 1); i++) {
-            System.out.print("#");
-        }
-        System.out.println("V");
-        for (int i = pivot; i < frames.size(); i++) {
-            System.out.print("#");
-        }
-        System.out.println();
-    }
 
     public void repaintSmallLog(ArrayList<Integer> uids){
         //convert ArrayList of Integers to ArrayList of ClickLabels
         ArrayList<ClickLabel> clickLabels = new ArrayList<ClickLabel>(uids.size());
         for (int i = 0; i < uids.size(); i++) {
-            clickLabels.add(i, map.get(i));
+            clickLabels.add(i, map.get(uids.get(i)));
         }
         //repaintSmallLog here
-        //smallLog.repaintFor(clickLabels);
+
+        smallLog.set(clickLabels);
     }
 
     public void undo(){
-        if (pivot > 0) {
-            pivot--;
-            repaintSmallLog(frames.get(pivot).getUids());
+        if (pivot == frames.size() && pivot > 0) {
+            pivot --;
+            repaintSmallLog(frames.get(pivot - 1).getUids());
+        } else {
+            if (pivot > 1) {
+                pivot--;
+                 repaintSmallLog(frames.get(pivot - 1).getUids());
+            } else if (pivot == 1 && frames.size() > 0) {
+                repaintSmallLog(frames.get(pivot - 1).getUids());
+            }
         }
+
     }
 
     public void redo(){
