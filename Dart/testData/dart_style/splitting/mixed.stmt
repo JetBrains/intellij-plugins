@@ -20,22 +20,31 @@ Stream readInput(AssetId id) =>
 someFunctionName(argument, argument, argument,
     someOtherFunction(argument, argument, arg));
 <<<
-someFunctionName(argument, argument,
-    argument, someOtherFunction(
+someFunctionName(
+    argument,
+    argument,
+    argument,
+    someOtherFunction(
         argument, argument, arg));
 >>> does not extra indent when multiple levels of nesting happen on one line
 someFunctionName(argument, argument, argument,
     some(other(function(argument, argument, arg))));
 <<<
-someFunctionName(argument, argument,
-    argument, some(other(function(
+someFunctionName(
+    argument,
+    argument,
+    argument,
+    some(other(function(
         argument, argument, arg))));
 >>> forces extra indent and lines, if later line needs it
 callSomeMethod(innerFunction(argument, argument, argument), argument, argument, argument);
 <<<
-callSomeMethod(innerFunction(
+callSomeMethod(
+    innerFunction(
         argument, argument, argument),
-    argument, argument, argument);
+    argument,
+    argument,
+    argument);
 >>> function inside a collection
 [item, obj.method(argument).method(argument).method(() {body;}).another().another()];
 <<<
@@ -48,11 +57,43 @@ callSomeMethod(innerFunction(
     body;
   }).another().another()
 ];
+>>> function inside an argument list
+function(argument, obj.method(argument).method(argument).method(() {body;}).another().another());
+<<<
+function(
+    argument,
+    obj
+        .method(argument)
+        .method(argument)
+        .method(() {
+      body;
+    }).another().another());
+>>> unnested function inside nested expression
+function(argument, function(() {;}));
+<<<
+function(
+    argument,
+    function(() {
+      ;
+    }));
+>>> nested function inside nested expression
+function(argument, function(() {;}, argument, () {;}));
+<<<
+function(
+    argument,
+    function(
+        () {
+          ;
+        },
+        argument,
+        () {
+          ;
+        }));
 >>> wrap before =>
-receiver.firstMethod().next(() => longIdentifier == veryLongIdentifier);
+receiver.firstMethod().next((parameter) => longIdentifier == veryLongIdentifier);
 <<<
 receiver.firstMethod().next(
-    () => longIdentifier ==
+    (parameter) => longIdentifier ==
         veryLongIdentifier);
 >>> wrap after =>
 receiver.firstMethod().next(() => veryveryveryverylongIdentifier == veryLongIdentifier);
@@ -66,16 +107,23 @@ receiver.firstMethod().next(longIdentifier == veryLongIdentifier);
 receiver.firstMethod().next(
     longIdentifier ==
         veryLongIdentifier);
->>> list inside separable TODO(rnystrom): Is this what we want?
+>>> list inside method chain
 receiver.first([listItem, secondItem, thirdItem]).second();
 <<<
-receiver
-    .first([
+receiver.first([
   listItem,
   secondItem,
   thirdItem
-])
-    .second();
+]).second();
+>>> list at end of method chain
+receiver.first().second([listItem, secondItem, thirdItem, fourthItem]);
+<<<
+receiver.first().second([
+  listItem,
+  secondItem,
+  thirdItem,
+  fourthItem
+]);
 >>> binary operators in ascending precedence
 {
   b___________________ || a______________ && a______________ == a______________ > a______________ + a______________;

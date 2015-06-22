@@ -1,4 +1,25 @@
 40 columns                              |
+>>> many parameters
+method(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
+    tenth, eleventh, twelfth) {
+  print('42');
+}
+<<<
+method(
+    first,
+    second,
+    third,
+    fourth,
+    fifth,
+    sixth,
+    seventh,
+    eighth,
+    ninth,
+    tenth,
+    eleventh,
+    twelfth) {
+  print('42');
+}
 >>> parameters fit but ) does not
 method(int firstArgument, int argumentTo) {
   print('42');
@@ -17,27 +38,14 @@ method(
     int firstArgument, int argument) {
   print('42');
 }
->>> many parameters
-method(int first, int second, int third, int fourth, int fifth, int sixth,
-    int seventh, int eighth, int ninth, int tenth, int eleventh, int twelfth) {
-  print('42');
-}
-<<<
-method(int first, int second, int third,
-    int fourth, int fifth, int sixth,
-    int seventh, int eighth, int ninth,
-    int tenth, int eleventh,
-    int twelfth) {
-  print('42');
-}
 >>> no split after "(" in lambda
 var meth = (
-    int firstArgument, int argument) {
+    int firstArgument, int argumentTo) {
   print('42');
 };
 <<<
 var meth = (int firstArgument,
-    int argument) {
+    int argumentTo) {
   print('42');
 };
 >>> keep mandatory and positional on same line
@@ -73,3 +81,10 @@ doStuff(callback(parameter1, parameter2, parameter3, parameter4)) {}
 <<<
 doStuff(callback(parameter1, parameter2,
     parameter3, parameter4)) {}
+>>> split optional onto one per line if they don't fit on one line
+doStuff([parameter1, parameter2, parameter3]) {}
+<<<
+doStuff(
+    [parameter1,
+    parameter2,
+    parameter3]) {}

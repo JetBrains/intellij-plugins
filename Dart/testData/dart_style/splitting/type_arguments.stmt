@@ -1,0 +1,38 @@
+40 columns                              |
+>>> all fit on one line
+new Foo<A,B,C,D>();
+<<<
+new Foo<A, B, C, D>();
+>>> prefer to split between args even when they all fit on next line
+new LongClassName<First, Second, Third>();
+<<<
+new LongClassName<First, Second,
+    Third>();
+>>> split before first if needed
+new LongClassName<FirstTypeArgumentIsLong, Second>();
+<<<
+new LongClassName<
+    FirstTypeArgumentIsLong, Second>();
+>>> split in middle if fit in two lines
+new LongClassName<First, Second, Third, Fourth, Fifth, Sixth, Seventh>();
+<<<
+new LongClassName<First, Second, Third,
+    Fourth, Fifth, Sixth, Seventh>();
+>>> split one per line if they don't fit in two lines
+new LongClassName<First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth>();
+<<<
+new LongClassName<
+    First,
+    Second,
+    Third,
+    Fourth,
+    Fifth,
+    Sixth,
+    Seventh,
+    Eighth>();
+>>> prefers to not split at type arguments
+new SomeClass<
+    TypeArgument>(valueArgument);
+<<<
+new SomeClass<TypeArgument>(
+    valueArgument);

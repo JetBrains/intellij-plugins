@@ -15,11 +15,27 @@ var m = {
   third: fourth,
   fifth: sixth
 };
->>> nested unsplit map
+>>> splits outer maps even if they fit
 var m = {a: {b: c}, d: {},
-    e: {f: g  }  };
+    e: {f: {g: h} }  };
 <<<
-var m = {a: {b: c}, d: {}, e: {f: g}};
+var m = {
+  a: {b: c},
+  d: {},
+  e: {
+    f: {g: h}
+  }
+};
+>>> split indirect outer
+var m = {a: function({b: inner})};
+<<<
+var m = {
+  a: function({b: inner})
+};
+>>> empty literal does not force outer split
+var m = {a:{}, b: [], c: () {}};
+<<<
+var m = {a: {}, b: [], c: () {}};
 >>> nested split map
 var m = {first: 1, second: {third: fourth}, fifth: 5, nested: {sixth: seventh, eighth: nine,
     tenth: eleventh}};
@@ -68,4 +84,77 @@ var map = {"foo": "bar", "fuzzy": null , };
 var map = {
   "foo": "bar",
   "fuzzy": null,
+};
+>>> preserve newlines in maps containing a line comment
+var map = {
+  // yeah
+  a:b,c:d,
+  e:f,g:h
+};
+<<<
+var map = {
+  // yeah
+  a: b, c: d,
+  e: f, g: h
+};
+>>> wrap between elements even when newlines are preserved
+var map = {
+  // yes
+  first: "value", second: "value", third: "value",
+
+  fourth: "value", fifth: "value", sixth: "value", seventh: "value"
+};
+<<<
+var map = {
+  // yes
+  first: "value", second: "value",
+  third: "value",
+
+  fourth: "value", fifth: "value",
+  sixth: "value", seventh: "value"
+};
+>>> ignore line comment after the "]"
+var map = {
+  a:b,c:
+  d
+} // comment
+;
+<<<
+var map = {a: b, c: d} // comment
+    ;
+>>> preserves one blank line between elements
+var map = {
+
+
+  element: value,
+
+
+
+  // comment
+  element: value,
+
+
+
+  element: value
+
+
+};
+<<<
+var map = {
+  element: value,
+
+  // comment
+  element: value,
+
+  element: value
+};
+>>> ignore newlines between keys and values
+var map = {// comment
+a:
+value
+};
+<<<
+var map = {
+  // comment
+  a: value
 };

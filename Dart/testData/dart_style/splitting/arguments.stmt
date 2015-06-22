@@ -1,15 +1,21 @@
 40 columns                              |
 >>> many arguments
 method(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth,
-    tenth, eleventh, twelfth) {
-  print('42');
-}
+    tenth, eleventh, twelfth);
 <<<
-method(first, second, third, fourth,
-    fifth, sixth, seventh, eighth,
-    ninth, tenth, eleventh, twelfth) {
-  print('42');
-}
+method(
+    first,
+    second,
+    third,
+    fourth,
+    fifth,
+    sixth,
+    seventh,
+    eighth,
+    ninth,
+    tenth,
+    eleventh,
+    twelfth);
 >>> wrap before first argument
 longFunctionIsLoooooooooooooong(argument, argument);
 <<<
@@ -25,13 +31,6 @@ printNumbers(000000000000000000000, 111);
 <<<
 printNumbers(
     000000000000000000000, 111);
->>> force multi-line because of contained block
-method(first,() {"fn";},third,fourth, fifth, sixth, seventh, eighth);
-<<<
-method(first, () {
-  "fn";
-}, third, fourth, fifth, sixth, seventh,
-    eighth);
 >>>
 function(firstArg * second, third * fourthAndLongest);
 <<<
@@ -43,21 +42,28 @@ someFunctionTwo(argument, argument, argument),
 someFunctionTwo(argument, argument, argument),
 someArgument, someArgument);
 <<<
-someFunctionOne(someArgument,
+someFunctionOne(
+    someArgument,
     someFunctionTwo(
         argument, argument, argument),
     someFunctionTwo(
         argument, argument, argument),
-    someArgument, someArgument);
->>> hard split inside argument list
-foo(argument, argument, argument, argument, () { fn; }, argument, argument,
-    argument, argument);
+    someArgument,
+    someArgument);
+>>> force all arguments to split if an argument splits
+foo(a, b, inner(veryLongArgument, veryLongArgument), c);
 <<<
-foo(argument, argument, argument,
-    argument, () {
-  fn;
-}, argument, argument, argument,
-    argument);
+foo(
+    a,
+    b,
+    inner(veryLongArgument,
+        veryLongArgument),
+    c);
+>>> do not force single-argument list to split if argument splits
+foo(inner(veryLongArgument, veryLongArgument));
+<<<
+foo(inner(veryLongArgument,
+    veryLongArgument));
 >>> do not split empty argument list
 foo___________________________________();
 <<<
@@ -96,8 +102,97 @@ reallyLongMethod(
     foo: first,
     bar: second,
     baz: third);
+>>> if split before first positional, split before first named too
+reallyLongMethodName(
+    first, second, third, a: 1, b: 1);
+<<<
+reallyLongMethodName(
+    first, second, third,
+    a: 1, b: 1);
+>>> if split before other positional, split before first named too
+reallyLongMethodName(first, second,
+    third, fourth, fif, s, a: 1, b: 1);
+<<<
+reallyLongMethodName(first, second,
+    third, fourth, fif, s,
+    a: 1, b: 1);
+>>> if positional args go one per line, named do too
+reallyLongMethod(first, second, third, fourth, fifth, sixth, seventh, eighth, a: 1, b: 2);
+<<<
+reallyLongMethod(
+    first,
+    second,
+    third,
+    fourth,
+    fifth,
+    sixth,
+    seventh,
+    eighth,
+    a: 1,
+    b: 2);
 >>> avoid splitting before single positional argument
 someLongReceiver.veryLongMethod(argument);
 <<<
 someLongReceiver
     .veryLongMethod(argument);
+>>> multiple nested collections
+method(function([veryLongElement, veryLongElement], [veryLongElement, veryLongElement]), argument);
+<<<
+method(
+    function([
+      veryLongElement,
+      veryLongElement
+    ], [
+      veryLongElement,
+      veryLongElement
+    ]),
+    argument);
+>>> trailing collections are not indented
+function(argument, argument, argument, argument,
+[element, element, element, element],
+{'key': value, 'other key': value, 'third key': value});
+<<<
+function(argument, argument, argument,
+    argument, [
+  element,
+  element,
+  element,
+  element
+], {
+  'key': value,
+  'other key': value,
+  'third key': value
+});
+>>> all trailing collections
+function([element, element, element, element], {'key': value, 'other key': value, 'third key': value});
+<<<
+function([
+  element,
+  element,
+  element,
+  element
+], {
+  'key': value,
+  'other key': value,
+  'third key': value
+});
+>>> non-body non-preceding argument forces all bodies to indent
+function([element, element, element, element], argument,
+{'key': value, 'other key': value, 'third key': value}, () {;});
+<<<
+function(
+    [
+      element,
+      element,
+      element,
+      element
+    ],
+    argument,
+    {
+      'key': value,
+      'other key': value,
+      'third key': value
+    },
+    () {
+      ;
+    });

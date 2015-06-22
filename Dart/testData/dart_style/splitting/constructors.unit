@@ -58,3 +58,27 @@ class Foo {
           third) =>
       "very long body that must wrap";
 }
+>>> wrap initializers past the ":"
+class Foo {
+  Foo(parameter)
+      : initializer = function(argument, argument),
+        initializer2 = function(argument, argument);
+}
+<<<
+class Foo {
+  Foo(parameter)
+      : initializer = function(
+            argument, argument),
+        initializer2 = function(
+            argument, argument);
+}
+>>> split at "=" in initializer
+class Foo {
+  Foo() : initializer =function(argument, arg);
+}
+<<<
+class Foo {
+  Foo()
+      : initializer =
+            function(argument, arg);
+}

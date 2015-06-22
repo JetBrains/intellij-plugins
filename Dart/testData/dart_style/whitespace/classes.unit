@@ -61,3 +61,42 @@ native
 }
 <<<
 class A extends B native "Zapp" {}
+>>> require blank line after non-empty block-bodied members
+class Foo {
+var a = 1; b() {;} c() => null; get d {;} get e => null; set f(value) {;
+} set g(value) => null; var h = 1;}
+<<<
+class Foo {
+  var a = 1;
+  b() {
+    ;
+  }
+
+  c() => null;
+  get d {
+    ;
+  }
+
+  get e => null;
+  set f(value) {
+    ;
+  }
+
+  set g(value) => null;
+  var h = 1;
+}
+>>> no required blank line after empty block-bodied members
+class Foo {
+var a = 1; b() {} c() => null; get d {} get e => null; set f(value) {
+} set g(value) => null; var h = 1;}
+<<<
+class Foo {
+  var a = 1;
+  b() {}
+  c() => null;
+  get d {}
+  get e => null;
+  set f(value) {}
+  set g(value) => null;
+  var h = 1;
+}

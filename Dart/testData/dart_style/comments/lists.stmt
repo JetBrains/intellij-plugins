@@ -89,3 +89,14 @@ var list = [
 var list = [1,/* a */ 2 /* b */  , 3];
 <<<
 var list = [1, /* a */ 2 /* b */, 3];
+>>> remove blank line before beginning of body
+var list = [
+
+
+
+  // comment
+];
+<<<
+var list = [
+  // comment
+];

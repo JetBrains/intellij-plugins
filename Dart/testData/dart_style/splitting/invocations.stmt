@@ -63,3 +63,92 @@ someVeryLongExpression = someVeryLongExpression.someLongMethod();
 someVeryLongExpression =
     someVeryLongExpression
         .someLongMethod();
+>>> split properties after a method chain
+compiler.method().method().method().property.property;
+<<<
+compiler
+    .method()
+    .method()
+    .method()
+    .property
+    .property;
+>>> split properties in a method chain
+compiler.method().property.method().property.method();
+<<<
+compiler
+    .method()
+    .property
+    .method()
+    .property
+    .method();
+>>> do not split leading properties in a chain
+compiler.property.property.method().method().method();
+<<<
+compiler.property.property
+    .method()
+    .method()
+    .method();
+>>> do not split leading properties even if others splits
+compiler.property.method().property.method();
+<<<
+compiler.property
+    .method()
+    .property
+    .method();
+>>> split between a pair of properties
+avian.bovine.canine.equine.feline.piscine.orycteropodian.camelid;
+<<<
+avian.bovine.canine.equine.feline
+    .piscine.orycteropodian.camelid;
+>>> split before all properties if they don't fit on two lines
+avian.bovine.canine.equine.feline.piscine.orycteropodian.camelid
+.rangiferine;
+<<<
+avian
+    .bovine
+    .canine
+    .equine
+    .feline
+    .piscine
+    .orycteropodian
+    .camelid
+    .rangiferine;
+>>> unsplit cascade unsplit method
+object.method().method()..c()..c();
+<<<
+object.method().method()..c()..c();
+>>> split cascade unsplit method
+object.method().method()..cascade()..cascade();
+<<<
+object.method().method()
+  ..cascade()
+  ..cascade();
+>>> unsplit cascade split method
+object.method().method().method().method()..cascade()..cascade();
+<<<
+object
+    .method()
+    .method()
+    .method()
+    .method()..cascade()..cascade();
+>>> split cascade split method
+object.method().method().method().method()..cascade()..cascade()..cascade();
+<<<
+object
+    .method()
+    .method()
+    .method()
+    .method()
+      ..cascade()
+      ..cascade()
+      ..cascade();
+>>> cascade setters on method chain
+object.method().method().method().method()..x=1..y=2;
+<<<
+object
+    .method()
+    .method()
+    .method()
+    .method()
+      ..x = 1
+      ..y = 2;

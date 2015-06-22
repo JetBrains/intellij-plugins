@@ -47,6 +47,7 @@ bar() {body;  ›  }
 foo() {
   body;
 ‹}
+
 bar() {
   body;›
 }

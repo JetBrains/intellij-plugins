@@ -41,20 +41,24 @@ var variableA,
     variableB,
     variableC,
     variableD;
->>> multiple variables get their own line if any has an initializer #16849
+>>> multiple variables stay on one line if they fit
 var x = 3, y = 4;
 <<<
-var x = 3,
-    y = 4;
+var x = 3, y = 4;
 >>>
 var x = 2, y;
 <<<
-var x = 2,
-    y;
+var x = 2, y;
 >>> multiple variables can stay on one line if there are no initializers
 var x, y, z;
 <<<
 var x, y, z;
+>>> multiple variables all split if they don't fit on one line
+var x = initializer, y = initializer, z = initializer;
+<<<
+var x = initializer,
+    y = initializer,
+    z = initializer;
 >>> dartbug.com/16379
 var x = new XXXXXXXXXXXXXXXXXXXXXXXXXXXXX();
 <<<
