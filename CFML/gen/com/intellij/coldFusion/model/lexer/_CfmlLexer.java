@@ -1254,8 +1254,8 @@ class _CfmlLexer implements FlexLexer {
             myCurrentConfiguration.myStartExpression = false;
             myCurrentConfiguration.myBlockType = CfmlTokenTypes.SCRIPT_EXPRESSION;
             yybegin(YYINITIAL);
-        } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfquery") ||
-                   myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfqueryparam")) {
+        } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfquery") /*|| // cfqueryparam is single tag without the end
+                   myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfqueryparam")*/) {
             myCurrentConfiguration.myBlockType = CfmlElementTypes.SQL;
             myCurrentConfiguration.myArePoundsEvaluated++;
             yybegin(YYINITIAL);

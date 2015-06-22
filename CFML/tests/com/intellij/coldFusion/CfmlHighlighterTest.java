@@ -56,10 +56,15 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
     }, CfmlLanguage.CF11, getProject());
   }
 
-  //public void testSyntaxError() throws Exception {
-  //  myFixture.enableInspections(new CfmlReferenceInspection());
-  //  doTest();
-  //}
+  public void testSyntaxError() throws Exception {
+    myFixture.enableInspections(new CfmlReferenceInspection());
+    doTest();
+  }
+
+  public void testAssertion() throws Exception {
+    myFixture.enableInspections(new CfmlReferenceInspection());
+    doTest();
+  }
 
   @Override
   protected String getBasePath() {
