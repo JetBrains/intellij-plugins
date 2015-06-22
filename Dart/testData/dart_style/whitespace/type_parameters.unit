@@ -1,0 +1,9 @@
+40 columns                              |
+>>> no spaces around braces
+class Foo<  T > {}
+<<<
+class Foo<T> {}
+>>> space between names
+class Foo<  A,B,   C,D> {}
+<<<
+class Foo<A, B, C, D> {}

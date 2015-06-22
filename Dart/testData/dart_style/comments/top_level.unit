@@ -185,3 +185,31 @@ b.c;
 <<<
 library a. //
     b.c;
+>>> inline block comment between different kinds of directives
+library a; /* comment */ import 'b.dart';
+<<<
+library a;
+
+/* comment */
+import 'b.dart';
+>>> inline block comment between directives
+import 'a.dart'; /* comment */ import 'b.dart';
+<<<
+import 'a.dart';
+/* comment */
+import 'b.dart';
+>>> block comment between directives
+import 'a.dart'; /* comment */
+import 'b.dart';
+<<<
+import 'a.dart'; /* comment */
+import 'b.dart';
+>>> ensure blank line above doc comments
+var a = 1;
+/// doc
+var b = 2;
+<<<
+var a = 1;
+
+/// doc
+var b = 2;

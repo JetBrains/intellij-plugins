@@ -28,7 +28,6 @@ foo
   ..baz = 3
   ..baz = 5;
 >>> cascades indent contained blocks (and force multi-line)
-
 "foo"..toString(() {body;});
 <<<
 "foo"

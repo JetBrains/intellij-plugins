@@ -116,3 +116,14 @@ longFunction(/* a very long block comment */) {}
 <<<
 longFunction(
     /* a very long block comment */) {}
+>>> remove blank line before beginning of body
+main() {
+
+
+
+  // comment
+}
+<<<
+main() {
+  // comment
+}

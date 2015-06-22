@@ -67,3 +67,40 @@ library foo;
 /* Comment 3 */
 
 class C {}
+>>> multiline comment inside nested blocks
+main() {
+  inner() {
+    function(/*
+comment */argument);
+  }
+}
+<<<
+main() {
+  inner() {
+    function(/*
+comment */
+        argument);
+  }
+}
+>>> line doc comments are indented even if flush left
+class C {
+/// doc
+  method() {}
+}
+<<<
+class C {
+  /// doc
+  method() {}
+}
+>>> commented out comments are not mistaken for doc comments
+class C {
+//// not a doc comment
+//commentedOut() {}
+  method() {}
+}
+<<<
+class C {
+//// not a doc comment
+//commentedOut() {}
+  method() {}
+}

@@ -61,13 +61,6 @@ class B = Base with Mixin;
 var c = 1;
 
 d() {}
->>> require at least a single newline between declarations
-class A {} class B = Base with Mixin; var c = 1; d() {}
-<<<
-class A {}
-class B = Base with Mixin;
-var c = 1;
-d() {}
 >>> force two newlines between directives and declarations
 library a; var b;
 <<<
@@ -78,3 +71,66 @@ var b;
 abstract class A = B with C<E>;
 <<<
 abstract class A = B with C<E>;
+>>> blank line between classes
+class A {} class B {}
+<<<
+class A {}
+
+class B {}
+>>> blank line between variables and classes
+var a = 1; class B{} var c = 3;
+<<<
+var a = 1;
+
+class B {}
+
+var c = 3;
+>>> blank line between functions and classes
+a() {} class B{} c() {}
+<<<
+a() {}
+
+class B {}
+
+c() {}
+>>> require newline between non-class declarations
+var a = 1; var b = 1; c() {} d() {} var e = 1;
+<<<
+var a = 1;
+var b = 1;
+c() {}
+d() {}
+var e = 1;
+>>> require blank line after non-empty block-bodied members
+var a = 1; b() {;} c() => null; get d {;} get e => null; set f(value) {;
+} set g(value) => null; var h = 1;
+<<<
+var a = 1;
+b() {
+  ;
+}
+
+c() => null;
+get d {
+  ;
+}
+
+get e => null;
+set f(value) {
+  ;
+}
+
+set g(value) => null;
+var h = 1;
+>>> no required blank line after empty block-bodied members
+var a = 1; b() {} c() => null; get d {} get e => null; set f(value) {
+} set g(value) => null; var h = 1;
+<<<
+var a = 1;
+b() {}
+c() => null;
+get d {}
+get e => null;
+set f(value) {}
+set g(value) => null;
+var h = 1;

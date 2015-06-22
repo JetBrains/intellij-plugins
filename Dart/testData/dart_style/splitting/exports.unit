@@ -91,24 +91,6 @@ export 'foo.dart'
         Dog,
         Echidna,
         FlyingFox;
->>> multiline both
-export 'foo.dart'hide Ape,Bear,Cat,Dog, Echidna, FlyingFox show Ape,Bear,Cat,Dog, Echidna, FlyingFox;
-<<<
-export 'foo.dart'
-    hide
-        Ape,
-        Bear,
-        Cat,
-        Dog,
-        Echidna,
-        FlyingFox
-    show
-        Ape,
-        Bear,
-        Cat,
-        Dog,
-        Echidna,
-        FlyingFox;
 >>> double line both
 export 'foo.dart'hide Ape,Bear,Cat,Dog show Ape,Bear,Cat,Dog;
 <<<

@@ -96,3 +96,51 @@ library foo;
 class C /* is cool */ {
   /* int */ foo() => 42;
 }
+>>> ensure blank line above doc comments
+class Foo {var a = 1;
+/// doc
+var b = 2;}
+<<<
+class Foo {
+  var a = 1;
+
+  /// doc
+  var b = 2;
+}
+>>> remove blank line before beginning of body
+class A {
+
+
+
+  // comment
+}
+<<<
+class A {
+  // comment
+}
+>>> nested flush left comment
+class Foo {
+  method() {
+// flush
+  }
+}
+<<<
+class Foo {
+  method() {
+// flush
+  }
+}
+>>> nested flush left after non-nested
+class Foo {
+  method() {
+    // ...
+// flush
+  }
+}
+<<<
+class Foo {
+  method() {
+    // ...
+// flush
+  }
+}

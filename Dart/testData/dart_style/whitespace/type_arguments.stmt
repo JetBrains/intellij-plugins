@@ -1,0 +1,9 @@
+40 columns                              |
+>>> no spaces around braces
+new Foo<  T >();
+<<<
+new Foo<T>();
+>>> space between names
+new Foo<  A,B,   C,D>();
+<<<
+new Foo<A, B, C, D>();

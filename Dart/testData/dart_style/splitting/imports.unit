@@ -96,24 +96,6 @@ import 'foo.dart'
         Dog,
         Echidna,
         FlyingFox;
->>> multiline both
-import 'foo.dart'hide Ape,Bear,Cat,Dog, Echidna, FlyingFox show Ape,Bear,Cat,Dog, Echidna, FlyingFox;
-<<<
-import 'foo.dart'
-    hide
-        Ape,
-        Bear,
-        Cat,
-        Dog,
-        Echidna,
-        FlyingFox
-    show
-        Ape,
-        Bear,
-        Cat,
-        Dog,
-        Echidna,
-        FlyingFox;
 >>> double line both
 import 'foo.dart'hide Ape,Bear,Cat,Dog show Ape,Bear,Cat,Dog;
 <<<

@@ -18,11 +18,29 @@
   fifth,
   sixth
 ];
->>> nested unsplit list
+>>> splits outer lists even if they fit
 [[first], [], [
-    second,third, fourth]  ];
+    second,[third], fourth]  ];
 <<<
-[[first], [], [second, third, fourth]];
+[
+  [first],
+  [],
+  [
+    second,
+    [third],
+    fourth
+  ]
+];
+>>> split indirect outer
+[function([inner])];
+<<<
+[
+  function([inner])
+];
+>>> empty literal does not force outer split
+[[], {}, () {}];
+<<<
+[[], {}, () {}];
 >>> nested split list
 [first, [second, third, fourth], fifth, [sixth, seventh, eighth, nine, tenth,
     eleventh]];
@@ -86,4 +104,65 @@
       ]
     ]
   ]
+];
+>>> preserve newlines in lists containing a line comment
+[
+  // yeah
+  a,b,c,
+  d,e,f,
+];
+<<<
+[
+  // yeah
+  a, b, c,
+  d, e, f,
+];
+>>> wrap between elements even when newlines are preserved
+[
+  // yes
+  longElement,longElement,longElement,longElement,
+  longElement,longElement,longElement,longElement,longElement,longElement,
+];
+<<<
+[
+  // yes
+  longElement, longElement, longElement,
+  longElement,
+  longElement, longElement, longElement,
+  longElement, longElement, longElement,
+];
+>>> ignore line comment after the "]"
+[
+  a,b,c,
+  d
+] // comment
+;
+<<<
+[a, b, c, d] // comment
+    ;
+>>> preserves one blank line between elements
+[
+
+
+  element,
+
+
+
+  // comment
+  element,
+
+
+
+  element
+
+
+];
+<<<
+[
+  element,
+
+  // comment
+  element,
+
+  element
 ];

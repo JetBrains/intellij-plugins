@@ -81,3 +81,17 @@ new ListBox(showScrollbars: true);
 -  -1.2;
 <<<
 - -1.2;
+>>> multiline string inside nested blocks
+main() {
+  inner() {
+    function("""
+string""");
+  }
+}
+<<<
+main() {
+  inner() {
+    function("""
+string""");
+  }
+}

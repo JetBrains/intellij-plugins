@@ -42,34 +42,16 @@ var kind = element != null ? argument : secondArgumentThatIsReallyLong;
 var kind = element != null
     ? argument
     : secondArgumentThatIsReallyLong;
->>> unsplit operator chains before and after block
+>>> split operator chain around block
 first + second + () {body;} + third + fourth;
-<<<
-first + second + () {
-  body;
-} + third + fourth;
->>> split operator chain before block
-first + second + third + fourth + fifth + () {body;} + sixth + seventh;
 <<<
 first +
     second +
-    third +
-    fourth +
-    fifth +
     () {
-  body;
-} + sixth + seventh;
->>> split operator chain after block
-first + second + third + () {body;} + fourth + fifth + sixth + seventh + eighth;
-<<<
-first + second + third + () {
-  body;
-} +
-    fourth +
-    fifth +
-    sixth +
-    seventh +
-    eighth;
+      body;
+    } +
+    third +
+    fourth;
 >>> indent previous line farther because later line is nested deeper
 someFunction(someExtremelyLongArgumentName).clamp();
 <<<
@@ -115,3 +97,9 @@ verylongIdentifier[someParticularlyLongArgument[someParticularlyLongArgument]];
 verylongIdentifier[
     someParticularlyLongArgument[
         someParticularlyLongArgument]];
+>>> successive index arguments
+identifier[longArgument][longArgument][longArgument][longArgument][longArgument];
+<<<
+identifier[longArgument][longArgument]
+        [longArgument][longArgument]
+    [longArgument];
