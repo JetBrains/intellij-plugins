@@ -33,7 +33,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.TimeoutUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -54,6 +53,7 @@ public class DartAnalysisServerService {
 
   public static final String MIN_SDK_VERSION = "1.9";
 
+  private static final long CHECK_CANCELLED_PERIOD = 100;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
@@ -100,6 +100,7 @@ public class DartAnalysisServerService {
                                    final boolean isLast) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, isLast));
+        myCompletionInfos.notifyAll();
       }
     }
 
@@ -167,9 +168,14 @@ public class DartAnalysisServerService {
 
           if (completionInfo.isLast) return;
         }
-      }
 
-      TimeoutUtil.sleep(100);
+        try {
+          myCompletionInfos.wait(CHECK_CANCELLED_PERIOD);
+        }
+        catch (InterruptedException e) {
+          return;
+        }
+      }
     }
   }
 
