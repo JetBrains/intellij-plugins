@@ -27,7 +27,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
         final String completionId = DartAnalysisServerService.getInstance().completion_getSuggestions(filePath, parameters.getOffset());
         if (completionId == null) return;
 
-        DartAnalysisServerService.getInstance().addCompletions(completionId, result);
+        DartAnalysisServerService.getInstance().addCompletions(parameters.getOriginalFile().getProject(), completionId, result);
       }
     });
   }

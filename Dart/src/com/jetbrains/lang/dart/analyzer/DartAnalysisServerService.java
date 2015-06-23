@@ -31,13 +31,17 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.ResolveResult;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
+import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -136,7 +140,9 @@ public class DartAnalysisServerService {
     }
   };
 
-  public void addCompletions(@NotNull final String completionId, @NotNull final CompletionResultSet resultSet) {
+  public void addCompletions(@NotNull final Project project,
+                             @NotNull final String completionId,
+                             @NotNull final CompletionResultSet resultSet) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -149,17 +155,38 @@ public class DartAnalysisServerService {
         while ((completionInfo = myCompletionInfos.poll()) != null) {
           if (!completionInfo.myCompletionId.equals(completionId)) continue;
 
-          for (CompletionSuggestion completion : completionInfo.myCompletions) {
-            final LookupElement lookup = LookupElementBuilder.create(completion.getCompletion());
+          for (final CompletionSuggestion completion : completionInfo.myCompletions) {
+            final ResolveResult psiElementFinder = new ResolveResult() {
+              @Nullable
+              @Override
+              public PsiElement getElement() {
+                final Element element = completion.getElement();
+                // todo for some reason Analysis Server doesn't provide location for local vars, fields and other local elements
+                final Location location = element == null ? null : element.getLocation();
+                final String filePath = location == null ? null : FileUtil.toSystemIndependentName(location.getFile());
+                // todo this path may point to Pub global cache, should point to local packages/FooPackage/... instead
+                final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
+                final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(project).findFile(vFile);
+                final PsiElement elementAtOffset = psiFile == null ? null : psiFile.findElementAt(location.getOffset());
+                return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
+              }
+
+              @Override
+              public boolean isValidResult() {
+                return true;
+              }
+            };
+
+            final LookupElement lookup = LookupElementBuilder.create(psiElementFinder, completion.getCompletion());
             // todo: lookup presentable text (e.g. signature for functions, etc.)
-            //       respect priority (may be also emphasize using bold font)
+            //       respect priority (may be also emphasize using bold font), see CompletionWeigher
             //       tail text
             //       type text
             //       icon
             //       strikeout for deprecated
-            //       quick doc preview
-            //       quick definition view
-            //       jump to item declaration
+            //       quick doc preview (already works if corresponding PsiElement is correctly found by psiElementFinder)
+            //       quick definition view (already works (but uses DartDocumentationProvider, not info from server) if corresponding PsiElement is correctly found by psiElementFinder)
+            //       jump to item declaration (already works if corresponding PsiElement is correctly found by psiElementFinder)
             //       what to insert except identifier (e.g. parentheses, import directive, update show/hide, etc.)
             //       caret placement after insertion
 
