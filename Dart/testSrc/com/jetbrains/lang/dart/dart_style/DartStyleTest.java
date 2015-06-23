@@ -294,9 +294,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/type_arguments.stmt:6  prefer to split between args even when they all fit on next line");
     KNOWN_TO_FAIL.add("splitting/type_parameters.unit:11  split before first if needed");
     KNOWN_TO_FAIL.add("splitting/type_parameters.unit:16  split in middle if fit in two lines");
-    KNOWN_TO_FAIL.add("splitting/type_parameters.unit:2  all fit on one line");
     KNOWN_TO_FAIL.add("splitting/type_parameters.unit:21  split one per line if they don't fit in two lines");
-    KNOWN_TO_FAIL.add("splitting/type_parameters.unit:32  prefers to not split at type arguments");
     KNOWN_TO_FAIL.add("splitting/type_parameters.unit:6  prefer to split between params even when they all fit on next line");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:12  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:17  initializer fits one line");
@@ -329,9 +327,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/functions.unit:63  DO use a spaces around = in optional positional parameters.");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:67  async*");
     KNOWN_TO_FAIL.add("whitespace/functions.unit:73  sync* functions");
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation");
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:34  single-expression then body");
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:44  single-expression else body");
+    KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation"); // would pass if test were correct
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:132  multiple top-level annotations always get their own line");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:138  multiple member annotations always get their own line");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:148  parameter annotations are inline");
@@ -340,11 +336,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:2  force newline before directives");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:32  force newline before variable declarations");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members");
-    KNOWN_TO_FAIL.add("whitespace/switch.stmt:123  collapse any other newlines in a case");
-    KNOWN_TO_FAIL.add("whitespace/switch.stmt:26  collapse any other newlines in a case");
-    KNOWN_TO_FAIL.add("whitespace/switch.stmt:75  collapse any other newlines in a default");
-    KNOWN_TO_FAIL.add("whitespace/type_parameters.unit:2  no spaces around braces");
-    KNOWN_TO_FAIL.add("whitespace/type_parameters.unit:6  space between names");
 
     //KNOWN_TO_FAIL.clear();
   }
