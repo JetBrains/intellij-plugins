@@ -158,6 +158,21 @@ public class DartSpacingProcessor {
     if (!COMMENTS.contains(type2) && parentType == BLOCK) {
       return addLineBreak();
     }
+
+    // Special checks for switch formatting according to dart_style, which conflicts with settings.
+    if (type2 == RBRACE && (type1 == SWITCH_CASE || type1 == DEFAULT_CASE)) {
+      // No blank line before closing brace in switch statement.
+      return Spacing.createSpacing(0, 0, 1, false, 0);
+    }
+    if (type1 == COLON && (elementType == SWITCH_CASE || elementType == DEFAULT_CASE)) {
+      // No blank line before first statement of a case.
+      return Spacing.createSpacing(0, 0, 1, false, 0);
+    }
+    if (elementType == SWITCH_STATEMENT && type1 == LBRACE) {
+      // No blank line before first case of a switch.
+      return Spacing.createSpacing(0, 0, 1, false, 0);
+    }
+
     if (type1 == STATEMENTS || type2 == STATEMENTS) {
       return addLineBreak();
     }
@@ -189,6 +204,17 @@ public class DartSpacingProcessor {
       }
       else if (elementType == ON_PART || elementType == CATCH_PART) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_PARENTHESES);
+      }
+    }
+    if (elementType == IF_STATEMENT) {
+      if (type1 == RPAREN && mySettings.BRACE_STYLE == CommonCodeStyleSettings.END_OF_LINE) {
+        // Always have a single space following the closing paren of an if-condition.
+        int nsp = mySettings.SPACE_BEFORE_IF_LBRACE ? 1 : 0;
+        return Spacing.createSpacing(nsp, nsp, 0, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
+      }
+      if (type1 == SEMICOLON && type2 == ELSE) {
+        // If the then-part is on the line with the condition put the else-part on the next line.
+        return Spacing.createSpacing(0, 0, 1, false, 0);
       }
     }
 
@@ -246,6 +272,9 @@ public class DartSpacingProcessor {
     if (elementType == CLASS_DEFINITION) {
       if (type2 == CLASS_BODY) {
         return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+      }
+      if (type2 == TYPE_PARAMETERS) {
+        return noSpace();
       }
       return Spacing.createSpacing(1, 1, 0, false, 0);
     }
@@ -402,8 +431,14 @@ public class DartSpacingProcessor {
     //Other
     //
 
-    if (type1 == ELSE && type2 == IF_STATEMENT) {
-      return Spacing.createSpacing(1, 1, mySettings.SPECIAL_ELSE_IF_TREATMENT ? 0 : 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    if (type1 == ELSE) {
+      if (type2 == IF_STATEMENT) {
+        return Spacing.createSpacing(1, 1, mySettings.SPECIAL_ELSE_IF_TREATMENT ? 0 : 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
+      if (type2 != LBRACE) {
+        // Keep single-statement else-part on same line.
+        return Spacing.createSpacing(1, 1, 0, type2 == BLOCK ? false : mySettings.KEEP_LINE_BREAKS, 0);
+      }
     }
 
     if (type1 == LBRACE && type2 == RBRACE) {
@@ -538,8 +573,8 @@ public class DartSpacingProcessor {
         return noSpace();
       }
     }
-    if (elementType == TYPE_ARGUMENTS) {
-      if (type1 == LT || type2 == GT) {
+    if (elementType == TYPE_ARGUMENTS || elementType == TYPE_PARAMETERS) {
+      if (type1 == LT || type2 == GT || type2 == LT || type1 == GT) {
         return noSpace(); // Might want a user setting to control space within type
       }
     }
