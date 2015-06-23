@@ -15,6 +15,7 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 public class DartWrappingProcessor {
 
   private static final Key<Wrap> DART_TERNARY_EXPRESSION_WRAP_KEY = Key.create("TERNARY_EXPRESSION_WRAP_KEY");
+  private static final Key<Wrap> DART_EXPRESSION_LIST_WRAP_KEY = Key.create("EXPRESSION_LIST_WRAP_KEY");
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -64,6 +65,60 @@ public class DartWrappingProcessor {
       if (childType == COLON && !DartSpacingProcessor.hasMultipleInitializers(child)) {
         return Wrap.createWrap(WrapType.NORMAL, true);
       }
+    }
+
+    // Lists in schematic s-expr notation:
+    // (LIST_LITERAL_EXPRESSION '[ (EXPRESSION_LIST expr ', expr) '])
+    if (elementType == EXPRESSION_LIST) {
+      Wrap wrap = null;
+      // First, do persistent object management.
+      if (myNode.getFirstChildNode() == child) {
+        wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+        if (myNode.getLastChildNode() != child) {
+          myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, wrap);
+        }
+      } else {
+        wrap = myNode.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
+      }
+      // Second, decide what object to return.
+      if (childType == MULTI_LINE_COMMENT || childType == CONST) {
+        return Wrap.createWrap(WrapType.NONE, false);
+      }
+      return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);
+    } else if (elementType == LIST_LITERAL_EXPRESSION && childType == RBRACKET) {
+      ASTNode exprList = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      Wrap wrap = null;
+      if (exprList != null && exprList.getElementType() == EXPRESSION_LIST) {
+        wrap = exprList.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
+        exprList.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, null);
+      }
+      return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);
+    }
+
+    // Maps in schematic s-expr notation:
+    // (MAP_LITERAL_EXPRESSION '{ (MAP_LITERAL_ENTRY expr ': expr) ', (MAP_LITERAL_ENTRY expr ': expr) '})
+    if (elementType == MAP_LITERAL_EXPRESSION) {
+      Wrap wrap = null;
+      // First, do persistent object management.
+      if (myNode.getFirstChildNode() == child) {
+        wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+        if (myNode.getLastChildNode() != child) {
+          myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, wrap);
+        }
+      } else {
+        wrap = myNode.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
+        if (myNode.getLastChildNode() == child) {
+          myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, null);
+        }
+      }
+      // Second, decide what object to return.
+      if (childType == LBRACE || childType == LBRACKET) {
+        return Wrap.createWrap(WrapType.NONE, false);
+      }
+      if (childType == MULTI_LINE_COMMENT || childType == CONST) {
+        return Wrap.createWrap(WrapType.NONE, false);
+      }
+      return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);
     }
 
     //
@@ -156,7 +211,7 @@ public class DartWrappingProcessor {
       }
     }
     if (childType == VAR_DECLARATION_LIST_PART) {
-      ASTNode parent = myNode.getTreeParent();
+      ASTNode parent = getParent();
       if (parent != null && parent.getElementType() == FOR_LOOP_PARTS) {
         return Wrap.createWrap(WrapType.NORMAL, true);
       }
@@ -184,6 +239,10 @@ public class DartWrappingProcessor {
 
   private boolean isRightOperand(ASTNode child) {
     return myNode.getLastChildNode() == child;
+  }
+
+  private ASTNode getParent() {
+    return myNode.getTreeParent();
   }
 
   private static Wrap createWrap(boolean isNormal) {

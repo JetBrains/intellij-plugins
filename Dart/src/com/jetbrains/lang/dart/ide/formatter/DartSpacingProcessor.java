@@ -436,7 +436,11 @@ public class DartSpacingProcessor {
     }
 
     if (type1 == COMMA) {
-      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA && type2 != RBRACE);
+      if (type2 == RBRACKET) {
+        TextRange range = myNode.getTextRange();
+        return Spacing.createDependentLFSpacing(0, 0, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
+      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA && type2 != RBRACE && type2 != RBRACKET);
     }
 
     if (type2 == COMMA) {
@@ -522,6 +526,10 @@ public class DartSpacingProcessor {
       }
     }
 
+    if (elementType == LIST_LITERAL_EXPRESSION && type2 == RBRACKET) {
+      return Spacing.createDependentLFSpacing(0, 0, node1.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+
     if (elementType == NAMED_ARGUMENT) {
       if (type1 == COLON) {
         return addSingleSpaceIf(true);
@@ -550,6 +558,18 @@ public class DartSpacingProcessor {
     if (type2 == RBRACE && type1 == MAP_LITERAL_ENTRY) {
       return noSpace();
     }
+
+    if (type2 == RBRACKET && type1 == LIST_LITERAL_EXPRESSION) {
+      return noSpace();
+    }
+
+    if (type2 == RBRACKET && type1 == EXPRESSION_LIST) {
+      return noSpace();
+    }
+
+    //if (type2 == MAP_LITERAL_ENTRY && type1 != RBRACE) {
+    //  return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    //}
 
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }

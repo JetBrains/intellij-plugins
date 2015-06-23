@@ -76,7 +76,14 @@ public class DartIndentProcessor {
       if (elementType == TYPE_ARGUMENTS) {
         return Indent.getNoneIndent();
       }
-      return Indent.getNormalIndent();
+      // Be careful to preserve typing behavior.
+      if (elementType == MAP_LITERAL_ENTRY || elementType == EXPRESSION_LIST || elementType == COMMA) {
+        return Indent.getNormalIndent();
+      }
+      if (COMMENTS.contains(elementType)) {
+        return Indent.getNormalIndent();
+      }
+      return Indent.getNoneIndent();
     }
 
     if (elementType == LBRACE || elementType == RBRACE) {
