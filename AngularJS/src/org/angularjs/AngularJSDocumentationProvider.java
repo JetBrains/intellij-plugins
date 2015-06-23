@@ -5,21 +5,13 @@ import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.psi.xml.XmlTokenType;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,26 +20,9 @@ import java.util.List;
  * @author Dennis.Ushakov
  */
 public class AngularJSDocumentationProvider extends DocumentationProviderEx {
-  @Nullable
-  @Override
-  public PsiElement getCustomDocumentationElement(@NotNull Editor editor,
-                                                  @NotNull PsiFile file,
-                                                  @Nullable PsiElement element) {
-    final IElementType elementType = element != null ? element.getNode().getElementType() : null;
-    if (elementType == XmlTokenType.XML_NAME || elementType == XmlTokenType.XML_TAG_NAME) {
-      return getElementForDocumentation(element.getProject(), DirectiveUtil.normalizeAttributeName(element.getText()));
-    }
-    return null;
-  }
 
   private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
     final JSImplicitElement directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.KEY, directiveName);
-    if (directive != null) {
-      final PsiComment comment = PsiTreeUtil.getParentOfType(directive, PsiComment.class);
-      if (comment != null) {
-        return comment;
-      }
-    }
     return directive;
   }
 
@@ -61,6 +36,7 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
 
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
+    if (element instanceof JSImplicitElement) element = element.getParent();
     if (element instanceof JSDocComment) {
       JSDocTag ngdocTag = null;
       JSDocTag nameTag = null;

@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.presentation.java.SymbolPresentationUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.AngularTestUtil;
@@ -32,7 +33,10 @@ public class DocumentationTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement originalElement = file.findElementAt(editor.getCaretModel().getOffset());
     assertNotNull(originalElement);
 
-    assertDocumentation(DocumentationManager.getInstance(getProject()).findTargetElement(editor, file), originalElement);
+    final PsiElement targetElement = DocumentationManager.getInstance(getProject()).findTargetElement(editor, file);
+    assertNotNull(targetElement);
+    assertEquals("ng-controller", SymbolPresentationUtil.getSymbolPresentableText(targetElement)); // WEB-16957
+    assertDocumentation(targetElement, originalElement);
   }
 
   public void testDocumentationInLookup() {
