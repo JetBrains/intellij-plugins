@@ -2,9 +2,7 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
-import org.jdom.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
     @Storage(file = StoragePathMacros.WORKSPACE_FILE)
   }
 )
+// Remove in IDEA 16
 public class KarmaPackageDirSetting implements PersistentStateComponent<Element> {
 
   private String myPackageDir;
@@ -21,14 +20,7 @@ public class KarmaPackageDirSetting implements PersistentStateComponent<Element>
   @Nullable
   @Override
   public Element getState() {
-    if (StringUtil.isEmpty(myPackageDir)) {
-      return null;
-    }
-    Element element = new Element("karma-settings");
-    Element child = new Element("data");
-    child.addContent(new Text(myPackageDir));
-    element.addContent(child);
-    return element;
+    return null;
   }
 
   @Override
@@ -48,11 +40,8 @@ public class KarmaPackageDirSetting implements PersistentStateComponent<Element>
 
   @Nullable
   public String getPackageDir() {
-    return myPackageDir;
+    String result = myPackageDir;
+    myPackageDir = null;
+    return result;
   }
-
-  public void setPackageDir(@NotNull String packageDir) {
-    myPackageDir = packageDir;
-  }
-
 }

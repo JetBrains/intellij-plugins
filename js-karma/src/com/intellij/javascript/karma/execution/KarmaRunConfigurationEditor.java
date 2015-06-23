@@ -2,11 +2,13 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
 import com.intellij.javascript.karma.KarmaBundle;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodePathSettings;
 import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -93,17 +95,15 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       @NotNull
       @Override
       public List<String> produce() {
-        NodePathSettings nodeSettings = KarmaGlobalSettingsUtil.getNodeSettings();
-        if (nodeSettings != null) {
-          nodeSettings.initGlobalNodeModulesDir();
-        }
+        String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getText();
+        NodePathSettings nodeSettings = StringUtil.isEmpty(nodeInterpreterPath) ? null : new NodePathSettings(nodeInterpreterPath);
         List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
-        VirtualFile requester = KarmaGlobalSettingsUtil.getRequester(
+        VirtualFile requester = KarmaUtil.getRequester(
           myProject,
           myConfigPathTextFieldWithBrowseButton.getChildComponent().getText()
         );
         NodeModuleSearchUtil.findModulesWithName(modules,
-                                                 KarmaGlobalSettingsUtil.NODE_PACKAGE_NAME,
+                                                 KarmaUtil.NODE_PACKAGE_NAME,
                                                  requester,
                                                  nodeSettings,
                                                  true);
@@ -165,9 +165,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     Collection<VirtualFile> files = FileTypeIndex.getFiles(JavaScriptFileType.INSTANCE, scope);
     List<VirtualFile> result = ContainerUtil.newArrayList();
     for (VirtualFile file : files) {
-      if (file != null && file.isValid() && !file.isDirectory() && file.getName().endsWith(".conf.js")) {
-        String path = file.getPath();
-        if (!path.contains("/node_modules/") && !path.contains("/bower_components/")) {
+      if (file != null && file.isValid() && !file.isDirectory() && KarmaUtil.isKarmaConfigFile(file.getNameSequence())) {
+        if (!JSLibraryUtil.isProbableLibraryFile(file)) {
           result.add(file);
         }
       }
@@ -179,13 +178,15 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   protected void resetEditorFrom(@NotNull KarmaRunConfiguration runConfiguration) {
     KarmaRunSettings runSettings = runConfiguration.getRunSettings();
 
-    String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
+    String nodeInterpreterPath = FileUtil.toSystemDependentName(KarmaProjectSettings.getNodeInterpreterPath(myProject));
     setTextAndAddToHistory(myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent(), nodeInterpreterPath);
 
-    String karmaNodePackageDir = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(myProject, runSettings.getConfigPath());
-    setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaNodePackageDir);
+    String karmaPackageDir = FileUtil.toSystemDependentName(runConfiguration.getKarmaPackageDir());
+    setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaPackageDir);
 
-    setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), runSettings.getConfigPath());
+    String configFilePath = FileUtil.toSystemDependentName(runSettings.getConfigPath());
+    setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), configFilePath);
+
     myBrowsers.setText(runSettings.getBrowsers());
 
     myEnvVarsComponent.setEnvs(runSettings.getEnvVars());
@@ -199,17 +200,15 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @Override
   protected void applyEditorTo(@NotNull KarmaRunConfiguration runConfiguration) throws ConfigurationException {
-    String configPath = myConfigPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
-    builder.setConfigPath(configPath);
+    builder.setConfigPath(myConfigPathTextFieldWithBrowseButton.getChildComponent().getText());
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
     builder.setEnvVars(myEnvVarsComponent.getEnvs());
     builder.setPassParentEnvVars(myEnvVarsComponent.isPassParentEnvs());
     runConfiguration.setRunSettings(builder.build());
-    String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText();
-    KarmaGlobalSettingsUtil.storeKarmaPackageDir(myProject, karmaNodePackageDir);
-    String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText();
-    KarmaGlobalSettingsUtil.storeNodeInterpreterPath(nodeInterpreterPath);
+
+    KarmaProjectSettings.setNodeInterpreterPath(myProject, myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText());
+    runConfiguration.setKarmaPackageDir(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText(), false);
   }
 
   @NotNull

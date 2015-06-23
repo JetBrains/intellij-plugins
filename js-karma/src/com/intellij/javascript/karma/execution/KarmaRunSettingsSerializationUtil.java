@@ -1,7 +1,7 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
-import com.intellij.openapi.util.JDOMExternalizer;
+import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Attribute;
@@ -12,31 +12,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaRunSettingsSerializationUtil {
 
-  private static final String OLD_CONFIG_PATH = "config_file";
   private static final String CONFIG_FILE = "config-file";
+  private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String PASS_PARENT_ENV_VAR = "pass-parent-env-vars";
   private static final String BROWSERS = "browsers";
 
   private KarmaRunSettingsSerializationUtil() {}
 
-  public static KarmaRunSettings readFromXml(@NotNull Element element) {
+  public static KarmaRunSettings readXml(@NotNull Element element) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
 
-    String configPath = getAttrValue(element, CONFIG_FILE);
-    if (configPath == null) {
-      configPath = StringUtil.notNullize(JDOMExternalizer.readString(element, OLD_CONFIG_PATH));
+    String configFilePath = getAttrValue(element, CONFIG_FILE);
+    if (configFilePath == null) {
+      configFilePath = JDOMExternalizerUtil.getFirstChildValueAttribute(element, CONFIG_FILE);
     }
-    builder.setConfigPath(FileUtil.toSystemDependentName(configPath));
+    builder.setConfigPath(FileUtil.toSystemDependentName(StringUtil.notNullize(configFilePath)));
 
     String browsers = getAttrValue(element, BROWSERS);
+    if (browsers == null) {
+      browsers = JDOMExternalizerUtil.getFirstChildValueAttribute(element, BROWSERS);
+    }
     if (browsers != null) {
       builder.setBrowsers(browsers);
     }
+    String karmaPackageDir = JDOMExternalizerUtil.getFirstChildValueAttribute(element, KARMA_PACKAGE_DIR);
+    builder.setKarmaPackageDir(FileUtil.toSystemDependentName(StringUtil.notNullize(karmaPackageDir)));
 
     Map<String, String> envVars = new LinkedHashMap<String, String>();
     EnvironmentVariablesComponent.readExternal(element, envVars);
@@ -51,15 +53,18 @@ public class KarmaRunSettingsSerializationUtil {
   }
 
   @Nullable
-  private static String getAttrValue(Element element, String attrKey) {
+  private static String getAttrValue(@NotNull Element element, @NotNull String attrKey) {
     Attribute attribute = element.getAttribute(attrKey);
     return attribute != null ? attribute.getValue() : null;
   }
 
-  public static void writeToXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
+  public static void writeXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
     element.setAttribute(CONFIG_FILE, FileUtil.toSystemIndependentName(settings.getConfigPath()));
-    if (!settings.getBrowsers().isEmpty()) {
+    if (StringUtil.isNotEmpty(settings.getBrowsers())) {
       element.setAttribute(BROWSERS, settings.getBrowsers());
+    }
+    if (StringUtil.isNotEmpty(settings.getKarmaPackageDir())) {
+      JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR, settings.getKarmaPackageDir());
     }
     EnvironmentVariablesComponent.writeExternal(element, settings.getEnvVars());
     if (settings.isPassParentEnvVars() != KarmaRunSettings.Builder.DEFAULT_PASS_PARENT_ENV_VARS) {
