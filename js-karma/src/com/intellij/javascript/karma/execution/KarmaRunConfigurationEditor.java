@@ -9,10 +9,14 @@ import com.intellij.javascript.nodejs.NodePathSettings;
 import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.options.ex.SingleConfigurableEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -191,6 +195,24 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
     myEnvVarsComponent.setEnvs(runSettings.getEnvVars());
     myEnvVarsComponent.setPassParentEnvs(runSettings.isPassParentEnvVars());
+
+    updatePreferredWidth();
+  }
+
+  private void updatePreferredWidth() {
+    final DialogWrapper dialogWrapper = DialogWrapper.findInstance(myRootComponent);
+    if (dialogWrapper instanceof SingleConfigurableEditor) {
+      // dialog for single run configuration
+      SwingHelper.setPreferredWidthToFitText(myNodeInterpreterPathTextFieldWithBrowseButton);
+      SwingHelper.setPreferredWidthToFitText(myKarmaPackageDirPathTextFieldWithBrowseButton);
+      SwingHelper.setPreferredWidthToFitText(myConfigPathTextFieldWithBrowseButton);
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          SwingHelper.adjustDialogSizeToFitPreferredSize(dialogWrapper);
+        }
+      }, ModalityState.any());
+    }
   }
 
   private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {

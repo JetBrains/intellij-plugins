@@ -22,7 +22,7 @@ import java.util.List;
 public class KarmaUtil {
 
   public static final String NODE_PACKAGE_NAME = "karma";
-  private static final String[] FILE_NAME_SUFFIXES = new String[] {".conf.js", "-conf.js", ".config.js", "-config.js"};
+  private static final String[] FILE_NAME_SUFFIXES = new String[] {".conf.js", "-conf.js", ".config.js", "-config.js", "karma.conf.coffee"};
 
   private KarmaUtil() {
   }

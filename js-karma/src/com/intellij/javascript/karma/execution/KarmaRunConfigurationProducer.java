@@ -17,9 +17,6 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaRunConfigurationProducer extends RunConfigurationProducer<KarmaRunConfiguration> {
 
   public KarmaRunConfigurationProducer() {
@@ -56,7 +53,7 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
 
   private static void setupKarmaConfiguration(@NotNull KarmaRunConfiguration configuration, @NotNull VirtualFile configVirtualFile) {
     String path = FileUtil.toSystemDependentName(configVirtualFile.getPath());
-    KarmaRunSettings settings = new KarmaRunSettings.Builder().setConfigPath(path).build();
+    KarmaRunSettings settings = new KarmaRunSettings.Builder(configuration.getRunSettings()).setConfigPath(path).build();
     configuration.setRunSettings(settings);
 
     String name = configuration.suggestedName();
@@ -68,19 +65,25 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
     if (configuration == null) {
       return false;
     }
+    VirtualFile contextConfigVirtualFile = getConfigFileFromContext(context);
+    if (contextConfigVirtualFile == null) {
+      return false;
+    }
+    String contextConfigFilePath = FileUtil.toSystemDependentName(contextConfigVirtualFile.getPath());
+    String candidateConfigFilePath = FileUtil.toSystemDependentName(configuration.getRunSettings().getConfigPath());
+    return contextConfigFilePath.equals(candidateConfigFilePath);
+  }
+
+  @Nullable
+  private static VirtualFile getConfigFileFromContext(@Nullable ConfigurationContext context) {
+    if (context == null) {
+      return null;
+    }
     JSFile jsFile = getConfigJsFile(context.getLocation());
     if (jsFile == null) {
-      return false;
+      return null;
     }
-    VirtualFile configVirtualFile = jsFile.getVirtualFile();
-    if (configVirtualFile == null) {
-      return false;
-    }
-    String path = FileUtil.toSystemDependentName(configVirtualFile.getPath());
-    KarmaRunSettings runSettingsPattern = new KarmaRunSettings.Builder().setConfigPath(path).build();
-
-    KarmaRunSettings runSettingsCandidate = configuration.getRunSettings();
-    return runSettingsCandidate.getConfigPath().equals(runSettingsPattern.getConfigPath());
+    return jsFile.getVirtualFile();
   }
 
   @Nullable
