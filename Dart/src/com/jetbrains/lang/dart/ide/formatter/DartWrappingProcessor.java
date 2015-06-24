@@ -233,6 +233,11 @@ public class DartWrappingProcessor {
     if (elementType == MIXIN_APPLICATION && childType == MIXINS) {
       return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
     }
+    if (elementType == ENUM_DEFINITION) {
+      if (childType == ENUM_CONSTANT_DECLARATION) {
+        return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+      }
+    }
 
     return defaultWrap;
   }

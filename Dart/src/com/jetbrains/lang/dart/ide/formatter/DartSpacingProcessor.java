@@ -25,7 +25,7 @@ public class DartSpacingProcessor {
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
   private static final TokenSet ID_SET = TokenSet.create(ID);
   private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
-  private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS);
+  private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
   private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
 
   private final ASTNode myNode;
@@ -73,8 +73,45 @@ public class DartSpacingProcessor {
       }
       return Spacing.createSpacing(0, 0, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
+
     if (AT == type1) return Spacing.createSpacing(0, 0, 0, false, 0);
-    if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
+
+    if (METADATA == type1) {
+      if (parentType == TYPE_PARAMETERS || COMMENTS.contains(type2)) {
+        // Metadata on type parameters must be inlined.
+        return Spacing.createSpacing(1, 1, 0, false, 0);
+      }
+      if (parentType == DART_FILE && elementType != FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE) {
+        // Metadata on top-level declarations must be on its own line.
+        return Spacing.createSpacing(0, 0, 1, false, 0);//false here
+      }
+      if (parentType == CLASS_MEMBERS) {
+        if (type2 == METADATA || FormatterUtil.hasPrecedingSiblingOfType(node1, METADATA, WHITE_SPACE)) {
+          // Mulitple metadata each goes on its own line.
+          return Spacing.createSpacing(0, 0, 1, false, 0);
+        }
+        // Metadata on constructors and methods may be inlined.
+        return Spacing.createSpacing(1, 1, 0, true, 0);
+      }
+      if (parentType == VAR_DECLARATION_LIST) {
+        if (myNode.getTreeParent().getTreeParent().getElementType() == STATEMENTS) {
+          // Metadata on local variables must be on its own line.
+          return Spacing.createSpacing(0, 0, 1, false, 0);
+        }
+        if (type2 == METADATA || FormatterUtil.hasPrecedingSiblingOfType(node1, METADATA, WHITE_SPACE)) {
+          // Mulitple metadata each goes on its own line.
+          return Spacing.createSpacing(0, 0, 1, false, 0);
+        }
+        // Metadata on fields may be inlined.
+        return Spacing.createSpacing(1, 1, 0, true, 0);
+      }
+      if (parentType == NORMAL_FORMAL_PARAMETER) {
+        // Metadata on parameter declarations must be inlined.
+        return Spacing.createSpacing(1, 1, 0, false, 0);
+      }
+      // Other metadata occurrences may be inlined.
+      return Spacing.createSpacing(1, 1, 0, true, 0);
+    }
 
     if (FUNCTION_DEFINITION.contains(type2)) {
       boolean needsBlank = needsBlankLineBeforeFunction(elementType);
@@ -110,9 +147,13 @@ public class DartSpacingProcessor {
               (myNode.getTreeParent().getTreeParent().getElementType() == METHOD_DECLARATION) &&
               mySettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE) {
             lineFeeds = 0; // Empty method.
+            keepBreaks = mySettings.KEEP_LINE_BREAKS;
+            blanks = keepBreaks ? mySettings.KEEP_BLANK_LINES_IN_CODE : 0;
           }
           else if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
             lineFeeds = 0; // Empty function, either top-level or statement.
+            keepBreaks = mySettings.KEEP_LINE_BREAKS;
+            blanks = keepBreaks ? mySettings.KEEP_BLANK_LINES_IN_CODE : 0;
           }
         }
         else if (parentType == IF_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
@@ -226,6 +267,10 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_METHOD_PARENTHESES);
     }
 
+    if (elementType == DEFAULT_FORMAL_NAMED_PARAMETER && (type1 == EQ || type2 == EQ)) {
+      return addSingleSpaceIf(mySettings.SPACE_AROUND_ASSIGNMENT_OPERATORS);
+    }
+
     if (type2 == ARGUMENTS && elementType == CALL_EXPRESSION) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_METHOD_CALL_PARENTHESES);
     }
@@ -282,8 +327,21 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(1, 1, 0, false, 0);
     }
 
-    if (elementType == ENUM_DEFINITION && type2 == LBRACE) {
-      return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+    if (elementType == ENUM_DEFINITION) {
+      if (mySettings.BRACE_STYLE == CommonCodeStyleSettings.END_OF_LINE) {
+        if (type1 == LBRACE && type2 == RBRACE) {
+          return noSpace();
+        }
+        if (type1 == LBRACE || type2 == RBRACE) {
+          return Spacing.createDependentLFSpacing(1, 1, textRangeFollowingMetadata(), false, 0);
+        }
+        if (type2 == ENUM_CONSTANT_DECLARATION) {
+          return Spacing.createDependentLFSpacing(1, 1, textRangeFollowingMetadata(), false, 0);
+        }
+      }
+      if (type2 == LBRACE) {
+        return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+      }
     }
 
     if (type1 == LPAREN || type2 == RPAREN) {
@@ -308,7 +366,10 @@ public class DartSpacingProcessor {
       else if (elementType == FORMAL_PARAMETER_LIST) {
         final boolean newLineNeeded =
           type1 == LPAREN ? mySettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE : mySettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE;
-        return addSingleSpaceIf(mySettings.SPACE_WITHIN_METHOD_PARENTHESES, newLineNeeded);
+        if (newLineNeeded || mySettings.SPACE_WITHIN_METHOD_PARENTHESES) {
+          return addSingleSpaceIf(mySettings.SPACE_WITHIN_METHOD_PARENTHESES, newLineNeeded);
+        }
+        return Spacing.createSpacing(0, 0, 0, false, 0);
       }
       else if (elementType == ARGUMENTS) {
         final boolean newLineNeeded =
@@ -518,14 +579,17 @@ public class DartSpacingProcessor {
     if (elementType == VALUE_EXPRESSION && type2 == CASCADE_REFERENCE_EXPRESSION) {
       if (type1 == CASCADE_REFERENCE_EXPRESSION) {
         if (cascadesAreSameMethod(((AbstractBlock)child1).getNode(), ((AbstractBlock)child2).getNode())) {
-          return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+          return Spacing.createSpacing(0, 0, 0, false, 0);
         }
       }
       else if (type1 == REFERENCE_EXPRESSION || isSimpleLiteral(type1)) {
         CompositeElement elem = (CompositeElement)myNode;
         ASTNode[] childs = elem.getChildren(CASCADE_REFERENCE_EXPRESSION_SET);
-        if (childs.length == 1 || allCascadesAreSameMethod(childs)) {
-          return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        if (childs.length == 1) {
+          return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), true, 0);
+        }
+        if (allCascadesAreSameMethod(childs)) {
+          return Spacing.createSpacing(0, 0, 0, false, 0);
         }
       }
       return addLineBreak();
@@ -565,7 +629,7 @@ public class DartSpacingProcessor {
       return Spacing.createDependentLFSpacing(0, 0, node1.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (elementType == NAMED_ARGUMENT) {
+    if (elementType == NAMED_ARGUMENT || elementType == DEFAULT_FORMAL_NAMED_PARAMETER) {
       if (type1 == COLON) {
         return addSingleSpaceIf(true);
       }
@@ -606,6 +670,15 @@ public class DartSpacingProcessor {
     //  return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     //}
 
+    // Spacing in async functions.
+    if (elementType == FUNCTION_BODY || elementType == FUNCTION_EXPRESSION_BODY) {
+      if (type1 == ASYNC || type1 == SYNC) {
+        if (type2 == MUL) return noSpace();
+        return addSingleSpaceIf(true);
+      }
+      if (type1 == MUL) return addSingleSpaceIf(true);
+    }
+
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
@@ -641,6 +714,17 @@ public class DartSpacingProcessor {
         : 1;
       return Spacing.createSpacing(spaces, spaces, lineBreaks, false, 0);
     }
+  }
+
+  private TextRange textRangeFollowingMetadata() {
+    TextRange range = myNode.getTextRange();
+    ASTNode child = myNode.getFirstChildNode();
+    if (child == null || child.getElementType() != METADATA) return range;
+    while (child != null && (child.getElementType() == METADATA || child.getElementType() == WHITE_SPACE)) {
+      child = child.getTreeNext();
+    }
+    if (child == null) return range; // Avoid nullable warning.
+    return new TextRange(child.getTextRange().getStartOffset(), range.getEndOffset());
   }
 
   private static boolean allCascadesAreSameMethod(ASTNode[] children) {

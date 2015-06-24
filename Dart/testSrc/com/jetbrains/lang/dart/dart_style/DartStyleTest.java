@@ -36,7 +36,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/classes.unit:110  remove blank line before beginning of body");
     KNOWN_TO_FAIL.add("comments/classes.unit:39  inline block comment");
     KNOWN_TO_FAIL.add("comments/classes.unit:50  multiple inline block comments");
-    KNOWN_TO_FAIL.add("comments/enums.unit:42  remove blank line before beginning of body");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:10  trailing line comment after non-split");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:17  inside list literal");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:2  trailing line comment after split");
@@ -148,8 +147,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/constructors.unit:51  indent parameters more if body is a wrapped =>");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:61  wrap initializers past the ':'");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:75  split at '=' in initializer");
-    KNOWN_TO_FAIL.add("splitting/enums.unit:11  multiple lines trailing comma");
-    KNOWN_TO_FAIL.add("splitting/enums.unit:2  multiple lines");
     KNOWN_TO_FAIL.add("splitting/exports.unit:100  force both keywords to split even if first would fit on first line");
     KNOWN_TO_FAIL.add("splitting/exports.unit:106  force split in list");
     KNOWN_TO_FAIL.add("splitting/exports.unit:15  export moves all shows each to their own line");
@@ -306,8 +303,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:48");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:6  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
-    KNOWN_TO_FAIL.add("whitespace/cascades.stmt:30  cascades indent contained blocks (and force multi-line)");
-    KNOWN_TO_FAIL.add("whitespace/cascades.stmt:6  long single cascade forces multi-line");
     KNOWN_TO_FAIL.add("whitespace/classes.unit:64  require blank line after non-empty block-bodied members");
     KNOWN_TO_FAIL.add("whitespace/classes.unit:88  no required blank line after empty block-bodied members");
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:104  require blank line after non-empty block-bodied members");
@@ -315,26 +310,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:88  blank line between functions and classes");
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:96  require newline between non-class declarations");
-    KNOWN_TO_FAIL.add("whitespace/enums.unit:10  single line trailing comma");
-    KNOWN_TO_FAIL.add("whitespace/enums.unit:14  metadata");
-    KNOWN_TO_FAIL.add("whitespace/enums.unit:2  single");
-    KNOWN_TO_FAIL.add("whitespace/enums.unit:6  single line");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:24  async");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:39");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:45");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:53");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:59  DO use a space after : in named parameters");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:63  DO use a spaces around = in optional positional parameters.");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:67  async*");
-    KNOWN_TO_FAIL.add("whitespace/functions.unit:73  sync* functions");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation"); // would pass if test were correct
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:132  multiple top-level annotations always get their own line");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:138  multiple member annotations always get their own line");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:148  parameter annotations are inline");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:158  type parameter annotations are inline");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:17  force newline before types");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:2  force newline before directives");
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:32  force newline before variable declarations");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members");
 
     //KNOWN_TO_FAIL.clear();
