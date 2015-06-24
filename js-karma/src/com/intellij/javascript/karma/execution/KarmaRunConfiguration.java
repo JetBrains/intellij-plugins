@@ -138,6 +138,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     myRunSettings = runSettings;
   }
 
+  public void setConfigFilePath(@NotNull String configFilePath) {
+    setRunSettings(new KarmaRunSettings.Builder(myRunSettings).setConfigPath(configFilePath).build());
+  }
+
   public void setKarmaPackageDir(@NotNull String karmaPackageDir, boolean initializeOnly) {
     Project project = getProject();
     boolean local = FileUtil.toSystemIndependentName(karmaPackageDir).equals(FileUtil.toSystemIndependentName(myRunSettings.getKarmaPackageDir()));

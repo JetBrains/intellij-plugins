@@ -52,10 +52,7 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
   }
 
   private static void setupKarmaConfiguration(@NotNull KarmaRunConfiguration configuration, @NotNull VirtualFile configVirtualFile) {
-    String path = FileUtil.toSystemDependentName(configVirtualFile.getPath());
-    KarmaRunSettings settings = new KarmaRunSettings.Builder(configuration.getRunSettings()).setConfigPath(path).build();
-    configuration.setRunSettings(settings);
-
+    configuration.setConfigFilePath(configVirtualFile.getPath());
     String name = configuration.suggestedName();
     configuration.setName(name);
   }

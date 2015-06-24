@@ -41,10 +41,7 @@ public class KarmaRunConfigurationRefactoringHandler {
     protected void refactored(@NotNull PsiElement element, @Nullable String oldQualifiedName) {
       VirtualFile newFile = PsiUtilBase.asVirtualFile(element);
       if (newFile != null) {
-        String newPath = FileUtil.toSystemDependentName(newFile.getPath());
-        KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
-        builder.setConfigPath(newPath);
-        myConfiguration.setRunSettings(builder.build());
+        myConfiguration.setConfigFilePath(newFile.getPath());
       }
     }
   }
