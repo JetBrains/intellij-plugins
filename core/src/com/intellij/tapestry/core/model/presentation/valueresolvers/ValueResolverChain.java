@@ -1,6 +1,7 @@
 package com.intellij.tapestry.core.model.presentation.valueresolvers;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.property.PropResolver;
@@ -47,7 +48,7 @@ public class ValueResolverChain extends ChainBase {
         try {
             execute(context);
         } catch (Exception ex) {
-            _logger.error(ex);
+            if (!(ex instanceof ProcessCanceledException)) _logger.error(ex);
 
             throw ex;
         }
