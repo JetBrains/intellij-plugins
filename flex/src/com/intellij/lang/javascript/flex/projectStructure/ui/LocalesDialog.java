@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.ui.CheckBoxList;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ListSpeedSearch;
@@ -61,7 +61,7 @@ public class LocalesDialog extends DialogWrapper {
   }
 
   private static boolean containsSwc(final File dir) {
-    return dir.listFiles(FileUtilRt.createFilterByExtension("swc")).length > 0;
+    return dir.listFiles(FileFilters.withExtension("swc")).length > 0;
   }
 
   @Override
