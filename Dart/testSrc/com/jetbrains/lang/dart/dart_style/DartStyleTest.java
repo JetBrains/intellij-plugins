@@ -303,15 +303,9 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:48");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:6  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
-    KNOWN_TO_FAIL.add("whitespace/classes.unit:64  require blank line after non-empty block-bodied members");
-    KNOWN_TO_FAIL.add("whitespace/classes.unit:88  no required blank line after empty block-bodied members");
-    KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:104  require blank line after non-empty block-bodied members");
-    KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:125  no required blank line after empty block-bodied members");
-    KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
-    KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:88  blank line between functions and classes");
-    KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:96  require newline between non-class declarations");
+    KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations"); // formatter bug
     KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation"); // would pass if test were correct
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members");
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members"); // fails due to blank lines
 
     //KNOWN_TO_FAIL.clear();
   }

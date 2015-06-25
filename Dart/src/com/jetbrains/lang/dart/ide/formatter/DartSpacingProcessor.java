@@ -115,6 +115,12 @@ public class DartSpacingProcessor {
 
     if (FUNCTION_DEFINITION.contains(type2)) {
       boolean needsBlank = needsBlankLineBeforeFunction(elementType);
+      if (needsBlank && !mySettings.KEEP_LINE_BREAKS) {
+        if (parentType == CLASS_BODY || elementType == DART_FILE) {
+          if (type1 == SEMICOLON) needsBlank = false;
+          else if (hasEmptyBlock(node1)) needsBlank = false;
+        }
+      }
       final int lineFeeds = COMMENTS.contains(type1) || !needsBlank ? 1 : 2;
       return Spacing.createSpacing(0, 0, lineFeeds, needsBlank, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
@@ -135,7 +141,8 @@ public class DartSpacingProcessor {
           }
         }
         else {
-          lineFeeds = 2;
+          if (type2 == VAR_DECLARATION_LIST && hasEmptyBlock(node1)) lineFeeds = 1;
+          else lineFeeds = 2;
         }
       }
       else if (type1 == LBRACE && type2 == RBRACE) {
@@ -666,10 +673,6 @@ public class DartSpacingProcessor {
       return noSpace();
     }
 
-    //if (type2 == MAP_LITERAL_ENTRY && type1 != RBRACE) {
-    //  return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-    //}
-
     // Spacing in async functions.
     if (elementType == FUNCTION_BODY || elementType == FUNCTION_EXPRESSION_BODY) {
       if (type1 == ASYNC || type1 == SYNC) {
@@ -774,10 +777,10 @@ public class DartSpacingProcessor {
     return SIMPLE_LITERAL_SET.contains(nodeType);
   }
 
-  private boolean needsBlankLineBeforeFunction(IElementType elementType) {
-    return mySettings.KEEP_LINE_BREAKS && (elementType == DART_FILE ||
-                                           elementType == CLASS_MEMBERS ||
-                                           elementType instanceof DartEmbeddedContentElementType);
+  private static boolean needsBlankLineBeforeFunction(IElementType elementType) {
+    return elementType == DART_FILE ||
+           elementType == CLASS_MEMBERS ||
+           elementType instanceof DartEmbeddedContentElementType;
   }
 
   private static boolean embeddedComment(IElementType type, Block block) {
@@ -817,5 +820,47 @@ public class DartSpacingProcessor {
 
   public static boolean hasMultipleInitializers(ASTNode node) {
     return FormatterUtil.isPrecededBy(node.getLastChildNode(), SUPER_CALL_OR_FIELD_INITIALIZER, SKIP_COMMA);
+  }
+
+  // dart_style recognizes three forms of "empty block":
+  //   e() {}
+  //   f() => expr;
+  //   M() : super();
+  private static boolean hasEmptyBlock(ASTNode node) {
+    if (node.getElementType() == CLASS_DEFINITION) return false;
+    ASTNode child = node;
+    while (true) {
+      child = child.getLastChildNode();
+      if (child == null) return false;
+      if (child.getElementType() == WHITE_SPACE) child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      if (child == null) return false;
+      if (child.getElementType() == FUNCTION_BODY) {
+        ASTNode next = child.getLastChildNode();
+        if (next.getElementType() == WHITE_SPACE) next = FormatterUtil.getPreviousNonWhitespaceSibling(next);
+        if (next != null && next.getElementType() == SEMICOLON) {
+          next = FormatterUtil.getPreviousNonWhitespaceSibling(next);
+          if (next != null && DartIndentProcessor.EXPRESSIONS.contains(next.getElementType())) {
+            ASTNode arrow = FormatterUtil.getPreviousNonWhitespaceSibling(next);
+            if (arrow != null && arrow.getElementType() == EXPRESSION_BODY_DEF) {
+              return true;
+            }
+          }
+        }
+      }
+      if (child.getElementType() == SEMICOLON) {
+        ASTNode prev = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+        if (prev != null && prev.getElementType() == INITIALIZERS) {
+          return true;
+        }
+      }
+      if (child.getElementType() != BLOCK) continue;
+      child = child.getLastChildNode();
+      if (child == null) return false;
+      if (child.getElementType() == WHITE_SPACE) child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      if (child == null) return false;
+      if (child.getElementType() != RBRACE) return false;
+      child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      return child != null && child.getElementType() == LBRACE;
+    }
   }
 }

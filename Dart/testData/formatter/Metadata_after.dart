@@ -1,5 +1,4 @@
 @Foo0 fun() {}
-
 @Foo1 var bar1;
 @Foo2() String bar2 = "";
 
