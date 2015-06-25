@@ -230,7 +230,7 @@ public class CucumberStepsIndex {
   private boolean isStepLikeFile(PsiElement child, PsiElement parent) {
     if (child instanceof PsiFile) {
       final PsiFile file = (PsiFile)child;
-      CucumberJvmExtensionPoint ep = myExtensionMap.get(file.getFileType());
+      CucumberJvmExtensionPoint ep = myExtensionMap.get(new BDDFrameworkType(file.getFileType()));
       return ep != null && ep.isStepLikeFile(file, parent);
     }
 
@@ -240,7 +240,7 @@ public class CucumberStepsIndex {
   private boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
     if (child instanceof PsiFile) {
       final PsiFile file = (PsiFile)child;
-      CucumberJvmExtensionPoint ep = myExtensionMap.get(file.getFileType());
+      CucumberJvmExtensionPoint ep = myExtensionMap.get(new BDDFrameworkType(file.getFileType()));
       return ep != null && ep.isWritableStepLikeFile(file, parent);
     }
 
