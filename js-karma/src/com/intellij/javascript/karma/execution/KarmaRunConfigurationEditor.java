@@ -227,10 +227,10 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
     builder.setEnvVars(myEnvVarsComponent.getEnvs());
     builder.setPassParentEnvVars(myEnvVarsComponent.isPassParentEnvs());
+    builder.setKarmaPackageDir(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText());
     runConfiguration.setRunSettings(builder.build());
 
     KarmaProjectSettings.setNodeInterpreterPath(myProject, myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText());
-    runConfiguration.setKarmaPackageDir(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText(), false);
   }
 
   @NotNull

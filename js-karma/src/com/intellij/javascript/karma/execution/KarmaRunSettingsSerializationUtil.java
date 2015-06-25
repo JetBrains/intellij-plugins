@@ -38,7 +38,9 @@ public class KarmaRunSettingsSerializationUtil {
       builder.setBrowsers(browsers);
     }
     String karmaPackageDir = JDOMExternalizerUtil.getFirstChildValueAttribute(element, KARMA_PACKAGE_DIR);
-    builder.setKarmaPackageDir(FileUtil.toSystemDependentName(StringUtil.notNullize(karmaPackageDir)));
+    if (karmaPackageDir != null) {
+      builder.setKarmaPackageDir(FileUtil.toSystemDependentName(karmaPackageDir));
+    }
 
     Map<String, String> envVars = new LinkedHashMap<String, String>();
     EnvironmentVariablesComponent.readExternal(element, envVars);
@@ -63,8 +65,9 @@ public class KarmaRunSettingsSerializationUtil {
     if (StringUtil.isNotEmpty(settings.getBrowsers())) {
       element.setAttribute(BROWSERS, settings.getBrowsers());
     }
-    if (StringUtil.isNotEmpty(settings.getKarmaPackageDir())) {
-      JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR, settings.getKarmaPackageDir());
+    if (settings.getKarmaPackageDir() != null) {
+      String value = FileUtil.toSystemIndependentName(settings.getKarmaPackageDir());
+      JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR, value);
     }
     EnvironmentVariablesComponent.writeExternal(element, settings.getEnvVars());
     if (settings.isPassParentEnvVars() != KarmaRunSettings.Builder.DEFAULT_PASS_PARENT_ENV_VARS) {

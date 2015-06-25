@@ -1,7 +1,10 @@
 package com.intellij.javascript.karma.execution;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -15,7 +18,7 @@ public class KarmaRunSettings {
   private final String myBrowsers;
 
   public KarmaRunSettings(@NotNull String configPath,
-                          @NotNull String karmaPackageDir,
+                          @Nullable String karmaPackageDir,
                           @NotNull Map<String, String> envVars,
                           boolean passParentEnvVars,
                           @NotNull String browsers) {
@@ -31,7 +34,7 @@ public class KarmaRunSettings {
     return myConfigPath;
   }
 
-  @NotNull
+  @Nullable
   public String getKarmaPackageDir() {
     return myKarmaPackageDir;
   }
@@ -59,6 +62,7 @@ public class KarmaRunSettings {
 
     return  myPassParentEnvVars == that.myPassParentEnvVars &&
             myConfigPath.equals(that.myConfigPath) &&
+            ComparatorUtil.equalsNullable(myKarmaPackageDir, that.myKarmaPackageDir) &&
             myEnvVars.equals(that.myEnvVars) &&
             myBrowsers.equals(that.myBrowsers);
   }
@@ -66,6 +70,7 @@ public class KarmaRunSettings {
   @Override
   public int hashCode() {
     int result = myConfigPath.hashCode();
+    result = 31 * result + StringUtil.notNullize(myKarmaPackageDir).hashCode();
     result = 31 * result + myEnvVars.hashCode();
     result = 31 * result + (myPassParentEnvVars ? 1 : 0);
     result = 31 * result + myBrowsers.hashCode();
@@ -77,7 +82,7 @@ public class KarmaRunSettings {
     public static final boolean DEFAULT_PASS_PARENT_ENV_VARS = true;
 
     private String myConfigPath = "";
-    private String myKarmaPackageDir = "";
+    private String myKarmaPackageDir = null;
     private Map<String, String> myEnvVars = Collections.emptyMap();
     private boolean myPassParentEnvVars = DEFAULT_PASS_PARENT_ENV_VARS;
     private String myBrowsers = "";
@@ -99,7 +104,7 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setKarmaPackageDir(@NotNull String karmaPackageDir) {
+    public Builder setKarmaPackageDir(@Nullable String karmaPackageDir) {
       myKarmaPackageDir = karmaPackageDir;
       return this;
     }

@@ -8,9 +8,6 @@ import com.intellij.openapi.project.Project;
 import icons.JSKarmaIcons;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaConfigurationType extends ConfigurationTypeBase {
 
   public KarmaConfigurationType() {
@@ -38,4 +35,9 @@ public class KarmaConfigurationType extends ConfigurationTypeBase {
     return ConfigurationTypeUtil.findConfigurationType(KarmaConfigurationType.class);
   }
 
+  @NotNull
+  public static ConfigurationFactory getFactory() {
+    KarmaConfigurationType type = getInstance();
+    return type.getConfigurationFactories()[0];
+  }
 }
