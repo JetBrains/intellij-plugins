@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.CheckBoxList;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ListSpeedSearch;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.*;
 
 public class LocalesDialog extends DialogWrapper {
@@ -61,12 +61,7 @@ public class LocalesDialog extends DialogWrapper {
   }
 
   private static boolean containsSwc(final File dir) {
-    return dir.list(new FilenameFilter() {
-      @Override
-      public boolean accept(final File dir, final String name) {
-        return name.toLowerCase().endsWith(".swc");
-      }
-    }).length > 0;
+    return dir.listFiles(FileUtilRt.createFilterByExtension("swc")).length > 0;
   }
 
   @Override
