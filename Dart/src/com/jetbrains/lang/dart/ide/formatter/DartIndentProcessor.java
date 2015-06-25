@@ -211,6 +211,11 @@ public class DartIndentProcessor {
     if (parentType == MIXIN_APPLICATION && elementType == MIXINS) {
       return Indent.getContinuationIndent();
     }
+
+    if (parentType == LIBRARY_NAME_ELEMENT) {
+      return Indent.getContinuationIndent();
+    }
+
     return Indent.getNoneIndent();
   }
 

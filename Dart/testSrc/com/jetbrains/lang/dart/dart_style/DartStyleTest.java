@@ -81,16 +81,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/statements.stmt:32  do with line comment");
     KNOWN_TO_FAIL.add("comments/statements.stmt:47  remove blank line before beginning of block");
     KNOWN_TO_FAIL.add("comments/statements.stmt:6  trailing line comment");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:133");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:164  before library name");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:168  block comment before '.' in library");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:172  block comment after '.' in library");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:176  line comment before '.' in library");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:182  line comment after '.' in library");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:188  inline block comment between different kinds of directives");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:195  inline block comment between directives");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:207  ensure blank line above doc comments");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:8");
+    KNOWN_TO_FAIL.add("comments/top_level.unit:8"); // formatter bug
     KNOWN_TO_FAIL.add("regression/0000/0025.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0025.stmt:13  (indent 8)");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:1  (indent 2)");

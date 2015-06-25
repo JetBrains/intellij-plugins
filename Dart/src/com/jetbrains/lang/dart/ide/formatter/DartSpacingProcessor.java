@@ -58,15 +58,43 @@ public class DartSpacingProcessor {
       }
       return Spacing.createSpacing(spaces, spaces, lines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type1 == IMPORT_STATEMENT && type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT && !embeddedComment(type2, child2)) {
+    if (type2 == SINGLE_LINE_DOC_COMMENT) {
+      int nsp = 2;
+      if (type1 == SINGLE_LINE_DOC_COMMENT || (elementType != DART_FILE && type1 == LBRACE)) nsp = 1;
+      return Spacing.createSpacing(0, 0, nsp, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+
+    if (type1 == IMPORT_STATEMENT) {
+      if (type2 == MULTI_LINE_COMMENT) {
+        ASTNode next = FormatterUtil.getNextNonWhitespaceSibling(node2);
+        if (next != null &&
+            next.getElementType() == IMPORT_STATEMENT &&
+            embeddedComment(type2, child2) &&
+            !directlyPreceededByNewline(next)) {
+          return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+      }
+      if (type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT && !embeddedComment(type2, child2)) {
+        int numNewlines = COMMENTS.contains(type2) && isBlankLineAfterComment(node2) ? 1 : 2;
+        return Spacing.createSpacing(0, 0, numNewlines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
+    }
+    if (type1 == LIBRARY_STATEMENT) {
       return Spacing.createSpacing(0, 0, 2, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type1 == LIBRARY_STATEMENT && !embeddedComment(type2, child2)) {
-      return Spacing.createSpacing(0, 0, 2, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+
+    if (elementType == LIBRARY_STATEMENT || parentType == LIBRARY_STATEMENT) {
+      if (embeddedComment(type2, child2)) {
+        return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
+      if (type1 == MULTI_LINE_COMMENT && embeddedComment(type1, child1)) {
+        return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
     }
     if (parentType == LIBRARY_STATEMENT) {
       return noSpace();
     }
+
     if (SEMICOLON == type2) {
       if (type1 == SEMICOLON && elementType == STATEMENTS) {
         return addSingleSpaceIf(false, true); // Empty statement on new line.
@@ -792,6 +820,9 @@ public class DartSpacingProcessor {
     // Return true if it is (or will be) at the beginning of the line, or
     // following a block comment that is at the beginning of the line.
     ASTNode node = ((DartBlock)child).getNode();
+    return directlyPreceededByNewline(node);
+  }
+  private static boolean directlyPreceededByNewline(ASTNode node) {
     while ((node = node.getTreePrev()) != null) {
       if (node.getElementType() == WHITE_SPACE) {
         if (node.getText().contains("\n")) return true;
@@ -862,5 +893,14 @@ public class DartSpacingProcessor {
       child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
       return child != null && child.getElementType() == LBRACE;
     }
+  }
+
+  private static boolean isBlankLineAfterComment(ASTNode node) {
+    // Assumes whitespace has been normalized.
+    ASTNode next = node.getTreeNext();
+    if (next == null || next.getElementType() != WHITE_SPACE) return false;
+    String comment = next.getText();
+    int n = comment.indexOf('\n');
+    return comment.indexOf('\n', n+1) > 0;
   }
 }
