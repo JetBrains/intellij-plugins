@@ -4,6 +4,7 @@ import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.FacetManagerImpl;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -11,7 +12,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
@@ -33,6 +33,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -51,7 +52,6 @@ import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.*;
 
 /**
@@ -447,22 +447,12 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
             return true;
           }
 
-          File[] swcs = file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File pathname) {
-              return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".swc");
-            }
-          });
+          File[] swcs = file.listFiles(FileFilters.filesWithExtension("swc"));
           if (swcs != null && swcs.length > 0) {
             return true;
           }
 
-          File[] jars = file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File pathname) {
-              return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".jar");
-            }
-          });
+          File[] jars = file.listFiles(FileFilters.filesWithExtension("jar"));
           if (jars != null && jars.length > 0) {
             continue;
           }
