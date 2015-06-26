@@ -17,9 +17,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.eduUI.panel.EduPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -40,23 +40,11 @@ public class EduEditor implements TextEditor {
         myProject = project;
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
         myComponent = myDefaultEditor.getComponent();
-        final JPanel lessonPanel = new JPanel();
-        lessonPanel.setBackground(Color.LIGHT_GRAY);
-
-        final JPanel coursePanel = new JPanel();
-
-        final JPanel eduPanel = new JPanel(new BorderLayout());
-        eduPanel.add(lessonPanel, BorderLayout.NORTH);
-        eduPanel.add(coursePanel, BorderLayout.SOUTH);
-
-
-//        eduPanel.setLayout(new BoxLayout(eduPanel, BoxLayout.Y_AXIS));
-//        eduPanel.setSize(new Dimension(100, 100));
-        eduPanel.setPreferredSize(new Dimension(350, 200));
-        eduPanel.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
-        eduPanel.setVisible(true);
+        final EduPanel eduPanel = new EduPanel(350);
         myComponent.add(eduPanel, BorderLayout.WEST);
     }
+
+
 
     private FileEditor getDefaultEditor() {
         return myDefaultEditor;
