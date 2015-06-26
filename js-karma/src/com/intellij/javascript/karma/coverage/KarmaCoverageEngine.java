@@ -10,14 +10,19 @@ import com.intellij.execution.configurations.coverage.CoverageEnabledConfigurati
 import com.intellij.execution.testframework.AbstractTestProxy;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
-import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.Language;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -25,6 +30,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.rt.coverage.data.ProjectData;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,12 +40,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaCoverageEngine extends CoverageEngine {
 
   public static final String ID = "KarmaJavaScriptTestRunnerCoverage";
+
+  private static final NotNullLazyValue<Set<FileType>> ALLOWED_FILE_TYPES = new NotNullLazyValue<Set<FileType>>() {
+    @NotNull
+    @Override
+    protected Set<FileType> compute() {
+      Set<FileType> fileTypes = ContainerUtil.newHashSet();
+      for (FileType type : FileTypeRegistry.getInstance().getRegisteredFileTypes()) {
+        if (type instanceof LanguageFileType) {
+          final Language language = ((LanguageFileType)type).getLanguage();
+          if (language.isKindOf(JavascriptLanguage.INSTANCE)) {
+            fileTypes.add(type);
+          }
+        }
+      }
+      return fileTypes;
+    }
+  };
 
   @Override
   public boolean isApplicableTo(@Nullable RunConfigurationBase configuration) {
@@ -125,8 +145,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
     if (file == null) {
       return null;
     }
-    final String filePath = file.getPath();
-    return SimpleCoverageAnnotator.getFilePath(filePath);
+    return file.getPath();
   }
 
   @NotNull
@@ -179,7 +198,11 @@ public class KarmaCoverageEngine extends CoverageEngine {
 
   @Override
   public boolean coverageProjectViewStatisticsApplicableTo(final VirtualFile fileOrDir) {
-    return !(fileOrDir.isDirectory()) && fileOrDir.getFileType() instanceof JavaScriptFileType;
+    if (!fileOrDir.isDirectory()) {
+      FileType fileType = fileOrDir.getFileType();
+      return ALLOWED_FILE_TYPES.getValue().contains(fileType);
+    }
+    return false;
   }
 
   @Override
