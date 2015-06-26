@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.rt.coverage.data.ClassData;
 import com.intellij.rt.coverage.data.LineData;
 import com.intellij.rt.coverage.data.ProjectData;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,13 +21,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaCoverageRunner extends CoverageRunner {
 
   private static final Logger LOG = Logger.getInstance(KarmaCoverageRunner.class);
   private KarmaServer myKarmaServer;
+
+  @NotNull
+  public static KarmaCoverageRunner getInstance() {
+    return ObjectUtils.assertNotNull(CoverageRunner.getInstance(KarmaCoverageRunner.class));
+  }
 
   @Override
   public ProjectData loadCoverageData(@NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
@@ -61,7 +64,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
     ProjectData projectData = new ProjectData();
     LcovCoverageReport report = CoverageSerializationUtils.readLCOV(basePath, dataFile);
     for (Map.Entry<String, List<LcovCoverageReport.LineHits>> entry : report.getInfo().entrySet()) {
-      String filePath = SimpleCoverageAnnotator.getFilePath(entry.getKey());
+      String filePath = entry.getKey();
       ClassData classData = projectData.getOrCreateClassData(filePath);
       int max = 0;
       List<LcovCoverageReport.LineHits> lineHitsList = entry.getValue();

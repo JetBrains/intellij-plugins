@@ -160,7 +160,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
               }
               RunnerSettings runnerSettings = env.getRunnerSettings();
               if (runnerSettings != null) {
-                KarmaCoverageRunner coverageRunner = CoverageRunner.getInstance(KarmaCoverageRunner.class);
+                KarmaCoverageRunner coverageRunner = KarmaCoverageRunner.getInstance();
                 coverageRunner.setKarmaServer(server);
                 CoverageDataManager.getInstance(env.getProject()).processGatheredCoverage(runConfiguration, runnerSettings);
               }
