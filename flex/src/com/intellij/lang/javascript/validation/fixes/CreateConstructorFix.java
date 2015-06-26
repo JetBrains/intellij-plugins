@@ -316,7 +316,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
     }
 
     @Override
-    protected void performRefactoring(UsageInfo[] usageInfos) {
+    protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
       final Collection<String> toImport = new ArrayList<String>();
       for (JSExpression argument : myNode.getArguments()) {
         String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());

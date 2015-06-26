@@ -73,7 +73,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
     return new FlexMoveInnerClassUsageViewDescriptor();
   }
 
@@ -105,7 +105,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(UsageInfo[] usages) {
+  protected void performRefactoring(@NotNull UsageInfo[] usages) {
     try {
       CreateClassOrInterfaceFix.createClass(myClassName, myPackageName, myTargetDirectory, false);
     }
@@ -201,7 +201,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected boolean preprocessUsages(Ref<UsageInfo[]> refUsages) {
+  protected boolean preprocessUsages(@NotNull Ref<UsageInfo[]> refUsages) {
     return showConflicts(detectConflicts(), refUsages.get());
   }
 
@@ -216,7 +216,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected boolean isPreviewUsages(UsageInfo[] usages) {
+  protected boolean isPreviewUsages(@NotNull UsageInfo[] usages) {
     if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }
