@@ -45,9 +45,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/expressions.stmt:80  force named args to split on line comment in positional");
     KNOWN_TO_FAIL.add("comments/functions.unit:102  after '{' in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:106  before '}' in param list");
-    KNOWN_TO_FAIL.add("comments/functions.unit:119  remove blank line before beginning of body");
     KNOWN_TO_FAIL.add("comments/functions.unit:39  inline block comment");
-    KNOWN_TO_FAIL.add("comments/functions.unit:43  multiple comments on opening line");
     KNOWN_TO_FAIL.add("comments/functions.unit:50  multiple inline block comments");
     KNOWN_TO_FAIL.add("comments/functions.unit:78  after ',' in param list");
     KNOWN_TO_FAIL.add("comments/functions.unit:82  before '[' in param list");
@@ -74,14 +72,9 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/maps.stmt:79  line comments after trailing comma");
     KNOWN_TO_FAIL.add("comments/maps.stmt:88  inside map literal");
     KNOWN_TO_FAIL.add("comments/maps.stmt:97  remove blank line before beginning of body");
-    KNOWN_TO_FAIL.add("comments/mixed.unit:2  block comment");
-    KNOWN_TO_FAIL.add("comments/mixed.unit:70  multiline comment inside nested blocks");
-    KNOWN_TO_FAIL.add("comments/mixed.unit:95  commented out comments are not mistaken for doc comments");
-    KNOWN_TO_FAIL.add("comments/statements.stmt:14  continue with line comment");
-    KNOWN_TO_FAIL.add("comments/statements.stmt:32  do with line comment");
-    KNOWN_TO_FAIL.add("comments/statements.stmt:47  remove blank line before beginning of block");
-    KNOWN_TO_FAIL.add("comments/statements.stmt:6  trailing line comment");
+
     KNOWN_TO_FAIL.add("comments/top_level.unit:8"); // formatter bug
+
     KNOWN_TO_FAIL.add("regression/0000/0025.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0025.stmt:13  (indent 8)");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:1  (indent 2)");
@@ -294,6 +287,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:48");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:6  initializer doesn't fit one line, wrap inside, keep name");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
+
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations"); // formatter bug
     KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation"); // would pass if test were correct
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members"); // fails due to blank lines

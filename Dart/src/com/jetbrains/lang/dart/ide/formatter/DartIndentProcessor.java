@@ -89,6 +89,10 @@ public class DartIndentProcessor {
     if (elementType == LBRACE || elementType == RBRACE) {
       switch (braceStyle) {
         case CommonCodeStyleSettings.END_OF_LINE:
+          if (elementType == LBRACE && FormatterUtil.hasPrecedingSiblingOfType(parent, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
+            // Use Nystrom style rather than Allman.
+            return Indent.getContinuationIndent();
+          } // FALL THROUGH
         case CommonCodeStyleSettings.NEXT_LINE:
         case CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED:
           return Indent.getNoneIndent();
@@ -166,7 +170,7 @@ public class DartIndentProcessor {
     if (BINARY_EXPRESSIONS.contains(parentType) && prevSibling != null) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == TERNARY_EXPRESSION && elementType == QUEST || elementType == COLON) {
+    if (elementType == COLON || parentType == TERNARY_EXPRESSION && elementType == QUEST) {
       return Indent.getContinuationIndent();
     }
     if (elementType == NAMED_ARGUMENT) {
@@ -213,6 +217,10 @@ public class DartIndentProcessor {
     }
 
     if (parentType == LIBRARY_NAME_ELEMENT) {
+      return Indent.getContinuationIndent();
+    }
+
+    if (elementType == SEMICOLON && FormatterUtil.hasPrecedingSiblingOfType(node, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
       return Indent.getContinuationIndent();
     }
 
