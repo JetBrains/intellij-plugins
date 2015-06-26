@@ -22,6 +22,11 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
   }
 
   @Override
+  protected boolean shouldCollectCoverageInsideLibraryDirs() {
+    return false;
+  }
+
+  @Override
   @Nullable
   protected FileCoverageInfo fillInfoForUncoveredFile(@NotNull File file) {
     return null;
