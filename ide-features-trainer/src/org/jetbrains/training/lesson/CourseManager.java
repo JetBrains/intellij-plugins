@@ -29,6 +29,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -41,6 +42,7 @@ public class CourseManager extends ActionGroup{
     public static final Dimension DIMENSION = new Dimension(500, 60);
 
     public ArrayList<Course> courses;
+    private HashMap<Course, VirtualFile> mapCourseVirtualFile;
 
 
     public static CourseManager getInstance(){
@@ -51,6 +53,8 @@ public class CourseManager extends ActionGroup{
         //init courses; init default course by default
         super("Courses", true);
         courses = new ArrayList<Course>();
+        mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
+
 
         try {
             final Course defaultCourse = new Course();
@@ -90,6 +94,13 @@ public class CourseManager extends ActionGroup{
         return null;
     }
 
+    public void registerVirtaulFile(Course course, VirtualFile virtualFile){
+        mapCourseVirtualFile.put(course, virtualFile);
+    }
+
+    public boolean isVirtualFileRegistered(VirtualFile virtualFile){
+        return mapCourseVirtualFile.containsValue(virtualFile);
+    }
 
     public synchronized void openLesson(final AnActionEvent e, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
