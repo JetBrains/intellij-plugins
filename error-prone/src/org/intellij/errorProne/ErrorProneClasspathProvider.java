@@ -1,6 +1,5 @@
 package org.intellij.errorProne;
 
-import com.google.common.base.Supplier;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
@@ -11,8 +10,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.platform.loader.PlatformLoader;
+import org.jetbrains.platform.loader.repository.RuntimeModuleId;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
       for (File file : jars) {
         classpath.add(file.getAbsolutePath());
       }
-      classpath.add(PathUtil.getJarPathForClass(Supplier.class));
+      classpath.addAll(PlatformLoader.getInstance().getRepository().getModuleRootPaths(RuntimeModuleId.projectLibrary("Guava")));
       return classpath;
     }
     return Collections.emptyList();
