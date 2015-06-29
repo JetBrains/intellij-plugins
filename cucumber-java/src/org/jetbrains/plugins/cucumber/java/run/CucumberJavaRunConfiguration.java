@@ -98,16 +98,10 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       @Nullable
       private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
         // console view
-        final ConsoleView testRunnerConsole;
-
         final String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor);
-
-        testRunnerConsole = SMTestRunnerConnectionUtil.createAndAttachConsole(testFrameworkName, processHandler, consoleProperties,
-                                                                              getEnvironment());
-
-        return testRunnerConsole;
+        return SMTestRunnerConnectionUtil.createAndAttachConsole(testFrameworkName, processHandler, consoleProperties);
       }
 
       @NotNull

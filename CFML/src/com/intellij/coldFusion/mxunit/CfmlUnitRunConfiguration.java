@@ -161,8 +161,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
     final CfmlUnitConsoleProperties consoleProps = new CfmlUnitConsoleProperties(runConfiguration, executor);
     consoleProps.addStackTraceFilter(new CfmlStackTraceFilterProvider(getProject()));
 
-    BaseTestsOutputConsoleView testsOutputConsoleView = SMTestRunnerConnectionUtil
-      .createAndAttachConsole("Cfml", processHandler, consoleProps, env);
+    BaseTestsOutputConsoleView testsOutputConsoleView = SMTestRunnerConnectionUtil.createAndAttachConsole("Cfml", processHandler, consoleProps);
     Disposer.register(project, testsOutputConsoleView);
     return testsOutputConsoleView;
   }
