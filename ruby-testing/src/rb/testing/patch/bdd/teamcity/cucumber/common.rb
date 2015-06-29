@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'cucumber/formatter/console'
+require 'cucumber/core/ast/empty_multiline_argument'
 require 'fileutils'
 
 require 'teamcity/runner_common'
@@ -590,6 +591,7 @@ module Teamcity
 
       def create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
         if ::Teamcity::Cucumber::CUCUMBER_VERSION_2
+          step_multiline_arg = step_multiline_arg || ::Cucumber::Core::Ast::EmptyMultilineArgument.new
           @step_mother.snippet_text(step_keyword || '', step_def_name, step_multiline_arg)
         else
           step_multiline_class = step_multiline_arg ? step_multiline_arg.class : nil
