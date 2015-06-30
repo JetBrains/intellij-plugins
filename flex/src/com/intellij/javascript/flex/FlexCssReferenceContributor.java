@@ -61,7 +61,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
           return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.EMBEDDED_ASSET);
         }
         final String value = StringUtil.unquoteString(element.getText());
-        JSReferenceSet refSet = new JSReferenceSet(element, value, 1, false, false, true);
+        JSReferenceSet refSet = new JSReferenceSet(element, value, 1, false, true);
         if (fun != null && element instanceof CssString) {
           assert FlexReferenceContributor.CLASS_REFERENCE.equals(fun.getName());
           refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {

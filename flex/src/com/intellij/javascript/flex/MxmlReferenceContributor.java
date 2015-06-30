@@ -15,8 +15,11 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
+import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
@@ -148,7 +151,31 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         final String trimmedText = StringUtil.unquoteString(element.getText());
         if (CodeContext.isPackageBackedNamespace(trimmedText)) {
-          final JSReferenceSet referenceSet = new JSReferenceSet(element, trimmedText, 1, false, true, false);
+          final JSReferenceSet referenceSet = new JSReferenceSet(element, trimmedText, 1, false, false) {
+            @Override
+            protected JSTextReference createTextReference(String s, int offset, boolean methodRef) {
+              return new JSTextReference(this, s, offset, methodRef) {
+                @Override
+                protected ResolveResult[] doResolve(@NotNull PsiFile psiFile) {
+                  if ("*".equals(getCanonicalText())) {
+                    return new ResolveResult[]{new JSResolveResult(mySet.getElement())};
+                  }
+                  return super.doResolve(psiFile);
+                }
+
+                @Override
+                protected MyResolveProcessor createResolveProcessor(String name, PsiElement place, ResultSink resultSink) {
+                  return new MyResolveProcessor(name, place, resultSink) {
+                    @Override
+                    public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+                      if (!(element instanceof JSPackageWrapper)) return true;
+                      return super.execute(element, state);
+                    }
+                  };
+                }
+              };
+            }
+          };
           return referenceSet.getReferences();
         }
         else {
@@ -463,7 +490,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         if (trimmedValueAndRange.first.indexOf('{') != -1 || trimmedValueAndRange.first.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
 
         final JSReferenceSet jsReferenceSet =
-          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, false, true) {
+          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, true) {
             @Override
             protected JSTextReference createTextReference(String s, int offset, boolean methodRef) {
               return new MyJSTextReference(this, s, offset, methodRef, quickFixProvider);

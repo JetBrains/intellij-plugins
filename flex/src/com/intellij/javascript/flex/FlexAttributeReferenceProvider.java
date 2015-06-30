@@ -115,7 +115,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       final String text = valueNode.getText();
       JSReferenceSet referenceSet = element.getUserData(METADATA_REFERENCE_KEY);
       if (referenceSet == null) {
-        referenceSet = new JSReferenceSet(element, "", offsetInParent, false, false, true);
+        referenceSet = new JSReferenceSet(element, "", offsetInParent, false, true);
         element.putUserData(METADATA_REFERENCE_KEY, referenceSet);
 
         referenceSet.setLocalQuickFixProvider(new ClassRefQuickFixProvider(element, referenceSet));

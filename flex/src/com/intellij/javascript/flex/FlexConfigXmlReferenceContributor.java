@@ -37,7 +37,7 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
               .getFileRefs(element, myRange.getStartOffset(), trimmed, ReferenceSupport.LookupOptions.FLEX_COMPILER_CONFIG_PATH_ELEMENT);
           }
 
-          return new JSReferenceSet(element, trimmed, myRange.getStartOffset(), false, false, true).getReferences();
+          return new FlexConfigXmlReferenceSet(element, trimmed, myRange.getStartOffset()).getReferences();
         }
       });
 
@@ -49,8 +49,23 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
           TextRange myRange = ElementManipulators.getValueTextRange(element);
           if (myRange.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
           final String attrValue = ((XmlAttributeValue)element).getValue();
-          return new JSReferenceSet(element, attrValue, myRange.getStartOffset(), false, false, true).getReferences();
+          return new FlexConfigXmlReferenceSet(element, attrValue, myRange.getStartOffset()).getReferences();
         }
       });
+  }
+
+  static class FlexConfigXmlReferenceSet extends JSReferenceSet {
+    public FlexConfigXmlReferenceSet(PsiElement element, String text, int offset) {
+      super(element, text, offset, false, true);
+    }
+
+    @Override
+    protected int findSeparatorPosition(String s, int fromIndex) {
+      int pos = s.indexOf('.', fromIndex);
+      // no more than one ':' and '#' symbol after last '.'
+      if (pos == -1 && s.indexOf(":") >= fromIndex) pos = s.indexOf(":", fromIndex);
+      if (pos == -1 && s.indexOf("#") >= fromIndex) pos = s.indexOf("#", fromIndex);
+      return pos;
+    }
   }
 }
