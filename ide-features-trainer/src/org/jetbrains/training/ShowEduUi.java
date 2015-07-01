@@ -1,5 +1,7 @@
 package org.jetbrains.training;
 
+import com.intellij.ide.scratch.ScratchFileService;
+import com.intellij.ide.scratch.ScratchFileType;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -19,12 +21,14 @@ import org.jetbrains.training.eduUI.EduEditor;
 import org.jetbrains.training.eduUI.EduEditorProvider;
 import org.jetbrains.training.lesson.CourseManager;
 
+import java.io.IOException;
+
 /**
  * Created by karashevich on 23/06/15.
  */
 public class ShowEduUi extends AnAction{
     @Override
-    public void actionPerformed(AnActionEvent anActionEvent) {
+    public void actionPerformed(final AnActionEvent anActionEvent) {
         boolean focusEditor = true;
 
         final Project project = anActionEvent.getProject();
@@ -32,7 +36,20 @@ public class ShowEduUi extends AnAction{
         final VirtualFile vf;
 //        vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
         //TODO: remove const "scratch" here
-        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "scratch2", Language.findLanguageByID("JAVA"), "some text here");
+
+        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "some text here");
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    vf.rename(anActionEvent, "Editor Basics");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        System.out.println("vf url:" + vf.getUrl());
         CourseManager.getInstance().registerVirtaulFile(CourseManager.getInstance().getAnyCourse(), vf);
         OpenFileDescriptor descriptor = new OpenFileDescriptor(anActionEvent.getProject(), vf);
 
