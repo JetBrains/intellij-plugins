@@ -575,9 +575,8 @@ public class DartSpacingProcessor {
     if (type1 == LBRACKET && type2 == RBRACKET) {
       return noSpace();
     }
-    if (type1 == COMMA &&
-        (elementType == FORMAL_PARAMETER_LIST || elementType == ARGUMENT_LIST || elementType == NORMAL_FORMAL_PARAMETER)) {
-      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA_IN_TYPE_ARGUMENTS);
+    if (type1 == COMMA && (elementType == FORMAL_PARAMETER_LIST || elementType == ARGUMENT_LIST)) {
+      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA);
     }
 
     if (type1 == COMMA) {

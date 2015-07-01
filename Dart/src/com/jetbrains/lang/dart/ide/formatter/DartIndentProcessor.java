@@ -121,17 +121,14 @@ public class DartIndentProcessor {
       }
       return Indent.getNormalIndent();
     }
-    if (parentType == ARGUMENTS && elementType == ARGUMENT_LIST) {
-      return Indent.getContinuationIndent();
-    }
     if (parentType == ARGUMENT_LIST) {
       // TODO In order to handle some dart_style examples we need to set indent for each arg.
-      // However, it conflicts with the previous statement, causing too much indent.
-      // Removing the previous statement in favor of this one is actually a
-      // net win, but breaks existing tests.
-      //return Indent.getContinuationIndent();
-      if (EXPRESSIONS.contains(elementType)) {
-        return Indent.getContinuationWithoutFirstIndent();
+      // The formatter does not appear to honor indent on individual argument expressions
+      // when KEEP_LINE_BREAKS==true. That means two DartFormatterTest tests fail. Those tests
+      // have been changed since the recommended setting for Dart programming is
+      // KEEP_LINE_BREAKS==false. The two tests are testAlignment() and testWrappingMeth().
+      if (EXPRESSIONS.contains(elementType) && elementType != FUNCTION_EXPRESSION) {
+        return Indent.getContinuationIndent();
       }
     }
     if (parentType == FORMAL_PARAMETER_LIST) {

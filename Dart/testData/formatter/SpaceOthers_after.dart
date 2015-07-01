@@ -4,10 +4,10 @@ class Foo {
   // comment
   Array<Array<Int>> tmp;
 
-  function foo(int x , z) {
-    new Foo(x , 2);
+  function foo(int x ,z) {
+    new Foo(x ,2);
 
-    int absSum(int a , int b) {
+    int absSum(int a ,int b) {
       int value = a + b;
       return value > 0?value:-value;
     }
@@ -21,7 +21,7 @@ class Foo {
       try {
         if (0 < x && x < 10) {
           while (x != y) {
-            x = absSum(x * 3 , 5);
+            x = absSum(x * 3 ,5);
           }
           z += 2;
         }else if (x > 20) {
@@ -43,7 +43,7 @@ class Foo {
     }while (x < 0);
   }
 
-  Foo(int n , int m) {
+  Foo(int n ,int m) {
     tmp = new Array<Array<Int>>();
     for (int i; i < 10; ++i)
       tmp.push(new Array<Int>());
