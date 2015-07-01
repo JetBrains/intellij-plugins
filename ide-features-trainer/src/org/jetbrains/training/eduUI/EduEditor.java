@@ -40,7 +40,7 @@ public class EduEditor implements TextEditor {
         myProject = project;
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
         myComponent = myDefaultEditor.getComponent();
-        final EduPanel eduPanel = new EduPanel(350);
+        final EduPanel eduPanel = new EduPanel(275);
         myComponent.add(eduPanel, BorderLayout.WEST);
     }
 

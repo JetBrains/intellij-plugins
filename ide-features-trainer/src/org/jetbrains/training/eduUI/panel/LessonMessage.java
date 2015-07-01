@@ -1,0 +1,40 @@
+package org.jetbrains.training.eduUI.panel;
+
+import com.intellij.ui.RoundedLineBorder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.plaf.BorderUIResource;
+import java.awt.*;
+
+/**
+ * Created by karashevich on 30/06/15.
+ */
+public class LessonMessage {
+    @NotNull
+    private JLabel message;
+    @Nullable
+    private ShortcutLabel shortcut;
+
+
+    public LessonMessage(@NotNull JLabel message, @Nullable ShortcutLabel shortcut) {
+        this.message = message;
+        this.shortcut = shortcut;
+    }
+
+    public JPanel getPanel(){
+        JPanel c = new JPanel();
+
+        c.setLayout(new BoxLayout(c, BoxLayout.LINE_AXIS));
+        c.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        c.add(message);
+        if (shortcut != null) {
+            c.add(shortcut);
+        }
+        return c;
+    }
+
+}
