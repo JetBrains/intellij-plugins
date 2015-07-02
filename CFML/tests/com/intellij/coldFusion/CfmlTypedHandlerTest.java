@@ -15,8 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-
 /**
  * Created by Lera Nikolaenko
  * Date: 12.01.2009
@@ -28,6 +26,7 @@ public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testSimpleTagGTCompletion() throws Throwable { doTest('>'); }
+  public void testSimpleTagGTCompletion2() throws Throwable { doTest('>'); }
 
     public void testInnerTagGTCompletion() throws Throwable {
         doTest('>');
