@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ThreeState;
@@ -32,13 +33,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
       for (String directiveName : docDirectives) {
-        if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.KEY) == ThreeState.YES) {
+        if (isApplicable(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY) == ThreeState.YES) {
           addAttributes(project, result, directiveName);
         }
       }
       for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.KEY, project)) {
         if (!docDirectives.contains(directiveName) &&
-            isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.KEY) == ThreeState.YES) {
+            isApplicable(project, directiveName, xmlTag, AngularDirectivesIndex.KEY) == ThreeState.YES) {
           addAttributes(project, result, directiveName);
         }
       }
@@ -55,7 +56,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     }
   }
 
-  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final StubIndexKey<String, JSImplicitElementProvider> index) {
+  private static ThreeState isApplicable(Project project, String directiveName, XmlTag tag, final StubIndexKey<String, JSImplicitElementProvider> index) {
     final JSImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
     if (directive == null) {
       return ThreeState.UNSURE;
@@ -65,11 +66,11 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
       final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
-      final String tag = split[1];
+      final String requiredTag = split[1];
       if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
         return ThreeState.NO;
       }
-      if (!tagMatches(tagName, tag)) {
+      if (!tagMatches(tag, requiredTag)) {
         return ThreeState.NO;
       }
     }
@@ -77,12 +78,18 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return ThreeState.YES;
   }
 
-  private static boolean tagMatches(String tagName, String tag) {
-    if (StringUtil.isEmpty(tag) || StringUtil.equalsIgnoreCase(tag, "ANY")) {
+  private static boolean tagMatches(XmlTag tag, String requiredTag) {
+    if (StringUtil.isEmpty(requiredTag) || StringUtil.equalsIgnoreCase(requiredTag, "ANY")) {
       return true;
     }
-    for (String s : tag.split(",")) {
-      if (StringUtil.equalsIgnoreCase(tagName, s.trim())) {
+    for (String s : requiredTag.split(",")) {
+      if (StringUtil.equalsIgnoreCase(tag.getName(), s.trim())) {
+        return true;
+      }
+    }
+    if ("input".equalsIgnoreCase(requiredTag)) {
+      PsiElement parent = tag.getParent();
+      if (parent instanceof XmlTag && "form".equalsIgnoreCase(((XmlTag)parent).getName())) {
         return true;
       }
     }
@@ -95,10 +102,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      final String tagName = xmlTag.getName();
-      ThreeState attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesDocIndex.KEY);
+      ThreeState attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (attributeAvailable == ThreeState.UNSURE) {
-        attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesIndex.KEY);
+        attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesIndex.KEY);
       }
       return attributeAvailable == ThreeState.YES ? createDescriptor(project, attributeName) : null;
     }

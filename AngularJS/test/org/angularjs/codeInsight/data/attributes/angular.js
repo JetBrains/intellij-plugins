@@ -56,6 +56,11 @@
 
 /**
  * @ngdoc directive
+ * @name ng.directive:ngDisabled
+ * @element input
+ */
+/**
+ * @ngdoc directive
  * @name ng.directive:ngCopy
  * @element window, input, select, textarea, a
  */
