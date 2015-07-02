@@ -30,6 +30,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -162,8 +163,12 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
         iterator.advance();
       }
     }
-    if (doInsertion && CfmlUtil.isEndTagRequired(((CfmlTag)tagElement).getTagName(), project)) {
-      EditorModificationUtil.insertStringAtCaret(editor, "</" + ((CfmlTag)tagElement).getTagName() + ">", true, 0);
+    String tagNameFromPsi = ((CfmlTag)tagElement).getTagName(); // tag name in lowercase
+    if (doInsertion && CfmlUtil.isEndTagRequired(tagNameFromPsi, project)) {
+      if (!Comparing.equal(tagNameFromPsi, tagName, false)) {
+        tagName = tagNameFromPsi; // use tagName because it has proper case
+      }
+      EditorModificationUtil.insertStringAtCaret(editor, "</" + tagName + ">", true, 0);
       return true;
     }
     return false;
