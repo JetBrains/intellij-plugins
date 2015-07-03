@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.eduUI.panel.EduPanel;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -218,5 +217,13 @@ public class EduEditor implements TextEditor {
 
     public void addMessage(String message){
         eduPanel.addMessage(message);
+    }
+
+    public void passExercise() {
+        eduPanel.setPreviousMessagesPassed();
+    }
+
+    public void passLesson(){
+        eduPanel.setLessonPassed();
     }
 }

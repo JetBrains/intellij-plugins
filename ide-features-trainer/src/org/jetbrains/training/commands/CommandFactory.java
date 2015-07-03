@@ -63,9 +63,9 @@ public class CommandFactory {
 //            case WAIT:
 //                return new WaitCommand();
 //
-//            case WIN:
-//                return new WinCommand();
-//
+            case WIN:
+                return new WinCommand();
+
             case MOUSEBLOCK:
                 return new MouseBlockCommand();
 
