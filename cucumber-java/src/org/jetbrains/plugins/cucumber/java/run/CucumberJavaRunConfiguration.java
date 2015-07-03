@@ -17,7 +17,6 @@ import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.platform.loader.PlatformLoader;
@@ -113,10 +112,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         return new DefaultExecutionResult(console, processHandler, createActions(console, processHandler, executor));
       }
     };
-  }
-
-  private static String getSMRunnerPath() {
-    return PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
   }
 
   @Override
