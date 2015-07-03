@@ -217,6 +217,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {
     textFieldWithHistory.setText(text);
+    textFieldWithHistory.getModel().setSelectedItem(text);
     textFieldWithHistory.addCurrentTextToHistory();
   }
 
