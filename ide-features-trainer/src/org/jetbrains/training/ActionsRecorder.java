@@ -61,12 +61,10 @@ public class ActionsRecorder implements Disposable {
 //                Notification notification = new Notification("IDEA Global Help", "document changed", "document changed", NotificationType.INFORMATION);
 //                Notifications.Bus.notify(notification);
 
-                if (isTaskSolved(document, target)) {
-//                    System.err.println("Task is solved!");
-                    //myInfoPanel.setText("Cool, let's try yourself now!");
-//                    Messages.showMessageDialog(project, "Congratulations, this task has been solved!", "Information", Messages.getInformationIcon());
-                    showWinMessage.run();
-                }
+//                if (isTaskSolved(document, target)) {
+//                    dispose();
+//                    showWinMessage.run();
+//                }
             }
         };
 
@@ -135,6 +133,7 @@ public class ActionsRecorder implements Disposable {
                     actionManager.removeAnActionListener(this);
                     if(isTaskSolved(document, target)) {
                         if(showWinMessage != null)
+                            dispose();
                             showWinMessage.run();
                     }
                 }

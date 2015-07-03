@@ -39,9 +39,6 @@ public class ShowEduUi extends AnAction{
         //TODO: remove const "scratch" here
 
         vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
-
-
-        System.out.println("vf url:" + vf.getUrl());
         CourseManager.getInstance().registerVirtaulFile(CourseManager.getInstance().getAnyCourse(), vf);
 
         //Open file with EduEditorProvider
@@ -49,7 +46,6 @@ public class ShowEduUi extends AnAction{
 
 
         final Lesson lesson = CourseManager.getInstance().getCourseById("default").giveNotPassedLesson();
-        System.out.println(lesson);
         try {
             CourseManager.getInstance().openLesson(anActionEvent, lesson);
         } catch (BadCourseException e) {

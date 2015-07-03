@@ -1,6 +1,7 @@
 package org.jetbrains.training.eduUI.panel;
 
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.training.commandsEx.util.XmlUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -40,6 +41,7 @@ public class EduPanel extends JPanel {
     private Color shortcutBorderColor;
     private Font shortcutFont;
     private Color passedColor; //TODO: should be replaced with UI scheme color
+    private Color lessonPassedColor;
 
     //separator UI
     private Color separatorColor;
@@ -84,18 +86,18 @@ public class EduPanel extends JPanel {
 
 
         //message test
-        addMessage("<html>Comment out any line 23u5 35" +
-                "23 45" +
-                "23 4" +
-                " 234" +
-                "2346 34 623462346236 346234 6 2346with <b>Ctrl + /</b> </html>");
-        paintPreviousMessagesToGray();
-        addMessage("<html>Comment the line with</html>");
-        paintPreviousMessagesToGray();
-        addMessage("<html>Comment the line with the same shortcut</html>");
-        paintPreviousMessagesToGray();
-        addMessage("<html>Comment the line with the same shortcut</html>");
-        addMessage("<html>Comment the line with the same shortcut</html>");
+//        addMessage("<html>Comment out any line 23u5 35" +
+//                "23 45" +
+//                "23 4" +
+//                " 234" +
+//                "2346 34 623462346236 346234 6 2346with <b>Ctrl + /</b> </html>");
+//        setPreviousMessagesPassed();
+//        addMessage("<html>Comment the line with</html>");
+//        setPreviousMessagesPassed();
+//        addMessage("<html>Comment the line with the same shortcut</html>");
+//        setPreviousMessagesPassed();
+//        addMessage("<html>Comment the line with the same shortcut</html>");
+//        addMessage("<html>Comment the line with the same shortcut</html>");
 
 
     }
@@ -112,6 +114,7 @@ public class EduPanel extends JPanel {
         lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
         messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
         passedColor = new Color(105, 105, 105);
+        lessonPassedColor = new Color(49, 140, 64);
 
         //shortcut UI
         shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
@@ -160,7 +163,7 @@ public class EduPanel extends JPanel {
     }
 
     public void addMessage(String text){
-        JLabel newLabel = new JLabel(text);
+        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
         newLabel.setFont(messageFont);
         final LessonMessage lessonMessage = new LessonMessage(newLabel, null);
         messages.add(lessonMessage);
@@ -177,7 +180,7 @@ public class EduPanel extends JPanel {
     }
 
     public void addMessage(String text, String shortcut){
-        JLabel newLabel = new JLabel(text);
+        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
         newLabel.setFont(messageFont);
         final LessonMessage lessonMessage = new LessonMessage(newLabel, new ShortcutLabel(shortcut,shortcutFont, shortcutTextColor, shortcutBckColor, shortcutBorderColor));
         messages.add(lessonMessage);
@@ -190,18 +193,25 @@ public class EduPanel extends JPanel {
         this.repaint();
     }
 
-    private void paintPreviousMessagesToGray(){
+    public void setPreviousMessagesPassed(){
         if (messages == null) return;
         for (LessonMessage message : messages) {
 //            message.setForeground(passedColor);
             if (message.getLabel().getForeground() != passedColor) {
                 message.getLabel().setForeground(passedColor);
-                String text = message.getLabel().getText();
+                String text = XmlUtil.removeHtmlTags(message.getLabel().getText());
                 text += " ✔";
-                message.getLabel().setText(text);
+                message.getLabel().setText(XmlUtil.addHtmlTags(text));
             }
         }
     }
+
+    public void setLessonPassed(){
+        lessonNameLabel.setText(lessonNameLabel.getText() + " ✔");
+        lessonNameLabel.setForeground(lessonPassedColor);
+        this.repaint();
+    }
+
 
     private void initCoursePanel(){
         coursePanel = new JPanel();
