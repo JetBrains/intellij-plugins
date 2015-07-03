@@ -1,12 +1,15 @@
 package org.jetbrains.training.eduUI;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
+import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
@@ -20,10 +23,13 @@ import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.eduUI.panel.EduPanel;
+import org.jetbrains.training.lesson.Course;
+import org.jetbrains.training.lesson.Lesson;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,7 +46,7 @@ public class EduEditor implements TextEditor {
         myProject = project;
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
         myComponent = myDefaultEditor.getComponent();
-        eduPanel = new EduPanel(275);
+        eduPanel = new EduPanel(this, 275);
         myComponent.add(eduPanel, BorderLayout.WEST);
     }
 
@@ -225,5 +231,27 @@ public class EduEditor implements TextEditor {
 
     public void passLesson(){
         eduPanel.setLessonPassed();
+    }
+
+    public void initAllLessons(Lesson lesson) {
+        eduPanel.setAllLessons(lesson);
+    }
+
+    public void clearEditor() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                if(getEditor()!= null && getEditor().getDocument() != null)
+                    try {
+                        getEditor().getDocument().setText("");
+                    } catch (NullPointerException e) {
+
+                    }
+            }
+        });
+    }
+
+    public void clearLessonPanel() {
+        eduPanel.clearLessonPanel();
     }
 }

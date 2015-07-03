@@ -62,6 +62,10 @@ public class Course extends ActionGroup{
         return answersPath;
     }
 
+    public ArrayList<Lesson> getLessons() {
+        return lessons;
+    }
+
     private void initLessons() throws BadCourseException, BadLessonException, JDOMException, IOException {
 
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(path);

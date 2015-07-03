@@ -47,7 +47,7 @@ public class ShowEduUi extends AnAction{
 
         final Lesson lesson = CourseManager.getInstance().getCourseById("default").giveNotPassedLesson();
         try {
-            CourseManager.getInstance().openLesson(anActionEvent, lesson);
+            CourseManager.getInstance().openLesson(anActionEvent.getProject(), lesson);
         } catch (BadCourseException e) {
             e.printStackTrace();
         } catch (BadLessonException e) {

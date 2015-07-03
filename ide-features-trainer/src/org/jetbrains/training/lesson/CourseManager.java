@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
@@ -97,7 +98,7 @@ public class CourseManager extends ActionGroup{
         return mapCourseVirtualFile.containsValue(virtualFile);
     }
 
-    public synchronized void openLesson(final AnActionEvent e, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
+    public synchronized void openLesson(final Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         if (lesson == null) throw new BadLessonException("Cannot open \"null\" lesson");
         if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
@@ -118,12 +119,12 @@ public class CourseManager extends ActionGroup{
         if (mapCourseVirtualFile.containsKey(lesson.getCourse())) {
             vf = mapCourseVirtualFile.get(lesson.getCourse());
         } else {
-            vf = ScratchRootType.getInstance().createScratchFile(e.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
+            vf = ScratchRootType.getInstance().createScratchFile(project, "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        vf.rename(e, lesson.getCourse().getId());
+                        vf.rename(CourseManager.getInstance(), lesson.getCourse().getId());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -141,7 +142,7 @@ public class CourseManager extends ActionGroup{
                 if(lesson.getCourse().hasNotPassedLesson()) {
                     Lesson nextLesson = lesson.getCourse().giveNotPassedAndNotOpenedLesson();
                     if (nextLesson == null) throw new BadLessonException("Unable to obtain not passed and not opened lessons");
-                    openLesson(e, nextLesson);
+                    openLesson(project, nextLesson);
                 }
             }
         });
@@ -158,7 +159,7 @@ public class CourseManager extends ActionGroup{
 //        lesson.open(DIMENSION);
 
         //Dispose balloon while scratch file is closing. InfoPanel still exists.
-        e.getProject().getMessageBus().connect(e.getProject()).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
+        project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
             @Override
             public void fileOpened(FileEditorManager source, VirtualFile file) {
 
@@ -174,15 +175,30 @@ public class CourseManager extends ActionGroup{
         });
 
 
-        OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
-        final java.util.List<FileEditor> fileEditors = FileEditorManager.getInstance(e.getProject()).openEditor(descriptor, true);
-        final FileEditor selectedEditor = FileEditorManager.getInstance(e.getProject()).getSelectedEditor(vf);
+        EduEditor eduEditor = getEduEditor(project, vf);
+
+        //Process lesson
+        LessonProcessor.process(lesson, eduEditor, project, eduEditor.getEditor().getDocument(), target);
+    }
+
+    @Nullable
+    private EduEditor getEduEditor(Project project, VirtualFile vf) {
+        OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
+        final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
+        if(allEditors == null) {
+            FileEditorManager.getInstance(project).openEditor(descriptor, true);
+        } else {
+            boolean editorIsFind = false;
+            for (FileEditor curEditor : allEditors) {
+                if(curEditor instanceof EduEditor) editorIsFind = true;
+            }
+            if (!editorIsFind) FileEditorManager.getInstance(project).openEditor(descriptor, true);
+        }
+        final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(vf);
 
         EduEditor eduEditor = null;
         if (selectedEditor instanceof EduEditor) eduEditor = (EduEditor) selectedEditor;
-
-        //Process lesson
-        LessonProcessor.process(lesson, eduEditor, e, eduEditor.getEditor().getDocument(), target);
+        return eduEditor;
     }
 
 }

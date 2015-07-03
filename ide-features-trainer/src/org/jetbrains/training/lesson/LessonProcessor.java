@@ -3,6 +3,7 @@ package org.jetbrains.training.lesson;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.commands.Command;
@@ -22,7 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class LessonProcessor {
 
-    public static void process(final Lesson lesson, final EduEditor eduEditor, final AnActionEvent e, Document document, @Nullable String target) throws InterruptedException, ExecutionException {
+    public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws InterruptedException, ExecutionException {
 
         Queue<Element> elements = new LinkedBlockingQueue<Element>();
         if (lesson.getScn().equals(null)) {
@@ -51,12 +52,16 @@ public class LessonProcessor {
             }
         }
 
-        //Perform first action, all next perform like a chain reaction
         MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
 
+        //Initialize ALL LESSONS in EduEditor in this course
+        eduEditor.initAllLessons(lesson);
+        eduEditor.clearEditor();
+        eduEditor.clearLessonPanel();
 
+        //Perform first action, all next perform like a chain reaction
         Command cmd = CommandFactory.buildCommand(elements.peek());
-        ExecutionList executionList = new ExecutionList(elements, lesson, e, eduEditor, mouseListenerHolder, target);
+        ExecutionList executionList = new ExecutionList(elements, lesson, project, eduEditor, mouseListenerHolder, target);
 
         cmd.execute(executionList);
 
