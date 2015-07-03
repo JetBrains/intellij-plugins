@@ -401,7 +401,7 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
 
       "<div>\n" +
       "    {{#foo}}\n" +
-      "        <caret>\n" + // NOTE: this is not ideal, but it's tough to get the formatting right when there's unclosed html elements
+      "    <caret>\n" + // NOTE: this is not ideal, but it's tough to get the formatting right when there's unclosed html elements
       "        {{bar}}\n" +
       "    {{/foo}}"
     );

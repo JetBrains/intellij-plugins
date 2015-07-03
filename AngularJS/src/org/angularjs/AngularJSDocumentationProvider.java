@@ -22,8 +22,7 @@ import java.util.List;
 public class AngularJSDocumentationProvider extends DocumentationProviderEx {
 
   private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
-    final JSImplicitElement directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.KEY, directiveName);
-    return directive;
+    return AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.KEY, directiveName);
   }
 
   @Override
