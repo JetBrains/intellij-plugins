@@ -209,6 +209,7 @@ public class EduPanel extends JPanel {
     public void setLessonPassed(){
         lessonNameLabel.setText(lessonNameLabel.getText() + " ✔");
         lessonNameLabel.setForeground(lessonPassedColor);
+        lessonNextButton.setVisible(true);
         this.repaint();
     }
 

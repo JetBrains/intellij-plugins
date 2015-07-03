@@ -40,7 +40,6 @@ public abstract class Command {
     protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor, final String htmlText){
 
         String inputText = "<html>" + htmlText + "</html>";
-
         infoPanel.setText(inputText);
 
     }
