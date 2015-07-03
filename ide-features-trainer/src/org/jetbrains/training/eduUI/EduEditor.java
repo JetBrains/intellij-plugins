@@ -33,6 +33,7 @@ public class EduEditor implements TextEditor {
     private Project myProject;
     private FileEditor myDefaultEditor;
     private JComponent myComponent;
+    final private EduPanel eduPanel;
 
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
@@ -40,11 +41,9 @@ public class EduEditor implements TextEditor {
         myProject = project;
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
         myComponent = myDefaultEditor.getComponent();
-        final EduPanel eduPanel = new EduPanel(275);
+        eduPanel = new EduPanel(275);
         myComponent.add(eduPanel, BorderLayout.WEST);
     }
-
-
 
     private FileEditor getDefaultEditor() {
         return myDefaultEditor;
@@ -214,5 +213,10 @@ public class EduEditor implements TextEditor {
                 });
             }
         }
+    }
+
+
+    public void addMessage(String message){
+        eduPanel.addMessage(message);
     }
 }

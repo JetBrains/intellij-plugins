@@ -25,12 +25,17 @@ public class LessonMessage {
         this.shortcut = shortcut;
     }
 
+    public JLabel getLabel(){
+        return message;
+    }
+
     public JPanel getPanel(){
         JPanel c = new JPanel();
 
         c.setLayout(new BoxLayout(c, BoxLayout.LINE_AXIS));
         c.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         c.add(message);
+        message.setAlignmentX(Component.LEFT_ALIGNMENT);
         if (shortcut != null) {
             c.add(shortcut);
         }

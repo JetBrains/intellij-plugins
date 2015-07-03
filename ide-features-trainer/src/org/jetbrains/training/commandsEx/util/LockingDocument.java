@@ -1,4 +1,4 @@
-package org.jetbrains.training.commands.util;
+package org.jetbrains.training.commandsEx.util;
 
 import com.intellij.openapi.editor.impl.*;
 import org.jetbrains.annotations.NotNull;

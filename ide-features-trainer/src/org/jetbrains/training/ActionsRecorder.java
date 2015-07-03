@@ -88,10 +88,15 @@ public class ActionsRecorder implements Disposable {
     public boolean isTaskSolved(Document current, String target){
         if (disposed) return false;
 
-        List<String> expected = computeTrimmedLines(target);
-        List<String> actual = computeTrimmedLines(current.getText());
+        if (target == null){
+            return triggerActivated;
+        } else {
+            List<String> expected = computeTrimmedLines(target);
+            List<String> actual = computeTrimmedLines(current.getText());
 
-        return ((expected.equals(actual) && triggerActivated));
+            return ((expected.equals(actual) && triggerActivated));
+        }
+
     }
 
     private List<String> computeTrimmedLines(String s) {

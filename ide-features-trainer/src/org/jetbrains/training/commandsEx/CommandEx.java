@@ -1,11 +1,11 @@
-package org.jetbrains.training;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.commands.util.XmlUtil;
+import org.jetbrains.training.commandsEx.util.XmlUtil;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.lesson.Lesson;
@@ -16,14 +16,14 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 30/01/15.
  */
-public abstract class Command {
+public abstract class CommandEx {
 
 
     private CommandType commandType;
 
         public enum CommandType {START, TEXT, TRY, TRYBLOCK, ACTION, REPLAY, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT, WIN}
 
-    public Command(CommandType commandType) {
+    public CommandEx(CommandType commandType) {
         this.commandType = commandType;
     }
 
@@ -94,7 +94,7 @@ public abstract class Command {
             @Override
             public void run() {
                 try {
-                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
+                    CommandFactoryEx.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 } catch (ExecutionException e1) {

@@ -1,10 +1,9 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
@@ -14,9 +13,9 @@ import java.util.Queue;
 /**
  * Created by karashevich on 30/01/15.
  */
-public class StartCommand extends Command {
+public class StartCommandEx extends CommandEx {
 
-    public StartCommand(){
+    public StartCommandEx(){
         super(CommandType.START);
     }
 

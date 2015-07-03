@@ -1,4 +1,4 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -7,10 +7,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
-import org.jetbrains.training.commands.util.PerformActionUtil;
+import org.jetbrains.training.commandsEx.util.PerformActionUtil;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.event.InputEvent;
@@ -20,9 +19,9 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 30/01/15.
  */
-public class TraverseCaretCommand extends Command {
+public class TraverseCaretCommandEx extends CommandEx {
 
-    public TraverseCaretCommand(){
+    public TraverseCaretCommandEx(){
         super(CommandType.TRAVERSECARET);
     }
 

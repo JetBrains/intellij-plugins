@@ -1,7 +1,5 @@
 package org.jetbrains.training;
 
-import com.intellij.ide.scratch.ScratchFileService;
-import com.intellij.ide.scratch.ScratchFileType;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -20,8 +18,11 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.training.eduUI.EduEditor;
 import org.jetbrains.training.eduUI.EduEditorProvider;
 import org.jetbrains.training.lesson.CourseManager;
+import org.jetbrains.training.lesson.Lesson;
 
+import java.awt.*;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 23/06/15.
@@ -37,41 +38,36 @@ public class ShowEduUi extends AnAction{
 //        vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
         //TODO: remove const "scratch" here
 
-        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "some text here");
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    vf.rename(anActionEvent, "Editor Basics");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
+
 
         System.out.println("vf url:" + vf.getUrl());
         CourseManager.getInstance().registerVirtaulFile(CourseManager.getInstance().getAnyCourse(), vf);
-        OpenFileDescriptor descriptor = new OpenFileDescriptor(anActionEvent.getProject(), vf);
+
+        //Open file with EduEditorProvider
+//        FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(vf, true, true);
 
 
+        final Lesson lesson = CourseManager.getInstance().getCourseById("default").giveNotPassedLesson();
+        System.out.println(lesson);
+        try {
+            CourseManager.getInstance().openLesson(anActionEvent, lesson);
+        } catch (BadCourseException e) {
+            e.printStackTrace();
+        } catch (BadLessonException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (LessonIsOpenedException e) {
+            e.printStackTrace();
+        }
 
-//        FileEditorManager.getInstance(project).openTextEditor()
-//        final Document document = editor.getDocument();
-
-//        FileEditorManager.getInstance(project).setSelectedEditor(descriptor.getFile(), new EduEditorProvider(project, vf).getEditorTypeId());
-//        Editor editor = new EduEditor(project, vf).getEditor();
-//        final Editor editor1 = FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
-
-//        FileEditorManager.getInstance(project).getOpenedEditor(editor, focusEditor);
-
-
-        final Pair<FileEditor[], FileEditorProvider[]> pair = FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(vf, true, true);
-
-
-//        if (openedFile != null && openedFile.getCanonicalPath() != null) {
-//            String filePath = openedFile.getCanonicalPath();
-//            executeFile(project, openedFile, filePath);
-//        }
     }
 
 

@@ -1,0 +1,26 @@
+<xml type="Scenario" name="Comment Line" passed="false" version="0.1" subtype="aimless">
+    <MouseBlock>
+        <CopyText>public class CommentLineDemo {
+
+    public int fib(int n) {
+        int a = 1;
+        int b = 1;
+
+        int tmp;
+
+        if (n &lt; 2) return 1;
+
+        for (int i = 0; i &lt; (n - 1); i++) {
+            tmp = b;
+            b = a;
+            a = a + tmp;
+        }
+
+        return a;
+    }
+}</CopyText>
+    </MouseBlock>
+    <Try description="&lt;html&gt;Comment out any line with &lt;b&gt;CMD + /&lt;/b&gt;&lt;/html&gt;&quot; action=&quot;CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="&lt;html&gt;Uncomment the line with the same shortcut&lt;/html&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="&lt;html&gt;Select several lines with &lt;b&gt;CMD + Down&lt;/b&gt; and comment with &lt;b&gt;CMD + Down&lt;/b&gt;&lt;/html&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+</xml>
