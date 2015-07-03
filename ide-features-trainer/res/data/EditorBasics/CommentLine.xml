@@ -1,0 +1,27 @@
+<xml type="Scenario" name="Comment Line" passed="false" version="0.1" subtype="aimless">
+    <MouseBlock>
+        <CopyText>public class CommentLineDemo {
+
+    public int fib(int n) {
+        int a = 1;
+        int b = 1;
+
+        int tmp;
+
+        if (n &lt; 2) return 1;
+
+        for (int i = 0; i &lt; (n - 1); i++) {
+            tmp = b;
+            b = a;
+            a = a + tmp;
+        }
+
+        return a;
+    }
+}</CopyText>
+    </MouseBlock>
+    <Try description="Comment out any line with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Uncomment the line with the same shortcut" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Select several lines with &lt;b&gt;&lt;action=&quot;EditorDownWithSelection&quot;&gt;&lt;/b&gt; and comment with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Win/>
+</xml>

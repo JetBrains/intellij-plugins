@@ -1,20 +1,33 @@
 package org.jetbrains.training.eduUI.panel;
 
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.training.BadCourseException;
+import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.commandsEx.util.XmlUtil;
+import org.jetbrains.training.eduUI.EduEditor;
+import org.jetbrains.training.lesson.Course;
+import org.jetbrains.training.lesson.CourseManager;
+import org.jetbrains.training.lesson.Lesson;
+import org.jetbrains.training.lesson.LessonProcessor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 26/06/15.
  */
 public class EduPanel extends JPanel {
 
+    private EduEditor eduEditor;
     private int width;
 
     //Lesson panel stuff
@@ -49,6 +62,7 @@ public class EduPanel extends JPanel {
 
     //Course panel stuff
     private JPanel coursePanel;
+    private ArrayList<JLabel> lessonsLabels;
 
     //coursePanel UI
     private int lessonGap;
@@ -57,10 +71,11 @@ public class EduPanel extends JPanel {
     private Font lessonsFont;
     private Font allLessonsFont;
 
-    public EduPanel(int width){
+    public EduPanel(EduEditor eduEditor, int width){
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.width = width;
+        this.eduEditor = eduEditor;
 
         //Obligatory block
         generalizeUI();
@@ -221,33 +236,92 @@ public class EduPanel extends JPanel {
 
         //define separator
         coursePanel.setBorder(new MatteBorder(1, 0, 0, 0, separatorColor));
-        JLabel allLessons = new JLabel();
-        allLessons.setText("ALL LESSONS");
-        allLessons.setFont(allLessonsFont);
 
-        coursePanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        coursePanel.add(allLessons);
-        coursePanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        lessonsLabels = new ArrayList<JLabel>();
 
-        ArrayList<JLabel> lessons = new ArrayList<JLabel>(5);
-        for (int i = 0; i < 7; i++) {
-            final JLabel e = new JLabel(("Lesson" + i).toString());
-            e.setForeground(lessonInactiveColor);
-            e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
-            e.setFont(lessonsFont);
-            lessons.add(e);
-            coursePanel.add(e);
+    }
+
+
+    public void setAllLessons(final Lesson lesson){
+        if(lesson == null) return;
+        if(lesson.getCourse() == null) return;
+        Course course = lesson.getCourse();
+        final ArrayList<Lesson> myLessons = course.getLessons();
+
+        //if course conrtains one lesson only
+        if (myLessons.size() == 1) return;
+        //cleat AllLessons region
+        if(lessonsLabels.size() > 0) {
+            while (lessonsLabels.size() > 0){
+                coursePanel.remove(lessonsLabels.get(0));
+                lessonsLabels.remove(0);
+            }
+
+
+        } else {
+            JLabel allLessons = new JLabel();
+            allLessons.setText("ALL LESSONS");
+            allLessons.setFont(allLessonsFont);
+
+            coursePanel.add(Box.createRigidArea(new Dimension(0, 5)));
+            coursePanel.add(allLessons);
+            coursePanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
 
-        lessons.get(0).setText("Delete");
-        lessons.get(1).setText("Duplicate");
-        lessons.get(2).setText("Comment");
-        lessons.get(2).setForeground(lessonActiveColor);
-        lessons.get(3).setText("Surround with ...");
-        lessons.get(4).setText("Select code blocks");
-        lessons.get(5).setText("Smart split and join");
-        lessons.get(6).setText("Toggle case");
+        for (int i = 0; i < myLessons.size(); i++) {
+            if (lesson.equals(myLessons.get(i))){
+                //selected lesson
+                final JLabel e = new JLabel((myLessons.get(i).getId()));
+                e.setForeground(lessonActiveColor);
+                e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
+                e.setFont(lessonsFont);
+                lessonsLabels.add(e);
+                coursePanel.add(e);
+            } else {
+                final JLabel e = new JLabel((myLessons.get(i).getId()));
+                e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                e.setForeground(lessonInactiveColor);
+                e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
+                e.setFont(lessonsFont);
+                final int index = i;
+                e.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent mouseEvent) {
+                        try {
+                            CourseManager.getInstance().openLesson(eduEditor.getEditor().getProject(), myLessons.get(index));
+                        } catch (BadCourseException e1) {
+                            e1.printStackTrace();
+                        } catch (BadLessonException e1) {
+                            e1.printStackTrace();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        } catch (FontFormatException e1) {
+                            e1.printStackTrace();
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        } catch (ExecutionException e1) {
+                            e1.printStackTrace();
+                        } catch (LessonIsOpenedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
+                lessonsLabels.add(e);
+                coursePanel.add(e);
+            }
+        }
         coursePanel.setMaximumSize(new Dimension(width - insets * 2, coursePanel.getPreferredSize().height));
     }
 
+
+    public void clearLessonPanel() {
+//        while (messages.size() > 0){
+//            lessonMessageContainer.remove(messages.get(0).getPanel());
+//            messages.remove(0);
+//        }
+        lessonMessageContainer.removeAll();
+        messages.clear();
+        this.revalidate();
+        this.repaint();
+    }
 }

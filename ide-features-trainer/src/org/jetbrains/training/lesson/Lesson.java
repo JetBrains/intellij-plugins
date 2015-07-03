@@ -160,7 +160,7 @@ public class Lesson extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         try {
-            CourseManager.getInstance().openLesson(anActionEvent, this);
+            CourseManager.getInstance().openLesson(anActionEvent.getProject(), this);
         } catch (BadCourseException e) {
             e.printStackTrace();
         } catch (BadLessonException e) {

@@ -19,7 +19,7 @@ public class CopyTextCommand extends Command {
 //        updateDescription(element, infoPanel, editor);
 
         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
-        WriteCommandAction.runWriteCommandAction(executionList.getAnActionEvent().getProject(), new Runnable() {
+        WriteCommandAction.runWriteCommandAction(executionList.getProject(), new Runnable() {
             @Override
             public void run() {
                 executionList.getEditor().getDocument().insertString(0, finalText);
@@ -30,6 +30,5 @@ public class CopyTextCommand extends Command {
         startNextCommand(executionList);
 
     }
-
 
 }
