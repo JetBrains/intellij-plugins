@@ -40,7 +40,11 @@ public class Lesson extends AnAction {
             name = scn.getName();
 
             isPassed = passed;
-            targetPath = scn.getTarget();
+            if (!scn.getSubtype().equals("aimless")) {
+                targetPath = scn.getTarget();
+            } else {
+                targetPath = null;
+            }
             lessonListeners = new ArrayList<LessonListener>();
             parentCourse = course;
 
@@ -94,12 +98,13 @@ public class Lesson extends AnAction {
         return scn;
     }
 
+    @Nullable
     public String getTargetPath() {
         return targetPath;
     }
 
     @Nullable
-    public Course getParentCourse() {return parentCourse;}
+    public Course getCourse() {return parentCourse;}
 
     //Listeners
     public void addLessonListener(LessonListener lessonListener){

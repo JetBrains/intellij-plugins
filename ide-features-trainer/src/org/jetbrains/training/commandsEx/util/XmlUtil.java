@@ -1,6 +1,5 @@
-package org.jetbrains.training.commands.util;
+package org.jetbrains.training.commandsEx.util;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
 

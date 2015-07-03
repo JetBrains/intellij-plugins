@@ -1,11 +1,10 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
@@ -15,10 +14,10 @@ import java.util.Queue;
 /**
  * Created by karashevich on 30/01/15.
  */
-public class TypeTextCommand extends Command {
+public class TypeTextCommandRx extends CommandEx {
 
-    public TypeTextCommand(){
-        super(Command.CommandType.TYPETEXT);
+    public TypeTextCommandRx(){
+        super(CommandEx.CommandType.TYPETEXT);
     }
 
     @Override

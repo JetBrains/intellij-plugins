@@ -5,13 +5,16 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.*;
+import org.jetbrains.training.ActionsRecorder;
+import org.jetbrains.training.MyClassLoader;
+import org.jetbrains.training.commandsEx.ActionCommandEx;
+import org.jetbrains.training.commandsEx.CommandEx;
 import org.jetbrains.training.editor.MouseListenerHolder;
+import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.graphics.HintPanel;
 import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
-import org.jetbrains.training.graphics.DetailPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,85 +33,54 @@ public class TryCommand extends Command {
     }
 
     @Override
-    public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) throws InterruptedException {
+    public void execute(ExecutionList executionList) throws InterruptedException {
 
 
-        Element element = elements.poll();
+        Element element = executionList.getElements().poll();
 //        updateDescription(element, infoPanel, editor);
 
-        String myTarget = target;
+        String myTarget = executionList.getTarget();
         if (element.getAttribute("target") != null)
             try {
-                myTarget = getFromTarget(lesson, element.getAttribute("target").getValue());
+                myTarget = getFromTarget(executionList.getLesson(), element.getAttribute("target").getValue());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-
-
-        if(lesson.hintPanel == null) {
-            if (element.getAttribute("hint") != null) {
-                String hintText = element.getAttribute("hint").getValue();
-                if (element.getAttribute("action") != null) {
-                    hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
-                }
-
-                try {
-                    lesson.hintPanel = new HintPanel(new String[]{hintText});
-                    lesson.hintPanel.showIt(editor);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (FontFormatException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-        }
 
         String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
 
         if (htmlText.equals("")) {
-            updateDescription(element, infoPanel, editor);
+            updateDescription(htmlText, executionList.getEduEditor());
         } else {
-            updateHTMLDescription(element, infoPanel, editor, htmlText);
+            updateHTMLDescription(htmlText, executionList.getEduEditor());
         }
 
         //Show button "again"
-        updateButton(element, elements, lesson, editor, e, document, myTarget, infoPanel, mouseListenerHolder);
+//        updateButton(element, elements, lesson, editor, e, document, myTarget, infoPanel, mouseListenerHolder);
 
-        final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, myTarget);
+        final ActionsRecorder recorder = new ActionsRecorder(executionList.getEditor().getProject(), executionList.getEditor().getDocument(), executionList.getTarget());
         //TODO: Make recorder disposable
 
         if (element.getAttribute("trigger") != null) {
             String actionId = element.getAttribute("trigger").getValue();
-            startRecord(elements, element, lesson, editor, e, document, myTarget, mouseListenerHolder, recorder, actionId);
+            startRecord(executionList, recorder, actionId);
         } else {
-            startRecord(elements, element, lesson, editor, e, document, myTarget, mouseListenerHolder, recorder, null);
+            startRecord(executionList, recorder, null);
         }
     }
 
-    private void startRecord(final Queue<Element> elements, final Element element, final Lesson lesson, final Editor editor, final AnActionEvent anActionEvent, final Document document, final String target, final MouseListenerHolder mouseListenerHolder, ActionsRecorder recorder, @Nullable String actionId) {
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId) {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
-                if(lesson.hintPanel != null) {
-                    if (element.getAttribute("hint") != null) {
-                        String hintText = element.getAttribute("hint").getValue();
-                        if (element.getAttribute("action") != null) {
-                            hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
-                        }
-
-                        lesson.hintPanel.setCheck(true, hintText);
-                    }
-                }
-
-                startNextCommand(elements, lesson, editor, anActionEvent, document, target, lesson.getInfoPanel(), mouseListenerHolder);
+                System.out.println("Lesson Completed");
             }
         }, actionId);
     }
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {
-        InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getParentCourse().getAnswersPath() + targetPath);
+        InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + targetPath);
         if(is == null) throw new IOException("Unable to get checkfile for \"" + lesson.getId() + "\" lesson");
         return new Scanner(is).useDelimiter("\\Z").next();
     }
@@ -120,8 +92,8 @@ public class TryCommand extends Command {
     }
 
     public static String substitution(String text, String shortcutString){
-        if (text.contains(ActionCommand.SHORTCUT)) {
-            return text.replace(ActionCommand.SHORTCUT, shortcutString);
+        if (text.contains(ActionCommandEx.SHORTCUT)) {
+            return text.replace(ActionCommandEx.SHORTCUT, shortcutString);
         } else {
             return text;
         }

@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
+import org.jetbrains.training.commandsEx.CommandEx;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.lesson.Lesson;
@@ -21,12 +21,12 @@ public class MouseBlockCommand extends Command {
     }
 
     @Override
-    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) {
+    public void execute(ExecutionList executionList) {
         //Block mouse and perform next
-        mouseListenerHolder.grabListeners(editor);
+        executionList.getMouseListenerHolderl().grabListeners(executionList.getEditor());
 
-        elements.poll();
-        startNextCommand(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
+        executionList.getElements().poll();
+        startNextCommand(executionList);
 
     }
 }

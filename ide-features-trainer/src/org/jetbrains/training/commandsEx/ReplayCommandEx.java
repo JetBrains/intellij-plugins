@@ -1,10 +1,9 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.lesson.Lesson;
@@ -19,9 +18,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  * From this command to TextCommand with an attribute again="true" all actions will be cached to Queue<Element> againChain
  *
  */
-public class ReplayCommand extends Command {
+public class ReplayCommandEx extends CommandEx {
 
-    public ReplayCommand() {
+    public ReplayCommandEx() {
         super(CommandType.REPLAY);
     }
     private Queue<Element> myElements;
@@ -85,7 +84,7 @@ public class ReplayCommand extends Command {
                     for(Element el1 : el.getChildren()){
                         myElements.add(el1); //add inner elements
                     }
-                    myElements.add(new Element(Command.CommandType.MOUSEUNBLOCK.toString())); //add unblock element
+                    myElements.add(new Element(CommandEx.CommandType.MOUSEUNBLOCK.toString())); //add unblock element
                 }
             } else {
                 myElements.add(el);
@@ -99,7 +98,7 @@ public class ReplayCommand extends Command {
     }
 
     private static boolean isMouseBlock(Element el){
-        return el.getName().toUpperCase().equals(Command.CommandType.MOUSEBLOCK.toString());
+        return el.getName().toUpperCase().equals(CommandEx.CommandType.MOUSEBLOCK.toString());
     }
 
 }

@@ -1,24 +1,16 @@
-package org.jetbrains.training.commands.util;
+package org.jetbrains.training.commandsEx.util;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapManager;
-import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Alarm;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.ide.PooledThreadExecutor;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by karashevich on 02/02/15.

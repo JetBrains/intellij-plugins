@@ -1,4 +1,4 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
@@ -23,14 +22,14 @@ import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static org.jetbrains.training.commands.util.PerformActionUtil.performAction;
+import static org.jetbrains.training.commandsEx.util.PerformActionUtil.performAction;
 
 /**
  * Created by karashevich on 30/01/15.
  */
-public class ActionCommand extends Command {
+public class ActionCommandEx extends CommandEx {
 
-    public ActionCommand() {
+    public ActionCommandEx() {
         super(CommandType.ACTION);
     }
 

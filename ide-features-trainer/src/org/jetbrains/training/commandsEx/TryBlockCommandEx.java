@@ -1,10 +1,9 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.graphics.HintPanel;
@@ -22,9 +21,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by karashevich on 30/01/15.
  */
-public class TryBlockCommand extends Command {
+public class TryBlockCommandEx extends CommandEx {
 
-    public TryBlockCommand(){
+    public TryBlockCommandEx(){
         super(CommandType.TRYBLOCK);
     }
 
@@ -90,8 +89,8 @@ public class TryBlockCommand extends Command {
     }
 
     public static String substitution(String text, String shortcutString){
-        if (text.contains(ActionCommand.SHORTCUT)) {
-            return text.replace(ActionCommand.SHORTCUT, shortcutString);
+        if (text.contains(ActionCommandEx.SHORTCUT)) {
+            return text.replace(ActionCommandEx.SHORTCUT, shortcutString);
         } else {
             return text;
         }
