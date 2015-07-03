@@ -1,11 +1,10 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.Alarm;
 import org.jdom.Element;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
@@ -15,9 +14,9 @@ import java.util.Queue;
 /**
  * Created by karashevich on 30/01/15.
  */
-public class WaitCommand extends Command {
+public class WaitCommandEx extends CommandEx {
 
-    public WaitCommand(){
+    public WaitCommandEx(){
         super(CommandType.WAIT);
     }
 

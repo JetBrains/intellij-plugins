@@ -1,13 +1,11 @@
-package org.jetbrains.training.commands;
+package org.jetbrains.training.commandsEx;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.util.Alarm;
 import org.jdom.Element;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.Command;
 import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
@@ -21,9 +19,9 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 30/01/15.
  */
-public class WinCommand extends Command {
+public class WinCommandEx extends CommandEx {
 
-    public WinCommand(){
+    public WinCommandEx(){
         super(CommandType.WIN);
     }
 
@@ -39,7 +37,7 @@ public class WinCommand extends Command {
         infoPanel.greenalize();
         lesson.setPassed(true);
 
-        if (lesson.getParentCourse().hasNotPassedLesson()) {
+        if (lesson.getCourse().hasNotPassedLesson()) {
             infoPanel.setButtonText("Next lesson");
             try {
                 infoPanel.addButtonAction(new Runnable() {

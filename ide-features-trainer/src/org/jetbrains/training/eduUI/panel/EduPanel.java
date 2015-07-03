@@ -77,7 +77,6 @@ public class EduPanel extends JPanel {
         this.add(filler);
         coursePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(coursePanel);
-//        coursePanel.setMaximumSize(new Dimension(width - insets * 2, coursePanel.getPreferredSize().height));
 
         //set EduPanel UI
         this.setPreferredSize(new Dimension(width, 100));
@@ -91,12 +90,14 @@ public class EduPanel extends JPanel {
                 " 234" +
                 "2346 34 623462346236 346234 6 2346with <b>Ctrl + /</b> </html>");
         paintPreviousMessagesToGray();
+        addMessage("<html>Comment the line with</html>");
+        paintPreviousMessagesToGray();
+        addMessage("<html>Comment the line with the same shortcut</html>");
+        paintPreviousMessagesToGray();
+        addMessage("<html>Comment the line with the same shortcut</html>");
         addMessage("<html>Comment the line with the same shortcut</html>");
 
-        //Pack lesson panel
-        lessonPanel.revalidate();
-        this.revalidate();
-        this.repaint();
+
     }
 
     private void generalizeUI(){
@@ -168,6 +169,9 @@ public class EduPanel extends JPanel {
         lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
 
         lessonMessageContainer.add(lessonMessagePanel);
+
+        //Pack lesson panel
+        lessonPanel.revalidate();
         this.revalidate();
         this.repaint();
     }
@@ -188,9 +192,15 @@ public class EduPanel extends JPanel {
 
     private void paintPreviousMessagesToGray(){
         if (messages == null) return;
-//        for (JLabel message : messages) {
+        for (LessonMessage message : messages) {
 //            message.setForeground(passedColor);
-//        }
+            if (message.getLabel().getForeground() != passedColor) {
+                message.getLabel().setForeground(passedColor);
+                String text = message.getLabel().getText();
+                text += " ✔";
+                message.getLabel().setText(text);
+            }
+        }
     }
 
     private void initCoursePanel(){
@@ -204,6 +214,7 @@ public class EduPanel extends JPanel {
         allLessons.setText("ALL LESSONS");
         allLessons.setFont(allLessonsFont);
 
+        coursePanel.add(Box.createRigidArea(new Dimension(0, 5)));
         coursePanel.add(allLessons);
         coursePanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
