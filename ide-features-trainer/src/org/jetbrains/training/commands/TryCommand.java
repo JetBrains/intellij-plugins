@@ -74,7 +74,8 @@ public class TryCommand extends Command {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
-                System.out.println("Lesson Completed");
+                executionList.getEduEditor().passExercise();
+                startNextCommand(executionList);
             }
         }, actionId);
     }

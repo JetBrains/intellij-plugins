@@ -20,7 +20,8 @@
     }
 }</CopyText>
     </MouseBlock>
-    <Try description="&lt;html&gt;Comment out any line with &lt;b&gt;CMD + /&lt;/b&gt;&lt;/html&gt;&quot; action=&quot;CommentByLineComment" trigger="CommentByLineComment"/>
-    <Try description="&lt;html&gt;Uncomment the line with the same shortcut&lt;/html&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
-    <Try description="&lt;html&gt;Select several lines with &lt;b&gt;CMD + Down&lt;/b&gt; and comment with &lt;b&gt;CMD + Down&lt;/b&gt;&lt;/html&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Comment out any line with &lt;b&gt;CMD + /&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Uncomment the line with the same shortcut" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Select several lines with &lt;b&gt;CMD + Down&lt;/b&gt; and comment with &lt;b&gt;CMD + /&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Win/>
 </xml>
