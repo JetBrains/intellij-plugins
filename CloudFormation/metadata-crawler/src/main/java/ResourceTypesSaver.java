@@ -227,7 +227,9 @@ public class ResourceTypesSaver {
           resourceType.properties.add(resourceProperty);
         }
       } else {
-        if (!name.equals("AWS::CloudFormation::WaitConditionHandle") && !name.equals("AWS::SDB::Domain")) {
+        if (!name.equals("AWS::CloudFormation::WaitConditionHandle") &&
+            !name.equals("AWS::SDB::Domain") &&
+            !name.equals("AWS::ECS::Cluster")) {
           throw new RuntimeException("No properties found in " + url);
         }
       }

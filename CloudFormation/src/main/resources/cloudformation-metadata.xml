@@ -232,12 +232,6 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
-          <name>LifecycleHookName</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
           <name>LifecycleTransition</name>
           <description></description>
           <type>String</type>
@@ -622,6 +616,54 @@
           <name>Unit</name>
           <description></description>
           <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::DataPipeline::Pipeline</name>
+      <properties>
+        <ResourceProperty>
+          <name>Activate</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Name</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ParameterObjects</name>
+          <description></description>
+          <type>AWS Data Pipeline Pipeline ParameterObjects</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ParameterValues</name>
+          <description></description>
+          <type>AWS Data Pipeline Pipeline ParameterValues</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PipelineObjects</name>
+          <description></description>
+          <type>A list of AWS Data Pipeline PipelineObjects</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PipelineTags</name>
+          <description></description>
+          <type>AWS Data Pipeline Pipeline PipelineTags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1355,6 +1397,12 @@
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>MapPublicIpOnLaunch</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Tags</name>
           <description></description>
           <type>AWS CloudFormation Resource Tags</type>
@@ -1695,6 +1743,65 @@
       <attributes/>
     </ResourceType>
     <ResourceType>
+      <name>AWS::ECS::Cluster</name>
+      <properties/>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::ECS::Service</name>
+      <properties>
+        <ResourceProperty>
+          <name>Cluster</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DesiredCount</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LoadBalancers</name>
+          <description></description>
+          <type>List of Amazon EC2 Container Service Service LoadBalancers</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Role</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TaskDefinition</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::ECS::TaskDefinition</name>
+      <properties>
+        <ResourceProperty>
+          <name>ContainerDefinitions</name>
+          <description></description>
+          <type>List of Amazon EC2 Container Service TaskDefinition ContainerDefinitions</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Volumes</name>
+          <description></description>
+          <type>List of Amazon EC2 Container Service TaskDefinition Volumes</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
       <name>AWS::ElastiCache::CacheCluster</name>
       <properties>
         <ResourceProperty>
@@ -1794,6 +1901,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>SnapshotName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>SnapshotRetentionLimit</name>
           <description></description>
           <type>Integer</type>
@@ -1846,6 +1959,137 @@
         </ResourceProperty>
       </properties>
       <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::ElastiCache::ReplicationGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>AutomaticFailoverEnabled</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AutoMinorVersionUpgrade</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheNodeType</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheParameterGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheSecurityGroupNames</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheSubnetGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Engine</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EngineVersion</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NotificationTopicArn</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NumCacheClusters</name>
+          <description></description>
+          <type>Integer</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Port</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredCacheClusterAZs</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredMaintenanceWindow</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ReplicationGroupDescription</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroupIds</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotArns</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotRetentionLimit</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotWindow</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes>
+        <ResourceAttribute>
+          <name>PrimaryEndPoint.Address</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>PrimaryEndPoint.Port</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>ReadEndPoint.Addresses</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>ReadEndPoint.Ports</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SecurityGroup</name>
@@ -1950,7 +2194,7 @@
           <name>SourceBundle</name>
           <description></description>
           <type>Source Bundle</type>
-          <required>false</required>
+          <required>true</required>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -2218,6 +2462,12 @@
       <name>AWS::IAM::Group</name>
       <properties>
         <ResourceProperty>
+          <name>ManagedPolicyArns</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Path</name>
           <description></description>
           <type>String</type>
@@ -2259,6 +2509,48 @@
           <description></description>
         </ResourceAttribute>
       </attributes>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::IAM::ManagedPolicy</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Groups</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Path</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PolicyDocument</name>
+          <description></description>
+          <type>JSON object</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Roles</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Users</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::Policy</name>
@@ -2306,10 +2598,16 @@
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>ManagedPolicyArns</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Path</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Policies</name>
@@ -2329,12 +2627,6 @@
       <name>AWS::IAM::User</name>
       <properties>
         <ResourceProperty>
-          <name>Path</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
           <name>Groups</name>
           <description></description>
           <type>List of strings</type>
@@ -2343,7 +2635,19 @@
         <ResourceProperty>
           <name>LoginProfile</name>
           <description></description>
-          <type>LoginProfile type</type>
+          <type>IAM User LoginProfile</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ManagedPolicyArns</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Path</name>
+          <description></description>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2389,6 +2693,59 @@
         </ResourceProperty>
       </properties>
       <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Lambda::Function</name>
+      <properties>
+        <ResourceProperty>
+          <name>Code</name>
+          <description></description>
+          <type>AWS Lambda Function Code</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Handler</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MemorySize</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Role</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Runtime</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Timeout</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes>
+        <ResourceAttribute>
+          <name>Arn</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::Logs::LogGroup</name>
@@ -2643,6 +3000,12 @@
           <name>InstallUpdatesOnBoot</name>
           <description></description>
           <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LifecycleEventConfiguration</name>
+          <description></description>
+          <type>AWS OpsWorks Layer LifeCycleConfiguration</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -3150,6 +3513,42 @@
           <name>SourceType </name>
           <description></description>
           <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::RDS::OptionGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>EngineName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MajorEngineVersion</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OptionGroupDescription</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OptionConfigurations</name>
+          <description></description>
+          <type>Amazon RDS OptionGroup OptionConfigurations</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>

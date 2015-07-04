@@ -6,7 +6,6 @@ CloudFormation <http://aws.amazon.com/documentation/cloudformation/> »
 User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
 » Release History
 Did this page help you?  Yes | No |  Tell us about it...
-<https://aws.amazon.com/forms/aws-doc-feedback?hidden_service_name=CloudFormation&hidden_guide_name=User%20Guide&hidden_api_version=2010-05-15&hidden_file_name=DocumentHistory>
 « PreviousNext »
 
 [Go]
@@ -21,6 +20,7 @@ Did this page help you?  Yes | No |  Tell us about it...
           o Walkthrough: Updating a Stack
           o Using CloudFormer to Create Templates
           o AWS CloudFormation Endpoints
+          o AWS CloudFormation and VPC Endpoints
     * Best Practices
     * Controlling Access with IAM
     * Working with Stacks
@@ -79,6 +79,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + CloudWatch
                 + CloudWatch Logs
                 + Amazon EC2
+                + Amazon ECS
                 + Elastic Beanstalk
                 + Elastic Load Balancing
                 + IAM
@@ -103,6 +104,8 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Amazon Simple Notification Service-backed Custom
                   Resources
                 + AWS Lambda-backed Custom Resources
+                      # Walkthrough: Refer to Resources in Another Stack
+                      # Walkthrough: Looking Up Amazon Machine Image IDs
                 + Custom Resource Reference
                       # Request Objects
                       # Response Objects
@@ -127,6 +130,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::CloudFront::Distribution
                 + AWS::CloudTrail::Trail
                 + AWS::CloudWatch::Alarm
+                + AWS::DataPipeline::Pipeline
                 + AWS::DynamoDB::Table
                 + AWS::EC2::CustomerGateway
                 + AWS::EC2::DHCPOptions
@@ -156,8 +160,12 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::EC2::VPNConnectionRoute
                 + AWS::EC2::VPNGateway
                 + AWS::EC2::VPNGatewayRoutePropagation
+                + AWS::ECS::Cluster
+                + AWS::ECS::Service
+                + AWS::ECS::TaskDefinition
                 + AWS::ElastiCache::CacheCluster
                 + AWS::ElastiCache::ParameterGroup
+                + AWS::ElastiCache::ReplicationGroup
                 + AWS::ElastiCache::SecurityGroup
                 + AWS::ElastiCache::SecurityGroupIngress
                 + AWS::ElastiCache::SubnetGroup
@@ -169,11 +177,13 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::IAM::AccessKey
                 + AWS::IAM::Group
                 + AWS::IAM::InstanceProfile
+                + AWS::IAM::ManagedPolicy
                 + AWS::IAM::Policy
                 + AWS::IAM::Role
                 + AWS::IAM::User
                 + AWS::IAM::UserToGroupAddition
                 + AWS::Kinesis::Stream
+                + AWS::Lambda::Function
                 + AWS::Logs::LogGroup
                 + AWS::Logs::MetricFilter
                 + AWS::OpsWorks::App
@@ -192,6 +202,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::RDS::DBSecurityGroup
                 + AWS::RDS::DBSecurityGroupIngress
                 + AWS::RDS::EventSubscription
+                + AWS::RDS::OptionGroup
                 + AWS::Route53::HealthCheck
                 + AWS::Route53::HostedZone
                 + AWS::Route53::RecordSet
@@ -226,6 +237,12 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + CloudWatch Metric Dimension
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
+                + AWS Data Pipeline Pipeline ParameterObjects
+                + AWS Data Pipeline Parameter Objects Attributes
+                + AWS Data Pipeline Pipeline ParameterValues
+                + AWS Data Pipeline PipelineObjects
+                + AWS Data Pipeline Data Pipeline Object Fields
+                + AWS Data Pipeline Pipeline PipelineTags
                 + DynamoDB Attribute Definitions
                 + DynamoDB Global Secondary Indexes
                 + DynamoDB Key Schema
@@ -243,6 +260,18 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + EC2 Network Interface Private IP Specification
                 + EC2 PortRange
                 + EC2 Security Group Rule
+                + Amazon ECS Service LoadBalancers
+                + Amazon ECS TaskDefinition ContainerDefinitions
+                + Amazon ECS TaskDefinition ContainerDefinitions
+                  Environment
+                + Amazon ECS TaskDefinition ContainerDefinitions
+                  MountPoints
+                + Amazon ECS TaskDefinition ContainerDefinitions
+                  PortMappings
+                + Amazon ECS TaskDefinition ContainerDefinitions
+                  VolumesFrom
+                + Amazon ECS TaskDefinition Volumes
+                + Amazon ECS TaskDefinition Volumes Host
                 + Elastic Beanstalk Environment Tier
                 + Elastic Beanstalk OptionSettings Property Type
                 + Elastic Beanstalk SourceBundle Property Type
@@ -256,9 +285,14 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
                 + IAM Policies
+                + IAM User LoginProfile
+                + AWS Lambda Function Code
                 + Name Type
                 + AWS OpsWorks AutoScalingThresholds Type
                 + AWS OpsWorks ChefConfiguration Type
+                + AWS OpsWorks Layer LifeCycleConfiguration
+                + AWS OpsWorks Layer LifeCycleConfiguration
+                  ShutdownEventConfiguration
                 + AWS OpsWorks LoadBasedAutoScaling Type
                 + AWS OpsWorks Recipes Type
                 + AWS OpsWorks Source Type
@@ -268,6 +302,9 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS OpsWorks VolumeConfiguration Type
                 + Amazon Redshift Parameter Type
                 + AWS CloudFormation Resource Tags
+                + Amazon RDS OptionGroup OptionConfigurations
+                + Amazon RDS OptionGroup OptionConfigurations
+                  OptionSettings
                 + RDS Security Group Rule
                 + Route 53 AliasTarget Property
                 + Amazon Route 53 Record Set GeoLocation Property
@@ -280,6 +317,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Amazon S3 Cors Configuration Rule
                 + Amazon S3 Lifecycle Configuration
                 + Amazon S3 Lifecycle Rule
+                + Amazon S3 Lifecycle Rule NoncurrentVersionTransition
                 + Amazon S3 Lifecycle Rule Transition
                 + Amazon S3 Logging Configuration
                 + Amazon S3 Notification Configuration
@@ -372,6 +410,120 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+Permission requirement change 	
+
+June 11, 2015
+
+When you create or update an AWS::RDS::DBInstance resource, you must now 
+also have permission to call the ec2:DescribeAccountAttributes action. 	 
+
+New resources
+
+June 11, 2015
+
+AWS CloudFormation added the following resources:
+
+AWS::DataPipeline::Pipeline
+
+    Use data pipelines to automate the movement and transformation of data.
+
+Amazon EC2 Container Service resources
+
+    Use the AWS::ECS::Service, AWS::ECS::Cluster, and 
+    AWS::ECS::TaskDefinition resources to create Docker containers on a
+    cluster of Amazon EC2 instances.
+
+AWS::ElastiCache::ReplicationGroup
+
+    Use replication groups to create a collection of nodes with one primary
+    read-write cluster and up to five secondary read-only clusters.
+
+AWS::IAM::ManagedPolicy
+
+    Use managed policies to create policies in your AWS account that you
+    can use to apply permissions to IAM users, groups, and roles.
+
+AWS::Lambda::Function
+
+    Use Lambda functions to run code in response to events.
+
+AWS::RDS::OptionGroup
+
+    Use option groups to help you create and manage Amazon RDS databases.
+
+2010-05-15
+
+Resource updates
+
+June 11, 2015
+
+AWS CloudFormation updated the following resources:
+
+AWS::EC2::Subnet
+
+    Use the MapPublicIpOnLaunch property to automatically assign public IP
+    addresses to instances in a subnet.
+
+AWS::ElastiCache::CacheCluster
+
+    Use the SnapshotName property to restore snapshot data into a new Redis
+    cache cluster.
+
+AWS::IAM::User
+
+    For the LoginProfile property, use the PasswordResetRequired property
+    so that users are required to set a new password when they log in to
+    the AWS Management Console.
+
+AWS::OpsWorks::Layer
+
+    Use the LifecycleEventConfiguration property to configure lifecycle
+    events for an AWS OpsWorks layer.
+
+AWS::S3::Bucket
+
+    For the LifecycleConfiguration property, use the 
+    NoncurrentVersionExpirationInDays and NoncurrentVersionTransition 
+    properties to specify lifecycle rules for non-current object versions.
+
+2010-05-15
+
+Parameter types
+
+May 19, 2015
+
+Whenever you use the AWS CloudFormation console to create or update a 
+stack, you can search for AWS-specific parameter type values by ID, name, 
+or Name tag value.
+
+AWS CloudFormation also added support for the following AWS-specific 
+parameter types. For more information, see Parameters.
+
+    * AWS::EC2::AvailabilityZone::Name
+
+    * List<AWS::EC2::AvailabilityZone::Name>
+
+    * AWS::EC2::Instance::Id
+
+    * List<AWS::EC2::Instance::Id>
+
+    * AWS::EC2::Image::Id
+
+    * List<AWS::EC2::Image::Id>
+
+    * AWS::EC2::SecurityGroup::GroupName
+
+    * List<AWS::EC2::SecurityGroup::GroupName>
+
+    * AWS::EC2::Volume::Id
+
+    * List<AWS::EC2::Volume::Id>
+
+    * AWS::Route53::HostedZone::Id
+
+    * List<AWS::Route53::HostedZone::Id>
+
+2010-05-15
 
 New resources
 
