@@ -122,6 +122,8 @@
             "Effect": "Allow",
             "Action"   : [
               "autoscaling:Describe*",
+              "cloudformation:Describe*",
+              "cloudformation:List*",
               "cloudfront:List*",
               "cloudFront:Get*",
               "cloudtrail:Describe*",
@@ -148,7 +150,6 @@
               "sqs:List*",
               "opsworks:Describe*",
               "redshift:Describe*",
-              "cloudformation:Describe*",
               "kinesis:Describe*",
               "kinesis:List*"
             ],
