@@ -9,8 +9,8 @@
     Amazon AWS CloudFormation language support
   ]]></description>
 
-  <!-- IDEA 14.0.3 to 14.1 -->
-  <idea-version since-build="139.661" until-build="141.99999"/>
+  <!-- IDEA 14.0.3 to 15.x -->
+  <idea-version since-build="139.661" until-build="142.99999"/>
 
   <depends>com.intellij.modules.lang</depends>
 
