@@ -1,7 +1,8 @@
 package com.intellij.javascript.karma.server;
 
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.platform.loader.PlatformLoader;
+import org.jetbrains.platform.loader.repository.RuntimeModuleId;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,16 +40,7 @@ public class KarmaJsSourcesLocator {
   }
 
   private static File getBundledJsReporterDir() {
-    String jarPath = PathUtil.getJarPathForClass(KarmaServer.class);
-    if (!jarPath.endsWith(".jar")) {
-      return new File(jarPath, "js_reporter");
-    }
-    File jarFile = new File(jarPath);
-    if (!jarFile.isFile()) {
-      throw new RuntimeException("jar file cannot be null");
-    }
-    File pluginBaseDir = jarFile.getParentFile().getParentFile();
-    return new File(pluginBaseDir, "js_reporter");
+    return new File(PlatformLoader.getInstance().getRepository().getModuleRootPath(RuntimeModuleId.moduleResource("js-karma", "js_reporter")));
   }
 
   private File getAppFile(@NotNull String baseName) throws IOException {
