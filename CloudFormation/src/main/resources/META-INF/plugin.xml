@@ -24,7 +24,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeDetector implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeDetector"/>
+    <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
 
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
 
