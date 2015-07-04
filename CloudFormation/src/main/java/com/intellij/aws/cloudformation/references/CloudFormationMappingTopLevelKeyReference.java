@@ -17,13 +17,13 @@ public class CloudFormationMappingTopLevelKeyReference extends CloudFormationRef
   @Nullable
   @Override
   public PsiElement resolve() {
-    final String entityName = CloudFormationResolve.OBJECT$.getTargetName((JsonStringLiteral) myElement);
-    return CloudFormationResolve.OBJECT$.resolveTopLevelMappingKey(myElement.getContainingFile(), myMappingName, entityName);
+    final String entityName = CloudFormationResolve.Companion.getTargetName((JsonStringLiteral) myElement);
+    return CloudFormationResolve.Companion.resolveTopLevelMappingKey(myElement.getContainingFile(), myMappingName, entityName);
   }
 
   @NotNull
   public String[] getCompletionVariants() {
-    final String[] keys = CloudFormationResolve.OBJECT$.getTopLevelMappingKeys(myElement.getContainingFile(), myMappingName);
+    final String[] keys = CloudFormationResolve.Companion.getTopLevelMappingKeys(myElement.getContainingFile(), myMappingName);
     return keys == null ? new String[0] : keys;
   }
 }

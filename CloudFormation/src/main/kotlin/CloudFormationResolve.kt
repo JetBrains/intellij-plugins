@@ -11,7 +11,7 @@ import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.json.psi.JsonProperty
 
 public open class CloudFormationResolve() {
-  class object {
+  companion object {
     public open fun getSectionNode(file: PsiFile, name: String): JsonObject? =
         CloudFormationPsiUtils.getObjectLiteralExpressionChild(CloudFormationPsiUtils.getRootExpression(file), name)
 

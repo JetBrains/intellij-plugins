@@ -86,7 +86,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
               JsonStringLiteral mappingNameExpression = ObjectUtils.tryCast(allParameters.get(0), JsonStringLiteral.class);
               if (mappingNameExpression != null) {
                 result.add(new CloudFormationMappingTopLevelKeyReference(stringLiteral,
-                    CloudFormationResolve.OBJECT$.getTargetName(mappingNameExpression)));
+                    CloudFormationResolve.Companion.getTargetName(mappingNameExpression)));
                 return result;
               }
             }
@@ -97,8 +97,8 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
               if (mappingNameExpression != null && topLevelKeyExpression != null) {
                 result.add(new CloudFormationMappingSecondLevelKeyReference(
                     stringLiteral,
-                    CloudFormationResolve.OBJECT$.getTargetName(mappingNameExpression),
-                    CloudFormationResolve.OBJECT$.getTargetName(topLevelKeyExpression)));
+                    CloudFormationResolve.Companion.getTargetName(mappingNameExpression),
+                    CloudFormationResolve.Companion.getTargetName(topLevelKeyExpression)));
                 return result;
               }
             }
@@ -145,7 +145,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return false;
     }
 
-    final String targetName = CloudFormationResolve.OBJECT$.getTargetName(element);
+    final String targetName = CloudFormationResolve.Companion.getTargetName(element);
     if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
       return false;
     }
