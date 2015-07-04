@@ -5,7 +5,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.json.JsonLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
-import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl;
 import com.intellij.openapi.util.io.ByteSequence;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,16 +54,8 @@ public class CloudFormationFileType extends LanguageFileType implements FileType
 
   @Override
   public boolean isMyFileType(@NotNull VirtualFile file) {
-    if (!CloudFormationFileType.DEFAULT_EXTENSION.equalsIgnoreCase(file.getExtension())) {
-      return false;
-    }
-
-    if (detectFromContent(file)) {
-      FileTypeManagerImpl.cacheFileType(file, INSTANCE);
-      return true;
-    }
-
-    return false;
+    return CloudFormationFileType.DEFAULT_EXTENSION.equalsIgnoreCase(file.getExtension()) &&
+        detectFromContent(file);
   }
 
   private boolean detectFromContent(@NotNull VirtualFile file) {
