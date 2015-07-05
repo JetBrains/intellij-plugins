@@ -40,9 +40,9 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
 
                boolean quoteResult = false; // parent instanceof JSReferenceExpression;
 
-               if (isResourceTypeValuePosition(parent)) {
+               if (CloudFormationPsiUtils.isResourceTypeValuePosition(parent)) {
                  completeResourceType(rs, quoteResult);
-               } else if (isResourcePropertyNamePosition(parent)) {
+               } else if (CloudFormationPsiUtils.isResourcePropertyNamePosition(parent)) {
                  completeResourceProperty(rs, parent, quoteResult);
                }
 
@@ -189,7 +189,7 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
       return;
     }
 
-    final JsonProperty resourceElement = getResourceElementFromPropertyName(propertyName);
+    final JsonProperty resourceElement = CloudFormationPsiUtils.getResourceElementFromPropertyName(propertyName);
     if (resourceElement == null) {
       return;
     }
@@ -230,97 +230,4 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
     return LookupElementBuilder.create(id);
   }
 
-  private boolean isResourceTypeValuePosition(PsiElement position) {
-    final JsonLiteral valueExpression = ObjectUtils.tryCast(position, JsonLiteral.class);
-    if (valueExpression == null) {
-      return false;
-    }
-
-    final JsonProperty typeProperty = ObjectUtils.tryCast(valueExpression.getParent(), JsonProperty.class);
-    if (typeProperty == null ||
-        typeProperty.getValue() != valueExpression ||
-        !CloudFormationConstants.TypePropertyName.equals(typeProperty.getName())) {
-      return false;
-    }
-
-    final JsonObject resourceExpression = ObjectUtils.tryCast(typeProperty.getParent(), JsonObject.class);
-    if (resourceExpression == null) {
-      return false;
-    }
-
-    final JsonProperty resourceProperty = ObjectUtils.tryCast(resourceExpression.getParent(), JsonProperty.class);
-    if (resourceProperty == null) {
-      return false;
-    }
-
-    final JsonObject resourcesExpression =
-      ObjectUtils.tryCast(resourceProperty.getParent(), JsonObject.class);
-    if (resourcesExpression == null) {
-      return false;
-    }
-
-    final JsonProperty resourcesProperty = ObjectUtils.tryCast(resourcesExpression.getParent(), JsonProperty.class);
-    if (resourcesProperty == null ||
-        !CloudFormationSections.Resources.equals(StringUtil.stripQuotesAroundValue(resourcesProperty.getName()))) {
-      return false;
-    }
-
-    final JsonObject root = CloudFormationPsiUtils.getRootExpression(resourceProperty.getContainingFile());
-    return root == resourcesProperty.getParent();
-  }
-
-  private boolean isResourcePropertyNamePosition(PsiElement position) {
-    final JsonProperty resourceProperty = getResourceElementFromPropertyName(position);
-    if (resourceProperty == null) {
-      return false;
-    }
-
-    final JsonObject resourcesExpression =
-      ObjectUtils.tryCast(resourceProperty.getParent(), JsonObject.class);
-    if (resourcesExpression == null) {
-      return false;
-    }
-
-    final JsonProperty resourcesProperty = ObjectUtils.tryCast(resourcesExpression.getParent(), JsonProperty.class);
-    if (resourcesProperty == null ||
-        resourcesProperty.getName().isEmpty() ||
-        !CloudFormationSections.Resources.equals(StringUtil.stripQuotesAroundValue(resourcesProperty.getName()))) {
-      return false;
-    }
-
-    final JsonObject root = CloudFormationPsiUtils.getRootExpression(resourceProperty.getContainingFile());
-    return root == resourcesProperty.getParent();
-  }
-
-  @Nullable
-  private static JsonProperty getResourceElementFromPropertyName(PsiElement position) {
-    final JsonStringLiteral propertyName = ObjectUtils.tryCast(position, JsonStringLiteral.class);
-    if (propertyName == null) {
-      return null;
-    }
-
-    final JsonProperty property = ObjectUtils.tryCast(propertyName.getParent(), JsonProperty.class);
-    if (property == null || property.getNameElement() != propertyName) {
-      return null;
-    }
-
-    final JsonObject propertiesExpression = ObjectUtils.tryCast(property.getParent(), JsonObject.class);
-    if (propertiesExpression == null) {
-      return null;
-    }
-
-    final JsonProperty properties = ObjectUtils.tryCast(propertiesExpression.getParent(), JsonProperty.class);
-    if (properties == null ||
-        properties.getValue() != propertiesExpression ||
-        !CloudFormationConstants.PropertiesPropertyName.equals(properties.getName())) {
-      return null;
-    }
-
-    final JsonObject resourceExpression = ObjectUtils.tryCast(properties.getParent(), JsonObject.class);
-    if (resourceExpression == null) {
-      return null;
-    }
-
-    return ObjectUtils.tryCast(resourceExpression.getParent(), JsonProperty.class);
-  }
 }
