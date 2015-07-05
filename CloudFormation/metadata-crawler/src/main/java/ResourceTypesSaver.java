@@ -101,6 +101,9 @@ public class ResourceTypesSaver {
 
     final Document doc = getDocumentFromUrl(url);
 
+    Element description = doc.select(".section").first();
+    resourceType.description = description.toString();
+
     Element vlist = doc.select("div.variablelist").first();
 
     if (vlist != null) {
@@ -112,10 +115,11 @@ public class ResourceTypesSaver {
         final Elements descrElements = descr.select("p");
 
         property.name = term.text();
-        property.description = "";
 
         String requiredValue = null;
         String typeValue = null;
+        String descriptionValue = null;
+        String updateValue = null;
 
         for (Element element : descrElements) {
           if (element.parent() != descr) {
@@ -124,7 +128,7 @@ public class ResourceTypesSaver {
 
           final String text = element.text();
 
-          if (text.matches("[a-zA-Z]+:.*")) {
+          if (text.matches("[a-zA-Z ]+:.*")) {
             String[] split = text.split(":", 2);
             assert split.length == 2 : text;
 
@@ -134,13 +138,18 @@ public class ResourceTypesSaver {
             if ("Required".equals(fieldName)) {
               requiredValue = fieldValue;
             } else if ("Type".equals(fieldName)) {
-              typeValue = fieldValue;
+              typeValue = element.toString().replace("Type:","");
+            } else if("Update requires".equals((fieldName))) {
+              updateValue = element.toString().replace("Update requires:","");
             }
+          }
+          else {
+            descriptionValue = element.toString();
           }
         }
 
-        // property.description = descr.html();
-
+        property.description = descriptionValue;
+        property.updateRequires = updateValue;
         if (typeValue != null) {
           property.type = typeValue;
         } else if (resourceType.name.equals("AWS::Redshift::Cluster") && property.name.equals("SnapshotClusterIdentifier")) {
@@ -239,8 +248,8 @@ public class ResourceTypesSaver {
 
     if (name.equals("AWS::ElasticBeanstalk::Application")) {
       // Not in official documentation yet, found in examples
-      resourceType.properties.add(CloudFormationResourceProperty.create("ConfigurationTemplates", "", "Unknown", false));
-      resourceType.properties.add(CloudFormationResourceProperty.create("ApplicationVersions", "", "Unknown", false));
+      resourceType.properties.add(CloudFormationResourceProperty.create("ConfigurationTemplates", "", "Unknown", false, ""));
+      resourceType.properties.add(CloudFormationResourceProperty.create("ApplicationVersions", "", "Unknown", false, ""));
     }
 
     if (name.equals("AWS::IAM::AccessKey")) {

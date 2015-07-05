@@ -24,6 +24,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <documentationProvider implementation="com.intellij.aws.cloudformation.CloudFormationDocumentationProvider"/>
     <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
 
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
