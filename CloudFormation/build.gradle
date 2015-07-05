@@ -86,6 +86,20 @@ task extractIdea {
     }
 }
 
+task extractPlugin {
+    ext.fromFile = file("$buildDir/distributions/CloudFormation.zip")
+    ext.toDir = file("$buildDir/idea-home/config/plugins")
+    inputs.file fromFile
+    outputs.dir toDir
+    
+    doLast {
+       delete toDir
+       copy {
+           from zipTree(fromFile)
+           into toDir
+       }
+    }
+}
 compileKotlin.dependsOn(extractIdea)
 compileJava.dependsOn(extractIdea)
 
@@ -103,7 +117,7 @@ task runIdeaWithPlugin(type: JavaExec, dependsOn: assemble) {
     classpath sourceSets.main.runtimeClasspath
     classpath fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
-
+runIdeaWithPlugin.dependsOn(extractPlugin)
 task zip(type: Zip) {
     baseName 'CloudFormation'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
