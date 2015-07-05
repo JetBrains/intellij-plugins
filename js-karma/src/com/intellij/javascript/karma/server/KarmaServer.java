@@ -152,8 +152,8 @@ public class KarmaServer {
   private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     KarmaRunSettings runSettings = serverSettings.getRunSettings();
-    commandLine.setPassParentEnvironment(runSettings.isPassParentEnvVars());
-    commandLine.getEnvironment().putAll(runSettings.getEnvVars());
+    commandLine.setPassParentEnvironment(runSettings.getEnvData().isPassParentEnvs());
+    commandLine.getEnvironment().putAll(runSettings.getEnvData().getEnvs());
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();

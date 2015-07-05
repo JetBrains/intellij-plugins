@@ -1,6 +1,6 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
+import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -9,14 +9,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class KarmaRunSettingsSerializationUtil {
 
   private static final String CONFIG_FILE = "config-file";
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
-  private static final String PASS_PARENT_ENV_VAR = "pass-parent-env-vars";
   private static final String BROWSERS = "browsers";
 
   private KarmaRunSettingsSerializationUtil() {}
@@ -42,14 +38,7 @@ public class KarmaRunSettingsSerializationUtil {
       builder.setKarmaPackageDir(FileUtil.toSystemDependentName(karmaPackageDir));
     }
 
-    Map<String, String> envVars = new LinkedHashMap<String, String>();
-    EnvironmentVariablesComponent.readExternal(element, envVars);
-    builder.setEnvVars(envVars);
-
-    String passParentEnvVarsStr = getAttrValue(element, PASS_PARENT_ENV_VAR);
-    if (passParentEnvVarsStr != null) {
-      builder.setPassParentEnvVars(Boolean.parseBoolean(passParentEnvVarsStr));
-    }
+    builder.setEnvData(EnvironmentVariablesData.readExternal(element));
 
     return builder.build();
   }
@@ -69,9 +58,6 @@ public class KarmaRunSettingsSerializationUtil {
       String value = FileUtil.toSystemIndependentName(settings.getKarmaPackageDir());
       JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR, value);
     }
-    EnvironmentVariablesComponent.writeExternal(element, settings.getEnvVars());
-    if (settings.isPassParentEnvVars() != KarmaRunSettings.Builder.DEFAULT_PASS_PARENT_ENV_VARS) {
-      element.setAttribute(PASS_PARENT_ENV_VAR, String.valueOf(settings.isPassParentEnvVars()));
-    }
+    settings.getEnvData().writeExternal(element);
   }
 }

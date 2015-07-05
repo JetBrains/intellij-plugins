@@ -192,9 +192,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), configFilePath);
 
     myBrowsers.setText(runSettings.getBrowsers());
-
-    myEnvVarsComponent.setEnvs(runSettings.getEnvVars());
-    myEnvVarsComponent.setPassParentEnvs(runSettings.isPassParentEnvVars());
+    myEnvVarsComponent.setData(runSettings.getEnvData());
 
     updatePreferredWidth();
   }
@@ -226,8 +224,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(myConfigPathTextFieldWithBrowseButton.getChildComponent().getText());
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
-    builder.setEnvVars(myEnvVarsComponent.getEnvs());
-    builder.setPassParentEnvVars(myEnvVarsComponent.isPassParentEnvs());
+    builder.setEnvData(myEnvVarsComponent.getData());
     builder.setKarmaPackageDir(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText());
     runConfiguration.setRunSettings(builder.build());
 
