@@ -2,10 +2,8 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -49,6 +47,8 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.platform.loader.PlatformLoader;
+import org.jetbrains.platform.loader.repository.RuntimeModuleId;
 
 import java.io.File;
 import java.util.*;
@@ -184,25 +184,8 @@ public class JstdRunProfileState implements RunProfileState {
   }
 
   private static String buildClasspath() {
-    List<File> classpathFiles = getClasspathRootFiles(
-      JstdCommonConstants.class,
-      TestRunner.class,
-      JsTestDriverServer.class,
-      Maps.class,
-      Gson.class
-    );
-    Set<String> classpathPaths = ImmutableSet.copyOf(Lists.transform(classpathFiles, GET_ABSOLUTE_PATH));
+    List<String> classpathPaths = PlatformLoader.getInstance().getRepository().getModuleClasspath(RuntimeModuleId.module("JsTestDriver-rt"));
     return Joiner.on(pathSeparator).join(classpathPaths);
-  }
-
-  private static List<File> getClasspathRootFiles(Class<?>... classList) {
-    List<File> classpath = Lists.newArrayList();
-    for (Class<?> clazz : classList) {
-      String path = PathUtil.getJarPathForClass(clazz);
-      File file = new File(path);
-      classpath.add(file.getAbsoluteFile());
-    }
-    return classpath;
   }
 
   @NotNull

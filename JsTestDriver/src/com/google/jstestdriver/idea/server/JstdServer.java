@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.server;
 
 import com.google.common.base.Charsets;
-import com.google.gson.stream.JsonWriter;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import com.google.jstestdriver.idea.rt.server.JstdServerMain;
@@ -15,10 +14,11 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.platform.loader.PlatformLoader;
+import org.jetbrains.platform.loader.repository.RuntimeModuleId;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,14 +151,8 @@ public class JstdServer {
 
   @NotNull
   private static String getClasspath() {
-    Class[] classes = new Class[] {JstdCommonConstants.class, JsTestDriverServer.class, JstdServerMain.class, JsonWriter.class};
-    List<String> result = ContainerUtil.newArrayList();
-    for (Class clazz : classes) {
-      String path = PathUtil.getJarPathForClass(clazz);
-      File file = new File(path);
-      result.add(file.getAbsolutePath());
-    }
-    return StringUtil.join(result, File.pathSeparator);
+    List<String> classpathPaths = PlatformLoader.getInstance().getRepository().getModuleClasspath(RuntimeModuleId.module("JsTestDriver-rt"));
+    return StringUtil.join(classpathPaths, File.pathSeparator);
   }
 
   public void addOutputListener(@NotNull final JstdServerOutputListener listener) {
