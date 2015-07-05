@@ -132,6 +132,4 @@ public class CloudFormationPsiUtils {
 
     return ObjectUtils.tryCast(resourceExpression.getParent(), JsonProperty.class);
   }
-
-
 }
