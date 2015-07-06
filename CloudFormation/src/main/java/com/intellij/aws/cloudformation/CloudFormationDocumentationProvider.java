@@ -52,7 +52,7 @@ public class CloudFormationDocumentationProvider extends AbstractDocumentationPr
       String propertyText = property.getValue() != null ? property.getValue().getText() : "";
 
       if (resourceType.name.equals(propertyText.replace("\"", "")))
-        return resourceType.description.replace("href=\"(?!http)", "href=\"http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/");
+        return prefixLinksWithUserGuideRoot(resourceType.description);
     }
 
     return "";
@@ -103,7 +103,7 @@ public class CloudFormationDocumentationProvider extends AbstractDocumentationPr
             propertyMetadata.type +
             propertyMetadata.updateRequires;
 
-        return document.replace("href=\"(?!http)", "href=\"http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/");
+        return prefixLinksWithUserGuideRoot(document);
       }
 
     }
@@ -133,5 +133,9 @@ public class CloudFormationDocumentationProvider extends AbstractDocumentationPr
   @Nullable
   public Image getLocalImageForElement(@NotNull PsiElement element, @NotNull String imageSpec) {
     return null;
+  }
+
+  private static String prefixLinksWithUserGuideRoot(String html) {
+    return html.replaceAll("href=\"(?!http)", "href=\"http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/");
   }
 }
