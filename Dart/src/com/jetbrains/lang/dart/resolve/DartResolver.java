@@ -15,7 +15,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
@@ -45,8 +44,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
         if (isIdentifier(reference)) {
           Project project = reference.getProject();
           final int refOffset = reference.getTextOffset();
-          final String refPath = refVirtualFile.getPath();
-          final List<NavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refPath);
+          final List<NavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
           for (NavigationRegion region : regions) {
             if (region.containsInclusive(refOffset)) {
               NavigationTarget target = region.getTargetObjects().get(0);
@@ -60,6 +58,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
       return null;
     }
+
     if (reference instanceof DartThisExpression) {
       return toResult(PsiTreeUtil.getParentOfType(reference, DartClass.class));
     }

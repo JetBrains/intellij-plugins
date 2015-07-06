@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.common.collect.ObjectArrays;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.generated.types.*;
@@ -13,7 +12,6 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
@@ -29,7 +27,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,10 +36,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.util.*;
-import com.intellij.util.ArrayUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -101,7 +96,7 @@ public class DartAnalysisServerService {
     @Override
     public void computedNavigation(String file, List<NavigationRegion> targets) {
       if (DartResolver.USE_SERVER) {
-        myNavigationData.put(file, targets);
+        myNavigationData.put(FileUtil.toSystemIndependentName(file), targets);
         final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
         if (virtualFile != null) {
           Project[] projects = ProjectManager.getInstance().getOpenProjects();
@@ -310,10 +305,12 @@ public class DartAnalysisServerService {
   /**
    * Returns {@link NavigationRegion}s for the given file.
    * Empty if no regions.
+   *
+   * @param file
    */
   @NotNull
-  public List<NavigationRegion> getNavigation(String file) {
-   List<NavigationRegion> sourceRegions = myNavigationData.get(file);
+  public List<NavigationRegion> getNavigation(@NotNull final VirtualFile file) {
+    List<NavigationRegion> sourceRegions = myNavigationData.get(file.getPath());
     if (sourceRegions == null) {
       return NavigationRegion.EMPTY_LIST;
     }
