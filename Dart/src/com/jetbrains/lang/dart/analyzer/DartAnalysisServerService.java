@@ -319,34 +319,7 @@ public class DartAnalysisServerService {
     EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
       @Override
       public void beforeDocumentChange(DocumentEvent e) {
-        final Document document = e.getDocument();
-        final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-        if (file == null) {
-          return;
-        }
-        long start = System.nanoTime();
-        synchronized (myLock) {
-          final String filePath = file.getPath();
-          myFilePathsWithUnsentChanges.add(filePath);
-          final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
-          if (regions != null) {
-            final int eventOffset = e.getOffset();
-            final int deltaLength = e.getNewLength() - e.getOldLength();
-            for (PluginNavigationRegion region : regions) {
-              if (region.offset <= eventOffset && eventOffset <= region.offset + region.length) {
-                region.length += deltaLength;
-              } else
-              if (region.offset >= eventOffset) {
-                region.offset += deltaLength;
-              }
-              for (PluginNavigationTarget target : region.getTargets()) {
-                if (target.file.equals(filePath) && target.offset >= eventOffset) {
-                  target.offset += deltaLength;
-                }
-              }
-            }
-          }
-        }
+        updateInformationFromServer(e);
       }
     });
   }
@@ -460,10 +433,6 @@ public class DartAnalysisServerService {
       }
     }
     myFilePathsWithUnsentChanges.clear();;
-  }
-
-  private void updateNavigationData() {
-
   }
 
   public boolean updateRoots(@NotNull final List<String> includedRoots,
@@ -1056,6 +1025,36 @@ public class DartAnalysisServerService {
     }
 
     return true;
+  }
+
+  private void updateInformationFromServer(DocumentEvent e) {
+    final Document document = e.getDocument();
+    final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    if (file == null) {
+      return;
+    }
+    final String filePath = file.getPath();
+    synchronized (myLock) {
+      myFilePathsWithUnsentChanges.add(filePath);
+      final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
+      if (regions != null) {
+        final int eventOffset = e.getOffset();
+        final int deltaLength = e.getNewLength() - e.getOldLength();
+        for (PluginNavigationRegion region : regions) {
+          if (region.offset <= eventOffset && eventOffset <= region.offset + region.length) {
+            region.length += deltaLength;
+          } else
+          if (region.offset >= eventOffset) {
+            region.offset += deltaLength;
+          }
+          for (PluginNavigationTarget target : region.getTargets()) {
+            if (target.file.equals(filePath) && target.offset >= eventOffset) {
+              target.offset += deltaLength;
+            }
+          }
+        }
+      }
+    }
   }
 
   private static class CompletionInfo {

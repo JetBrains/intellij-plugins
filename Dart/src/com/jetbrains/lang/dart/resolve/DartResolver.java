@@ -30,7 +30,7 @@ import java.util.List;
 public class DartResolver implements ResolveCache.AbstractResolver<DartReference, List<? extends PsiElement>> {
   public static final DartResolver INSTANCE = new DartResolver();
 
-  public static final boolean USE_SERVER = true;
+  public static final boolean USE_SERVER = false;
 
   @Nullable
   @Override
