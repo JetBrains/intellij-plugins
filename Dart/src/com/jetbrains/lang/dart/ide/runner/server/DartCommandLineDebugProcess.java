@@ -52,6 +52,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private boolean myVmConnected = false;
 
   public DartCommandLineDebugProcess(@NotNull final XDebugSession session,
+                                     @Nullable final String debuggingHost,
                                      final int debuggingPort,
                                      final int observatoryPort,
                                      @Nullable final ExecutionResult executionResult,
@@ -65,7 +66,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     myBreakpointHandlers = new XBreakpointHandler[]{dartBreakpointHandler};
 
     // see com.google.dart.tools.debug.core.server.ServerDebugTarget
-    myVmConnection = new VmConnection(null, debuggingPort);
+    myVmConnection = new VmConnection(debuggingHost, debuggingPort);
     myVmConnection.addListener(new DartVmListener(this, dartBreakpointHandler));
 
     session.addSessionListener(new XDebugSessionAdapter() {

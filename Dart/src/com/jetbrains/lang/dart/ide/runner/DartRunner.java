@@ -71,6 +71,7 @@ public class DartRunner extends DefaultProgramRunner {
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
     final ExecutionResult executionResult;
+    final String debuggingHost;
     final int debuggingPort;
     final int observatoryPort;
 
@@ -82,6 +83,7 @@ public class DartRunner extends DefaultProgramRunner {
         return null;
       }
 
+      debuggingHost = null;
       debuggingPort = ((DartCommandLineRunningState)state).getDebuggingPort();
       observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
     }
@@ -94,6 +96,7 @@ public class DartRunner extends DefaultProgramRunner {
 
       executionResult = null;
 
+      debuggingHost = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getHost();
       debuggingPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
       observatoryPort = -1;
     }
@@ -110,7 +113,7 @@ public class DartRunner extends DefaultProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
-        return new DartCommandLineDebugProcess(session, debuggingPort, observatoryPort, executionResult, dartUrlResolver);
+        return new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver);
       }
     });
 
