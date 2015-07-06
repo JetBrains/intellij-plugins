@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.common.collect.ObjectArrays;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.generated.types.*;
@@ -12,6 +13,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
@@ -24,8 +26,10 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,13 +39,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.util.*;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -81,12 +89,28 @@ public class DartAnalysisServerService {
   private final List<String> myPriorityFiles = new ArrayList<String>();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
+  @NotNull private final Map<String, List<NavigationRegion>> myNavigationData = new THashMap<String, List<NavigationRegion>>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
     public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
       updateProblemsView(DartProblemsViewImpl.createGroupName(file), errors);
+    }
+
+    @Override
+    public void computedNavigation(String file, List<NavigationRegion> targets) {
+      if (DartResolver.USE_SERVER) {
+        myNavigationData.put(file, targets);
+        final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
+        if (virtualFile != null) {
+          Project[] projects = ProjectManager.getInstance().getOpenProjects();
+          for (final Project project : projects) {
+            ResolveCache.getInstance(project).clearCache(true);
+            DaemonCodeAnalyzer.getInstance(project).restart();
+          }
+        }
+      }
     }
 
     @Override
@@ -283,12 +307,26 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
+  /**
+   * Returns {@link NavigationRegion}s for the given file.
+   * Empty if no regions.
+   */
+  @NotNull
+  public List<NavigationRegion> getNavigation(String file) {
+   List<NavigationRegion> sourceRegions = myNavigationData.get(file);
+    if (sourceRegions == null) {
+      return NavigationRegion.EMPTY_LIST;
+    }
+    return sourceRegions;
+  }
+
   void addPriorityFile(@NotNull final VirtualFile file) {
     synchronized (myLock) {
       final String path = FileUtil.toSystemDependentName(file.getPath());
       if (!myPriorityFiles.contains(path)) {
         myPriorityFiles.add(path);
         analysis_setPriorityFiles();
+        analysis_setSubscriptions();
       }
     }
   }
@@ -298,6 +336,7 @@ public class DartAnalysisServerService {
       final String path = FileUtil.toSystemDependentName(file.getPath());
       if (myPriorityFiles.remove(path)) {
         analysis_setPriorityFiles();
+        analysis_setSubscriptions();
       }
     }
   }
@@ -756,6 +795,34 @@ public class DartAnalysisServerService {
           server.analysis_setPriorityFiles(myPriorityFiles);
         }
       }, "analysis_setPriorityFiles(" + StringUtil.join(myPriorityFiles, ", ") + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return false;
+      }
+
+      return true;
+    }
+  }
+
+  private boolean analysis_setSubscriptions() {
+    synchronized (myLock) {
+      if (myServer == null) return false;
+
+      final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
+      subscriptions.put(AnalysisService.NAVIGATION, myPriorityFiles);
+
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("analysis_setSubscriptions, subscriptions:\n" + subscriptions);
+      }
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.analysis_setSubscriptions(subscriptions);
+        }
+      }, "analysis_setSubscriptions(" + subscriptions + ")", SEND_REQUEST_TIMEOUT);
 
       if (!ok) {
         stopServer();

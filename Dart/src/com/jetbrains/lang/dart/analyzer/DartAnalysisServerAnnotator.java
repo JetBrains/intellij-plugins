@@ -59,24 +59,10 @@ public class DartAnalysisServerAnnotator
   @Nullable
   @Override
   public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @Nullable final Editor editor, boolean hasErrors) {
-    if (psiFile instanceof DartExpressionCodeFragment) return null;
-
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
     if (annotatedFile == null) return null;
 
-    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-    if (module == null) return null;
-
-    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-    if (sdk == null || !isDartSDKVersionSufficient(sdk)) return null;
-
-    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return null;
-
-    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
-
-    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return null;
-
-    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk)) return null;
+    if (!serverReadyForRequest(psiFile)) return null;
 
     if (editor != null) {
       // editor is null if DartAnalysisServerGlobalInspectionContext.analyzeFile() is running
@@ -86,6 +72,27 @@ public class DartAnalysisServerAnnotator
     DartAnalysisServerService.getInstance().updateFilesContent();
 
     return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
+  }
+
+  public static boolean serverReadyForRequest(@NotNull PsiFile psiFile) {
+    if (psiFile instanceof DartExpressionCodeFragment) return false;
+
+    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+    if (module == null) return true;
+
+    final Project project = module.getProject();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !isDartSDKVersionSufficient(sdk)) return false;
+
+    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return false;
+
+    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return false;
+
+    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
+
+    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(project, sdk)) return false;
+
+    return true;
   }
 
   public static boolean isDartSDKVersionSufficient(@NotNull final DartSdk sdk) {
