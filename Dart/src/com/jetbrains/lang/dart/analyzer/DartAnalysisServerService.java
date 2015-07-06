@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.generated.types.*;
@@ -18,6 +20,9 @@ import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.event.DocumentAdapter;
+import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
@@ -82,9 +87,10 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myPriorityFiles = new ArrayList<String>();
+  private final Set<String> myFilePathsWithUnsentChanges = Sets.newHashSet();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
-  @NotNull private final Map<String, List<NavigationRegion>> myNavigationData = new THashMap<String, List<NavigationRegion>>();
+  @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = new THashMap<String, List<PluginNavigationRegion>>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -94,9 +100,23 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedNavigation(String file, List<NavigationRegion> targets) {
+    public void computedNavigation(String file, List<NavigationRegion> regions) {
       if (DartResolver.USE_SERVER) {
-        myNavigationData.put(FileUtil.toSystemIndependentName(file), targets);
+        file = FileUtil.toSystemIndependentName(file);
+        // Ignore notifications for files that has been changed, but server does not know about it yet.
+        if (myFilePathsWithUnsentChanges.contains(file)) {
+          return;
+        }
+        // Convert NavigationRegion(s) into PluginNavigationRegion(s).
+        List<PluginNavigationRegion> pluginRegions = new ArrayList<PluginNavigationRegion>(regions.size());
+        for (NavigationRegion region : regions) {
+          pluginRegions.add(new PluginNavigationRegion(region));
+        }
+        // Put PluginNavigationRegion(s).
+        synchronized (myLock) {
+          myNavigationData.put(file, pluginRegions);
+        }
+        // Force (re)highlighting.
         final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
         if (virtualFile != null) {
           Project[] projects = ProjectManager.getInstance().getOpenProjects();
@@ -295,6 +315,40 @@ public class DartAnalysisServerService {
           }
         }
       });
+
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
+      @Override
+      public void beforeDocumentChange(DocumentEvent e) {
+        final Document document = e.getDocument();
+        final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+        if (file == null) {
+          return;
+        }
+        long start = System.nanoTime();
+        synchronized (myLock) {
+          final String filePath = file.getPath();
+          myFilePathsWithUnsentChanges.add(filePath);
+          final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
+          if (regions != null) {
+            final int eventOffset = e.getOffset();
+            final int deltaLength = e.getNewLength() - e.getOldLength();
+            for (PluginNavigationRegion region : regions) {
+              if (region.offset <= eventOffset && eventOffset <= region.offset + region.length) {
+                region.length += deltaLength;
+              } else
+              if (region.offset >= eventOffset) {
+                region.offset += deltaLength;
+              }
+              for (PluginNavigationTarget target : region.getTargets()) {
+                if (target.file.equals(filePath) && target.offset >= eventOffset) {
+                  target.offset += deltaLength;
+                }
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
   @NotNull
@@ -309,12 +363,14 @@ public class DartAnalysisServerService {
    * @param file
    */
   @NotNull
-  public List<NavigationRegion> getNavigation(@NotNull final VirtualFile file) {
-    List<NavigationRegion> sourceRegions = myNavigationData.get(file.getPath());
-    if (sourceRegions == null) {
-      return NavigationRegion.EMPTY_LIST;
+  public List<PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
+    synchronized (myLock) {
+      List<PluginNavigationRegion> sourceRegions = myNavigationData.get(file.getPath());
+      if (sourceRegions == null) {
+        return PluginNavigationRegion.EMPTY_LIST;
+      }
+      return sourceRegions;
     }
-    return sourceRegions;
   }
 
   void addPriorityFile(@NotNull final VirtualFile file) {
@@ -403,6 +459,11 @@ public class DartAnalysisServerService {
         }
       }
     }
+    myFilePathsWithUnsentChanges.clear();;
+  }
+
+  private void updateNavigationData() {
+
   }
 
   public boolean updateRoots(@NotNull final List<String> includedRoots,
@@ -1007,12 +1068,59 @@ public class DartAnalysisServerService {
     public CompletionInfo(@NotNull final String completionId,
                           final int replacementOffset,
                           final int replacementLength,
-                          @NotNull final List<CompletionSuggestion> completions, boolean isLast) {
+                          @NotNull final List<CompletionSuggestion> completions,
+                          boolean isLast) {
       this.myCompletionId = completionId;
       this.myReplacementOffset = replacementOffset;
       this.myReplacementLength = replacementLength;
       this.myCompletions = completions;
       this.isLast = isLast;
+    }
+  }
+
+  public static class PluginNavigationRegion {
+    public static final List<PluginNavigationRegion> EMPTY_LIST = Lists.newArrayList();
+
+    private int offset;
+    private int length;
+    private final List<PluginNavigationTarget> targets = Lists.newArrayList();
+
+    private PluginNavigationRegion(NavigationRegion region) {
+      offset = region.getOffset();
+      length = region.getLength();
+      for (NavigationTarget target : region.getTargetObjects()) {
+        targets.add(new PluginNavigationTarget(target));
+      }
+    }
+
+    public int getOffset() {
+      return offset;
+    }
+
+    public int getLength() {
+      return length;
+    }
+
+    public List<PluginNavigationTarget> getTargets() {
+      return targets;
+    }
+  }
+
+  public static class PluginNavigationTarget {
+    private final String file;
+    private int offset;
+
+    private PluginNavigationTarget(NavigationTarget target) {
+      file = FileUtil.toSystemIndependentName(target.getFile());
+      offset = target.getOffset();
+    }
+
+    public String getFile() {
+      return file;
+    }
+
+    public int getOffset() {
+      return offset;
     }
   }
 }
