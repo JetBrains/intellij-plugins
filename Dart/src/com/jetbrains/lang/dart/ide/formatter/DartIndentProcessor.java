@@ -16,7 +16,7 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartIndentProcessor {
 
-  private static final TokenSet EXPRESSIONS = TokenSet
+  public static final TokenSet EXPRESSIONS = TokenSet
     .create(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION, AWAIT_EXPRESSION, BITWISE_EXPRESSION,
             CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION, COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
             LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION,
@@ -89,6 +89,10 @@ public class DartIndentProcessor {
     if (elementType == LBRACE || elementType == RBRACE) {
       switch (braceStyle) {
         case CommonCodeStyleSettings.END_OF_LINE:
+          if (elementType == LBRACE && FormatterUtil.hasPrecedingSiblingOfType(parent, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
+            // Use Nystrom style rather than Allman.
+            return Indent.getContinuationIndent();
+          } // FALL THROUGH
         case CommonCodeStyleSettings.NEXT_LINE:
         case CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED:
           return Indent.getNoneIndent();
@@ -117,17 +121,14 @@ public class DartIndentProcessor {
       }
       return Indent.getNormalIndent();
     }
-    if (parentType == ARGUMENTS && elementType == ARGUMENT_LIST) {
-      return Indent.getContinuationIndent();
-    }
     if (parentType == ARGUMENT_LIST) {
       // TODO In order to handle some dart_style examples we need to set indent for each arg.
-      // However, it conflicts with the previous statement, causing too much indent.
-      // Removing the previous statement in favor of this one is actually a
-      // net win, but breaks existing tests.
-      //return Indent.getContinuationIndent();
-      if (EXPRESSIONS.contains(elementType)) {
-        return Indent.getContinuationWithoutFirstIndent();
+      // The formatter does not appear to honor indent on individual argument expressions
+      // when KEEP_LINE_BREAKS==true. That means two DartFormatterTest tests fail. Those tests
+      // have been changed since the recommended setting for Dart programming is
+      // KEEP_LINE_BREAKS==false. The two tests are testAlignment() and testWrappingMeth().
+      if (EXPRESSIONS.contains(elementType) && elementType != FUNCTION_EXPRESSION) {
+        return Indent.getContinuationIndent();
       }
     }
     if (parentType == FORMAL_PARAMETER_LIST) {
@@ -166,7 +167,7 @@ public class DartIndentProcessor {
     if (BINARY_EXPRESSIONS.contains(parentType) && prevSibling != null) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == TERNARY_EXPRESSION && elementType == QUEST || elementType == COLON) {
+    if (elementType == COLON || parentType == TERNARY_EXPRESSION && elementType == QUEST) {
       return Indent.getContinuationIndent();
     }
     if (elementType == NAMED_ARGUMENT) {
@@ -211,6 +212,15 @@ public class DartIndentProcessor {
     if (parentType == MIXIN_APPLICATION && elementType == MIXINS) {
       return Indent.getContinuationIndent();
     }
+
+    if (parentType == LIBRARY_NAME_ELEMENT) {
+      return Indent.getContinuationIndent();
+    }
+
+    if (elementType == SEMICOLON && FormatterUtil.hasPrecedingSiblingOfType(node, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
+      return Indent.getContinuationIndent();
+    }
+
     return Indent.getNoneIndent();
   }
 

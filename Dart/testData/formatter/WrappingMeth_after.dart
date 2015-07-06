@@ -13,8 +13,8 @@ class Foo {
     try {
       this.fTwo(
           argA, argB, argC, this.fThree(
-              "", argE, argF, argG, argH
-          )
+          "", argE, argF, argG, argH
+      )
       );
     }
     catch (e, s) {}

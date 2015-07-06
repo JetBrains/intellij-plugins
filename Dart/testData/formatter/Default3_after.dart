@@ -2,13 +2,11 @@ class Test1 {
   String a;
 
   foo() {}
-
   int b;
 }
 
 class Test2 {
   foo() {}
-
   int b;
 }
 

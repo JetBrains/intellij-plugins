@@ -25,7 +25,7 @@ public class DartSpacingProcessor {
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
   private static final TokenSet ID_SET = TokenSet.create(ID);
   private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
-  private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS);
+  private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
   private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
 
   private final ASTNode myNode;
@@ -53,31 +53,103 @@ public class DartSpacingProcessor {
       int lines = 1;
       if (elementType == DART_FILE &&
           !isScriptTag(child1) &&
-          !directlyPreceededByNewline(child1)) {
+          !isDirectlyPrecededByNewline(child1)) {
         lines = 2;
       }
       return Spacing.createSpacing(spaces, spaces, lines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type1 == IMPORT_STATEMENT && type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT && !embeddedComment(type2, child2)) {
-      return Spacing.createSpacing(0, 0, 2, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    if (type2 == SINGLE_LINE_DOC_COMMENT) {
+      int nsp = 2;
+      if (type1 == SINGLE_LINE_DOC_COMMENT || (elementType != DART_FILE && type1 == LBRACE)) nsp = 1;
+      return Spacing.createSpacing(0, 0, nsp, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type1 == LIBRARY_STATEMENT && !embeddedComment(type2, child2)) {
-      return Spacing.createSpacing(0, 0, 2, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+
+    if (type1 == IMPORT_STATEMENT) {
+      if (type2 == MULTI_LINE_COMMENT) {
+        ASTNode next = FormatterUtil.getNextNonWhitespaceSibling(node2);
+        if (next != null &&
+            next.getElementType() == IMPORT_STATEMENT &&
+            isEmbeddedComment(type2, child2) &&
+            !isDirectlyPrecededByNewline(next)) {
+          return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+      }
+      if (type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT && !isEmbeddedComment(type2, child2)) {
+        int numNewlines = COMMENTS.contains(type2) && isBlankLineAfterComment(node2) ? 1 : 2;
+        return Spacing.createSpacing(0, 0, numNewlines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
+    }
+    if (type1 == LIBRARY_STATEMENT) {
+      int newlines = COMMENTS.contains(type2) && isBlankLineAfterComment(node2) ? 1 : 2;
+      return Spacing.createSpacing(0, 0, newlines, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+
+    if (elementType == LIBRARY_STATEMENT || parentType == LIBRARY_STATEMENT) {
+      if (isEmbeddedComment(type2, child2)) {
+        return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
+      if (type1 == MULTI_LINE_COMMENT && isEmbeddedComment(type1, child1)) {
+        return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      }
     }
     if (parentType == LIBRARY_STATEMENT) {
       return noSpace();
     }
+
     if (SEMICOLON == type2) {
       if (type1 == SEMICOLON && elementType == STATEMENTS) {
         return addSingleSpaceIf(false, true); // Empty statement on new line.
       }
       return Spacing.createSpacing(0, 0, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
+
     if (AT == type1) return Spacing.createSpacing(0, 0, 0, false, 0);
-    if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
+
+    if (METADATA == type1) {
+      if (parentType == TYPE_PARAMETERS || COMMENTS.contains(type2)) {
+        // Metadata on type parameters must be inlined.
+        return Spacing.createSpacing(1, 1, 0, false, 0);
+      }
+      if (parentType == DART_FILE && elementType != FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE) {
+        // Metadata on top-level declarations must be on its own line.
+        return Spacing.createSpacing(0, 0, 1, false, 0);//false here
+      }
+      if (parentType == CLASS_MEMBERS) {
+        if (type2 == METADATA || FormatterUtil.hasPrecedingSiblingOfType(node1, METADATA, WHITE_SPACE)) {
+          // Mulitple metadata each goes on its own line.
+          return Spacing.createSpacing(0, 0, 1, false, 0);
+        }
+        // Metadata on constructors and methods may be inlined.
+        return Spacing.createSpacing(1, 1, 0, true, 0);
+      }
+      if (parentType == VAR_DECLARATION_LIST) {
+        if (myNode.getTreeParent().getTreeParent().getElementType() == STATEMENTS) {
+          // Metadata on local variables must be on its own line.
+          return Spacing.createSpacing(0, 0, 1, false, 0);
+        }
+        if (type2 == METADATA || FormatterUtil.hasPrecedingSiblingOfType(node1, METADATA, WHITE_SPACE)) {
+          // Mulitple metadata each goes on its own line.
+          return Spacing.createSpacing(0, 0, 1, false, 0);
+        }
+        // Metadata on fields may be inlined.
+        return Spacing.createSpacing(1, 1, 0, true, 0);
+      }
+      if (parentType == NORMAL_FORMAL_PARAMETER) {
+        // Metadata on parameter declarations must be inlined.
+        return Spacing.createSpacing(1, 1, 0, false, 0);
+      }
+      // Other metadata occurrences may be inlined.
+      return Spacing.createSpacing(1, 1, 0, true, 0);
+    }
 
     if (FUNCTION_DEFINITION.contains(type2)) {
       boolean needsBlank = needsBlankLineBeforeFunction(elementType);
+      if (needsBlank && !mySettings.KEEP_LINE_BREAKS) {
+        if (parentType == CLASS_BODY || elementType == DART_FILE) {
+          if (type1 == SEMICOLON) needsBlank = false;
+          else if (hasEmptyBlock(node1)) needsBlank = false;
+        }
+      }
       final int lineFeeds = COMMENTS.contains(type1) || !needsBlank ? 1 : 2;
       return Spacing.createSpacing(0, 0, lineFeeds, needsBlank, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
@@ -98,7 +170,8 @@ public class DartSpacingProcessor {
           }
         }
         else {
-          lineFeeds = 2;
+          if (type2 == VAR_DECLARATION_LIST && hasEmptyBlock(node1)) lineFeeds = 1;
+          else lineFeeds = 2;
         }
       }
       else if (type1 == LBRACE && type2 == RBRACE) {
@@ -110,9 +183,13 @@ public class DartSpacingProcessor {
               (myNode.getTreeParent().getTreeParent().getElementType() == METHOD_DECLARATION) &&
               mySettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE) {
             lineFeeds = 0; // Empty method.
+            keepBreaks = mySettings.KEEP_LINE_BREAKS;
+            blanks = keepBreaks ? mySettings.KEEP_BLANK_LINES_IN_CODE : 0;
           }
           else if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
             lineFeeds = 0; // Empty function, either top-level or statement.
+            keepBreaks = mySettings.KEEP_LINE_BREAKS;
+            blanks = keepBreaks ? mySettings.KEEP_BLANK_LINES_IN_CODE : 0;
           }
         }
         else if (parentType == IF_STATEMENT && mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) {
@@ -145,7 +222,17 @@ public class DartSpacingProcessor {
         spaces = 1;
         keepBreaks = true;
       }
+      else if (type1 != LBRACE && isEmbeddedComment(type2, child2)) {
+        lineFeeds = 0;
+        spaces = 1;
+        keepBreaks = false;
+      }
       else if ((type1 == LBRACE && type2 == STATEMENTS) || (type2 == RBRACE && type1 == STATEMENTS)) {
+        lineFeeds = 1;
+        keepBreaks = false;
+        blanks = 0;
+      }
+      else if (type1 == LBRACE && type2 == SINGLE_LINE_COMMENT) {
         lineFeeds = 1;
         keepBreaks = false;
         blanks = 0;
@@ -226,6 +313,10 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_METHOD_PARENTHESES);
     }
 
+    if (elementType == DEFAULT_FORMAL_NAMED_PARAMETER && (type1 == EQ || type2 == EQ)) {
+      return addSingleSpaceIf(mySettings.SPACE_AROUND_ASSIGNMENT_OPERATORS);
+    }
+
     if (type2 == ARGUMENTS && elementType == CALL_EXPRESSION) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_METHOD_CALL_PARENTHESES);
     }
@@ -282,8 +373,21 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(1, 1, 0, false, 0);
     }
 
-    if (elementType == ENUM_DEFINITION && type2 == LBRACE) {
-      return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+    if (elementType == ENUM_DEFINITION) {
+      if (mySettings.BRACE_STYLE == CommonCodeStyleSettings.END_OF_LINE) {
+        if (type1 == LBRACE && type2 == RBRACE) {
+          return noSpace();
+        }
+        if (type1 == LBRACE || type2 == RBRACE) {
+          return Spacing.createDependentLFSpacing(1, 1, textRangeFollowingMetadata(), false, 0);
+        }
+        if (type2 == ENUM_CONSTANT_DECLARATION) {
+          return Spacing.createDependentLFSpacing(1, 1, textRangeFollowingMetadata(), false, 0);
+        }
+      }
+      if (type2 == LBRACE) {
+        return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+      }
     }
 
     if (type1 == LPAREN || type2 == RPAREN) {
@@ -308,7 +412,10 @@ public class DartSpacingProcessor {
       else if (elementType == FORMAL_PARAMETER_LIST) {
         final boolean newLineNeeded =
           type1 == LPAREN ? mySettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE : mySettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE;
-        return addSingleSpaceIf(mySettings.SPACE_WITHIN_METHOD_PARENTHESES, newLineNeeded);
+        if (newLineNeeded || mySettings.SPACE_WITHIN_METHOD_PARENTHESES) {
+          return addSingleSpaceIf(mySettings.SPACE_WITHIN_METHOD_PARENTHESES, newLineNeeded);
+        }
+        return Spacing.createSpacing(0, 0, 0, false, 0);
       }
       else if (elementType == ARGUMENTS) {
         final boolean newLineNeeded =
@@ -460,14 +567,16 @@ public class DartSpacingProcessor {
       if (type2 == RBRACKET && elementType != NAMED_FORMAL_PARAMETERS) {
         return addLineBreak();
       }
+      if (type2 == ARGUMENT_LIST) {
+        return addLineBreak();
+      }
     }
 
     if (type1 == LBRACKET && type2 == RBRACKET) {
       return noSpace();
     }
-    if (type1 == COMMA &&
-        (elementType == FORMAL_PARAMETER_LIST || elementType == ARGUMENT_LIST || elementType == NORMAL_FORMAL_PARAMETER)) {
-      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA_IN_TYPE_ARGUMENTS);
+    if (type1 == COMMA && (elementType == FORMAL_PARAMETER_LIST || elementType == ARGUMENT_LIST)) {
+      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA);
     }
 
     if (type1 == COMMA) {
@@ -518,14 +627,17 @@ public class DartSpacingProcessor {
     if (elementType == VALUE_EXPRESSION && type2 == CASCADE_REFERENCE_EXPRESSION) {
       if (type1 == CASCADE_REFERENCE_EXPRESSION) {
         if (cascadesAreSameMethod(((AbstractBlock)child1).getNode(), ((AbstractBlock)child2).getNode())) {
-          return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+          return Spacing.createSpacing(0, 0, 0, false, 0);
         }
       }
       else if (type1 == REFERENCE_EXPRESSION || isSimpleLiteral(type1)) {
         CompositeElement elem = (CompositeElement)myNode;
         ASTNode[] childs = elem.getChildren(CASCADE_REFERENCE_EXPRESSION_SET);
-        if (childs.length == 1 || allCascadesAreSameMethod(childs)) {
-          return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        if (childs.length == 1) {
+          return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), true, 0);
+        }
+        if (allCascadesAreSameMethod(childs)) {
+          return Spacing.createSpacing(0, 0, 0, false, 0);
         }
       }
       return addLineBreak();
@@ -565,7 +677,7 @@ public class DartSpacingProcessor {
       return Spacing.createDependentLFSpacing(0, 0, node1.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (elementType == NAMED_ARGUMENT) {
+    if (elementType == NAMED_ARGUMENT || elementType == DEFAULT_FORMAL_NAMED_PARAMETER) {
       if (type1 == COLON) {
         return addSingleSpaceIf(true);
       }
@@ -602,9 +714,14 @@ public class DartSpacingProcessor {
       return noSpace();
     }
 
-    //if (type2 == MAP_LITERAL_ENTRY && type1 != RBRACE) {
-    //  return Spacing.createDependentLFSpacing(0, 0, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-    //}
+    // Spacing in async functions.
+    if (elementType == FUNCTION_BODY || elementType == FUNCTION_EXPRESSION_BODY) {
+      if (type1 == ASYNC || type1 == SYNC) {
+        if (type2 == MUL) return noSpace();
+        return addSingleSpaceIf(true);
+      }
+      if (type1 == MUL) return addSingleSpaceIf(true);
+    }
 
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
@@ -641,6 +758,17 @@ public class DartSpacingProcessor {
         : 1;
       return Spacing.createSpacing(spaces, spaces, lineBreaks, false, 0);
     }
+  }
+
+  private TextRange textRangeFollowingMetadata() {
+    TextRange range = myNode.getTextRange();
+    ASTNode child = myNode.getFirstChildNode();
+    if (child == null || child.getElementType() != METADATA) return range;
+    while (child != null && (child.getElementType() == METADATA || child.getElementType() == WHITE_SPACE)) {
+      child = child.getTreeNext();
+    }
+    if (child == null) return range; // Avoid nullable warning.
+    return new TextRange(child.getTextRange().getStartOffset(), range.getEndOffset());
   }
 
   private static boolean allCascadesAreSameMethod(ASTNode[] children) {
@@ -690,21 +818,24 @@ public class DartSpacingProcessor {
     return SIMPLE_LITERAL_SET.contains(nodeType);
   }
 
-  private boolean needsBlankLineBeforeFunction(IElementType elementType) {
-    return mySettings.KEEP_LINE_BREAKS && (elementType == DART_FILE ||
-                                           elementType == CLASS_MEMBERS ||
-                                           elementType instanceof DartEmbeddedContentElementType);
+  private static boolean needsBlankLineBeforeFunction(IElementType elementType) {
+    return elementType == DART_FILE ||
+           elementType == CLASS_MEMBERS ||
+           elementType instanceof DartEmbeddedContentElementType;
   }
 
-  private static boolean embeddedComment(IElementType type, Block block) {
-    return COMMENTS.contains(type) && !directlyPreceededByNewline(block);
+  private static boolean isEmbeddedComment(IElementType type, Block block) {
+    return COMMENTS.contains(type) && !isDirectlyPrecededByNewline(block);
   }
 
-  private static boolean directlyPreceededByNewline(Block child) {
+  private static boolean isDirectlyPrecededByNewline(Block child) {
     // The child is a line comment whose parent is the DART_FILE.
     // Return true if it is (or will be) at the beginning of the line, or
     // following a block comment that is at the beginning of the line.
     ASTNode node = ((DartBlock)child).getNode();
+    return isDirectlyPrecededByNewline(node);
+  }
+  private static boolean isDirectlyPrecededByNewline(ASTNode node) {
     while ((node = node.getTreePrev()) != null) {
       if (node.getElementType() == WHITE_SPACE) {
         if (node.getText().contains("\n")) return true;
@@ -733,5 +864,57 @@ public class DartSpacingProcessor {
 
   public static boolean hasMultipleInitializers(ASTNode node) {
     return FormatterUtil.isPrecededBy(node.getLastChildNode(), SUPER_CALL_OR_FIELD_INITIALIZER, SKIP_COMMA);
+  }
+
+  // dart_style recognizes three forms of "empty block":
+  //   e() {}
+  //   f() => expr;
+  //   M() : super();
+  private static boolean hasEmptyBlock(ASTNode node) {
+    if (node.getElementType() == CLASS_DEFINITION) return false;
+    ASTNode child = node;
+    while (true) {
+      child = child.getLastChildNode();
+      if (child == null) return false;
+      if (child.getElementType() == WHITE_SPACE) child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      if (child == null) return false;
+      if (child.getElementType() == FUNCTION_BODY) {
+        ASTNode next = child.getLastChildNode();
+        if (next.getElementType() == WHITE_SPACE) next = FormatterUtil.getPreviousNonWhitespaceSibling(next);
+        if (next != null && next.getElementType() == SEMICOLON) {
+          next = FormatterUtil.getPreviousNonWhitespaceSibling(next);
+          if (next != null && DartIndentProcessor.EXPRESSIONS.contains(next.getElementType())) {
+            ASTNode arrow = FormatterUtil.getPreviousNonWhitespaceSibling(next);
+            if (arrow != null && arrow.getElementType() == EXPRESSION_BODY_DEF) {
+              return true;
+            }
+          }
+          return false;
+        }
+        // Look inside the function body.
+        continue;
+      }
+      if (child.getElementType() == SEMICOLON) {
+        ASTNode prev = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+        return (prev != null && prev.getElementType() == INITIALIZERS);
+      }
+      if (child.getElementType() != BLOCK) continue;
+      child = child.getLastChildNode();
+      if (child == null) return false;
+      if (child.getElementType() == WHITE_SPACE) child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      if (child == null) return false;
+      if (child.getElementType() != RBRACE) return false;
+      child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
+      return child != null && child.getElementType() == LBRACE;
+    }
+  }
+
+  private static boolean isBlankLineAfterComment(ASTNode node) {
+    // Assumes whitespace has been normalized.
+    ASTNode next = node.getTreeNext();
+    if (next == null || next.getElementType() != WHITE_SPACE) return false;
+    String comment = next.getText();
+    int n = comment.indexOf('\n');
+    return comment.indexOf('\n', n+1) > 0;
   }
 }
