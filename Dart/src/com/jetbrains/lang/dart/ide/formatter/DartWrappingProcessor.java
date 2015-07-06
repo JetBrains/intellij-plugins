@@ -44,7 +44,7 @@ public class DartWrappingProcessor {
     //
     if (elementType == ARGUMENT_LIST) {
       if (mySettings.CALL_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
-         if (!mySettings.PREFER_PARAMETERS_WRAP && childWrap != null) {
+        if (!mySettings.PREFER_PARAMETERS_WRAP && childWrap != null) {
           // Not used; PREFER_PARAMETERS_WRAP cannot be changed in the UI.
           return Wrap.createChildWrap(childWrap, WrappingUtil.getWrapType(mySettings.CALL_PARAMETERS_WRAP), true);
         }
@@ -54,13 +54,15 @@ public class DartWrappingProcessor {
           ASTNode[] childs = myNode.getChildren(DartIndentProcessor.EXPRESSIONS);
           if (childs.length >= 7) { // Approximation; dart_style uses dynamic programming with cost-based analysis to choose.
             wrap = Wrap.createWrap(WrapType.ALWAYS, true);
-          } else {
+          }
+          else {
             wrap = Wrap.createWrap(WrapType.NORMAL, true); // NORMAL,CHOP_DOWN_IF_LONG
           }
           if (myNode.getLastChildNode() != child) {
             myNode.putUserData(DART_ARGUMENT_LIST_WRAP_KEY, wrap);
           }
-        } else {
+        }
+        else {
           if (childType == NAMED_ARGUMENT) {
             ASTNode[] named = myNode.getChildren(NAMED_ARGUMENTS);
             wrap = myNode.getUserData(DART_ARGUMENT_LIST_WRAP_KEY);
@@ -70,13 +72,15 @@ public class DartWrappingProcessor {
                 Wrap namedWrap;
                 if (childs.length >= 7 || named.length > 4) { // Another approximation.
                   namedWrap = Wrap.createWrap(WrapType.ALWAYS, true);
-                } else {
+                }
+                else {
                   namedWrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
                 }
                 myNode.putUserData(DART_ARGUMENT_LIST_WRAP_KEY, namedWrap);
               }
             }
-          } else {
+          }
+          else {
             wrap = myNode.getUserData(DART_ARGUMENT_LIST_WRAP_KEY);
           }
           if (myNode.getLastChildNode() == child) {
@@ -122,7 +126,8 @@ public class DartWrappingProcessor {
         if (myNode.getLastChildNode() != child) {
           myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, wrap);
         }
-      } else {
+      }
+      else {
         wrap = myNode.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
       }
       // Second, decide what object to return.
@@ -130,7 +135,8 @@ public class DartWrappingProcessor {
         return Wrap.createWrap(WrapType.NONE, false);
       }
       return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);
-    } else if (elementType == LIST_LITERAL_EXPRESSION && childType == RBRACKET) {
+    }
+    else if (elementType == LIST_LITERAL_EXPRESSION && childType == RBRACKET) {
       ASTNode exprList = FormatterUtil.getPreviousNonWhitespaceSibling(child);
       Wrap wrap = null;
       if (exprList != null && exprList.getElementType() == EXPRESSION_LIST) {
@@ -150,7 +156,8 @@ public class DartWrappingProcessor {
         if (myNode.getLastChildNode() != child) {
           myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, wrap);
         }
-      } else {
+      }
+      else {
         wrap = myNode.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
         if (myNode.getLastChildNode() == child) {
           myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, null);

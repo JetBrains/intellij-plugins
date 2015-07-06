@@ -25,7 +25,8 @@ public class DartSpacingProcessor {
   private static final TokenSet REFERENCE_EXPRESSION_SET = TokenSet.create(REFERENCE_EXPRESSION);
   private static final TokenSet ID_SET = TokenSet.create(ID);
   private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
-  private static final TokenSet SIMPLE_LITERAL_SET = TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
+  private static final TokenSet SIMPLE_LITERAL_SET =
+    TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
   private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
 
   private final ASTNode myNode;
@@ -146,8 +147,9 @@ public class DartSpacingProcessor {
       boolean needsBlank = needsBlankLineBeforeFunction(elementType);
       if (needsBlank && !mySettings.KEEP_LINE_BREAKS) {
         if (parentType == CLASS_BODY || elementType == DART_FILE) {
-          if (type1 == SEMICOLON) needsBlank = false;
-          else if (hasEmptyBlock(node1)) needsBlank = false;
+          if (type1 == SEMICOLON || hasEmptyBlock(node1)) {
+            needsBlank = false;
+          }
         }
       }
       final int lineFeeds = COMMENTS.contains(type1) || !needsBlank ? 1 : 2;
@@ -170,8 +172,12 @@ public class DartSpacingProcessor {
           }
         }
         else {
-          if (type2 == VAR_DECLARATION_LIST && hasEmptyBlock(node1)) lineFeeds = 1;
-          else lineFeeds = 2;
+          if (type2 == VAR_DECLARATION_LIST && hasEmptyBlock(node1)) {
+            lineFeeds = 1;
+          }
+          else {
+            lineFeeds = 2;
+          }
         }
       }
       else if (type1 == LBRACE && type2 == RBRACE) {
@@ -668,7 +674,8 @@ public class DartSpacingProcessor {
     if (type2 == INITIALIZERS) {
       if (hasMultipleInitializers(node2)) {
         return addSingleSpaceIf(false, true);
-      } else {
+      }
+      else {
         return addSingleSpaceIf(true, false);
       }
     }
@@ -835,6 +842,7 @@ public class DartSpacingProcessor {
     ASTNode node = ((DartBlock)child).getNode();
     return isDirectlyPrecededByNewline(node);
   }
+
   private static boolean isDirectlyPrecededByNewline(ASTNode node) {
     while ((node = node.getTreePrev()) != null) {
       if (node.getElementType() == WHITE_SPACE) {
@@ -915,6 +923,6 @@ public class DartSpacingProcessor {
     if (next == null || next.getElementType() != WHITE_SPACE) return false;
     String comment = next.getText();
     int n = comment.indexOf('\n');
-    return comment.indexOf('\n', n+1) > 0;
+    return comment.indexOf('\n', n + 1) > 0;
   }
 }
