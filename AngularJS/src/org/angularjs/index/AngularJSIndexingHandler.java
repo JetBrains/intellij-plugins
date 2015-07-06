@@ -419,7 +419,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public String resolveContextFromProperty(JSObjectLiteralExpression objectLiteralExpression) {
+  public String resolveContextFromProperty(JSObjectLiteralExpression objectLiteralExpression, boolean returnPropertiesNamespace) {
     if (!(objectLiteralExpression.getParent() instanceof JSReturnStatement)) return null;
 
     final JSFunction function = PsiTreeUtil.getParentOfType(objectLiteralExpression, JSFunction.class);
