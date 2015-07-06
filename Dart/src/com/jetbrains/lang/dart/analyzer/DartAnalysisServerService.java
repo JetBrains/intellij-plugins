@@ -49,6 +49,7 @@ import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -99,13 +100,15 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedNavigation(String file, List<NavigationRegion> targets) {
-      myNavigationData.put(file, targets);
-      final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
-      if (virtualFile != null) {
-        Project[] projects = ProjectManager.getInstance().getOpenProjects();
-        for (final Project project : projects) {
-          ResolveCache.getInstance(project).clearCache(true);
-          DaemonCodeAnalyzer.getInstance(project).restart();
+      if (DartResolver.USE_SERVER) {
+        myNavigationData.put(file, targets);
+        final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
+        if (virtualFile != null) {
+          Project[] projects = ProjectManager.getInstance().getOpenProjects();
+          for (final Project project : projects) {
+            ResolveCache.getInstance(project).clearCache(true);
+            DaemonCodeAnalyzer.getInstance(project).restart();
+          }
         }
       }
     }

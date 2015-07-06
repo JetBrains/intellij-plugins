@@ -37,9 +37,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
     if (USE_SERVER) {
       final PsiFile refPsiFile = reference.getContainingFile();
-      if (!DartAnalysisServerAnnotator.serverReadyForRequest(refPsiFile)) {
-        return null;
-      }
+      //if (!DartAnalysisServerAnnotator.serverReadyForRequest(refPsiFile)) {
+      //  return null;
+      //}
       final VirtualFile refVirtualFile = refPsiFile.getVirtualFile();
       if (refVirtualFile != null) {
         if (isIdentifier(reference)) {
