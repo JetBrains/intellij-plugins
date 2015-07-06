@@ -112,12 +112,12 @@ task runIdeaWithPlugin(type: JavaExec, dependsOn: assemble) {
     systemProperty "idea.debug.mode", "true"
     systemProperty "idea.system.path", file("$buildDir/idea-home/system")
     systemProperty "idea.config.path", file("$buildDir/idea-home/config")
-    systemProperty "plugin.path", file("$buildDir/distributions/CloudFormation.zip")
 
     classpath sourceSets.main.runtimeClasspath
     classpath fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
 runIdeaWithPlugin.dependsOn(extractPlugin)
+
 task zip(type: Zip) {
     baseName 'CloudFormation'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
