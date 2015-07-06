@@ -22,7 +22,9 @@ import java.util.Collections;
 
 public class CloudFormationFileType extends LanguageFileType implements FileTypeIdentifiableByVirtualFile {
   public static final CloudFormationFileType INSTANCE = new CloudFormationFileType();
-  public static final String DEFAULT_EXTENSION = "template";
+
+  private static final String EXTENSION = "template";
+  private static final byte[] BYTES_TO_DETECT_CFN_FILE = CloudFormationSections.FormatVersion.getBytes(Charsets.US_ASCII);
 
   public CloudFormationFileType() {
     super(JsonLanguage.INSTANCE);
@@ -54,8 +56,7 @@ public class CloudFormationFileType extends LanguageFileType implements FileType
 
   @Override
   public boolean isMyFileType(@NotNull VirtualFile file) {
-    return CloudFormationFileType.DEFAULT_EXTENSION.equalsIgnoreCase(file.getExtension()) &&
-        detectFromContent(file);
+    return CloudFormationFileType.EXTENSION.equalsIgnoreCase(file.getExtension()) && detectFromContent(file);
   }
 
   private boolean detectFromContent(@NotNull VirtualFile file) {
@@ -65,7 +66,7 @@ public class CloudFormationFileType extends LanguageFileType implements FileType
         return FileUtil.processFirstBytes(inputStream, 1024, new Processor<ByteSequence>() {
           @Override
           public boolean process(ByteSequence byteSequence) {
-            return findArray(byteSequence.getBytes(), CloudFormationSections.FormatVersion.getBytes(Charsets.US_ASCII)) >= 0;
+            return findArray(byteSequence.getBytes(), BYTES_TO_DETECT_CFN_FILE) >= 0;
           }
         });
       } finally {
