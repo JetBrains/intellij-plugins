@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.resolve;
 
-import com.google.dart.server.generated.types.NavigationRegion;
 import com.google.dart.server.generated.types.NavigationTarget;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -17,6 +16,8 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationTarget;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -39,21 +40,28 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
     if (isServerDrivenResolution()) {
       final PsiFile refPsiFile = reference.getContainingFile();
-      //if (!DartAnalysisServerAnnotator.serverReadyForRequest(refPsiFile)) {
-      //  return null;
-      //}
       final VirtualFile refVirtualFile = refPsiFile.getVirtualFile();
       if (refVirtualFile != null) {
         if (isIdentifier(reference)) {
-          Project project = reference.getProject();
+          final Project project = reference.getProject();
           final int refOffset = reference.getTextOffset();
-          final List<NavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
-          for (NavigationRegion region : regions) {
-            if (region.containsInclusive(refOffset)) {
-              NavigationTarget target = region.getTargetObjects().get(0);
-              return getResultForNavigationTarget(project, target);
+          final int refLength = reference.getTextLength();
+          final List<PluginNavigationRegion> regions =
+            DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
+          for (PluginNavigationRegion region : regions) {
+            final int regionOffset = region.getOffset();
+            final int regionLength = region.getLength();
+            if (regionOffset == refOffset && regionLength == refLength) {
+              final List<PsiElement> result = new SmartList<PsiElement>();
+              for (PluginNavigationTarget target : region.getTargets()) {
+                final PsiElement targetElement = getElementForNavigationTarget(project, target);
+                if (targetElement != null) {
+                  result.add(targetElement);
+                }
+              }
+              return result;
             }
-            if (region.getOffset() + region.getLength() > refOffset) {
+            if (regionOffset + regionLength > refOffset) {
               break;
             }
           }
@@ -129,7 +137,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   @Nullable
-  private static List<? extends PsiElement> getResultForNavigationTarget(Project project, NavigationTarget target) {
+  private static PsiElement getElementForNavigationTarget(Project project, PluginNavigationTarget target) {
     String targetPath = target.getFile();
     VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
     if (virtualFile != null) {
@@ -143,7 +151,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
           }
           PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, clazz, false);
           if (elementAt != null) {
-            return toResult(elementAt);
+            return elementAt;
           }
         }
       }
