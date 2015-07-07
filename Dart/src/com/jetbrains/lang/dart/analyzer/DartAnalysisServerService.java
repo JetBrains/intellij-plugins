@@ -87,7 +87,7 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myPriorityFiles = new ArrayList<String>();
-  private final Set<String> myFilePathsWithUnsentChanges = Sets.newHashSet();
+  private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = new THashMap<String, List<PluginNavigationRegion>>();
@@ -103,7 +103,7 @@ public class DartAnalysisServerService {
     public void computedNavigation(String file, List<NavigationRegion> regions) {
       if (DartResolver.isServerDrivenResolution()) {
         file = FileUtil.toSystemIndependentName(file);
-        // Ignore notifications for files that has been changed, but server does not know about it yet.
+        // Ignore notifications for files that has been changed, but server does not know about them yet.
         if (myFilePathsWithUnsentChanges.contains(file)) {
           return;
         }
@@ -113,13 +113,13 @@ public class DartAnalysisServerService {
           pluginRegions.add(new PluginNavigationRegion(region));
         }
         // Put PluginNavigationRegion(s).
-        synchronized (myLock) {
+        synchronized (myNavigationData) {
           myNavigationData.put(file, pluginRegions);
         }
         // Force (re)highlighting.
         final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
         if (virtualFile != null) {
-          Project[] projects = ProjectManager.getInstance().getOpenProjects();
+          Set<Project> projects = myRootsHandler.getTrackedProjects();
           for (final Project project : projects) {
             ResolveCache.getInstance(project).clearCache(true);
             DaemonCodeAnalyzer.getInstance(project).restart();
@@ -337,7 +337,7 @@ public class DartAnalysisServerService {
    */
   @NotNull
   public List<PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
-    synchronized (myLock) {
+    synchronized (myNavigationData) {
       List<PluginNavigationRegion> sourceRegions = myNavigationData.get(file.getPath());
       if (sourceRegions == null) {
         return PluginNavigationRegion.EMPTY_LIST;
@@ -414,6 +414,7 @@ public class DartAnalysisServerService {
         final UpdateContentConsumer consumer = new UpdateContentConsumer() {
           @Override
           public void onResponse() {
+            myFilePathsWithUnsentChanges.clear();
           }
         };
 
@@ -432,7 +433,6 @@ public class DartAnalysisServerService {
         }
       }
     }
-    myFilePathsWithUnsentChanges.clear();
   }
 
   public boolean updateRoots(@NotNull final List<String> includedRoots,
@@ -1033,8 +1033,11 @@ public class DartAnalysisServerService {
     if (file == null) {
       return;
     }
+    if (!isDartOrHtmlFile(file)) {
+      return;
+    }
     final String filePath = file.getPath();
-    synchronized (myLock) {
+    synchronized (myNavigationData) {
       myFilePathsWithUnsentChanges.add(filePath);
       final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
       if (regions != null) {
@@ -1043,8 +1046,8 @@ public class DartAnalysisServerService {
         for (PluginNavigationRegion region : regions) {
           if (region.offset <= eventOffset && eventOffset <= region.offset + region.length) {
             region.length += deltaLength;
-          } else
-          if (region.offset >= eventOffset) {
+          }
+          else if (region.offset >= eventOffset) {
             region.offset += deltaLength;
           }
           for (PluginNavigationTarget target : region.getTargets()) {
