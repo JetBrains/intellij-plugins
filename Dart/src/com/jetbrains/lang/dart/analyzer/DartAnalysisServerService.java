@@ -95,7 +95,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedNavigation(String file, List<NavigationRegion> targets) {
-      if (DartResolver.USE_SERVER) {
+      if (DartResolver.isServerDrivenResolution()) {
         myNavigationData.put(FileUtil.toSystemIndependentName(file), targets);
         final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
         if (virtualFile != null) {

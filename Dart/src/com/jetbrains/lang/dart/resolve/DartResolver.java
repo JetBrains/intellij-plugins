@@ -4,6 +4,7 @@ import com.google.dart.server.generated.types.NavigationRegion;
 import com.google.dart.server.generated.types.NavigationTarget;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -29,12 +30,14 @@ import java.util.List;
 public class DartResolver implements ResolveCache.AbstractResolver<DartReference, List<? extends PsiElement>> {
   public static final DartResolver INSTANCE = new DartResolver();
 
-  public static final boolean USE_SERVER = false;
+  public static boolean isServerDrivenResolution() {
+    return Registry.is("dart.server.driven.resolution", false);
+  }
 
   @Nullable
   @Override
   public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
-    if (USE_SERVER) {
+    if (isServerDrivenResolution()) {
       final PsiFile refPsiFile = reference.getContainingFile();
       //if (!DartAnalysisServerAnnotator.serverReadyForRequest(refPsiFile)) {
       //  return null;
