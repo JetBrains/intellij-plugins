@@ -219,6 +219,11 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitIfNullExpression(@NotNull DartIfNullExpression o) {
+    visitExpression(o);
+    // visitReference(o);
+  }
+
   public void visitIfStatement(@NotNull DartIfStatement o) {
     visitPsiCompositeElement(o);
   }

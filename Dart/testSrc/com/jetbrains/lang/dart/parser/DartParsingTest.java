@@ -80,6 +80,14 @@ public class DartParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testNullAwareInvalid() throws Throwable {
+    doTest();
+  }
+
+  public void testNullAwareOperators() throws Throwable {
+    doTest();
+  }
+
   public void testOperators() throws Throwable {
     doTest();
   }

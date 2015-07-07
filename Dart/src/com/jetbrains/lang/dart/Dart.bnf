@@ -127,10 +127,13 @@
   LT_EQ="<="
   LT_LT="<<"
   LT_LT_EQ="<<="
-  QUEST="?"
   OR="|"
   OR_EQ="|="
   OR_OR="||"
+  QUEST="?"
+  QUEST_DOT="?."
+  QUEST_QUEST="??"
+  QUEST_QUEST_EQ="??="
   XOR="^"
   XOR_EQ="^="
   AND="&"
@@ -299,6 +302,7 @@ namedConstructorDeclaration ::= metadata* ('external' | 'const')* referenceExpre
 
 initializers ::= ':' superCallOrFieldInitializer (',' superCallOrFieldInitializer)*
 
+// If it were possible to edit Object or Null then we'd have to allow for ?.
 redirection ::= ':' 'this' ('.' referenceExpression)? arguments  {pin=2}
 
 fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
@@ -336,7 +340,7 @@ shiftOperator ::= '<<' | <<gtGt>>
 relationalOperator ::= <<gtEq>> | '>' | '<=' | '<'
 bitwiseOperator ::= '&' | '^' | '|'
 
-assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|='
+assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
 equalityOperator ::= '==' | '!='
 
 formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
@@ -478,8 +482,9 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
-                                 '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | '?' | '@' | '[' |
-                                 ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+                                 '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
+                                 '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
+                                 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
@@ -491,8 +496,12 @@ private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrap
 private assignExpressionWrapper ::= ternaryExpressionWrapper assignExpression*
 left assignExpression ::= assignmentOperator ternaryExpressionWrapper {pin=1} // todo right associate
 
-private ternaryExpressionWrapper ::= logicOrExpressionWrapper ternaryExpression?
+private ternaryExpressionWrapper ::= ifNullExpressionWrapper ternaryExpression?
 left ternaryExpression ::= '?' expression ':' ternaryExpressionWrapper
+
+private ifNullExpressionWrapper ::= logicOrExpressionWrapper ifNullExpression*
+left ifNullExpression ::= '??' logicOrExpressionWrapper
+{mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 private logicOrExpressionWrapper ::= logicAndExpressionWrapper logicOrExpression*
 left logicOrExpression ::= '||' logicAndExpressionWrapper
@@ -566,7 +575,7 @@ libraryComponentReferenceExpression ::= << nonStrictID >>
 referenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-left qualifiedReferenceExpression ::= '.' referenceExpression {elementType="referenceExpression"}
+left qualifiedReferenceExpression ::= '.' referenceExpression | '?.' referenceExpression {elementType="referenceExpression"}
 cascadeReferenceExpression ::= '..' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 

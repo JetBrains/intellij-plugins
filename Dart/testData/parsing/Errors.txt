@@ -49,7 +49,7 @@ Dart File
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('F')
-              PsiErrorElement:'(', '.' or < expected, got '}'
+              PsiErrorElement:'(', '.', < or <qualified reference expression> expected, got '}'
                 <empty list>
         PsiElement(})('}')
   PsiErrorElement:'`' unexpected

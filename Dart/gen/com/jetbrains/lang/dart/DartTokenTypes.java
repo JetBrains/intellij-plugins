@@ -59,6 +59,7 @@ public interface DartTokenTypes {
   IElementType GETTER_DECLARATION = new DartElementType("GETTER_DECLARATION");
   IElementType HIDE_COMBINATOR = new DartElementType("HIDE_COMBINATOR");
   IElementType ID = new DartElementType("ID");
+  IElementType IF_NULL_EXPRESSION = new DartElementType("IF_NULL_EXPRESSION");
   IElementType IF_STATEMENT = new DartElementType("IF_STATEMENT");
   IElementType IMPORT_STATEMENT = new DartElementType("IMPORT_STATEMENT");
   IElementType INCOMPLETE_DECLARATION = new DartElementType("INCOMPLETE_DECLARATION");
@@ -226,6 +227,9 @@ public interface DartTokenTypes {
   IElementType PLUS_EQ = new DartElementType("+=");
   IElementType PLUS_PLUS = new DartElementType("++");
   IElementType QUEST = new DartElementType("?");
+  IElementType QUEST_DOT = new DartElementType("?.");
+  IElementType QUEST_QUEST = new DartElementType("??");
+  IElementType QUEST_QUEST_EQ = new DartElementType("??=");
   IElementType RAW_SINGLE_QUOTED_STRING = new DartElementType("RAW_SINGLE_QUOTED_STRING");
   IElementType RAW_TRIPLE_QUOTED_STRING = new DartElementType("RAW_TRIPLE_QUOTED_STRING");
   IElementType RBRACE = new DartElementType("}");
@@ -412,6 +416,9 @@ public interface DartTokenTypes {
       }
       else if (type == ID) {
         return new DartIdImpl(node);
+      }
+      else if (type == IF_NULL_EXPRESSION) {
+        return new DartIfNullExpressionImpl(node);
       }
       else if (type == IF_STATEMENT) {
         return new DartIfStatementImpl(node);
