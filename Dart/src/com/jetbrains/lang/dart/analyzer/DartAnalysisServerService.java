@@ -29,7 +29,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -897,9 +896,9 @@ public class DartAnalysisServerService {
         final boolean ok = runInPooledThreadAndWait(new Runnable() {
           @Override
           public void run() {
-            server.analysis_updateOptions(new AnalysisOptions(true, true, true, false /*true*/, false, true, false));
+            server.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
           }
-        }, "analysis_updateOptions(true, true, true, false, false, true, false)", SEND_REQUEST_TIMEOUT);
+        }, "analysis_updateOptions(true, true, true, true, false, true, false)", SEND_REQUEST_TIMEOUT);
 
         if (!ok) {
           stopServer();
