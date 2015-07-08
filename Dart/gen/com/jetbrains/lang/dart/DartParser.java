@@ -9,9 +9,10 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
+import com.intellij.lang.LightPsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
-public class DartParser implements PsiParser {
+public class DartParser implements PsiParser, LightPsiParser {
 
   public ASTNode parse(IElementType t, PsiBuilder b) {
     parseLight(t, b);
@@ -174,6 +175,9 @@ public class DartParser implements PsiParser {
     }
     else if (t == ID) {
       r = id(b, 0);
+    }
+    else if (t == IF_NULL_EXPRESSION) {
+      r = ifNullExpression(b, 0);
     }
     else if (t == IF_STATEMENT) {
       r = ifStatement(b, 0);
@@ -422,13 +426,13 @@ public class DartParser implements PsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION,
       AWAIT_EXPRESSION, BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION,
-      COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
-      LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION,
-      LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION,
-      PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION,
-      SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION, SUPER_EXPRESSION,
-      SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, THROW_EXPRESSION,
-      VALUE_EXPRESSION),
+      COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IF_NULL_EXPRESSION,
+      IS_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION,
+      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
+      NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
+      REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
+      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
+      THROW_EXPRESSION, VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -776,7 +780,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|='
+  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
   public static boolean assignmentOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignmentOperator")) return false;
     boolean r;
@@ -793,6 +797,7 @@ public class DartParser implements PsiParser {
     if (!r) r = consumeToken(b, AND_EQ);
     if (!r) r = consumeToken(b, XOR_EQ);
     if (!r) r = consumeToken(b, OR_EQ);
+    if (!r) r = consumeToken(b, QUEST_QUEST_EQ);
     exit_section_(b, l, m, ASSIGNMENT_OPERATOR, r, false, null);
     return r;
   }
@@ -1683,8 +1688,9 @@ public class DartParser implements PsiParser {
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
-  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | '?' | '@' | '[' |
-  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
+  //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
+  //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
   //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
@@ -1703,8 +1709,9 @@ public class DartParser implements PsiParser {
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
-  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | '?' | '@' | '[' |
-  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
+  //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
+  //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
   //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
@@ -1753,12 +1760,15 @@ public class DartParser implements PsiParser {
     if (!r) r = gtGt(b, l + 1);
     if (!r) r = gtEq(b, l + 1);
     if (!r) r = gtGtEq(b, l + 1);
-    if (!r) r = consumeToken(b, QUEST);
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, LBRACKET);
     if (!r) r = consumeToken(b, RBRACKET);
     if (!r) r = consumeToken(b, XOR);
     if (!r) r = consumeToken(b, XOR_EQ);
+    if (!r) r = consumeToken(b, QUEST_DOT);
+    if (!r) r = consumeToken(b, QUEST_QUEST_EQ);
+    if (!r) r = consumeToken(b, QUEST_QUEST);
+    if (!r) r = consumeToken(b, QUEST);
     if (!r) r = consumeToken(b, ABSTRACT);
     if (!r) r = consumeToken(b, AS);
     if (!r) r = consumeToken(b, ASSERT);
@@ -3038,6 +3048,43 @@ public class DartParser implements PsiParser {
     r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, ID, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '??' logicOrExpressionWrapper
+  public static boolean ifNullExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifNullExpression")) return false;
+    if (!nextTokenIs(b, QUEST_QUEST)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _LEFT_, null);
+    r = consumeToken(b, QUEST_QUEST);
+    r = r && logicOrExpressionWrapper(b, l + 1);
+    exit_section_(b, l, m, IF_NULL_EXPRESSION, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // logicOrExpressionWrapper ifNullExpression*
+  static boolean ifNullExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifNullExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = logicOrExpressionWrapper(b, l + 1);
+    r = r && ifNullExpressionWrapper_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ifNullExpression*
+  private static boolean ifNullExpressionWrapper_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifNullExpressionWrapper_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!ifNullExpression(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "ifNullExpressionWrapper_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
   }
 
   /* ********************************************************** */
@@ -4680,15 +4727,37 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '.' referenceExpression
+  // '.' referenceExpression | '?.' referenceExpression
   public static boolean qualifiedReferenceExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qualifiedReferenceExpression")) return false;
-    if (!nextTokenIs(b, DOT)) return false;
+    if (!nextTokenIs(b, "<qualified reference expression>", DOT, QUEST_DOT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _LEFT_, null);
+    Marker m = enter_section_(b, l, _LEFT_, "<qualified reference expression>");
+    r = qualifiedReferenceExpression_0(b, l + 1);
+    if (!r) r = qualifiedReferenceExpression_1(b, l + 1);
+    exit_section_(b, l, m, REFERENCE_EXPRESSION, r, false, null);
+    return r;
+  }
+
+  // '.' referenceExpression
+  private static boolean qualifiedReferenceExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualifiedReferenceExpression_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
     r = consumeToken(b, DOT);
     r = r && referenceExpression(b, l + 1);
-    exit_section_(b, l, m, REFERENCE_EXPRESSION, r, false, null);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '?.' referenceExpression
+  private static boolean qualifiedReferenceExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualifiedReferenceExpression_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, QUEST_DOT);
+    r = r && referenceExpression(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -5600,12 +5669,12 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // logicOrExpressionWrapper ternaryExpression?
+  // ifNullExpressionWrapper ternaryExpression?
   static boolean ternaryExpressionWrapper(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ternaryExpressionWrapper")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = logicOrExpressionWrapper(b, l + 1);
+    r = ifNullExpressionWrapper(b, l + 1);
     r = r && ternaryExpressionWrapper_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
