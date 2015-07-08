@@ -6,31 +6,31 @@ var cli = require('./intellijCli.js')
   , coveragePreprocessorName = 'coverage';
 
 /**
- * Modifies passed config in order to turn on or turn off configure.
- * If 'Run' was requested, coverage is turned off.
- * If 'Run with coverage' was requested, coverage is turned on.
+ * Configures coverage if 'Run with coverage' action performed
  * @param {Object} config
  */
 function configureCoverage(config) {
-  var karmaCoverageReporterName = 'coverage';
-  var reporters = config.reporters || [];
   if (cli.isWithCoverage()) {
+    var karmaCoverageReporterName = 'coverage';
+    var reporters = config.reporters || [];
+    // Coverage preprocessor won't work, if there is no 'coverage' reporter:
+    //   https://github.com/karma-runner/karma-coverage/blob/v0.4.2/lib/preprocessor.js#L53
     if (reporters.indexOf(karmaCoverageReporterName) < 0) {
-      // we need to add 'coverage' reporter to make coverage preprocessor working
       reporters.push(karmaCoverageReporterName);
-      config.coverageReporter = {
-        type : 'lcovonly',
-        dir : path.join(cli.getCoverageTempDirPath(), 'original'),
-        reporters: []
-      };
+      if (!config.hasOwnProperty('coverageReporter')) {
+        // If 'coverage' reporter is missing and there is no 'config.coverageReporter', then
+        //   probably, it isn't a good idea to generate external files inside project ("coverage/" by default).
+        // The generated coverage won't be used.
+        config.coverageReporter = {
+          type : 'lcovonly',
+          dir : path.join(cli.getCoverageTempDirPath(), 'unused'),
+          reporters: []
+        };
+      }
     }
     reporters.push(IntellijCoverageReporter.reporterName);
+    config.reporters = reporters;
   }
-  else {
-    clearCoveragePreprocessors(config.preprocessors);
-    reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
-  }
-  config.reporters = reporters;
 }
 
 function findLcovInfoFile(coverageDir, callback) {
@@ -120,25 +120,6 @@ function isCoveragePreprocessorSpecified(preprocessors) {
     }
   }
   return false;
-}
-
-/**
- * @param {Object} preprocessors
- */
-function clearCoveragePreprocessors(preprocessors) {
-  if (preprocessors != null) {
-    for (var key in preprocessors) {
-      if (Object.prototype.hasOwnProperty.call(preprocessors, key)) {
-        var value = preprocessors[key];
-        if (value === coveragePreprocessorName) {
-          delete preprocessors[key];
-        }
-        if (Array.isArray(value)) {
-          preprocessors[key] = intellijUtil.removeAll(value, coveragePreprocessorName);
-        }
-      }
-    }
-  }
 }
 
 /**
