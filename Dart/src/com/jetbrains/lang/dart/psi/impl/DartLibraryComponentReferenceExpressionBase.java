@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.psi.DartId;
@@ -14,6 +15,8 @@ import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class DartLibraryComponentReferenceExpressionBase extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
   public DartLibraryComponentReferenceExpressionBase(ASTNode node) {
@@ -79,14 +82,19 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    if (DartResolver.isServerDrivenResolution()) {
+      final List<? extends PsiElement> elements =
+        ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
+      return DartResolveUtil.toCandidateInfoArray(elements);
+    }
     final DartImportOrExportStatement statement = PsiTreeUtil.getParentOfType(this, DartImportOrExportStatement.class);
     final String uri = statement == null ? null : statement.getUriString();
     final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(getContainingFile());
-    final VirtualFile importedFile = uri == null || vFile == null ? null
-                                                                  : DartResolveUtil.getImportedFile(getProject(), vFile, uri);
+    final VirtualFile importedFile = uri == null || vFile == null ? null : DartResolveUtil.getImportedFile(getProject(), vFile, uri);
     final PsiFile importedPsiFile = importedFile == null ? null : PsiManager.getInstance(getProject()).findFile(importedFile);
-    return importedPsiFile == null ? ResolveResult.EMPTY_ARRAY
-                                   : DartResolveUtil.toCandidateInfoArray(DartResolver.resolveSimpleReference(importedPsiFile, getText()));
+    return importedPsiFile == null
+           ? ResolveResult.EMPTY_ARRAY
+           : DartResolveUtil.toCandidateInfoArray(DartResolver.resolveSimpleReference(importedPsiFile, getText()));
   }
 
   @NotNull

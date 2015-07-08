@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.resolve;
 
-import com.google.dart.server.generated.types.NavigationTarget;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.registry.Registry;
@@ -46,9 +45,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
           final Project project = reference.getProject();
           final int refOffset = reference.getTextOffset();
           final int refLength = reference.getTextLength();
-          final List<PluginNavigationRegion> regions =
-            DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
-          for (PluginNavigationRegion region : regions) {
+          final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
+          PluginNavigationRegion region = findRegionAtOffset(regions, refOffset);
+          if (region != null) {
             final int regionOffset = region.getOffset();
             final int regionLength = region.getLength();
             if (regionOffset == refOffset && regionLength == refLength) {
@@ -60,9 +59,6 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
                 }
               }
               return result;
-            }
-            if (regionOffset + regionLength > refOffset) {
-              break;
             }
           }
         }
@@ -187,6 +183,33 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
         return !isGetterOrSetter;
       }
     });
+  }
+
+  /**
+   * Find the region with the given offset in the given list of sorted regions.
+   * Returns the found region or null.
+   */
+  @Nullable
+  private static PluginNavigationRegion findRegionAtOffset(List<PluginNavigationRegion> regions, int offset) {
+    int low = 0;
+    int high = regions.size() - 1;
+
+    while (low <= high) {
+      int mid = (low + high) >>> 1;
+      PluginNavigationRegion midVal = regions.get(mid);
+      int cmp = midVal.getOffset() - offset;
+
+      if (cmp < 0) {
+        low = mid + 1;
+      }
+      else if (cmp > 0) {
+        high = mid - 1;
+      }
+      else {
+        return midVal;
+      }
+    }
+    return null;
   }
 
   private static List<? extends PsiElement> resolveSimpleReference(@NotNull DartReference reference) {
