@@ -72,6 +72,9 @@ public class CloudFormationFormatChecker {
         resources(value);
       } else if (CloudFormationSections.Conditions.equals(name)) {
         // TODO
+      } else if (CloudFormationSections.Metadata.equals(name)) {
+        // Generic content inside, no need to check
+        // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
       } else if (CloudFormationSections.Outputs.equals(name)) {
         outputs(value);
       } else if (CloudFormationSections.Mappings.equals(name)) {

@@ -4,6 +4,7 @@ public class CloudFormationSections {
   public static final String Resources = "Resources";
   public static final String Parameters = "Parameters";
   public static final String Mappings = "Mappings";
+  public static final String Metadata = "Metadata";
   public static final String Conditions = "Conditions";
   public static final String Outputs = "Outputs";
 
