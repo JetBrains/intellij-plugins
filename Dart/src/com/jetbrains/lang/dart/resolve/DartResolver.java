@@ -42,24 +42,20 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       final VirtualFile refVirtualFile = refPsiFile.getVirtualFile();
       if (refVirtualFile != null) {
         if (isIdentifier(reference)) {
-          final Project project = reference.getProject();
           final int refOffset = reference.getTextOffset();
           final int refLength = reference.getTextLength();
           final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
-          PluginNavigationRegion region = findRegionAtOffset(regions, refOffset);
+          final PluginNavigationRegion region = findRegion(regions, refOffset, refLength);
           if (region != null) {
-            final int regionOffset = region.getOffset();
-            final int regionLength = region.getLength();
-            if (regionOffset == refOffset && regionLength == refLength) {
-              final List<PsiElement> result = new SmartList<PsiElement>();
-              for (PluginNavigationTarget target : region.getTargets()) {
-                final PsiElement targetElement = getElementForNavigationTarget(project, target);
-                if (targetElement != null) {
-                  result.add(targetElement);
-                }
+            final Project project = reference.getProject();
+            final List<PsiElement> result = new SmartList<PsiElement>();
+            for (PluginNavigationTarget target : region.getTargets()) {
+              final PsiElement targetElement = getElementForNavigationTarget(project, target);
+              if (targetElement != null) {
+                result.add(targetElement);
               }
-              return result;
             }
+            return result;
           }
         }
       }
@@ -190,7 +186,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
    * Returns the found region or null.
    */
   @Nullable
-  private static PluginNavigationRegion findRegionAtOffset(List<PluginNavigationRegion> regions, int offset) {
+  private static PluginNavigationRegion findRegion(List<PluginNavigationRegion> regions, int offset, int length) {
     int low = 0;
     int high = regions.size() - 1;
 
@@ -206,7 +202,10 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
         high = mid - 1;
       }
       else {
-        return midVal;
+        if (midVal.getLength() == length) {
+          return midVal;
+        }
+        return null;
       }
     }
     return null;
