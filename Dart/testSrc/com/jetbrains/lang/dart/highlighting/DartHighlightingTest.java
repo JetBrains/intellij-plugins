@@ -6,7 +6,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
@@ -160,5 +162,17 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.openFileInEditor(webFile.getVirtualFile());
     myFixture.checkResult("import r'../lib/renamed.dart'\n" +
                           "import r'package:ProjectName/renamed.dart'");
+  }
+
+  public void testUpdateImportsOnFileMove() {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
+    final PsiFile libFile = myFixture.addFileToProject("lib/libFile.dart", "");
+    final PsiFile libFile2 = myFixture.addFileToProject("lib/sub/libFile2.dart", "import '../libFile.dart';\n" +
+                                                                                 "import 'package:ProjectName/libFile.dart';");
+    new MoveFilesOrDirectoriesProcessor(getProject(), new PsiElement[]{libFile2}, libFile.getParent(), true, true, true, null, null).run();
+
+    myFixture.openFileInEditor(libFile2.getVirtualFile());
+    myFixture.checkResult("import 'libFile.dart';\n" +
+                          "import 'package:ProjectName/libFile.dart';");
   }
 }

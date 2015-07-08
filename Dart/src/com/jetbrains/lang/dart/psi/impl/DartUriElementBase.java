@@ -11,8 +11,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.DartFile;
@@ -140,31 +138,22 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
     relPathFromContextFileToPackagesFolder += "/";
     final String str = relPathFromContextFileToPackagesFolder + relPathFromPackagesFolderToReferencedFile;
 
+    final int nestedLevel = StringUtil.countChars(relPathFromContextFileToPackagesFolder, '/');
+    final int shift = startOffset - relPathFromContextFileToPackagesFolder.length();
+
     final FileReferenceSet referenceSet = new FileReferenceSet(str, this, 0, null, false, true, new FileType[]{DartFileType.INSTANCE}) {
       @Override
       protected Condition<PsiFileSystemItem> getReferenceCompletionFilter() {
         return DART_FILE_OR_DIR_FILTER;
       }
-    };
 
-    final FileReference[] references = referenceSet.getAllReferences();
-
-    final int nestedLevel = StringUtil.countChars(relPathFromContextFileToPackagesFolder, '/');
-    final int shift = startOffset - relPathFromContextFileToPackagesFolder.length();
-    return references.length < nestedLevel ? PsiReference.EMPTY_ARRAY
-                                           : shiftReferences(Arrays.copyOfRange(references, nestedLevel, references.length), shift);
-  }
-
-  private static FileReference[] shiftReferences(FileReference[] references, final int shift) {
-    return ContainerUtil.map(references, new Function<FileReference, FileReference>() {
       @Override
-      public FileReference fun(FileReference reference) {
-        return new FileReference(
-          reference.getFileReferenceSet(),
-          reference.getRangeInElement().shiftRight(shift),
-          reference.getIndex(),
-          reference.getText()
-        ) {
+      public FileReference createFileReference(TextRange range, int index, String text) {
+        if (index < nestedLevel) {
+          return super.createFileReference(range, index, text); // will be ignored anyway few lines below
+        }
+
+        return new FileReference(this, range.shiftRight(shift), index, text) {
           @Override
           public PsiElement bindToElement(@NotNull final PsiElement element, final boolean absolute) {
             final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(getElement().getContainingFile());
@@ -179,7 +168,11 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
           }
         };
       }
-    }, FileReference.EMPTY);
+    };
+
+    final FileReference[] references = referenceSet.getAllReferences();
+    return references.length < nestedLevel ? PsiReference.EMPTY_ARRAY
+                                           : Arrays.copyOfRange(references, nestedLevel, references.length);
   }
 
   public static class DartUriElementManipulator extends AbstractElementManipulator<DartUriElement> {
