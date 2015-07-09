@@ -916,7 +916,7 @@ public class DartAnalysisServerService {
       final DebugPrintStream debugStream = new DebugPrintStream() {
         @Override
         public void println(String str) {
-          System.out.println("debugStream: " + str);
+          //System.out.println("debugStream: " + str);
         }
       };
 
