@@ -607,4 +607,15 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     myFixture.openFileInEditor(psiFile.getVirtualFile());
     doTest();
   }
+
+  public void testElvisRes() throws Exception {
+    doTest("class Bar{}\n" +
+           "class Foo extends Bar{\n" +
+           "  voor(){\n" +
+           "    var i = this?.hashCode<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> hashCode'>;\n" +
+           "    var b = new Bar();\n" +
+           "    b?.runtimeType<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> runtimeType'>;\n" +
+           "  }\n" +
+           "}");
+  }
 }
