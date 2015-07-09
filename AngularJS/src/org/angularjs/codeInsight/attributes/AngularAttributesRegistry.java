@@ -31,7 +31,7 @@ public class AngularAttributesRegistry {
     final JSImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.KEY, attributeName);
     if (directive != null) {
       final String restrict = directive.getTypeString();
-      final String param = restrict.split(";", -1)[2];
+      final String param = restrict != null ? restrict.split(";", -1)[2] : "";
       return param.endsWith("expression") || param.startsWith("string");
     }
     return false;
