@@ -458,8 +458,11 @@ public class DartResolveUtil {
     for (PsiElement sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node, true);
          sibling != null;
          sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(sibling, true)) {
-      if (".".equals(sibling.getText())) continue;
-      if ("..".equals(sibling.getText())) continue;
+      String siblingText = sibling.getText();
+      // String.equals() is fast so use it instead of trying to optimize this.
+      if (".".equals(siblingText)) continue;
+      if ("..".equals(siblingText)) continue;
+      if ("?.".equals(siblingText)) continue;
       PsiElement candidate = sibling;
       if (candidate instanceof DartType) {
         candidate = ((DartType)sibling).getReferenceExpression();

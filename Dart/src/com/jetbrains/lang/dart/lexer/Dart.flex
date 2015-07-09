@@ -247,7 +247,6 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "&&"               { return AND_AND; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "@"                { return AT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "#"                { return HASH; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "?."               { return QUEST_DOT; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {NUMERIC_LITERAL} { return NUMBER; }
 
