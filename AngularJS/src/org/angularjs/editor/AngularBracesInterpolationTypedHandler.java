@@ -49,6 +49,16 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
           }
         }
       }
+      if (c == '}') {
+        if (!AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
+
+        final int offset = editor.getCaretModel().getOffset();
+        final char charAt = editor.getDocument().getCharsSequence().charAt(offset);
+        if (charAt == '}') {
+          editor.getCaretModel().moveCaretRelatively(1, 0, false, false, true);
+          return Result.STOP;
+        }
+      }
     }
 
     return Result.CONTINUE;

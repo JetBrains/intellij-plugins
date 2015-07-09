@@ -20,6 +20,12 @@ public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTest
     myFixture.checkResult("{{<caret>}}");
   }
 
+  public void testClosingBracketsSkipped() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, "{{<caret>}}");
+    myFixture.type("}");
+    myFixture.checkResult("{{}<caret>}");
+  }
+
   public void testInsertWhitespace() {
     boolean oldWhitespace = AngularJSConfig.getInstance().INSERT_WHITESPACE;
     try {
