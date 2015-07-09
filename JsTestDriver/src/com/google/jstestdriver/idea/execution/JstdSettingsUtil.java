@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.config.JstdConfigFileType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -95,6 +96,9 @@ public class JstdSettingsUtil {
         new FileBasedIndex.ValueProcessor<Void>() {
           @Override
           public boolean process(final VirtualFile file, final Void value) {
+            if (JSLibraryUtil.isProbableLibraryFile(file)) {
+              return true;
+            }
             jstdConfigFound.set(true);
             return false;
           }

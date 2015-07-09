@@ -58,7 +58,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     if (jsFile == null) {
       return null;
     }
-    if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(element.getProject())) {
+    if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
       return null;
     }
     LineMarkerInfo lineMarkerInfo = getJstdLineMarkerInfo(project, jsFile, element);
@@ -182,9 +182,6 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     }
     DataContext dataContext = createDataContext(editor, element);
     RunConfigurationProducer jstdOriginalProducer = getJstdRunConfigurationProducer();
-    if (jstdOriginalProducer == null) {
-      return;
-    }
     ConfigurationContext context = ConfigurationContext.getFromContext(dataContext);
     boolean created = false;
     RunnerAndConfigurationSettings configuration = jstdOriginalProducer.findExistingConfiguration(context);
