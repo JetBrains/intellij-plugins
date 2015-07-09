@@ -53,14 +53,6 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
     inject(definitionMap, abcMerger);
   }
 
-  private static File createAbcFile(String directory, String flexVersion) {
-    return new File(directory, generateInjectionName(flexVersion));
-  }
-
-  private static String generateInjectionName(String flexSdkVersion) {
-    return "flex-injection-" + (StringUtil.compareVersionNumbers(flexSdkVersion, "4.6") < 0 ? flexSdkVersion : "4.6") + ".swc";
-  }
-
   private void inject(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {
     final THashSet<String> overloadedMasked = new THashSet<String>(FlexDefinitionProcessor.OVERLOADED.length);
     for (String origin : FlexDefinitionProcessor.OVERLOADED) {
@@ -86,14 +78,20 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
   }
 
   private Pair<CharArrayReader, ByteArrayInputStream> getInjection() throws IOException {
+    String injectionName = "flex-injection-" + (StringUtil.compareVersionNumbers(version, "4.6") < 0 ? version : "4.6") + ".swc";
     if (DebugPathManager.IS_DEV) {
-      File file = createAbcFile(DebugPathManager.getFudHome() + "/flex-injection/target", version);
+      // maven build
+      File file = new File(DebugPathManager.getFudHome() + "/flex-injection/target", injectionName);
+      if (!file.exists()) {
+        // gant build
+        file = new File(DebugPathManager.getFudHome(), injectionName);
+      }
       if (file.exists()) {
         return LibraryUtil.openSwc(file);
       }
     }
 
-    URL resource = getClass().getClassLoader().getResource(generateInjectionName(version));
+    URL resource = getClass().getClassLoader().getResource(injectionName);
     assert resource != null;
     return LibraryUtil.openSwc(resource.openStream());
   }

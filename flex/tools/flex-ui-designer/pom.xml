@@ -105,6 +105,9 @@
     <repository>
       <id>project-repo</id>
       <url>file://${user.dir}/lib</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -112,6 +115,16 @@
     <repository>
       <id>flash-mvn-repo</id>
       <url>http://develar.github.com/flash-mvn-repo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>flex-mojos-repository</id>
+      <url>http://repository.sonatype.org/content/groups/flexgroup/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -124,7 +137,17 @@
     </pluginRepository>
     <pluginRepository>
       <id>flash-mvn-repo</id>
-      <url>http://develar.github.com/flash-mvn-repo/</url>
+      <url>http://develar.github.io/flash-mvn-repo/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>flex-mojos-repository</id>
+      <url>http://repository.sonatype.org/content/groups/flexgroup/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </pluginRepository>
   </pluginRepositories>
 
