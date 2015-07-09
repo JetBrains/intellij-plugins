@@ -93,15 +93,22 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
         return parseStringLiteral(firstToken);
       }
-      if (firstToken == JSTokenTypes.IDENTIFIER && builder.lookAhead(1) == JSTokenTypes.AS_KEYWORD) {
-        return parseAsExpression();
+      if (parseAsExpression()) {
+        return true;
       }
       return super.parsePrimaryExpression();
     }
 
     private boolean parseAsExpression() {
       PsiBuilder.Marker expr = builder.mark();
-      buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      if (!parseQualifiedTypeName(false)) {
+        expr.rollbackTo();
+        return false;
+      }
+      if (builder.getTokenType() != JSTokenTypes.AS_KEYWORD) {
+        expr.rollbackTo();
+        return false;
+      }
       builder.advanceLexer();
       parseExplicitIdentifierWithError();
       expr.done(AngularJSElementTypes.AS_EXPRESSION);
@@ -151,7 +158,7 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
         builder.advanceLexer();
         currentToken = builder.getTokenType();
       }
-      mark.done(JSElementTypes.LITERAL_EXPRESSION);
+      mark.done(JSStubElementTypes.LITERAL_EXPRESSION);
       final String errorMessage = validateLiteralText(literal.toString());
       if (errorMessage != null) {
         builder.error(errorMessage);
@@ -204,7 +211,7 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
     private void parseExplicitIdentifier() {
       final PsiBuilder.Marker def = builder.mark();
       buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-      def.done(JSElementTypes.DEFINITION_EXPRESSION);
+      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
     }
   }
 }

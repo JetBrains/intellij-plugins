@@ -19,3 +19,21 @@ ASTWrapperPsiElement(FILE)
       PsiElement(JS:AS_KEYWORD)('as')
       PsiErrorElement:identifier expected
         <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    AngularJSAsExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('NS')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('App')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('Ctrl')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('app')
