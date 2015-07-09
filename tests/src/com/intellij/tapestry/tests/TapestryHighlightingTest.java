@@ -31,6 +31,10 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(true, new DeprecatedClassUsageInspection());
   }
 
+  public void testHtml5() throws Throwable {
+    doTest(true);
+  }
+
   public void testUnknownTypeOfTag() throws Throwable {
     addComponentToProject("Count");
     doTest(false);
