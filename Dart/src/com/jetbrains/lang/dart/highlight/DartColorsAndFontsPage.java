@@ -41,7 +41,10 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.semicolon"), SEMICOLON),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.bad.character"), BAD_CHARACTER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parameter"), PARAMETER),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum"), ENUM),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum.constant"), ENUM_CONSTANT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function"), FUNCTION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.function.type.alias"), FUNCTION_TYPE_ALIAS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable"), LOCAL_VARIABLE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.access"), LOCAL_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.label"), LABEL),
@@ -70,10 +73,20 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
                                STATIC_MEMBER_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.call"), CONSTRUCTOR_CALL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.decl"), CONSTRUCTOR_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.type.parameter"), TYPE_PARAMETER),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.variable.of.dynamic.type"), VARIABLE_OF_DYNAMIC_TYPE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.getter.declaration"), GETTER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.getter.declaration.static"), GETTER_DECLARATION_STATIC),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.setter.declaration"), SETTER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.setter.declaration.static"), SETTER_DECLARATION_STATIC),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.import.prefix"), IMPORT_PREFIX),
     };
 
     ourTags.put("parameter", PARAMETER);
+    ourTags.put("enum", ENUM);
+    ourTags.put("enum.constant", ENUM_CONSTANT);
     ourTags.put("function", FUNCTION);
+    ourTags.put("function.type.alias", FUNCTION_TYPE_ALIAS);
     ourTags.put("local.variable", LOCAL_VARIABLE);
     ourTags.put("label", LABEL);
     ourTags.put("class", CLASS);
@@ -96,6 +109,13 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     ourTags.put("top.level.var.decl", TOP_LEVEL_VARIABLE_DECLARATION);
     ourTags.put("top.level.func.call", TOP_LEVEL_FUNCTION_CALL);
     ourTags.put("top.level.func.decl", TOP_LEVEL_FUNCTION_DECLARATION);
+    ourTags.put("type.parameter", TYPE_PARAMETER);
+    ourTags.put("variable.of.dynamic.type", VARIABLE_OF_DYNAMIC_TYPE);
+    ourTags.put("getter.declaration", GETTER_DECLARATION);
+    ourTags.put("getter.declaration.static", GETTER_DECLARATION_STATIC);
+    ourTags.put("setter.declaration", SETTER_DECLARATION);
+    ourTags.put("setter.declaration.static", SETTER_DECLARATION_STATIC);
+    ourTags.put("import.prefix", IMPORT_PREFIX);
   }
 
   @NotNull

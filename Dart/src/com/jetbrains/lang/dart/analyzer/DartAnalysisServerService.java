@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
@@ -89,13 +90,36 @@ public class DartAnalysisServerService {
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
-  @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = new THashMap<String, List<PluginNavigationRegion>>();
+  @NotNull private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
+  @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
     public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
       updateProblemsView(DartProblemsViewImpl.createGroupName(file), errors);
+    }
+
+    @Override
+    public void computedHighlights(String file, List<HighlightRegion> regions) {
+      if (DartResolver.isServerDrivenResolution()) {
+        file = FileUtil.toSystemIndependentName(file);
+        // Ignore notifications for files that has been changed, but server does not know about them yet.
+        if (myFilePathsWithUnsentChanges.contains(file)) {
+          return;
+        }
+        // Convert HighlightRegion(s) into PluginHighlightRegion(s).
+        List<PluginHighlightRegion> pluginRegions = Lists.newArrayList();
+        for (HighlightRegion region : regions) {
+          pluginRegions.add(new PluginHighlightRegion(region));
+        }
+        // Put PluginHighlightRegion(s).
+        synchronized (myHighlightData) {
+          myHighlightData.put(file, pluginRegions);
+        }
+        // Force (re)highlighting.
+        forceFileAnnotation(file);
+      }
     }
 
     @Override
@@ -116,14 +140,7 @@ public class DartAnalysisServerService {
           myNavigationData.put(file, pluginRegions);
         }
         // Force (re)highlighting.
-        final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
-        if (virtualFile != null) {
-          Set<Project> projects = myRootsHandler.getTrackedProjects();
-          for (final Project project : projects) {
-            ResolveCache.getInstance(project).clearCache(true);
-            DaemonCodeAnalyzer.getInstance(project).restart();
-          }
-        }
+        forceFileAnnotation(file);
       }
     }
 
@@ -177,6 +194,17 @@ public class DartAnalysisServerService {
       });
     }
   };
+
+  private void forceFileAnnotation(String file) {
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
+    if (virtualFile != null) {
+      Set<Project> projects = myRootsHandler.getTrackedProjects();
+      for (final Project project : projects) {
+        ResolveCache.getInstance(project).clearCache(true);
+        DaemonCodeAnalyzer.getInstance(project).restart();
+      }
+    }
+  }
 
   public void addCompletions(@NotNull final Project project,
                              @NotNull final String completionId,
@@ -329,19 +357,32 @@ public class DartAnalysisServerService {
   }
 
   /**
-   * Returns {@link NavigationRegion}s for the given file.
+   * Returns {@link PluginHighlightRegion}s for the given file.
    * Empty if no regions.
-   *
-   * @param file
+   */
+  @NotNull
+  public List<PluginHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
+    synchronized (myHighlightData) {
+      List<PluginHighlightRegion> regions = myHighlightData.get(file.getPath());
+      if (regions == null) {
+        return PluginHighlightRegion.EMPTY_LIST;
+      }
+      return regions;
+    }
+  }
+
+  /**
+   * Returns {@link PluginNavigationRegion}s for the given file.
+   * Empty if no regions.
    */
   @NotNull
   public List<PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
     synchronized (myNavigationData) {
-      List<PluginNavigationRegion> sourceRegions = myNavigationData.get(file.getPath());
-      if (sourceRegions == null) {
+      List<PluginNavigationRegion> regions = myNavigationData.get(file.getPath());
+      if (regions == null) {
         return PluginNavigationRegion.EMPTY_LIST;
       }
-      return sourceRegions;
+      return regions;
     }
   }
 
@@ -837,6 +878,7 @@ public class DartAnalysisServerService {
 
       final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
       subscriptions.put(AnalysisService.NAVIGATION, myPriorityFiles);
+      subscriptions.put(AnalysisService.HIGHLIGHTS, myPriorityFiles);
 
       if (LOG.isDebugEnabled()) {
         LOG.debug("analysis_setSubscriptions, subscriptions:\n" + subscriptions);
@@ -874,7 +916,7 @@ public class DartAnalysisServerService {
       final DebugPrintStream debugStream = new DebugPrintStream() {
         @Override
         public void println(String str) {
-          //System.out.println("debugStream: " + str);
+          System.out.println("debugStream: " + str);
         }
       };
 
@@ -1078,6 +1120,33 @@ public class DartAnalysisServerService {
       this.isLast = isLast;
     }
   }
+
+  public static class PluginHighlightRegion {
+    public static final List<PluginHighlightRegion> EMPTY_LIST = Lists.newArrayList();
+
+    private int offset;
+    private int length;
+    private final String type;
+
+    private PluginHighlightRegion(HighlightRegion region) {
+      offset = region.getOffset();
+      length = region.getLength();
+      type = region.getType();
+    }
+
+    public int getOffset() {
+      return offset;
+    }
+
+    public int getLength() {
+      return length;
+    }
+
+    public String getType() {
+      return type;
+    }
+  }
+
 
   public static class PluginNavigationRegion {
     public static final List<PluginNavigationRegion> EMPTY_LIST = Lists.newArrayList();
