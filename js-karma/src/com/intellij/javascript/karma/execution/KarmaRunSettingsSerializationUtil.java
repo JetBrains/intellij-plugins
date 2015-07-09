@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.execution;
 
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.io.FileUtil;
@@ -14,6 +15,7 @@ public class KarmaRunSettingsSerializationUtil {
   private static final String CONFIG_FILE = "config-file";
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String BROWSERS = "browsers";
+  private static final String OLD_PASS_PARENT_ENV_VAR = "pass-parent-env-vars"; // TODO to be removed in IDEA 16
 
   private KarmaRunSettingsSerializationUtil() {}
 
@@ -38,7 +40,12 @@ public class KarmaRunSettingsSerializationUtil {
       builder.setKarmaPackageDir(FileUtil.toSystemDependentName(karmaPackageDir));
     }
 
-    builder.setEnvData(EnvironmentVariablesData.readExternal(element));
+    EnvironmentVariablesData envData = EnvironmentVariablesData.readExternal(element);
+    String passParentEnvVarsStr = getAttrValue(element, OLD_PASS_PARENT_ENV_VAR);
+    if (passParentEnvVarsStr != null) {
+      envData = EnvironmentVariablesData.create(envData.getEnvs(), Boolean.parseBoolean(passParentEnvVarsStr));
+    }
+    builder.setEnvData(envData);
 
     return builder.build();
   }
@@ -58,6 +65,9 @@ public class KarmaRunSettingsSerializationUtil {
       String value = FileUtil.toSystemIndependentName(settings.getKarmaPackageDir());
       JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR, value);
     }
-    settings.getEnvData().writeExternal(element);
+    EnvironmentVariablesComponent.writeExternal(element, settings.getEnvData().getEnvs());
+    if (!settings.getEnvData().isPassParentEnvs()) {
+      element.setAttribute(OLD_PASS_PARENT_ENV_VAR, String.valueOf(settings.getEnvData().isPassParentEnvs()));
+    }
   }
 }
