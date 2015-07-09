@@ -42,4 +42,8 @@ public class CfmlAnnotationTest extends CfmlCodeInsightFixtureTestCase {
   public void testActionNameAnnotation() throws Throwable {
     doAnnotationTest(true, CfmlReferenceInspection.class);
   }
+
+  public void testTodoAnnotation() throws Throwable {
+    doAnnotationTest(true);
+  }
 }
