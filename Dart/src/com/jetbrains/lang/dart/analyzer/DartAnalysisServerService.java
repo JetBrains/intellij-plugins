@@ -1045,12 +1045,18 @@ public class DartAnalysisServerService {
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
-    LOG.error("Error from " + methodName +
-              (filePath == null ? "" : (", file = " + filePath)) +
-              ", SDK version = " + mySdkVersion +
-              ", server version = " + myServerVersion +
-              ", error code = " + error.getCode() + ": " + error.getMessage() +
-              "\n" + partialTrace + "...");
+    final String message = "Error from " + methodName +
+                           (filePath == null ? "" : (", file = " + filePath)) +
+                           ", SDK version = " + mySdkVersion +
+                           ", server version = " + myServerVersion +
+                           ", error code = " + error.getCode() + ": " + error.getMessage() +
+                           "\n" + partialTrace + "...";
+    if (RequestErrorCode.GET_ERRORS_INVALID_FILE.equals(error.getCode())) {
+      LOG.warn(message);
+    }
+    else {
+      LOG.error(message);
+    }
   }
 
   private static boolean runInPooledThreadAndWait(@NotNull final Runnable runnable,
