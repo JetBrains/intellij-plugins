@@ -25,9 +25,9 @@ import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.LanguageParserDefinitions;
+import com.intellij.lexer.HtmlHighlightingLexer;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.Lexer;
-import com.intellij.lexer.XmlHighlightingLexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.search.IndexPatternBuilder;
@@ -49,7 +49,7 @@ public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
 
       LayeredLexer cfmlLayeredLexer = new LayeredLexer(new CfmlLexer(true, project));
 
-      cfmlLayeredLexer.registerLayer(new XmlHighlightingLexer(), CfmlElementTypes.TEMPLATE_TEXT);
+      cfmlLayeredLexer.registerLayer(new HtmlHighlightingLexer(), CfmlElementTypes.TEMPLATE_TEXT);
       cfmlLayeredLexer.registerLayer(sqlLexer, CfmlElementTypes.SQL);
 
       return cfmlLayeredLexer;
