@@ -10,6 +10,7 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
+import com.google.dart.server.utilities.logging.Logging;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -323,6 +324,28 @@ public class DartAnalysisServerService {
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
+      }
+    });
+
+    Logging.setLogger(new com.google.dart.server.utilities.logging.Logger() {
+      @Override
+      public void logError(String message) {
+        LOG.error(message);
+      }
+
+      @Override
+      public void logError(String message, Throwable exception) {
+        LOG.error(message, exception);
+      }
+
+      @Override
+      public void logInformation(String message) {
+        LOG.debug(message);
+      }
+
+      @Override
+      public void logInformation(String message, Throwable exception) {
+        LOG.debug(message, exception);
       }
     });
 
