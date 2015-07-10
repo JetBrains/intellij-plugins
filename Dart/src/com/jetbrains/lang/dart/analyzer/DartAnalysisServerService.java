@@ -19,6 +19,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -29,7 +30,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
@@ -44,9 +47,11 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Alarm;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.psi.DartComponentName;
@@ -61,6 +66,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DartAnalysisServerService {
 
@@ -93,6 +99,9 @@ public class DartAnalysisServerService {
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
   @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
+
+  @NotNull final AtomicBoolean myServerBusy = new AtomicBoolean(false);
+  @NotNull final Alarm myShowServerProgressAlarm = new Alarm();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -184,15 +193,43 @@ public class DartAnalysisServerService {
 
     @Override
     public void serverStatus(@Nullable final AnalysisStatus analysisStatus, @Nullable final PubStatus pubStatus) {
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
+      if (analysisStatus != null && analysisStatus.isAnalyzing() || pubStatus != null && pubStatus.isListingPackageDirs()) {
+        if (myServerBusy.compareAndSet(false, true)) {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
-            if (project.isDisposed()) continue;
-            DartProblemsViewImpl.getInstance(project).setProgress(analysisStatus, pubStatus);
+            final Runnable delayedRunnable = new Runnable() {
+              public void run() {
+                if (project.isDisposed() || !myServerBusy.get()) return;
+
+                final Task.Backgroundable task =
+                  new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
+                    @Override
+                    public void run(@NotNull ProgressIndicator indicator) {
+                      if (myServerBusy.get()) {
+                        try {
+                          synchronized (myServerBusy) {
+                            //noinspection WaitNotInLoop
+                            myServerBusy.wait();
+                          }
+                        }
+                        catch (InterruptedException e) {/* unlucky */}
+                      }
+                    }
+                  };
+
+                ProgressManager.getInstance().run(task);
+              }
+            };
+
+            // 50ms delay to minimize blinking in case of consequent start-stop-start-stop-... events that happen with pubStatus events
+            // 300ms delay to avoid showing progress for very fast analysis start-stop cycle that happens with analysisStatus events
+            final int delay = pubStatus != null && pubStatus.isListingPackageDirs() ? 50 : 300;
+            myShowServerProgressAlarm.addRequest(delayedRunnable, delay, ModalityState.any());
           }
         }
-      });
+      }
+      else {
+        stopShowingServerProgress();
+      }
     }
   };
 
@@ -1021,6 +1058,8 @@ public class DartAnalysisServerService {
   }
 
   private void onServerStopped() {
+    stopShowingServerProgress();
+
     synchronized (myLock) {
       myServerSocket = null;
       myServer = null;
@@ -1039,6 +1078,14 @@ public class DartAnalysisServerService {
       });
 
       myRootsHandler.reset();
+    }
+  }
+
+  private void stopShowingServerProgress() {
+    myShowServerProgressAlarm.cancelAllRequests();
+    myServerBusy.set(false);
+    synchronized (myServerBusy) {
+      myServerBusy.notifyAll();
     }
   }
 
