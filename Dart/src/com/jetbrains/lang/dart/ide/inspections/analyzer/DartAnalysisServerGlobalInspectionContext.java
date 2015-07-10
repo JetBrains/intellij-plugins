@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.inspections.analyzer;
 
-import com.google.dart.server.generated.types.AnalysisError;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionContext;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
@@ -23,6 +22,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import gnu.trove.THashMap;
+import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

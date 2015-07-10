@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.google.dart.server.generated.types.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -22,6 +21,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import icons.DartIcons;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.PooledThreadExecutor;

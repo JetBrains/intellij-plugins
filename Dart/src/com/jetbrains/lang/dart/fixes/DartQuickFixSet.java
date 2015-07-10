@@ -1,8 +1,8 @@
 package com.jetbrains.lang.dart.fixes;
 
-import com.google.dart.server.generated.types.AnalysisErrorFixes;
-import com.google.dart.server.generated.types.SourceChange;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
+import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

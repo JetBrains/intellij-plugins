@@ -1,8 +1,5 @@
 package com.jetbrains.lang.dart.ide.inspections.analyzer;
 
-import com.google.dart.server.generated.types.AnalysisError;
-import com.google.dart.server.generated.types.AnalysisErrorSeverity;
-import com.google.dart.server.generated.types.Location;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -12,6 +9,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
+import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
+import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.actions;
 
-import com.google.dart.server.generated.types.SourceEdit;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
@@ -43,6 +42,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import gnu.trove.THashMap;
 import icons.DartIcons;
+import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

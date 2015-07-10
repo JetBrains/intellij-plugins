@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
-import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
@@ -61,6 +60,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -837,7 +837,7 @@ public class DartAnalysisServerService {
       final boolean ok = runInPooledThreadAndWait(new Runnable() {
         @Override
         public void run() {
-          server.edit_format(filePath, selectionOffset, selectionLength, consumer);
+          server.edit_format(filePath, selectionOffset, selectionLength, -1, consumer);
         }
       }, "edit_format(" + filePath + ", " + selectionOffset + ", " + selectionLength + ")", SEND_REQUEST_TIMEOUT);
 

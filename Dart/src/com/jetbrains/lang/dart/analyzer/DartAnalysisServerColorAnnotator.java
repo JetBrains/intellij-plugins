@@ -15,7 +15,6 @@
  */
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.server.generated.types.HighlightRegionType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.openapi.editor.Editor;
@@ -25,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginHighlightRegion;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
+import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
   @Nullable
   private static String getHighlightType(String type) {
     if (type.equals(HighlightRegionType.ANNOTATION)) {
-      return DartSyntaxHighlighterColors.DART_METADATA;
+      return DartSyntaxHighlighterColors.DART_ANNOTATION;
     }
     if (type.equals(HighlightRegionType.BUILT_IN)) {
       return DartSyntaxHighlighterColors.DART_KEYWORD;
@@ -43,38 +43,57 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
       return DartSyntaxHighlighterColors.DART_CLASS;
     }
     if (type.equals(HighlightRegionType.CONSTRUCTOR)) {
-      return DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION;
+      return DartSyntaxHighlighterColors.DART_CONSTRUCTOR;
     }
-    if (type.equals(HighlightRegionType.DYNAMIC_TYPE)) {
-      return DartSyntaxHighlighterColors.DART_VARIABLE_OF_DYNAMIC_TYPE;
+
+    if (type.equals(HighlightRegionType.DYNAMIC_LOCAL_VARIABLE_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION;
     }
+    if (type.equals(HighlightRegionType.DYNAMIC_LOCAL_VARIABLE_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.DYNAMIC_PARAMETER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.DYNAMIC_PARAMETER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_REFERENCE;
+    }
+
     if (type.equals(HighlightRegionType.ENUM)) {
       return DartSyntaxHighlighterColors.DART_ENUM;
     }
     if (type.equals(HighlightRegionType.ENUM_CONSTANT)) {
       return DartSyntaxHighlighterColors.DART_ENUM_CONSTANT;
     }
-    if (type.equals(HighlightRegionType.FIELD)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE_ACCESS;
-    }
-    if (type.equals(HighlightRegionType.FIELD_STATIC)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE_ACCESS;
-    }
-    if (type.equals(HighlightRegionType.FUNCTION)) {
-      return DartSyntaxHighlighterColors.DART_FUNCTION;
-    }
-    if (type.equals(HighlightRegionType.FUNCTION_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION;
-    }
     if (type.equals(HighlightRegionType.FUNCTION_TYPE_ALIAS)) {
       return DartSyntaxHighlighterColors.DART_FUNCTION_TYPE_ALIAS;
     }
-    if (type.equals(HighlightRegionType.GETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_GETTER_DECLARATION;
+    
+    if (type.equals(HighlightRegionType.INSTANCE_FIELD_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_DECLARATION;
     }
-    if (type.equals(HighlightRegionType.LOCAL_VARIABLE)) {
-      return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_ACCESS;
+    if (type.equals(HighlightRegionType.INSTANCE_FIELD_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_REFERENCE;
     }
+    if (type.equals(HighlightRegionType.INSTANCE_GETTER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_GETTER_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.INSTANCE_GETTER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_GETTER_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.INSTANCE_METHOD_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.INSTANCE_METHOD_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.INSTANCE_SETTER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.INSTANCE_SETTER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE;
+    }
+    
     if (type.equals(HighlightRegionType.IMPORT_PREFIX)) {
       return DartSyntaxHighlighterColors.DART_IMPORT_PREFIX;
     }
@@ -84,35 +103,79 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
     if (type.equals(HighlightRegionType.LABEL)) {
       return DartSyntaxHighlighterColors.DART_LABEL;
     }
+    
+    if (type.equals(HighlightRegionType.LOCAL_FUNCTION_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.LOCAL_FUNCTION_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_REFERENCE;
+    }
     if (type.equals(HighlightRegionType.LOCAL_VARIABLE_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE;
+      return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_DECLARATION;
     }
-    if (type.equals(HighlightRegionType.METHOD)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION_CALL;
+    if (type.equals(HighlightRegionType.LOCAL_VARIABLE_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_REFERENCE;
     }
-    if (type.equals(HighlightRegionType.METHOD_STATIC)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION_CALL;
+    
+    if (type.equals(HighlightRegionType.PARAMETER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_PARAMETER_DECLARATION;
     }
-    if (type.equals(HighlightRegionType.METHOD_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION;
+    if (type.equals(HighlightRegionType.PARAMETER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_PARAMETER_REFERENCE;
     }
-    if (type.equals(HighlightRegionType.METHOD_DECLARATION_STATIC)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION;
+
+    if (type.equals(HighlightRegionType.STATIC_FIELD_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_FIELD_DECLARATION;
     }
-    if (type.equals(HighlightRegionType.PARAMETER)) {
-      return DartSyntaxHighlighterColors.DART_PARAMETER;
+    if (type.equals(HighlightRegionType.STATIC_GETTER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_GETTER_DECLARATION;
     }
-    if (type.equals(HighlightRegionType.SETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_SETTER_DECLARATION;
+    if (type.equals(HighlightRegionType.STATIC_GETTER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_GETTER_REFERENCE;
     }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_VARIABLE)) {
+    if (type.equals(HighlightRegionType.STATIC_METHOD_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_METHOD_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.STATIC_METHOD_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_METHOD_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.STATIC_SETTER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_SETTER_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.STATIC_SETTER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_STATIC_SETTER_REFERENCE;
+    }
+
+    if (type.equals(HighlightRegionType.TOP_LEVEL_FUNCTION_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.TOP_LEVEL_FUNCTION_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.TOP_LEVEL_GETTER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.TOP_LEVEL_GETTER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.TOP_LEVEL_SETTER_DECLARATION)) {
+      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_DECLARATION;
+    }
+    if (type.equals(HighlightRegionType.TOP_LEVEL_SETTER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_REFERENCE;
+    }
+    if (type.equals(HighlightRegionType.TOP_LEVEL_VARIABLE_DECLARATION)) {
       return DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION;
     }
+
     if (type.equals(HighlightRegionType.TYPE_NAME_DYNAMIC)) {
-      return DartSyntaxHighlighterColors.DART_KEYWORD;
+      return DartSyntaxHighlighterColors.DART_BUILT_IN;
     }
     if (type.equals(HighlightRegionType.TYPE_PARAMETER)) {
       return DartSyntaxHighlighterColors.DART_TYPE_PARAMETER;
+    }
+    if (type.equals(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE)) {
+      return DartSyntaxHighlighterColors.DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE;
     }
     return null;
   }
