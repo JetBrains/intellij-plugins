@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
@@ -35,6 +36,7 @@ import com.intellij.ui.LightweightHint;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
@@ -186,8 +188,8 @@ public class DartStyleAction extends AnAction implements DumbAware {
     }
 
     if (dirScope != null) {
-      for (VirtualFile file : FileTypeIndex.getFiles(DartFileType.INSTANCE,
-                                                     GlobalSearchScope.projectScope(project).intersectWith(dirScope))) {
+      for (VirtualFile file : FileTypeIndex
+        .getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project).intersectWith(dirScope))) {
         if (isApplicableFile(project, dartSdk, file)) {
           result.add(file);
         }
@@ -210,11 +212,12 @@ public class DartStyleAction extends AnAction implements DumbAware {
     final Runnable runnable = new Runnable() {
       public void run() {
         final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
-        int caretOffset = editor.getCaretModel().getOffset();
+        final int caretOffset = editor.getCaretModel().getOffset();
+        final int lineLength = getRightMargin(project);
 
         DartAnalysisServerService.getInstance().updateFilesContent();
         DartAnalysisServerService.FormatResult formatResult =
-          DartAnalysisServerService.getInstance().edit_format(path, caretOffset, 0);
+          DartAnalysisServerService.getInstance().edit_format(path, caretOffset, 0, lineLength);
 
         if (formatResult == null) {
           showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
@@ -250,14 +253,11 @@ public class DartStyleAction extends AnAction implements DumbAware {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        final JComponent component = error ? HintUtil.createErrorLabel(text)
-                                           : HintUtil.createInformationLabel(text);
+        final JComponent component = error ? HintUtil.createErrorLabel(text) : HintUtil.createInformationLabel(text);
         final LightweightHint hint = new LightweightHint(component);
-        HintManagerImpl.getInstanceImpl().showEditorHint(hint, editor, HintManager.UNDER,
-                                                         HintManager.HIDE_BY_ANY_KEY |
-                                                         HintManager.HIDE_BY_TEXT_CHANGE |
-                                                         HintManager.HIDE_BY_SCROLLING,
-                                                         0, false);
+        HintManagerImpl.getInstanceImpl().showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY |
+                                                                                          HintManager.HIDE_BY_TEXT_CHANGE |
+                                                                                          HintManager.HIDE_BY_SCROLLING, 0, false);
       }
     }, ModalityState.NON_MODAL, new Condition() {
       @Override
@@ -279,6 +279,7 @@ public class DartStyleAction extends AnAction implements DumbAware {
     }
 
     final Map<VirtualFile, String> fileToNewContentMap = new THashMap<VirtualFile, String>();
+    final int lineLength = getRightMargin(project);
 
     final Runnable runnable = new Runnable() {
       public void run() {
@@ -293,7 +294,8 @@ public class DartStyleAction extends AnAction implements DumbAware {
           }
 
           final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-          final DartAnalysisServerService.FormatResult formatResult = DartAnalysisServerService.getInstance().edit_format(path, 0, 0);
+          final DartAnalysisServerService.FormatResult formatResult =
+            DartAnalysisServerService.getInstance().edit_format(path, 0, 0, lineLength);
           if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
             fileToNewContentMap.put(virtualFile, formatResult.getEdits().get(0).getReplacement());
           }
@@ -331,5 +333,9 @@ public class DartStyleAction extends AnAction implements DumbAware {
         }
       });
     }
+  }
+
+  private static int getRightMargin(@NotNull Project project) {
+    return CodeStyleSettingsManager.getSettings(project).getCommonSettings(DartLanguage.INSTANCE).RIGHT_MARGIN;
   }
 }

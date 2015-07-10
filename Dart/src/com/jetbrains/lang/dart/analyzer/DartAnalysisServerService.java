@@ -808,7 +808,10 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public FormatResult edit_format(@NotNull final String filePath, final int selectionOffset, final int selectionLength) {
+  public FormatResult edit_format(@NotNull final String filePath,
+                                  final int selectionOffset,
+                                  final int selectionLength,
+                                  final int lineLength) {
     final Ref<FormatResult> resultRef = new Ref<FormatResult>();
     final Semaphore semaphore = new Semaphore();
 
@@ -837,7 +840,7 @@ public class DartAnalysisServerService {
       final boolean ok = runInPooledThreadAndWait(new Runnable() {
         @Override
         public void run() {
-          server.edit_format(filePath, selectionOffset, selectionLength, -1, consumer);
+          server.edit_format(filePath, selectionOffset, selectionLength, lineLength, consumer);
         }
       }, "edit_format(" + filePath + ", " + selectionOffset + ", " + selectionLength + ")", SEND_REQUEST_TIMEOUT);
 
