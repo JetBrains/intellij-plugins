@@ -118,10 +118,10 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   private static RunContentDescriptor executeAfterSuccessfulInitialization(@NotNull KarmaRunProfileState state,
                                                                            @NotNull ExecutionEnvironment env,
                                                                            @NotNull KarmaServer server) throws ExecutionException {
-    ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
     if (server.areBrowsersReady()) {
-      return doCoverage(executionResult, env, server);
+      return doCoverage(state, env, server);
     }
+    ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
     RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(env.getContentToReuse());
     server.onBrowsersReady(new Runnable() {
@@ -134,15 +134,13 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @NotNull
-  private static RunContentDescriptor doCoverage(@NotNull ExecutionResult executionResult,
+  private static RunContentDescriptor doCoverage(@NotNull KarmaRunProfileState state,
                                                  @NotNull final ExecutionEnvironment env,
-                                                 @NotNull final KarmaServer server) {
+                                                 @NotNull final KarmaServer server) throws ExecutionException {
     final KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
     final String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-    final RunContentDescriptor descriptor = contentBuilder.showRunContent(env.getContentToReuse());
     if (coverageFilePath != null) {
       KarmaCoveragePeer coveragePeer = getCoveragePeer(server);
       coveragePeer.startCoverageSession(new KarmaCoverageSession() {
@@ -169,7 +167,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
         }
       });
     }
-    return descriptor;
+    ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
+    return contentBuilder.showRunContent(env.getContentToReuse());
   }
 
 }

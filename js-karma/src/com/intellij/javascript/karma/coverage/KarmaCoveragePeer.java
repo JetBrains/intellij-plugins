@@ -41,8 +41,6 @@ public class KarmaCoveragePeer {
 
   public KarmaCoveragePeer() throws IOException {
     myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
-    File subDir = new File(myCoverageTempDir, "original");
-    FileUtil.createDirectory(subDir);
   }
 
   @NotNull
