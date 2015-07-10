@@ -12,6 +12,8 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public class PrimitiveWriter {
   protected final StringRegistry.StringWriter stringWriter;
 
@@ -54,7 +56,7 @@ public class PrimitiveWriter {
       value = value.substring(2);
     }
     else {
-      final String colorName = value.toLowerCase();
+      final String colorName = value.toLowerCase(Locale.ENGLISH);
       String hexCodeForColorName = ColorMap.getHexCodeForColorName(colorName);
       if (hexCodeForColorName == null) {
         try {

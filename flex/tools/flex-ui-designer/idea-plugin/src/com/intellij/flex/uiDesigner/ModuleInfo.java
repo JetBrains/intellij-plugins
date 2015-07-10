@@ -2,13 +2,14 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.AmfOutputable;
-import org.jetbrains.io.Info;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.Info;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,7 +103,7 @@ class LocalStyleHolder implements AmfOutputable {
 class ExternalLocalStyleHolder extends LocalStyleHolder {
   final List<VirtualFile> users;
 
-  ExternalLocalStyleHolder(VirtualFile file, byte[] data, VirtualFile user) {
+  ExternalLocalStyleHolder(@NotNull VirtualFile file, @NotNull byte[] data, @NotNull VirtualFile user) {
     super(file, data);
 
     users = new ArrayList<VirtualFile>(5);

@@ -1,11 +1,11 @@
 package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
+import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
-import com.intellij.flex.uiDesigner.io.AmfUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
+import com.intellij.flex.uiDesigner.mxml.MxmlReader;
 
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
@@ -29,7 +29,13 @@ public final class Stylesheet {
     if (n > 0) {
       _rulesets = new Vector.<CssRuleset>(n, true);
       for (var i:int = 0; i < n; i++) {
-        readRuleset(_rulesets[i] = CssRuleset.create(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input)), input, stringRegistry);
+        var ruleSet: CssRuleset = CssRuleset.create(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input));
+        try {
+          readRuleset(_rulesets[i] = ruleSet, input, stringRegistry);
+        }
+        catch (e:Error) {
+          throw new Error("Cannot read css ruleset (line: " + ruleSet.line + "): " + e.message +  ", rulesets " + _rulesets + "\n" + e.getStackTrace())
+        }
       }
     }
     
@@ -47,7 +53,12 @@ public final class Stylesheet {
     const selectorsLength:int = input.readByte();
     var selectors:Vector.<CssSelector> = new Vector.<CssSelector>(selectorsLength, true);
     for (i = 0; i < selectorsLength; i++) {
-      selectors[i] = readSimpleSelectors(input, stringRegistry);
+      try {
+        selectors[i] = readSimpleSelectors(input, stringRegistry);
+      }
+      catch (e:Error) {
+        throw new Error("Cannot read css selectors: " + e.message +  ", selectors " + selectors + "\n" + e.getStackTrace())
+      }
     }
     ruleset.selectors = selectors;
 
@@ -58,46 +69,65 @@ public final class Stylesheet {
         var name:String = stringRegistry.read(input);
         var textOffset:int = AmfUtil.readUInt29(input);
         var type:int = input.readByte();
-        switch (type) {
-          case CssPropertyType.STRING:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, AmfUtil.readString(input));
-            break;
+        try {
+          var v:Object = MxmlReader.readPrimitive(type, input, stringRegistry);
+          if (v == input) {
+            switch (type) {
+              case AmfExtendedTypes.CLASS_REFERENCE:
+                declarations[i] = CssDeclarationImpl.create2(CssPropertyType.CLASS_REFERENCE, name, textOffset, null, new ClassReferenceImpl(stringRegistry.readNotNull(input)));
+                break;
 
-          case AmfExtendedTypes.STRING_REFERENCE:
-            declarations[i] = CssDeclarationImpl.create2(CssPropertyType.STRING, name, textOffset, null, stringRegistry.readNotNull(input));
-            break;
+              case AmfExtendedTypes.SWF:
+                CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create2(name, textOffset, input));
+                break;
 
-          case AmfExtendedTypes.CLASS_REFERENCE:
-            declarations[i] = CssDeclarationImpl.create2(CssPropertyType.CLASS_REFERENCE, name, textOffset, null, new ClassReferenceImpl(stringRegistry.readNotNull(input)));
-            break;
-          
-          case CssPropertyType.NULL:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, null);
-            break;
+              case AmfExtendedTypes.IMAGE:
+                CssEmbedImageDeclaration(declarations[i] = CssEmbedImageDeclaration.create(name, textOffset, AmfUtil.readUInt29(input)));
+                break;
 
-          case CssPropertyType.NAN:
-            declarations[i] = CssDeclarationImpl.create2(CssPropertyType.NUMBER, name, textOffset, null, NaN);
-            break;
+              case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
+                declarations[i] = readSkinClass(textOffset, input);
+                break;
 
-          case AmfExtendedTypes.SWF:
-            CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create2(name, textOffset, input));
-            break;
+              case Amf3Types.ARRAY:
+                declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, readCssArray(input, stringRegistry));
+                break;
 
-          case AmfExtendedTypes.IMAGE:
-            CssEmbedImageDeclaration(declarations[i] = CssEmbedImageDeclaration.create(name, textOffset, AmfUtil.readUInt29(input)));
-            break;
-
-          case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
-            declarations[i] = readSkinClass(textOffset, input);
-            break;
-
-          default:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, type == CssPropertyType.COLOR_STRING ? stringRegistry.readNotNull(input) : null, input.readObject());
-            break;
+              default:
+                declarations[i] =
+                  CssDeclarationImpl.create2(type, name, textOffset, type == CssPropertyType.COLOR_STRING ? stringRegistry.readNotNull(input) : null, input.readObject());
+                break;
+            }
+          }
+          else {
+            if (type == Amf3Types.TRUE || type == Amf3Types.FALSE) {
+              type = CssPropertyType.BOOL;
+            }
+            else if (type == Amf3Types.INTEGER || type == Amf3Types.DOUBLE) {
+              type = CssPropertyType.NUMBER;
+            }
+            else if (type == AmfExtendedTypes.STRING_REFERENCE) {
+              type = Amf3Types.STRING;
+            }
+            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, v);
+          }
+        }
+        catch (e:Error) {
+          throw new Error("Cannot read css declaration " + name + ": " + e.message + "\n" + e.getStackTrace())
         }
       }
       ruleset.declarations = declarations;
     }
+  }
+
+  private static function readCssArray(input:IDataInput, stringRegistry:StringRegistry): Array {
+    const length:int = input.readUnsignedByte();
+    var result: Array = new Array(length)
+    var i:int = 0;
+    while (i < length) {
+      result[i++] = MxmlReader.readPrimitive(input.readByte(), input, stringRegistry)
+    }
+    return result;
   }
 
   private static function readSkinClass(textOffset:int, input:IDataInput):CssDeclaration {
@@ -121,13 +151,19 @@ public final class Stylesheet {
       var subject:String = stringRegistry.read(data);
       var presentableSubject:String = subject == null ? null : stringRegistry.read(data);
       var namespacePrefix:String = presentableSubject == null ? null : stringRegistry.read(data);
+
       var conditionsLength:int = data.readByte();
-      var conditions:Vector.<CssCondition> = null;
       if (conditionsLength > 0) {
-        conditions = new Vector.<CssCondition>(conditionsLength, true);
-        for (var j:int = 0; j < conditionsLength; j++) {
-          var clazz:Class = cssConditions[data.readByte()];
-          conditions[j] = new clazz(stringRegistry.read(data));
+        try {
+          var conditions:Vector.<CssCondition> = null;
+          conditions = new Vector.<CssCondition>(conditionsLength, true);
+          for (var j:int = 0; j < conditionsLength; j++) {
+            var clazz:Class = cssConditions[data.readByte()];
+            conditions[j] = new clazz(stringRegistry.read(data));
+          }
+        }
+        catch (e:Error) {
+          throw new Error("Cannot read css conditions " + subject + " (conditions length: " + conditionsLength + "): " + e.message + "\n" + e.getStackTrace())
         }
       }
 

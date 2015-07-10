@@ -26,7 +26,9 @@ import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -48,10 +50,15 @@ public class CssWriter {
     this.assetCounter = assetCounter;
   }
 
-  public byte[] write(VirtualFile file, Module module) {
+  @Nullable
+  public byte[] write(@NotNull VirtualFile file, @NotNull Module module) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
-    assert document != null;
-    CssFile cssFile = (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
+    CssFile cssFile = document == null ? null : (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
+    if (cssFile == null) {
+      LOG.warn("CSS file is null for " + file.getName());
+      return null;
+    }
+
     problemsHolder.setCurrentFile(file);
     try {
       return write(cssFile, document, module);
@@ -61,25 +68,35 @@ public class CssWriter {
     }
   }
 
-  public byte[] write(CssFile cssFile, Module module) {
+  @Nullable
+  public byte[] write(@NotNull CssFile cssFile, @NotNull Module module) {
     problemsHolder.setCurrentFile(cssFile.getVirtualFile());
     try {
-      return write(cssFile, PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile), module);
+      Document document = PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile);
+      if (document == null) {
+        LOG.warn("Document is null for " + cssFile.getName());
+        return null;
+      }
+      return write(cssFile, document, module);
     }
     finally {
       problemsHolder.setCurrentFile(null);
     }
   }
 
-  private byte[] write(CssFile cssFile, Document document, Module module) {
+  @Nullable
+  private byte[] write(@NotNull CssFile cssFile, @NotNull Document document, @NotNull Module module) {
+    CssStylesheet stylesheet = cssFile.getStylesheet();
+    if (stylesheet == null) {
+      LOG.warn("Stylesheet is null for " + cssFile.getName());
+      return null;
+    }
+
     rulesetVectorWriter.prepareIteration();
 
-    CssStylesheet stylesheet = cssFile.getStylesheet();
-    CssRuleset[] rulesets = stylesheet != null ? stylesheet.getRulesets() : CssRuleset.EMPTY_ARRAY;
-
-    final DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow)document : null;
-    for (CssRuleset ruleset : rulesets) {
-      final CssBlock block = ruleset.getBlock();
+    DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow)document : null;
+    for (CssRuleset ruleset : stylesheet.getRulesets()) {
+      CssBlock block = ruleset.getBlock();
       if (block == null) {
         continue;
       }
@@ -87,12 +104,12 @@ public class CssWriter {
       PrimitiveAmfOutputStream rulesetOut = rulesetVectorWriter.getOutputForIteration();
 
       int textOffset = ruleset.getTextOffset();
-      if (documentWindow != null) {
-        rulesetOut.writeUInt29(documentWindow.injectedToHostLine(document.getLineNumber(textOffset)) + 1);
-        textOffset = documentWindow.injectedToHost(textOffset);
+      if (documentWindow == null) {
+        rulesetOut.writeUInt29(document.getLineNumber(textOffset) + 1);
       }
       else {
-        rulesetOut.writeUInt29(document.getLineNumber(textOffset) + 1);
+        rulesetOut.writeUInt29(documentWindow.injectedToHostLine(document.getLineNumber(textOffset)) + 1);
+        textOffset = documentWindow.injectedToHost(textOffset);
       }
       rulesetOut.writeUInt29(textOffset);
 
@@ -112,7 +129,7 @@ public class CssWriter {
           textOffset = declaration.getTextOffset();
           propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
 
-          CssPropertyDescriptor propertyDescriptor = declaration.getDescriptor();
+          CssPropertyDescriptor propertyDescriptor = ContainerUtil.getFirstItem(declaration.getDescriptors());
           writePropertyValue(value, propertyDescriptor != null && propertyDescriptor instanceof FlexCssPropertyDescriptor
                                     ? ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo()
                                     : null);
@@ -145,7 +162,7 @@ public class CssWriter {
     return IOUtil.getBytes(rulesetVectorWriter);
   }
 
-  private void writeSelectors(CssRuleset ruleset, PrimitiveAmfOutputStream out, Module module) {
+  private void writeSelectors(@NotNull CssRuleset ruleset, @NotNull PrimitiveAmfOutputStream out, @NotNull Module module) {
     CssSelector[] selectors = ruleset.getSelectors();
     out.write(selectors.length);
 
@@ -160,17 +177,17 @@ public class CssWriter {
         }
         else {
           XmlElementDescriptor typeSelectorDescriptor = FlexCssElementDescriptorProvider.getTypeSelectorDescriptor(simpleSelector, module);
-          final String subject = simpleSelector.getElementName();
+          String subject = simpleSelector.getElementName();
           if (typeSelectorDescriptor == null) {
             if (!subject.equals("global")) {
               LOG.warn("unqualified type selector " + simpleSelector.getText());
             }
-            stringWriter.writeNullable(subject, out);
+            stringWriter.write(subject, out);
             out.write(0);
           }
           else {
-            stringWriter.writeNullable(typeSelectorDescriptor.getQualifiedName(), out);
-            stringWriter.writeNullable(subject, out);
+            stringWriter.write(typeSelectorDescriptor.getQualifiedName(), out);
+            stringWriter.write(subject, out);
             stringWriter.writeNullable(simpleSelector.getNamespaceName(), out);
           }
         }
@@ -192,55 +209,39 @@ public class CssWriter {
             LOG.error("unknown selector suffix " + selectorSuffix.getText());
           }
 
-          stringWriter.writeNullable(selectorSuffix.getName(), out);
+          stringWriter.write(selectorSuffix.getName(), out);
         }
       }
     }
   }
 
-  private void writeStringValue(ASTNode node, boolean writeCssTypeMarker, @Nullable final FlexStyleIndexInfo info) {
-    final boolean stripQuotes;
-    if (node.getElementType() == CssElementTypes.CSS_STRING) {
-      stripQuotes = true;
+  private void writeStringValue(@NotNull ASTNode node, @Nullable FlexStyleIndexInfo info) {
+    boolean stripQuotes = node.getElementType() == CssElementTypes.CSS_STRING;
+    if (stripQuotes) {
       node = node.getFirstChildNode();
-    }
-    else {
-      stripQuotes = false;
     }
 
     final CharSequence chars = node.getChars();
     if (info == null || info.getEnumeration() == null) {
       if (stripQuotes) {
-        if (writeCssTypeMarker) {
-          propertyOut.write(Amf3Types.STRING);
-        }
+        propertyOut.write(Amf3Types.STRING);
         writeCssStringToken(chars);
       }
       else {
         if (StringUtil.equals(chars, "true")) {
-          if (writeCssTypeMarker) {
-            propertyOut.write(CssPropertyType.BOOL);
-          }
           propertyOut.write(Amf3Types.TRUE);
         }
         else if (StringUtil.equals(chars, "false")) {
-          if (writeCssTypeMarker) {
-            propertyOut.write(CssPropertyType.BOOL);
-          }
           propertyOut.write(Amf3Types.FALSE);
         }
         else {
-          if (writeCssTypeMarker) {
-            propertyOut.write(Amf3Types.STRING);
-          }
+          propertyOut.write(Amf3Types.STRING);
           propertyOut.writeAmfUtf(chars);
         }
       }
     }
     else {
-      if (writeCssTypeMarker) {
-        propertyOut.write(AmfExtendedTypes.STRING_REFERENCE);
-      }
+      propertyOut.write(AmfExtendedTypes.STRING_REFERENCE);
       stringWriter.write(stripQuotes ? chars.subSequence(1, chars.length() - 1).toString() : chars.toString(), propertyOut);
     }
   }
@@ -250,11 +251,7 @@ public class CssWriter {
   }
 
   // In Flex css number cannot be hex (#ddaabb, allowable only for Color)
-  private void writeNumberValue(ASTNode node, final boolean isInt, boolean writeCssTypeMarker) {
-    if (writeCssTypeMarker) {
-      propertyOut.write(CssPropertyType.NUMBER);
-    }
-
+  private void writeNumberValue(ASTNode node, final boolean isInt) {
     final IElementType elementType = node.getElementType();
     boolean isNegative = false;
     if (elementType == CssElementTypes.CSS_NUMBER_TERM) {
@@ -287,12 +284,6 @@ public class CssWriter {
     IOUtil.writeAmfIntOrDouble(propertyOut, node.getChars(), isNegative, isInt);
   }
 
-  private void writeColor(PsiElement value) {
-    Color color = CssPsiColorUtil.getColor(value);
-    assert color != null;
-    propertyOut.writeAmfUInt(color.getRGB());
-  }
-
   private static boolean isArray(PsiElement sibling) {
     if (sibling == null) {
       return false;
@@ -313,7 +304,6 @@ public class CssWriter {
    * If there is no descriptor (FlexCssPropertyDescriptor) for property, then:
    * 1) property is outdated and unused, but it have forgotten remove it
    * 2) developer is too lazy
-   * 5
    */
   private void writePropertyValue(CssTermList value, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     final PsiElement firstChild = value.getFirstChild();
@@ -322,18 +312,13 @@ public class CssWriter {
     }
 
     int lengthPosition = -1;
-    final boolean writeCssTypeMarker;
     if (isArray(firstChild.getNextSibling())) {
-      propertyOut.write(CssPropertyType.ARRAY);
       propertyOut.write(Amf3Types.ARRAY);
-      lengthPosition = propertyOut.size(); // assume array length will be less 64
-      propertyOut.write(0); // allocate for length
-      propertyOut.write(1);
-      writeCssTypeMarker = false;
+      lengthPosition = propertyOut.size();
+      // assume array length will be less 128
+      propertyOut.write(0);
     }
-    else {
-      writeCssTypeMarker = true;
-    }
+    boolean writeCssType = lengthPosition == -1;
 
     int length = 0;
     boolean expectTerm = true;
@@ -345,29 +330,41 @@ public class CssWriter {
 
         CssTermType termType = ((CssTerm)child).getTermType();
         if (termType == CssTermTypes.COLOR) {
-          if (writeCssTypeMarker) {
+          if (writeCssType) {
             propertyOut.write(CssPropertyType.COLOR_INT);
           }
-          writeColor(child);
+          Color color = CssPsiColorUtil.getColor(child);
+          assert color != null;
+          propertyOut.writeAmfUInt(color.getRGB());
         }
         else if (termType == CssTermTypes.IDENT) {
           //noinspection ConstantConditions
-          final ASTNode node = child.getFirstChild().getNode();
+          ASTNode node = child.getFirstChild().getNode();
           if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
+            LOG.assertTrue(writeCssType);
             writeFunctionValue((CssFunction)node, info);
           }
           else {
-            writeStringValue(node, writeCssTypeMarker, info);
+            writeStringValue(node, info);
           }
         }
-        else if (termType == CssTermTypes.NUMBER || termType == CssTermTypes.NEGATIVE_NUMBER || termType == CssTermTypes.LENGTH ||
-                 termType == CssTermTypes.NEGATIVE_LENGTH) {
+        else if (termType == CssTermTypes.NUMBER || termType == CssTermTypes.NEGATIVE_NUMBER || termType == CssTermTypes.LENGTH || termType == CssTermTypes.NEGATIVE_LENGTH) {
           // todo if termType equals CssTermTypes.LENGTH, we must respect unit
           //noinspection ConstantConditions
-          writeNumberValue(child.getFirstChild().getNode(), false, writeCssTypeMarker);
+          writeNumberValue(child.getFirstChild().getNode(), false);
+        }
+        else if (termType == CssTermTypes.STRING) {
+          writeStringValue(child.getFirstChild().getNode(), info);
         }
         else {
-          throw new InvalidPropertyException("unknown css term type: " + termType + " in " + value.getText(), value);
+          ASTNode node = child.getFirstChild().getNode();
+          if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
+            LOG.assertTrue(writeCssType);
+            writeFunctionValue((CssFunction)node, info);
+          }
+          else {
+            throw new InvalidPropertyException("unknown css term type: " + termType + " in " + value.getText(), value);
+          }
         }
 
         length++;
@@ -383,7 +380,6 @@ public class CssWriter {
     }
 
     if (lengthPosition != -1) {
-      length = (length << 1) | 1;
       assert length < 128;
       propertyOut.putByte(length, lengthPosition);
     }
@@ -392,18 +388,22 @@ public class CssWriter {
   @SuppressWarnings("ConstantConditions")
   private void writeFunctionValue(CssFunction cssFunction, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String functionName = cssFunction.getName();
-    ASTNode termListNode = cssFunction.getNode().findChildByType(CssElementTypes.CSS_TERM_LIST);
+    CssTermList termList = cssFunction.getValue();
+    if (termList == null) {
+      throw new InvalidPropertyException("termList is null: " + functionName);
+    }
+
     switch (functionName.charAt(0)) {
       case 'C':
-        writeClassReference(info, termListNode.getFirstChildNode().getFirstChildNode());
+        writeClassReference(info, termList.getNode().getFirstChildNode().getFirstChildNode());
         break;
 
       case 'E':
-        writeEmbed(cssFunction, (CssTermList)termListNode.getPsi());
+        writeEmbed(cssFunction, termList);
         break;
 
       case 'P':
-        writePropertyReference(termListNode.getFirstChildNode().getFirstChildNode());
+        writePropertyReference(termList.getNode().getFirstChildNode().getFirstChildNode());
         break;
 
       default:
@@ -470,6 +470,30 @@ public class CssWriter {
             else {
               LOG.warn("unsupported embed param: " + name + "=" + value);
             }
+          }
+        }
+        else if (firstChild instanceof CssTermList) {
+          CssTerm[] terms = ((CssTermList)firstChild).getTerms();
+          if (terms.length == 2) {
+            CharSequence name = terms[0].getNode().getChars();
+            if (StringUtil.equals(name, "source")) {
+              source = InjectionUtil.getReferencedFile(terms[1].getFirstChild());
+            }
+            else {
+              String value = ((CssString)terms[1].getFirstChild()).getValue();
+              if (StringUtil.equals(name, "symbol")) {
+                symbol = value;
+              }
+              else if (StringUtil.equals(name, "mimeType")) {
+                mimeType = value;
+              }
+              else {
+                LOG.warn("unsupported embed param: " + name + "=" + value);
+              }
+            }
+          }
+          else {
+            LOG.warn("unsupported embed: " + firstChild.getText());
           }
         }
         else if (firstChild instanceof CssString) {

@@ -69,7 +69,7 @@ class LibraryStyleInfoCollector {
       fileBasedIndex.processValues(FlexStyleIndex.INDEX_ID, dataKey, libraryFile, processor, searchScope);
     }
 
-    if (uniqueGuard.size() == 0) {
+    if (uniqueGuard.isEmpty()) {
       return null;
     }
     else {
@@ -91,13 +91,16 @@ class LibraryStyleInfoCollector {
       bytes.reset();
     }
 
-    final VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
+    VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
-      final AssetCounter libAssetCounter = new AssetCounter();
-      library.defaultsStyle = new CssWriter(stringWriter, problemsHolder, libAssetCounter).write(defaultsCssVirtualFile, module);
-      library.assetCounter = libAssetCounter;
+      AssetCounter libAssetCounter = new AssetCounter();
+      byte[] data = new CssWriter(stringWriter, problemsHolder, libAssetCounter).write(defaultsCssVirtualFile, module);
+      if (data != null) {
+        library.defaultsStyle = data;
+        library.assetCounter = libAssetCounter;
 
-      assetCounter.append(libAssetCounter);
+        assetCounter.append(libAssetCounter);
+      }
     }
   }
 }

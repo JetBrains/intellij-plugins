@@ -2,31 +2,19 @@ package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.ClassPool;
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.DocumentReader;
-import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.Module;
-import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.UncaughtErrorManager;
-import com.intellij.flex.uiDesigner.css.CssDeclaration;
-import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssEmbedImageDeclaration;
 import com.intellij.flex.uiDesigner.css.CssEmbedSwfDeclaration;
-import com.intellij.flex.uiDesigner.css.CssPropertyType;
-import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
-import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
-import com.intellij.flex.uiDesigner.css.StyleManagerEx;
-import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContextImpl;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
-import com.intellij.flex.uiDesigner.io.AmfUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 
 import flash.display.DisplayObjectContainer;
-import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 import flash.utils.Proxy;
@@ -248,7 +236,7 @@ public class MxmlReader implements DocumentReader {
         case Amf3Types.STRING:
           propertyHolder[propertyName] = AmfUtil.readString(input);
           if (cssDeclaration != null) {
-            cssDeclaration.type = CssPropertyType.STRING;
+            cssDeclaration.type = Amf3Types.STRING;
           }
           break;
 
@@ -710,12 +698,6 @@ public class MxmlReader implements DocumentReader {
   }
 }
 }
-
-import com.intellij.flex.uiDesigner.VirtualFile;
-import com.intellij.flex.uiDesigner.css.CssDeclaration;
-import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
-import com.intellij.flex.uiDesigner.css.CssRuleset;
-import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 
 import flash.utils.Proxy;
 import flash.utils.flash_proxy;

@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.io;
 import com.intellij.flex.uiDesigner.LogMessageUtil;
 import com.intellij.openapi.components.ServiceManager;
 import gnu.trove.TObjectIntProcedure;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class StringRegistry {
@@ -115,20 +116,22 @@ public class StringRegistry {
       out.reset();
     }
 
-    public int getReference(String string) {
+    public int getReference(@NotNull String string) {
       return stringRegistry.getNameReference(string, this);
     }
 
-    public void write(String string, PrimitiveAmfOutputStream out) {
+    public void write(@NotNull String string, @NotNull PrimitiveAmfOutputStream out) {
       out.writeUInt29(getReference(string));
     }
 
-    public void writeNullable(@Nullable String string, PrimitiveAmfOutputStream out) {
+    public boolean writeNullable(@Nullable String string, PrimitiveAmfOutputStream out) {
       if (string == null) {
         out.write(0);
+        return false;
       }
       else {
         out.writeUInt29(getReference(string));
+        return true;
       }
     }
 

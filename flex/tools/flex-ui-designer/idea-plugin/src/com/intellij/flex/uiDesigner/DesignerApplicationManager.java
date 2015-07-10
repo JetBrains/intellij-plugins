@@ -68,7 +68,7 @@ import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 import static com.intellij.flex.uiDesigner.RenderActionQueue.RenderAction;
 
-public class DesignerApplicationManager extends ServiceManagerImpl {
+public class DesignerApplicationManager {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
     new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
 
@@ -81,8 +81,14 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   private final RenderActionQueue initialRenderQueue = new RenderActionQueue();
 
-  public DesignerApplicationManager() {
-    super(true);
+  private ServiceManagerImpl serviceManager;
+
+  private static class MyServiceManagerImpl extends ServiceManagerImpl {
+    public MyServiceManagerImpl(@NotNull DesignerApplication newApp) {
+      super(true);
+
+      installEP(SERVICES, newApp);
+    }
   }
 
   public static <T> T getService(@NotNull Class<T> serviceClass) {
@@ -110,15 +116,22 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     AppUIUtil.invokeOnEdt(new Runnable() {
       @Override
       public void run() {
-        Disposer.dispose(disposedApp);
+        try {
+          Disposer.dispose(disposedApp);
+        }
+        finally {
+          serviceManager.disposeComponent();
+          serviceManager = null;
+        }
       }
     });
   }
 
-  void setApplication(DesignerApplication newApp) {
+  void setApplication(@NotNull DesignerApplication newApp) {
     LOG.assertTrue(application == null);
+    LOG.assertTrue(serviceManager == null);
     Disposer.register(ApplicationManager.getApplication(), newApp);
-    installEP(SERVICES, newApp);
+    serviceManager = new MyServiceManagerImpl(newApp);
     application = newApp;
   }
 

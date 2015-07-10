@@ -102,15 +102,15 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     }
   }
 
-  public void writeAmfUtf(final CharSequence s) {
+  public void writeAmfUtf(@NotNull CharSequence s) {
     writeAmfUtf(s, false);
   }
 
-  public final void writeAmfUtf(final CharSequence s, final boolean shiftLength) {
+  public final void writeAmfUtf(@NotNull CharSequence s, final boolean shiftLength) {
     writeAmfUtf(s, shiftLength, 0, s.length());
   }
 
-  public final void writeAmfUtf(final CharSequence s, final boolean shiftLength, final int beginIndex, final int endIndex) {
+  public final void writeAmfUtf(@NotNull CharSequence s, final boolean shiftLength, final int beginIndex, final int endIndex) {
     int utfLen = 0;
     int c;
 

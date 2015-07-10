@@ -4,16 +4,12 @@ public final class CssPropertyType {
   public static const COLOR_STRING:int = 7;
 
   public static const ARRAY_OF_COLOR:int = 2;
-  public static const ARRAY:int = 3;
 
   public static const CLASS_REFERENCE:int = 4;
   public static const EMBED:int = 5;
-  public static const NULL:int = 1;
-  public static const NAN:int = 12;
 
   public static const BOOL:int = 8;
-  public static const STRING:int = 6;
-  public static const NUMBER:int = 9;
+  public static const NUMBER:int = 12;
   
   public static const EFFECT:int = 10;
   

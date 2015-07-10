@@ -1,17 +1,10 @@
 package com.intellij.flex.uiDesigner.libraries {
-import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.VirtualFileImpl;
-import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.css.Stylesheet;
-import com.intellij.flex.uiDesigner.flex.ResourceBundle;
-import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.system.ApplicationDomain;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
-
-import org.jetbrains.Identifiable;
 
 public class LibrarySet implements Identifiable {
   /**
@@ -104,7 +97,12 @@ public class LibrarySet implements Identifiable {
     var defaultStyle:Stylesheet;
     if (input.readBoolean()) {
       defaultStyle = new Stylesheet();
-      defaultStyle.read(input);
+      try {
+        defaultStyle.read(input);
+      }
+      catch (e: Error) {
+        throw new Error("Cannot read default style (library: " + file.url + "): " + e.message + "\n" + e.getStackTrace())
+      }
     }
 
     return new Library(file, inheritingStyles, defaultStyle);

@@ -14,6 +14,7 @@ import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSelector;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
+import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
 
 import flash.text.engine.ContentElement;
@@ -178,19 +179,19 @@ public class CssRulesetPrinter {
 
   private function determinateTypeForExternalInlineStyle(value:*):int {
     if (value === null) {
-      return CssPropertyType.NULL;
+      return Amf3Types.NULL;
     }
     else if (value is Boolean) {
       return CssPropertyType.BOOL;
     }
     else if (value is String) {
-      return CssPropertyType.STRING;
+      return Amf3Types.STRING;
     }
     else if (value is Number) {
       return CssPropertyType.NUMBER;
     }
     else if (value is Array) {
-      return CssPropertyType.ARRAY;
+      return Amf3Types.ARRAY;
     }
     else if (value is _module.getClass("mx.effects.IEffect")) {
       return CssPropertyType.EFFECT;
@@ -229,7 +230,7 @@ public class CssRulesetPrinter {
         }
         break;
 
-      case CssPropertyType.STRING:
+      case Amf3Types.STRING:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement('"' + descriptor.value + '"', CssElementFormat.string);
         break;
@@ -259,7 +260,7 @@ public class CssRulesetPrinter {
         contentIndex = -1;
         break;
 
-      case CssPropertyType.NULL:
+      case Amf3Types.NULL:
         content = new Vector.<ContentElement>(contentIndex + 4, true);
         content[contentIndex++] = new TextElement("ClassReference", CssElementFormat.func);
         content[contentIndex++] = new TextElement("(", CssElementFormat.defaultText);
@@ -283,7 +284,7 @@ public class CssRulesetPrinter {
         }
         break;
 
-      case CssPropertyType.ARRAY:
+      case Amf3Types.ARRAY:
         array = descriptor.value as Array;
         if (array.length == 0) {
           content = new Vector.<ContentElement>(contentIndex + 2, true);
