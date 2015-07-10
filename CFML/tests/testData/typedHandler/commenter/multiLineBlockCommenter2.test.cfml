@@ -1,0 +1,15 @@
+<cfquery name="qry">
+	SELECT *
+	  FROM MyImportantTable
+	 WHERE Foo = <cfqueryparam value="zed" cfsqltype="CF_SQL_VARCHAR">
+  AND Bar = 'asdf'
+	<selection><cfif someVar neq "">
+          AND Honk = <cfqueryparam value="#someVar#" cfsqltype="CF_SQL_VARCHAR">
+	</cfif></selection>
+  AND (1=0
+	<cfloop list="1,2,3" index="i">
+          OR Splat = <cfqueryparam value="#i#" cfsqltype="CF_SQL_INTEGER">
+	</cfloop>
+  )
+  AND Why = 'not'
+</cfquery>
