@@ -13,13 +13,16 @@
 # limitations under the License.
 
 require 'cucumber/formatter/console'
-require 'cucumber/core/ast/empty_multiline_argument'
 require 'fileutils'
 
 require 'teamcity/runner_common'
 require 'teamcity/utils/service_message_factory'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/url_formatter'
+
+if Teamcity::Cucumber.same_or_newer?('2.0.0.0')
+  require 'cucumber/core/ast/empty_multiline_argument'
+end
 
 module Teamcity
   module Cucumber

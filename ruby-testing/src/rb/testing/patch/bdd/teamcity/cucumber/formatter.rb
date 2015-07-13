@@ -45,8 +45,13 @@ module Teamcity
       end
       cuke_version.each_with_index do |num, i|
         gnum = given_version[i]
-        if num =~ /\d*/ && gnum =~ /\d*/ && num.to_i > gnum.to_i
-          return true
+        if num =~ /\d*/ && gnum =~ /\d*/
+          diff = num.to_i - gnum.to_i
+          if diff > 0
+            return true
+          elsif diff < 0
+            return false
+          end
         elsif num =~ /\d*/ && gnum =~ /a-zA-Z/
           return true
         end
