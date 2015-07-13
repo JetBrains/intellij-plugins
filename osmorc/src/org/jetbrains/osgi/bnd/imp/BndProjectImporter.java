@@ -78,7 +78,8 @@ public class BndProjectImporter {
   public static final String BND_FILE = Project.BNDFILE;
   public static final String BND_LIB_PREFIX = "bnd:";
 
-  public static final NotificationGroup NOTIFICATIONS = new NotificationGroup("osgi.bnd", NotificationDisplayType.STICKY_BALLOON, true);
+  public static final NotificationGroup NOTIFICATIONS =
+    new NotificationGroup("OSGi Bnd Notifications", NotificationDisplayType.STICKY_BALLOON, true);
 
   private static final Logger LOG = Logger.getInstance(BndProjectImporter.class);
 
