@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.fixes;
 
+import com.google.dart.server.generated.types.*;
 import com.intellij.CommonBundle;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -26,7 +27,6 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartBundle;
-import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

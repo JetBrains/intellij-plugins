@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
+import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
@@ -62,7 +63,6 @@ import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -810,10 +810,7 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public FormatResult edit_format(@NotNull final String filePath,
-                                  final int selectionOffset,
-                                  final int selectionLength,
-                                  final int lineLength) {
+  public FormatResult edit_format(@NotNull final String filePath, final int selectionOffset, final int selectionLength) {
     final Ref<FormatResult> resultRef = new Ref<FormatResult>();
     final Semaphore semaphore = new Semaphore();
 
@@ -842,7 +839,7 @@ public class DartAnalysisServerService {
       final boolean ok = runInPooledThreadAndWait(new Runnable() {
         @Override
         public void run() {
-          server.edit_format(filePath, selectionOffset, selectionLength, lineLength, consumer);
+          server.edit_format(filePath, selectionOffset, selectionLength, consumer);
         }
       }, "edit_format(" + filePath + ", " + selectionOffset + ", " + selectionLength + ")", SEND_REQUEST_TIMEOUT);
 

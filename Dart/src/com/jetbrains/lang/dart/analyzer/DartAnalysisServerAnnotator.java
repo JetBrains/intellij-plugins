@@ -1,5 +1,9 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.server.generated.types.AnalysisError;
+import com.google.dart.server.generated.types.AnalysisErrorSeverity;
+import com.google.dart.server.generated.types.AnalysisErrorType;
+import com.google.dart.server.generated.types.Location;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
@@ -27,10 +31,6 @@ import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
-import org.dartlang.analysis.server.protocol.AnalysisErrorType;
-import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
