@@ -37,6 +37,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -47,6 +48,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Alarm;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -985,8 +987,17 @@ public class DartAnalysisServerService {
 
       final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
-      myServerSocket = new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false,
-                                             FileReadMode.NORMALIZE_EOL_ALWAYS);
+      String argsRaw;
+      try {
+        argsRaw = Registry.stringValue("dart.server.additional.arguments");
+      }
+      catch (MissingResourceException e) {
+        argsRaw = "";
+      }
+
+      myServerSocket = new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream,
+                                             ArrayUtil.toStringArray(StringUtil.split(argsRaw, " ")),
+                                             false, false, port, false, FileReadMode.NORMALIZE_EOL_ALWAYS);
       myServerSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
       myServerSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
       myServer = new RemoteAnalysisServerImpl(myServerSocket);
