@@ -1,5 +1,6 @@
 package org.jetbrains.training.lesson;
 
+import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -10,6 +11,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
@@ -103,33 +105,35 @@ public class CourseManager extends ActionGroup{
         if (lesson == null) throw new BadLessonException("Cannot open \"null\" lesson");
         if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
 
-
-//        final VirtualFile vf;
-//        vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
-        //TODO: remove const "scratch" here
-//        vf = ScratchRootType.getInstance().createScratchFile(e.getProject(), "scratch", Language.findLanguageByID("JAVA"), "");
-
-//        OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
-//        final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
-//        final Document document = editor.getDocument();
-
-        //Lesson without course
+        //If lesson from some course
         if(lesson.getCourse() == null) return;
-        final VirtualFile vf;
-        if (mapCourseVirtualFile.containsKey(lesson.getCourse())) {
+        VirtualFile vf = null;
+        //If virtual file for this course exists;
+        if (mapCourseVirtualFile.containsKey(lesson.getCourse()))
             vf = mapCourseVirtualFile.get(lesson.getCourse());
-        } else {
-            vf = ScratchRootType.getInstance().createScratchFile(project, "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        vf.rename(CourseManager.getInstance(), lesson.getCourse().getId());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+        if (vf == null || !vf.isValid()) {
+            //while course info is not stored
+            final String courseName = lesson.getCourse().getName();
+            String rootPath = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance());
+            final String url =  rootPath + "/" + courseName;
+            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), courseName, null);
+
+            if (vf == null || !vf.isValid()) {
+                vf = ScratchRootType.getInstance().createScratchFile(project, courseName, Language.findLanguageByID("JAVA"), "");
+                final VirtualFile finalVf = vf;
+//                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            finalVf.rename(project, courseName);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+            }
+            registerVirtaulFile(lesson.getCourse(), vf);
+
 
         }
 

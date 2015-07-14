@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.eduUI.panel.EduPanel;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.Lesson;
@@ -30,6 +31,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -39,6 +41,7 @@ public class EduEditor implements TextEditor {
     private FileEditor myDefaultEditor;
     private JComponent myComponent;
     final private EduPanel eduPanel;
+    private HashSet<ActionsRecorder> actionsRecorders;
 
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
@@ -48,6 +51,8 @@ public class EduEditor implements TextEditor {
         myComponent = myDefaultEditor.getComponent();
         eduPanel = new EduPanel(this, 275);
         myComponent.add(eduPanel, BorderLayout.WEST);
+
+        actionsRecorders = new HashSet<ActionsRecorder>();
     }
 
     private FileEditor getDefaultEditor() {
@@ -241,17 +246,46 @@ public class EduEditor implements TextEditor {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                if(getEditor()!= null && getEditor().getDocument() != null)
-                    try {
-                        getEditor().getDocument().setText("");
-                    } catch (NullPointerException e) {
-
+                final Editor editor = getEditor();
+                if (editor != null) {
+                    final Document document = getEditor().getDocument();
+                    if (document != null) {
+                        try {
+                            document.setText("");
+                        } catch (Exception e) {
+                            System.err.println("Unable to update text in EduEdutor!");
+                        }
                     }
+                }
             }
         });
     }
 
     public void clearLessonPanel() {
         eduPanel.clearLessonPanel();
+    }
+
+    public void registerActionsRecorder(ActionsRecorder recorder){
+        actionsRecorders.add(recorder);
+    }
+
+    public void removeActionsRecorders(){
+        for (ActionsRecorder actionsRecorder : actionsRecorders) {
+            actionsRecorder.dispose();
+        }
+        actionsRecorders.clear();
+    }
+
+    public void initLesson(Lesson lesson) {
+        eduPanel.setLessonName(lesson.getId());
+        hideButtons();
+        initAllLessons(lesson);
+        clearEditor();
+        clearLessonPanel();
+        removeActionsRecorders();
+    }
+
+    private void hideButtons() {
+        eduPanel.hideButtons();
     }
 }
