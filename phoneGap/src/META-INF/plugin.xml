@@ -4,6 +4,8 @@
   <version>999.999</version>
   <vendor email="masahiro.suzuka@gmail.com">masahirosuzuka, JetBrains</vendor>
 
+  <resource-bundle>com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle</resource-bundle>
+
   <depends optional="true" config-file="javascript-plugin.xml">JavaScript</depends>
 
 
@@ -18,6 +20,7 @@
         <p>See README.md</p>
 
     ]]></description>
+
 
 
   <idea-version since-build="138.1498"/>
