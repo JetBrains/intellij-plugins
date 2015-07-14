@@ -38,8 +38,8 @@ public class ShowEduUi extends AnAction{
 //        vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
         //TODO: remove const "scratch" here
 
-        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
-        CourseManager.getInstance().registerVirtaulFile(CourseManager.getInstance().getAnyCourse(), vf);
+//        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
+//        CourseManager.getInstance().registerVirtaulFile(CourseManager.getInstance().getAnyCourse(), vf);
 
         //Open file with EduEditorProvider
 //        FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(vf, true, true);

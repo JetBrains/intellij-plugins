@@ -55,9 +55,9 @@ public class LessonProcessor {
         MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
 
         //Initialize ALL LESSONS in EduEditor in this course
-        eduEditor.initAllLessons(lesson);
-        eduEditor.clearEditor();
-        eduEditor.clearLessonPanel();
+        eduEditor.initLesson(lesson);
+
+
 
         //Perform first action, all next perform like a chain reaction
         Command cmd = CommandFactory.buildCommand(elements.peek());

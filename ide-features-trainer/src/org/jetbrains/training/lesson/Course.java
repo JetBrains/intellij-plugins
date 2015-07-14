@@ -29,12 +29,14 @@ public class Course extends ActionGroup{
     private String answersPath;
     private Element root;
     private String id;
+    private String name;
 
     public Course() throws BadCourseException, BadLessonException, JDOMException, IOException {
         super(DEFAULT_NAME, true);
         path = DEFAULT_PATH;
         lessons = new ArrayList<Lesson>();
         id = "default";
+        name = "default";
 
         initLessons();
         answersPath = root.getAttribute("answerspath").getValue();
@@ -80,6 +82,8 @@ public class Course extends ActionGroup{
             throw new BadCourseException("Probably cannot open file.");
         }
         root = doc.getRootElement();
+
+        name = root.getAttribute("name").getValue();
 
         //Goto Lessons
         Element lessonsRoot = root.getChild("lessons");
@@ -137,4 +141,7 @@ public class Course extends ActionGroup{
     }
 
 
+    public String getName() {
+        return name;
+    }
 }
