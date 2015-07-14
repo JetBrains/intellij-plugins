@@ -60,6 +60,7 @@ public class TryCommand extends Command {
 //        updateButton(element, elements, lesson, editor, e, document, myTarget, infoPanel, mouseListenerHolder);
 
         final ActionsRecorder recorder = new ActionsRecorder(executionList.getEditor().getProject(), executionList.getEditor().getDocument(), executionList.getTarget());
+        executionList.getEduEditor().registerActionsRecorder(recorder);
         //TODO: Make recorder disposable
 
         if (element.getAttribute("trigger") != null) {

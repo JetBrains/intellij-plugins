@@ -9,11 +9,9 @@ import org.jetbrains.training.eduUI.EduEditor;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.CourseManager;
 import org.jetbrains.training.lesson.Lesson;
-import org.jetbrains.training.lesson.LessonProcessor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -40,6 +38,7 @@ public class EduPanel extends JPanel {
 
     //UI Preferences
     private Color background;
+    private Color defaultTextColor; //default text color
     private int insets;
 
     //lessonPanel UI
@@ -128,6 +127,7 @@ public class EduPanel extends JPanel {
         background = new Color(250,250,250);
         lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
         messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+        defaultTextColor = new Color(30, 30, 30);
         passedColor = new Color(105, 105, 105);
         lessonPassedColor = new Color(49, 140, 64);
 
@@ -175,6 +175,13 @@ public class EduPanel extends JPanel {
         lessonPanel.add(lessonMessageContainer);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
         lessonPanel.add(lessonNextButton);
+    }
+
+    public void setLessonName(String lessonName){
+        lessonNameLabel.setText(lessonName);
+        lessonNameLabel.setForeground(defaultTextColor);
+        this.revalidate();
+        this.repaint();
     }
 
     public void addMessage(String text){
@@ -313,6 +320,10 @@ public class EduPanel extends JPanel {
         coursePanel.setMaximumSize(new Dimension(width - insets * 2, coursePanel.getPreferredSize().height));
     }
 
+    public void hideButtons(){
+        if (lessonNextButton.isVisible()) lessonNextButton.setVisible(false);
+        this.repaint();
+    }
 
     public void clearLessonPanel() {
 //        while (messages.size() > 0){
