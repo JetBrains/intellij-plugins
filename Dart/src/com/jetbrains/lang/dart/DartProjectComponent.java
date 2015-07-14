@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart;
 
+import com.intellij.ProjectTopics;
 import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
@@ -11,10 +12,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ModuleRootModificationUtil;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
@@ -24,6 +22,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
@@ -58,6 +57,15 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   protected DartProjectComponent(@NotNull final Project project) {
     super(project);
+
+    VirtualFileManager.getInstance().addVirtualFileListener(new DartFileListener(project), project);
+
+    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+      @Override
+      public void rootsChanged(ModuleRootEvent event) {
+        DartFileListener.scheduleDartPackageRootsUpdate(myProject);
+      }
+    });
   }
 
   public void projectOpened() {
@@ -93,6 +101,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
             }
           }
         }
+
+        DartFileListener.scheduleDartPackageRootsUpdate(myProject);
       }
     });
   }
