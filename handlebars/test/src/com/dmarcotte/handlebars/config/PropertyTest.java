@@ -3,11 +3,11 @@ package com.dmarcotte.handlebars.config;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PropertyTest1 {
+public class PropertyTest {
 
   /**
    * This test will fail if properties are added/removed in {@link com.dmarcotte.handlebars.config.Property}
@@ -31,14 +31,14 @@ public class PropertyTest1 {
 
   @Test
   public void ensureAllPropertiesAreTested() {
-    Set<Property> properties = new HashSet<Property>(Arrays.asList(Property.values()));
+    Set<Property> properties = EnumSet.allOf(Property.class);
 
-    for (PropertyTest2.PropertyTestDefinition propertyTestDefinition : PropertyTest2.PROPERTY_TEST_DEFINITIONS) {
+    for (PropertyNameTest.PropertyTestDefinition propertyTestDefinition : PropertyNameTest.PROPERTY_TEST_DEFINITIONS) {
       properties.remove(propertyTestDefinition.property);
     }
 
     Assert.assertTrue("The following " + Property.class.getSimpleName() + " entries do not have corresponding " +
-                      PropertyTest2.PropertyTestDefinition.class.getSimpleName() +
+                      PropertyNameTest.PropertyTestDefinition.class.getSimpleName() +
                       " tests defined: " + properties.toString(),
                       properties.isEmpty());
   }

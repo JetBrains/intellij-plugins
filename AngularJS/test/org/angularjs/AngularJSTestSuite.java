@@ -1,14 +1,13 @@
 package org.angularjs;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.angularjs.codeInsight.*;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
 
-public class AngularJSTestSuite extends TestCase {
+public class AngularJSTestSuite {
 
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(AngularJSTestSuite.class.getSimpleName());
