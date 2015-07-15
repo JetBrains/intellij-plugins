@@ -109,6 +109,7 @@ public class CourseManager extends ActionGroup{
         if(lesson.getCourse() == null) return;
         VirtualFile vf = null;
         //If virtual file for this course exists;
+
         if (mapCourseVirtualFile.containsKey(lesson.getCourse()))
             vf = mapCourseVirtualFile.get(lesson.getCourse());
         if (vf == null || !vf.isValid()) {
@@ -116,9 +117,9 @@ public class CourseManager extends ActionGroup{
             final String courseName = lesson.getCourse().getName();
             String rootPath = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance());
             final String url =  rootPath + "/" + courseName;
-            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), courseName, null);
+//            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), courseName, null);
 
-            if (vf == null || !vf.isValid()) {
+//            if (vf == null || !vf.isValid()) {
                 vf = ScratchRootType.getInstance().createScratchFile(project, courseName, Language.findLanguageByID("JAVA"), "");
                 final VirtualFile finalVf = vf;
 //                ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -131,7 +132,7 @@ public class CourseManager extends ActionGroup{
 //                        }
 //                    }
 //                });
-            }
+//            }
             registerVirtaulFile(lesson.getCourse(), vf);
 
 

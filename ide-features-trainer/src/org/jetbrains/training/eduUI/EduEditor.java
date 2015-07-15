@@ -42,16 +42,18 @@ public class EduEditor implements TextEditor {
     private JComponent myComponent;
     final private EduPanel eduPanel;
     private HashSet<ActionsRecorder> actionsRecorders;
+    private VirtualFile vf;
+    Course myCourse;
 
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
 
         myProject = project;
+        vf = file;
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
         myComponent = myDefaultEditor.getComponent();
         eduPanel = new EduPanel(this, 275);
         myComponent.add(eduPanel, BorderLayout.WEST);
-
         actionsRecorders = new HashSet<ActionsRecorder>();
     }
 
@@ -287,5 +289,13 @@ public class EduEditor implements TextEditor {
 
     private void hideButtons() {
         eduPanel.hideButtons();
+    }
+
+
+    public void updateMyDefaultEditor() {
+        myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, vf);
+        myDefaultEditor.getComponent().setVisible(true);
+        myComponent = myDefaultEditor.getComponent();
+        myComponent.add(eduPanel, BorderLayout.WEST);
     }
 }
