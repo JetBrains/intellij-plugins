@@ -30,6 +30,7 @@ public class ActionsRecorder implements Disposable {
 
     private boolean disposed = false;
     private Runnable showWinMessage;
+    DocumentListener documentListener;
 
     public ActionsRecorder(Project project, Document document, String target) {
         this.project = project;
@@ -47,29 +48,30 @@ public class ActionsRecorder implements Disposable {
 
     public void startRecording(final Runnable showWinMessage){
 
+        if (disposed) return;
         this.showWinMessage = showWinMessage;
 
-        DocumentListener documentListener = new DocumentListener() {
-            @Override
-            public void beforeDocumentChange(DocumentEvent event) {
-
-            }
-
-            @Override
-            public void documentChanged(DocumentEvent event) {
-
+//        documentListener = new DocumentListener() {
+//            @Override
+//            public void beforeDocumentChange(DocumentEvent event) {
+//
+//            }
+//
+//            @Override
+//            public void documentChanged(DocumentEvent event) {
+//
 //                Notification notification = new Notification("IDEA Global Help", "document changed", "document changed", NotificationType.INFORMATION);
 //                Notifications.Bus.notify(notification);
-
+//
 //                if (isTaskSolved(document, target)) {
 //                    dispose();
 //                    showWinMessage.run();
 //                }
-            }
-        };
+//            }
+//        };
 
 
-        document.addDocumentListener(documentListener, this);
+//        document.addDocumentListener(documentListener, this);
     }
 
     public void startRecording(final Runnable showWinMessage, final @Nullable String actionId) {
