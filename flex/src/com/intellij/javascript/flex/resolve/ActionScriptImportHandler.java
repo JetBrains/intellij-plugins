@@ -66,7 +66,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
   @NotNull
   @Override
-  public JSTypeResolveResult resolveTypeName(@NotNull String type, @NotNull PsiElement context) {
+  public JSTypeResolveResult resolveName(@NotNull String type, @NotNull PsiElement context) {
     final JSImportedElementResolveResult result = _resolveTypeName(type, context);
     String resolvedType = result != null ? result.qualifiedName : type;
     return new JSTypeResolveResult(resolvedType != null ? resolvedType : type, null);
