@@ -237,7 +237,69 @@ Dart File
                       ID
                         PsiElement(IDENTIFIER)('from')
                 PsiElement(;)(';')
-              PsiComment(SINGLE_LINE_COMMENT)('//y = new List<String>##call; // same as (new List<String>#)#call')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('y')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(=)('=')
+                  VALUE_EXPRESSION
+                    NEW_TEAR_OFF
+                      PsiElement(new)('new')
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('List')
+                        TYPE_ARGUMENTS
+                          PsiElement(<)('<')
+                          TYPE_LIST
+                            TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('String')
+                          PsiElement(>)('>')
+                      TEAR_OFF
+                        PsiElement(#)('#')
+                    SUPER_TEAR_OFF_EXPRESSION
+                      TEAR_OFF
+                        PsiElement(#)('#')
+                      ID
+                        PsiElement(IDENTIFIER)('call')
+                PsiElement(;)(';')
+                PsiComment(SINGLE_LINE_COMMENT)('// same as (new List<String>#)#call')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('y')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(=)('=')
+                  VALUE_EXPRESSION
+                    PARENTHESIZED_EXPRESSION
+                      PsiElement(()('(')
+                      VALUE_EXPRESSION
+                        NEW_TEAR_OFF
+                          PsiElement(new)('new')
+                          TYPE
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('List')
+                            TYPE_ARGUMENTS
+                              PsiElement(<)('<')
+                              TYPE_LIST
+                                TYPE
+                                  REFERENCE_EXPRESSION
+                                    ID
+                                      PsiElement(IDENTIFIER)('String')
+                              PsiElement(>)('>')
+                          TEAR_OFF
+                            PsiElement(#)('#')
+                      PsiElement())(')')
+                    SUPER_TEAR_OFF_EXPRESSION
+                      TEAR_OFF
+                        PsiElement(#)('#')
+                      ID
+                        PsiElement(IDENTIFIER)('call')
+                PsiElement(;)(';')
               PsiElement(})('}')
       PsiElement(})('}')
   CLASS_DEFINITION

@@ -21,7 +21,8 @@ class Test {
 
     x = new Map<Symbol,Type>#.from;
 
-    //y = new List<String>##call; // same as (new List<String>#)#call
+    y = new List<String>##call; // same as (new List<String>#)#call
+    y = (new List<String>#)#call;
   }
 }
 
