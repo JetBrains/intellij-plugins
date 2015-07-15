@@ -61,16 +61,9 @@ public class DartAnalysisServerAnnotator
   public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @Nullable final Editor editor, boolean hasErrors) {
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
     if (annotatedFile == null) return null;
-
     if (!serverReadyForRequest(psiFile)) return null;
 
-    if (editor != null) {
-      // editor is null if DartAnalysisServerGlobalInspectionContext.analyzeFile() is running
-      DartAnalysisServerService.getInstance().addPriorityFile(annotatedFile);
-    }
-
     DartAnalysisServerService.getInstance().updateFilesContent();
-
     return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
   }
 

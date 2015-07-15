@@ -45,6 +45,7 @@ public class DartServerRootsHandler {
       public void afterProjectClosed(@NotNull final Project project) {
         if (myTrackedProjects.remove(project)) {
           updateRoots();
+          DartAnalysisServerService.getInstance().updateVisibleFiles();
         }
       }
     });
@@ -61,6 +62,7 @@ public class DartServerRootsHandler {
 
     myTrackedProjects.add(project);
     updateRoots();
+    DartAnalysisServerService.getInstance().updateVisibleFiles();
 
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
       @Override

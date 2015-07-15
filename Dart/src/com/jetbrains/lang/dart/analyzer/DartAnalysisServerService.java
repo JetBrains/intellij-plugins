@@ -25,15 +25,13 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -63,6 +61,7 @@ import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +94,7 @@ public class DartAnalysisServerService {
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
-  private final List<String> myPriorityFiles = new ArrayList<String>();
+  private final List<String> myVisibleFiles = new ArrayList<String>();
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
@@ -395,12 +394,23 @@ public class DartAnalysisServerService {
           if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
             DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
           }
+
+          if (isDartOrHtmlFile(file)) {
+            updateVisibleFiles();
+          }
+        }
+
+        @Override
+        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+          if (isDartOrHtmlFile(event.getOldFile()) || isDartOrHtmlFile(event.getNewFile())) {
+            updateVisibleFiles();
+          }
         }
 
         @Override
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
           if (isDartOrHtmlFile(file)) {
-            removePriorityFile(file);
+            updateVisibleFiles();
           }
         }
       });
@@ -448,29 +458,30 @@ public class DartAnalysisServerService {
     }
   }
 
-  void addPriorityFile(@NotNull final VirtualFile file) {
+  void updateVisibleFiles() {
     synchronized (myLock) {
-      final String path = FileUtil.toSystemDependentName(file.getPath());
-      if (!myPriorityFiles.contains(path)) {
-        myPriorityFiles.add(path);
+      final List<String> newVisibleFiles = new ArrayList<String>();
+
+      for (Project project : myRootsHandler.getTrackedProjects()) {
+        for (VirtualFile file : FileEditorManager.getInstance(project).getSelectedFiles()) {
+          if (file.isInLocalFileSystem() && isDartOrHtmlFile(file)) {
+            newVisibleFiles.add(FileUtil.toSystemDependentName(file.getPath()));
+          }
+        }
+      }
+
+      if (!Comparing.haveEqualElements(myVisibleFiles, newVisibleFiles)) {
+        myVisibleFiles.clear();
+        myVisibleFiles.addAll(newVisibleFiles);
         analysis_setPriorityFiles();
         analysis_setSubscriptions();
       }
     }
   }
 
-  private void removePriorityFile(@NotNull final VirtualFile file) {
-    synchronized (myLock) {
-      final String path = FileUtil.toSystemDependentName(file.getPath());
-      if (myPriorityFiles.remove(path)) {
-        analysis_setPriorityFiles();
-        analysis_setSubscriptions();
-      }
-    }
-  }
-
-  private static boolean isDartOrHtmlFile(@NotNull final VirtualFile file) {
-    return file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file);
+  @Contract("null->false")
+  private static boolean isDartOrHtmlFile(@Nullable final VirtualFile file) {
+    return file != null && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file));
   }
 
   public void updateFilesContent() {
@@ -484,7 +495,7 @@ public class DartAnalysisServerService {
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       for (Document document : fileDocumentManager.getUnsavedDocuments()) {
         final VirtualFile file = fileDocumentManager.getFile(document);
-        if (file != null && isDartOrHtmlFile(file)) {
+        if (isDartOrHtmlFile(file)) {
           oldTrackedFiles.remove(file.getPath());
 
           final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
@@ -917,16 +928,16 @@ public class DartAnalysisServerService {
       if (myServer == null) return false;
 
       if (LOG.isDebugEnabled()) {
-        LOG.debug("analysis_setPriorityFiles, files:\n" + StringUtil.join(myPriorityFiles, ",\n"));
+        LOG.debug("analysis_setPriorityFiles, files:\n" + StringUtil.join(myVisibleFiles, ",\n"));
       }
 
       final AnalysisServer server = myServer;
       final boolean ok = runInPooledThreadAndWait(new Runnable() {
         @Override
         public void run() {
-          server.analysis_setPriorityFiles(myPriorityFiles);
+          server.analysis_setPriorityFiles(myVisibleFiles);
         }
-      }, "analysis_setPriorityFiles(" + StringUtil.join(myPriorityFiles, ", ") + ")", SEND_REQUEST_TIMEOUT);
+      }, "analysis_setPriorityFiles(" + StringUtil.join(myVisibleFiles, ", ") + ")", SEND_REQUEST_TIMEOUT);
 
       if (!ok) {
         stopServer();
@@ -942,8 +953,8 @@ public class DartAnalysisServerService {
       if (myServer == null) return false;
 
       final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
-      subscriptions.put(AnalysisService.NAVIGATION, myPriorityFiles);
-      subscriptions.put(AnalysisService.HIGHLIGHTS, myPriorityFiles);
+      subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
+      subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
 
       if (LOG.isDebugEnabled()) {
         LOG.debug("analysis_setSubscriptions, subscriptions:\n" + subscriptions);
@@ -1079,7 +1090,7 @@ public class DartAnalysisServerService {
       myServer = null;
       mySdkHome = null;
       myFilePathWithOverlaidContentToTimestamp.clear();
-      myPriorityFiles.clear();
+      myVisibleFiles.clear();
 
       ApplicationManager.getApplication().runReadAction(new Runnable() {
         @Override
@@ -1162,12 +1173,8 @@ public class DartAnalysisServerService {
   private void updateInformationFromServer(DocumentEvent e) {
     final Document document = e.getDocument();
     final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-    if (file == null) {
-      return;
-    }
-    if (!isDartOrHtmlFile(file)) {
-      return;
-    }
+    if (!isDartOrHtmlFile(file)) return;
+
     final String filePath = file.getPath();
     synchronized (myNavigationData) {
       myFilePathsWithUnsentChanges.add(filePath);
