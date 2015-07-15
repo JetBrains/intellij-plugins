@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentIterator;
@@ -67,18 +68,18 @@ public final class DesignerTests {
       Disposer.register(module, new Disposable() {
         @Override
         public void dispose() {
-          final AccessToken token = WriteAction.start();
-          try {
-            sourceDir.delete(null);
-          }
-          catch (IOException e) {
-            throw new AssertionError(e);
-          }
-          finally {
-            token.finish();
-
-            FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
-          }
+          FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
+          ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+              try {
+                sourceDir.delete(null);
+              }
+              catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          });
         }
       });
 
