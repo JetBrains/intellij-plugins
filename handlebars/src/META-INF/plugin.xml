@@ -29,7 +29,7 @@
     <completion.contributor language="Handlebars" implementationClass="com.dmarcotte.handlebars.completion.HbKeywordCompletionContributor"/>
     <lang.foldingBuilder language="Handlebars"
                          implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
-    <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler"/>
+    <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler" order="before xmlSlash"/>
     <enterHandlerDelegate implementation="com.dmarcotte.handlebars.editor.actions.HbEnterHandler"/>
     <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"/>
     <codeFoldingOptionsProvider
