@@ -12,6 +12,9 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.training.lesson.CourseManager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by karashevich on 23/06/15.
  */
@@ -20,9 +23,11 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
 
     static final private String EDITOR_TYPE_ID = "EduEditor";
     final private com.intellij.openapi.fileEditor.FileEditorProvider defaultTextEditorProvider = TextEditorProvider.getInstance();
+    HashMap<VirtualFile, EduEditor> fileEduEditorMap;
 
 
     public EduEditorProvider() {
+        fileEduEditorMap = new HashMap<VirtualFile, EduEditor>();
     }
 
     @Override
@@ -33,7 +38,16 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
     @NotNull
     @Override
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        return new EduEditor(project, file);
+        if(fileEduEditorMap.containsKey(file)){
+            EduEditor eduEditor = fileEduEditorMap.get(file);
+            eduEditor.updateMyDefaultEditor();
+
+            return eduEditor;
+        } else {
+            EduEditor eduEditor = new EduEditor(project, file);
+            fileEduEditorMap.put(file, eduEditor);
+            return eduEditor;
+        }
     }
 
     @Override
