@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.plugins.groovy.GroovyLightProjectDescriptor
 import org.jetbrains.plugins.groovy.LightGroovyTestCase
 /**
@@ -15,7 +16,7 @@ import org.jetbrains.plugins.groovy.LightGroovyTestCase
 abstract class GrCucumberLightTestCase extends LightGroovyTestCase {
   static class GrCucumberLightProjectDescriptor extends GroovyLightProjectDescriptor {
     @Override
-    void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+    void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       super.configureModule(module, model, contentEntry)
 
       final Library.ModifiableModel modifiableModel = model.moduleLibraryTable.createLibrary("GROOVY_CUCUMBER").modifiableModel

@@ -36,7 +36,7 @@ import java.io.File;
 public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
-    public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       super.configureModule(module, model, contentEntry);
 
       String libPath = PluginPathManager.getPluginHomePath("osmorc") + "/lib";

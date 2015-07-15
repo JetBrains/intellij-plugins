@@ -34,6 +34,7 @@ import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.util.SmartList;
 import com.intellij.util.descriptors.ConfigFileInfoSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +100,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   }
 
   @Override
-  public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+  public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
     super.configureModule(module, model, contentEntry);
 
     if (addStrutsLibrary) {

@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: Andrey.Vokin
@@ -52,7 +53,7 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
 
   private static final DefaultLightProjectDescriptor DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
-    public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       PsiTestUtil.addLibrary(module, model, "cucumber-java", PathManager.getHomePath() + "/community/lib", "cucumber-java-1.2.2.jar");
 
       VirtualFile sourceRoot = VirtualFileManager.getInstance().refreshAndFindFileByUrl("temp:///src");
