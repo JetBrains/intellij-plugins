@@ -78,7 +78,7 @@ public class DartAnalysisServerAnnotator
     if (psiFile instanceof DartExpressionCodeFragment) return false;
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-    if (module == null) return true;
+    if (module == null) return false;
 
     final Project project = module.getProject();
     final DartSdk sdk = DartSdk.getDartSdk(project);
