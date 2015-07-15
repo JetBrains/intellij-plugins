@@ -382,6 +382,8 @@ componentName ::= << nonStrictID >>
 // see nonStrictID
 id ::= IDENTIFIER
 
+tearOff ::= HASH
+
 type ::= simpleQualifiedReferenceExpression typeArguments? {
   pin=1
   methods=[
@@ -483,7 +485,7 @@ expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
-                                 '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
+                                 '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' | '#'
                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
@@ -549,6 +551,7 @@ left asExpression ::= 'as' type
 
 private primary ::=  literalExpression |
                      functionExpression |
+                     newTearOff |
                      newExpression | // constant object expression is also parsed as newExpression
                      refOrThisOrSuperOrParenExpression |
                      throwExpression
@@ -558,7 +561,7 @@ parenthesizedExpression ::= '(' expressionInParentheses ')'
 private expressionInParentheses ::= expression | statement {recoverWhile=parenthesesRecovery}
 private parenthesesRecovery ::= !')'
 
-private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
+private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAccessExpression | qualifiedReferenceExpression | superTearOffExpression)*
 
 private refOrThisOrSuperOrParenExpression ::= (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>)
 
@@ -572,19 +575,29 @@ private arrayAccess ::= '[' expression? ']' {pin=1}
 libraryComponentReferenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryComponentReferenceExpressionBase" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-referenceExpression ::= << nonStrictID >>
+referenceExpression ::= tearOffReferenceExpression
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+simpleReferenceExpression ::= << nonStrictID >>
+{elementType="referenceExpression"}
+tearOffReferenceExpression ::= simpleReferenceExpression ( tearOff  (( << nonStrictID >> ('=' expression)?) | userDefinableOperator))?
+{elementType="referenceExpression"} // TODO change elementType to some kind of tear-off type
 
-left qualifiedReferenceExpression ::= '.' referenceExpression | '?.' referenceExpression {elementType="referenceExpression"}
+left qualifiedReferenceExpression ::= '.' referenceExpression | '?.' referenceExpression
+{elementType="referenceExpression"}
 cascadeReferenceExpression ::= '..' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 simpleQualifiedReferenceExpression ::= referenceExpression qualifiedReferenceExpression* {elementType="referenceExpression"}
 
+superTearOffExpression ::= tearOff (( << nonStrictID >> ('=' expression)?) | userDefinableOperator)
+
 thisExpression ::= 'this'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 superExpression ::= 'super'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+
+newTearOff ::= 'new' type tearOff ('.' << nonStrictID >>)? // TODO Waiting for confirmation that the '.' is required
+{ pin=3 }
 
 newExpression ::= ('new' | 'const') type ('.' referenceExpression)? arguments {
   pin=1

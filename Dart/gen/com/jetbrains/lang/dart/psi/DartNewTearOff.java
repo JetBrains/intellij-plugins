@@ -5,13 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartIsExpression extends DartExpression {
+public interface DartNewTearOff extends DartPsiCompositeElement {
 
-  @Nullable
-  DartExpression getExpression();
-
-  @Nullable
-  DartNewTearOff getNewTearOff();
+  @NotNull
+  DartTearOff getTearOff();
 
   @NotNull
   DartType getType();

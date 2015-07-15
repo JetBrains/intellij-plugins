@@ -23,9 +23,15 @@ public class DartAsExpressionImpl extends DartClassReferenceImpl implements Dart
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+    return findChildByClass(DartExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartNewTearOff getNewTearOff() {
+    return findChildByClass(DartNewTearOff.class);
   }
 
   @Override

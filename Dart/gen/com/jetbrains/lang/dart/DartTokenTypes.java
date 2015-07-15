@@ -89,6 +89,7 @@ public interface DartTokenTypes {
   IElementType NAMED_CONSTRUCTOR_DECLARATION = new DartElementType("NAMED_CONSTRUCTOR_DECLARATION");
   IElementType NAMED_FORMAL_PARAMETERS = new DartElementType("NAMED_FORMAL_PARAMETERS");
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
+  IElementType NEW_TEAR_OFF = new DartElementType("NEW_TEAR_OFF");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType ON_PART = new DartElementType("ON_PART");
   IElementType OPERATOR_DECLARATION = new DartElementType("OPERATOR_DECLARATION");
@@ -116,9 +117,11 @@ public interface DartTokenTypes {
   IElementType SUPERCLASS = new DartElementType("SUPERCLASS");
   IElementType SUPER_CALL_OR_FIELD_INITIALIZER = new DartElementType("SUPER_CALL_OR_FIELD_INITIALIZER");
   IElementType SUPER_EXPRESSION = new DartElementType("SUPER_EXPRESSION");
+  IElementType SUPER_TEAR_OFF_EXPRESSION = new DartElementType("SUPER_TEAR_OFF_EXPRESSION");
   IElementType SWITCH_CASE = new DartElementType("SWITCH_CASE");
   IElementType SWITCH_STATEMENT = new DartElementType("SWITCH_STATEMENT");
   IElementType SYMBOL_LITERAL_EXPRESSION = new DartElementType("SYMBOL_LITERAL_EXPRESSION");
+  IElementType TEAR_OFF = new DartElementType("TEAR_OFF");
   IElementType TERNARY_EXPRESSION = new DartElementType("TERNARY_EXPRESSION");
   IElementType THIS_EXPRESSION = new DartElementType("THIS_EXPRESSION");
   IElementType THROW_EXPRESSION = new DartElementType("THROW_EXPRESSION");
@@ -507,6 +510,9 @@ public interface DartTokenTypes {
       else if (type == NEW_EXPRESSION) {
         return new DartNewExpressionImpl(node);
       }
+      else if (type == NEW_TEAR_OFF) {
+        return new DartNewTearOffImpl(node);
+      }
       else if (type == NORMAL_FORMAL_PARAMETER) {
         return new DartNormalFormalParameterImpl(node);
       }
@@ -588,6 +594,9 @@ public interface DartTokenTypes {
       else if (type == SUPER_EXPRESSION) {
         return new DartSuperExpressionImpl(node);
       }
+      else if (type == SUPER_TEAR_OFF_EXPRESSION) {
+        return new DartSuperTearOffExpressionImpl(node);
+      }
       else if (type == SWITCH_CASE) {
         return new DartSwitchCaseImpl(node);
       }
@@ -596,6 +605,9 @@ public interface DartTokenTypes {
       }
       else if (type == SYMBOL_LITERAL_EXPRESSION) {
         return new DartSymbolLiteralExpressionImpl(node);
+      }
+      else if (type == TEAR_OFF) {
+        return new DartTearOffImpl(node);
       }
       else if (type == TERNARY_EXPRESSION) {
         return new DartTernaryExpressionImpl(node);

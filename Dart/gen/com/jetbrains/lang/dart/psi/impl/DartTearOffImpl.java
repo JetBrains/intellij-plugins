@@ -11,33 +11,15 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartIsExpressionImpl extends DartExpressionImpl implements DartIsExpression {
+public class DartTearOffImpl extends DartPsiCompositeElementImpl implements DartTearOff {
 
-  public DartIsExpressionImpl(ASTNode node) {
+  public DartTearOffImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitIsExpression(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTearOff(this);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public DartNewTearOff getNewTearOff() {
-    return findChildByClass(DartNewTearOff.class);
-  }
-
-  @Override
-  @NotNull
-  public DartType getType() {
-    return findNotNullChildByClass(DartType.class);
   }
 
 }

@@ -28,4 +28,10 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
+  @Override
+  @Nullable
+  public DartNewTearOff getNewTearOff() {
+    return findChildByClass(DartNewTearOff.class);
+  }
+
 }
