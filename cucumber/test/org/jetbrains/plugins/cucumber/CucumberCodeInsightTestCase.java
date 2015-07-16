@@ -20,7 +20,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -31,11 +30,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class CucumberCodeInsightTestCase extends LightPlatformCodeInsightFixtureTestCase {
   @NonNls protected static final String CARET_STR = "<caret>";
-
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-  protected CucumberCodeInsightTestCase() {
-    PlatformTestCase.autodetectPlatformPrefix();
-  }
 
   protected int findOffsetBySignature(String signature) {
     return findOffsetBySignature(signature, myFixture.getFile());

@@ -14,11 +14,6 @@ import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenam
 public class GherkinInplaceRenameTest extends LightPlatformCodeInsightFixtureTestCase {
   private static final String TEST_DATA_PATH = "/refactoring/rename";
 
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-  public GherkinInplaceRenameTest() {
-    PlatformTestCase.autodetectPlatformPrefix();
-  }
-
   public void testRenameStepParameter() {
     doTest("newDescription");
   }
