@@ -5,7 +5,6 @@ import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationTy
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
-import com.intellij.testFramework.PlatformTestCase;
 import com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jdom.Element;
@@ -13,10 +12,6 @@ import org.jdom.Element;
 import java.io.File;
 
 public class DartRunConfigurationConverterTest extends LightPlatformTestCase {
-  public DartRunConfigurationConverterTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
-
   private static String getBaseDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/converter/");
   }

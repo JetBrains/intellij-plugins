@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.generate;
 
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import com.intellij.testFramework.PlatformTestCase;
 import com.jetbrains.lang.dart.ide.generation.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,10 +8,6 @@ import org.jetbrains.annotations.NotNull;
  * @author: Fedor.Korotkov
  */
 abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsightTestCase {
-  protected DartGenerateActionTestBase() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
-
   protected void doOverrideTest() {
     doTest(new DartOverrideMethodHandler());
   }

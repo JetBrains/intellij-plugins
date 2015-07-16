@@ -3,14 +3,10 @@ package com.dmarcotte.handlebars.inspections;
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public class HbBlockMismatchFixTest extends LightPlatformCodeInsightFixtureTestCase {
-  public HbBlockMismatchFixTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
 
   @Override
   protected boolean isWriteActionRequired() {

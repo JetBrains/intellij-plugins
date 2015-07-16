@@ -2,7 +2,6 @@ package com.dmarcotte.handlebars.highlighting;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,11 +12,6 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
   @Override
   protected String getBasePath() {
     return "/highlighting";
-  }
-
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-  public HbHighlightingTest() {
-    PlatformTestCase.initPlatformLangPrefix();
   }
 
   @Override

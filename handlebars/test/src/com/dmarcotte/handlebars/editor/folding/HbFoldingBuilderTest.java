@@ -9,10 +9,6 @@ import java.io.File;
 public class HbFoldingBuilderTest extends LightPlatformCodeInsightFixtureTestCase {
   private static final String TEST_DATA_PATH = new File(HbTestUtils.BASE_TEST_DATA_PATH, "folding").getAbsolutePath();
 
-  public HbFoldingBuilderTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
-
   public void testFoldsWithUnclosedBlocks() {
     doTest();
   }

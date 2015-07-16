@@ -3,16 +3,10 @@ package com.dmarcotte.handlebars.inspections;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public class HbInspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
-
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-  public HbInspectionsTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
 
   @Override
   protected boolean isWriteActionRequired() {

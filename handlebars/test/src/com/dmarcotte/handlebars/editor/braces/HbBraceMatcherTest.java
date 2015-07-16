@@ -9,10 +9,6 @@ public class HbBraceMatcherTest extends LightPlatformCodeInsightFixtureTestCase 
 
   private static final String ourBraceMatchIndicator = "<brace_match>";
 
-  public HbBraceMatcherTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
-
   /**
    * Expects "fileText" to have two "&lt;brace_match&gt;" tokens, placed in front of two braces which are
    * expected to be matched by the built-in brace matching (i.e. when the caret is at one of the &lt;brace_match&gt;

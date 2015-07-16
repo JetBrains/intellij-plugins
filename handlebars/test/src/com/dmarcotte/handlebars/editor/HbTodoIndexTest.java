@@ -2,22 +2,12 @@ package com.dmarcotte.handlebars.editor;
 
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.PsiTodoSearchHelper;
 import com.intellij.psi.search.TodoItem;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import com.intellij.testFramework.PlatformTestCase;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class HbTodoIndexTest extends LightPlatformCodeInsightTestCase {
-
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-  public HbTodoIndexTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
 
   @Override
   @NotNull

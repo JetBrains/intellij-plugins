@@ -11,12 +11,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 
 public class HbsEmmetTest extends LightPlatformCodeInsightFixtureTestCase {
 
-  @Override
-  protected void setUp() throws Exception {
-    PlatformTestCase.initPlatformLangPrefix();
-    super.setUp();
-  }
-
   public void testSimpleTags() {
     myFixture.configureByText(HbFileType.INSTANCE, "div>span<caret>");
     TemplateManager.getInstance(getProject()).startTemplate(myFixture.getEditor(), TemplateSettings.TAB_CHAR);

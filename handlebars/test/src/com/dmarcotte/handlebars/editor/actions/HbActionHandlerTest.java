@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.TypedAction;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,11 +26,6 @@ import org.jetbrains.annotations.NotNull;
  * to indicate a selection.
  */
 public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
-
-  protected HbActionHandlerTest() {
-    PlatformTestCase.initPlatformLangPrefix();
-  }
-
   private void performWriteAction(final Project project, final Runnable action) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override

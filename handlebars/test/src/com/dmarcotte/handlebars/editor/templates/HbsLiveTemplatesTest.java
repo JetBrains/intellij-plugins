@@ -6,18 +6,11 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 
 public class HbsLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
-
-  @Override
-  protected void setUp() throws Exception {
-    PlatformTestCase.initPlatformLangPrefix();
-    super.setUp();
-  }
 
   @NotNull
   @Override
