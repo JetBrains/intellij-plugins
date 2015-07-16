@@ -170,8 +170,11 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
               JSExpression expression = ((JSForInStatement)grandParent).getCollectionExpression();
               if (expression != null) {
                 JSType expressionType = JSResolveUtil.getExpressionJSType(expression);
-                if (expressionType != null && JSTypeUtils.isArrayType(expressionType)) {
-                  type = JSTypeUtils.getComponentType(expressionType);
+                if (expressionType != null) {
+                  final JSType componentType = JSTypeUtils.getComponentType(expressionType);
+                  if (componentType != null) {
+                    type = componentType;
+                  }
                 }
               }
             }
