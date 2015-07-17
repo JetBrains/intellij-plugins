@@ -235,10 +235,13 @@ class DartUrlResolverImpl extends DartUrlResolver {
     }
 
     final VirtualFile pubspecYamlFile = PubspecYamlUtil.findPubspecYamlFile(myProject, contextFile);
-    final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
-    final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild(PACKAGES_FOLDER_NAME);
-    if (packagesFolder != null && packagesFolder.isDirectory()) {
-      myPackageRoot = packagesFolder;
+
+    if (myDartSdk == null || StringUtil.compareVersionNumbers(myDartSdk.getVersion(), "1.12") < 0) {
+      final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
+      final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild(PACKAGES_FOLDER_NAME);
+      if (packagesFolder != null && packagesFolder.isDirectory()) {
+        myPackageRoot = packagesFolder;
+      }
     }
 
     return pubspecYamlFile;
@@ -247,20 +250,39 @@ class DartUrlResolverImpl extends DartUrlResolver {
   private void initLivePackageNameToDirMap() {
     final VirtualFile baseDir = myPubspecYamlFile == null ? null : myPubspecYamlFile.getParent();
     if (myPubspecYamlFile == null || baseDir == null) return;
+    final VirtualFile dotPackagesFile = baseDir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
-    final String name = PubspecYamlUtil.getDartProjectName(myPubspecYamlFile);
-    final VirtualFile libFolder = baseDir.findChild(PubspecYamlUtil.LIB_DIR_NAME);
-
-    if (name != null && libFolder != null && libFolder.isDirectory()) {
-      myLivePackageNameToDirMap.put(name, libFolder);
-    }
-
-    PubspecYamlUtil.processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile, new PairConsumer<String, VirtualFile>() {
-      @Override
-      public void consume(@NotNull final String packageName, @NotNull final VirtualFile packageDir) {
-        myLivePackageNameToDirMap.put(packageName, packageDir);
+    if (dotPackagesFile != null &&
+        !dotPackagesFile.isDirectory() &&
+        myDartSdk != null &&
+        StringUtil.compareVersionNumbers(myDartSdk.getVersion(), "1.12") > 0) {
+      final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
+      if (packagesMap != null) {
+        for (Map.Entry<String, String> entry : packagesMap.entrySet()) {
+          final String packageName = entry.getKey();
+          final String packagePath = entry.getValue();
+          final VirtualFile packageDir = LocalFileSystem.getInstance().findFileByPath(packagePath);
+          if (packageDir != null) {
+            myLivePackageNameToDirMap.put(packageName, packageDir);
+          }
+        }
       }
-    });
+    }
+    else {
+      final String name = PubspecYamlUtil.getDartProjectName(myPubspecYamlFile);
+      final VirtualFile libFolder = baseDir.findChild(PubspecYamlUtil.LIB_DIR_NAME);
+
+      if (name != null && libFolder != null && libFolder.isDirectory()) {
+        myLivePackageNameToDirMap.put(name, libFolder);
+      }
+
+      PubspecYamlUtil.processInProjectPathPackagesRecursively(myProject, myPubspecYamlFile, new PairConsumer<String, VirtualFile>() {
+        @Override
+        public void consume(@NotNull final String packageName, @NotNull final VirtualFile packageDir) {
+          myLivePackageNameToDirMap.put(packageName, packageDir);
+        }
+      });
+    }
   }
 
   private void initPubListPackageDirsMap(final @NotNull VirtualFile contextFile) {
