@@ -7,7 +7,14 @@ if (browsers != null) {
   cliOptions.browsers = browsers;
 }
 
-server.start(cliOptions);
+if (typeof server === 'function') {
+  var serverObj = new server(cliOptions);
+  serverObj.start();
+}
+else {
+  // prior to karma@0.13
+  server.start(cliOptions);
+}
 
 // Prevent karma server from being an orphan process.
 // For example, if WebStorm is killed using SIGKILL, karma server will still be alive.
