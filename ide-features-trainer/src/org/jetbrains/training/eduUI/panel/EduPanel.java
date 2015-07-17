@@ -157,12 +157,12 @@ public class EduPanel extends JPanel {
 
         } else  {
 
-            background = new Color(250, 250, 250);
+            background = new Color(50, 50, 50);
             lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
             messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-            defaultTextColor = new Color(30, 30, 30);
-            passedColor = new Color(105, 105, 105);
-            lessonPassedColor = new Color(49, 140, 64);
+            defaultTextColor = new Color(228, 228, 228);
+            passedColor = new Color(103, 103, 103);
+            lessonPassedColor = new Color(7, 140, 45);
 
             //shortcut UI
             shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
@@ -171,13 +171,14 @@ public class EduPanel extends JPanel {
             shortcutTextColor = Color.BLACK;
 
             //separator UI
-            separatorColor = new Color(222, 222, 222);
+            separatorColor = new Color(149, 149, 149);
 
             //course UI
-            lessonActiveColor = new Color(167, 167, 167);
-            lessonInactiveColor = new Color(17, 96, 166);
+            lessonActiveColor = new Color(202, 202, 202);
+            lessonInactiveColor = new Color(104, 159, 220);
             lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
             allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
+
 
         }
 
@@ -204,6 +205,8 @@ public class EduPanel extends JPanel {
         lessonNextButton = new JButton("Next");
         lessonNextButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNextButton.setVisible(false);
+        lessonNextButton.setBackground(background);
+
 
         lessonPanel.add(lessonNameLabel);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
