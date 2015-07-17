@@ -20,6 +20,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -221,6 +222,9 @@ public class DartProjectComponent extends AbstractProjectComponent {
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
+    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
+    final boolean excludeRootPackagesFolder = sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "1.12") >= 0;
+
     final VirtualFile root = pubspecYamlFile.getParent();
     final VirtualFile contentRoot =
       root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
@@ -239,30 +243,29 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final String rootUrl = root.getUrl();
 
         public boolean value(final String url) {
-          if (!url.equals(rootUrl + "/.pub") &&
-              !url.equals(rootUrl + "/build") &&
-              !url.startsWith(rootUrl + "/packages/") &&
-              !url.startsWith(rootUrl + "/bin/") &&
-              !url.startsWith(rootUrl + "/benchmark/") &&
-              !url.startsWith(rootUrl + "/example/") &&
-              !url.startsWith(rootUrl + "/test/") &&
-              !url.startsWith(rootUrl + "/tool/") &&
-              !url.startsWith(rootUrl + "/web/")) {
-            return false;
-          }
-
           if (url.equals(rootUrl + "/.pub")) return true;
           if (url.equals(rootUrl + "/build")) return true;
-          if (url.endsWith("/packages")) return true;
+
+          // root packages folder is excluded in case of SDK 1.12 (but do not check excludeRootPackagesFolder here as SDK might be changed right now!)
+          if (url.equals(rootUrl + "/packages")) return true;
 
           // excluded subfolder of 'packages' folder
           if (url.startsWith(root + "/packages/")) return true;
+
+          if (url.endsWith("/packages") && (url.startsWith(rootUrl + "/bin/") ||
+                                            url.startsWith(rootUrl + "/benchmark/") ||
+                                            url.startsWith(rootUrl + "/example/") ||
+                                            url.startsWith(rootUrl + "/test/") ||
+                                            url.startsWith(rootUrl + "/tool/") |
+                                            url.startsWith(rootUrl + "/web/"))) {
+            return true;
+          }
 
           return false;
         }
       });
 
-    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(module, pubspecYamlFile, true);
+    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(module, pubspecYamlFile, true, excludeRootPackagesFolder);
 
     if (oldExcludedUrls.size() != newExcludedUrls.size() || !newExcludedUrls.containsAll(oldExcludedUrls)) {
       ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedUrls, newExcludedUrls);
@@ -271,7 +274,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   public static Set<String> collectFolderUrlsToExclude(@NotNull final Module module,
                                                        @NotNull final VirtualFile pubspecYamlFile,
-                                                       final boolean withDotPubAndBuild) {
+                                                       final boolean withDotPubAndBuild,
+                                                       final boolean withRootPackagesFolder) {
     final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
@@ -289,16 +293,20 @@ public class DartProjectComponent extends AbstractProjectComponent {
       }
     }
 
+    if (withRootPackagesFolder) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/packages");
+    }
+
     final VirtualFile binFolder = root.findChild("bin");
     if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
       newExcludedPackagesUrls.add(binFolder.getUrl() + "/packages");
     }
 
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("benchmark"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("example"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("test"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("tool"), fileIndex);
-    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("web"), fileIndex);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("benchmark"), fileIndex, withRootPackagesFolder);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("example"), fileIndex, withRootPackagesFolder);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("test"), fileIndex, withRootPackagesFolder);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("tool"), fileIndex, withRootPackagesFolder);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("web"), fileIndex, withRootPackagesFolder);
 
     // Folders like packages/PathPackage and packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) are symlinks to local 'lib' folders. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
     // Empty nodes like 'ThisProject (ThisProject/lib)' are added to Project Structure by DartTreeStructureProvider
@@ -314,7 +322,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   private static void appendPackagesFolders(final @NotNull Collection<String> excludedPackagesUrls,
                                             final @Nullable VirtualFile folder,
-                                            final @NotNull ProjectFileIndex fileIndex) {
+                                            final @NotNull ProjectFileIndex fileIndex,
+                                            final boolean withRootPackagesFolder) {
     if (folder == null) return;
 
     VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor() {
@@ -329,7 +338,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
             return SKIP_CHILDREN;
           }
           // do not exclude 'packages' folder near another pubspec.yaml file
-          else if (file.findChild(PUBSPEC_YAML) == null) {
+          else if (withRootPackagesFolder || file.findChild(PUBSPEC_YAML) == null) {
             excludedPackagesUrls.add(file.getUrl() + "/packages");
           }
         }
