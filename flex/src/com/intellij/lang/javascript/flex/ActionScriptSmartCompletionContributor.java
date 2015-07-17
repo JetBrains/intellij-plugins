@@ -10,9 +10,9 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.completion.JSCompletionContributor;
+import com.intellij.lang.javascript.completion.JSInsertHandler;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
-import com.intellij.lang.javascript.completion.JavaScriptCompletionData;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
@@ -105,7 +105,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           CompletionResultSet completionResultSet = JSCompletionContributor.getInstance().getCompletionResultSet();
 
           if (completionResultSet != null && !ApplicationManager.getApplication().isHeadlessEnvironment()) {
-            ((LookupItem)lookupItem).setInsertHandler(new JavaScriptCompletionData.JSInsertHandler<LookupElement>());
+            ((LookupItem)lookupItem).setInsertHandler(new JSInsertHandler<LookupElement>());
             completionResultSet.addElement(lookupItem);
           }
           variants.add(lookupItem);
