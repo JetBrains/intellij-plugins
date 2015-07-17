@@ -111,7 +111,6 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     return offset;
   }
 
-  // TODO: skip whitespaces at each line (move comment right)
   public MyCommenterData createLineCommentingState(int startLine, int endLine, @NotNull Document document, @NotNull PsiFile file) {
     int lineStartOffset = document.getLineStartOffset(startLine);
     return new MyCommenterData(isOffsetWithinCfscript(lineStartOffset, document, file), lineStartOffset);
@@ -126,6 +125,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
 
   public void commentLine(int line, int offset, @NotNull Document document, @NotNull MyCommenterData data) {
     final int originalLineEndOffset = document.getLineEndOffset(line);
+    offset = CharArrayUtil.shiftForward(document.getCharsSequence(), offset, " \t\n");
     if (data.isIsWithinCfscript()) {
       document.insertString(offset, CF_SCRIPT_LINE_COMMENT_PREFIX);
     }
