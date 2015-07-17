@@ -114,27 +114,26 @@ public class CourseManager extends ActionGroup{
         if (vf == null || !vf.isValid()) {
             //while course info is not stored
             final String courseName = lesson.getCourse().getName();
-            String rootPath = ScratchFileService.getInstance().getRootPath(ScratchRootType.getInstance());
-
-            final String url =  rootPath + "/" + courseName;
 
             //find file if it is existed
-            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), url, ScratchFileService.Option.existing_only);
+            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), courseName, ScratchFileService.Option.existing_only);
             if (vf != null) ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
 
             if (vf == null || !vf.isValid()) {
                 vf = ScratchRootType.getInstance().createScratchFile(project, courseName, Language.findLanguageByID("JAVA"), "");
                 final VirtualFile finalVf = vf;
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            finalVf.rename(project, courseName);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                if (!vf.getName().equals(courseName)) {
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                finalVf.rename(project, courseName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
             registerVirtaulFile(lesson.getCourse(), vf);
 
