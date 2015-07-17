@@ -2,7 +2,7 @@ package com.intellij.javascript.flex.completion;
 
 import com.intellij.lang.javascript.completion.JSCompletionContributor;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
-import com.intellij.lang.javascript.completion.JavaScriptCompletionData;
+import com.intellij.lang.javascript.completion.JSKeywordsCompletionProvider;
 import com.intellij.lang.javascript.completion.KeywordCompletionConsumer;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -27,14 +27,14 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
     final PsiElement parent = context.getParent();
     final PsiElement grandParent = parent != null ? parent.getParent() : null;
     final PsiElement grandGrandParent = grandParent != null ? grandParent.getParent() : null;
-    if (parent instanceof JSReferenceExpression && (
-      (JSResolveUtil.isExprInTypeContext((JSReferenceExpression)parent) ||
-       (grandParent instanceof JSExpressionStatement && (JSResolveUtil.isPlaceWhereNsCanBe(grandParent) ||
-                                                         grandGrandParent instanceof JSFile &&
-                                                         grandGrandParent.getContext() == null)) ||
-       grandParent instanceof JSAttributeList
-      ) ||
-      parent instanceof JSAttributeNameValuePair)
+    if (parent instanceof JSReferenceExpression &&
+        ((JSReferenceExpression)parent).getQualifier() == null &&
+        (JSResolveUtil.isExprInTypeContext((JSReferenceExpression)parent) ||
+         grandParent instanceof JSExpressionStatement && (JSResolveUtil.isPlaceWhereNsCanBe(grandParent) ||
+                                                          grandGrandParent instanceof JSFile && grandGrandParent.getContext() == null) ||
+         grandParent instanceof JSAttributeList ||
+         parent instanceof JSAttributeNameValuePair
+        )
       ) {
       if (!(grandParent instanceof JSImportStatement) &&
           (grandParent instanceof JSAttributeList || JSResolveUtil.isPlaceWhereNsCanBe(grandParent) ||
@@ -51,7 +51,7 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
     }
     if (JSResolveUtil.isInPlaceWhereTypeCanBeDuringCompletion(parent) && JSResolveUtil.isPlaceWhereNsCanBe(grandParent)
       ) {
-      consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, false, JavaScriptCompletionData.TYPE_LITERAL_VALUES);
+      consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, false, JSKeywordsCompletionProvider.TYPE_LITERAL_VALUES);
       consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, false, "function");
       consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, true, accessModifiers);
       consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, true, "extends", "implements", "include",
