@@ -116,7 +116,7 @@ public class EduPanel extends JPanel {
 
     }
 
-    private void generalizeUI(){
+    private void generalizeUI() {
         //generalize fonts, colors and sizes
         //TODO: change size to UiUtil size
         fontSize = 12;
@@ -124,31 +124,66 @@ public class EduPanel extends JPanel {
         lessonNameGap = 10;
         lessonNextButtonGap = 10;
         messageGap = 10;
-        background = new Color(250,250,250);
-        lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
-        messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-        defaultTextColor = new Color(30, 30, 30);
-        passedColor = new Color(105, 105, 105);
-        lessonPassedColor = new Color(49, 140, 64);
-
-        //shortcut UI
-        shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
-        shortcutBckColor = Color.WHITE;
-        shortcutBorderColor = Color.BLACK;
-        shortcutTextColor = Color.BLACK;
 
         //separator UI
-        separatorColor = new Color(222, 222, 222);
         separatorGap = 10;
 
         //course UI
         lessonGap = 10;
-        lessonActiveColor = new Color(167, 167, 167);
-        lessonInactiveColor = new Color(17, 96, 166);
-        lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-        allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
+
+        //Look and feel differences
+        if (!UIUtil.isUnderDarcula()) {
+            background = new Color(250, 250, 250);
+            lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
+            messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+            defaultTextColor = new Color(30, 30, 30);
+            passedColor = new Color(105, 105, 105);
+            lessonPassedColor = new Color(49, 140, 64);
+
+            //shortcut UI
+            shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
+            shortcutBckColor = Color.WHITE;
+            shortcutBorderColor = Color.BLACK;
+            shortcutTextColor = Color.BLACK;
+
+            //separator UI
+            separatorColor = new Color(222, 222, 222);
+
+            //course UI
+            lessonActiveColor = new Color(167, 167, 167);
+            lessonInactiveColor = new Color(17, 96, 166);
+            lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+            allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
+
+        } else  {
+
+            background = new Color(250, 250, 250);
+            lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
+            messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+            defaultTextColor = new Color(30, 30, 30);
+            passedColor = new Color(105, 105, 105);
+            lessonPassedColor = new Color(49, 140, 64);
+
+            //shortcut UI
+            shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
+            shortcutBckColor = Color.WHITE;
+            shortcutBorderColor = Color.BLACK;
+            shortcutTextColor = Color.BLACK;
+
+            //separator UI
+            separatorColor = new Color(222, 222, 222);
+
+            //course UI
+            lessonActiveColor = new Color(167, 167, 167);
+            lessonInactiveColor = new Color(17, 96, 166);
+            lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+            allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
+
+        }
 
     }
+
+
 
     private void initLessonPanel(){
         lessonPanel = new JPanel();
