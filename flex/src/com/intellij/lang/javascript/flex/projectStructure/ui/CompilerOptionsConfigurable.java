@@ -1035,7 +1035,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         }
       }
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 
   public void queryPlace(@NotNull final Place place) {

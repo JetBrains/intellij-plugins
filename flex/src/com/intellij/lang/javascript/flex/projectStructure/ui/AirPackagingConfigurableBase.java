@@ -256,7 +256,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
         }
       }
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 
   public void queryPlace(@NotNull final Place place) {

@@ -214,6 +214,6 @@ public class FilesToPackageForm {
     if (location == AirPackagingConfigurableBase.Location.FilesToPackage) {
       return IdeFocusManager.findInstance().requestFocus(myFilesToPackageTable, true);
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 }

@@ -150,7 +150,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
   @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place == null) {
-      return new ActionCallback.Done();
+      return ActionCallback.DONE;
     }
 
     final Object tabName = place.getPath(TAB_NAME);
@@ -163,7 +163,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
         }
       }
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 
   @Override

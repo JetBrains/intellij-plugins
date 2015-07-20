@@ -1773,7 +1773,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 
   @Override

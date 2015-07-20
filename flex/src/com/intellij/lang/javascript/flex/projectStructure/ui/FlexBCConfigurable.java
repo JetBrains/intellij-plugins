@@ -771,7 +771,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
         }
       }
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 
   @Override

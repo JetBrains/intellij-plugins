@@ -243,7 +243,7 @@ public class SigningOptionsForm {
       case IosSdkPath:
         return IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField(), true);
       default:
-        return new ActionCallback.Done();
+        return ActionCallback.DONE;
     }
   }
 }

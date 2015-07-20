@@ -78,6 +78,6 @@ public class AirDescriptorForm {
     if (location == AirPackagingConfigurableBase.Location.CustomDescriptor) {
       return IdeFocusManager.findInstance().requestFocus(myCustomDescriptorTextWithBrowse.getChildComponent(), true);
     }
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }
 }
