@@ -6,6 +6,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
@@ -50,7 +51,7 @@ public class CourseManager extends ActionGroup{
 
     public CourseManager() {
         //init courses; init default course by default
-        super("Courses", true);
+//        super("Courses", true);
         courses = new ArrayList<Course>();
         mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
 
