@@ -14,6 +14,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -314,16 +316,20 @@ public class EduPanel extends JPanel {
         }
 
         for (int i = 0; i < myLessons.size(); i++) {
-            if (lesson.equals(myLessons.get(i))){
+            Lesson currentLesson = myLessons.get(i);
+            String id = currentLesson.getId();
+            if (currentLesson.isPassed()) id = id + " ✔";
+
+            if (lesson.equals(currentLesson)){
                 //selected lesson
-                final JLabel e = new JLabel((myLessons.get(i).getId()));
+                final JLabel e = new JLabel(id);
                 e.setForeground(lessonActiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
                 e.setFont(lessonsFont);
                 lessonsLabels.add(e);
                 coursePanel.add(e);
             } else {
-                final JLabel e = new JLabel((myLessons.get(i).getId()));
+                final JLabel e = new JLabel(id);
                 e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 e.setForeground(lessonInactiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
@@ -372,5 +378,25 @@ public class EduPanel extends JPanel {
         messages.clear();
         this.revalidate();
         this.repaint();
+    }
+
+
+    public void updateLessonPanel(Lesson lesson){
+        setAllLessons(lesson);
+    }
+
+    public void setNextButtonAction(final Runnable runnable) {
+        final ActionListener actionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                runnable.run();
+                lessonNextButton.removeActionListener(this);
+            }
+        };
+        lessonNextButton.addActionListener(actionListener);
+    }
+
+    public void hideNextButton() {
+        lessonNextButton.setVisible(false);
     }
 }
