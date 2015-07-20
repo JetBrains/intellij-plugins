@@ -7,14 +7,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,9 +26,10 @@ public class ActionsRecorder implements Disposable {
     private Document document;
     private String target;
     private boolean triggerActivated;
+    private HashMap<String, Boolean> triggerMap;
 
     private boolean disposed = false;
-    private Runnable showWinMessage;
+    private Runnable doWhenDone;
     DocumentListener documentListener;
 
     public ActionsRecorder(Project project, Document document, String target) {
@@ -37,8 +37,7 @@ public class ActionsRecorder implements Disposable {
         this.document = document;
         this.target = target;
         this.triggerActivated = false;
-
-        this.showWinMessage = null;
+        this.doWhenDone = null;
     }
 
     @Override
@@ -46,10 +45,10 @@ public class ActionsRecorder implements Disposable {
         disposed = true;
     }
 
-    public void startRecording(final Runnable showWinMessage){
+    public void startRecording(final Runnable doWhenDone){
 
         if (disposed) return;
-        this.showWinMessage = showWinMessage;
+        this.doWhenDone = doWhenDone;
 
 //        documentListener = new DocumentListener() {
 //            @Override
@@ -65,7 +64,7 @@ public class ActionsRecorder implements Disposable {
 //
 //                if (isTaskSolved(document, target)) {
 //                    dispose();
-//                    showWinMessage.run();
+//                    doWhenDone.run();
 //                }
 //            }
 //        };
@@ -74,27 +73,54 @@ public class ActionsRecorder implements Disposable {
 //        document.addDocumentListener(documentListener, this);
     }
 
-    public void startRecording(final Runnable showWinMessage, final @Nullable String actionId) {
+    public void startRecording(final Runnable doWhenDone, final @Nullable String actionId) {
         if(actionId != null && !actionId.equals("") && ActionManager.getInstance().getAction(actionId) != null) {
             checkAction(actionId);
-            startRecording(showWinMessage);
+            startRecording(doWhenDone);
         } else {
             triggerActivated = true;
-            startRecording(showWinMessage);
+            startRecording(doWhenDone);
         }
 
     }
+    public void startRecording(final Runnable doWhenDone, final String[] actionIdArray){
+
+        if (disposed) return;
+        this.doWhenDone = doWhenDone;
+
+        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
+        //set triggerMap
+        for (String anActionIdArray : actionIdArray) {
+            triggerMap.put(anActionIdArray, false);
+        }
+        checkAction(actionIdArray);
+
+    }
+
+
 
     public boolean isTaskSolved(Document current, String target){
         if (disposed) return false;
 
         if (target == null){
-            return triggerActivated;
+            if (triggerMap !=null) {
+                boolean result = true;
+                for (Boolean aBoolean : triggerMap.values()) {
+                    if (!aBoolean) result = false;
+                }
+                return result;
+            } else return triggerActivated;
         } else {
             List<String> expected = computeTrimmedLines(target);
             List<String> actual = computeTrimmedLines(current.getText());
 
-            return ((expected.equals(actual) && triggerActivated));
+            if (triggerMap !=null) {
+                boolean result = true;
+                for (Boolean aBoolean : triggerMap.values()) {
+                    if (!aBoolean) result = false;
+                }
+                return (expected.equals(actual) && result);
+            } else return (expected.equals(actual) && triggerActivated);
         }
 
     }
@@ -131,12 +157,16 @@ public class ActionsRecorder implements Disposable {
                 if(actionId == null) return;
                 if (actionId.toUpperCase().equals(actionTriggerId.toUpperCase())) {
 //                    System.out.println("Action trigger has been activated.");
-                    triggerActivated = true;
+                    if (triggerMap != null) {
+                        triggerMap.put(actionTriggerId, true);
+                    } else {
+                        triggerActivated = true;
+                    }
                     actionManager.removeAnActionListener(this);
                     if(isTaskSolved(document, target)) {
-                        if(showWinMessage != null)
+                        if(doWhenDone != null)
                             dispose();
-                            showWinMessage.run();
+                            doWhenDone.run();
                     }
                 }
 //                System.out.println("ACTION PERFORMED: " + actionId);
@@ -148,6 +178,12 @@ public class ActionsRecorder implements Disposable {
         };
 
         actionManager.addAnActionListener(anActionListener);
+    }
+
+    private void checkAction(String[] actionIdArray) {
+        for (String actionId : actionIdArray) {
+            checkAction(actionId);
+        }
     }
 }
 

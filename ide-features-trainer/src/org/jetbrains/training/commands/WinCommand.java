@@ -30,7 +30,6 @@ public class WinCommand extends Command {
     public void execute(ExecutionList executionList) throws InterruptedException {
 
         Element element = executionList.getElements().poll();
-        System.out.println("Lesson is passed");
         executionList.getLesson().setPassed(true);
         executionList.getEduEditor().passLesson(executionList.getLesson());
 

@@ -66,9 +66,17 @@ public class TryCommand extends Command {
         if (element.getAttribute("trigger") != null) {
             String actionId = element.getAttribute("trigger").getValue();
             startRecord(executionList, recorder, actionId);
+        } else if(element.getAttribute("triggers") != null) {
+            String actionIds = element.getAttribute("triggers").getValue();
+            String[] actionIdArray = actionIds.split(";");
+            startRecord(executionList, recorder, actionIdArray);
         } else {
-            startRecord(executionList, recorder, null);
+            startRecord(executionList, recorder);
         }
+    }
+
+    private void startRecord(ExecutionList executionList, ActionsRecorder recorder) {
+
     }
 
     private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId) {
@@ -79,6 +87,16 @@ public class TryCommand extends Command {
                 startNextCommand(executionList);
             }
         }, actionId);
+    }
+
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray){
+        recorder.startRecording(new Runnable() {        //do when done
+            @Override
+            public void run() {
+                executionList.getEduEditor().passExercise();
+                startNextCommand(executionList);
+            }
+        }, actionIdArray);
     }
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {
