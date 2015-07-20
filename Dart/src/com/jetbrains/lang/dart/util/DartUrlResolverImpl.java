@@ -20,9 +20,9 @@ import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
+import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
+import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.listPackageDirs.DartListPackageDirsLibraryProperties;
-import com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,15 +39,22 @@ class DartUrlResolverImpl extends DartUrlResolver {
   @Nullable private final DartSdk myDartSdk;
   @Nullable private final VirtualFile myPubspecYamlFile;
   @Nullable private VirtualFile myPackageRoot;
+  // myLivePackageNameToDirMap also contains packages map from .packages file if applicable
   @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<String, VirtualFile>();
-  @NotNull private final Map<String, List<String>> myPubListPackageDirsMap = new THashMap<String, List<String>>();
+  // myPackagesMapFromLib is not empty only if pubspec.yaml file is null
+  @NotNull private final Map<String, List<String>> myPackagesMapFromLib = new THashMap<String, List<String>>();
 
   DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
     myDartSdk = DartSdk.getDartSdk(project);
+
     myPubspecYamlFile = initPackageRootAndReturnPubspecYamlFile(contextFile);
+
     initLivePackageNameToDirMap();
-    initPubListPackageDirsMap(contextFile);
+
+    if (myPubspecYamlFile == null) {
+      initPackagesMapfromLib(contextFile);
+    }
   }
 
   @Nullable
@@ -71,12 +78,17 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
-  public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(@NotNull final String packageName,
-                                                                        @Nullable final String pathRelToPackageDir) {
+  public VirtualFile getPackageDirIfNotInOldStylePackagesFolder(@NotNull final String packageName,
+                                                                @Nullable final String pathRelToPackageDir) {
+    if (myPubspecYamlFile == null && myPackageRoot != null) {
+      // custom packages root
+      return myPackageRoot.findChild(packageName);
+    }
+
     final VirtualFile dir = myLivePackageNameToDirMap.get(packageName);
     if (dir != null) return dir;
 
-    final List<String> dirPaths = myPubListPackageDirsMap.get(packageName);
+    final List<String> dirPaths = myPackagesMapFromLib.get(packageName);
     if (dirPaths != null) {
       VirtualFile notNullPackageDir = null;
 
@@ -125,7 +137,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
         }
       }
 
-      final List<String> packageDirs = myPubListPackageDirsMap.get(packageName);
+      final List<String> packageDirs = myPackagesMapFromLib.get(packageName);
       if (packageDirs != null) {
         for (String packageDirPath : packageDirs) {
           final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(packageDirPath + "/" + pathRelToPackageDir);
@@ -161,7 +173,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     result = getUrlIfFileFromPackageRoot(file, myPackageRoot);
     if (result != null) return result;
 
-    result = getUrlIfFileFromPubListPackageDirs(file, myPubListPackageDirsMap);
+    result = getUrlIfFileFromDartPackagesLib(file, myPackagesMapFromLib);
     if (result != null) return result;
 
     // see com.google.dart.tools.debug.core.server.ServerBreakpointManager#getAbsoluteUrlForResource()
@@ -210,8 +222,8 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
-  private static String getUrlIfFileFromPubListPackageDirs(final @NotNull VirtualFile file,
-                                                           final @NotNull Map<String, List<String>> pubListPackageDirsMap) {
+  private static String getUrlIfFileFromDartPackagesLib(final @NotNull VirtualFile file,
+                                                        final @NotNull Map<String, List<String>> pubListPackageDirsMap) {
     for (Map.Entry<String, List<String>> mapEntry : pubListPackageDirsMap.entrySet()) {
       for (String dirPath : mapEntry.getValue()) {
         if (file.getPath().startsWith(dirPath + "/")) {
@@ -285,7 +297,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     }
   }
 
-  private void initPubListPackageDirsMap(final @NotNull VirtualFile contextFile) {
+  private void initPackagesMapfromLib(final @NotNull VirtualFile contextFile) {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
 
     final List<OrderEntry> orderEntries = module != null
@@ -294,12 +306,12 @@ class DartUrlResolverImpl extends DartUrlResolver {
     for (OrderEntry orderEntry : orderEntries) {
       if (orderEntry instanceof LibraryOrderEntry &&
           LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
-          PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
+          DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
         final LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
         final LibraryProperties properties = library == null ? null : library.getProperties();
 
-        if (properties instanceof DartListPackageDirsLibraryProperties) {
-          myPubListPackageDirsMap.putAll(((DartListPackageDirsLibraryProperties)properties).getPackageNameToDirsMap());
+        if (properties instanceof DartPackagesLibraryProperties) {
+          myPackagesMapFromLib.putAll(((DartPackagesLibraryProperties)properties).getPackageNameToDirsMap());
           return;
         }
       }

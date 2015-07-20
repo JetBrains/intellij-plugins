@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.sdk.listPackageDirs;
+package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryType;
@@ -13,17 +13,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DartListPackageDirsLibraryType extends LibraryType<DartListPackageDirsLibraryProperties> {
+public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProperties> {
 
-  public static final PersistentLibraryKind<DartListPackageDirsLibraryProperties> LIBRARY_KIND =
-    new PersistentLibraryKind<DartListPackageDirsLibraryProperties>("DartListPackageDirsLibraryType") {
+  public static final String DART_PACKAGES_LIBRARY_NAME = "Dart Packages";
+
+  public static final PersistentLibraryKind<DartPackagesLibraryProperties> LIBRARY_KIND =
+    new PersistentLibraryKind<DartPackagesLibraryProperties>("DartPackagesLibraryType") {
       @NotNull
-      public DartListPackageDirsLibraryProperties createDefaultProperties() {
-        return new DartListPackageDirsLibraryProperties();
+      public DartPackagesLibraryProperties createDefaultProperties() {
+        return new DartPackagesLibraryProperties();
       }
     };
 
-  protected DartListPackageDirsLibraryType() {
+  protected DartPackagesLibraryType() {
     super(LIBRARY_KIND);
   }
 
@@ -40,7 +42,7 @@ public class DartListPackageDirsLibraryType extends LibraryType<DartListPackageD
   }
 
   @Nullable
-  public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<DartListPackageDirsLibraryProperties> editorComponent) {
+  public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<DartPackagesLibraryProperties> editorComponent) {
     return null;
   }
 

@@ -2,10 +2,7 @@ package com.jetbrains.lang.dart.workflow;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
@@ -153,10 +150,8 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("example/packages/NestedProject/nestedlib.dart", "");
     myFixture.addFileToProject("example/packages/RootProject/rootlib.dart", "");
     myFixture.addFileToProject("example/packages/SomePackage/somepack.dart", "");
-    final VirtualFile customPack1 =
-      myFixture.addFileToProject("custom_pack1/RootProject/rootlib.dart", "").getVirtualFile().getParent().getParent();
-    final VirtualFile customPack2 =
-      myFixture.addFileToProject("custom_pack2/SomePackage/somepack.dart", "").getVirtualFile().getParent().getParent();
+    final VirtualFile customPack =
+      myFixture.addFileToProject("custom_pack/RootProject/rootlib.dart", "").getVirtualFile().getParent().getParent();
 
     DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
     VirtualFile file;
@@ -186,38 +181,51 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     assertEquals(rootPath + "/example/packages/SomePackage/somepack.dart", file.getPath());
     assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        try {
-          final Library library = modifiableModel.getModuleLibraryTable().createLibrary("Dart custom package roots");
-          final Library.ModifiableModel libModel = library.getModifiableModel();
-          libModel.addRoot(customPack1.getUrl(), OrderRootType.CLASSES);
-          libModel.addRoot(customPack2.getUrl(), OrderRootType.CLASSES);
-          libModel.commit();
-          modifiableModel.commit();
+
+    try {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
+          try {
+            final Library library = modifiableModel.getModuleLibraryTable().createLibrary("Dart custom package root");
+            final Library.ModifiableModel libModel = library.getModifiableModel();
+            libModel.addRoot(customPack.getUrl(), OrderRootType.CLASSES);
+            libModel.commit();
+            modifiableModel.commit();
+          }
+          catch (Exception e) {
+            if (!modifiableModel.isDisposed()) modifiableModel.dispose();
+          }
         }
-        catch (Exception e) {
-          if (!modifiableModel.isDisposed()) modifiableModel.dispose();
+      });
+
+      resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
+
+      file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
+      assertNull(file);
+
+      file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
+      assertNotNull(file);
+      assertEquals(rootPath + "/custom_pack/RootProject/rootlib.dart", file.getPath());
+      assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
+    }
+    finally {
+      ApplicationManager.getApplication().runWriteAction(
+        new Runnable() {
+          public void run() {
+            final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
+            for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
+              if (entry instanceof LibraryOrderEntry && "Dart custom package root".equals(((LibraryOrderEntry)entry).getLibraryName())) {
+                modifiableModel.removeOrderEntry(entry);
+                break;
+              }
+            }
+
+            modifiableModel.commit();
+          }
         }
-      }
-    });
-
-    resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
-
-    file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
-    assertNull(file);
-
-    file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
-    assertNotNull(file);
-    assertEquals(rootPath + "/custom_pack1/RootProject/rootlib.dart", file.getPath());
-    assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
-
-    // multiple custom package roots are not supported anymore
-    file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
-    assertNull(file);
-    //assertEquals(rootPath + "/custom_pack2/SomePackage/somepack.dart", file.getPath());
-    //assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
+      );
+    }
   }
 
   public void testTwoPackageDirsForOnePackage() throws Exception {
@@ -231,11 +239,11 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                                                                   Collections.singletonMap("PackageName", packageDirList));
       final DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(),
                                                                    ModuleRootManager.getInstance(myModule).getContentRoots()[0]);
-      assertEquals(packageDir1, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", "foo/bar1.dart"));
-      assertEquals(packageDir2, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", "foo/bar2.dart"));
-      assertEquals(packageDir1, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", "incorrect"));
-      assertEquals(packageDir1, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", ""));
-      assertEquals(packageDir1, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", null));
+      assertEquals(packageDir1, resolver.getPackageDirIfNotInOldStylePackagesFolder("PackageName", "foo/bar1.dart"));
+      assertEquals(packageDir2, resolver.getPackageDirIfNotInOldStylePackagesFolder("PackageName", "foo/bar2.dart"));
+      assertEquals(packageDir1, resolver.getPackageDirIfNotInOldStylePackagesFolder("PackageName", "incorrect"));
+      assertEquals(packageDir1, resolver.getPackageDirIfNotInOldStylePackagesFolder("PackageName", ""));
+      assertEquals(packageDir1, resolver.getPackageDirIfNotInOldStylePackagesFolder("PackageName", null));
     }
     finally {
       PubListPackageDirsAction.configurePubListPackageDirsLibrary(getProject(),

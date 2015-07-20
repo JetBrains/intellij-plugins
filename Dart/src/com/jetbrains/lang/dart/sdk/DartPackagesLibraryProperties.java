@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.sdk.listPackageDirs;
+package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.util.io.FileUtil;
@@ -10,11 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
-public class DartListPackageDirsLibraryProperties extends LibraryProperties<DartListPackageDirsLibraryProperties> {
+public class DartPackagesLibraryProperties extends LibraryProperties<DartPackagesLibraryProperties> {
 
   private @NotNull Map<String, List<String>> myPackageNameToDirsMap;
 
-  public DartListPackageDirsLibraryProperties() {
+  public DartPackagesLibraryProperties() {
     myPackageNameToDirsMap = new TreeMap<String, List<String>>();
   }
 
@@ -43,17 +43,17 @@ public class DartListPackageDirsLibraryProperties extends LibraryProperties<Dart
   }
 
   @Nullable
-  public DartListPackageDirsLibraryProperties getState() {
+  public DartPackagesLibraryProperties getState() {
     return this;
   }
 
-  public void loadState(final DartListPackageDirsLibraryProperties state) {
+  public void loadState(final DartPackagesLibraryProperties state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
   public boolean equals(final Object obj) {
-    return obj instanceof DartListPackageDirsLibraryProperties &&
-           myPackageNameToDirsMap.equals(((DartListPackageDirsLibraryProperties)obj).getPackageNameToDirsMap());
+    return obj instanceof DartPackagesLibraryProperties &&
+           myPackageNameToDirsMap.equals(((DartPackagesLibraryProperties)obj).getPackageNameToDirsMap());
   }
 
   public int hashCode() {

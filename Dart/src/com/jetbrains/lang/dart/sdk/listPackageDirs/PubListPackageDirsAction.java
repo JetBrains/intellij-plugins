@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -26,6 +25,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
+import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -39,10 +40,6 @@ import java.util.*;
 // todo instead of unioning all of the package name maps and configuring all Dart modules to the unioned value, the module roots could be
 // todo used as a key to only set the specific package map information for the specific module.
 public class PubListPackageDirsAction extends AnAction {
-
-  public static final String PUB_LIST_PACKAGE_DIRS_LIB_NAME = "Dart pub list-package-dirs";
-
-  private static final Logger LOG = Logger.getInstance(PubListPackageDirsAction.class.getName());
 
   public PubListPackageDirsAction() {
     super("Configure Dart package roots using 'pub list-package-dirs'", null, DartIcons.Dart_16);
@@ -199,7 +196,7 @@ public class PubListPackageDirsAction extends AnAction {
         for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
           if (entry instanceof LibraryOrderEntry &&
               LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)entry).getLibraryLevel()) &&
-              PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+              DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
             existingEntry = entry;
             break;
           }
@@ -233,10 +230,10 @@ public class PubListPackageDirsAction extends AnAction {
   private static Library createPubListPackageDirsLibrary(@NotNull final Project project,
                                                          @NotNull final Collection<String> rootsToAddToLib,
                                                          @NotNull final Map<String, List<File>> packageMap) {
-    Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(PUB_LIST_PACKAGE_DIRS_LIB_NAME);
+    Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library == null) {
       final LibraryTableBase.ModifiableModel libTableModel = ProjectLibraryTable.getInstance(project).getModifiableModel();
-      library = libTableModel.createLibrary(PUB_LIST_PACKAGE_DIRS_LIB_NAME, DartListPackageDirsLibraryType.LIBRARY_KIND);
+      library = libTableModel.createLibrary(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME, DartPackagesLibraryType.LIBRARY_KIND);
       libTableModel.commit();
     }
 
@@ -250,7 +247,7 @@ public class PubListPackageDirsAction extends AnAction {
         libModel.addRoot(VfsUtilCore.pathToUrl(packageDir), OrderRootType.CLASSES);
       }
 
-      final DartListPackageDirsLibraryProperties libraryProperties = new DartListPackageDirsLibraryProperties();
+      final DartPackagesLibraryProperties libraryProperties = new DartPackagesLibraryProperties();
       libraryProperties.setPackageNameToFileDirsMap(packageMap);
       libModel.setProperties(libraryProperties);
       libModel.commit();
@@ -263,7 +260,7 @@ public class PubListPackageDirsAction extends AnAction {
     return library;
   }
 
-  static void removePubListPackageDirsLibrary(final @NotNull Project project) {
+  private static void removePubListPackageDirsLibrary(@NotNull final Project project) {
     ApplicationManager.getApplication().runWriteAction(
       new Runnable() {
         public void run() {
@@ -280,7 +277,7 @@ public class PubListPackageDirsAction extends AnAction {
         for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
           if (entry instanceof LibraryOrderEntry &&
               LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)entry).getLibraryLevel()) &&
-              PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+              DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
             modifiableModel.removeOrderEntry(entry);
           }
         }
@@ -296,7 +293,7 @@ public class PubListPackageDirsAction extends AnAction {
       }
     }
 
-    final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(PUB_LIST_PACKAGE_DIRS_LIB_NAME);
+    final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library != null) {
       ProjectLibraryTable.getInstance(project).removeLibrary(library);
     }

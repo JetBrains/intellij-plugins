@@ -50,7 +50,7 @@ class DartPackageAwareFileReference extends FileReference {
         b.append(allReferences[i].getText());
       }
 
-      final VirtualFile packageDir = myDartResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(getText(), b.toString());
+      final VirtualFile packageDir = myDartResolver.getPackageDirIfNotInOldStylePackagesFolder(getText(), b.toString());
       final PsiDirectory psiDirectory = packageDir == null ? null : containingFile.getManager().findDirectory(packageDir);
       if (psiDirectory != null) {
         return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};

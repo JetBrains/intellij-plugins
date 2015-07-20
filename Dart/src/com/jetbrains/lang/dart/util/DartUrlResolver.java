@@ -51,8 +51,8 @@ public abstract class DartUrlResolver {
   public abstract Collection<String> getLivePackageNames();
 
   @Nullable
-  public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(@NotNull final String packageName,
-                                                                                 @Nullable final String pathAfterPackageName);
+  public abstract VirtualFile getPackageDirIfNotInOldStylePackagesFolder(@NotNull final String packageName,
+                                                                         @Nullable final String pathAfterPackageName);
 
   /**
    * Dart url has <code>dart:</code>, <code>package:</code> or <code>file:</code> scheme
