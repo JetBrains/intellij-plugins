@@ -23,16 +23,22 @@ import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
+import org.jetbrains.training.BadCourseException;
+import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.eduUI.panel.EduPanel;
 import org.jetbrains.training.lesson.Course;
+import org.jetbrains.training.lesson.CourseManager;
 import org.jetbrains.training.lesson.Lesson;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class EduEditor implements TextEditor {
@@ -236,8 +242,36 @@ public class EduEditor implements TextEditor {
         eduPanel.setPreviousMessagesPassed();
     }
 
-    public void passLesson(){
+    public void passLesson(Lesson lesson) {
         eduPanel.setLessonPassed();
+        if(lesson.getCourse()!=null && lesson.getCourse().hasNotPassedLesson()){
+            final Lesson notPassedLesson = lesson.getCourse().giveNotPassedLesson();
+            eduPanel.setNextButtonAction(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        CourseManager.getInstance().openLesson(myProject, notPassedLesson);
+                    } catch (BadCourseException e) {
+                        e.printStackTrace();
+                    } catch (BadLessonException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (FontFormatException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (LessonIsOpenedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } else {
+            eduPanel.hideNextButton();
+        }
+        eduPanel.updateLessonPanel(lesson);
     }
 
     public void initAllLessons(Lesson lesson) {
