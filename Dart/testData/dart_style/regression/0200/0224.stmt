@@ -24,12 +24,11 @@
     return doughnutFryer
         .start()
         .then((_) => _frostingGlazer.start())
-        .then(
-            (_) => Future.wait([
-                  _conveyorBelts.start(),
-                  sprinkleSprinkler.start(),
-                  sauceDripper.start()
-                ]))
+        .then((_) => Future.wait([
+              _conveyorBelts.start(),
+              sprinkleSprinkler.start(),
+              sauceDripper.start()
+            ]))
         .catchError(cannotGetConveyorBeltRunning)
         .then((_) => tellEveryoneDonutsAreJustAboutDone())
         .then(

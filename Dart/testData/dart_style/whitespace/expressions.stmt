@@ -11,6 +11,14 @@ var c = !condition == a > b;
 var d=condition?b:obj.foo(a, b);
 <<<
 var d = condition ? b : obj.foo(a, b);
+>>> as
+identifier     as    TypeName;
+<<<
+identifier as TypeName;
+>>> is
+identifier     is    TypeName;
+<<<
+identifier is TypeName;
 >>> is!
 var d=obj is!SomeType;
 <<<
@@ -95,3 +103,15 @@ main() {
 string""");
   }
 }
+>>> null coalescing operator
+argument??    argument;
+<<<
+argument ?? argument;
+>>> ?. operator
+receiver ?.  method() ?. getter;
+<<<
+receiver?.method()?.getter;
+>>> null coalescing self assignment
+variableName??=argument;
+<<<
+variableName ??= argument;

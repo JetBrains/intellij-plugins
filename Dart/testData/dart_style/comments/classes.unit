@@ -144,3 +144,23 @@ class Foo {
 // flush
   }
 }
+>>> force doc comment between classes to have two newlines before
+class Foo {} /**
+*/
+class Bar {}
+<<<
+class Foo {}
+
+/**
+*/
+class Bar {}
+>>> force doc comment between classes to have newline after
+class Foo {}
+/**
+*/ class Bar {}
+<<<
+class Foo {}
+
+/**
+*/
+class Bar {}

@@ -152,3 +152,11 @@ object
     .method()
       ..x = 1
       ..y = 2;
+>>> conditional invocation
+object?.method().method()?.method().method();
+<<<
+object
+    ?.method()
+    .method()
+    ?.method()
+    .method();
