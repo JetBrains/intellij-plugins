@@ -228,7 +228,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
   @NotNull
   public ActionCallback updateFromRoot(boolean b) {
     if (myTree != null) ((SimpleTreeBuilder)getTreeBuilder()).updateFromRoot(b);
-    return new ActionCallback.Done();
+    return ActionCallback.DONE;
   }//updateFromRoot
 
 
