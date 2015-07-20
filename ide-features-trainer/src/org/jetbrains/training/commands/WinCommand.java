@@ -31,7 +31,8 @@ public class WinCommand extends Command {
 
         Element element = executionList.getElements().poll();
         System.out.println("Lesson is passed");
-        executionList.getEduEditor().passLesson();
+        executionList.getLesson().setPassed(true);
+        executionList.getEduEditor().passLesson(executionList.getLesson());
 
     }
 }
