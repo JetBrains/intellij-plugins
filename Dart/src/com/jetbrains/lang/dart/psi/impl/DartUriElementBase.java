@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
@@ -13,10 +14,13 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationTarget;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
 import com.jetbrains.lang.dart.psi.DartUriElement;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +57,25 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
     final String uri = ((DartUriBasedDirective)parent).getUriString();
     final int uriOffset = ((DartUriBasedDirective)parent).getUriStringOffset();
 
+    if (DartResolver.isServerDrivenResolution()) {
+      final PsiFile refPsiFile = getContainingFile();
+      final int refOffset = getTextOffset();
+      final int refLength = getTextLength();
+      final PluginNavigationRegion region = DartResolver.INSTANCE.findRegion(refPsiFile, refOffset, refLength);
+      if (region != null) {
+        final PluginNavigationTarget target = region.getTargets().get(0);
+        final String targetPath = target.getFile();
+        final VirtualFile targetVirtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
+        if (targetVirtualFile != null) {
+          final PsiFile targetPsiFile = getManager().findFile(targetVirtualFile);
+          if (targetPsiFile != null) {
+            return new PsiReference[]{new DartFileReference(this, uri, targetPsiFile)};
+          }
+        }
+      }
+      return PsiReference.EMPTY_ARRAY;
+    }
+
     if (uri.startsWith(DartUrlResolver.DART_PREFIX)) {
       return new PsiReference[]{new DartSdkLibReference(this, uri)};
     }
@@ -67,8 +90,7 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
       if (slashIndex > 0) {
         final String packageName = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length(), slashIndex);
         final String pathAfterPackageName = uri.substring(slashIndex + 1);
-        final VirtualFile packageDir =
-          dartUrlResolver.getPackageDirIfNotInOldStylePackagesFolder(packageName, pathAfterPackageName);
+        final VirtualFile packageDir = dartUrlResolver.getPackageDirIfNotInOldStylePackagesFolder(packageName, pathAfterPackageName);
         if (packageDir != null) {
           return getPackageReferences(file, packageDir, pathAfterPackageName, uriOffset + slashIndex + 1);
         }
@@ -171,8 +193,7 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
     };
 
     final FileReference[] references = referenceSet.getAllReferences();
-    return references.length < nestedLevel ? PsiReference.EMPTY_ARRAY
-                                           : Arrays.copyOfRange(references, nestedLevel, references.length);
+    return references.length < nestedLevel ? PsiReference.EMPTY_ARRAY : Arrays.copyOfRange(references, nestedLevel, references.length);
   }
 
   public static class DartUriElementManipulator extends AbstractElementManipulator<DartUriElement> {

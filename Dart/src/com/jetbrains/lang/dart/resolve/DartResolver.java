@@ -39,25 +39,19 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
     if (isServerDrivenResolution()) {
       final PsiFile refPsiFile = reference.getContainingFile();
-      final VirtualFile refVirtualFile = refPsiFile.getVirtualFile();
-      if (refVirtualFile != null) {
-        if (isIdentifier(reference)) {
-          final int refOffset = reference.getTextOffset();
-          final int refLength = reference.getTextLength();
-          final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
-          final PluginNavigationRegion region = findRegion(regions, refOffset, refLength);
-          if (region != null) {
-            final Project project = reference.getProject();
-            final List<PsiElement> result = new SmartList<PsiElement>();
-            for (PluginNavigationTarget target : region.getTargets()) {
-              final PsiElement targetElement = getElementForNavigationTarget(project, target);
-              if (targetElement != null) {
-                result.add(targetElement);
-              }
-            }
-            return result;
+      final int refOffset = reference.getTextOffset();
+      final int refLength = reference.getTextLength();
+      final PluginNavigationRegion region = findRegion(refPsiFile, refOffset, refLength);
+      if (region != null) {
+        final Project project = reference.getProject();
+        final List<PsiElement> result = new SmartList<PsiElement>();
+        for (PluginNavigationTarget target : region.getTargets()) {
+          final PsiElement targetElement = getElementForNavigationTarget(project, target);
+          if (targetElement != null) {
+            result.add(targetElement);
           }
         }
+        return result;
       }
       return null;
     }
@@ -125,6 +119,16 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
     }
 
+    return null;
+  }
+
+  @Nullable
+  public PluginNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
+    final VirtualFile refVirtualFile = refPsiFile.getVirtualFile();
+    if (refVirtualFile != null) {
+      final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
+      return findRegion(regions, refOffset, refLength);
+    }
     return null;
   }
 
