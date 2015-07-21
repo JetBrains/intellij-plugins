@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode;
 import com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -13,6 +14,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.util.Function;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
@@ -33,6 +35,35 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
   public Collection<AbstractTreeNode> modify(final @NotNull AbstractTreeNode parentNode,
                                              final @NotNull Collection<AbstractTreeNode> children,
                                              final ViewSettings settings) {
+    if (parentNode instanceof ExternalLibrariesNode) {
+      return ContainerUtil.map(children, new Function<AbstractTreeNode, AbstractTreeNode>() {
+        @Override
+        public AbstractTreeNode fun(AbstractTreeNode node) {
+          if (node instanceof NamedLibraryElementNode &&
+              (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(node.getName()) ||
+               DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName()))) {
+            final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(node.getName());
+
+            return new NamedLibraryElementNode(node.getProject(), ((NamedLibraryElementNode)node).getValue(), settings) {
+              @Override
+              public boolean canNavigate() {
+                return isSdkRoot; // no sense to navigate anywhere in case of "Dart Packages" library
+              }
+
+              @Override
+              public void navigate(boolean requestFocus) {
+                final Project project = getProject();
+                if (project != null) {
+                  DartConfigurable.openDartSettings(project);
+                }
+              }
+            };
+          }
+          return node;
+        }
+      });
+    }
+
     if (parentNode instanceof NamedLibraryElementNode &&
         (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(parentNode.getName()) ||
          DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName()))) {
