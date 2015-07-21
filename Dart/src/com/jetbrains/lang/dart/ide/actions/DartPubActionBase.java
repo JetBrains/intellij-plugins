@@ -15,7 +15,6 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.CloseActiveTabAction;
-import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -119,7 +118,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
                                              Messages.getErrorIcon());
       if (answer != Messages.OK) return;
 
-      ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
+      DartConfigurable.openDartSettings(module.getProject());
       sdk = DartSdk.getDartSdk(module.getProject());
     }
 
@@ -136,7 +135,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
                             Messages.getErrorIcon());
       if (answer != Messages.OK) return;
 
-      ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
+      DartConfigurable.openDartSettings(module.getProject());
 
       sdk = DartSdk.getDartSdk(module.getProject());
       if (sdk == null) return;

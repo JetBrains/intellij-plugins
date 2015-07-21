@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.codeInspection.SmartHashMap;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
@@ -65,7 +66,7 @@ import java.util.*;
 
 public class DartConfigurable implements SearchableConfigurable {
 
-  public static final String DART_SETTINGS_PAGE_ID = "dart.settings";
+  private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
   private static final String CUSTOM_PACKAGE_ROOT_LIB_NAME = "Dart custom package root";
@@ -840,5 +841,9 @@ public class DartConfigurable implements SearchableConfigurable {
     }
 
     return Collections.emptyMap();
+  }
+
+  public static void openDartSettings(@NotNull final Project project) {
+    ShowSettingsUtilImpl.showSettingsDialog(project, DART_SETTINGS_PAGE_ID, "");
   }
 }

@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -116,7 +115,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     if (sdk == null) {
       throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"), new Runnable() {
         public void run() {
-          ShowSettingsUtilImpl.showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_ID, "");
+          DartConfigurable.openDartSettings(project);
         }
       });
     }

@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -148,7 +147,7 @@ public class DartSdkUpdateChecker {
         }
 
         if ("settings".equals(event.getDescription())) {
-          ShowSettingsUtilImpl.showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_ID, "");
+          DartConfigurable.openDartSettings(project);
         }
       }
     }).notify(project);

@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -167,7 +166,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
     @Override
     public void run() {
-      ShowSettingsUtilImpl.showSettingsDialog(myProject, DartConfigurable.DART_SETTINGS_PAGE_ID, "");
+      DartConfigurable.openDartSettings(myProject);
     }
   }
 }

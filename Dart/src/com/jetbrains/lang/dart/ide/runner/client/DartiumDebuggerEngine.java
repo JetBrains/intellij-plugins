@@ -5,7 +5,6 @@ import com.intellij.chromeConnector.debugger.ChromeDebugProcess;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.openapi.diagnostic.Logger;
@@ -68,7 +67,7 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
       throw new RuntimeConfigurationError(DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()), new Runnable() {
         @Override
         public void run() {
-          ShowSettingsUtilImpl.showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_ID, "");
+          DartConfigurable.openDartSettings(project);
         }
       });
     }
