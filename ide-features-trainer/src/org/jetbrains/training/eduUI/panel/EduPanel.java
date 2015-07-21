@@ -386,6 +386,13 @@ public class EduPanel extends JPanel {
     }
 
     public void setNextButtonAction(final Runnable runnable) {
+
+        //remove previous action listeners
+        ActionListener[] actionListeners = lessonNextButton.getActionListeners();
+        for (int i = 0; i < actionListeners.length; i++) {
+            lessonNextButton.removeActionListener(actionListeners[i]);
+        }
+
         final ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -399,4 +406,5 @@ public class EduPanel extends JPanel {
     public void hideNextButton() {
         lessonNextButton.setVisible(false);
     }
+
 }
