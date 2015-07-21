@@ -3,16 +3,23 @@ package com.jetbrains.lang.dart;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.util.Function;
 import com.intellij.util.PairConsumer;
+import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +33,23 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
   public Collection<AbstractTreeNode> modify(final @NotNull AbstractTreeNode parentNode,
                                              final @NotNull Collection<AbstractTreeNode> children,
                                              final ViewSettings settings) {
+    if (parentNode instanceof NamedLibraryElementNode &&
+        (DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(parentNode.getName()) ||
+         DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName()))) {
+      final boolean isSdkRoot = DartSdk.DART_SDK_GLOBAL_LIB_NAME.equals(parentNode.getName());
+
+      return ContainerUtil.map(children, new Function<AbstractTreeNode, AbstractTreeNode>() {
+        @Override
+        public AbstractTreeNode fun(AbstractTreeNode node) {
+          final VirtualFile dir = node instanceof PsiDirectoryNode ? ((PsiDirectoryNode)node).getVirtualFile() : null;
+          if (dir != null && dir.isInLocalFileSystem() && dir.isDirectory() && "lib".equals(dir.getName())) {
+            return new DartSdkOrLibraryRootNode(node.getProject(), ((PsiDirectoryNode)node).getValue(), isSdkRoot, settings);
+          }
+          return node;
+        }
+      });
+    }
+
     // root/packages/ThisProject and root/packages/PathPackage folders are excluded in dart projects (see DartProjectComponent.excludeBuildAndPackagesFolders),
     // this provider adds location string tho these nodes in Project View like "ThisProject (ThisProject/lib)"
     final Project project = parentNode.getProject();
@@ -111,6 +135,39 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
 
     public int getWeight() {
       return 0;
+    }
+  }
+
+  private static class DartSdkOrLibraryRootNode extends PsiDirectoryNode {
+    private boolean myIsSdkRoot;
+
+    public DartSdkOrLibraryRootNode(final Project project, final PsiDirectory value, boolean isSdkRoot, final ViewSettings settings) {
+      super(project, value, settings);
+      myIsSdkRoot = isSdkRoot;
+    }
+
+    @Override
+    public boolean canNavigate() {
+      return false; // 'Dart Packages' and 'Dart SDK' libraries are generated automatically, no need to navigate to Project Structure
+    }
+
+    @Override
+    public boolean canNavigateToSource() {
+      return false;
+    }
+
+    @Override
+    protected void updateImpl(final PresentationData data) {
+      super.updateImpl(data);
+
+      final VirtualFile dir = getVirtualFile();
+      final VirtualFile parentDir = dir == null ? null : dir.getParent();
+      if (parentDir != null && parentDir.isInLocalFileSystem() && dir.isDirectory() && "lib".equals(dir.getName())) {
+        final String text = myIsSdkRoot ? parentDir.getName() + File.separator + dir.getName() // e.g. "dart-sdk-1.12/lib" instead of "lib"
+                                        : parentDir.getName();                                 // e.g. "path-1.3.6"        instead of "lib"
+        data.setPresentableText(text);
+        data.setLocationString("");
+      }
     }
   }
 }

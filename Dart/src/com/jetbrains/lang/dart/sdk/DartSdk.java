@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DartSdk {
-  static final String DART_SDK_GLOBAL_LIB_NAME = "Dart SDK";
+  public static final String DART_SDK_GLOBAL_LIB_NAME = "Dart SDK";
   private static final String UNKNOWN_VERSION = "unknown";
   private static final Key<CachedValue<DartSdk>> CACHED_DART_SDK_KEY = Key.create("CACHED_DART_SDK_KEY");
 
