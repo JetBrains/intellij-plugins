@@ -134,6 +134,8 @@
     <gotoSymbolContributor implementation="com.jetbrains.lang.dart.ide.DartSymbolContributor"/>
 
     <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>-->
+    <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix"
+             implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionWeigher"/>
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartKeywordCompletionContributor"/>
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>
     <completion.contributor language="Dart"

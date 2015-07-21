@@ -39,12 +39,9 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.concurrency.Semaphore;
@@ -52,8 +49,8 @@ import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.completion.DartLookupObject;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
-import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -261,37 +258,19 @@ public class DartAnalysisServerService {
           if (!completionInfo.myCompletionId.equals(completionId)) continue;
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
-            final ResolveResult psiElementFinder = new ResolveResult() {
-              @Nullable
-              @Override
-              public PsiElement getElement() {
-                final Element element = completion.getElement();
-                // todo for some reason Analysis Server doesn't provide location for local vars, fields and other local elements
-                final Location location = element == null ? null : element.getLocation();
-                final String filePath = location == null ? null : FileUtil.toSystemIndependentName(location.getFile());
-                // todo this path may point to Pub global cache, should point to local packages/FooPackage/... instead
-                final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
-                final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(project).findFile(vFile);
-                final PsiElement elementAtOffset = psiFile == null ? null : psiFile.findElementAt(location.getOffset());
-                return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponentName.class);
-              }
+            final Element element = completion.getElement();
+            final Location location = element == null ? null : element.getLocation();
+            final DartLookupObject lookupObject = new DartLookupObject(project, location, completion.getRelevance());
+            final LookupElement lookup = LookupElementBuilder.create(lookupObject, completion.getCompletion());
 
-              @Override
-              public boolean isValidResult() {
-                return true;
-              }
-            };
-
-            final LookupElement lookup = LookupElementBuilder.create(psiElementFinder, completion.getCompletion());
             // todo: lookup presentable text (e.g. signature for functions, etc.)
-            //       respect priority (may be also emphasize using bold font), see CompletionWeigher
             //       tail text
             //       type text
             //       icon
             //       strikeout for deprecated
-            //       quick doc preview (already works if corresponding PsiElement is correctly found by psiElementFinder)
-            //       quick definition view (already works (but uses DartDocumentationProvider, not info from server) if corresponding PsiElement is correctly found by psiElementFinder)
-            //       jump to item declaration (already works if corresponding PsiElement is correctly found by psiElementFinder)
+            //       quick doc preview (already works if corresponding PsiElement is correctly found by lookupObject)
+            //       quick definition view (already works (but uses DartDocumentationProvider, not info from server) if corresponding PsiElement is correctly found by lookupObject)
+            //       jump to item declaration (already works if corresponding PsiElement is correctly found by lookupObject)
             //       what to insert except identifier (e.g. parentheses, import directive, update show/hide, etc.)
             //       caret placement after insertion
 
