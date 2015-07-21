@@ -23,23 +23,19 @@ import java.util.ArrayList;
 public class Course extends ActionGroup{
 
     private ArrayList<Lesson> lessons;
-    private String path;
-    private final static String DEFAULT_PATH = "DefaultCourse.xml";
-    private final static String DEFAULT_NAME = "Default Course";
     private String answersPath;
     private Element root;
     private String id;
     private String name;
 
-    public Course() throws BadCourseException, BadLessonException, JDOMException, IOException {
-        super(DEFAULT_NAME, true);
-        path = DEFAULT_PATH;
+    public Course(String name, Element root) throws JDOMException, BadLessonException, BadCourseException, IOException {
+        super(name, true);
         lessons = new ArrayList<Lesson>();
-        id = "default";
-        name = "default";
-
+        this.name = name;
+        this.root = root;
         initLessons();
         answersPath = root.getAttribute("answerspath").getValue();
+        id = root.getAttribute("id").getValue();
     }
 
     @NotNull
@@ -50,14 +46,24 @@ public class Course extends ActionGroup{
         return actions;
     }
 
-    public Course(String coursePath) throws BadCourseException, BadLessonException, JDOMException, IOException {
+    @Nullable
+    public static Course initCourse(String coursePath) throws BadCourseException, BadLessonException, JDOMException, IOException {
         //load xml with lessons
-        path = coursePath;
 
-        lessons = new ArrayList<Lesson>();
-        initLessons();
-        answersPath = root.getAttribute("answerspath").getValue();
-        id = root.getAttribute("id").getValue();
+        //Check DOM with Course
+        Element init_root = getRootFromPath(coursePath);
+        if(init_root.getAttribute("name") == null) return null;
+        String init_name = init_root.getAttribute("name").getValue();
+
+        return new Course(init_name, init_root);
+
+    }
+
+    private static Element getRootFromPath(String pathToFile) throws JDOMException, IOException {
+        InputStream is = MyClassLoader.getInstance().getResourceAsStream(pathToFile);
+        SAXBuilder builder = new SAXBuilder();
+        Document document = builder.build(is);
+        return document.getRootElement();
     }
 
     public String getAnswersPath() {
@@ -70,19 +76,6 @@ public class Course extends ActionGroup{
 
     private void initLessons() throws BadCourseException, BadLessonException, JDOMException, IOException {
 
-        InputStream is = MyClassLoader.getInstance().getResourceAsStream(path);
-
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = null;
-        try {
-            doc = builder.build(is);
-        } catch (JDOMException e) {
-            throw new BadCourseException("Probably course file has been corrupted.");
-        } catch (IOException e) {
-            throw new BadCourseException("Probably cannot open file.");
-        }
-        root = doc.getRootElement();
-
         name = root.getAttribute("name").getValue();
 
         //Goto Lessons
@@ -94,7 +87,7 @@ public class Course extends ActionGroup{
                 if (lessonEl.getAttribute("isPassed") != null) {
                     lessonIsPassed = (lessonEl.getAttribute("isPassed").getValue().equals("true"));
                 } else {
-                    throw new BadLessonException("Cannot obtain lessons from " + path + " course file");
+                    throw new BadLessonException();
                 }
 
                 String pathToScenario = lessonEl.getAttribute("path").getValue();
@@ -109,7 +102,7 @@ public class Course extends ActionGroup{
                     //Scenario file cannot be read
                     throw new BadLessonException("Probably scenario file cannot be read: " + pathToScenario);
                 }
-            } else throw new BadCourseException("Cannot obtain lessons from " + path + " course file");
+            } else throw new BadCourseException();
         }
     }
 

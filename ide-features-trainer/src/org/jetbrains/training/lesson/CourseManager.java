@@ -3,40 +3,30 @@ package org.jetbrains.training.lesson;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.ui.awt.RelativePoint;
 import org.jdom.JDOMException;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.MyClassLoader;
 import org.jetbrains.training.eduUI.EduEditor;
-import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 11/03/15.
  */
-public class CourseManager extends ActionGroup{
+public class CourseManager{
 
     public static final CourseManager INSTANCE = new CourseManager();
     public static final Dimension DIMENSION = new Dimension(500, 60);
@@ -51,13 +41,12 @@ public class CourseManager extends ActionGroup{
 
     public CourseManager() {
         //init courses; init default course by default
-//        super("Courses", true);
         courses = new ArrayList<Course>();
         mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
 
 
         try {
-            final Course defaultCourse = new Course();
+            final Course defaultCourse = Course.initCourse("DefaultCourse.xml");
             courses.add(defaultCourse);
         } catch (BadCourseException e) {
             e.printStackTrace();
@@ -70,13 +59,6 @@ public class CourseManager extends ActionGroup{
         }
     }
 
-    @NotNull
-    @Override
-    public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
-        AnAction[] actions = new AnAction[courses.size()];
-        actions = courses.toArray(actions);
-        return actions;
-    }
 
     @Nullable
     public Course getAnyCourse(){
