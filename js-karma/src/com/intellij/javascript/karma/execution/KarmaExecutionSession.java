@@ -27,9 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaExecutionSession {
 
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
@@ -67,8 +64,7 @@ public class KarmaExecutionSession {
     KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration)myEnvironment.getRunProfile();
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
     TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(runConfiguration, myExecutor, filterProvider);
-    String propertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(FRAMEWORK_NAME);
-    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myEnvironment, propertyName, myKarmaServer, this);
+    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, this);
     Disposer.register(myProject, consoleView);
     SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME);
     return consoleView;

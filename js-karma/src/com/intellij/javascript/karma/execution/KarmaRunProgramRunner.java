@@ -8,16 +8,11 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.*;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaRunProgramRunner extends GenericProgramRunner {
-  private static final Logger LOG = Logger.getInstance(KarmaRunProgramRunner.class);
 
   @NotNull
   @Override
@@ -38,11 +33,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     if (executionResult == null) {
       return null;
     }
-    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
-    if (consoleView == null) {
-      LOG.error("Can't get KarmaConsoleView from executionResult!");
-      return null;
-    }
+    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
     final RunContentDescriptor descriptor = new RunContentBuilder(executionResult, environment).showRunContent(environment.getContentToReuse());
 
     KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();

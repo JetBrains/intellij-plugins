@@ -1,9 +1,9 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.*;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMRootTestProxyFormatter;
@@ -32,17 +32,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.debugger.connection.VmConnection;
 
-/**
-* @author Sergey Simonchik
-*/
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
 
   private final KarmaServer myServer;
   private final KarmaExecutionSession myExecutionSession;
 
   public KarmaConsoleView(@NotNull TestConsoleProperties consoleProperties,
-                          @NotNull ExecutionEnvironment env,
-                          @Nullable String splitterProperty,
                           @NotNull KarmaServer server,
                           @NotNull KarmaExecutionSession executionSession) {
     super(consoleProperties);
@@ -161,9 +156,15 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return new KarmaDebugTabLayouter(debugProcess);
   }
 
-  @Nullable
-  public static KarmaConsoleView get(@NotNull ExecutionResult result) {
-    return ObjectUtils.tryCast(result.getExecutionConsole(), KarmaConsoleView.class);
+  @NotNull
+  public static KarmaConsoleView get(@NotNull ExecutionResult result, @NotNull RunProfileState state) {
+    ExecutionConsole console = result.getExecutionConsole();
+    if (console instanceof KarmaConsoleView) {
+      return (KarmaConsoleView)console;
+    }
+    Class consoleClass = console != null ? console.getClass() : null;
+    throw new AssertionError("Cannot cast " + consoleClass + " to " + KarmaConsoleView.class.getSimpleName() +
+                             ", RunProfileState: " + state.getClass().getName());
   }
 
   private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
@@ -178,12 +179,14 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
                                         @NotNull KarmaServer server,
                                         boolean debug) {
       myTreeView = consoleView.getResultsViewer().getTreeView();
-      TestTreeRenderer originalRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
-      if (originalRenderer != null) {
-        originalRenderer.setAdditionalRootFormatter(this);
-      }
       myServer = server;
       myDebug = debug;
+      if (myTreeView != null) {
+        TestTreeRenderer originalRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
+        if (originalRenderer != null) {
+          originalRenderer.setAdditionalRootFormatter(this);
+        }
+      }
     }
 
     private static void render(@NotNull TestTreeRenderer renderer, @NotNull String msg, boolean error) {

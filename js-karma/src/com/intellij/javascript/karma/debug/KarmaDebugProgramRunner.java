@@ -43,9 +43,6 @@ import org.jetbrains.debugger.connection.VmConnection;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
   private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
@@ -69,12 +66,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     if (executionResult == null) {
       return Promise.resolve(null);
     }
-
-    final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
-    if (consoleView == null) {
-      throw new RuntimeException("KarmaConsoleView was expected!");
-    }
-
+    final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
