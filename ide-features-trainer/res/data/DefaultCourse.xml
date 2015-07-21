@@ -1,4 +1,4 @@
-<xml type="Course" name="Default Course" version="0.1" answerspath="answers/" id="default">
+<xml type="Course" name="Editor Basics" version="0.1" answerspath="answers/" id="default">
     <lessons>
         <lesson name="Comment Line" isPassed="false" path="EditorBasics/CommentLine.xml"/>
         <lesson name="Some line comment" isPassed="false" path="EditorBasics/DuplicateLine.xml"/>
