@@ -22,4 +22,5 @@
             'numberInputFieldPlaceholder': '3',
             'timeUnitDropdownPlaceholder': 'per light-year'
           },
-          desc: 'Some very long descriptive text that actually isn\'t obeying the...');
+          desc:
+              'Some very long descriptive text that actually isn\'t obeying the...');

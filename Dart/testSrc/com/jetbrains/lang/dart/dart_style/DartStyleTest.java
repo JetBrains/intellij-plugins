@@ -34,6 +34,8 @@ public class DartStyleTest extends FormatterTestCase {
 
   static {
     KNOWN_TO_FAIL.add("comments/classes.unit:110  remove blank line before beginning of body");
+    KNOWN_TO_FAIL.add("comments/classes.unit:147  force doc comment between classes to have two newlines before");
+    KNOWN_TO_FAIL.add("comments/classes.unit:157  force doc comment between classes to have newline after");
     KNOWN_TO_FAIL.add("comments/classes.unit:39  inline block comment");
     KNOWN_TO_FAIL.add("comments/classes.unit:50  multiple inline block comments");
     KNOWN_TO_FAIL.add("comments/expressions.stmt:10  trailing line comment after non-split");
@@ -75,8 +77,152 @@ public class DartStyleTest extends FormatterTestCase {
 
     KNOWN_TO_FAIL.add("comments/top_level.unit:8"); // formatter bug
 
+    KNOWN_TO_FAIL.add("regression/0000/0000.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0000.stmt:17  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0000/0000.stmt:67  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0000/0005.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0006.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0013.unit:2  no trailing whitespace before initializer comment");
+    KNOWN_TO_FAIL.add("regression/0000/0013.unit:14  no trailing whitespace before initializer comment when params wrap");
+    KNOWN_TO_FAIL.add("regression/0000/0014.unit:1  https://github.com/dart-lang/dart_style/issues/14");
+    KNOWN_TO_FAIL.add("regression/0000/0019.stmt:15  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0000/0019.stmt:21  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0000/0021.stmt:12  preserve newlines but not indent");
+    KNOWN_TO_FAIL.add("regression/0000/0022.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0022.stmt:15  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0000/0025.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0025.stmt:13  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0000/0026.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0027.stmt:1  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0000/0028.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0029.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0031.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0037.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0037.stmt:19");
+    KNOWN_TO_FAIL.add("regression/0000/0040.stmt:10  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0000/0041.stmt:1  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0000/0042.unit:2");
+    KNOWN_TO_FAIL.add("regression/0000/0044.stmt:10");
+    KNOWN_TO_FAIL.add("regression/0000/0044.stmt:50");
+    KNOWN_TO_FAIL.add("regression/0000/0046.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0049.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0050.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0000/0055.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0000/0055.unit:9  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0000/0055.unit:17  (indent 12)");
+    KNOWN_TO_FAIL.add("regression/0000/0056.stmt:1  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0000/0057.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0058.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0060.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0061.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0068.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0000/0068.stmt:13");
+    KNOWN_TO_FAIL.add("regression/0000/0069.stmt:13");
+    KNOWN_TO_FAIL.add("regression/0000/0070.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0000/0072.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0075.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0076.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0077.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0080.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0081.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0000/0082.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0084.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0090.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0000/0090.stmt:11");
+    KNOWN_TO_FAIL.add("regression/0000/0095.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0000/0096.unit:1");
+    KNOWN_TO_FAIL.add("regression/0000/0098.stmt:1  (indent 4)");
+
+    KNOWN_TO_FAIL.add("regression/0100/0100.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0102.stmt:1  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0100/0108.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0108.unit:74  pathologically deep");
+    KNOWN_TO_FAIL.add("regression/0100/0108.unit:209");
+    KNOWN_TO_FAIL.add("regression/0100/0108.unit:235");
+    KNOWN_TO_FAIL.add("regression/0100/0110.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0111.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0112.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0112.stmt:13  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0115.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0115.stmt:15  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0119.stmt:9  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0100/0121.stmt:1  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0100/0122.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0122.unit:12");
+    KNOWN_TO_FAIL.add("regression/0100/0130.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0135.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0137.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0139.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0140.stmt:1  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0100/0141.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0142.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0142.stmt:14  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0100/0142.stmt:30  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0100/0144.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0144.unit:15  a knock-on issue caused by the initial fix for the above");
+    KNOWN_TO_FAIL.add("regression/0100/0151.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0155.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0158.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0158.unit:18");
+    KNOWN_TO_FAIL.add("regression/0100/0158.unit:31");
+    KNOWN_TO_FAIL.add("regression/0100/0161.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0162.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0162.stmt:57  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0100/0177.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0184.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0185.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0186.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0100/0187.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0189.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0189.stmt:20  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0198.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0100/0199.stmt:1  (indent 4)");
+
+    KNOWN_TO_FAIL.add("regression/0200/0203.stmt:8  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0204.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0200/0204.stmt:10  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0200/0205.stmt:8  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0200/0206.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0200/0211.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0211.unit:16");
+    KNOWN_TO_FAIL.add("regression/0200/0211.unit:32  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0200/0211.unit:49  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0211.unit:64  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0212.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0200/0217.stmt:9  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0218.stmt:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0221.unit:43  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0221.unit:67");
+    KNOWN_TO_FAIL.add("regression/0200/0222.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0200/0222.stmt:7  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0200/0223.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0200/0224.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0200/0224.stmt:48  (indent 22)");
+    KNOWN_TO_FAIL.add("regression/0200/0224.stmt:49  (indent 22)");
+    KNOWN_TO_FAIL.add("regression/0200/0228.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0229.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0232.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0235.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0236.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0237.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0238.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0241.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0242.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0243.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0200/0243.stmt:16  (indent 10)");
+    KNOWN_TO_FAIL.add("regression/0200/0247.unit:1  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/0200/0249.stmt:1  (indent 8)");
+    KNOWN_TO_FAIL.add("regression/0200/0250.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0256.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0257.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0258.unit:1");
+    KNOWN_TO_FAIL.add("regression/0200/0259.unit:1");
+
+    KNOWN_TO_FAIL.add("regression/0300/0364.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0368.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0370.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0300/0384.stmt:1  (indent 4)");
+
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:11");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:28");
@@ -137,6 +283,9 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/exports.unit:64  multiline second");
     KNOWN_TO_FAIL.add("splitting/exports.unit:76  multiline both");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:100  successive index arguments");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:106  is");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:111  as");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:116  null coalescing operator");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:18  conditions, same operator");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:45  split operator chain around block");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:55  indent previous line farther because later line is nested deeper");
@@ -166,6 +315,7 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:13  don't split before implicit receiver");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:134  split cascade split method");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:145  cascade setters on method chain");
+    KNOWN_TO_FAIL.add("splitting/invocations.stmt:155  conditional invocation");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:2  split all chained calls if they don't fit on one line");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:38  allow an inline chain before a hard newline but not after");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:49  allow an inline chain after a hard newline but not before");
@@ -278,7 +428,8 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
 
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations"); // formatter bug
-    KNOWN_TO_FAIL.add("whitespace/if.stmt:2  indentation"); // would pass if test were correct
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:106  null coalescing operator");
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members"); // fails due to blank lines
 
     //KNOWN_TO_FAIL.clear();
@@ -500,9 +651,573 @@ public class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("whitespace");
   }
 
+  public void test0000() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0005() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0006() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0009() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0013() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0014() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0019() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0021() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0022() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0023() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
   public void test0025() throws Exception {
     // Verify leadingIndent is working.
     runTestInDirectory("regression/0000");
+  }
+
+  public void test0026() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0027() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0028() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0029() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0031() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0033() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0036() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0037() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0038() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0039() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0040() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0041() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0042() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0044() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0045() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0046() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0047() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0049() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0050() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0054() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0055() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0056() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0057() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0058() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0060() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0061() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0066() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0068() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0069() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0070() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0071() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0072() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0075() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0076() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0077() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0080() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0081() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0082() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0083() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0084() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0085() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0086() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0087() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0089() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0090() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0091() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0095() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0096() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0098() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0099() throws Exception {
+    runTestInDirectory("regression/0000");
+  }
+
+  public void test0100() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0102() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0108() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0109() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0110() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0111() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0112() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0113() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0114() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0115() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0119() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0121() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0122() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0130() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0132() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0135() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0137() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0139() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0140() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0141() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0142() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0144() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0146() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0151() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0152() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0154() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0155() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0156() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0158() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0161() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0162() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0168() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0170() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0171() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0176() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0177() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0178() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0184() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0185() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0186() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0187() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0189() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0192() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0197() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0198() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0199() throws Exception {
+    runTestInDirectory("regression/0100");
+  }
+
+  public void test0200() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0203() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0204() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0205() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0206() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0211() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0212() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0217() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0218() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0221() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0222() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0223() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0224() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0228() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0229() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0232() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0235() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0236() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0237() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0238() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0241() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0242() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0243() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0247() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0249() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0250() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0256() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0257() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0258() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0259() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
+  public void test0361() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0364() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0368() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0370() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0384() throws Exception {
+    runTestInDirectory("regression/0300");
   }
 
   public void testAnalysis_server() throws Exception {
@@ -516,8 +1231,6 @@ public class DartStyleTest extends FormatterTestCase {
   public void testPub() throws Exception {
     runTestInDirectory("regression/other");
   }
-
-  // TODO Add more of the tests in 'regression'. Currently, they just clutter the results.
 
   /**
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
@@ -585,7 +1298,7 @@ public class DartStyleTest extends FormatterTestCase {
 
         while (!lines[i].startsWith("<<<")) {
           String line = lines[i++];
-          if (leadingIndent > 0) line = line.substring(leadingIndent);
+          if (leadingIndent > 0 && leadingIndent < line.length()) line = line.substring(leadingIndent);
           if (!isCompilationUnit && !line.isEmpty()) line = "  " + line;
           input += line + "\n";
         }
@@ -599,7 +1312,7 @@ public class DartStyleTest extends FormatterTestCase {
 
         while (i < lines.length && !lines[i].startsWith(">>>")) {
           String line = lines[i++];
-          if (leadingIndent > 0) line = line.substring(leadingIndent);
+          if (leadingIndent > 0 && leadingIndent < line.length()) line = line.substring(leadingIndent);
           if (!isCompilationUnit && !line.isEmpty()) line = "  " + line;
           expectedOutput += line + "\n";
         }

@@ -63,8 +63,8 @@ void main() {
         minUpTimeBeforeShutdown: new Duration(seconds: 0));
 <<<
     final server = new DatastoreLocalDevServer('connect',
-        workingDirectory: path.join(
-            packageRoot().absolute.path, 'test/tmp_data'),
+        workingDirectory:
+            path.join(packageRoot().absolute.path, 'test/tmp_data'),
         environment: <String, String>{
           'JAVA': '/usr/lib/jvm/java-7-openjdk-amd64/bin/java'
         },

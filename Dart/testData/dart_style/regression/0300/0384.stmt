@@ -1,0 +1,6 @@
+>>> (indent 4)
+    (scubaMatchers.publishers[
+        ErrorCollectingPublisher] as ErrorCollectingPublisher).verify();
+<<<
+    (scubaMatchers.publishers[ErrorCollectingPublisher]
+        as ErrorCollectingPublisher).verify();

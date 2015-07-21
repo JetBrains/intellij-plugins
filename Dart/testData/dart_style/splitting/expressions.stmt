@@ -103,3 +103,20 @@ identifier[longArgument][longArgument][longArgument][longArgument][longArgument]
 identifier[longArgument][longArgument]
         [longArgument][longArgument]
     [longArgument];
+>>> is
+verylongIdentifier.property is LongTypeName;
+<<<
+verylongIdentifier.property
+    is LongTypeName;
+>>> as
+verylongIdentifier.property as LongTypeName;
+<<<
+verylongIdentifier.property
+    as LongTypeName;
+>>> null coalescing operator
+identifier&&identifier&&identifier&&identifier;
+<<<
+identifier &&
+    identifier &&
+    identifier &&
+    identifier;
