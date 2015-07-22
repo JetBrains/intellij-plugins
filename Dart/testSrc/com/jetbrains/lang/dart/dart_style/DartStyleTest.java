@@ -428,8 +428,6 @@ public class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
 
     KNOWN_TO_FAIL.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations"); // formatter bug
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:106  null coalescing operator");
-    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members"); // fails due to blank lines
 
     //KNOWN_TO_FAIL.clear();

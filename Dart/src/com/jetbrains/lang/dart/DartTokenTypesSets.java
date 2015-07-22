@@ -137,7 +137,9 @@ public interface DartTokenTypesSets {
   );
 
   TokenSet LOGIC_OPERATORS = TokenSet.create(
-    OR_OR, AND_AND
+    OR_OR, AND_AND,
+    // Strictly speaking, this isn't a logical operator, but should be formatted the same.
+    QUEST_QUEST
   );
 
   TokenSet UNARY_OPERATORS = TokenSet.create(
