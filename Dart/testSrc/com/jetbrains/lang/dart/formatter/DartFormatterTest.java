@@ -235,4 +235,10 @@ public class DartFormatterTest extends FormatterTestCase {
     settings.RIGHT_MARGIN = 40;
     doTest();
   }
+
+  public void testOddCases() throws Exception {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED;
+    doTest();
+  }
 }

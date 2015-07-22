@@ -278,10 +278,6 @@ public class DartSpacingProcessor {
       }
     }
 
-    if (type1 == CLASS_MEMBERS) {
-      return addLineBreak();
-    }
-
     if (type2 == LPAREN) {
       if (elementType == IF_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_IF_PARENTHESES);
@@ -291,9 +287,6 @@ public class DartSpacingProcessor {
       }
       else if (elementType == SWITCH_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_SWITCH_PARENTHESES);
-      }
-      else if (elementType == TRY_STATEMENT) {
-        return addSingleSpaceIf(mySettings.SPACE_BEFORE_TRY_PARENTHESES);
       }
       else if (elementType == ON_PART || elementType == CATCH_PART) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_PARENTHESES);
@@ -409,9 +402,6 @@ public class DartSpacingProcessor {
       else if (elementType == SWITCH_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_SWITCH_PARENTHESES);
       }
-      else if (elementType == TRY_STATEMENT) {
-        return addSingleSpaceIf(mySettings.SPACE_WITHIN_TRY_PARENTHESES);
-      }
       else if (elementType == CATCH_PART) {
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_CATCH_PARENTHESES);
       }
@@ -485,7 +475,7 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(mySettings.SPACE_AROUND_RELATIONAL_OPERATORS);
     }
     //
-    // Spacing around  additive operators ( &, |, ^, etc.)
+    // Spacing around  bitwise operators ( &, |, ^, etc.)
     //
     if (BITWISE_OPERATORS.contains(type1) || BITWISE_OPERATORS.contains(type2)) {
       return addSingleSpaceIf(mySettings.SPACE_AROUND_BITWISE_OPERATORS);
@@ -728,6 +718,13 @@ public class DartSpacingProcessor {
         return addSingleSpaceIf(true);
       }
       if (type1 == MUL) return addSingleSpaceIf(true);
+    }
+
+    if (type1 == DOT || type1 == QUEST_DOT || type2 == DOT || type2 == QUEST_DOT || type1 == HASH) {
+      return noSpace(); // Seems odd that no plugin has a setting for spaces around DOT -- need a Lisp mode!
+    }
+    if (type2 == HASH) {
+      return addSingleSpaceIf(parentType == SYMBOL_LITERAL_EXPRESSION); // No space before closurization.
     }
 
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
