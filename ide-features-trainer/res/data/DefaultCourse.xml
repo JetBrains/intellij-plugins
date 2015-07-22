@@ -1,8 +1,2 @@
-<xml type="Course" name="Editor Basics" version="0.1" answerspath="answers/" id="default">
-    <lessons>
-        <lesson name="Comment Line" isPassed="false" path="EditorBasics/CommentLine.xml"/>
-        <lesson name="Some line comment" isPassed="false" path="EditorBasics/DuplicateLine.xml"/>
-        <lesson name="How to comment line" isPassed="false" path="EditorBasics/DeleteLine.xml"/>
-        <lesson name="How to comment line" isPassed="false" path="EditorBasics/MultipleSelection.xml"/>
-    </lessons>
+<xml type="Course" name="Editor Basics" version="0.2" answerspath="answers/" id="default" lessonspath="EditorBasics/">
 </xml>

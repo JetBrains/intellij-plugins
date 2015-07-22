@@ -1,5 +1,6 @@
 package org.jetbrains.training;
 
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -17,6 +18,10 @@ public class MyClassLoader {
 
     public InputStream getResourceAsStream(String path){
         return this.getClass().getResourceAsStream(RESPATH + path);
+    }
+
+    public String getDataPath(){
+        return this.getClass().getResource(RESPATH).getPath();
     }
 
 }
