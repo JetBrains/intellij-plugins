@@ -123,8 +123,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   @Nullable
-  public PluginNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
-    final VirtualFile refVirtualFile = refPsiFile.getVirtualFile();
+  public static  PluginNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
+    final VirtualFile refVirtualFile = DartResolveUtil.getRealVirtualFile(refPsiFile);
     if (refVirtualFile != null) {
       final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
       return findRegion(regions, refOffset, refLength);
@@ -153,10 +153,6 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
     }
     return null;
-  }
-
-  private static boolean isIdentifier(@NotNull DartReference reference) {
-    return reference.getChildren().length == 1 && reference.getChildren()[0] instanceof DartId;
   }
 
   @NotNull

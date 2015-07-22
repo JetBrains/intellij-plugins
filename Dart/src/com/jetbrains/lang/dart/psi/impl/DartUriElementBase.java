@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DartUriElementBase extends DartPsiCompositeElementImpl {
 
@@ -58,22 +59,7 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
     final int uriOffset = ((DartUriBasedDirective)parent).getUriStringOffset();
 
     if (DartResolver.isServerDrivenResolution()) {
-      final PsiFile refPsiFile = getContainingFile();
-      final int refOffset = getTextOffset();
-      final int refLength = getTextLength();
-      final PluginNavigationRegion region = DartResolver.INSTANCE.findRegion(refPsiFile, refOffset, refLength);
-      if (region != null) {
-        final PluginNavigationTarget target = region.getTargets().get(0);
-        final String targetPath = target.getFile();
-        final VirtualFile targetVirtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
-        if (targetVirtualFile != null) {
-          final PsiFile targetPsiFile = getManager().findFile(targetVirtualFile);
-          if (targetPsiFile != null) {
-            return new PsiReference[]{new DartFileReference(this, uri, targetPsiFile)};
-          }
-        }
-      }
-      return PsiReference.EMPTY_ARRAY;
+      return new PsiReference[]{new DartFileReference(this, uri)};
     }
 
     if (uri.startsWith(DartUrlResolver.DART_PREFIX)) {

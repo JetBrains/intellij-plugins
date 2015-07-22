@@ -16,29 +16,34 @@
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
- * Reference to a file in import or export directive.
+ * Reference to a file in an import, export or part directive.
  */
 public class DartFileReference implements PsiReference {
   @NotNull private final PsiElement myElement;
   @NotNull private final String myUri;
-  @NotNull private final PsiFile myPsiFile;
   @NotNull private final TextRange myRange;
+  private PsiFile myTargetPsiFile;
 
-  public DartFileReference(@NotNull final DartUriElementBase uriRefExpr, @NotNull final String uri, @NotNull final PsiFile psiFile) {
+  public DartFileReference(@NotNull final DartUriElementBase uriRefExpr, @NotNull final String uri) {
     final int offset = uriRefExpr.getText().indexOf(uri);
     assert offset >= 0 : uriRefExpr.getText() + " doesn't contain " + uri;
 
     myElement = uriRefExpr;
     myUri = uri;
-    myPsiFile = psiFile;
     myRange = TextRange.create(offset, offset + uri.length());
   }
 
@@ -56,7 +61,24 @@ public class DartFileReference implements PsiReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    return myPsiFile;
+    if (myTargetPsiFile == null) {
+      final PsiFile refPsiFile = myElement.getContainingFile();
+      final int refOffset = myElement.getTextOffset();
+      final int refLength = myElement.getTextLength();
+      final DartAnalysisServerService.PluginNavigationRegion region = DartResolver.findRegion(refPsiFile, refOffset, refLength);
+      if (region != null) {
+        final List<DartAnalysisServerService.PluginNavigationTarget> targets = region.getTargets();
+        if (!targets.isEmpty()) {
+          final DartAnalysisServerService.PluginNavigationTarget target = targets.get(0);
+          final String targetPath = target.getFile();
+          final VirtualFile targetVirtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
+          if (targetVirtualFile != null) {
+            myTargetPsiFile = myElement.getManager().findFile(targetVirtualFile);
+          }
+        }
+      }
+    }
+    return myTargetPsiFile;
   }
 
   @NotNull
