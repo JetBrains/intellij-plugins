@@ -659,9 +659,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                                 !XmlBackedJSClassImpl.isImplementsAttribute((JSFile)clazzParent);
 
           if (PsiTreeUtil.getParentOfType(jsClass, JSFunction.class, JSClass.class) != null || clazzParentIsInjectedJsFile) {
-            if (getAnnotateHighlighterFilter(jsClass).shouldHighlightNestedClass()) {
-              myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.nested.classes.are.not.allowed"));
-            }
+            myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.nested.classes.are.not.allowed"));
           }
           checkClass(jsClass);
         }
