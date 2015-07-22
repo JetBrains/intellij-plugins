@@ -123,7 +123,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   @Nullable
-  public static  PluginNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
+  public static PluginNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
     final VirtualFile refVirtualFile = DartResolveUtil.getRealVirtualFile(refPsiFile);
     if (refVirtualFile != null) {
       final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);

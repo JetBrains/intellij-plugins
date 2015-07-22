@@ -36,6 +36,7 @@ public class DartFileReference implements PsiReference {
   @NotNull private final PsiElement myElement;
   @NotNull private final String myUri;
   @NotNull private final TextRange myRange;
+  private boolean myResolveDone;
   private PsiFile myTargetPsiFile;
 
   public DartFileReference(@NotNull final DartUriElementBase uriRefExpr, @NotNull final String uri) {
@@ -61,7 +62,7 @@ public class DartFileReference implements PsiReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    if (myTargetPsiFile == null) {
+    if (!myResolveDone) {
       final PsiFile refPsiFile = myElement.getContainingFile();
       final int refOffset = myElement.getTextOffset();
       final int refLength = myElement.getTextLength();
@@ -77,7 +78,10 @@ public class DartFileReference implements PsiReference {
           }
         }
       }
+
+      myResolveDone = true;
     }
+
     return myTargetPsiFile;
   }
 
@@ -89,12 +93,12 @@ public class DartFileReference implements PsiReference {
 
   @Override
   public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
-    throw new IncorrectOperationException("Can't rename file");
+    return myElement;
   }
 
   @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
-    throw new IncorrectOperationException("Can't rename file");
+    return element;
   }
 
   @Override
