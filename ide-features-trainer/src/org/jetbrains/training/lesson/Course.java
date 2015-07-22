@@ -3,6 +3,7 @@ package org.jetbrains.training.lesson;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.psi.impl.file.impl.FileManager;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -13,6 +14,7 @@ import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.MyClassLoader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -78,31 +80,56 @@ public class Course extends ActionGroup{
 
         name = root.getAttribute("name").getValue();
 
-        //Goto Lessons
-        Element lessonsRoot = root.getChild("lessons");
-        for (Element lessonEl: lessonsRoot.getChildren()){
-            if (lessonEl.getAttribute("path") != null) {
-                boolean lessonIsPassed = false;
+        if (root.getAttribute("lessonspath")!=null){
 
-                if (lessonEl.getAttribute("isPassed") != null) {
-                    lessonIsPassed = (lessonEl.getAttribute("isPassed").getValue().equals("true"));
-                } else {
-                    throw new BadLessonException();
-                }
+            //retieve list of xml files inside lessonspath directory
+            String lessonsPath = root.getAttribute("lessonspath").getValue();
+            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
+            File dir = new File(lessonsFullpath);
 
-                String pathToScenario = lessonEl.getAttribute("path").getValue();
-                try{
-                    Scenario scn = new Scenario(pathToScenario);
-                    Lesson tmpl = new Lesson(scn, lessonIsPassed, this);
-                    lessons.add(tmpl);
+            for (String lessonFilename : dir.list()) {
+                String lessonPath = lessonsPath + lessonFilename;
+                try {
+                    Scenario scn = new Scenario(lessonPath);
+                    Lesson lesson = new Lesson(scn, false, this);
+                    lessons.add(lesson);
                 } catch (JDOMException e) {
                     //Scenario file is corrupted
-                    throw new BadLessonException("Probably scenario file is corrupted: " + pathToScenario);
+                    throw new BadLessonException("Probably scenario file is corrupted: " + lessonPath);
                 } catch (IOException e) {
                     //Scenario file cannot be read
-                    throw new BadLessonException("Probably scenario file cannot be read: " + pathToScenario);
+                    throw new BadLessonException("Probably scenario file cannot be read: " + lessonPath);
                 }
-            } else throw new BadCourseException();
+            }
+
+        } else {
+
+            //Goto Lessons
+            Element lessonsRoot = root.getChild("lessons");
+            for (Element lessonEl : lessonsRoot.getChildren()) {
+                if (lessonEl.getAttribute("path") != null) {
+                    boolean lessonIsPassed = false;
+
+                    if (lessonEl.getAttribute("isPassed") != null) {
+                        lessonIsPassed = (lessonEl.getAttribute("isPassed").getValue().equals("true"));
+                    } else {
+                        throw new BadLessonException();
+                    }
+
+                    String lessonPath = lessonEl.getAttribute("path").getValue();
+                    try {
+                        Scenario scn = new Scenario(lessonPath);
+                        Lesson lesson = new Lesson(scn, lessonIsPassed, this);
+                        lessons.add(lesson);
+                    } catch (JDOMException e) {
+                        //Scenario file is corrupted
+                        throw new BadLessonException("Probably scenario file is corrupted: " + lessonPath);
+                    } catch (IOException e) {
+                        //Scenario file cannot be read
+                        throw new BadLessonException("Probably scenario file cannot be read: " + lessonPath);
+                    }
+                } else throw new BadCourseException();
+            }
         }
     }
 
