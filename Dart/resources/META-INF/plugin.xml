@@ -209,6 +209,10 @@
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
+    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.actions.ReanalyzeAction"
+            text="Reanalyze Sources" description="Reanalyze all sources">
+      <add-to-group group-id="BuildMenu" relative-to-action="CompileProject" anchor="after"/>
+    </action>
     <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
             text="Reformat with Dart Style" description="Format your Dart code using the dart_style formatter">
       <add-to-group group-id="CodeFormatGroup" anchor="last"/>

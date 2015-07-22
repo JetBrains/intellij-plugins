@@ -902,6 +902,32 @@ public class DartAnalysisServerService {
     return resultRef.get();
   }
 
+  public boolean analysis_reanalyze(@Nullable final List<String> roots) {
+    synchronized (myLock) {
+      if (myServer == null) return false;
+
+      String rootsStr = roots != null ? StringUtil.join(roots, ",\n") : "all roots";
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("analysis_reanalyze, roots: " + rootsStr);
+      }
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.analysis_reanalyze(roots);
+        }
+      }, "analysis_reanalyze(" + rootsStr + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return false;
+      }
+
+      return true;
+    }
+  }
+
   private boolean analysis_setPriorityFiles() {
     synchronized (myLock) {
       if (myServer == null) return false;
