@@ -1,13 +1,10 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 
 public class DartProblemsViewPanel extends NewErrorTreeViewPanel {
 
@@ -19,13 +16,10 @@ public class DartProblemsViewPanel extends NewErrorTreeViewPanel {
   @Override
   protected void fillRightToolbarGroup(DefaultActionGroup group) {
     super.fillRightToolbarGroup(group);
-    group.add(new AnAction(DartBundle.message("dart.reanalyze.action.name"), DartBundle.message("dart.reanalyze.action.description"),
-                           AllIcons.Actions.ForceRefresh) {
-      @Override
-      public void actionPerformed(AnActionEvent e) {
-        DartAnalysisServerService.getInstance().analysis_reanalyze(null);
-      }
-    });
+    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
+    if (reanalyzeAction != null) {
+      group.add(reanalyzeAction);
+    }
   }
 
   @Override

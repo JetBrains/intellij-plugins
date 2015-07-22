@@ -907,9 +907,7 @@ public class DartAnalysisServerService {
       if (myServer == null) return false;
 
       String rootsStr = roots != null ? StringUtil.join(roots, ",\n") : "all roots";
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("analysis_reanalyze, roots: " + rootsStr);
-      }
+      LOG.debug("analysis_reanalyze, roots: " + rootsStr);
 
       final AnalysisServer server = myServer;
       final boolean ok = runInPooledThreadAndWait(new Runnable() {

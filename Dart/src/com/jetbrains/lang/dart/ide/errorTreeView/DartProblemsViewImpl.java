@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
 
 public class DartProblemsViewImpl {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl");
-  private static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
+  public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
 
   private final DartProblemsViewPanel myPanel;
   private final Project myProject;

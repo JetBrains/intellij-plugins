@@ -61,7 +61,8 @@
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
     <lang.structureViewExtension implementation="com.jetbrains.lang.dart.ide.structure.DartStructureViewExtension"/>
-    <psi.referenceContributor language="HTML" implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor" order="last"/>
+    <psi.referenceContributor language="HTML" implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor"
+                              order="last"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartUriElement"
@@ -209,9 +210,8 @@
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.actions.ReanalyzeAction"
-            text="Reanalyze Sources" description="Reanalyze all sources">
-      <add-to-group group-id="BuildMenu" relative-to-action="CompileProject" anchor="after"/>
+    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.actions.ReanalyzeDartSourcesAction"
+            text="Reanalyze Dart Sources" description="Reanalyze all Dart source files">
     </action>
     <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
             text="Reformat with Dart Style" description="Format your Dart code using the dart_style formatter">
@@ -237,16 +237,21 @@
     </action>
 
     <group>
-      <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies" description="Run 'pub get'"/>
-      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Pub: Upgrade Dependencies" description="Run 'pub upgrade'"/>
-      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..." description="Run 'pub build'"/>
+      <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies"
+              description="Run 'pub get'"/>
+      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Pub: Upgrade Dependencies"
+              description="Run 'pub upgrade'"/>
+      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..."
+              description="Run 'pub build'"/>
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
-    <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..." description="Run 'pub cache repair'"/>
+    <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..."
+            description="Run 'pub cache repair'"/>
 
-    <action id="DartTypeHierarchy.BaseOnThisType" text="Base on This Type" class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
+    <action id="DartTypeHierarchy.BaseOnThisType" text="Base on This Type"
+            class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
     <group id="DartClassHierarchyPopupMenu">
       <reference ref="DartTypeHierarchy.BaseOnThisType"/>
       <reference ref="TypeHierarchy.Class"/>
