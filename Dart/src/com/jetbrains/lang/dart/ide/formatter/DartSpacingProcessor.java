@@ -278,10 +278,6 @@ public class DartSpacingProcessor {
       }
     }
 
-    //if (type1 == CLASS_MEMBERS) {
-    //  return addLineBreak();
-    //}
-
     if (type2 == LPAREN) {
       if (elementType == IF_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_IF_PARENTHESES);
