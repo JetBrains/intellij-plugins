@@ -40,7 +40,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     new WriteCommandAction(getProject(), psiFile) {
       @Override
-      protected void run(final Result result) throws Throwable {
+      protected void run(@NotNull final Result result) throws Throwable {
         final PsiElementFactory factory = JavaPsiFacade.getInstance(getProject()).getElementFactory();
         final PsiMethod method = factory.createMethodFromText(stepDef, psiClass);
         psiClass.add(method);
@@ -57,7 +57,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     new WriteCommandAction(getProject(), psiFile) {
       @Override
-      protected void run(Result result) throws Throwable {
+      protected void run(@NotNull Result result) throws Throwable {
 
         for (PsiMethod method : psiClass.getAllMethods()) {
           if (method.getName().equals(stepDefName)) {

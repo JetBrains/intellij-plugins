@@ -374,7 +374,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     final DartExpression expression = operation.getInitializer();
     final Project project = operation.getProject();
     return new WriteCommandAction<PsiElement>(project, expression.getContainingFile()) {
-      protected void run(final Result<PsiElement> result) throws Throwable {
+      protected void run(@NotNull final Result<PsiElement> result) throws Throwable {
         final PsiElement createdDeclaration = addDeclaration(operation, declaration);
         result.setResult(createdDeclaration);
         if (createdDeclaration != null) {

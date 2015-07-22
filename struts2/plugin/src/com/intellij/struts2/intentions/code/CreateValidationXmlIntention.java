@@ -144,7 +144,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
             final String path = selectedValue.getName().getStringValue();
             new WriteCommandAction<Void>(project) {
               @Override
-              protected void run(final Result<Void> result) throws Throwable {
+              protected void run(@NotNull final Result<Void> result) throws Throwable {
                 createValidationXml(project, actionClass, path);
               }
             }.execute();
