@@ -11,9 +11,12 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,8 +26,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -44,11 +50,13 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.ide.completion.DartLookupObject;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.resolve.DartResolver;
@@ -57,6 +65,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -242,9 +251,8 @@ public class DartAnalysisServerService {
     }
   }
 
-  public void addCompletions(@NotNull final Project project,
-                             @NotNull final String completionId,
-                             @NotNull final CompletionResultSet resultSet) {
+  public void addCompletions(@NotNull final String completionId,
+                             @NotNull final CompletionSuggestionProcessor processor) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -258,23 +266,7 @@ public class DartAnalysisServerService {
           if (!completionInfo.myCompletionId.equals(completionId)) continue;
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
-            final Element element = completion.getElement();
-            final Location location = element == null ? null : element.getLocation();
-            final DartLookupObject lookupObject = new DartLookupObject(project, location, completion.getRelevance());
-            final LookupElement lookup = LookupElementBuilder.create(lookupObject, completion.getCompletion());
-
-            // todo: lookup presentable text (e.g. signature for functions, etc.)
-            //       tail text
-            //       type text
-            //       icon
-            //       strikeout for deprecated
-            //       quick doc preview (already works if corresponding PsiElement is correctly found by lookupObject)
-            //       quick definition view (already works (but uses DartDocumentationProvider, not info from server) if corresponding PsiElement is correctly found by lookupObject)
-            //       jump to item declaration (already works if corresponding PsiElement is correctly found by lookupObject)
-            //       what to insert except identifier (e.g. parentheses, import directive, update show/hide, etc.)
-            //       caret placement after insertion
-
-            resultSet.consume(lookup);
+            processor.process(completion);
           }
 
           if (completionInfo.isLast) return;
@@ -1009,9 +1001,9 @@ public class DartAnalysisServerService {
         argsRaw = "";
       }
 
-      myServerSocket = new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream,
-                                             ArrayUtil.toStringArray(StringUtil.split(argsRaw, " ")),
-                                             false, false, port, false, FileReadMode.NORMALIZE_EOL_ALWAYS);
+      myServerSocket =
+        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, ArrayUtil.toStringArray(StringUtil.split(argsRaw, " ")),
+                              false, false, port, false, FileReadMode.NORMALIZE_EOL_ALWAYS);
       myServerSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
       myServerSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
       myServer = new RemoteAnalysisServerImpl(myServerSocket);
@@ -1293,5 +1285,9 @@ public class DartAnalysisServerService {
     public int getOffset() {
       return offset;
     }
+  }
+
+  public static interface CompletionSuggestionProcessor {
+    void process(CompletionSuggestion suggestion);
   }
 }
