@@ -2,9 +2,9 @@
 <project name="module_training-concept" default="compile.module.training-concept">
   <dirname property="module.training-concept.basedir" file="${ant.file.module_training-concept}"/>
   
-  <property name="module.jdk.home.training-concept" value="${jdk.home.idea_ic-141.177.4}"/>
-  <property name="module.jdk.bin.training-concept" value="${jdk.bin.idea_ic-141.177.4}"/>
-  <property name="module.jdk.classpath.training-concept" value="jdk.classpath.idea_ic-141.177.4"/>
+  <property name="module.jdk.home.training-concept" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.training-concept" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.training-concept" value="${project.jdk.classpath}"/>
   
   <property name="compiler.args.training-concept" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
   
@@ -20,6 +20,7 @@
     <path refid="library.home.classpath"/>
     <path refid="library.javafx-mx.classpath"/>
     <path refid="library.javafx-src.classpath"/>
+    <path refid="library.shortcutter.classpath"/>
   </path>
   
   <path id="training-concept.runtime.production.module.classpath">
@@ -27,6 +28,7 @@
     <path refid="library.home.classpath"/>
     <path refid="library.javafx-mx.classpath"/>
     <path refid="library.javafx-src.classpath"/>
+    <path refid="library.shortcutter.classpath"/>
   </path>
   
   <path id="training-concept.module.classpath">
@@ -35,6 +37,7 @@
     <path refid="library.home.classpath"/>
     <path refid="library.javafx-mx.classpath"/>
     <path refid="library.javafx-src.classpath"/>
+    <path refid="library.shortcutter.classpath"/>
   </path>
   
   <path id="training-concept.runtime.module.classpath">
@@ -43,11 +46,13 @@
     <path refid="library.home.classpath"/>
     <path refid="library.javafx-mx.classpath"/>
     <path refid="library.javafx-src.classpath"/>
+    <path refid="library.shortcutter.classpath"/>
   </path>
   
   
   <patternset id="excluded.from.module.training-concept">
     <patternset refid="ignored.files"/>
+    <exclude name="org/jetbrains/training/sandbox/**"/>
   </patternset>
   
   <patternset id="excluded.from.compilation.training-concept">
@@ -108,7 +113,8 @@
         <attribute name="Manifest-Version" value="1.0"/>
       </manifest>
     </jar>
-    <copy file="${module.training-concept.basedir}/../../../Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/lib/javafx-mx.jar" tofile="${tmp.dir.training-concept}/lib/javafx-mx.jar"/>
+    <copy file="${module.training-concept.basedir}/../../../../Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/lib/javafx-mx.jar" tofile="${tmp.dir.training-concept}/lib/javafx-mx.jar"/>
+    <copy file="${module.training-concept.basedir}/../shortcutter/out/artifacts/shortcutter_jar/shortcutter.jar" tofile="${tmp.dir.training-concept}/lib/shortcutter.jar"/>
     <zip destfile="${training-concept.plugin.path.jar}">
       <fileset dir="${module.training-concept.basedir}/../temp"/>
     </zip>
