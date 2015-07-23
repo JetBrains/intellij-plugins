@@ -28,6 +28,7 @@ public class DartSpacingProcessor {
   private static final TokenSet SIMPLE_LITERAL_SET =
     TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
   private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
+  private static final TokenSet DIRECTIVE_GROUPS = TokenSet.create(IMPORT_STATEMENT, EXPORT_STATEMENT, PART_STATEMENT);
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -65,14 +66,15 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(0, 0, nsp, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (type1 == IMPORT_STATEMENT) {
+    if (DIRECTIVE_GROUPS.contains(type1)) {
       if (type2 == MULTI_LINE_COMMENT) {
         ASTNode next = FormatterUtil.getNextNonWhitespaceSibling(node2);
         if (next != null &&
-            next.getElementType() == IMPORT_STATEMENT &&
-            isEmbeddedComment(type2, child2) &&
-            !isDirectlyPrecededByNewline(next)) {
-          return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+            next.getElementType() == type1) {
+          boolean needsNewline = isEmbeddedComment(type2, child2) && !isDirectlyPrecededByNewline(next);
+          int space = needsNewline ? 0 : 1;
+          int newline = needsNewline ? 1 : 0;
+          return Spacing.createSpacing(0, space, newline, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
       }
       if (type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT && !isEmbeddedComment(type2, child2)) {
@@ -829,7 +831,7 @@ public class DartSpacingProcessor {
   }
 
   private static boolean isEmbeddedComment(IElementType type, Block block) {
-    return COMMENTS.contains(type) && !isDirectlyPrecededByNewline(block);
+    return COMMENTS.contains(type) && (!isDirectlyPrecededByNewline(block) || isDirectlyPrecededByBlockComment(block));
   }
 
   private static boolean isDirectlyPrecededByNewline(Block child) {
@@ -851,6 +853,25 @@ public class DartSpacingProcessor {
           return true;
         }
         continue;
+      }
+      break;
+    }
+    return false;
+  }
+
+  private static boolean isDirectlyPrecededByBlockComment(Block child) {
+    ASTNode node = ((DartBlock)child).getNode();
+    return isDirectlyPrecededByBlockComment(node);
+  }
+
+  private static boolean isDirectlyPrecededByBlockComment(ASTNode node) {
+    while ((node = node.getTreePrev()) != null) {
+      if (node.getElementType() == WHITE_SPACE) {
+        if (node.getText().contains("\n")) return false;
+        continue;
+      }
+      if (node.getElementType() == MULTI_LINE_COMMENT) {
+        return true;
       }
       break;
     }

@@ -15,9 +15,7 @@ public class DartStyleLenientTest extends DartStyleTest {
   private static final Set<String> KNOWN_TO_FAIL_LENIENT = new THashSet<String>();
 
   static {
-    KNOWN_TO_FAIL_LENIENT.add("regression/0100/0178.unit:1");
-    KNOWN_TO_FAIL_LENIENT.add("comments/functions.unit:43  multiple comments on opening line");
-    KNOWN_TO_FAIL_LENIENT.add("comments/top_level.unit:195  inline block comment between directives");
+    //KNOWN_TO_FAIL_LENIENT.add("regression/0100/0178.unit:1");
   }
 
   /**
