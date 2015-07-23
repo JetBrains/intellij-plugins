@@ -1,0 +1,29 @@
+<xml type="Scenario" name="Selection" passed="false" version="0.1" subtype="aimless">
+    <MouseBlock>
+        <CopyText>public class SelectionDemo {
+
+    public int fib(int n) {
+        int a = 1;
+        int b = 1;
+
+        int tmp;
+
+        if (n &lt; 2) return 1;
+
+        for (int i = 0; i &lt; (n - 1); i++) {
+            tmp = b;
+            b = a;
+            a = a + tmp;
+        }
+
+        return a;
+    }
+}</CopyText>
+    </MouseBlock>
+    <Try description="Put cursor before any word. Select it with &lt;b&gt;&lt;action=&quot;EditorNextWordWithSelection&quot;&gt;&lt;/b&gt;" action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection"/>
+    <Try description="Now let's select the whole line with &lt;b&gt;&lt;action=&quot;EditorSelectWord&quot;&gt;&lt;/b&gt;" action="EditorSelectWord" trigger="EditorSelectWord"/>
+    <Text description="You may increase your selection with &lt;b&gt;&lt;action=&quot;EditorSelectWord&quot;&gt;&lt;/b&gt; until your file will be selected"/>
+    <Try description="To decrease selection use &lt;b&gt;&lt;action=&quot;EditorUnSelectWord&quot;&gt;&lt;/b&gt;" action="EditorUnSelectWord" trigger="EditorUnSelectWord"/>
+    <Try description="Select the whole file with &lt;b&gt;&lt;action=&quot;$SelectAll&quot;&gt;&lt;/b&gt;" action="$SelectAll" trigger="$SelectAll"/>
+    <Win/>
+</xml>

@@ -9,10 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.BadCourseException;
-import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.LessonIsOpenedException;
-import org.jetbrains.training.MyClassLoader;
+import org.jetbrains.training.util.MyClassLoader;
 import org.jetbrains.training.eduUI.EduEditor;
 
 import java.awt.*;

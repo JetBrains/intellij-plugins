@@ -3,16 +3,13 @@ package org.jetbrains.training.lesson;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.psi.impl.file.impl.FileManager;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.BadCourseException;
-import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.MyClassLoader;
+import org.jetbrains.training.util.MyClassLoader;
 
 import java.io.File;
 import java.io.IOException;
