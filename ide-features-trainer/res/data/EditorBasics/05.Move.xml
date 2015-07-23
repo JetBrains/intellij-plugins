@@ -1,0 +1,23 @@
+<xml type="Scenario" name="Moving" passed="false" version="0.1" subtype="aimless">
+    <MouseBlock>
+        <CopyText>public class HelloThread extends Thread {
+
+    boolean started = false;
+
+    public void run() {
+        started = true;
+        System.out.println(&quot;Hello from a thread!&quot;);
+    }
+
+    public static void main(String args[]) {
+       (new HelloThread()).start();
+    }
+
+}</CopyText>
+    </MouseBlock>
+    <Text description="You can rearrange lines sequence with one shortcut instead of 3 actions: copy, delete and paste"/>
+    <Try description="Put cursor to the 6 line and pull it down with &lt;b&gt;&lt;action=&quot;MoveLineDown&quot;&gt;&lt;/b&gt;" trigger="MoveLineDown"/>
+    <Try description="It works in a opposite way also &lt;b&gt;&lt;action=&quot;MoveLineUp&quot;&gt;&lt;/b&gt;" trigger="MoveLineUp"/>
+    <Try description="Go to line 10 and move the whole statement up with &lt;b&gt;&lt;action=&quot;MoveStatementUp&quot;&gt;&lt;/b&gt;" trigger="MoveStatementUp"/>
+    <Win/>
+</xml>

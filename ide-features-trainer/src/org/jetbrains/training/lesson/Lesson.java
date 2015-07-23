@@ -1,22 +1,11 @@
 package org.jetbrains.training.lesson;
 
-import com.intellij.ide.ui.laf.darcula.ui.DarculaEditorTextFieldBorder;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.actionSystem.impl.PoppedIcon;
-import com.intellij.openapi.util.IconLoader;
-import com.intellij.ui.SizedIcon;
-import com.intellij.util.PlatformIcons;
-import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.BadCourseException;
-import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.graphics.HintPanel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;

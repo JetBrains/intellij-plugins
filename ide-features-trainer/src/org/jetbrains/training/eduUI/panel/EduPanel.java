@@ -1,9 +1,9 @@
 package org.jetbrains.training.eduUI.panel;
 
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.training.BadCourseException;
-import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.LessonIsOpenedException;
+import org.jetbrains.training.lesson.BadCourseException;
+import org.jetbrains.training.lesson.BadLessonException;
+import org.jetbrains.training.lesson.LessonIsOpenedException;
 import org.jetbrains.training.commandsEx.util.XmlUtil;
 import org.jetbrains.training.eduUI.EduEditor;
 import org.jetbrains.training.lesson.Course;
@@ -261,11 +261,15 @@ public class EduPanel extends JPanel {
 //            message.setForeground(passedColor);
             if (message.getLabel().getForeground() != passedColor) {
                 message.getLabel().setForeground(passedColor);
-                String text = XmlUtil.removeHtmlTags(message.getLabel().getText());
-                text += " ✔";
-                message.getLabel().setText(XmlUtil.addHtmlTags(text));
             }
         }
+
+        //add to last message check mark
+        LessonMessage lastMessage = messages.get(messages.size() - 1);
+        String text = XmlUtil.removeHtmlTags(lastMessage.getLabel().getText());
+        text += " ✔";
+        lastMessage.getLabel().setText(XmlUtil.addHtmlTags(text));
+
     }
 
     public void setLessonPassed(){

@@ -25,7 +25,6 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
     final private com.intellij.openapi.fileEditor.FileEditorProvider defaultTextEditorProvider = TextEditorProvider.getInstance();
     HashMap<VirtualFile, EduEditor> fileEduEditorMap;
 
-
     public EduEditorProvider() {
         fileEduEditorMap = new HashMap<VirtualFile, EduEditor>();
     }

@@ -1,14 +1,5 @@
 package org.jetbrains.training.lesson;
 
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.messages.Topic;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.training.BadCourseException;
-import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.LessonIsOpenedException;
-
 import java.awt.*;
 import java.io.IOException;
 import java.util.EventListener;

@@ -1,24 +1,10 @@
 package org.jetbrains.training;
 
-import com.intellij.ide.scratch.ScratchRootType;
-import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.*;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import org.jetbrains.training.eduUI.EduEditor;
-import org.jetbrains.training.eduUI.EduEditorProvider;
-import org.jetbrains.training.lesson.CourseManager;
-import org.jetbrains.training.lesson.Lesson;
+import org.jetbrains.training.lesson.*;
 
 import java.awt.*;
 import java.io.IOException;
