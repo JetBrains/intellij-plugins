@@ -1,0 +1,39 @@
+<xml type="Scenario" name="Collapse" passed="false" version="0.1" subtype="aimless">
+    <MouseBlock>
+        <CopyText>public class Car{
+
+    String model;
+
+    Engine myEngine;
+    Wheel myWheel;
+    float fuelTank;
+    int passengerCapacity;
+
+    public Car(String model){
+        this.model = model;
+        Engine myEngine = new Engine(model);
+        Wheel myWheel = new Wheel(model);
+        passengerCapacity = CarBase.getPassengerCapacity(model);
+    }
+
+    public void startEngine() throws CheckEngineException{
+        myEngine.callStarter();
+    }
+
+    public void rotateWheel(float angle){
+        if (angle &gt; 0) {
+            myWheel.rotateClockwise(Math.abs(angle));
+        } else {
+            myWheel.rotateCounterClockwise(Math.abs(angle));
+        }
+    }
+
+}</CopyText>
+    </MouseBlock>
+    <Text description="Sometimes you need to collapse some code to read it better"/>
+    <Try description="Put cursor to the 11 line and collapse code with &lt;b&gt;&lt;action=&quot;CollapseRegion&quot;&gt;&lt;/b&gt;" trigger="CollapseRegion"/>
+    <Try description="To expand code region try &lt;b&gt;&lt;action=&quot;ExpandRegion&quot;&gt;&lt;/b&gt;" trigger="ExpandRegion"/>
+    <Try description="If you want to collapse all regions in code use &lt;b&gt;&lt;action=&quot;CollapseAllRegions&quot;&gt;&lt;/b&gt;" trigger="CollapseAllRegions"/>
+    <Try description="And &lt;b&gt;&lt;action=&quot;ExpandAllRegions&quot;&gt;&lt;/b&gt; in a back way" trigger="ExpandAllRegions"/>
+    <Win/>
+</xml>
