@@ -7,6 +7,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
@@ -83,6 +84,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
       Icon icon = getBaseImage(element);
       if (icon != null) {
         icon = applyVisibility(icon, element.isPrivate());
+        icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
+        icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         lookup = lookup.withIcon(icon);
       }
       // insert
@@ -156,5 +159,12 @@ public class DartServerCompletionContributor extends CompletionContributor {
     else {
       return null;
     }
+  }
+
+  private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
+    if (condition) {
+      return new LayeredIcon(base, overlay);
+    }
+    return base;
   }
 }
