@@ -1,22 +1,19 @@
-<xml type="Scenario" name="Comment Line" passed="false" version="0.1" subtype="aimless">
+<xml type="Scenario" name="Commenting" passed="false" version="0.1" subtype="aimless">
     <MouseBlock>
-        <CopyText>public class CommentLineDemo {
+        <CopyText>import java.awt.Color;
 
-    public int fib(int n) {
-        int a = 1;
-        int b = 1;
+public class Main {
+    public static void main() {
 
-        int tmp;
+        float hue = 5;
+        float saturation = 10;
+        float brightness = 10;
 
-        if (n &lt; 2) return 1;
+        int rgb = Color.HSBtoRGB(hue, saturation, brightness);
+        int red = (rgb &gt;&gt; 16) &amp; 0xFF;
+        int green = (rgb &gt;&gt; 8) &amp; 0xFF;
+        int blue = rgb &amp; 0xFF;
 
-        for (int i = 0; i &lt; (n - 1); i++) {
-            tmp = b;
-            b = a;
-            a = a + tmp;
-        }
-
-        return a;
     }
 }</CopyText>
     </MouseBlock>

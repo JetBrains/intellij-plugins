@@ -1,6 +1,5 @@
-package org.jetbrains.training;
+package org.jetbrains.training.util;
 
-import java.io.File;
 import java.io.InputStream;
 
 /**

@@ -12,6 +12,7 @@ import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
+import org.jetbrains.training.util.MyClassLoader;
 
 import javax.swing.*;
 import java.awt.*;

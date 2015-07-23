@@ -1,26 +1,16 @@
 package org.jetbrains.training.commands;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
-import org.jetbrains.training.MyClassLoader;
+import org.jetbrains.training.util.MyClassLoader;
 import org.jetbrains.training.commandsEx.ActionCommandEx;
-import org.jetbrains.training.commandsEx.CommandEx;
-import org.jetbrains.training.editor.MouseListenerHolder;
-import org.jetbrains.training.graphics.DetailPanel;
-import org.jetbrains.training.graphics.HintPanel;
 import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Queue;
 import java.util.Scanner;
 
 /**
