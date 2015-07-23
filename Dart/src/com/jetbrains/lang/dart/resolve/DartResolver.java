@@ -135,22 +135,28 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   @Nullable
   private static PsiElement getElementForNavigationTarget(Project project, PluginNavigationTarget target) {
     String targetPath = target.getFile();
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
-    if (virtualFile != null) {
-      PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
-      if (file != null) {
-        int targetOffset = target.getOffset();
-        for (int i = 0; i < 2; i++) {
-          Class<? extends PsiElement> clazz = DartComponentName.class;
-          if (i == 1) {
-            clazz = DartReferenceExpression.class;
-          }
-          PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, clazz, false);
-          if (elementAt != null) {
-            return elementAt;
-          }
+    PsiFile file = findPsiFile(project, targetPath);
+    if (file != null) {
+      int targetOffset = target.getOffset();
+      for (int i = 0; i < 2; i++) {
+        Class<? extends PsiElement> clazz = DartComponentName.class;
+        if (i == 1) {
+          clazz = DartReferenceExpression.class;
+        }
+        PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, clazz, false);
+        if (elementAt != null) {
+          return elementAt;
         }
       }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static PsiFile findPsiFile(@NotNull Project project, @NotNull String path) {
+    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
+    if (virtualFile != null) {
+      return PsiManager.getInstance(project).findFile(virtualFile);
     }
     return null;
   }

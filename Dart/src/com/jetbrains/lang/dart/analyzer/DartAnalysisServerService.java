@@ -41,6 +41,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -75,6 +76,7 @@ public class DartAnalysisServerService {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
+  private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
@@ -91,6 +93,7 @@ public class DartAnalysisServerService {
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
+  @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
   @NotNull private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
   @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
 
@@ -164,6 +167,14 @@ public class DartAnalysisServerService {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, isLast));
         myCompletionInfos.notifyAll();
+      }
+    }
+
+    @Override
+    public void computedSearchResults(String searchId, List<SearchResult> results, boolean last) {
+      synchronized (mySearchResultSets) {
+        mySearchResultSets.add(new SearchResultsSet(searchId, results, last));
+        mySearchResultSets.notifyAll();
       }
     }
 
@@ -242,8 +253,7 @@ public class DartAnalysisServerService {
     }
   }
 
-  public void addCompletions(@NotNull final String completionId,
-                             @NotNull final CompletionSuggestionProcessor processor) {
+  public void addCompletions(@NotNull final String completionId, @NotNull final CompletionSuggestionProcessor processor) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -731,6 +741,84 @@ public class DartAnalysisServerService {
     }
 
     return resultRef.get();
+  }
+
+  public void search_findElementReferences(@NotNull final String filePath,
+                                           final int offset,
+                                           @NotNull final Processor<SearchResult> processor) {
+    final String searchId;
+    synchronized (myLock) {
+      if (myServer == null) return;
+      final AnalysisServer server = myServer;
+
+      final Ref<String> searchIdRef = new Ref<String>();
+      final Semaphore semaphore = new Semaphore();
+
+      semaphore.down();
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.search_findElementReferences(filePath, offset, true, new FindElementReferencesConsumer() {
+            @Override
+            public void computedElementReferences(String searchId, Element element) {
+              searchIdRef.set(searchId);
+              semaphore.up();
+            }
+
+            @Override
+            public void onError(RequestError requestError) {
+              semaphore.up();
+            }
+          });
+        }
+      }, "search_findElementReferences(" + filePath + ", " + offset + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return;
+      }
+
+      final long t0 = System.currentTimeMillis();
+      semaphore.waitFor(FIND_ELEMENT_REFERENCES_TIMEOUT);
+
+      if (semaphore.tryUp()) {
+        LOG.info("search_findElementReferences() took too long for file " +
+                 filePath +
+                 "@" +
+                 offset +
+                 ": " +
+                 (System.currentTimeMillis() - t0) +
+                 "ms");
+        return;
+      }
+
+      searchId = searchIdRef.get();
+      if (searchId == null) {
+        return;
+      }
+    }
+
+    while (true) {
+      ProgressManager.checkCanceled();
+      synchronized (mySearchResultSets) {
+        SearchResultsSet resultSet;
+        // process already received results
+        while ((resultSet = mySearchResultSets.poll()) != null) {
+          if (!resultSet.id.equals(searchId)) continue;
+          for (final SearchResult searchResult : resultSet.results) {
+            processor.process(searchResult);
+          }
+          if (resultSet.isLast) return;
+        }
+        // wait for more results
+        try {
+          mySearchResultSets.wait();
+        }
+        catch (InterruptedException e) {
+          return;
+        }
+      }
+    }
   }
 
   @Nullable
@@ -1284,5 +1372,20 @@ public class DartAnalysisServerService {
 
   public interface CompletionSuggestionProcessor {
     void process(CompletionSuggestion suggestion);
+  }
+
+  /**
+   * A set of {@link SearchResult}s.
+   */
+  private static class SearchResultsSet {
+    @NotNull final String id;
+    @NotNull final List<SearchResult> results;
+    final boolean isLast;
+
+    public SearchResultsSet(@NotNull String id, @NotNull List<SearchResult> results, boolean isLast) {
+      this.id = id;
+      this.results = results;
+      this.isLast = isLast;
+    }
   }
 }
