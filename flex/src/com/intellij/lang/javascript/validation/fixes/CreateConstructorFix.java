@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -330,7 +331,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
         newConstuctorText.append("public ");
       }
       newConstuctorText.append("function ").append(myClass.getName());
-      JSChangeSignatureDialog.buildParameterListText(Arrays.asList(myParameters), newConstuctorText, true);
+      JSChangeSignatureDialog.buildParameterListText(Arrays.asList(myParameters), newConstuctorText, true, DialectDetector.dialectOfElement(myClass));
       newConstuctorText.append("{}");
       JSFunction constructorPrototype = (JSFunction)JSChangeUtil.createStatementFromText(myProject, newConstuctorText.toString(),
                                                                                  JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
