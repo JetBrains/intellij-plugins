@@ -30,6 +30,14 @@
   <description>This plugin adds support for the development of OSGi-based applications to IDEA</description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
+  <modules>
+    <module>osmorc-jps-plugin</module>
+    <module>osmorc-idea</module>
+    <module>lib.osmorc-jps-plugin.plexus-utils</module>
+    <module>lib.osmorc-idea.org.apache.felix.framework</module>
+    <module>lib.osmorc-jps-plugin.bndlib</module>
+    <module>lib.osmorc-jps-plugin.bundlor</module>
+  </modules>
   <idea-version since-build="141.470"/>
 
   <change-notes>

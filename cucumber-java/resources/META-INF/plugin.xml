@@ -23,6 +23,11 @@
   <depends>cucumber</depends>
   <idea-version since-build="136.0"/>
   <vendor>JetBrains</vendor>
+  <modules>
+    <module>cucumber-jvm-formatter</module>
+    <module>cucumber-java</module>
+    <module>lib.cucumber-jvm</module>
+  </modules>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>

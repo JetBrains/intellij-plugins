@@ -26,6 +26,16 @@
   <version>999.999</version>
   <idea-version since-build="142.1" until-build="145.0"/>
   <vendor>JetBrains</vendor>
+  <modules>
+    <module>idetalk-jabber</module>
+    <module>idetalk-idea</module>
+    <module>idetalk-core-impl</module>
+    <module>idetalk-p2p</module>
+    <module>idetalk-jabber-idea</module>
+    <module>idetalk-core</module>
+    <module>lib.idetalk-core.nanocontainer-1.0-SNAPSHOT.jar</module>
+    <module>lib.idetalk-jabber.Smack</module>
+  </modules>
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">

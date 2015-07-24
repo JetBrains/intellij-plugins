@@ -25,6 +25,11 @@
   <depends>cucumber-java</depends>
   <idea-version since-build="136.0"/>
   <vendor>JetBrains</vendor>
+  <modules>
+    <module>cucumber-groovy</module>
+    <module>lib.cucumber-jvm</module>
+    <module>lib.cucumber-groovy</module>
+  </modules>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>

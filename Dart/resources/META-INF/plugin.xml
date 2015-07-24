@@ -4,6 +4,14 @@
   <version>999.999</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="144.1" until-build="144.*"/>
+  <modules>
+    <module>Dart</module>
+    <module>lib.Dart.snakeyaml-1.13.jar</module>
+    <module>lib.Dart.commons-lang3-3.2.1.jar</module>
+    <module>lib.Dart.json.jar</module>
+    <module>lib.Dart.dartanalyzer_server.jar</module>
+  </modules>
+  <idea-version since-build="142.1" until-build="142.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>

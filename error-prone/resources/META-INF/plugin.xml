@@ -10,6 +10,10 @@
   <version>999.999</version>
   <depends>com.intellij.modules.java</depends>
   <vendor>JetBrains</vendor>
+  <modules>
+    <module>error-prone</module>
+    <module scope="build">error-prone-jps-plugin</module>
+  </modules>
   <idea-version since-build="134.1425"/>
 
   <extensions defaultExtensionNs="com.intellij">

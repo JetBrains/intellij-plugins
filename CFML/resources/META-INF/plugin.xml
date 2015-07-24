@@ -13,6 +13,10 @@
    </description>
   <version>3.53</version>
     <vendor email="support@jetbrains.com">JetBrains</vendor>
+  <modules>
+    <module>CFML</module>
+    <module scope="embedded">ultimate-verifier</module>
+  </modules>
     <resource-bundle>messages.CfmlBundle</resource-bundle>
 
     <depends>com.intellij.modules.sql</depends>

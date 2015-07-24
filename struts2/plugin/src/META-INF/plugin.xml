@@ -45,6 +45,11 @@
   <depends optional="true" config-file="struts2-velocity.xml">com.intellij.velocity</depends>
 
   <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@gmail.com">Yann Cébron, JetBrains</vendor>
+  <modules>
+    <module>struts2-dom-api</module>
+    <module>struts2-plugin</module>
+    <module>ognl</module>
+  </modules>
 
   <xi:include href="/META-INF/ognl.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
