@@ -42,8 +42,8 @@ public class Util {
     return getFileText(getCommonTestDataPath() + "/" + fileName);
   }
 
-  public static IdeaProjectTestFixture getWebModuleFixture() throws Exception {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
+  public static IdeaProjectTestFixture getWebModuleFixture(String name) throws Exception {
+    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(name);
     WebModuleFixtureBuilder webBuilder = fixtureBuilder.addModule(WebModuleFixtureBuilder.class);
     webBuilder.addContentRoot(new File("").getAbsoluteFile() + "/src/test/webModule");
     webBuilder.addSourceRoot("src");

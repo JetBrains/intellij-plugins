@@ -26,9 +26,7 @@ public class BaseTestCase {
     @DataProvider(name = EMPTY_FIXTURE_PROVIDER)
     public Object[][] createEmptyFixtureData() throws Exception {
         if (_emptyFixture == null) {
-            TestFixtureBuilder<IdeaProjectTestFixture> testFixtureBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
-
-            _emptyFixture = testFixtureBuilder.getFixture();
+            _emptyFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getClass().getSimpleName()).getFixture();
             _emptyFixture.setUp();
         }
 
@@ -38,7 +36,7 @@ public class BaseTestCase {
     @DataProvider(name = JAVA_MODULE_FIXTURE_PROVIDER)
     public Object[][] createJavaModuleFixtureData() throws Exception {
         if (_javaModuleFixture == null) {
-            TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
+            TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getClass().getSimpleName());
             JavaModuleFixtureBuilder javaBuilder = fixtureBuilder.addModule(JavaModuleFixtureBuilder.class);
             javaBuilder.addContentRoot(new File("").getAbsoluteFile() + "/src/test/javaModule");
             javaBuilder.addSourceRoot("src");
@@ -56,13 +54,13 @@ public class BaseTestCase {
     @DataProvider(name = WEB_MODULE_FIXTURE_PROVIDER)
     public Object[][] createWebModuleFixtureData() throws Exception {
         if (_webModuleFixture == null) {
-          _webModuleFixture = Util.getWebModuleFixture();
+          _webModuleFixture = Util.getWebModuleFixture(getClass().getSimpleName());
         }
 
         return new Object[][]{{_webModuleFixture}};
     }
 
-  @AfterSuite
+    @AfterSuite
     public void releaseFixture() throws Exception {
         releaseFixture(_emptyFixture);
         _emptyFixture = null;
@@ -74,7 +72,7 @@ public class BaseTestCase {
         _webModuleFixture = null;
     }
 
-    private void releaseFixture(IdeaTestFixture fixture) throws Exception {
+    private static void releaseFixture(IdeaTestFixture fixture) throws Exception {
         if (fixture != null) {
           try {
             fixture.tearDown();
