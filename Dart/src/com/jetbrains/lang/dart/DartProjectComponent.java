@@ -102,8 +102,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
             }
           }
         }
-
-        DartFileListener.scheduleDartPackageRootsUpdate(myProject);
       }
     });
   }
