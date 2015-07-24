@@ -91,12 +91,24 @@ public class DartFileListener extends VirtualFileAdapter {
     scheduleDartPackageRootsUpdate(project);
   }
 
+  /**
+   * Make sure to set it to <code>false</code> in the corresponding <code>finally</code> block
+   */
+  public static void setDartPackageRootUpdateScheduledOrInProgress(@NotNull final Project project, final boolean scheduledOrInProgress) {
+    if (scheduledOrInProgress) {
+      project.putUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS, true);
+    }
+    else {
+      project.putUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS, null);
+    }
+  }
+
   public static void scheduleDartPackageRootsUpdate(@NotNull final Project project) {
     if (project.getUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS) == Boolean.TRUE) {
       return;
     }
 
-    project.putUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS, Boolean.TRUE);
+    setDartPackageRootUpdateScheduledOrInProgress(project, Boolean.TRUE);
 
     DumbService.getInstance(project).smartInvokeLater(new Runnable() {
       @Override
@@ -113,7 +125,7 @@ public class DartFileListener extends VirtualFileAdapter {
           }
         }
         finally {
-          project.putUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS, null);
+          setDartPackageRootUpdateScheduledOrInProgress(project, false);
         }
       }
     }, ModalityState.NON_MODAL);

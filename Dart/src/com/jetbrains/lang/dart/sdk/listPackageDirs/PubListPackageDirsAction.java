@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
@@ -141,6 +142,7 @@ public class PubListPackageDirsAction extends AnAction {
               if (contentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) continue;
 
               affectedModules.add(module);
+              break;
             }
           }
         }
@@ -155,11 +157,23 @@ public class PubListPackageDirsAction extends AnAction {
       dialog.show();
 
       if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-        configurePubListPackageDirsLibrary(project, affectedModules, rootsToAddToLib, packageNameToDirMap);
+        DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, true);
+        try {
+          configurePubListPackageDirsLibrary(project, affectedModules, rootsToAddToLib, packageNameToDirMap);
+        }
+        finally {
+          DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, false);
+        }
       }
 
       if (dialog.getExitCode() == DartListPackageDirsDialog.CONFIGURE_NONE_EXIT_CODE) {
-        removePubListPackageDirsLibrary(project);
+        DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, true);
+        try {
+          removePubListPackageDirsLibrary(project);
+        }
+        finally {
+          DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, false);
+        }
       }
     }
   }
