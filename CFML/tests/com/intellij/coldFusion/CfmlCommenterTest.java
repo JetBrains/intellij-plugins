@@ -41,6 +41,10 @@ public class CfmlCommenterTest extends CfmlCodeInsightFixtureTestCase {
         doTest(IdeActions.ACTION_COMMENT_LINE);
     }
 
+    public void testOneLineByLineCommenter_2() throws Throwable {
+        doTest(IdeActions.ACTION_COMMENT_LINE);
+    }
+
     public void testOneLineBlockCommenter() throws Throwable {
         doTest(IdeActions.ACTION_COMMENT_BLOCK);
     }
