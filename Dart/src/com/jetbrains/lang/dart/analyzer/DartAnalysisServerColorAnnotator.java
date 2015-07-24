@@ -68,7 +68,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
     if (type.equals(HighlightRegionType.FUNCTION_TYPE_ALIAS)) {
       return DartSyntaxHighlighterColors.DART_FUNCTION_TYPE_ALIAS;
     }
-    
+
     if (type.equals(HighlightRegionType.INSTANCE_FIELD_DECLARATION)) {
       return DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_DECLARATION;
     }
@@ -93,7 +93,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
     if (type.equals(HighlightRegionType.INSTANCE_SETTER_REFERENCE)) {
       return DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE;
     }
-    
+
     if (type.equals(HighlightRegionType.IMPORT_PREFIX)) {
       return DartSyntaxHighlighterColors.DART_IMPORT_PREFIX;
     }
@@ -103,7 +103,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
     if (type.equals(HighlightRegionType.LABEL)) {
       return DartSyntaxHighlighterColors.DART_LABEL;
     }
-    
+
     if (type.equals(HighlightRegionType.LOCAL_FUNCTION_DECLARATION)) {
       return DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_DECLARATION;
     }
@@ -116,7 +116,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
     if (type.equals(HighlightRegionType.LOCAL_VARIABLE_REFERENCE)) {
       return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_REFERENCE;
     }
-    
+
     if (type.equals(HighlightRegionType.PARAMETER_DECLARATION)) {
       return DartSyntaxHighlighterColors.DART_PARAMETER_DECLARATION;
     }
