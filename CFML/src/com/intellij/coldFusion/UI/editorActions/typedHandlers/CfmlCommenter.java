@@ -125,7 +125,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
 
   public void commentLine(int line, int offset, @NotNull Document document, @NotNull MyCommenterData data) {
     final int originalLineEndOffset = document.getLineEndOffset(line);
-    offset = CharArrayUtil.shiftForward(document.getCharsSequence(), offset, " \t\n");
+    offset = CharArrayUtil.shiftForward(document.getCharsSequence(), offset, " \t");
     if (data.isIsWithinCfscript()) {
       document.insertString(offset, CF_SCRIPT_LINE_COMMENT_PREFIX);
     }
