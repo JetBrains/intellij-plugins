@@ -41,6 +41,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
@@ -253,7 +254,7 @@ public class DartAnalysisServerService {
     }
   }
 
-  public void addCompletions(@NotNull final String completionId, @NotNull final CompletionSuggestionProcessor processor) {
+  public void addCompletions(@NotNull final String completionId, @NotNull final Consumer<CompletionSuggestion> consumer) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -267,7 +268,7 @@ public class DartAnalysisServerService {
           if (!completionInfo.myCompletionId.equals(completionId)) continue;
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
-            processor.process(completion);
+            consumer.consume(completion);
           }
 
           if (completionInfo.isLast) return;
@@ -1368,10 +1369,6 @@ public class DartAnalysisServerService {
     public int getOffset() {
       return offset;
     }
-  }
-
-  public interface CompletionSuggestionProcessor {
-    void process(CompletionSuggestion suggestion);
   }
 
   /**

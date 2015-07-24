@@ -38,6 +38,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   @Override
   public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
     if (isServerDrivenResolution()) {
+      reference = replaceQualifiedReferenceWithLast(reference);
       final PsiFile refPsiFile = reference.getContainingFile();
       final int refOffset = reference.getTextOffset();
       final int refLength = reference.getTextLength();
@@ -120,6 +121,19 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     }
 
     return null;
+  }
+
+  /**
+   * When parameter information is requested for <code>items.insert(^)</code>,
+   * we are given <code>items.insert</code>, but we cannot resolve it, we need just <code>insert</code>.
+   */
+  @NotNull
+  private static DartReference replaceQualifiedReferenceWithLast(@NotNull DartReference reference) {
+    final PsiElement lastChild = reference.getLastChild();
+    if (lastChild instanceof DartReference) {
+      reference = (DartReference)lastChild;
+    }
+    return reference;
   }
 
   @Nullable

@@ -1,14 +1,18 @@
 package com.jetbrains.lang.dart.ide.completion;
 
+import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
+import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -23,6 +27,7 @@ import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -47,9 +52,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
         final String completionId = DartAnalysisServerService.getInstance().completion_getSuggestions(filePath, parameters.getOffset());
         if (completionId == null) return;
 
-        DartAnalysisServerService.getInstance().addCompletions(completionId, new DartAnalysisServerService.CompletionSuggestionProcessor() {
+        DartAnalysisServerService.getInstance().addCompletions(completionId, new Consumer<CompletionSuggestion>() {
           @Override
-          public void process(CompletionSuggestion suggestion) {
+          public void consume(CompletionSuggestion suggestion) {
             final LookupElement lookupElement = createLookupElement(project, suggestion);
             result.addElement(lookupElement);
           }
@@ -58,7 +63,22 @@ public class DartServerCompletionContributor extends CompletionContributor {
     });
   }
 
-  private static LookupElement createLookupElement(Project project, CompletionSuggestion suggestion) {
+  private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
+    if (condition) {
+      return new LayeredIcon(base, overlay);
+    }
+    return base;
+  }
+
+  private static Icon applyVisibility(Icon base, boolean isPrivate) {
+    RowIcon result = new RowIcon(2);
+    result.setIcon(base, 0);
+    Icon visibility = isPrivate ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON;
+    result.setIcon(visibility, 1);
+    return result;
+  }
+
+  private static LookupElement createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
@@ -93,31 +113,30 @@ public class DartServerCompletionContributor extends CompletionContributor {
         icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         lookup = lookup.withIcon(icon);
       }
-      // insert
-      // TODO(scheglov) insert () with arguments
-      //lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
-      //  @Override
-      //  public void handleInsert(InsertionContext context, LookupElement item) {
-      //    context.getDocument().insertString(context.getStartOffset(), "()");
-      //  }
-      //});
+      // insert handler
+      final List<String> parameterNames = suggestion.getParameterNames();
+      if (parameterNames != null) {
+        lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
+          @Override
+          public void handleInsert(InsertionContext context, LookupElement item) {
+            final Editor editor = context.getEditor();
+            // Insert parenthesis.
+            final int offset = context.getTailOffset();
+            context.getDocument().insertString(offset, "()");
+            // Prepare for typing arguments, if any.
+            if (parameterNames.isEmpty()) {
+              editor.getCaretModel().moveToOffset(offset + 2);
+            } else {
+              editor.getCaretModel().moveToOffset(offset + 1);
+              // Show parameters popup.
+              final PsiElement psiElement = lookupObject.getElement();
+              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
+            }
+          }
+        });
+      }
     }
-
-    // todo:
-    //       quick doc preview (already works if corresponding PsiElement is correctly found by lookupObject)
-    //       quick definition view (already works (but uses DartDocumentationProvider, not info from server) if corresponding PsiElement is correctly found by lookupObject)
-    //       jump to item declaration (already works if corresponding PsiElement is correctly found by lookupObject)
-    //       what to insert except identifier (e.g. parentheses, import directive, update show/hide, etc.)
-    //       caret placement after insertion
     return lookup;
-  }
-
-  private static Icon applyVisibility(Icon base, boolean isPrivate) {
-    RowIcon result = new RowIcon(2);
-    result.setIcon(base, 0);
-    Icon visibility = isPrivate ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON;
-    result.setIcon(visibility, 1);
-    return result;
   }
 
   private static Icon getBaseImage(Element element) {
@@ -164,12 +183,5 @@ public class DartServerCompletionContributor extends CompletionContributor {
     else {
       return null;
     }
-  }
-
-  private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
-    if (condition) {
-      return new LayeredIcon(base, overlay);
-    }
-    return base;
   }
 }
