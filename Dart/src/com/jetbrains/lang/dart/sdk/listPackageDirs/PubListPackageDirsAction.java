@@ -159,6 +159,7 @@ public class PubListPackageDirsAction extends AnAction {
       if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
         DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, true);
         try {
+          removeProjectLibraryAndDependencies(project, "Dart pub list-package-dirs"); // remove lib configured in previous IDE version
           configurePubListPackageDirsLibrary(project, affectedModules, rootsToAddToLib, packageNameToDirMap);
         }
         finally {
@@ -169,7 +170,8 @@ public class PubListPackageDirsAction extends AnAction {
       if (dialog.getExitCode() == DartListPackageDirsDialog.CONFIGURE_NONE_EXIT_CODE) {
         DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, true);
         try {
-          removePubListPackageDirsLibrary(project);
+          removeProjectLibraryAndDependencies(project, "Dart pub list-package-dirs"); // remove lib configured in previous IDE version
+          removeProjectLibraryAndDependencies(project, DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
         }
         finally {
           DartFileListener.setDartPackageRootUpdateScheduledOrInProgress(project, false);
@@ -184,7 +186,7 @@ public class PubListPackageDirsAction extends AnAction {
                                                         @NotNull final Collection<String> rootsToAddToLib,
                                                         @NotNull final Map<String, List<File>> packageMap) {
     if (modules.isEmpty() || packageMap.isEmpty()) {
-      removePubListPackageDirsLibrary(project);
+      removeProjectLibraryAndDependencies(project, DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
       return;
     }
 
@@ -274,24 +276,24 @@ public class PubListPackageDirsAction extends AnAction {
     return library;
   }
 
-  private static void removePubListPackageDirsLibrary(@NotNull final Project project) {
+  private static void removeProjectLibraryAndDependencies(@NotNull final Project project, @NotNull final String libraryName) {
     ApplicationManager.getApplication().runWriteAction(
       new Runnable() {
         public void run() {
-          doRemovePubListPackageDirsLibrary(project);
+          doRemoveProjectLibraryandDependencies(project, libraryName);
         }
       }
     );
   }
 
-  private static void doRemovePubListPackageDirsLibrary(final @NotNull Project project) {
+  private static void doRemoveProjectLibraryandDependencies(@NotNull final Project project, @NotNull final String libraryName) {
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
       try {
         for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
           if (entry instanceof LibraryOrderEntry &&
               LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)entry).getLibraryLevel()) &&
-              DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+              libraryName.equals(((LibraryOrderEntry)entry).getLibraryName())) {
             modifiableModel.removeOrderEntry(entry);
           }
         }
@@ -307,7 +309,7 @@ public class PubListPackageDirsAction extends AnAction {
       }
     }
 
-    final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
+    final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(libraryName);
     if (library != null) {
       ProjectLibraryTable.getInstance(project).removeLibrary(library);
     }
