@@ -1000,6 +1000,7 @@ public class DartAnalysisServerService {
       catch (MissingResourceException e) {
         argsRaw = "";
       }
+      argsRaw += " --useAnalysisHighlight2";
 
       myServerSocket =
         new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, ArrayUtil.toStringArray(StringUtil.split(argsRaw, " ")),
