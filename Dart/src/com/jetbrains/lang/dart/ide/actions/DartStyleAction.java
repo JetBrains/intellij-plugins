@@ -37,7 +37,6 @@ import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -63,24 +62,23 @@ public class DartStyleAction extends AnAction implements DumbAware {
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final Project project = event.getProject();
-    if (project == null) {
-      return;
-    }
+    if (project == null) return;
+
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
     final Editor editor = event.getData(CommonDataKeys.EDITOR);
 
     if (editor != null) {
-      runDartStyleOverEditor(project, editor);
+      runDartStyleOverEditor(project, editor, sdk);
     }
     else {
-      final DartSdk sdk = DartSdk.getDartSdk(project);
       final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-
-      if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk) || filesAndDirs == null) return;
-
-      final List<VirtualFile> vFiles = getApplicableVirtualFiles(project, sdk, filesAndDirs);
-      runDartStyleOverVirtualFiles(project, vFiles);
+      if (filesAndDirs != null) {
+        final List<VirtualFile> vFiles = getApplicableVirtualFiles(project, sdk, filesAndDirs);
+        runDartStyleOverVirtualFiles(project, vFiles);
+      }
     }
   }
 
@@ -93,13 +91,19 @@ public class DartStyleAction extends AnAction implements DumbAware {
       return;
     }
 
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
+      presentation.setEnabledAndVisible(false);
+      return;
+    }
+
     final Editor editor = event.getData(CommonDataKeys.EDITOR);
     if (editor != null) {
       final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
       // visible for any Dart file, but enabled for applicable only
       presentation.setText(DartBundle.message("dart.style.action.name"));
       presentation.setVisible(psiFile != null && psiFile.getFileType() == DartFileType.INSTANCE);
-      presentation.setEnabled(isApplicableFile(psiFile));
+      presentation.setEnabled(isApplicableFile(psiFile, sdk));
       return;
     }
 
@@ -111,20 +115,14 @@ public class DartStyleAction extends AnAction implements DumbAware {
 
     presentation.setText(DartBundle.message("dart.style.action.name.ellipsis")); // because with dialog
 
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    presentation.setEnabledAndVisible(sdk != null &&
-                                      DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk) &&
-                                      mayHaveApplicableDartFiles(project, sdk, filesAndDirs));
+    presentation.setEnabledAndVisible(mayHaveApplicableDartFiles(project, sdk, filesAndDirs));
   }
 
-  private static boolean isApplicableFile(@Nullable final PsiFile psiFile) {
+  private static boolean isApplicableFile(@Nullable final PsiFile psiFile, @NotNull final DartSdk sdk) {
     if (psiFile == null || psiFile.getVirtualFile() == null || psiFile.getFileType() != DartFileType.INSTANCE) return false;
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) return false;
-
-    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-    if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk)) return false;
 
     if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return false;
 
@@ -199,15 +197,12 @@ public class DartStyleAction extends AnAction implements DumbAware {
     return result;
   }
 
-  private static void runDartStyleOverEditor(@NotNull final Project project, @NotNull final Editor editor) {
+  private static void runDartStyleOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final DartSdk sdk) {
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    if (!isApplicableFile(psiFile)) return;
+    if (!isApplicableFile(psiFile, sdk)) return;
 
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
-
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null || !DartAnalysisServerService.getInstance().serverReadyForRequest(project, sdk)) return;
 
     final Runnable runnable = new Runnable() {
       public void run() {

@@ -198,6 +198,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
   @Nullable
   @Override
   public Object collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
+    // todo applicability check, may be files content update
     return new Object();
   }
 

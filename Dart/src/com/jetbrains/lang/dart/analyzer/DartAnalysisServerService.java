@@ -77,7 +77,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DartAnalysisServerService {
 
-  public static final String MIN_SDK_VERSION = "1.9";
+  public static final String MIN_SDK_VERSION = "1.12";
 
   private static final long CHECK_CANCELLED_PERIOD = 100;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -239,6 +239,10 @@ public class DartAnalysisServerService {
       }
     }
   };
+
+  public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
+  }
 
   private void forceFileAnnotation(String file) {
     final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
@@ -1041,7 +1045,10 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
         stopServer();
-        startServer(sdk);
+
+        if (isDartSdkVersionSufficient(sdk)) {
+          startServer(sdk);
+        }
       }
 
       if (myServer != null) {

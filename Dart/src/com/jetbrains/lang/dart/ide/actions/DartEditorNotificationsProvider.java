@@ -9,7 +9,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -91,8 +90,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
         return panel;
       }
 
-      // old SDK, pre-1.9 (no analysis server)
-      if (StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) < 0) {
+      if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
         final String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
         final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
 

@@ -13,6 +13,7 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.CompletionSuggestion;
@@ -35,13 +36,17 @@ public class DartServerCompletionContributor extends CompletionContributor {
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
         if (file == null) return;
 
+        final Project project = parameters.getOriginalFile().getProject();
+
+        final DartSdk sdk = DartSdk.getDartSdk(project);
+        if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
+
         DartAnalysisServerService.getInstance().updateFilesContent();
 
         final String filePath = FileUtil.toSystemDependentName(file.getPath());
         final String completionId = DartAnalysisServerService.getInstance().completion_getSuggestions(filePath, parameters.getOffset());
         if (completionId == null) return;
 
-        final Project project = parameters.getOriginalFile().getProject();
         DartAnalysisServerService.getInstance().addCompletions(completionId, new DartAnalysisServerService.CompletionSuggestionProcessor() {
           @Override
           public void process(CompletionSuggestion suggestion) {

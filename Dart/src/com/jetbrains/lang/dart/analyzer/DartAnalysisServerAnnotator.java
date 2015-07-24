@@ -75,7 +75,7 @@ public class DartAnalysisServerAnnotator
 
     final Project project = module.getProject();
     final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null || !isDartSDKVersionSufficient(sdk)) return false;
+    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
 
     if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return false;
 
@@ -86,10 +86,6 @@ public class DartAnalysisServerAnnotator
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(project, sdk)) return false;
 
     return true;
-  }
-
-  public static boolean isDartSDKVersionSufficient(@NotNull final DartSdk sdk) {
-    return StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) > 0;
   }
 
   @Nullable

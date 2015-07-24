@@ -24,7 +24,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartFileListener;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
@@ -92,13 +91,13 @@ public class PubListPackageDirsAction extends AnAction {
   public void update(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
     final DartSdk sdk = project == null ? null : DartSdk.getDartSdk(project);
-    e.getPresentation().setEnabled(sdk != null && DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk));
+    e.getPresentation().setEnabled(sdk != null && DartAnalysisServerService.isDartSdkVersionSufficient(sdk));
   }
 
   public void actionPerformed(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
     final DartSdk sdk = project == null ? null : DartSdk.getDartSdk(project);
-    if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk)) return;
+    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
     FileDocumentManager.getInstance().saveAllDocuments();
 
