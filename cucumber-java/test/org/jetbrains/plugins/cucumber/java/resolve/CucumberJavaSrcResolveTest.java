@@ -20,4 +20,8 @@ public class CucumberJavaSrcResolveTest extends BaseCucumberJavaResolveTest {
   public void testStrictStartAndEndRegexOptions() throws Exception {
     doTest("strictStartAndEndRegexOptions", "I have sh<caret>ort step", "I_have_short_step");
   }
+
+  public void testStepDefContainerMarkedWithStepDefAnnotation() throws Exception {
+    doTest("stepDefContainerMarkedWithStepDefAnnotation", "the follo<caret>wing grocerie", "the_following_groceries");
+  }
 }
