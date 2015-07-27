@@ -53,7 +53,7 @@ public class ShowGeneratedManifestTest extends HeavyOsgiFixtureTestCase {
     ViewGeneratedManifestGroup group = (ViewGeneratedManifestGroup)ActionManager.getInstance().getAction("osmorc.viewGeneratedManifests");
     assertNotNull(group);
     @SuppressWarnings("deprecation") DataContext context = DataManager.getInstance().getDataContext();
-    AnActionEvent event = new AnActionEvent(null, context, "", group.getTemplatePresentation(), ActionManager.getInstance(), 0);
+    AnActionEvent event = AnActionEvent.createFromAnAction(group, null, "", context);
     AnAction[] actions = group.getChildren(event);
     assertEquals(3, actions.length);
     Arrays.sort(actions, new Comparator<AnAction>() {
