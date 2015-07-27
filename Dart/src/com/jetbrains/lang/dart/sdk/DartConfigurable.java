@@ -16,6 +16,8 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.project.DumbModePermission;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -437,7 +439,7 @@ public class DartConfigurable implements SearchableConfigurable {
   @Override
   public void apply() throws ConfigurationException {
     // similar to DartProjectGenerator.setupSdkAndDartium()
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+    final Runnable runnable = new Runnable() {
       @Override
       public void run() {
         if (myEnableDartSupportCheckBox.isSelected()) {
@@ -494,6 +496,13 @@ public class DartConfigurable implements SearchableConfigurable {
             setCustomPackageRootPath(module, null);
           }
         }
+      }
+    };
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        DumbService.getInstance(myProject).allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, runnable);
       }
     });
 
