@@ -17,13 +17,14 @@ package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
-import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.stubs.NamedStub;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -31,15 +32,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfmlTagComponentImpl extends CfmlTagImpl implements CfmlComponent, StubBasedPsiElement<NamedStub> {
-
-  private final static String TAG_NAME = "cfcomponent";
-
-  public CfmlTagComponentImpl(ASTNode astNode) {
+public CfmlTagComponentImpl(ASTNode astNode) {
     super(astNode);
   }
 
   public CfmlTagComponentImpl(@NotNull NamedStub<CfmlComponent> stub) {
-    super(stub, CfmlElementTypes.COMPONENT_TAG);
+    super(stub, CfmlStubElementTypes.COMPONENT_TAG);
   }
 
   @Override
@@ -56,7 +54,15 @@ public class CfmlTagComponentImpl extends CfmlTagImpl implements CfmlComponent, 
   @NotNull
   @Override
   public CfmlFunction[] getFunctions() {
-    return findChildrenByClass(CfmlFunction.class);
+    CfmlFunction[] functions = findChildrenByClass(CfmlFunction.class);
+    final CfmlTagScriptImpl[] tagScripts = PsiTreeUtil.getChildrenOfType(this, CfmlTagScriptImpl.class);
+    if (tagScripts != null) {
+      for(CfmlTagScriptImpl tagScript:tagScripts) {
+        final CfmlFunction[] functionsFromScript = PsiTreeUtil.getChildrenOfType(tagScript, CfmlFunction.class);
+        if (functionsFromScript != null) functions = ArrayUtil.mergeArrays(functions, functionsFromScript);
+      }
+    }
+    return functions;
   }
 
   @NotNull
@@ -151,11 +157,6 @@ public class CfmlTagComponentImpl extends CfmlTagImpl implements CfmlComponent, 
 
   public PsiElement getNameIdentifier() {
     return getNavigationElement();
-  }
-
-  @Nullable
-  private CfmlComponentReference getReferenceToSuperComponent() {
-    return null;
   }
 
   @NotNull

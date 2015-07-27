@@ -16,7 +16,6 @@
 package com.intellij.coldFusion.UI.editorActions.structureView;
 
 import com.intellij.coldFusion.model.files.CfmlFile;
-import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.coldFusion.model.psi.CfmlFunction;
 import com.intellij.coldFusion.model.psi.CfmlTag;
@@ -43,7 +42,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     super(psiElement);
   }
 
-  private void collectResults(Collection<StructureViewTreeElement> result, PsiElement element) {
+  private static void collectResults(Collection<StructureViewTreeElement> result, PsiElement element) {
     if (element instanceof CfmlComponent) {
       result.addAll(makeCollection(((CfmlComponent)element).getFunctions()));
     }
@@ -51,10 +50,14 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
       result.add(new CfmlStructureViewElement(element));
     }
     else if (element instanceof CfmlTag) {
-      final PsiElement[] children = element.getChildren();
-      for (PsiElement child : children) {
-        collectResults(result, child);
-      }
+      collectResultsFromChildren(result, element);
+    }
+  }
+
+  private static void collectResultsFromChildren(Collection<StructureViewTreeElement> result, PsiElement element) {
+    final PsiElement[] children = element.getChildren();
+    for (PsiElement child : children) {
+      collectResults(result, child);
     }
   }
 
@@ -64,10 +67,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     Collection<StructureViewTreeElement> result = new LinkedList<StructureViewTreeElement>();
 
     if (element != null && (element instanceof CfmlFile || !(element instanceof CfmlFunction))) {
-      final PsiElement[] children = element.getChildren();
-      for (PsiElement child : children) {
-        collectResults(result, child);
-      }
+      collectResultsFromChildren(result, element);
     }
 
     return result;
@@ -90,11 +90,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     return "";
   }
 
-  public static String getParameterPresentation(CfmlFunctionDescription.CfmlParameterDescription param) {
-    return param.getPresetableText();
-  }
-
-  private Collection<StructureViewTreeElement> makeCollection(@Nullable PsiElement[] tags) {
+  private static Collection<StructureViewTreeElement> makeCollection(@Nullable PsiElement[] tags) {
     if (tags == null) {
       return Collections.emptyList();
     }

@@ -15,7 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.coldFusion.model.files.CfmlFileViewProvider;
 import com.intellij.ide.structureView.StructureView;
@@ -28,19 +27,24 @@ import com.intellij.ide.util.treeView.smartTree.SmartTreeStructure;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeStructureUtil;
 import com.intellij.lang.LanguageStructureViewBuilder;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.Assert;
 
-import java.io.File;
-
 /**
  * @author vnikolaenko
  */
 public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
+  public void testScriptAndTagFunctions() throws Exception {
+    myFixture.configureByFile(getTestName(true) + ".test.cfc");
+    final Object[] topLevelObjects = getTopLevelItems();
+    assertEquals(topLevelObjects.length, 2);
+    assertEquals("someFunction1(arg1, [arg2])", getText(topLevelObjects[0]));
+    assertEquals("someFunction2()", getText(topLevelObjects[1]));
+  }
+
   public void testScriptFunctions() throws Exception {
     myFixture.configureByFile(getTestName(true) + ".test.cfml");
     final Object[] topLevelObjects = getTopLevelItems();
