@@ -51,6 +51,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexStructureViewTest.class);
     testSuite.addTestSuite(FlexDocumentationTest.class);
     testSuite.addTestSuite(FlexLiveTemplatesTest.class);
+    testSuite.addTestSuite(FlexFindUsagesTest.class);
 
     return testSuite;
   }
