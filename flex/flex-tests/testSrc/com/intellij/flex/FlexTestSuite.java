@@ -73,6 +73,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexRenameTest.class);
     testSuite.addTestSuite(FlexNavigationTest.class);
     testSuite.addTestSuite(FlexMoveTest.class);
+    testSuite.addTestSuite(FlexConvertToLocalTest.class);
 
     return testSuite;
   }
