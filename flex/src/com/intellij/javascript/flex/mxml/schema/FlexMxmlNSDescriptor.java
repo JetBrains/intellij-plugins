@@ -138,10 +138,6 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     return myFile;
   }
 
-  public boolean isHierarhyEnabled() {
-    return false;
-  }
-
   public PsiElement getDeclaration() {
     return myFile;
   }
