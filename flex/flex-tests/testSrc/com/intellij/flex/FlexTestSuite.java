@@ -71,6 +71,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexEditorTest.class);
     testSuite.addTestSuite(FlexExtendSelectionTest.class);
     testSuite.addTestSuite(FlexRenameTest.class);
+    testSuite.addTestSuite(FlexNavigationTest.class);
 
     return testSuite;
   }
