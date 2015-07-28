@@ -1,0 +1,11 @@
+package bar {
+import flash.events.Event;
+
+import foo.ConstructorSignatureMismatch2;
+
+public class Foo {
+    public function Foo(s:String, constructorSignatureMismatch2:ConstructorSignatureMismatch2, v:Event) {
+        <caret>
+    }
+  }
+}

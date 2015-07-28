@@ -1,0 +1,22 @@
+
+[ExcludeClass]
+public class _62b08a43f4429629220641769fa9ede888146a7ce27e038e8773afed32048487_flash_display_Sprite extends flash.display.Sprite
+{
+  native public function _62b08a43f4429629220641769fa9ede888146a7ce27e038e8773afed32048487_flash_display_Sprite():*;
+  native public function allowDomainInRSL(... rest):void;
+  native public function allowInsecureDomainInRSL(... rest):void;
+}
+
+
+public class Hi extends Object
+{
+  native public function Hi():*;
+
+  native public var _segments:Vector.<PathSegment>;
+}
+
+private class PathSegment extends Object
+{
+  native private function PathSegment():*;
+}
+

@@ -1,0 +1,5 @@
+package {
+class CreateClassOrInterfaceAction {
+  function xxx():<error>Y<caret>YY</error> {}
+}
+}

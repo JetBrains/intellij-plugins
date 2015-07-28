@@ -1,0 +1,8 @@
+package {
+  function <warning descr="Declaration has implicit package internal scope"><caret>ImplicitlyInternalDeclaration</warning>():void {}
+}
+class C {
+    var <warning descr="Declaration has implicit package internal scope">x</warning>:int;
+
+    function C() {}
+}

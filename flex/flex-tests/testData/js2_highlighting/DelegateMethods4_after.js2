@@ -1,0 +1,27 @@
+package {
+
+ class DelegateMethods2 extends Base {
+     static var foobar : MyClass;
+
+
+     public function get prop():* {
+         return foobar.prop;
+     }
+
+     public function set prop(value):void {
+         foobar.prop = value;
+     }
+
+     public static function foo():MyClass {
+         return foobar.foo();
+     }
+
+     public static function bar():void {
+         foobar.bar();
+     }
+
+     public static function bar2():void {
+         foobar.bar2();
+     }
+ }
+}

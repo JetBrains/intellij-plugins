@@ -1,0 +1,6 @@
+package {
+  public class UnusedParameterHasCreateFieldQuickFix_4 {
+    public function bar(<warning>v<caret>alue</warning>): void {
+    }
+  }
+}

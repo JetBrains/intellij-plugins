@@ -1,0 +1,7 @@
+package {
+  public class UnusedParameterHasAssignToFieldQuickFix {
+    private var <warning>xxx</warning>:int;
+    public function bar(<warning>x<caret>xx</warning>:int): void {
+    }
+  }
+}

@@ -1,0 +1,14 @@
+package {
+import com.Foo;
+
+import zzz.Bar;
+
+import zzz2.Bar;
+
+class NoSuperConstructorCall4 extends A {
+
+      function NoSuperConstructorCall4(p:Foo, b:zzz.Bar, e, b2:zzz2.Bar = null, ...others) {
+          super(p, b, e, b2, others);
+      }
+  }
+}

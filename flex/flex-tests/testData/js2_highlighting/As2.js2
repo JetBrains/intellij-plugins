@@ -1,0 +1,5 @@
+class foo.Bar {}
+class baz.Foo {
+    import foo.Bar;
+    var bar:Bar;
+}

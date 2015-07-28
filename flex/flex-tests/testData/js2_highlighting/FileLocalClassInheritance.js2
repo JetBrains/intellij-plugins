@@ -1,0 +1,24 @@
+package
+{
+import flash.display.Sprite;
+
+public class FileLocalClassInheritance extends Sprite
+{
+    public function FileLocalClassInheritance()
+    {
+        super();
+
+        var s:Sprite = new Child();
+    }
+}
+}
+
+import flash.display.Sprite;
+
+class Child extends Sprite
+{
+    public function Child1()
+    {
+        //super();
+    }
+}

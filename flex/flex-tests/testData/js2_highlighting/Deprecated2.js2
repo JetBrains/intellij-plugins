@@ -1,0 +1,11 @@
+class Foo {
+    [Deprecated(replacement="Bar.yyy", since="3.0", message="No longer used")]
+    static var fooField:int;
+    function foo() {
+        Foo.<weak_warning descr="Since version 3.0 symbol is marked as deprecated, use Bar.yyy as replacement">fooField</weak_warning> = 1;
+    }
+}
+
+class Bar {
+    static var yyy:int;
+}

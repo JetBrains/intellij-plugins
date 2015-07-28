@@ -1,0 +1,9 @@
+<warning descr="Access modifier allowed for class members only">public</warning> function clearSky() :void {
+<error descr="Access modifier allowed for class members only">private</error> function removeCloud(cloud:Cloud, index:int, vector:Vector.<Cloud>):void {
+}
+}
+
+class Cloud {}
+class Vector {}
+
+internal class B {}

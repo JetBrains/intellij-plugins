@@ -1,0 +1,3 @@
+package {
+  var VariableUnderPackage = /Name=(?P<filename>.*?)(&|$)/ix;
+}

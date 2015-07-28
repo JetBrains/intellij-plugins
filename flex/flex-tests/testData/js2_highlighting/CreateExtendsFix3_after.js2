@@ -1,0 +1,20 @@
+package {
+import com.D;
+
+public class CreateExtendsFix3 extends C {
+  public function foo() {
+    var v : D = super;
+  }
+}
+}
+
+package {
+import com.D;
+
+public class C extends D {}
+
+}
+
+package com {
+  public class D {}
+}

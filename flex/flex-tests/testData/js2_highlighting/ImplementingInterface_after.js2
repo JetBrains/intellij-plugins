@@ -1,0 +1,13 @@
+import externalization.Externalizable
+import externalization.IDataInput;
+import externalization.ODataOutput;
+
+class Dummy implements Externalizable {
+
+    public function doRead(iStream:IDataInput):Boolean {
+        return false;
+    }
+
+    public function doWrite(oStream:ODataOutput):void {
+    }
+}

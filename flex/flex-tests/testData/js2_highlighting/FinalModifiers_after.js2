@@ -1,0 +1,24 @@
+package foo {
+public final interface Target {
+    function doIt();
+}
+}
+
+class Foo {
+  final function foo() {}
+  final var x;
+  final const x2 = 1;
+}
+
+final class Foo_ {
+  function foo() {}
+}
+
+class Foo2 extends Foo {
+  override function foo() {}
+}
+
+class Foo2_ extends Foo_ {
+  override function foo() {}
+}
+final function zz() {}

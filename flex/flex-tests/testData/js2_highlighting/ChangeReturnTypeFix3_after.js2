@@ -1,0 +1,7 @@
+package {
+public class ChangeReturnTypeFix3 {
+  public function foo():ChangeReturnTypeFix3 {
+    return this;
+  }
+}
+}

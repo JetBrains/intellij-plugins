@@ -1,0 +1,9 @@
+class Base {
+    static function f<caret>f():void  {
+    }
+}
+
+class Derived extends Base {
+    function ff():void {
+    }
+}

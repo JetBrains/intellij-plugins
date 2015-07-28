@@ -1,0 +1,13 @@
+package {
+import flash.events.EventDispatcher;
+class <error>FooBase</error> {
+    function foo(p: EventDispatcher):void {}
+}
+}
+
+package {
+class <error>Foo</error> extends FooBase {
+    override function foo<error>()</error>:void {
+    }
+}
+}

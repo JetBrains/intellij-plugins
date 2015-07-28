@@ -1,0 +1,9 @@
+package {
+    public class NonExistingMethodAfterNew {
+        public function NonExistingMethodAfterNew() {
+            new Foobar().<error>zzz</error>();
+        }
+    }
+}
+
+class Foobar{}

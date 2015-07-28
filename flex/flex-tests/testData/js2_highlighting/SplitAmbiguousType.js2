@@ -1,0 +1,9 @@
+package {
+import bar.A;
+
+public class SplitAmbiguousType {
+    public function foo() {
+        var v<caret> = Test.func1();
+    }
+}
+}

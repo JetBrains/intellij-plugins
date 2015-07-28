@@ -1,0 +1,4 @@
+var data:XML = <data><name><![CDATA[dd]]></name></data>;
+trace(data.Project.name.toString());
+var tw:* = data.name.toString();
+function trace(... r) { r = r; }

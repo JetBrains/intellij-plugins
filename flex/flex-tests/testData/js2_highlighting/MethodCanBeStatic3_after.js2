@@ -1,0 +1,7 @@
+package {
+   public class MethodCanBeStatic3 {
+     public static function foo():void {
+       var v;
+     }
+   }
+}

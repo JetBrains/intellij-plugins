@@ -1,0 +1,10 @@
+class Bar {
+  public function toString():String {}
+}
+class A extends Bar {
+  var i3:int;
+
+    public override function toString():String {
+        return super.toString() + "{i3=" + String(i3) + "}";
+    }
+}

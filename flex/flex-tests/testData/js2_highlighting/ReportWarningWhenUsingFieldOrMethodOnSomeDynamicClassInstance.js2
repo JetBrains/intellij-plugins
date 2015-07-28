@@ -1,0 +1,6 @@
+var e:Error;
+e.<warning>getMessage</warning>();
+
+var myDate:Date = new Date();
+var x = myDate.<warning>foo</warning> + e.<warning>bar</warning>;
+var date:Date = myDate.<warning>parse</warning>("Jan 01 00:00:00 2006");

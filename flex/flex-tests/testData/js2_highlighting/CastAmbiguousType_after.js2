@@ -1,0 +1,11 @@
+package {
+import bar.A;
+
+import foo.A;
+
+public class CastAmbiguousType {
+    public function foo() {
+        Test.func2(bar.A(Test.func1()));
+    }
+}
+}

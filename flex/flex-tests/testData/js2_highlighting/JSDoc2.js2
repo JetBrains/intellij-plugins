@@ -1,0 +1,10 @@
+package {
+/**
+ * @see #xx
+ */
+class JSDoc2 {
+    public function get xx():int {
+        return 1;
+    }
+}
+}

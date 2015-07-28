@@ -1,0 +1,33 @@
+package {
+public class UnusedGlobalSymbols
+{
+  public function <warning>foo</warning>() {}
+  function <warning>bar</warning>() {}
+  function bar2() {}
+
+  public function usedFoo() {
+      bar2();
+      if (false) new XXX().test_zzz();
+  }
+}
+}
+
+class XXX {
+    var x:XXX = new XXX2();
+    function zzz():void {}
+    function <warning>zzz2</warning>():void {}
+    function test_zzz():void {
+        x.zzz();
+    }
+}
+
+class XXX2 extends XXX {
+    override function zzz():void {}
+    override function zzz2():void {}
+}
+
+package {
+    public class <error>XXX3</error> extends XXX3_2 {
+        public override function call():* { return 1; }
+    }
+}

@@ -1,0 +1,53 @@
+package com.foo {
+
+import flash.events.EventDispatcher;
+
+    public class MyClass {
+        public function foo(p:int, p2:String = "abc",p3:Object = "null"):MyClass {
+            return null;
+        }
+
+        public function bar():* {
+
+        }
+
+        function zzz() {
+
+        }
+
+        private function hidden() {
+
+        }
+
+        protected function hidden2() {
+
+        }
+
+        private var _prop1: String;
+
+
+        public function get prop1():EventDispatcher {
+            return _prop1;
+        }
+
+        public function set prop1(value:EventDispatcher):void {
+            _prop1 = value;
+        }
+
+        public var prop2: Boolean;
+
+        private var prop3: Boolean;
+
+        protected var prop3: Boolean;
+
+        internal var prop4: Boolean;
+
+        public static function staticF() {
+
+        }
+
+        public function existing() {}
+
+        public var existingProp;
+   }
+}

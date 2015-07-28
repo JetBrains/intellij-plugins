@@ -1,0 +1,9 @@
+package <error>test.bar</error>
+{
+class <error>Test</error>
+{
+	function foo() {
+        var x:XXX;
+    }
+}
+}

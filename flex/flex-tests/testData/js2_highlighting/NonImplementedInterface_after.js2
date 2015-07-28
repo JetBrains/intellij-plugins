@@ -1,0 +1,10 @@
+interface FirstInterface implements Object {
+  function firstInterfaceMethod(x:int):void;
+}
+
+class FirstClass implements FirstInterface {
+    public function firstInterfaceMethod(x:int):void {
+    }
+}
+class SecondClass extends FirstInterface implements FirstClass {}
+interface SecondInterface extends FirstClass {}

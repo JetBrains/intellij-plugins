@@ -1,0 +1,38 @@
+package {
+public class UnusedGlobalSymbols4 extends flash.display.Sprite {
+    private var _xxx;
+
+    public function toString():String {
+        ++xxx;
+        return "";
+    }
+    public function get xxx():* {
+        return _xxx;
+    }
+
+    public function set xxx(value):void {
+        _xxx = value;
+    }
+
+    [EventHandler]
+    public function zzz():void {}
+
+    [Deprecated]
+    public function <warning>zzz2</warning>():void {}
+}
+}
+
+class flash.display.Sprite {
+}
+
+(function descriptiveFunctionTitle(x:int = 0):void {
+    x = 1;
+})();
+
+interface XXX {
+    function <warning>unused11</warning>():void;
+}
+
+class TTT implements XXX {
+    public function unused11():void {}
+}

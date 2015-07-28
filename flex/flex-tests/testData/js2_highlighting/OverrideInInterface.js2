@@ -1,0 +1,15 @@
+interface ClassA {
+  function bar();
+}
+
+interface ClassA2 extends ClassA {
+  function <error>bar</error>();
+}
+
+interface ClassA3 extends ClassA {
+  override function <error descr="Incompatible override for method from ClassA">bar</error>();
+}
+
+interface ClassB extends ClassA {
+  <caret>
+}

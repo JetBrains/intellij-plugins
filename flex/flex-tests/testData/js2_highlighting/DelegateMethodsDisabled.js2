@@ -1,0 +1,19 @@
+package {
+
+class DelegateMethodsDisabled {
+    var p : String;
+
+    var p2: Number;
+
+    var p3: int;
+
+    var p4: XML;
+
+    var p5: uint;
+
+    var p6: XMLList;
+
+    <caret>
+}
+
+}

@@ -1,0 +1,21 @@
+package <error>foo</error> {
+  public class <error>SomeType</error> {}
+}
+
+package {
+  public class <error>Vector$object</error> {}
+}
+
+import foo.SomeType;
+function createSomething():SomeType {
+    var v:Vector.<SomeType> = Vector.<SomeType>(new <SomeType>[]);
+    return <error>v</error>;
+}
+
+function createSomething2():Vector.<SomeType> {
+    return <error>new SomeType()</error>;
+}
+
+function ttt():void {
+    return ttt();
+}

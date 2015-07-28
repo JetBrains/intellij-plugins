@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,7 +16,6 @@ import java.util.zip.ZipFile;
  */
 @SuppressWarnings({"ALL"})
 public class FlexImporterTest extends TestCase {
-  protected static final String BASE_PATH = "/flex_importer/";
 
   public final void testAbc() throws Exception {
     doTestFor("builtin.abc");
@@ -110,7 +110,7 @@ public class FlexImporterTest extends TestCase {
     }
   }
 
-  protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + BASE_PATH;
+  static String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("flex_importer") + "/";
   }
 }

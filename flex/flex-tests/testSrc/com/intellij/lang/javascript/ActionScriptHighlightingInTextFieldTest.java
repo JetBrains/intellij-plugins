@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.refactoring.ui.JSEditorTextField;
@@ -31,6 +32,11 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
   @Override
   protected String getBasePath() {
     return BASE_PATH;
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

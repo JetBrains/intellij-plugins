@@ -1,0 +1,13 @@
+package {
+public class FieldPrefix {
+  public var _element:Object;
+
+  public function ff():void {
+    ee(_element);
+  }
+
+  public function ee(element:Object):void {
+
+  }
+}
+}

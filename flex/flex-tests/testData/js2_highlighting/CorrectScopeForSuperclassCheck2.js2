@@ -1,0 +1,12 @@
+package {
+    import flash.events.Event;
+    import flash.events.MouseEvent;
+
+    public class CorrectScopeForSuperclassCheck2 {
+        public function Foo():void {
+            handler(new MouseEvent("ddd"));
+        }
+
+        private function handler(event:Event):void {}
+    }
+}

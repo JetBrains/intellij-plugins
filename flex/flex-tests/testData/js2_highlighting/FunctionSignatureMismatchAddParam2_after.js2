@@ -1,0 +1,11 @@
+package {
+public class FunctionSignatureMismatchAddParam2 {
+  public function D() {
+    var msg = "e";
+    foo(msg, "ff");
+  }
+
+  public function foo(msg:String, s:String):void {
+  }
+}
+}

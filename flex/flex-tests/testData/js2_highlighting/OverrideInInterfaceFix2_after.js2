@@ -1,0 +1,7 @@
+interface ClassA {
+  function bar();
+}
+
+interface ClassB extends ClassA {
+  override function bar();
+}

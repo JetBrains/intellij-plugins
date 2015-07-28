@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flexunit.FlexUnitCompletionTest;
 import com.intellij.lang.javascript.flexunit.FlexUnitConfigurationTest;
 import com.intellij.lang.javascript.flexunit.FlexUnitHighlightingTest;
+import com.intellij.lang.javascript.generate.ActionScriptGenerateTest;
 import com.intellij.lang.javascript.imports.FlexAutoImportsTest;
 import com.intellij.lang.javascript.imports.FlexOptimizeImportsTest;
 import com.intellij.lang.javascript.refactoring.extractMethod.FlexExtractFunctionTest;
@@ -81,6 +82,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexInlineFunctionTest.class);
     testSuite.addTestSuite(FlexInlineVariableTest.class);
     testSuite.addTestSuite(ActionScriptStubsTest.class);
+    testSuite.addTestSuite(ActionScriptGenerateTest.class);
 
     return testSuite;
   }

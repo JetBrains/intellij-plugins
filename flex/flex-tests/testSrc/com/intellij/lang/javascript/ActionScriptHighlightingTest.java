@@ -12,6 +12,7 @@ import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -80,6 +81,11 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
 
   private Runnable myAfterCommitRunnable = null;
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
 
   @Override
   protected void setUp() throws Exception {
@@ -1880,7 +1886,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "playerglobal", getTestDataPath() + FlexImporterTest.BASE_PATH, "PlayerGlobal10.swc", null, null);
+        JSTestUtils.addLibrary(myModule, "playerglobal", FlexImporterTest.getTestDataPath(), "PlayerGlobal10.swc", null, null);
       }
     };
     doTestFor(true, getTestName(false) + ".as");

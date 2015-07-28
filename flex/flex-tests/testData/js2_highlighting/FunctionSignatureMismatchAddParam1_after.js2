@@ -1,0 +1,14 @@
+package {
+public class FunctionSignatureMismatchAddParam1 {
+    public function foo(param:int, s:String, flag:Boolean, number:Number):void {
+      var amount;
+    }
+
+    public function bar():void {
+        var param:String;
+        var flag: Boolean;
+        var amount: Number;
+        foo(0, param, flag, amount);
+    }
+}
+}

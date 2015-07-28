@@ -1,0 +1,11 @@
+package {
+import mypackage.getDefinitionByName;
+
+public class ImportFunction
+	{
+		public function ImportFunction()
+		{
+			getDefinitionByName();
+		}
+	}
+}

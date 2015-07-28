@@ -1,0 +1,10 @@
+package {
+  public class ChangeVarTypeFix3 {
+
+    public function ChangeVarTypeFix() {
+      var v1 : Vector.<String>;
+      var v2 : ChangeVarTypeFix3;
+      v2 = <error>v1</error>;
+    }
+  }
+}

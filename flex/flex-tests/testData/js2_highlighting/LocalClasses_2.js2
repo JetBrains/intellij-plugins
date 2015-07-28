@@ -1,0 +1,10 @@
+package {
+public class TopLevelTypeOne2 {
+}
+}
+
+class BaseType {
+}
+
+class DerivedType extends BaseType {
+}

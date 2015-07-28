@@ -1,0 +1,25 @@
+import bbb.BBB;
+
+package <error>bbb</error> {
+  public class <error>BBB</error> {
+    public function set aaa(a:*):void {}
+  }
+}
+
+class AAA {
+  static function myfun(a:*):void {
+    a = 1;
+    var b;
+    if (false) myfun(a)
+    else myfun(b);
+    BBB(a).aaa = 1;
+  }
+
+  function myfun2():void {
+    var x:* = new constr();
+    myfun(x)
+    myfun(constr)
+  }
+
+  static var constr:Function;
+}

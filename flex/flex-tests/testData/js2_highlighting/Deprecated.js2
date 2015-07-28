@@ -1,0 +1,6 @@
+class Foo {
+    [Deprecated(replacement="ResourceManager.getInstance().getResourceBundle()", since="3.0", message="No longer used")]
+    function foo() {
+        <weak_warning descr="Since version 3.0 symbol is marked as deprecated, use ResourceManager.getInstance().getResourceBundle() as replacement">foo</weak_warning>();
+    }
+}

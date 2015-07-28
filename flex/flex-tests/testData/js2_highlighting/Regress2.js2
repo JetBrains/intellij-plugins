@@ -1,0 +1,32 @@
+class Object {}
+class Foo {
+    private var arguments:Array;
+    function foo() {
+        var x = prototype == Foo.prototype;
+        (function (x:int):String {
+          return "1";
+        })<error>()</error>;
+    }
+
+  function set prop(x:*):void {}
+  function get prop():* {}
+}
+
+class Bar extends Foo {
+  override function set prop(x:*):void {}
+
+  internal function xxx(x:*):void {
+    xxx({xxx:super.prop});
+  }
+}
+
+class Bar2 extends Foo {
+  override function get prop():* {}
+}
+
+var x:Bar = new Bar();
+var x2:Bar2 = new Bar2();
+x.prop &&= true;
+x2.pr<caret>op &&= true;
+
+var x25 = new <warning>Array</warning>[1,2,3];

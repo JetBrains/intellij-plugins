@@ -1,0 +1,15 @@
+package {
+public class ChangeReturnTypeFix2 extends Foo123 {
+  override public function foo():String {
+    return "abc";
+  }
+}
+}
+
+package {
+public class Foo123 {
+  public function foo():String {
+    return 0;
+  }
+}
+}

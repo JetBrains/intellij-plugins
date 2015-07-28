@@ -1,0 +1,14 @@
+package {
+public class <error>A</error> {
+public function A() {
+var i:int;
+var j:int;
+var k:int;
+i = j << k;
+i = j >> k;
+i = j >>> k;
+}
+}
+}
+
+class B {}

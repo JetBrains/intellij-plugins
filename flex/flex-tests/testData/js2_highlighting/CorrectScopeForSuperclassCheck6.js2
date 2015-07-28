@@ -1,0 +1,10 @@
+package {
+import mx.accessibility.AdvancedDataGridAccImpl;
+import mx.core.UIComponent;
+
+public class CorrectScopeForSuperclassCheck6 extends UIComponent {
+    public function fooobar():void {
+        new AdvancedDataGridAccImpl(this);
+    }
+}
+}

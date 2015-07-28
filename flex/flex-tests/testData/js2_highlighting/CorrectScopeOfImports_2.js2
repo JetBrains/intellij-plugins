@@ -1,0 +1,5 @@
+package com {
+  public class Foo {}
+  public class Foo2 {}
+  public class Bar {}
+}

@@ -1,0 +1,26 @@
+package {
+import com.foo.MyInt;
+
+public class CreateImplementsFix2 extends C {
+  public function foo():MyInt {
+    return <error>this</error>;
+  }
+}
+}
+
+
+package <error>com.foo</error> {
+
+public interface <error>MyInt</error> {
+}
+
+}
+
+package {
+  import com.foo.MyInt;
+
+  public class <error>C</error> {
+    internal static function ccc(i: MyInt) {}
+  }
+
+}

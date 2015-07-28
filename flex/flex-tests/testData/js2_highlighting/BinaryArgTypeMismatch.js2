@@ -1,0 +1,86 @@
+package {
+class BinaryArgTypeMismatch {
+    function Foo() {
+
+        var x:Bar
+        var y:Baz
+        var z:Class
+        if (x is <error descr="Binary operation argument type Class is not compatible with type Baz">y</error>) {
+            trace("Hi")
+        }
+      
+        var t = x as <error>new Baz()</error>;
+        var t2 = x as <error>x</error>;
+
+        if (x is z || x is (z)) {
+            trace(x as Baz)
+        }
+
+        if (x is Bar) {
+            trace(x as Baz)
+        }
+      
+        var t3:IFoo3;
+        var t4:Object;
+      
+        if (x <error descr="Binary operation argument type Bar is not compatible with type Baz">==</error> y ||
+            x == x || x == null || x == t3 || x == t4) {}
+      
+        var a:Foo2;
+        var b:IFoo2;
+        if (a == b) {}
+        var z2:Boolean = new Array();
+        z2 = new Vector.<Boolean>()
+        var z3:Class = <error>new Object()</error>
+        z3 = (new Object()).constructor;
+    }
+}
+interface <error>IFoo3</error> {}
+}
+
+class Bar {
+}
+class Baz {
+}
+
+interface IFoo2 {}
+class Foo2 implements IFoo2 {}
+
+function trace(... x) {}
+
+class A {}
+class B extends A {}
+
+var a:A;
+var b:B;
+if (a == b) {} // correct
+if (b == a) {}
+
+var s:String = "1";
+s+= 500; // similar to s+= 500
+
+var f: String = <error>function(): int { return 0; }</error>;
+var flag:Boolean = false;
+var l:String = flag ? "aa" : <error>123</error>;
+var l2:String = flag ? <error>123</error>: "aa";
+
+var x:Object;
+var y:* = x + 2; // OK (apparently conversion to String)
+var y2:* = <error>x</error> * 2;
+++<error>x</error>;
+<error>x</error>++;
+
+var m:Number = <warning>null</warning>;
+m = <warning>null</warning>;
+
+function foo():void {
+  var n:Number = <warning>null</warning>;
+  if (n == <error>null</error>) {}
+  if (n === <error>null</error>) {}
+  if (n != <error>null</error>) {}
+  if (n !== <error>null</error>) {}
+}
+
+package {
+  public class <error>Vector$object</error> {}
+}

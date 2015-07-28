@@ -1,0 +1,9 @@
+package {
+class RemoveMethodWithAsdoc {
+    /**
+     * As doc for unused
+     */
+    private function <warning descr="Unused method Unused">Unused</warning>():void {
+    }
+}
+}

@@ -1,0 +1,60 @@
+package {
+}
+
+class Z{
+    [Bindable]
+    public var name;
+}
+class A {
+    [Bindable]
+    private var field;
+}
+class B {
+    [Bindable]
+    private static var field;
+}
+class C {
+    private var _field;
+
+    [Bindable]
+    public function get field():* {
+        return _field;
+    }
+}
+class D {
+    private var _field;
+
+    [Bindable]
+    public function set field(value):void {
+        _field = value;
+    }
+}
+
+class F {
+    [Bindable]
+    public function foo():* {
+    }
+}
+class G {
+    [Bindable]
+    public static function get field():* {
+        return 0;
+    }
+
+    [Bindable]
+    public static function set field(value):void {
+    }
+}
+
+function zz() {
+    new Z().addEventListener("foo", null);
+    new A().addEventListener("foo", null);
+    new B().addEventListener("foo", null);
+    new C().addEventListener("foo", null);
+    new D().addEventListener("foo", null);
+    new F().<error>addEventListener</error>("foo", null);
+    new G().<error>addEventListener</error>("foo", null);
+
+    new OtherClass().addEventListener("foo", null);
+    new OtherClass2().addEventListener("foo", null);
+}

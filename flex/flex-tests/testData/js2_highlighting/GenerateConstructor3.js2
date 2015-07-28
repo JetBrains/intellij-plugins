@@ -1,0 +1,7 @@
+class B {
+  function B(x:int, x2:int) {}
+}
+
+class <error descr="Missed superclass's constructor invocation">A</error> extends B {
+  <caret>
+}

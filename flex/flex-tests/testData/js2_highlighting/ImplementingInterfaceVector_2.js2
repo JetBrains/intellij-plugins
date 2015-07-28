@@ -1,0 +1,6 @@
+package foo {
+  public interface IDummy {
+    function abc(p:Vector.<String>):Vector.<IDummy>;
+  }
+
+}

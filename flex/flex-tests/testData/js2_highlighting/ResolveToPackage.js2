@@ -1,0 +1,9 @@
+package {
+
+public class ResolveToPackage {
+
+    var v = <error>somepackage</error>;
+    var v2 = <error>somepackage</error>();
+
+}
+}

@@ -1,0 +1,4 @@
+package {
+public class <error>Vector$object</error> {}
+}
+function foo(<TYPO>xx<caret>xx</TYPO>:Vector.<Object>) {}

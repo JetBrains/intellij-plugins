@@ -1,0 +1,29 @@
+package {
+  interface <error>IImplicitGetSet</error> {
+      function get foo():int;
+      function set foo(x:int):void;
+  }
+
+  class ImplicitGetSet implements IImplicitGetSet {
+      [Bindable]
+      public var foo:int;
+  }
+}
+
+class <error>ImplicitGetSet2</error> implements IImplicitGetSet {
+  public var foo:int;
+}
+
+[Bindable]
+class ImplicitGetSet3 implements IImplicitGetSet {
+   public var foo:int;
+}
+
+function foo() {
+    var x:ImplicitGetSet = new ImplicitGetSet()
+    x.foo = 1;
+    var x2:ImplicitGetSet2 = new ImplicitGetSet2()
+    x2.foo = 1;
+    var x3:ImplicitGetSet3 = new ImplicitGetSet3()
+    x3.foo = 1;
+}

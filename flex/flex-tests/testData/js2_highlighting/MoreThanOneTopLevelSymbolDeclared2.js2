@@ -1,0 +1,9 @@
+package <error>model.tasks</error>
+{
+  public interface <error>ICallable</error> {}
+}
+
+package {
+  import model.tasks.ICallable
+  public class <error>test</error> implements ICallable {}
+}

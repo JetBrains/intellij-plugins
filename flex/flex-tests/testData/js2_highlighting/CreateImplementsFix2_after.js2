@@ -1,0 +1,26 @@
+package {
+import com.foo.MyInt;
+
+public class CreateImplementsFix2 extends C implements MyInt {
+  public function foo():MyInt {
+    return this;
+  }
+}
+}
+
+
+package com.foo {
+
+public interface MyInt {
+}
+
+}
+
+package {
+import com.foo.MyInt;
+
+public class C {
+    internal static function ccc(i: MyInt) {}
+  }
+
+}

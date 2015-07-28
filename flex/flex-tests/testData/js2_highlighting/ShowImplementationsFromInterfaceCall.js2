@@ -1,0 +1,10 @@
+interface XXX {
+  function bbb2();
+}
+
+class AAA implements XXX {
+  public function bbb2() {}
+}
+
+var a:XXX;
+a.bb<caret>b2();

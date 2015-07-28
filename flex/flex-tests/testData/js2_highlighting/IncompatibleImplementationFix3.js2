@@ -1,0 +1,13 @@
+package {
+import flash.events.EventDispatcher;
+interface <error>FooBase</error> {
+    function foo():EventDispatcher;
+}
+}
+
+package {
+class <error>Foo</error> implements FooBase {
+    public function foo():<error>int</error> {
+    }
+}
+}

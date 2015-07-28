@@ -1,0 +1,8 @@
+class FooBase {
+    function foo(x:int):void {}
+}
+
+class Foo extends FooBase {
+    override function foo<error>()</error>:void {
+    }
+}

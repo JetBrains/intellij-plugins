@@ -1,0 +1,17 @@
+package {
+  class AS3NsOpenedByDefault {
+      AS3 function foo():Vector.<int> {}
+      AS3_ function foo2():Vector.<int> {}
+      function bar():<warning descr="Vector without type">Vector</warning> {
+          foo();
+          foo2();
+          var x:<warning descr="Vector without type">Vector</warning> = new <warning descr="Vector without type can not be instantiated">Vector</warning>();
+          var x2:Vector.<Object>;
+
+          var x3:Vector.<AS3NsOpenedByDefault> = <error>new Vector()</error>;
+      }
+  }
+}
+
+namespace AS3;
+namespace AS3_ = "http://adobe.com/AS3/2006/builtin";

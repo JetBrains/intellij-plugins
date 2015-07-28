@@ -1,0 +1,5 @@
+import externalization.Externalizable
+
+class <error>Dummy</error> implements Externalizable {
+  <caret>
+}

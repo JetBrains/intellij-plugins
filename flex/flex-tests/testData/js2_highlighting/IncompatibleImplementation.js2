@@ -1,0 +1,39 @@
+package <error>xxx</error> {
+  interface <error>Foo</error> {
+    function foo();
+    function bar(x);
+  }
+
+  class <error>IncompatibleImplementation</error> implements Foo {
+    public function bar<error descr="Incompatible implementation, should have signature '(x)'">()</error> {
+    }
+    <error descr="Incompatible implementation, should have 'public' access modifier">protected</error> function foo() {
+    }
+  }
+
+  class <error>IncompatibleImplementation2</error> extends IncompatibleImplementation3 implements Foo2 {
+    protected function baz(<warning>a</warning>:MyClass) {
+        import yyy.MyClass
+    }
+  }
+}
+
+package {
+	public class <error>A</error> implements IAny
+	{
+        public function firstMethod():<error descr="Incompatible implementation, should have return type ''">void</error> {}
+		public function secondMethod():<error descr="Incompatible implementation, should have return type 'void'">N<caret>umber</error>
+		{
+		}
+        public function thirdMethod<error descr="Incompatible implementation, should have signature '(x:Object = null)'">(x:Object)</error>:void {}
+	    public function fourthMethod<error descr="Incompatible implementation, should have signature '(x:Object)'">(x:Object = null)</error>:void {}
+	}
+}
+
+interface IAny
+{
+	function firstMethod()
+	function secondMethod():void
+	function thirdMethod(x:Object = null):void
+	function fourthMethod(x:Object):void
+}

@@ -1,0 +1,7 @@
+class XXX {
+    [ArrayElementType("String")]
+    public var arrayOfStrings:Array;
+}
+var x:XXX;
+x.arrayOfStrings = []
+x.arrayOfStrings.push("Floarian");

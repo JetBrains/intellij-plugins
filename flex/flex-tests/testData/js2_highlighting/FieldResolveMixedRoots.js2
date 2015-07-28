@@ -1,0 +1,10 @@
+package {
+import flash.events.ServerSocketConnectEvent;
+
+public class FieldResolveMixedRoots {
+    public function MySprite() {
+        var v : ServerSocketConnectEvent;
+        trace(v.socket.remoteAddress);
+    }
+}
+}

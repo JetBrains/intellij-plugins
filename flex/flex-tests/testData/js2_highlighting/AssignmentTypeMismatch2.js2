@@ -1,0 +1,108 @@
+package <error>foo</error> {}
+package <error>bar</error> {}
+public interface foo.IEvent {}
+
+public class foo.Event implements IEvent {}
+import bar.MyEvent;
+class bar.MyEvent extends foo.Event {}
+
+function xxx(x:foo.IEvent):void {}
+
+xxx(new bar.MyEvent());
+
+class foo.Bar {
+    [ArrayElementType("bar.MyEvent")]
+    [Inspectable(arrayType="bar.MyEvent")]
+
+    private var events:Array = [];
+
+    static function doFoo(bar:Bar):void {
+      if (bar == null) doFoo(new foo.Bar())
+      bar.events = new Array()
+      var testN:Number = 12;
+      var testS:String = <error>testN</error>;
+      testN = <error>testS</error>;
+    }
+}
+
+import mypackage.ListCollectionView;
+import mypackage.ArrayCollection;
+
+class Foo {
+    var _xx:ListCollectionView
+
+    public function get xx():ListCollectionView {
+        return _xx;
+    }
+
+    public function set xx(val:ListCollectionView):void {
+        _xx = val;
+    }
+}
+
+class Foo2 {
+    var x:Foo;
+    function bar() {
+        x.xx = new ArrayCollection()
+    }
+}
+
+var x:Number = Math.PI
+var y:Number = " ".length
+
+class X {
+    var fff3:Function;
+
+    function get fff2():Function {
+        return function() {};
+    }
+
+    function fff4():Function {
+        return function() {};
+    }
+
+    function foo() {
+        var x:Array  = fff2();
+        var x2:Array  = fff3();
+        x = fff2();
+        x = fff3();
+
+        x = <error>fff2</error>;
+        x = <error>fff3</error>;
+        x = <error>fff4()</error>;
+        x = fff4()();
+        x = <error>fff4</error>;
+    }
+}
+
+var s222:String = <error>new X()</error>;
+var s:String = new XML("<a>bla</a>");
+var s2:String = <></>;
+
+var n:uint = 1 | 2;
+var n2:uint = 1 & 2;
+var x3:Boolean = !s;
+var x4:Object = true;
+var x5:Boolean = x4;
+
+function set dataProvider(value:Object):void {
+  if (value is XML) {
+    var xl:XMLList = new XMLList();
+    xl += value;
+  }
+}
+
+var x6:Number = function(x:Number):Number { return x} (1);
+var x7:String = <error>String</error>;
+x7 = <error>String</error>
+var x8:Boolean = 0;
+var x9:int = 0, x9_2:int = 0;
+x8 = !x9 == x9_2;
+x8 = "";
+
+class Vector {
+    var length:int;
+}
+
+var vi:Vector.<int> = new <int>[<error>,</error>123,123];
+x9 = (int)((1.0 + 3.0)/2.0);

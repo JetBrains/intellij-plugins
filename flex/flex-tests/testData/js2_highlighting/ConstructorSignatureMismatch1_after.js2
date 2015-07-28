@@ -1,0 +1,13 @@
+package  {
+  public class ConstructorSignatureMismatch1 {
+      public function ConstructorSignatureMismatch1(i:int, b:Boolean, constructorSignatureMismatch1:ConstructorSignatureMismatch1) {
+          
+      }
+    private function foo() {
+      var v : ConstructorSignatureMismatch1;
+      new ConstructorSignatureMismatch1(1, true, this);
+    }
+  }
+}
+
+class C extends ConstructorSignatureMismatch1 {}

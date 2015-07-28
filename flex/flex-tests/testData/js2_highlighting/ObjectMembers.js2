@@ -1,0 +1,11 @@
+package {
+public class ObjectMembers {
+    function foo() {
+        var x:Array
+        x.toString()
+        arguments.callee;
+    }
+}
+}
+
+

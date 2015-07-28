@@ -1,0 +1,12 @@
+class A {
+  var _i:int;
+  var _i2:int;
+  var i3:int;
+  static var _i4:int;
+
+    public function toString():String {
+        return "A{_i=" + String(_i) + ",_i2=" + String(_i2) + ",i3=" + String(i3) + "}";
+    }
+
+    function xxx() {}
+}

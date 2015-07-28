@@ -1,0 +1,3 @@
+function <warning>foo</warning>() {
+    return 1;
+}

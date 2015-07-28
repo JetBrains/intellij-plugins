@@ -1,0 +1,9 @@
+class Foo {}
+class Bar extends Foo {}
+class Baz extends Foo {}
+function <warning>foo</warning>() {
+    if (arguments.length == 0) return new Bar();
+    if (arguments.length == 1) return new Bar();
+    if (arguments.length == 2) return new Foo();
+    return new Baz();
+}

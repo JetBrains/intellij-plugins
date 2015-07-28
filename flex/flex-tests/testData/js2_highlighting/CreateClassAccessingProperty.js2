@@ -1,0 +1,12 @@
+class Foo {
+    var x:Class;
+    function get xx():Class {
+        return x;
+    }
+    function Foo () {
+        var y2:Foo = new xx();
+    }
+}
+
+var y:Foo = null;
+var y2:Foo = new y.xx();

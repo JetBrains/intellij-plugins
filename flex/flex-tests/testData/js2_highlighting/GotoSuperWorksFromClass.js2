@@ -1,0 +1,5 @@
+class AAA {
+}
+class A<caret>AA2 extends AAA {
+  function bbb() {}
+}

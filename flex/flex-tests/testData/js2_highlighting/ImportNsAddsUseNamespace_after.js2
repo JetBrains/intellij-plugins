@@ -1,0 +1,13 @@
+package foo {
+public namespace Foo = "xxx";
+}
+
+package bar {
+import foo.Foo;
+
+use namespace Foo;
+
+class C {
+      Foo function foo() {}
+  }
+}

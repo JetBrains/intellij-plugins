@@ -1,0 +1,14 @@
+package {
+import mx.core.UIComponent;
+
+import mypackage.IResourceManager;
+
+public class ChangeVarTypeFix2 {
+
+    var v :IResourceManager;
+
+    public function ChangeVarTypeFix() {
+      v = new UIComponent().resourceManager;
+    }
+  }
+}

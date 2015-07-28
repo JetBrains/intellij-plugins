@@ -1,0 +1,15 @@
+package {
+public class ChangeReturnTypeFix2 extends Foo123 {
+  override public function foo():int {
+    return <error>"abc"</error>;
+  }
+}
+}
+
+package {
+public class <error>Foo123</error> {
+  public function foo():int {
+    return 0;
+  }
+}
+}

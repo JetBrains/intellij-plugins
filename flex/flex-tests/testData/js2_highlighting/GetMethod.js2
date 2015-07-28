@@ -1,0 +1,13 @@
+class Map {
+    function get():String {
+        return "1";
+    }
+
+    function set():String {
+        return "1";
+    }
+}
+
+var x:Map;
+var y:String = x.get();
+var y2:String = x.set();

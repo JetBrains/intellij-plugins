@@ -1,0 +1,54 @@
+import aaa.XXX;
+import bbb.YYY;
+
+package <error>aaa</error> {
+  public class <error>XXX</error> {}
+}
+
+package <error>bbb</error> {
+  public class <error>YYY</error> {}
+}
+
+function xxx():XXX {}
+var x:* = xxx();
+x = xxx();
+
+var y:YYY = <error>xxx()</error>;
+y = <error>x<caret>xx()</error>;
+var a:uint = 1
+
+interface ITest {}
+class TestImpl implements ITest {
+  function set aaa(x:TestImpl):void {}
+}
+
+import xxx.C;
+function Test():void {
+  var t:ITest = new TestImpl();
+  TestImpl(t).aaa = TestImpl(t);
+  var x:C = new Object() as C;
+  var d:Boolean = true;
+  var d2:Boolean = !d && !d;
+  var d3:int
+  var d4:uint = d3
+  d3 = d4;
+
+  var d5:Number = d3;
+  d3 = d5;
+  d4 = d5;
+
+  var d6:int = <error descr="Initializer type String is not assignable to variable type int">"string"</error>
+
+  var o2:Object;
+  var o:Number;
+  o = <error descr="Assigned expression type Object is not assignable to type Number">o2</error>;
+}
+
+function test2():ITest {
+  if (false) return <error descr="Returned expression type String is not assignable to type ITest">new String</error>
+  return new TestImpl()
+}
+
+package <error>xxx</error> {
+  public class <error>C</error> {}
+}

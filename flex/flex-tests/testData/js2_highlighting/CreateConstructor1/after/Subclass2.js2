@@ -1,0 +1,10 @@
+package {
+import flash.events.Event;
+
+class Subclass2 extends SuperClass {
+
+ public function Subclass2() {
+   super(1, 2, "foo", new Event("foo"));
+  }
+}
+}

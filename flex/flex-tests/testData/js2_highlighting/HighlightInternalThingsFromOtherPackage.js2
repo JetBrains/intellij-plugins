@@ -1,0 +1,44 @@
+package <error>foo</error> {
+  class HighlightInternalThingsFromOtherPackage {}
+}
+
+package <error>foo2</error> {
+  public class <error>HighlightInternalThingsFromOtherPackage3</error> {
+    function foo() {}
+  }
+}
+
+package <error>foo3</error> {
+  public interface <error>HighlightInternalThingsFromOtherPackage4</error> {
+    function foo();
+  }
+}
+
+package <error>bar</error> {
+  import foo.<error>HighlightInternalThingsFromOtherPackage</error>;
+  import foo2.HighlightInternalThingsFromOtherPackage3;
+  import foo3.HighlightInternalThingsFromOtherPackage4;
+  var <error>x</error>:<error>HighlightInternalThingsFromOtherPackage</error>;
+  var <error>x2</error>:HighlightInternalThingsFromOtherPackage2;
+  var <error>x3</error>:HighlightInternalThingsFromOtherPackage3;
+  var <error>x4</error>:HighlightInternalThingsFromOtherPackage4;
+  x3.<error>foo</error>();
+  x4.foo();
+}
+
+import foo2.HighlightInternalThingsFromOtherPackage3;
+var x3:HighlightInternalThingsFromOtherPackage3;
+x3.<error>foo</error>();
+
+package <error>bar</error> {
+  class <error>HighlightInternalThingsFromOtherPackage2</error> {}
+}
+
+package <error>xyz</error> {
+[ExcludeClass]
+public class <error>MineGod</error> {}
+}
+
+<error>package</error> {
+  import xyz.MineGod;
+}

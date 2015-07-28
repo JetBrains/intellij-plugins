@@ -1,0 +1,13 @@
+package {
+    public class NonExistingMethodAfterNew {
+        public function NonExistingMethodAfterNew() {
+            new Foobar().zzz();
+        }
+    }
+}
+
+class Foobar{
+    internal function zzz():void {
+        
+    }
+}

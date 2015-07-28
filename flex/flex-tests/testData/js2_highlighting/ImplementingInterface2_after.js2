@@ -1,0 +1,27 @@
+package {
+import model.tasks.ICallable
+
+import mypackage.AbstractService;
+
+public class test implements ICallable
+{
+
+    public function call():void {
+    }
+
+    public function initTimer():void {
+    }
+
+    public function getRemoteObject():AbstractService {
+        return null;
+    }
+
+    public function getTargetObject():Object {
+        return null;
+    }
+
+    public function getTargetParentNode():Object {
+        return null;
+    }
+}
+}

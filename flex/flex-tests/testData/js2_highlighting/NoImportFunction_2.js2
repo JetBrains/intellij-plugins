@@ -1,0 +1,16 @@
+package {
+	public class NoImportFunction_2
+	{
+		public function ImportFunction()
+		{
+			var x:Object
+            x.f<caret>oo()
+		}
+	}
+}
+
+package {
+  class <error>Bar</error> {
+      function foo() {}
+  }
+}

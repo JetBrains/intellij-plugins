@@ -1,0 +1,37 @@
+class A extends B
+{
+    public function A()
+    {
+        super();
+    }
+}
+
+class B {}
+
+class SuperClass {
+    public function SuperClass(s:String) {
+    }
+}
+
+class SubClass extends SuperClass {
+    function SubClass() {
+        if (2 > 1) {
+            var s:String = "a".concat(1) + 2;
+            super("");
+        }
+        else {
+            throw new Error();
+        }
+    }
+}
+
+class SubClass2 extends SuperClass {
+    function <error descr="Missed superclass's constructor invocation">SubClass2</error>() {
+        if (2 > 1) {
+            throw new Error();
+        }
+        else {
+            super("");
+        }
+    }
+}

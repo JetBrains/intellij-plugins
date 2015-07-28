@@ -1,0 +1,7 @@
+package {
+public class ChangeParamTypeFix {
+  public function foo(i:ChangeParamTypeFix) {
+    i = this;
+  }
+}
+}

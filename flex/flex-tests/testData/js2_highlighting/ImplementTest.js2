@@ -1,0 +1,22 @@
+package bar {
+  public class Param {}
+}
+package foo {
+    interface IA {
+      function bar(p:bar.Param);
+      function set baz(p:bar.Param);
+      function get baz():bar.Param;
+    }
+
+    interface IB {
+      function bar(p:bar.Param);
+      function set baz(p:bar.Param);
+      function get baz():bar.Param;
+    }
+}
+
+import foo.*;
+
+class ClassB implements IA, IB {
+  <caret>
+}

@@ -1,0 +1,7 @@
+class Bar {
+  public function toString():String {}
+}
+class A extends Bar {
+  var i3:int;
+  <caret>
+}

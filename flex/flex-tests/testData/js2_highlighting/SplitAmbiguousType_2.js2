@@ -1,0 +1,13 @@
+package foo {
+public class SplitAmbiguousType_2 {}
+}
+package bar {
+public class A {}
+}
+package {
+public class Test {
+
+    public static function func1() : foo.A {}
+
+}
+}

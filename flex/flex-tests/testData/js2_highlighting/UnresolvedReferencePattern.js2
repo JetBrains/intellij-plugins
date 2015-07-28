@@ -1,0 +1,9 @@
+package {
+[Embed(source="<error>{a}</error>")]
+[Embed(source="<error>{{</error>")]
+[Embed(source="<error>'</error>")]
+[Embed(source="<error>'{</error>")]
+[Embed(source="<error>{</error>")]
+public class UnresolvedReferencePattern {
+}
+}

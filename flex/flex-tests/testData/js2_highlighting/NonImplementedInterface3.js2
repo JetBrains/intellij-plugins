@@ -1,0 +1,3 @@
+package <error>xxx</error> {
+  class <error>Bar</error> extends Foo implements IFoo {}
+}

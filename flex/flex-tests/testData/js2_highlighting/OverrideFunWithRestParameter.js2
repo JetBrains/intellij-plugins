@@ -1,0 +1,6 @@
+package {
+  import flash.utils.Proxy;
+  class C extends Proxy {
+    <caret>
+  }
+}

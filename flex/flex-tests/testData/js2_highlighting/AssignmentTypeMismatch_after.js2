@@ -1,0 +1,54 @@
+import aaa.XXX;
+import bbb.YYY;
+
+package aaa {
+  public class XXX {}
+}
+
+package bbb {
+  public class YYY {}
+}
+
+function xxx():XXX {}
+var x:* = xxx();
+x = xxx();
+
+var y:YYY = xxx();
+y = YYY(xxx());
+var a:uint = 1
+
+interface ITest {}
+class TestImpl implements ITest {
+  function set aaa(x:TestImpl):void {}
+}
+
+import xxx.C;
+function Test():void {
+  var t:ITest = new TestImpl();
+  TestImpl(t).aaa = TestImpl(t);
+  var x:C = new Object() as C;
+  var d:Boolean = true;
+  var d2:Boolean = !d && !d;
+  var d3:int
+  var d4:uint = d3
+  d3 = d4;
+
+  var d5:Number = d3;
+  d3 = d5;
+  d4 = d5;
+
+  var d6:int = "string"
+
+  var o2:Object;
+  var o:Number;
+  o = o2;
+}
+
+function test2():ITest {
+  if (false) return new String
+  return new TestImpl()
+}
+
+package xxx {
+  public class C {}
+}

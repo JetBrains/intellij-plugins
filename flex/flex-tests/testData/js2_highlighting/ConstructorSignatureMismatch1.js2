@@ -1,0 +1,10 @@
+package  {
+  public class ConstructorSignatureMismatch1 {
+    private function foo() {
+      var v : ConstructorSignatureMismatch1;
+      new ConstructorSignatureMismatch1<error>(1, true, this)</error>;
+    }
+  }
+}
+
+class C extends ConstructorSignatureMismatch1 {}

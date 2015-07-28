@@ -1,0 +1,8 @@
+package {
+  public class UnusedParameterHasCreateFieldQuickFix_2 {
+      private var _bar:int;
+    public function set bar(value:int): void {
+        _bar = value;
+    }
+  }
+}

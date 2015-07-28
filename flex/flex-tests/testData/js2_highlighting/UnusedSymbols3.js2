@@ -1,0 +1,49 @@
+package {
+  public class UnusedSymbols3
+{
+    public static function bar(): void {
+      var foo: UnusedSymbols3 = new UnusedSymbols3();
+      foo._instanceField = foo._instanceField;
+      foo.prop++;
+      foo.prop2+=2;
+      --foo.prop3;
+    }
+
+    public function foo():void {
+      UnusedSymbols3._staticField = 1;
+    }
+
+    private var _instanceField: Number;
+    private static var _staticField: Number;
+
+      public function method1():void {
+        const newInstance:UnusedSymbols3 = this;
+        newInstance.method2();
+      }
+
+      private function method2():void {}
+
+      private var _prop:int;
+
+      private function get prop():int {
+        return _prop;
+      }
+      private function set prop(prop:int):void  {
+        _prop = prop;
+      }
+
+      private function get prop2():int {
+        return _prop;
+      }
+      private function set prop2(prop:int):void  {
+        _prop = prop;
+      }
+
+      private function get prop3():int {
+        return _prop;
+      }
+      private function set prop3(prop:int):void  {
+        _prop = prop;
+      }
+  }
+}

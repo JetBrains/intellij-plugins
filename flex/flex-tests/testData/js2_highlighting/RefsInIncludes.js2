@@ -1,0 +1,3 @@
+include "<error>RefsInIncludesz.js2</error>"
+include "RefsInIncludes.js2"
+class myPic {}

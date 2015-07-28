@@ -1,0 +1,36 @@
+package <error>foo</error> {
+public class <error>Target</error> {
+    function Target() {
+    }
+}
+}
+
+package <error>bar</error> {
+import foo.*;
+
+public class <error>Caller</error> {
+    public function Caller() {
+        var target:Target = new Target();
+    }
+}
+}
+
+class XXX {
+    <error>private</error> function XXX() {
+    }
+
+    protected function foo() {
+        <error>super()</error>;
+    }
+}
+
+class XXX2 {
+    <error>internal</error> function XXX2() {
+    }
+}
+
+class XXX3 {
+    namespace xxx;
+    <error descr="Constructor should be public or have no visibility specified">xxx</error> function XXX3() {
+    }
+}

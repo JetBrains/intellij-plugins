@@ -1,0 +1,15 @@
+package {
+public class ChangeSignatureFixForIncompatibleReturnType1 {
+  public function foo():void {
+
+  }
+}
+}
+
+import flash.events.MouseEvent;
+
+class C extends ChangeSignatureFixForIncompatibleReturnType1 {
+  override public function foo():<error>MouseEvent</error> {
+
+  }
+}

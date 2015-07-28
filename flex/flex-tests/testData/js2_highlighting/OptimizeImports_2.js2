@@ -1,0 +1,27 @@
+package some.unusedimport.withstar {
+  public class UnusedClass2 {}
+}
+
+package some.unusedimport {
+  public class UnusedClass {}
+  public function UnusedFunction() {}
+}
+
+package some.usedimport {
+  public class UsedClass {}
+  public function UsedFunction() {}
+}
+
+package some.usedimport.withstar {
+  public class UsedClass2 {}
+}
+
+package detect.me {
+  public class ClassNotDetected{ public static const PROPERTY:String = "test"; }
+}
+
+package nspackage.aaa {
+  public namespace ns = "xxx";
+}
+
+native public const my.utils.proxy:* = "proxy";

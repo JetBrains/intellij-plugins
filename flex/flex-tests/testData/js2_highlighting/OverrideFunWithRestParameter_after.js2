@@ -1,0 +1,49 @@
+package {
+  import flash.utils.Proxy;
+import flash.utils.flash_proxy;
+
+use namespace flash_proxy;
+
+class C extends Proxy {
+
+    override flash_proxy function deleteProperty(name:*):Boolean {
+        return super.flash_proxy::deleteProperty(name);
+    }
+
+    override flash_proxy function isAttribute(name:*):Boolean {
+        return super.flash_proxy::isAttribute(name);
+    }
+
+    override flash_proxy function callProperty(name:*, ...rest):* {
+        return super.flash_proxy::callProperty(name, rest);
+    }
+
+    override flash_proxy function nextNameIndex(index:int):int {
+        return super.flash_proxy::nextNameIndex(index);
+    }
+
+    override flash_proxy function nextName(index:int):String {
+        return super.flash_proxy::nextName(index);
+    }
+
+    override flash_proxy function getDescendants(name:*):* {
+        return super.flash_proxy::getDescendants(name);
+    }
+
+    override flash_proxy function getProperty(name:*):* {
+        return super.flash_proxy::getProperty(name);
+    }
+
+    override flash_proxy function nextValue(index:int):* {
+        return super.flash_proxy::nextValue(index);
+    }
+
+    override flash_proxy function setProperty(name:*, value:*):void {
+        super.flash_proxy::setProperty(name, value);
+    }
+
+    override flash_proxy function hasProperty(name:*):Boolean {
+        return super.flash_proxy::hasProperty(name);
+    }
+}
+}

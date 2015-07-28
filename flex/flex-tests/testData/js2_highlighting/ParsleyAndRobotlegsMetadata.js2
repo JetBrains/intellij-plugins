@@ -1,0 +1,5 @@
+class XXX {
+[Inject(id="staticDataServiceFacade")] // parsley
+[Inject(name="editorPromptsModel")] // robotlegs
+public var model:*;
+}

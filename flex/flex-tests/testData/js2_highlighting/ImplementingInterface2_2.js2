@@ -1,0 +1,12 @@
+package mypackage {
+  public class AbstractService {}
+}
+
+package model.tasks
+{
+import mypackage.AbstractService;
+
+public interface ICallable
+{ function call():void; function initTimer():void; function getRemoteObject():AbstractService; function getTargetObject():Object; function getTargetParentNode():Object; }
+
+}

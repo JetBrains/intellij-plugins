@@ -1,0 +1,7 @@
+package {
+    public class FunctionSignatureMismatchFixInaccessible1 {
+        function foo(i: int, s: String) {
+            foo<error>(this)</error>;
+        }
+    }
+}

@@ -1,0 +1,55 @@
+/**
+ * @see #foo
+ * @see C#foo()
+ * @see #<warning>foo2</warning>
+ * @see C#<warning>foo2</warning>
+ */
+class C {
+  /**
+   * @see #foo
+   * @see C#foo()
+   * @see #<warning>foo2</warning>
+   * @see C#<warning>foo2</warning>
+   */
+  function foo():C {}
+}
+
+class D {
+  function foo2() {}
+  function foo4():D {}
+}
+
+<error>package</error> {
+  <warning descr="Unused import">import yyy.CCC;</warning>
+  class JSDoc {
+    /**
+     * @see #foo3
+     * @see #foo3()
+     * @see #<warning>foo4</warning>()
+     * @see #<warning>foo4</warning>
+     */
+    function foo3() {}
+
+    [Bindable]
+    /**
+     * @param x
+     */
+    function foo5(x) {
+        x = 1;
+    }
+  }
+}
+
+package <error>yyy</error> {
+  public class <error>CCC</error> {}
+}
+
+package <error>tt</error> {
+  public class <error>Foo</error> {
+    /**
+     * @see tt.Bar#baz
+     * @see Bar#baz
+     */
+     function xxx() {}
+  }
+}

@@ -1,0 +1,1 @@
+<error>dyn<caret>amic</error> <error>dynamic</error> class Foo {}

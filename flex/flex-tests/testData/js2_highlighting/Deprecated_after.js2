@@ -1,0 +1,6 @@
+class Foo {
+    [Deprecated(replacement="ResourceManager.getInstance().getResourceBundle()", since="3.0", message="No longer used")]
+    function foo() {
+        ResourceManager.getInstance().getResourceBundle();
+    }
+}

@@ -1,0 +1,15 @@
+package {
+    public class FunctionSignatureMismatch5 {
+        public function foo(i: int, s:String=null) {}
+
+        function bar() {
+            foo(0, <error><caret>this</error>);
+        }
+
+        function zzz() {
+            foo<error>()</error>;
+            foo(0); // TODO should be foo(0, this) in _after
+            foo(0, "abc");
+        }
+    }
+}

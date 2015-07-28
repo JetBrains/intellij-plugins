@@ -1,0 +1,17 @@
+package xxx.bar.baz {
+  public class Baz {
+    public static function doIt(f:Function) {}
+  }
+}
+
+package xxx.bar2 {
+  public class Baz3 {
+    public static function doIt3(f:Function) {}
+  }
+}
+
+package xxx.bar2.baz2 {
+  public class Baz2 {
+    public static function doIt2(f:Function) {}
+  }
+}

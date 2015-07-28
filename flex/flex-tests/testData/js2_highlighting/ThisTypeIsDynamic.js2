@@ -1,0 +1,18 @@
+class Foo {
+    import mypackage.CSSStyleDeclaration;
+    private static function classConstruct():Boolean {
+        var styles:CSSStyleDeclaration = new CSSStyleDeclaration();
+        styles.defaultFactory = function():void {
+            this.color = 0x0071BC;
+            doSomething(this.color);
+        };
+        return true;
+    }
+    private static function doSomething(x:*):void {}
+}
+
+dynamic class Bar {
+    function foo() {
+        <error>xxx</error> = 1;
+    }
+}

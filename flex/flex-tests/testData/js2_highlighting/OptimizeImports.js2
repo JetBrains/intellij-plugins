@@ -1,0 +1,47 @@
+<warning>import some.unusedimport.withstar.*;</warning>
+<warning>import some.unusedimp<caret>ort.UnusedClass;</warning>
+<warning>import some.unusedimport.UnusedFunction;</warning>
+import some.usedimport.UsedClass;
+import some.usedimport.UsedFunction;
+var i:UsedClass = UsedFunction();
+
+package <error>yyy</error> {
+  import some.usedimport.withstar.*;
+  class <error>XXX</error> extends UsedClass2 {}
+}
+
+package {
+  import detect.me.ClassNotDetected;
+  import mypackage.Label;
+  <warning>import mx.core.UIComponent;</warning>
+  import mx.core.UIComponent;
+  import flash.display.DisplayObject
+
+  public class <error>Test</error> extends Label {
+    public function print(s):void{ print(s+ClassNotDetected.PROPERTY); }
+
+    public function testMe():void {
+        var x:*;
+        for each (var chld:UIComponent in x) var a:* = chld as DisplayObject;
+        print(a);
+    }
+  }
+}
+
+<error>package</error> {
+  import nspackage.aaa.ns;
+  use namespace ns
+}
+
+package {
+  import my.utils.proxy;
+  import mypackage.getDefinitionByName;
+
+  class <error>Foo</error> {
+    proxy var i:int;
+    static function xxx() {
+      var x:Class = Class(getDefinitionByName("foo"));
+      x.prototype = null;
+    }
+  }
+}

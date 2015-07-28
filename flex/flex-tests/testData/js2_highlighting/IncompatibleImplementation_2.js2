@@ -1,0 +1,17 @@
+package xxx {
+  interface Foo2 {
+    function foo2();
+    function bar2(x);
+  }
+
+  class IncompatibleImplementation3 {
+    public function bar2() {
+    }
+    protected function foo2() {
+    }
+  }
+}
+
+package yyy {
+  public class MyClass {}
+}

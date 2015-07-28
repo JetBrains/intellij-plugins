@@ -1,0 +1,8 @@
+package {
+class FunctionSignatureMismatch13 {
+  function zz() {
+    var say: Function = function(msg:String):void {}
+    say(<error>100</error>);
+  }
+}
+}

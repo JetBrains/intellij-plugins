@@ -1,0 +1,108 @@
+package <error>xxx</error> {
+  namespace <error>ns</error> = "xxx";
+  class <error>Foo</error> {
+    protected function foo() {}
+    protected function bar(x) {}
+    ns function baz(x) {}
+    function baz2(x) {}
+    ns function baz2(x) {}
+  }
+
+  class <error>Bar</error> extends Foo {
+    protected override function bar<error descr="Incompatible override, should have signature '(x)'">()</error> {
+    }
+    <error descr="Incompatible override, should have 'protected' access modifier">private</error> override function foo() {
+    }
+
+    <error descr="Method does not override method from super class">override</error> function baz(x) {}
+
+    override function baz2(x) { super.baz2(x); }
+    ns override function baz2(x) {  super.baz2(x); }
+  }
+}
+
+class A extends B{
+    override public function foo():<error descr="Incompatible override, should have return type 'void'">Number</error>
+    {
+    }
+
+    public override function foo2<error descr="Incompatible override, should have signature '(x:Object = null)'">(x:Object)</error>:void
+	{
+	}
+
+    public override function foo3<error descr="Incompatible override, should have signature '(x:Object)'">(x:Object = null)</error>:void
+	{
+	}
+
+    public override function foo4(x:Object = null):void
+	{
+	}
+
+    public override function foo5(x:Object = "null"):void
+	{
+	}
+}
+
+class B
+{
+	public function foo():void
+	{
+	}
+
+    public function foo2(x:Object = null):void
+	{
+	}
+
+    public function foo3(x:Object):void
+	{
+	}
+
+    public function foo4(x:Object = null):void
+	{
+	}
+
+    public function foo5(x:Object = null):void
+	{
+	}
+}
+
+class C {
+  public function get currentImage():C {
+    return null;
+  }
+
+  public function get currentImage2():C {
+    return null;
+  }
+}
+
+class D extends C {
+   public override function get currentImage():<error>D</error> {
+    return <error>new C()</error>;
+  }
+
+  public override function <error>currentImage2</error>():C {
+    return null;
+  }
+}
+
+class SomeClass extends SuperClass {
+    public function <error descr="Method overrides method in superclass SuperSuperClass without override keyword">toString</error>():String {
+        return super.toString();
+    }
+
+    public function toSource():Object {
+        return super.toSource();
+    }
+}
+
+class SuperClass extends SuperSuperClass {
+    [Bindable]
+    public var bindableField:String;
+}
+
+class SuperSuperClass {
+    public function toString():String {
+        return super.toString();
+    }
+}

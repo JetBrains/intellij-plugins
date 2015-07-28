@@ -1,0 +1,7 @@
+/*
+File header
+*/
+var a:<error>X<caret>XX</error>;
+package <error>yyy</error> {
+  public class <error>XXX</error> {}
+}

@@ -1,0 +1,10 @@
+package {
+  public class ChangeVarTypeFix1 {
+    import flash.display.Sprite;
+
+    public function ChangeVarTypeFix() {
+      var v1 : Sprite;
+      var v2 : int = <error>v1</error>;
+    }
+  }
+}

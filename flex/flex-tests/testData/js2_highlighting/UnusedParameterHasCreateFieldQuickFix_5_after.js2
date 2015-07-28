@@ -1,0 +1,11 @@
+package {
+  public class UnusedParameterHasCreateFieldQuickFix_5 {
+    var _foo;
+      private var _bar;
+    public function UnusedParameterHasCreateFieldQuickFix_5(foo, bar): void {
+       super();
+      _foo = foo;
+        _bar = bar;
+    }
+  }
+}

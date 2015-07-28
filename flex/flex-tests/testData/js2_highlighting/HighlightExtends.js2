@@ -1,0 +1,11 @@
+class Foo {
+    function foo() {}
+}
+
+class Bar ex<caret>tends Foo {
+    function bar() {}
+
+    override function foo() {
+        return super.foo();
+    }
+}

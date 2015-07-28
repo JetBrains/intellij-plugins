@@ -1,0 +1,15 @@
+package {
+import flash.display.Sprite;
+import mx.core.UIComponent;
+
+    public class FunctionSignatureMismatch10 {
+  private function f():void {
+    var b:Sprite = new Sprite();
+    foo(<error>b</error>);
+  }
+
+  private function foo(container: UIComponent): void {
+
+  }
+}
+}

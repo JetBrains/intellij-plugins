@@ -1,0 +1,29 @@
+class A extends B
+{
+    function A()
+    {
+    }
+}
+
+class A2 extends B
+{
+    public function A2()
+    {
+        super("hello");
+    }
+}
+
+class A3 extends B
+{
+    function A3(needParam:String) {
+        super(needParam);
+    }
+}
+
+class B
+{
+	public function B(needParam:String)
+	{
+	}
+}
+

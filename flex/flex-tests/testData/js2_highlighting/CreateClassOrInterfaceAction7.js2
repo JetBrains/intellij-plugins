@@ -1,0 +1,7 @@
+package {
+public class CreateClassOrInterfaceAction7 {
+  private function foo() {
+    new <error>Abc<caret></error>(1, 2, "Hello", true, this);
+  }
+}
+}

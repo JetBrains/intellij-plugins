@@ -1,0 +1,33 @@
+interface FirstInterface {
+  function FirstInterface()
+  function foo():FirstInterface
+}
+
+class FirstClass implements FirstInterface {
+  public function foo():FirstInterface {
+  }
+}
+
+interface SecondInterface extends FirstInterface {
+  function bar():void
+}
+
+class SecondClass extends FirstClass implements SecondInterface {
+  public function bar():void {
+  }
+
+  public override function f<caret>oo():FirstInterface {
+  }
+}
+
+interface ThirdInterface {
+  function get xxx():int
+}
+
+class <error>ThirdClass</error> implements ThirdInterface {
+  function set xxx(x):void {}
+}
+
+class ForthClass implements ThirdInterface {
+  public function get xxx():int { return 1; }
+}

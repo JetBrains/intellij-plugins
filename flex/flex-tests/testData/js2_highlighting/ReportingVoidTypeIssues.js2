@@ -1,0 +1,5 @@
+function foo():void {
+  <error descr="Cannot return a value from a function with result type void"><caret>return 1;</error>
+}
+
+var x:<error descr="Illegal variable type: 'void'">void</error>;

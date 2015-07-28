@@ -1,0 +1,13 @@
+package <error>ideaBug</error> {
+
+public class <error>Test</error> {
+
+	public function Test() {
+		var singleton:Singleton = new Singleton(new <error>Singletoniser</error>());
+        var x:<error>Singletoniser</error>;
+      x = null;
+      singleton = null;
+	}
+
+}
+}
