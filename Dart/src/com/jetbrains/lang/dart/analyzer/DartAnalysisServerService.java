@@ -259,19 +259,15 @@ public class DartAnalysisServerService {
       ProgressManager.checkCanceled();
 
       synchronized (myCompletionInfos) {
-        // todo in case of several AnalysisServerListenerAdapter.computedCompletion() invocations for one completion (only the last
-        // invocation has isLast==true) it looks like each next List<CompletionSuggestion> also contains all items that were already
-        // given in previous invocations. If it is by design we should optimize cycle and handle only the last in queue.
-
         CompletionInfo completionInfo;
         while ((completionInfo = myCompletionInfos.poll()) != null) {
           if (!completionInfo.myCompletionId.equals(completionId)) continue;
+          if (!completionInfo.isLast) continue;
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
             consumer.consume(completion);
           }
-
-          if (completionInfo.isLast) return;
+          return;
         }
 
         try {

@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
@@ -20,10 +21,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.dartlang.analysis.server.protocol.CompletionSuggestion;
-import org.dartlang.analysis.server.protocol.Element;
-import org.dartlang.analysis.server.protocol.ElementKind;
-import org.dartlang.analysis.server.protocol.Location;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -113,27 +111,26 @@ public class DartServerCompletionContributor extends CompletionContributor {
         icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         lookup = lookup.withIcon(icon);
       }
-      // insert handler
-      final List<String> parameterNames = suggestion.getParameterNames();
-      if (parameterNames != null) {
-        lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
-          @Override
-          public void handleInsert(InsertionContext context, LookupElement item) {
-            final Editor editor = context.getEditor();
-            // Insert parenthesis.
-            final int offset = context.getTailOffset();
-            context.getDocument().insertString(offset, "()");
-            // Prepare for typing arguments, if any.
-            if (parameterNames.isEmpty()) {
-              editor.getCaretModel().moveToOffset(offset + 2);
-            } else {
-              editor.getCaretModel().moveToOffset(offset + 1);
-              // Show parameters popup.
-              final PsiElement psiElement = lookupObject.getElement();
-              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
+      // Prepare for typing arguments, if any.
+      if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
+        final List<String> parameterNames = suggestion.getParameterNames();
+        if (parameterNames != null) {
+          lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
+            @Override
+            public void handleInsert(InsertionContext context, LookupElement item) {
+              if (parameterNames.isEmpty()) {
+                ParenthesesInsertHandler.NO_PARAMETERS.handleInsert(context, null);
+              }
+              else {
+                ParenthesesInsertHandler.WITH_PARAMETERS.handleInsert(context, null);
+                // Show parameters popup.
+                final Editor editor = context.getEditor();
+                final PsiElement psiElement = lookupObject.getElement();
+                AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, psiElement);
+              }
             }
-          }
-        });
+          });
+        }
       }
     }
     return lookup;
