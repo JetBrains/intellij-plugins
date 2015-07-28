@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -36,7 +37,7 @@ public class TapestrySchemaProvider extends XmlSchemaProvider implements DumbAwa
   @Override
   public Set<String> getAvailableNamespaces(final @NotNull XmlFile file, final @Nullable String tagName) {
     HashSet<String> set = new HashSet<String>();
-    set.add(TapestryConstants.TEMPLATE_NAMESPACE);
+    set.addAll(Arrays.asList(TapestryXmlExtension.tapestryTemplateNamespaces()));
     set.add(TapestryConstants.PARAMETERS_NAMESPACE);
     set.add(XmlUtil.XHTML_URI);
     return set;
@@ -46,7 +47,7 @@ public class TapestrySchemaProvider extends XmlSchemaProvider implements DumbAwa
   @Override
   public String getDefaultPrefix(@NotNull @NonNls String namespace, @NotNull final XmlFile context) {
     if (XmlUtil.XHTML_URI.equals(namespace)) return "";
-    if (TapestryConstants.TEMPLATE_NAMESPACE.equals(namespace)) return "t";
+    if (TapestryXmlExtension.isTapestryTemplateNamespace(namespace)) return "t";
     if (TapestryConstants.PARAMETERS_NAMESPACE.equals(namespace)) return "p";
     return null;
   }

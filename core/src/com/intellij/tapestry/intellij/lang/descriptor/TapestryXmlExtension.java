@@ -12,11 +12,17 @@ import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.xml.DefaultXmlExtension;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.dtd.XmlNSDescriptorImpl;
 import com.intellij.xml.util.XmlUtil;
+import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @author Alexey Chmutov
@@ -24,6 +30,24 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 6:39:24 PM
  */
 public class TapestryXmlExtension extends DefaultXmlExtension {
+  private static final Set<String> ourTapestryTemplateNamespaces = new THashSet<String>(Arrays.asList(
+    TapestryConstants.TEMPLATE_NAMESPACE, TapestryConstants.TEMPLATE_NAMESPACE2, TapestryConstants.TEMPLATE_NAMESPACE3,
+    TapestryConstants.TEMPLATE_NAMESPACE4));
+
+  public static boolean isTapestryTemplateNamespace(String namespace) {
+    return namespace != null && ourTapestryTemplateNamespaces.contains(namespace);
+  }
+
+  @NotNull
+  public static String getTapestryNamespace(XmlTag tag) {
+    if (tag != null) {
+      for(String tapestryTemplateNamespace:ourTapestryTemplateNamespaces) {
+        if (tag.getPrefixByNamespace(tapestryTemplateNamespace) != null) return tapestryTemplateNamespace;
+      }
+    }
+
+    return TapestryConstants.TEMPLATE_NAMESPACE;
+  }
 
   @Nullable
   @Override
@@ -65,7 +89,7 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);
     if(tapestryProject == null) return super.isRequiredAttributeImplicitlyPresent(tag, attrName);
 
-    if(tag.getAttribute(attrName, TapestryConstants.TEMPLATE_NAMESPACE) != null) {
+    if(tag.getAttribute(attrName, getTapestryNamespace(tag)) != null) {
       return true;
     }
 
@@ -93,5 +117,9 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
       }
     }
     return descriptor;
+  }
+
+  public static String[] tapestryTemplateNamespaces() {
+    return ArrayUtil.toStringArray(ourTapestryTemplateNamespaces);
   }
 }

@@ -18,6 +18,7 @@ import com.intellij.tapestry.core.resource.xml.XmlTag;
 import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.core.util.PathUtils;
+import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -263,7 +264,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
           Component component = null;
 
           for (XmlAttribute attribute : tag.getAttributes()) {
-            if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
+            if (attribute.getLocalName().equals("type") && TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getNamespace())) {
               String value = attribute.getValue();
               if (value != null) {
                 component = _project.findComponent(value);
@@ -322,7 +323,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
             Component component = null;
 
             for (XmlAttribute attribute : tag.getAttributes()) {
-              if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
+              if (attribute.getLocalName().equals("type") && TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getNamespace())) {
                 component = _project.findComponent(attribute.getValue());
                 injectedElement = new InjectedElement(tag, component);
 

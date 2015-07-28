@@ -8,6 +8,7 @@ public interface TapestryConstants {
   String TEMPLATE_NAMESPACE = "http://tapestry.apache.org/schema/tapestry_5_1_0.xsd";
   String TEMPLATE_NAMESPACE2 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
   String TEMPLATE_NAMESPACE3 = "http://tapestry.apache.org/schema/tapestry_5_3.xsd";
+  String TEMPLATE_NAMESPACE4 = "http://tapestry.apache.org/schema/tapestry_5_4.xsd";
 
   /**
    * The Tapestry namespace used for parameters.

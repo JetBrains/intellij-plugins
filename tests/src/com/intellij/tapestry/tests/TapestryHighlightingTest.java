@@ -59,6 +59,10 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(true, new TelReferencesInspection());
   }
 
+  public void testTelPropertiesAndAccessors2() throws Throwable {
+    doTest(true, new TelReferencesInspection());
+  }
+
   public void testHtmlTagNameInHtmlParentTag() throws Throwable {
     addComponentToProject("Count");
     doTest(true);

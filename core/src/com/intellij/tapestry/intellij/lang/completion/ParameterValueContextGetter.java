@@ -11,7 +11,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
-import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.Component;
@@ -22,6 +21,7 @@ import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolve
 import com.intellij.tapestry.core.util.ClassUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
+import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.util.ArrayUtil;
 
@@ -55,8 +55,8 @@ public class ParameterValueContextGetter implements ContextGetter {
       }
 
       // Completion of type and id attributes is handled by ComponentNameContextGetter
-      if (attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE) &&
-          (attribute.getLocalName().equals("type") || attribute.getLocalName().equals("id") || attribute.getLocalName().equals("mixins"))) {
+      if (TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getNamespace()) &&
+                               (attribute.getLocalName().equals("type") || attribute.getLocalName().equals("id") || attribute.getLocalName().equals("mixins"))) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 

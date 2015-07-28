@@ -15,5 +15,6 @@ public class TapestryResourceProvider implements StandardResourceProvider {
     registrar.addStdResource(TapestryConstants.TEMPLATE_NAMESPACE, "/META-INF/tapestry_5_1_0.xsd", getClass());
     registrar.addStdResource(TapestryConstants.TEMPLATE_NAMESPACE2, "/META-INF/tapestry_5_0_0.xsd", getClass());
     registrar.addStdResource(TapestryConstants.TEMPLATE_NAMESPACE3, "/META-INF/tapestry_5_3.xsd", getClass());
+    registrar.addStdResource(TapestryConstants.TEMPLATE_NAMESPACE4, "/META-INF/tapestry_5_4.xsd", getClass());
   }
 }

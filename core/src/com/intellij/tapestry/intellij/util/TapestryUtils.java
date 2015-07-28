@@ -21,6 +21,7 @@ import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
+import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
@@ -75,10 +76,8 @@ public class TapestryUtils {
    */
   @Nullable
   public static XmlElement getComponentIdentifier(@Nullable final XmlTag tag) {
-    return tag == null ? null : tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)
-                                // embedded components
-                                ? IdeaUtils.getNameElement(tag)
-                                // using invisible instrumentation
+    return tag == null ? null : TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace()) // embedded components
+                                ? IdeaUtils.getNameElement(tag) // using invisible instrumentation
                                 : getIdentifyingAttribute(tag);
   }
 
@@ -90,12 +89,12 @@ public class TapestryUtils {
 
   @Nullable
   public static XmlAttribute getTIdAttribute(XmlTag tag) {
-    return tag.getAttribute("id", TapestryConstants.TEMPLATE_NAMESPACE);
+    return tag.getAttribute("id", TapestryXmlExtension.getTapestryNamespace(tag));
   }
 
   @Nullable
   public static XmlAttribute getTTypeAttribute(XmlTag tag) {
-    return tag.getAttribute("type", TapestryConstants.TEMPLATE_NAMESPACE);
+    return tag.getAttribute("type", TapestryXmlExtension.getTapestryNamespace(tag));
   }
 
   /**
@@ -152,7 +151,7 @@ public class TapestryUtils {
 
   @Nullable
   private static IJavaField findIdentifyingField(IntellijJavaClassType elementClass, XmlTag tag) {
-    final String tagId = tag.getAttributeValue("id", TapestryConstants.TEMPLATE_NAMESPACE);
+    final String tagId = tag.getAttributeValue("id", TapestryXmlExtension.getTapestryNamespace(tag));
     if (tagId == null) return null;
     for (IJavaField field : elementClass.getFields(false).values()) {
       if (tagId.equals(getFieldId(field))) return field;
@@ -169,7 +168,7 @@ public class TapestryUtils {
 
   @Nullable
   public static XmlAttribute getTapestryAttribute(XmlTag tag, String attrName) {
-    XmlAttribute attribute = tag.getAttribute(attrName, TapestryConstants.TEMPLATE_NAMESPACE);
+    XmlAttribute attribute = tag.getAttribute(attrName, TapestryXmlExtension.getTapestryNamespace(tag));
     return attribute != null ? attribute : tag.getAttribute(attrName, "");
   }
 
@@ -353,7 +352,8 @@ public class TapestryUtils {
     final XmlTag rootTag = doc.getRootTag();
     if (rootTag == null) return null;
     for (XmlAttribute attribute : rootTag.getAttributes()) {
-      if (attribute.getName().startsWith("xmlns:") && attribute.getValue().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
+      if (attribute.getName().startsWith("xmlns:") &&
+          TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getValue())) {
         return attribute.getName().substring(6);
       }
     }

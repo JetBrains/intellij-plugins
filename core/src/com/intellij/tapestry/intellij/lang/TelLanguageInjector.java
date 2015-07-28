@@ -8,25 +8,20 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.intellij.lang.descriptor.TapestryAttributeDescriptor;
+import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 import com.intellij.tapestry.lang.TelLanguage;
 import com.intellij.xml.XmlAttributeDescriptor;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: Maxim.Mossienko
  * Date: 2/4/13
  */
 public class TelLanguageInjector implements MultiHostInjector {
-  private static final Set<String> namespaces = new THashSet<String>(Arrays.asList(
-    TapestryConstants.TEMPLATE_NAMESPACE, TapestryConstants.TEMPLATE_NAMESPACE2, TapestryConstants.TEMPLATE_NAMESPACE3));
-
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     PsiElement contextParent = context.getParent();
@@ -37,7 +32,10 @@ public class TelLanguageInjector implements MultiHostInjector {
     XmlTag parent = attr.getParent();
     if (parent == null) return;
 
-    if (!namespaces.contains(attr.getNamespace()) && !namespaces.contains(parent.getNamespace())) return;
+    if (!TapestryXmlExtension.isTapestryTemplateNamespace(attr.getNamespace()) &&
+        !TapestryXmlExtension.isTapestryTemplateNamespace(parent.getNamespace())) {
+      return;
+    }
     if(attr.textContains('\n')) return;
     String value = attr.getValue();
     if (value.indexOf('$') != -1 || value.indexOf('{') != -1 || value.indexOf('}') != -1 || value.indexOf('/') != -1 || value.indexOf('\\') != -1) {

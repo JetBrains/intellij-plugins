@@ -68,7 +68,7 @@ class DescriptorUtil {
 
   @Nullable
   static String getTAttributeName(@NotNull XmlTag context, String attrName) {
-    String prefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
+    String prefix = context.getPrefixByNamespace(TapestryXmlExtension.getTapestryNamespace(context));
     if (prefix == null) return null;
     return prefix.length() > 0 ? prefix + ":" + attrName : attrName;
   }
@@ -171,7 +171,7 @@ class DescriptorUtil {
   public static XmlElementDescriptor[] getTmlSubelementDescriptors(@NotNull XmlTag context) {
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(context);
     if (project == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    final String namespacePrefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
+    final String namespacePrefix = context.getPrefixByNamespace(TapestryXmlExtension.getTapestryNamespace(context));
     final XmlElementDescriptor[] namespaceElements = getElementDescriptors(project.getAvailableElements(), namespacePrefix);
     final String parametersPrefix = context.getPrefixByNamespace(TapestryConstants.PARAMETERS_NAMESPACE);
     final Component component = TapestryUtils.getTypeOfTag(context);
@@ -253,7 +253,7 @@ class DescriptorUtil {
   @Nullable
   public static XmlElementDescriptor getTmlTagDescriptor(XmlTag tag) {
     final String prefix = tag.getNamespacePrefix();
-    if (TapestryConstants.TEMPLATE_NAMESPACE.equals(tag.getNamespace())) {
+    if (TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace())) {
       final Component component = TapestryUtils.getTypeOfTag(tag);
       final List<Mixin> mixins = findMixins(tag);
       return component == null
@@ -277,7 +277,7 @@ class DescriptorUtil {
       return Collections.emptyList();
     }
     final TapestryProject tapestryProject = TapestryUtils.getTapestryProject(tag);
-    final XmlAttribute mixinsAttribute = tag.getAttribute("mixins", TapestryConstants.TEMPLATE_NAMESPACE);
+    final XmlAttribute mixinsAttribute = tag.getAttribute("mixins", TapestryXmlExtension.getTapestryNamespace(tag));
     if (tapestryProject == null || mixinsAttribute == null) {
       return Collections.emptyList();
     }
