@@ -50,6 +50,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlashBuilderImportTest.class);
     testSuite.addTestSuite(FlexStructureViewTest.class);
     testSuite.addTestSuite(FlexDocumentationTest.class);
+    testSuite.addTestSuite(FlexLiveTemplatesTest.class);
 
     return testSuite;
   }
