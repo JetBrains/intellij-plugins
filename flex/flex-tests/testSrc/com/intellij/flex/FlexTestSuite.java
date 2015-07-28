@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.flexunit.FlexUnitHighlightingTest;
 import com.intellij.lang.javascript.imports.FlexAutoImportsTest;
 import com.intellij.lang.javascript.imports.FlexOptimizeImportsTest;
 import com.intellij.lang.javascript.refactoring.extractMethod.FlexExtractFunctionTest;
+import com.intellij.lang.javascript.refactoring.inlineFunction.FlexInlineFunctionTest;
 import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantTest;
 import com.intellij.lang.javascript.refactoring.introduceField.FlexIntroduceFieldTest;
 import junit.framework.Test;
@@ -75,6 +76,8 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexMoveTest.class);
     testSuite.addTestSuite(FlexConvertToLocalTest.class);
     testSuite.addTestSuite(FlexGotoImplementationsTest.class);
+    testSuite.addTestSuite(FlexAutoPopupTest.class);
+    testSuite.addTestSuite(FlexInlineFunctionTest.class);
 
     return testSuite;
   }
