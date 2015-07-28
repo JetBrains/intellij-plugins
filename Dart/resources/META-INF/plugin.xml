@@ -153,6 +153,8 @@
     <lang.findUsagesProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.findUsages.DartFindUsagesProvider"/>
     <usageTypeProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartUsageTypeProvider"/>
     <findUsagesHandlerFactory implementation="com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandlerFactory"/>
+    <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartUnitMemberGroupRuleProvider"/>
+    <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartClassMemberGroupRuleProvider"/>
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
                         serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>

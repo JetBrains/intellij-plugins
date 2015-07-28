@@ -18,7 +18,6 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -42,18 +41,17 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   public boolean processElementUsages(@NotNull final PsiElement element,
                                       @NotNull final Processor<UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
-    final ReadActionProcessor<SearchResult> searchResultProcessor = new ReadActionProcessor<SearchResult>() {
+    final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
       @Override
-      public boolean processInReadAction(SearchResult result) {
+      public void consumeInReadAction(SearchResult result) {
         final Location location = result.getLocation();
-        final String filePath = location.getFile();
-        final PsiFile psiFile = findPsiFile(element, filePath);
-        if (psiFile != null) {
-          final int offset = location.getOffset();
-          final int length = location.getLength();
-          processor.process(new UsageInfo(psiFile, offset, offset + length));
+        final PsiElement locationPsiElement = findPsiElement(element, location);
+        if (locationPsiElement != null) {
+          int offset = location.getOffset();
+          int length = location.getLength();
+          offset -= locationPsiElement.getTextOffset();
+          processor.process(new UsageInfo(locationPsiElement, offset, offset + length));
         }
-        return true;
       }
     };
     // Send the search request and wait for results.
@@ -62,6 +60,17 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
     DartAnalysisServerService.getInstance().search_findElementReferences(elementFilePath, elementOffset, searchResultProcessor);
     // OK
     return true;
+  }
+
+  @Nullable
+  private static PsiElement findPsiElement(PsiElement context, Location location) {
+    final String locationFilePath = location.getFile();
+    final PsiFile psiFile = findPsiFile(context, locationFilePath);
+    if (psiFile != null) {
+      final int offset = location.getOffset();
+      return psiFile.findElementAt(offset);
+    }
+    return null;
   }
 
   @Nullable
