@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.flexunit.FlexUnitConfigurationTest;
 import com.intellij.lang.javascript.flexunit.FlexUnitHighlightingTest;
 import com.intellij.lang.javascript.imports.FlexAutoImportsTest;
 import com.intellij.lang.javascript.imports.FlexOptimizeImportsTest;
+import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantTest;
+import com.intellij.lang.javascript.refactoring.introduceField.FlexIntroduceFieldTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -53,6 +55,15 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexLiveTemplatesTest.class);
     testSuite.addTestSuite(FlexFindUsagesTest.class);
     testSuite.addTestSuite(FlexChangeSignatureTest.class);
+
+    testSuite.addTestSuite(FlexIntroduceConstantTest.class);
+    testSuite.addTestSuite(FlexIntroduceFieldTest.class);
+    testSuite.addTestSuite(FlexMoveInnerClassTest.class);
+    testSuite.addTestSuite(FlexMoveMembersTest.class);
+    testSuite.addTestSuite(FlexPullUpTest.class);
+    testSuite.addTestSuite(FlexPushDownTest.class);
+    testSuite.addTestSuite(FlexExtractSuperTest.class);
+    testSuite.addTestSuite(FlexHierarchyTest.class);
 
     return testSuite;
   }
