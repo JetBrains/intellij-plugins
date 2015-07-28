@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.parser;
 import com.intellij.lang.HtmlInlineScriptTokenTypesProvider;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlScriptContentProvider;
-import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.dtd.DTDLanguage;
 import com.intellij.lang.dtd.DTDParserDefinition;
 import com.intellij.lang.html.HTMLLanguage;
@@ -29,11 +28,10 @@ public class DartInHtmlParsingTest extends ParsingTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    myLanguage = HTMLLanguage.INSTANCE;
     super.setUp();
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, XMLLanguage.INSTANCE, new XMLParserDefinition());
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, DTDLanguage.INSTANCE, new DTDParserDefinition());
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, HTMLLanguage.INSTANCE, new HTMLParserDefinition());
+    configureFromParserDefinition(new XMLParserDefinition(), "xml");
+    configureFromParserDefinition(new DTDParserDefinition(), "dtd");
+    configureFromParserDefinition(new HTMLParserDefinition(), "html");
     addExplicitExtension(LanguageASTFactory.INSTANCE, HTMLLanguage.INSTANCE, new XmlASTFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, DTDLanguage.INSTANCE, new XmlASTFactory());
