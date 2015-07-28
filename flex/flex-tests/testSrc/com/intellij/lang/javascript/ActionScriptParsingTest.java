@@ -12,8 +12,8 @@ import com.intellij.testFramework.ParsingTestCase;
 /**
  * @by Maxim.Mossienko
  */
-public class ECMAScriptLevelFourParsingTest extends ParsingTestCase {
-  public ECMAScriptLevelFourParsingTest() {
+public class ActionScriptParsingTest extends ParsingTestCase {
+  public ActionScriptParsingTest() {
     super("", "js2", new ECMAL4ParserDefinition(), new JavascriptParserDefinition());
   }
 

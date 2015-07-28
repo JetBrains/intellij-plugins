@@ -33,7 +33,7 @@ import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 
-public class ECMAScriptLevelFourCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
+public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
 
   @Override
   protected String getTestDataPath() {

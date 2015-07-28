@@ -20,14 +20,14 @@ public class FlexTestSuite extends TestCase {
 
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
-    testSuite.addTestSuite(ECMAScriptLevelFourParsingTest.class);
+    testSuite.addTestSuite(ActionScriptParsingTest.class);
 
-    testSuite.addTestSuite(ECMAScriptLevelFourCompletionTest.class);
-    testSuite.addTestSuite(ECMAScriptLevelFourHighlightingTest.class);
+    testSuite.addTestSuite(ActionScriptCompletionTest.class);
+    testSuite.addTestSuite(ActionScriptHighlightingTest.class);
     testSuite.addTestSuite(FlexHighlightingTest.class);
     testSuite.addTestSuite(FlexCompletionTest.class);
-    testSuite.addTestSuite(ECMAScriptLevelFourCompletionInTextFieldTest.class);
-    testSuite.addTestSuite(ECMAScriptLevelFourHighlightingInTextFieldTest.class);
+    testSuite.addTestSuite(ActionScriptCompletionInTextFieldTest.class);
+    testSuite.addTestSuite(ActionScriptHighlightingInTextFieldTest.class);
     testSuite.addTestSuite(SwfHighlightingTest.class);
 
     testSuite.addTestSuite(FlexCssCompletionTest.class);

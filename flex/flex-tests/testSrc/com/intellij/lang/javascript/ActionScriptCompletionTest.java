@@ -32,7 +32,7 @@ import java.util.Arrays;
  * @by Maxim.Mossienko
  */
 @SuppressWarnings({"ALL"})
-public class ECMAScriptLevelFourCompletionTest extends BaseJSCompletionTestCase {
+public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
 
   {

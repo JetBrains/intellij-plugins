@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * @author ksafonov
  */
-public class ECMAScriptLevelFourHighlightingInTextFieldTest extends JSDaemonAnalyzerTestCase {
+public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTestCase {
 
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
 

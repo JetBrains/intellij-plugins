@@ -76,7 +76,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ECMAScriptLevelFourHighlightingTest extends JSDaemonAnalyzerTestCase {
+public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
 
   private Runnable myAfterCommitRunnable = null;
