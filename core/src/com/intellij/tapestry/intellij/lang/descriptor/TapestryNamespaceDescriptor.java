@@ -41,10 +41,6 @@ public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
     return myFile;
   }
 
-  public boolean isHierarhyEnabled() {
-    return false;
-  }
-
   public PsiElement getDeclaration() {
     return myElement;
   }
