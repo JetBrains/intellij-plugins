@@ -1,0 +1,7 @@
+class SomeType {
+    public static const FOO:SomeType = new SomeType();
+}
+
+function test():void {
+    var st:SomeType = SomeType.FOO<caret>
+}

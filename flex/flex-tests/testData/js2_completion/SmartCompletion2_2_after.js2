@@ -1,0 +1,4 @@
+import mypackage.getClassByQualifiedClassName;
+
+function foo(x:Class) {}
+foo(getClassByQualifiedClassName(<caret>));

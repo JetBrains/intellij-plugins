@@ -1,0 +1,2 @@
+function foo():Number { return 1; }
+var xxx:N<caret> = foo();

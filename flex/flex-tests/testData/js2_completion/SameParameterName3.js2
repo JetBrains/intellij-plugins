@@ -1,0 +1,15 @@
+package {
+public class SameParameterName3 {
+    public function SameParameterName3() {
+    }
+
+
+    public function a() {
+        var b:int = 1;
+        var x:int = 1;
+        this.drawCircle(<caret>);
+    }
+
+    private function drawCircle(x:int, y:int) {}
+}
+}

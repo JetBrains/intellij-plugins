@@ -1,0 +1,13 @@
+package {
+
+public class ParameterNameCompl {
+
+    public function a() {
+        var obj = {a:1, x:2};
+        this.drawCircle(obj.<caret>);
+    }
+
+    private function drawCircle(x, y) {}
+}
+
+}

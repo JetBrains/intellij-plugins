@@ -1,0 +1,5 @@
+class SomeType {
+    function foo() {
+        var x:Boolean = tr<caret>
+    }
+}

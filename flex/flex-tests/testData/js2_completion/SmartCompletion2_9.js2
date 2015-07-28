@@ -1,0 +1,12 @@
+class Bar {}
+class Z {
+  function bar():Bar {}
+  function baz():Object {}
+}
+class C {
+  function foo(x:Bar):Object {}
+  function baz() {
+      var x:Z;
+      foo(x.<caret>)
+  }
+}

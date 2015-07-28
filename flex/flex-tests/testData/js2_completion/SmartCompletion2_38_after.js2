@@ -1,0 +1,4 @@
+class Foo {}
+class Bar extends Foo {}
+var x:Foo
+if (x is Bar<caret>) {}

@@ -1,0 +1,17 @@
+package foo {
+public class Test {
+    public function Test() {
+    }
+}
+}
+
+package bar {
+public class Test {
+    public function Test() {
+    }
+}
+}
+
+package {
+var v  = new Test<caret>
+}

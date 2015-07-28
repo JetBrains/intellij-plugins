@@ -1,0 +1,9 @@
+class MyClass {
+  private function myFunction() {}
+}
+
+class MyClass2 extends MyClass {
+  function MyClass2() {
+    my<caret>
+  }
+}

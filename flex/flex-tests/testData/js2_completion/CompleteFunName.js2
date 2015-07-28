@@ -1,0 +1,7 @@
+class Foo {
+    function bar():void {}
+}
+
+class Bar extends Foo {
+    override function bar<caret>
+}

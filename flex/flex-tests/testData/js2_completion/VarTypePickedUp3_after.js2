@@ -1,0 +1,6 @@
+class A {
+  var a:*;
+  function aaa() {
+    a.<caret>
+  }
+}

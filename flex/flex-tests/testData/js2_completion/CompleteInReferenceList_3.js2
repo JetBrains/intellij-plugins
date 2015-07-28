@@ -1,0 +1,4 @@
+class MyClass {}
+interface MyInterface {}
+
+interface Clazz extends My<caret>

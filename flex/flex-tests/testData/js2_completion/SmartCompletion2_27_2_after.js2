@@ -1,0 +1,9 @@
+class Error {}
+class AnotherError extends Error {}
+
+/**
+ * @throws {AnotherError}
+ */
+function foo() {
+  throw new AnotherError()<caret>
+}

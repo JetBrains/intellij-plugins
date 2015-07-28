@@ -1,0 +1,23 @@
+package baz {
+  import foo.*;
+  import bar.*;
+
+  function f() {
+    var xxx:MySmartCompletion
+    var yyy:Object;
+    var xxx2:XXX;
+    xxx2.foo(<caret>);
+  }
+}
+
+package foo {
+  public class SmartCompletion {}
+  public class MySmartCompletion extends SmartCompletion {}
+}
+
+package bar {
+  import foo.*;
+  public class XXX {
+    public function foo(x:SmartCompletion) {}
+  }
+}

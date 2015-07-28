@@ -1,0 +1,7 @@
+interface Foo {
+    function bar():void;
+}
+
+class Bar implements Foo {
+    function ba<caret>
+}

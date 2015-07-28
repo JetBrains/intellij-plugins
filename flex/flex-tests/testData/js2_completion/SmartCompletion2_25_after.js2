@@ -1,0 +1,17 @@
+package {
+public class Vector$object {}
+}
+
+package {
+import foo.MyEnum;
+
+public class Baz {
+    public function Baz2():Vector.<MyEnum> {
+        var vv:Vector.<MyEnum> = new <MyEnum>[];
+
+        return vv<caret>
+    }
+}
+}
+
+public class foo.MyEnum {}

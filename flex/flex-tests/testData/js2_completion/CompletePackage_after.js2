@@ -1,0 +1,9 @@
+import mx.mynamespace<caret>
+
+package mx.mypackage {
+  public class MyPackage {}
+}
+
+package mx {
+  public namespace mynamespace {}
+}

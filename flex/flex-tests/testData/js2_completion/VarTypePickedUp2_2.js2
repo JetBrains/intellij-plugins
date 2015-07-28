@@ -1,0 +1,12 @@
+package {
+class B {
+  var myvar;
+}
+
+class C extends B {
+}
+
+class D {
+  var myDvar;
+}
+}

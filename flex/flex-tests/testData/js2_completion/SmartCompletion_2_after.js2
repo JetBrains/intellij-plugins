@@ -1,0 +1,4 @@
+class SmartCompletion {}
+function foo():SmartCompletion {
+  return new SmartCompletion()<caret>
+}

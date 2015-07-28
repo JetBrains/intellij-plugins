@@ -1,0 +1,5 @@
+import qqq.A;
+
+function aaa() {
+  A.myfield<caret>
+}

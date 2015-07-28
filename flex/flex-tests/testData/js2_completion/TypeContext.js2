@@ -1,0 +1,12 @@
+class A {}
+class W {}
+class Z extends W {}
+
+class Temp {
+    private var instance:W;
+    function t():void {
+        instance = new <caret>
+    }
+}
+
+

@@ -1,0 +1,4 @@
+interface IFoo {}
+interface IBar extends IFoo {}
+var x:IFoo;
+if (x is IB<caret>)

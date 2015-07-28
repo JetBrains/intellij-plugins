@@ -1,0 +1,9 @@
+package xxx.yyy {
+  class C {
+    function C() {}
+    public function doIt() {}
+    public static function doItStatic() {}
+  }
+}
+
+xxx.yyy.C.do<caret>

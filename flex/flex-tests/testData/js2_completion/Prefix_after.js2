@@ -1,0 +1,9 @@
+package foo {
+public class Loader {}
+}
+
+import foo.Loader;
+
+class Vector2 {}
+
+var v:Vector2.<Loader>

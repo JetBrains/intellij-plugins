@@ -1,0 +1,11 @@
+package {
+import flash.events.KeyboardEvent;
+
+import mypackage.Application
+public class EventName {
+    var xxx:Application
+    function foo() {
+      xxx.addEventListener(KeyboardEvent.TYPED, <caret>)
+    }
+}
+}

@@ -1,0 +1,16 @@
+package xxx {
+  public class CCC {
+    public function foo() {}
+  }
+}
+
+package yyy {
+  import xxx.CCC;
+  class DDD {
+    #include "IncludedMemberTypePickedUp_included.js2"
+
+    function DDD() {
+      yyy().foo()<caret>
+    }
+  }
+}

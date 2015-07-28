@@ -1,0 +1,19 @@
+class A {
+  var fieldA;
+}
+
+class B {
+  var fieldB;
+}
+
+class C {
+  native function get myvar():A;
+}
+
+class D {
+  var myDvar;
+  native function get myDvar2():B;
+}
+
+var a:C;
+a.myvar.fieldA<caret>

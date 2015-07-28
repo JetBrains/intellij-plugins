@@ -1,0 +1,11 @@
+package baz {
+import com.Bar;
+import com.Foo;
+
+public class CompleteInRHSOfAsBinOp {
+    public function CompleteInRHSOfAsBinOp() {
+        var test:Foo;
+        test as Bar<caret>
+    }
+}
+}

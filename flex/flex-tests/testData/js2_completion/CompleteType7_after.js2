@@ -1,0 +1,11 @@
+package xxx.yyy {
+  public class C {
+    function C() {}
+    public function doIt() {}
+    public static function doItStatic() {}
+  }
+}
+
+import xxx.yyy.C;
+
+C.doItStatic()<caret>

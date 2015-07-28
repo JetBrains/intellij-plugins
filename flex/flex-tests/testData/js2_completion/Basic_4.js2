@@ -1,0 +1,6 @@
+package {
+public dyna<caret> class Blabla {
+    public function Blabla() {
+    }
+}
+}

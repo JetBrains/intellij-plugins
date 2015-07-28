@@ -1,0 +1,5 @@
+class Simple {
+    public function Simple() {
+        var x = this.S<caret>
+    }
+}

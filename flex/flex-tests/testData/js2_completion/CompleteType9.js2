@@ -1,0 +1,12 @@
+package xxx.yyy {
+  class CCC {
+    function CCC() {}
+    function doIt() {}
+    static function doItStatic() {}
+  }
+}
+
+import xxx.yyy.CCC;
+var c:CCC
+
+c.CC<caret>

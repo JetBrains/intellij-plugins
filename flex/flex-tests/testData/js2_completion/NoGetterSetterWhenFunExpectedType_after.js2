@@ -1,0 +1,3 @@
+function foo(x:Function) {}
+function get bar():int { return 1; }
+foo(ba<caret>)

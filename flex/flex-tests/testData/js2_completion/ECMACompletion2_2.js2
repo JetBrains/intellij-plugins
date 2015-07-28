@@ -1,0 +1,6 @@
+interface Element {
+    function fff():void;
+}
+
+var e:Element = null;
+e.f<caret>

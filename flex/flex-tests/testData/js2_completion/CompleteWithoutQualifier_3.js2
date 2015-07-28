@@ -1,0 +1,8 @@
+package {
+class C extends A {
+  function aaa() {
+    var field
+    aaa(fie<caret>)
+  }
+}
+}

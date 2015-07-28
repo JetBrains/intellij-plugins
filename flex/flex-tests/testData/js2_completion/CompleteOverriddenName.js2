@@ -1,0 +1,15 @@
+class A {
+    function foo() {}
+    function foobar() {}
+}
+
+class B extends A {
+    override function foo() {}
+}
+
+class C extends B {
+    override function foo() {}
+}
+
+var a:C
+a.f<caret>

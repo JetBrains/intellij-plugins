@@ -1,0 +1,15 @@
+class C {
+  var field2;
+}
+
+class A extends C {
+  var field3;
+  
+  function aaa() {
+    super.fi<caret>
+  }
+}
+
+class B {
+  var field4;
+}

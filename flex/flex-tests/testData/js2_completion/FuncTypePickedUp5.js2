@@ -1,0 +1,27 @@
+import package1.A;
+import package2.B;
+
+package package1 {
+  public class _A {
+    public native function method();
+  }
+
+  public class A extends _A {
+
+  }
+}
+
+package package2 {
+  public class B {
+    public native function met();
+  }
+}
+
+class C {
+  native function get myvar():A;
+  native function get myDvar2():B;
+
+  function C() {
+    myvar.m<caret>
+  }
+}

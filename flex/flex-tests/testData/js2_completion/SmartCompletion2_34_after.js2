@@ -1,0 +1,5 @@
+class SmartCompletionTest {
+    function SmartCompletionTest():String {
+        return true<caret> ?
+    }
+}

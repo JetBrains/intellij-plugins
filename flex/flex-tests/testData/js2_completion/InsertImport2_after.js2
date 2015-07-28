@@ -1,0 +1,4 @@
+import foo.AAA<caret>
+package foo {
+  public class AAA {}
+}

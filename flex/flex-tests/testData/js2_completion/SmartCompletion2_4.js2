@@ -1,0 +1,6 @@
+interface SmartCompletion {}
+class MySmartCompletion implements SmartCompletion {}
+function foo(x:SmartCompletion) {}
+var xxx:MySmartCompletion
+var yyy:Object;
+foo(<caret>);

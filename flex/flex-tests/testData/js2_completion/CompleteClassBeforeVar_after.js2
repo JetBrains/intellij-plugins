@@ -1,0 +1,12 @@
+class Simple {
+    public function Simple() {
+        BarBaz<caret>
+        var x;
+    }
+}
+
+package foo {
+  public class BarBaz {}
+}
+
+import foo.BarBaz;

@@ -1,0 +1,12 @@
+package aaa {
+  class A {
+    var field2;
+    function aaa() {
+      this.f<caret>
+    }
+  }
+}
+
+class B {
+  var field3;
+}

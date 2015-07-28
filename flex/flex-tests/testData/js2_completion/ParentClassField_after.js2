@@ -1,0 +1,18 @@
+package com.bla.blub
+{
+class A
+{
+  protected static const SOMECONSTANT: Number = 0.0;
+}
+}
+package com.bla.blub
+{
+ class B extends A
+ {
+  private function someFunction(): void
+  {
+    var f: Number = SOMECONSTANT<caret>
+  }
+ }
+
+}

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -33,6 +34,11 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 
 public class ECMAScriptLevelFourCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
 
   private JSFunction createFakeFunction() {
     return createFakeClass().findFunctionByName("a");

@@ -1,0 +1,8 @@
+class SomeEnum {
+    public static const FOO:SomeEnum = new SomeEnum();
+    public static const BAR:SomeEnum = new SomeEnum();
+
+    function test():void {
+        var se:SomeEnum = FOO<caret>
+    }
+}

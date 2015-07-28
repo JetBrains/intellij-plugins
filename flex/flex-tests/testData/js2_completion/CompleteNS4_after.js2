@@ -1,0 +1,12 @@
+package mypackage {
+  class B {
+    function MyField():int {}
+  }
+  class A extends B {
+    My<caret>AAA function aaa() {}
+  }
+}
+
+package mypackage {
+  namespace MyNamespace;
+}

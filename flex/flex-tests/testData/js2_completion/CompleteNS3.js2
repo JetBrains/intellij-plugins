@@ -1,0 +1,5 @@
+My<caret>
+
+package mypackage {
+  public namespace MyNamespace;
+}

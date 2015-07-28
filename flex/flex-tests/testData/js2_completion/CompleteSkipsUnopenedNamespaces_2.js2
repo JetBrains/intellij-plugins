@@ -1,0 +1,12 @@
+package {
+class CompleteSkipsUnopenedNamespaces_2 {
+    namespace Foo;
+
+    Foo var xxx;
+
+    function foo():void {
+        use namespace Foo;
+        xx<caret>
+    }
+}
+}
