@@ -1,0 +1,70 @@
+JSFile:StaticBlock.js2
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n')
+    JSClass
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('TTT')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      JSBlockStatement
+        PsiElement(JS:LBRACE)('{')
+        PsiWhiteSpace('\n      ')
+        JSVarStatement
+          JSAttributeList
+            JSAttribute
+              PsiElement(JS:LBRACKET)('[')
+              PsiElement(JS:IDENTIFIER)('Embed')
+              PsiElement(JS:LPAR)('(')
+              JSAttributeNameValuePair
+                PsiElement(JS:IDENTIFIER)('source')
+                PsiElement(JS:EQ)('=')
+                PsiElement(JS:STRING_LITERAL)('"xxx"')
+              PsiElement(JS:RPAR)(')')
+              PsiElement(JS:RBRACKET)(']')
+            PsiWhiteSpace('\n      ')
+            PsiElement(JS:PUBLIC_KEYWORD)('public')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:STATIC_KEYWORD)('static')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:CONST_KEYWORD)('const')
+          PsiWhiteSpace(' ')
+          ActionScriptVariable
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:COLON)(':')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Class')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n      ')
+        JSExpressionStatement
+          JSCallExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('Alert')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('show')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"a = "')
+                PsiElement(JS:PLUS)('+')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('a')
+              PsiElement(JS:RPAR)(')')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n    ')
+        PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n  ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')

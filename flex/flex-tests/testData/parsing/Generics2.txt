@@ -1,0 +1,188 @@
+JSFile:Generics2.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('a')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Vector')
+        JSGenericSignature
+          PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Column')
+          PsiElement(JS:GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSCallExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Vector')
+          JSGenericSignature
+            PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Column')
+            PsiElement(JS:GT)('>')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSArrayLiteralExpression
+            PsiElement(JS:LBRACKET)('[')
+            JSNewExpression
+              PsiElement(JS:NEW_KEYWORD)('new')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('Column')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('0')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('2')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:RBRACKET)(']')
+          PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('rows')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Vector')
+        JSGenericSignature
+          PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Row')
+          PsiElement(JS:GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSNewExpression
+        PsiElement(JS:NEW_KEYWORD)('new')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Vector')
+          JSGenericSignature
+            PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Row')
+            PsiElement(JS:GT)('>')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('rows')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('push')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSNewExpression
+          PsiElement(JS:NEW_KEYWORD)('new')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Row')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('0')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('25')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('rows2')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Vector')
+        JSGenericSignature
+          PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Row')
+          PsiElement(JS:GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSCallExpression
+        JSReferenceExpression
+          JSNewExpression
+            PsiElement(JS:NEW_KEYWORD)('new')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Vector')
+              JSGenericSignature
+                PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('Row')
+                PsiElement(JS:GT)('>')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              PsiElement(JS:RPAR)(')')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('concat')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSNewExpression
+            PsiElement(JS:NEW_KEYWORD)('new')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Row')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('183')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('3')
+              PsiElement(JS:RPAR)(')')
+          PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CONST_KEYWORD)('const')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiElement(JS:COLON)(':')
+      PsiElement(JS:ANY_IDENTIFIER)('*')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSNewExpression
+        PsiElement(JS:NEW_KEYWORD)('new')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Vector')
+          JSGenericSignature
+            PsiElement(JS:GENERIC_SIGNATURE_START)('.<')
+            PsiElement(JS:ANY_IDENTIFIER)('*')
+            PsiElement(JS:GT)('>')
+    PsiElement(JS:SEMICOLON)(';')

@@ -1,0 +1,8 @@
+data.appendChild(<object id="{i}"/>);
+trace(<object id="{i}"/> / <object id="{i}"/>);
+trace(<object id="{i}"/> < <object id="{i}"/>);
+var data2:XML = <data><name><![CDATA[dd]]></name></data>;
+trace(data2.name.toString());
+
+var xml:XML = <xml><!--<data>2</data>--></xml>
+

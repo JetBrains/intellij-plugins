@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.javascript.dialects.ECMAL4ParserDefinition;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lang.xml.XmlASTFactory;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
@@ -28,7 +28,7 @@ public class ECMAScriptLevelFourParsingTest extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + "/plugins/JavaScriptLanguage/testData/psi";
+    return FlexTestUtils.getTestDataPath("parsing");
   }
 
   public void testBasic() throws Exception {

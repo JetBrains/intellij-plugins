@@ -1,0 +1,5 @@
+var x:Array = [,];
+var x1:Array = [,,];
+var x2:Array = [,2];
+var x3:Array = [1,];
+var x4:Array = [,1,];

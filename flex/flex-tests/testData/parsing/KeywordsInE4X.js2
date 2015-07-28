@@ -1,0 +1,4 @@
+var someXML:XML = <name fff="0" default="1">K</name>;
+var attribute:XMLList = someXML.@default;
+
+err.function = 2;

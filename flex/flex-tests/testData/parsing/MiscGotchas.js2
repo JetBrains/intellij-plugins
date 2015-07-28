@@ -1,0 +1,39 @@
+package com.default.foo {
+import allowed_reserved_words.internal.A3;
+import allowed_reserved_words.dynamic.A4;
+import allowed_reserved_words.each.A5;
+import allowed_reserved_words.set.A10;
+import allowed_reserved_words.get.A9;
+import allowed_reserved_words.namespace.A7;
+import allowed_reserved_words.native.A0;
+import allowed_reserved_words.override.A6;
+import allowed_reserved_words.static.A11;
+import allowed_reserved_words.final.A8;
+  class XXX {
+    private namespace ns = public;
+    private namespace ns2 = ns;
+    function XXX() {
+      try { 
+        import foo.bar.Baz;
+        use namespace yyy;
+        include "Foo.bar"
+        Baz.init();
+      }
+      catch( error: Error ) {}
+    }
+  }
+}
+
+[Bindable()]
+[Bindable())]
+var x;
+
+[native(undefined="ArrayClass")]
+class XXX {}
+
+function foo(f:Object!):some.Object! {
+  var x2:Object? = f;
+  var x3:foo?.Object;
+}
+
+import SomeObject?;

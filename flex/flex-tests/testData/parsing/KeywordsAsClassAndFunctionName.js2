@@ -1,0 +1,16 @@
+class int extends Object {
+  function int() {}
+}
+
+class uint extends Object {
+  function uint() {}
+}
+
+native const undefined:*;
+
+var dynamic = 1;
+var final = 1;
+var override = 1;
+alert(dynamic);
+alert(final);
+alert(override);

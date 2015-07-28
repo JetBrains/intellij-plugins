@@ -1,0 +1,31 @@
+package  {
+    import mx.controls.Button;
+    private static const companyName:String = NAMES::Company;
+
+    CONFIG::debugging
+    public class MyButton extends Button {
+        public function MyButton() {
+            super();
+
+            CONFIG::debugging {
+              setStyle("color", 0x0000FF);
+            }
+
+            setStyle("color", 0x0000FF);
+        }
+    }
+
+    CONFIG::release
+    public class MyButton extends Button {
+        public function MyButton() {
+            super();
+
+            setStyle("color", 0xFF0000);
+        }
+    }
+}
+
+CONFIG::release {
+  import com.asfusion.mate.utils.debug.Debugger;
+  var x;  
+}

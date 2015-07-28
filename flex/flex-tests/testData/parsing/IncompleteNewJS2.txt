@@ -1,0 +1,31 @@
+JSFile:IncompleteNewJS2.js2
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('MyClass')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n  ')
+    JSVarStatement
+      JSAttributeList
+        <empty list>
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:ANY_IDENTIFIER)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSNewExpression
+          PsiElement(JS:NEW_KEYWORD)('new')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('i')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')

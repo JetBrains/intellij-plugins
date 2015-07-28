@@ -1,0 +1,6 @@
+var t:Vector.<int> = new<int>[1, 2, 3];
+var t2:Vector.<int> = new<int>;
+var t3:Vector.<int> = new<int;
+var t4:Vector.<int> = new<int>[,];
+var t4_2:Vector.<int> = new<int>[,111];
+var t4_3:Vector.<int> = new<int>[111,];

@@ -1,0 +1,39 @@
+JSFile:IncorrectGenerics.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('ccv')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Vector')
+        PsiErrorElement:Expecting .
+          <empty list>
+        JSGenericSignature
+          PsiElement(JS:LT)('<')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('CompletionCollector')
+          PsiElement(JS:GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSBinaryExpression
+          JSNewExpression
+            PsiElement(JS:NEW_KEYWORD)('new')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Vector')
+            PsiErrorElement:Expecting .
+              <empty list>
+          PsiElement(JS:LT)('<')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('CompletionCollector')
+        PsiElement(JS:GT)('>')
+        PsiErrorElement:expression expected
+          <empty list>
+    PsiElement(JS:SEMICOLON)(';')

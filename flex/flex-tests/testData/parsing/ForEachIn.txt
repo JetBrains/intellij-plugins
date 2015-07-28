@@ -1,0 +1,102 @@
+JSFile:ForEachIn.js2
+  PsiComment(JS:END_OF_LINE_COMMENT)('// For Each ... In, JavaScript 1.6')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('sum')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('0')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('obj')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSObjectLiteralExpression
+        PsiElement(JS:LBRACE)('{')
+        JSProperty
+          PsiElement(JS:IDENTIFIER)('prop1')
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('5')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSProperty
+          PsiElement(JS:IDENTIFIER)('prop2')
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('13')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSProperty
+          PsiElement(JS:IDENTIFIER)('prop3')
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('8')
+        PsiElement(JS:RBRACE)('}')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSForInStatement
+    PsiElement(JS:FOR_KEYWORD)('for')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:EACH_KEYWORD)('each')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LPAR)('(')
+    JSVarStatement
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('item')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:IN_KEYWORD)('in')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('obj')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('sum')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUSEQ)('+=')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('item')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('print')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('sum')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')

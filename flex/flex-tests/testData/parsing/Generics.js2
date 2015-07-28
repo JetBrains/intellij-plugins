@@ -1,0 +1,12 @@
+var a:Vector.<int>
+a = new Vector.<int>()
+
+var b:Vector.<Vector<int>>
+b = new Vector.<Vector<int>>()
+
+var c:Vector.<>
+var c2:Vector.<Vector.<int>>
+
+new<String>["a","b","c"].filter(function(item:String,index:int,vector:Vector.<String>):Boolean {
+    return true;
+});

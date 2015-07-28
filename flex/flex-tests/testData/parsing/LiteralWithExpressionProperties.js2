@@ -1,0 +1,11 @@
+function foo() {
+    var METRIC_SEATS_SUM = "SEATS_SUM";
+    var METRIC_ASM_SUM = "ASM_SUM";
+    var METRIC_FLIGHTS_SUM = "FLIGHTS_SUM";
+
+    return {
+        (""+METRIC_SEATS_SUM): 0,
+        (""+METRIC_ASM_SUM): 0,
+        (""+METRIC_FLIGHTS_SUM): 0
+    };
+}

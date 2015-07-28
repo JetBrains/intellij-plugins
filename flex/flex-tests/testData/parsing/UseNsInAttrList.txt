@@ -1,0 +1,79 @@
+JSFile:UseNsInAttrList.js2
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n')
+    JSClass
+      JSAttributeList
+        JSAttribute
+          PsiElement(JS:LBRACKET)('[')
+          PsiElement(JS:IDENTIFIER)('Deprecated')
+          PsiElement(JS:RBRACKET)(']')
+        PsiWhiteSpace('\n')
+        JSUseNamespaceDirective
+          PsiElement(JS:USE_KEYWORD)('use')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('some_namespace')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n')
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('SomeClass')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        JSAttributeList
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('some_namespace')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('varInNamespace')
+          PsiElement(JS:COLON)(':')
+          PsiElement(JS:INT_KEYWORD)('int')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:VOID_KEYWORD)('void')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          JSExpressionStatement
+            JSAssignmentExpression
+              JSDefinitionExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('varInNamespace')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('5')
+            PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n    ')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')

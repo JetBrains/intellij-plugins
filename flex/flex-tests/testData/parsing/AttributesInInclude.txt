@@ -1,0 +1,20 @@
+JSFile:AttributesInInclude.js2
+  JSDocComment
+    PsiElement(JS:DOC_COMMENT_START)('/**')
+    PsiWhiteSpace(' ')
+    JSDocTag
+      PsiElement(JS:DOC_TAG_NAME)('@MyDoc')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:DOC_COMMENT_END)('*/')
+  PsiWhiteSpace('\n')
+  JSAttributeList
+    JSAttribute
+      PsiElement(JS:LBRACKET)('[')
+      PsiElement(JS:IDENTIFIER)('AccessibilityClass')
+      PsiElement(JS:LPAR)('(')
+      JSAttributeNameValuePair
+        PsiElement(JS:IDENTIFIER)('implementation')
+        PsiElement(JS:EQ)('=')
+        PsiElement(JS:STRING_LITERAL)('"mx.accessibility.LinkButtonAccImpl"')
+      PsiElement(JS:RPAR)(')')
+      PsiElement(JS:RBRACKET)(']')
