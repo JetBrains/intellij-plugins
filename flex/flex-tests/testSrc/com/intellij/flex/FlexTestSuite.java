@@ -65,6 +65,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexExtractSuperTest.class);
     testSuite.addTestSuite(FlexHierarchyTest.class);
     testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
+    testSuite.addTestSuite(CreateASVariableIntentionTest.class);
 
     return testSuite;
   }
