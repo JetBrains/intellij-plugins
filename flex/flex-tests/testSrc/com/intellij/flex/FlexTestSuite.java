@@ -80,6 +80,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexAutoPopupTest.class);
     testSuite.addTestSuite(FlexInlineFunctionTest.class);
     testSuite.addTestSuite(FlexInlineVariableTest.class);
+    testSuite.addTestSuite(ActionScriptStubsTest.class);
 
     return testSuite;
   }
