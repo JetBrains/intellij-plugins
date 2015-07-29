@@ -22,11 +22,18 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -34,12 +41,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.*;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
@@ -50,7 +57,9 @@ import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.resolve.DartResolver;
+import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
@@ -60,6 +69,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -104,6 +114,11 @@ public class DartAnalysisServerService {
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
+
+    @Override
+    public void computedAnalyzedFiles(List<String> directories) {
+      configureImportedLibraries(directories);
+    }
 
     @Override
     public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
@@ -319,6 +334,148 @@ public class DartAnalysisServerService {
     public Map<String, Map<String, List<String>>> getPackageMap() {
       return packageMap;
     }
+  }
+
+  private void configureImportedLibraries(@NotNull final Collection<String> rootsToAddToLib) {
+    runInEventDispatchThread(new Runnable() {
+      @Override
+      public void run() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            doConfigureImportedLibraries(rootsToAddToLib);
+          }
+        });
+      }
+    });
+  }
+
+  private static void runInEventDispatchThread(final Runnable runnable) {
+    try {
+      if (SwingUtilities.isEventDispatchThread()) {
+        runnable.run();
+      }
+      else {
+        ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+          public void run() {
+            runnable.run();
+          }
+        }, ModalityState.defaultModalityState());
+      }
+    }
+    catch (Exception e) {
+      LOG.warn(e);
+    }
+  }
+
+  private void doConfigureImportedLibraries(@NotNull final Collection<String> libraries) {
+    for (final Project project : myRootsHandler.getTrackedProjects()) {
+      if (project == null) continue;
+      final DartSdk sdk = DartSdk.getDartSdk(project);
+      if (sdk == null) continue;
+
+      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+      final SortedSet<String> folderPaths = new TreeSet<String>();
+      final Collection<String> rootsToAddToLib = new THashSet<String>();
+
+      for (final String path : libraries) {
+        if (path != null) {
+          folderPaths.add(PathUtil.getParentPath(FileUtil.toSystemIndependentName(path)));
+        }
+      }
+
+      outer:
+      for (final String path : folderPaths) {
+        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path);
+        if (!path.startsWith(sdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
+          for (String configuredPath : rootsToAddToLib) {
+            if (path.startsWith(configuredPath + "/")) {
+              continue outer; // folderPaths is sorted so subfolders go after parent folder
+            }
+          }
+          rootsToAddToLib.add(path);
+        }
+      }
+
+
+      final Set<Module> affectedModules = new THashSet<Module>();
+      final Module[] modules = ModuleManager.getInstance(project).getModules();
+      for (final Module module : modules) {
+        if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
+          for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
+            // if there is a pubspec, skip this contentRoot
+            if (contentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) continue;
+            affectedModules.add(module);
+          }
+        }
+      }
+
+      final Library library = createDartPackagesLibrary(project, rootsToAddToLib);
+
+      for (final Module module : affectedModules) {
+        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+        try {
+          OrderEntry existingEntry = null;
+          for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
+            if (entry instanceof LibraryOrderEntry &&
+                LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)entry).getLibraryLevel()) &&
+                DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+              existingEntry = entry;
+              break;
+            }
+          }
+
+          final boolean contains = existingEntry != null;
+          final boolean mustContain = affectedModules.contains(module);
+
+          if (contains != mustContain) {
+            if (mustContain) {
+              modifiableModel.addLibraryEntry(library);
+            }
+            else {
+              modifiableModel.removeOrderEntry(existingEntry);
+            }
+          }
+
+          if (modifiableModel.isChanged()) {
+            modifiableModel.commit();
+          }
+        }
+        finally {
+          if (!modifiableModel.isDisposed()) {
+            modifiableModel.dispose();
+          }
+        }
+      }
+    }
+  }
+
+  private static Library createDartPackagesLibrary(@NotNull final Project project,
+                                                         @NotNull final Collection<String> rootsToAddToLib) {
+    Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
+    if (library == null) {
+      final LibraryTableBase.ModifiableModel libTableModel = ProjectLibraryTable.getInstance(project).getModifiableModel();
+      library = libTableModel.createLibrary(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME, DartPackagesLibraryType.LIBRARY_KIND);
+      libTableModel.commit();
+    }
+
+    final LibraryEx.ModifiableModelEx libModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+    try {
+      for (String url : libModel.getUrls(OrderRootType.CLASSES)) {
+        libModel.removeRoot(url, OrderRootType.CLASSES);
+      }
+
+      for (String packageDir : rootsToAddToLib) {
+        libModel.addRoot(VfsUtilCore.pathToUrl(packageDir), OrderRootType.CLASSES);
+      }
+
+      libModel.commit();
+    }
+    finally {
+      if (!Disposer.isDisposed(libModel)) {
+        Disposer.dispose(libModel);
+      }
+    }
+    return library;
   }
 
   public DartAnalysisServerService() {
@@ -1201,6 +1358,7 @@ public class DartAnalysisServerService {
       try {
         myServer.start();
         myServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
+        //myServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
 
