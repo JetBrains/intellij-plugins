@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark">
+    <s:Button id="myButton" skinClass="HostComponentImplicitField_Skin"/>
+    <fx:Script><![CDATA[
+        import spark.components.Group;
+        import spark.components.supportClasses.ButtonBase;
+        import spark.components.supportClasses.SkinnableComponent;
+
+        private function foo():void {
+          var a:Button = myButton.skin.<error descr="Unresolved variable hostComponent">hostComponent</error>;
+          var b:Button = (myButton.skin as HostComponentImplicitField_Skin).hostComponent;
+          var c:ButtonBase = HostComponentImplicitField_Skin(myButton.skin).hostComponent;
+          var d:Group = <error descr="Initializer type spark.components.Button is not assignable to variable type Group">(myButton.skin as HostComponentImplicitField_Skin).hostComponent</error>;
+          (myButton.skin as HostComponentImplicitField_Skin).hostComponent = new Button();
+          (myButton.skin as HostComponentImplicitField_Skin).hostComponent = <error descr="Assigned expression type SkinnableComponent is not assignable to type spark.components.Button">new SkinnableComponent()</error>;
+          var e:Object = HostComponentImplicitField_Skin.<error descr="Instance member is not accessible">hostComponent</error>;
+        }
+        ]]></fx:Script>
+</s:Application>
+

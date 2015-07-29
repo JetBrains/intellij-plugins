@@ -1,0 +1,30 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    .someClass {
+
+    }
+
+    .someOtherClass {
+
+    }
+
+    .class1 {
+
+    }
+
+    <warning>.class2</warning> {
+
+    }
+
+    * {
+      tabStyleName: "someClass";
+      labelStyleName: someOtherClass;
+    }
+  </mx:Style>
+  <mx:Script><![CDATA[
+    function f() {
+      canvas.styleName = "class1";
+    }
+    ]]></mx:Script>
+  <mx:Canvas id="canvas"/>
+</mx:Application>

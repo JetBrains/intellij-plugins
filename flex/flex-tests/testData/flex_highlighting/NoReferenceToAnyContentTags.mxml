@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
+    <fx:Script><![CDATA[
+        var a = myXml;
+        var b = <error>myXmlItem</error>;
+        var c = <error>myXmlInnerItem</error>;
+        var d = myXmlList;
+        var e = <error>myXmlListItem</error>;
+        var f = <error>myXmlListItem2</error>;
+        var g = myModel;
+        var h = <error>myModelItem</error>;
+        var i = <error>myPrivate</error>;
+        var j = <error>myService</error>;
+        var k = <error>myOperation</error>;
+        var l = myHttpService;
+        var m = myWebService;
+
+        ]]></fx:Script>
+    <fx:Declarations>
+        <fx:XML id="myXml">
+            <abc id="myXmlItem">
+                <def id="myXmlInnerItem"/>
+            </abc>
+        </fx:XML>
+
+        <fx:XMLList id="myXmlList">
+            <item id="myXmlListItem"/>
+            <item id="myXmlListItem2"/>
+        </fx:XMLList>
+
+        <fx:Model id="myModel">
+            <item id="myModelItem"/>
+        </fx:Model>
+
+        <s:WebService id="myWebService">
+            <s:operation id="myOperation">
+                <s:request>
+                </s:request>
+            </s:operation>
+        </s:WebService>
+
+        <s:HTTPService id="myHttpService">
+            <s:request>
+            </s:request>
+        </s:HTTPService>
+
+    </fx:Declarations>
+
+    <fx:Private>
+        <abc id="myPrivate"/>
+    </fx:Private>
+</s:Application>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <mx:Script><![CDATA[
+        var foo;
+
+        static function abc() {
+            <error descr="Instance member is not accessible">foo</error> = 0;
+            <error descr="Instance member is not accessible">bar</error>();
+        }
+
+        function bar():void {}
+        ]]></mx:Script>
+
+</mx:Application>

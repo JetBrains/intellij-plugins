@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*" xmlns:pack="pack.*">
+    <local:InRootPackage <error>a</error>="" <error>b</error>="" <error>c</error>="" <error>d</error>=""/>
+    <local:InRootPackage>
+        <<error>local:a</error>/>
+        <<error>local:b</error>/>
+        <<error>local:c</error>/>
+        <<error>local:d</error>/>
+    </local:InRootPackage>
+
+    <pack:InPack a="" b="" c="" d=""/>
+    <pack:InPack>
+        <pack:a/>
+        <pack:b/>
+        <pack:c/>
+        <pack:d/>
+    </pack:InPack>
+
+    <local:Child <error>a</error>="" <error>b</error>="" <error>c</error>="" <error>d</error>="" parent1="" parent2="" parent3="" parent4=""/>
+    <local:Child>
+        <<error>local:a</error>/>
+        <<error>local:b</error>/>
+        <<error>local:c</error>/>
+        <<error>local:d</error>/>
+        <local:parent1/>
+        <local:parent2/>
+        <local:parent3/>
+        <local:parent4/>
+    </local:Child>
+</mx:Application>

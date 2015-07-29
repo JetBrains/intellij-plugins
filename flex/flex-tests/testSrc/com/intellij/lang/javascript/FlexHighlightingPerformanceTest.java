@@ -9,8 +9,6 @@ import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NonNls;
 
 public class FlexHighlightingPerformanceTest extends JSDaemonAnalyzerTestCase {
-  @NonNls private static final String BASE_PATH = "/flex_highlighting";
-
   @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
@@ -23,7 +21,12 @@ public class FlexHighlightingPerformanceTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected String getBasePath() {
-    return BASE_PATH;
+    return "";
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath(FlexHighlightingTest.BASE_PATH);
   }
 
   @Override

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<local:PropertiesSpecifiedByMxmlIdAttributes_otherSuper xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <mx:Button id="buttonId"/>
+</local:PropertiesSpecifiedByMxmlIdAttributes_otherSuper>

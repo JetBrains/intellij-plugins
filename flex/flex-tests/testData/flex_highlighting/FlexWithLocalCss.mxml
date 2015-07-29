@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="<error>http://www.adobe.com/2006/mxml</error>">
+
+    <mx:Style>
+      .aaa {
+        background-color:blue;
+      }
+    </mx:Style>
+    <mx:TextInput id="source" width="100" styleName="aaa"/>
+</mx:Application>

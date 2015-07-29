@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        function foo():void{
+            removeEventListener(Mou<caret>seEvent.CLICK, function() {
+                    });
+        }
+]]></mx:Script>
+</mx:Application>

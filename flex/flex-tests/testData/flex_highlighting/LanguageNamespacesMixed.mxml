@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:mx="<error descr="Different language namespaces are declared in MXML file">http://www.adobe.com/2006/mxml</error>" xmlns:fx="<error descr="Different language namespaces are declared in MXML file">http://ns.adobe.com/mxml/2009</error>"
+               xmlns:s="library://ns.adobe.com/flex/spark">
+    <s:Button xmlns:mx="<error descr="Different language namespaces are declared in MXML file">http://www.adobe.com/2006/mxml</error>"/>
+    <s:Button xmlns:fx="<error descr="Different language namespaces are declared in MXML file">http://ns.adobe.com/mxml/2009</error>"/>
+</s:Application>

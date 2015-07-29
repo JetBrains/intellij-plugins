@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="foo();">
+    <mx:Script><![CDATA[
+        private function foo():void {
+            addEventListener("aa", function(e:mx.events.<error descr="Qualified name is not imported">FlexEvent</error>):void {
+            });
+        }
+        ]]></mx:Script>
+</mx:Application>

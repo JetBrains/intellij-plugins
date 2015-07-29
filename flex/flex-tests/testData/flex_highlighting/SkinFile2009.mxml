@@ -1,0 +1,11 @@
+<Skin xmlns="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009">
+    <fx:Metadata>
+    	[HostComponent("spark.components.Application")]
+    </fx:Metadata>
+
+    <Rect id="backgroundRect">
+        <fill>
+            <SolidColor color="{hostComponent.states.length}" />
+        </fill>
+    </Rect>
+</Skin>

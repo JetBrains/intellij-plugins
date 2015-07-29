@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        function foo() {
+            var lastTenDataGridColumn:DataGridColumn = lastTenDataGrid.columns[0]
+        }
+
+        public var localVar:String="Renderer localVar";
+        ]]></mx:Script>
+    <mx:DataGrid id="lastTenDataGrid">
+    <mx:columns>
+      <mx:DataGridColumn dataField="@id"/>
+    </mx:columns>
+    <mx:dataProvider>
+      <mx:ArrayCollection>
+        <mx:Object>
+          <mx:name>xxx</mx:name>
+        </mx:Object>
+      </mx:ArrayCollection>
+    </mx:dataProvider>
+    <mx:itemRenderer>
+      <mx:Component>
+        <mx:VBox>
+          <mx:Script>
+            var xxx = outerDocument.lastTenDataGrid
+            var yyy = data;
+            public var localVar:String="Renderer localVar";
+          </mx:Script>
+          <mx:TextArea text="{'Renderer localVar= ' + localVar}"/>
+          <mx:TextArea text="{'App localVar= ' + outerDocument.localVar}"/>
+
+        </mx:VBox>
+      </mx:Component>
+    </mx:itemRenderer>
+  </mx:DataGrid>
+</mx:Application>

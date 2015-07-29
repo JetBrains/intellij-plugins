@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300">
+  <mx:Script><![CDATA[
+   [Bindable] public var model2:XML;  
+  ]]></mx:Script>
+  <mx:Metadata>
+    [Event(name="select2", type="flash.events.Event")]
+  </mx:Metadata>
+</mx:Canvas>

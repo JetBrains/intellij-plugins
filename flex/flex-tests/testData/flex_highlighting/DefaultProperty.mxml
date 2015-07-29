@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="<error>INonImplementedInterface2</error>">
+  <mx:transitions>
+    <mx:Transition fromState="*">
+      <<error>mx:Object</error>/>
+      <mx:Resize />
+      <mx:toState>*</mx:toState>
+    </mx:Transition>
+  </mx:transitions>
+</mx:Application>

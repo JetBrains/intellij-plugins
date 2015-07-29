@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:DataGrid width="100%" height="100%">
+    <mx:columns>
+      <mx:DataGridColumn width="100" headerText="Field" itemRenderer="{new ClassFactory(Label)}"/>
+    </mx:columns>
+  </mx:DataGrid>
+  <mx:Label />
+  <mx:Script><![CDATA[
+    import mypackage.ClassFactory;
+    var x2:* = [function (z:*):void { trace("inside:"+z)}];
+    function foo() {
+    x2.toString = function aaa():* {
+      return "it"
+    };
+    }
+    ]]></mx:Script>
+</mx:Application>

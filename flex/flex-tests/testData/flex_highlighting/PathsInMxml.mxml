@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Style source="<error>aaa.css</error>" />
+    <mx:Script source="<error>aaa.as</error>" />
+    <mx:Image source="<error>aaa.as</error>" />
+    <mx:Script source="PathsInMxml.mxml" />
+    <mx:Style source="PathsInMxml.mxml" />
+    <mx:Image source="PathsInMxml.mxml" />
+    <mx:ArrayCollection source="not_a_file_reference" />
+
+</mx:Application>

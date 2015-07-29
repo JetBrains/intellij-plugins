@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="foo();">
+    <mx:Script><![CDATA[
+        import mx.events.FlexEvent;
+
+        private function foo():void {
+            addEventListener("aa", function (e:FlexEvent):void {
+            });
+        }
+        ]]></mx:Script>
+</mx:Application>

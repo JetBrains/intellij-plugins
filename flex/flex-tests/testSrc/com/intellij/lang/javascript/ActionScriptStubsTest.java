@@ -32,7 +32,12 @@ public class ActionScriptStubsTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected String getBasePath() {
-    return "/flex_highlighting";
+    return "";
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath(FlexHighlightingTest.BASE_PATH);
   }
 
   @Override

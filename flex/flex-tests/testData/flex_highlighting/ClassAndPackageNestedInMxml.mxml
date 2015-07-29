@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="class <error descr="Nested classes are not allowed">SomeClass</error>{}">
+    <mx:Script><![CDATA[
+        <error descr="Nested packages are not allowed">package</error>{}
+        class <error descr="Nested classes are not allowed">SomeClass</error>{}
+        interface <error descr="Nested classes are not allowed">SomeInterface</error>{}
+]]></mx:Script>
+</mx:Application>

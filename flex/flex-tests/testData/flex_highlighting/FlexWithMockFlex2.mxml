@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+  xmlns:mx="http://www.adobe.com/2006/mxml"
+  layout="absolute"
+  currentState="info"
+  xmlns:local="*"
+  xmlns:ui="mypackage.*"
+  implements="foo.baz.IComponent"
+  >
+<mx:Script>
+  function __foo__() {
+    xxx.<error>bar</error>(111);
+  }
+</mx:Script>
+
+  <mx:Metadata/>
+  <local:FlexWithMockFlex2_2 horizontalCenter="0" verticalCenter="0" width="100%" height="100%" hints="hint"
+                             model = "{null}" model2 = "{null}" id="xxx"
+                             select = "<error>foo</error>(event.data);" select2 = "<error>foo</error>(event.data);"
+                             mouseDown="<error>xyz</error>"/>
+  
+  <mx:Text/>
+
+  <<error>local:LoginPanel</error>/>
+
+  <ui:MyClass height="100" employee="1"/>
+  <ui:MyClass3 height="100" employee="1"/>
+  <<error>ui:MyClass2</error> />
+</mx:Application>

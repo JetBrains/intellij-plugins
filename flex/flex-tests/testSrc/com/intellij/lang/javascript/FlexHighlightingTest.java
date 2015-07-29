@@ -117,7 +117,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
-  @NonNls static final String BASE_PATH = JSTestUtils.FLEX_HIGHLIGHTING_BASE_PATH;
+  @NonNls static final String BASE_PATH = "flex_highlighting";
 
   protected Runnable myAfterCommitRunnable = null;
 
@@ -133,6 +133,11 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.METHOD})
   public @interface NeedsJavaModule {
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
   }
 
   private boolean needsJavaModule() {

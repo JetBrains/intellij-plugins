@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:DataGrid>
+        <mx:itemRenderer>
+            <mx:Component>
+                <mx:VBox>
+                    <mx:Script><inject descr="null">
+                        use namespace mx_internal;
+
+                        mx_internal override function <lineMarker descr="overrides method in mx.core.UIComponent"><info descr="instance method">update<caret>Callbacks</info></lineMarker>():void {
+
+                        }
+                        </inject></mx:Script>
+                </mx:VBox>
+            </mx:Component>
+        </mx:itemRenderer>
+    </mx:DataGrid>
+    <mx:DataGrid>
+        <mx:itemRenderer>
+            <mx:Component>
+                <mx:VBox>
+                    <mx:Script><inject descr="null">
+                        use namespace mx_internal;
+
+                      mx_internal override function <lineMarker descr="overrides method in mx.core.UIComponent"><info descr="instance method">updateCallbacks</info></lineMarker>():void {
+                            
+                        }
+                        </inject></mx:Script>
+                </mx:VBox>
+            </mx:Component>
+        </mx:itemRenderer>
+    </mx:DataGrid>
+</mx:Panel>

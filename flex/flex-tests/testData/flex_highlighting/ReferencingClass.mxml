@@ -1,0 +1,3 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:x="aaa.*">
+    <x:CCC zzz = "1" zzz2 = "2" <error>zzz3</error> = "3" <error>zzz4</error> = "4" <error>prototype</error>="111"/>
+</mx:Application>

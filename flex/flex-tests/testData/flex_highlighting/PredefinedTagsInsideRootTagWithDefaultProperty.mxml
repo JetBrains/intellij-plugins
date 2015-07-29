@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+    <fx:DesignLayer id="id1" visible="<error descr="Wrong attribute value">incorrect</error>" <error descr="Attribute incorrect is not allowed here">incorrect</error>="false"/>
+    <fx:Declarations>
+        <fx:DesignLayer id="id2" visible="false"/>
+        <fx:Model/>
+        <fx:Vector type="String" fixed="<error descr="Wrong attribute value">incorrect</error>" length=<error descr="invalid integer value">"incorrect"</error>/>
+        <<error descr="Element fx:Vector doesn't have required attribute type">fx:Vector</error> id="vec" fixed="true" length="1"/>
+    </fx:Declarations>
+    <fx:Script><![CDATA[
+
+]]></fx:Script>
+    <fx:Style/>
+    <fx:Metadata/>
+    <<error descr="Element fx:Model is not allowed here">fx:Model</error>/>
+</s:Group>

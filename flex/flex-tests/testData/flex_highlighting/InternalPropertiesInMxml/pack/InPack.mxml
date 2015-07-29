@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Button xmlns="http://www.adobe.com/2006/mxml">
+    <Script><![CDATA[
+        var a:String;
+        internal var b:String;
+        function set c(s:String):void{}
+        internal function set d(s:String){}
+        ]]></Script>
+</Button>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<componentPackage>
+  <component class="flash.events.Event"/>
+  <component class="flash.events:Event"/>
+  <component class="flash:<error>events:Event</error>"/>
+  <component class="<error>flash:events</error>.<error>Event</error>"/>
+</componentPackage>

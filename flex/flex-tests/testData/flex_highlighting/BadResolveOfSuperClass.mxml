@@ -1,0 +1,17 @@
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+      <![CDATA[
+    import mx.events.DynamicEvent;
+
+    public function foo():void {
+      var error:Error;
+      error.toString();
+      error.<warning>toString1</warning>();
+    }
+
+    ]]>
+   </mx:Script>
+  <mx:Metadata>
+    [Event(name="userEnteredText", type="mx.events.DynamicEvent")]
+  </mx:Metadata>
+</mx:Panel>

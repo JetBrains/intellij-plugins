@@ -1,0 +1,19 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    MyMxmlComponent {
+      myMxmStyle: 1;
+    }
+    
+    FlexWithCss6 {
+      styleInScript: one;
+    }
+
+    * {
+      styleInScript: <error>on</error>;
+      myMxmStyle: 1;
+    }
+  </mx:Style>
+  <mx:Script><![CDATA[
+  [Style(name="styleInScript", inherit="yes", enumeration="one,two")]
+    ]]></mx:Script>
+</mx:Application>

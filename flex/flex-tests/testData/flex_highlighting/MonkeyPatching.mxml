@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<containers:WindowShade
+        xmlns:mx="http://www.adobe.com/2006/mxml"
+        xmlns:containers="flexlib.containers.*"
+        openEnd="whyIsOpenEndRed()">
+    <mx:Script><![CDATA[
+        public function whyIsOpenEndRed():void
+        {
+            //this is a protected member of super class... red!
+            if(_headerButton)
+            {
+                trace("I'm here, but red. That makes me sad.")
+            }
+        }
+]]></mx:Script>
+</containers:WindowShade>

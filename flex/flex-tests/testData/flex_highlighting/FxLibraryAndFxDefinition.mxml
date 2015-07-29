@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+               xmlns:s="library://ns.adobe.com/flex/spark">
+    <fx:Library <error descr="Attribute id is not allowed here">id</error>="not_allowed1">
+        <fx:Definition name="MySquare1" <error descr="Attribute id is not allowed here">id</error>="not_allowed2" <error descr="Attribute incorrect is not allowed here">incorrect</error>="1">
+            <s:XMLListCollection/>
+        </fx:Definition>
+        <<error descr="The <fx:Definition> tag must have exactly one child tag">fx:Definition</error> name="MySquare2">
+        </<error descr="The <fx:Definition> tag must have exactly one child tag">fx:Definition</error>>
+        <<error descr="The <fx:Definition> tag must have exactly one child tag">fx:Definition</error> name="MySquare3">
+            <s:Group/>
+            <s:Group/>
+        </<error descr="The <fx:Definition> tag must have exactly one child tag">fx:Definition</error>>
+        <<error descr="Element fx:Definition doesn't have required attribute name">fx:Definition</error>>
+            <<error descr="The <fx:Library> tag must be the first child of the root document tag">fx:Library</error>/>
+        </<error descr="Element fx:Definition doesn't have required attribute name">fx:Definition</error>>
+
+        <<error descr="Only <fx:Definition> tag is allowed here">s:Group</error>/>
+        <fx:Definition name="buttonDef">
+            <s:Button/>
+        </fx:Definition>
+        <fx:Definition name="GroupDef">
+            <s:Group/>
+        </fx:Definition>
+    </fx:Library>
+
+    <<error descr="The <fx:Library> tag must be the first child of the root document tag">fx:Library</error>/>
+    <<error descr="Element fx:Definition is not allowed here">fx:Definition</error> name="MySquare4">
+    <s:Group>
+        <fx:buttonDef label="a" click="trace(); <error descr="Unresolved function or method incorrect()">incorrect</error>()"/>
+    </s:Group>
+    <fx:GroupDef buttonMode="<error descr="Wrong attribute value">zzz</error>">
+       <fx:buttonDef label="a" click="<error descr="Unresolved function or method incorrect()">incorrect</error>(); trace()"/>
+       <<error descr="Element fx:incorrect is not allowed here">fx:incorrect</error>/>
+   </fx:GroupDef>
+
+    </<error descr="Element fx:Definition is not allowed here">fx:Definition</error>>
+</s:Application>

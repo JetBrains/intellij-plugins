@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="<error>http://www.adobe.com/2006/mxml</error>">
+
+    <mx:HBox>
+      <mx:Tree/>
+        <mx:VBox>
+            <mx:DataGrid/>
+            <mx:TextArea/>
+        </mx:VBox>
+    </mx:HBox>
+    <mx:Script>
+
+        function copy() {
+            //TODO: fixme
+            destination.text2=source.text2
+            <error>destination2</error>.text=<error>source2</error>.text
+        }
+
+        [EventHandler]
+        function foo():void {
+          var test:int;
+        }
+    </mx:Script>
+
+
+    <mx:TextInput id="source" width="100" styleName="aaa"/>
+    <mx:Button label="Copy" />
+    <mx:Button label="Copy2" />
+    <mx:TextInput id="destination" width="100"/>
+    <mx:List itemRenderer="Flex" />
+</mx:Application>

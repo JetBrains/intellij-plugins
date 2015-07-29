@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <local:MxmlAttrPreferResolveToEvent_2 someEvent1="trace()"
+                                          someEvent2="trace()"
+                                          someStyle=<error>"trace()"</error>
+                                          someEffect=<error>"trace()"</error>
+                                          <error>textChanged</error>="trace()"
+  />
+</mx:Application>

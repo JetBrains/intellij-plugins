@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*">
+  <mx:Script>
+    function foo() {}
+    function bar() {
+      xxx.foo();
+    }
+  </mx:Script>
+  <referencingLowercasedComponent id="xxx"/>
+</mx:Application>

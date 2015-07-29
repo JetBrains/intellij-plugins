@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<<error descr="Nonunique object in package">mx:Application</error> xmlns:mx="http://www.adobe.com/2006/mxml">
+</<error descr="Nonunique object in package">mx:Application</error>>

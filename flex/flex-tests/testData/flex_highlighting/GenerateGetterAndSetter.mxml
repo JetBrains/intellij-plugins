@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    var _i:Number;
+    <caret>
+    var _j:Number;
+  </mx:Script>
+</mx:Application>

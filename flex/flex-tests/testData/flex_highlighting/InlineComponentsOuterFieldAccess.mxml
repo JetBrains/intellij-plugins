@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Number id="maxCharsNumber">10</mx:Number>
+    <mx:XMLList id="list"/>
+
+    <mx:DataGrid dataProvider="{list}" >
+        <mx:columns>
+            <mx:DataGridColumn dataField="val2" headerText="val2">
+                <mx:itemRenderer>
+                    <mx:Component>
+                        <mx:Panel>
+                            <mx:Script><![CDATA[
+                                internal var a:int, b:int;
+                                ]]></mx:Script>
+                            <mx:XML/>
+                            <mx:XMLList/>
+                            <mx:XMLListCollection/>
+                            <mx:Button/>
+                            <mx:Style/>
+                            <mx:Binding source="a" destination="b"/>
+                            <mx:Metadata/>
+                            <mx:Model/>
+                            <mx:Script/>
+                            <mx:Panel>
+                                <<error>mx:XML</error>/>
+                                <<error>mx:XMLList</error>/>
+                                <<error>mx:XMLListCollection</error>/>
+                                <mx:Button/>
+                                <mx:Script/>
+                            </mx:Panel>
+                            <mx:TextInput count="{<error>maxCharsNumber</error>}"/>
+                        </mx:Panel>
+                    </mx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
+        </mx:columns>
+    </mx:DataGrid>
+
+    <mx:Script><![CDATA[
+        internal var a:int, b:int;
+        ]]></mx:Script>
+    <mx:XML/>
+    <mx:XMLList/>
+    <mx:XMLListCollection/>
+    <mx:Style/>
+    <mx:Binding source="a" destination="b"/>
+    <mx:Metadata/>
+    <mx:Model/>
+    <mx:Component>
+        <mx:Button/>
+    </mx:Component>
+</mx:Application>

@@ -1,0 +1,6 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <file-specs>
+    <path-element> <error>CompilerHighlighting.xml</error> </path-element>
+    <path-element> ReferencesInCompilerConfig.xml </path-element>
+  </file-specs>
+</flex-config>

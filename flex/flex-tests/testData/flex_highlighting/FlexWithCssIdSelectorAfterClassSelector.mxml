@@ -1,0 +1,20 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    @namespace s "library://ns.adobe.com/flex/spark";
+
+    s|VBox .aa {
+      color: green;
+      fontStyle: normal;
+    }
+
+    s|VBox  .aa#ddd:down {
+      color: blue;
+      fontStyle: normal;
+    }
+
+  </mx:Style>
+
+  <mx:VBox>
+    <mx:Button label="pseudo class ancestor" id="ddd" styleName="aa"/>
+  </mx:VBox>
+</mx:Application>

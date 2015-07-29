@@ -1,0 +1,10 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import <error>LibSources</error>;
+        import mx.core.<error>LibSources2</error>;
+
+        var a1:<error>LibSources</error>;
+        var a2:<error>LibSources2</error>;
+        var a3:mx.core.<error>LibSources2</error>;
+        ]]></mx:Script>
+</mx:Application>

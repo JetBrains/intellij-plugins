@@ -1,0 +1,9 @@
+.myClass {
+  cffHinting: horizontalStem;
+}
+
+* {
+  cffHinting: <error descr="Mismatched property value (horizontalStem | verticalStem | <string> | undefined | PropertyReference | Embed?)">horizontalstem</error>;
+  disabledColor: red;
+  borderColor: <error descr="Mismatched property value (<color> | <number> | undefined | PropertyReference | Embed?)">pink</error>; 
+}

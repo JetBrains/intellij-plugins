@@ -45,7 +45,12 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected String getBasePath() {
-    return FlexHighlightingTest.BASE_PATH;
+    return "";
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath(FlexHighlightingTest.BASE_PATH);
   }
 
   @Override

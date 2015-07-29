@@ -1,0 +1,11 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Model id="h1">
+        <mx:anything>
+            <a:anythingElse xmlns:a="not.a.package.*" any="any" goodRef="{a}" badRef="{<error>b</error>}"/>
+        </mx:anything>
+    </mx:Model>
+
+    <mx:Script><![CDATA[
+        private var a:int;
+        ]]></mx:Script>
+</mx:Application>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<VBox xmlns="http://www.adobe.com/2006/mxml">
+    <Script>
+      public var myproperty2:Boolean;
+    </Script>
+</VBox>

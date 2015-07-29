@@ -321,8 +321,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
       }
     });
 
-    JSTestUtils.addFlexLibrary(false, module2, "Flex Lib", true, JSTestUtils.getHighlightingTestDataBase() + "/lib/", "flexlib.swc", null,
-                               null);
+    JSTestUtils
+      .addFlexLibrary(false, module2, "Flex Lib", true, FlexTestUtils.getTestDataPath("flexlib/"), "flexlib.swc", null, null);
 
     doHighlightingTest("_1");
 

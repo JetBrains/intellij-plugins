@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        <warning descr="Unused import">import flash.filters.BitmapFilterQuality;</warning>
+        var t:BitmapFilterQuality;
+
+        import mx.filters.BaseFilter;
+        var t2:BaseFilter;
+
+        import mx.core.IFlexModuleFactory;
+        var t3: IFlexModuleFactory;
+
+        ]]></mx:Script>
+</mx:Application>

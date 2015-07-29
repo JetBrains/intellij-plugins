@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<<warning descr="Object is located in file out of source root, certain functionality will not be available">mx:Application</warning> xmlns:mx="http://www.adobe.com/2006/mxml">
+</<warning>mx:Application</warning>>

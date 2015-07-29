@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="new My<caret>Class(foo())">
+  <mx:Script><![CDATA[
+import com.MyClass;
+      function foo():void {}
+  ]]></mx:Script>
+</mx:Application>

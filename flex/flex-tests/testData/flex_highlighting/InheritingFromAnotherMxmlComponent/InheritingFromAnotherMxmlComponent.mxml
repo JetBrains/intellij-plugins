@@ -1,0 +1,10 @@
+<x:InheritingFromAnotherMxmlComponent2 xmlns:x="xxx.*" xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    public override function foo():void {
+      dispatchEvent(new Event("a"));
+      mySuperField.selected = <error descr="Assigned expression type void is not assignable to type Boolean">superMethod()</error>;
+      super.foo();
+    }
+  </mx:Script>
+  <mx:Button change="<error>bar</error>()"/>
+</x:InheritingFromAnotherMxmlComponent2>

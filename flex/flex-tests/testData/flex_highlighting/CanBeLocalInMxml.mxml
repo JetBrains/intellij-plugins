@@ -1,0 +1,10 @@
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+  <fx:Script source="CanBeLocalInMxml_other.as"/>
+  <fx:Script><![CDATA[
+    private var <warning descr="Field can be converted to a local variable">bar</warning>:int;
+
+    public function baz():void {
+      bar = 1;
+    }
+    ]]></fx:Script>
+</s:Application>

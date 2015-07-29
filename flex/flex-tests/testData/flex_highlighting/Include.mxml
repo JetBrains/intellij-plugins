@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="on<caret>CreationComplete()">
+    <mx:Script source="Include_2.as">
+      a.
+    </mx:Script>
+    <mx:Script>
+      function foo(x:MyEvent):void {}
+    </mx:Script>
+    <mx:Button id="theBtn" click="Alert.show('Hello, world')" label="Say Hello"/>
+</mx:Application>

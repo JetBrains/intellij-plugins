@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    public function foo():void {}
+    public function superMethod():void {}
+  </mx:Script>
+  <mx:Button id="mySuperField"/>
+</mx:Application>
