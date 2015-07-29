@@ -36,7 +36,7 @@ import java.util.List;
 
 public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
-  private static final String BASE_PATH = "/gotoImplementations/";
+  private static final String BASE_PATH = "gotoImplementations/";
 
   private Runnable myAfterCommitRunnable = null;
 
@@ -48,7 +48,7 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

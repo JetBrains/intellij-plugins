@@ -14,12 +14,12 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
   @Override
   @NonNls
   public String getBasePath() {
-    return "/highlighting/intention/convertToLocal";
+    return "/convertToLocal";
   }
 
   @Override
   public String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override
