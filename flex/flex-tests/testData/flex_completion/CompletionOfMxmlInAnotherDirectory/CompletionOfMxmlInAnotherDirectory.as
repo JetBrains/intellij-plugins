@@ -1,0 +1,1 @@
+var a:CompletionOf<caret>

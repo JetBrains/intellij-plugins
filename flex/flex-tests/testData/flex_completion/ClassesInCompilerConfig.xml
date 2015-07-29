@@ -1,0 +1,10 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <debug>true</debug>
+  </compiler>
+  <include-classes>
+    <class>
+      Obj<caret>
+    </class>
+  </include-classes>
+</flex-config>

@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Button id="button1"
+click="Alert.show(resourceManager.getString('main', 'hello.world'))"
+label="@Resource(bun<caret>)" />
+</mx:Application>

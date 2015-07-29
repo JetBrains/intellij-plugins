@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="doInit()">
+    <mx:Script>
+        <![CDATA[
+        private function doInit():void {
+            navigateToURL()<caret>
+        }
+        ]]>
+    </mx:Script>
+</mx:Application>

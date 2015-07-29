@@ -1,0 +1,1 @@
+public var com.xxx.myvar;

@@ -45,6 +45,11 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

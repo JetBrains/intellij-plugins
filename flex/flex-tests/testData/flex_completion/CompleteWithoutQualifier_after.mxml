@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        function aaa() {
+          addEventListener(<caret>)
+        }
+    </mx:Script>
+</mx:Application>

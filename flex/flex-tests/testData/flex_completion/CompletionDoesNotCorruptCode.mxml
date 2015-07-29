@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        var myObject1:Object;
+        var myObject2:Object;
+
+        function foo() {
+          myo<caret>
+        }
+
+]]></mx:Script>
+</mx:Application>

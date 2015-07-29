@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        function f() {
+            myComponent.setStyle("verticalAlign");
+        }
+
+        ]]></mx:Script>
+    <mx:Button id="myComponent">
+</mx:Application>

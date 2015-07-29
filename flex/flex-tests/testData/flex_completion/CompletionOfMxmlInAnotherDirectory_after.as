@@ -1,0 +1,3 @@
+import aaa.CompletionOfMxmlInAnotherDirectory;
+
+var a:CompletionOfMxmlInAnotherDirectory<caret>

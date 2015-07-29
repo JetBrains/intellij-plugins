@@ -1,0 +1,10 @@
+<mx:Smth xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    var abcde;
+
+    abc<caret>
+
+    function foo() {}
+
+  </mx:Script>
+</mx:Smth>

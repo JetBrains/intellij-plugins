@@ -56,6 +56,8 @@ import java.util.Map;
  * @by Maxim.Mossienko
  */
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
+  static final String BASE_PATH = "/flex_completion/";
+
   @NonNls private static final String MXML_EXTENSION = "mxml";
 
   protected Runnable myAfterCommitRunnable = null;
@@ -72,6 +74,16 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     mySmartCompletionTests.addAll(
       Arrays.asList("CompletionInMxml2", "CompletionInMxml3", "PickupArrayElementType", "PickupArrayElementType2",
                     "PickupArrayElementType3", "CompleteAfterThisInMxml", "BindingCompletion"));
+  }
+
+  @Override
+  protected String getBasePath() {
+    return BASE_PATH;
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override
@@ -172,13 +184,6 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
         }
       }
     };
-  }
-
-  static final String BASE_PATH = "/flex_completion/";
-
-  @Override
-  protected String getBasePath() {
-    return BASE_PATH;
   }
 
   @Override

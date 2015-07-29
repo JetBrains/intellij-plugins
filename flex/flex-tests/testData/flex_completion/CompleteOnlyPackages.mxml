@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="Obj<caret>">
+  <mx:Script>
+  </mx:Script>
+</mx:Application>

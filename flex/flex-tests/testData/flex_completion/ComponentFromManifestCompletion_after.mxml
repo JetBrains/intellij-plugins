@@ -1,0 +1,3 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <my:ComponentFromManifest<caret> xmlns:my="http://MyNamespace"/>
+</mx:Application>

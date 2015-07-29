@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    function foo() {
+      contentBox.width<caret>
+    }
+  </mx:Script>
+  <mx:List id="contentBox" minWidth="310" minHeight="70" styleName="contentBox"
+           horizontalScrollPolicy="off" verticalScrollPolicy="off" resizeEffect="Resize" verticalGap="3"/>
+</mx:Application>

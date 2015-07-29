@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Panel/>
+  <mx:XMLListCollection id="id1">
+    <mx:XMLList id="someId"/>
+  </mx:XMLListCollection>
+</mx:Panel>

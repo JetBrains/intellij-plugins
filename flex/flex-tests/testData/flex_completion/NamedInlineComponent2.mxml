@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                width="700">
+    <mx:Script>
+        <![CDATA[
+
+        ]]>
+    </mx:Script>
+
+    <mx:DataGrid>
+        <mx:columns>
+            <mx:DataGridColumn dataField="A">
+                <mx:itemEditor>
+                    <mx:Component className="MyEditor">
+                        <mx:DataGrid creationComplete="var t : MyEditor; var t2: MyEditor2; var t3: MyEditor3;">
+                            <mx:Script><![CDATA[
+
+                                ]]></mx:Script>
+                            <mx:columns>
+                                <mx:DataGridColumn dataField="B">
+                                    <mx:itemEditor>
+                                        <mx:Component className="MyEditor2">
+                                            <mx:DataGrid creationComplete="var t : MyEditor; var t2: MyEditor2; var t3: MyEditor3;">
+                                                <mx:Script><![CDATA[
+
+                                                ]]></mx:Script>
+                                                <mx:columns>
+                                                    <mx:DataGridColumn dataField="C">
+                                                        <mx:itemEditor>
+                                                            <mx:Component className="MyEditor3">
+                                                                <mx:VBox backgroundColor="yellow">
+                                                                    <mx:Script><![CDATA[
+                                                                      var t : MyEdito<caret>
+                                                                    ]]></mx:Script>
+                                                                </mx:VBox>
+                                                            </mx:Component>
+                                                        </mx:itemEditor>
+                                                    </mx:DataGridColumn>
+                                                </mx:columns>
+                                            </mx:DataGrid>
+                                        </mx:Component>
+                                    </mx:itemEditor>
+                                </mx:DataGridColumn>
+                            </mx:columns>
+                        </mx:DataGrid>
+                    </mx:Component>
+                </mx:itemEditor>
+            </mx:DataGridColumn>
+        </mx:columns>
+    </mx:DataGrid>
+</mx:Application>

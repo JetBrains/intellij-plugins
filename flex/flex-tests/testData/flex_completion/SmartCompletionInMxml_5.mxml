@@ -1,0 +1,9 @@
+<mx:Hz xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Metadata>
+    [Event(name="yyy", type="mypackage.MyEvent")]
+  </mx:Metadata>
+  <mx:Script>
+    <![CDATA[
+    this.addEventListener(My<caret>)
+  ]]></mx:Script>
+</mx:Hz>

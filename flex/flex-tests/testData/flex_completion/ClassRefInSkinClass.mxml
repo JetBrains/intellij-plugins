@@ -1,0 +1,3 @@
+<s:Application xmlns:s="library://ns.adobe.com/flex/spark" xmlns:ss="spark.components.*">
+  <ss:Button skinClass="ClassRefInSkin<caret>"/>
+</s:Application>

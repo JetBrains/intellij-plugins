@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:mx="library://ns.adobe.com/flex/mx">
+
+    <mx:Button id="but1" includeIn="Parent2"/>
+    <s:Button id="but2" includeIn="Parent2"/>
+
+    <fx:Reparent target="a" excludeFrom="Parent2, Pa" >
+        <>
+    </fx:Reparent>
+    <s:Panel>
+        <fx:Re>
+    </s:Panel>
+
+    <mx:Panel>
+        <mx:Button id="but3" includeIn="Parent2"/>
+    </mx:Panel>
+
+    <s:states>
+        <s:State name="Parent1"/>
+        <s:State name="Parent2"/>
+    </s:states>
+
+</s:Application>
