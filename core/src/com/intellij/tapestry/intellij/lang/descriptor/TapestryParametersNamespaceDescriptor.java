@@ -15,12 +15,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Fedor Korotkov
  */
 public class TapestryParametersNamespaceDescriptor implements XmlNSDescriptor {
-  public static final TapestryParametersNamespaceDescriptor INSTANCE = new TapestryParametersNamespaceDescriptor();
   private XmlFile myFile;
   private XmlElement myElement;
-
-  private TapestryParametersNamespaceDescriptor() {
-  }
 
   public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
     return null;
@@ -31,7 +27,9 @@ public class TapestryParametersNamespaceDescriptor implements XmlNSDescriptor {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
     XmlTag rootTag = doc.getRootTag();
     if (rootTag == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    return DescriptorUtil.getTmlSubelementDescriptors(rootTag);
+    TapestryNamespaceDescriptor tapestryNamespaceDescriptor = TapestryXmlExtension.getTapestryTemplateDescriptor(rootTag);
+    if (tapestryNamespaceDescriptor == null) return XmlElementDescriptor.EMPTY_ARRAY;
+    return DescriptorUtil.getTmlSubelementDescriptors(rootTag, tapestryNamespaceDescriptor);
   }
 
   @Nullable

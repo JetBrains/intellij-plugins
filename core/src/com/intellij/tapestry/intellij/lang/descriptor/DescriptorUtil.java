@@ -2,6 +2,7 @@ package com.intellij.tapestry.intellij.lang.descriptor;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlElement;
@@ -168,37 +169,40 @@ class DescriptorUtil {
     return param == null ? null : new TapestryAttributeDescriptor(param);
   }
 
-  public static XmlElementDescriptor[] getTmlSubelementDescriptors(@NotNull XmlTag context) {
+  public static XmlElementDescriptor[] getTmlSubelementDescriptors(@NotNull XmlTag context, TapestryNamespaceDescriptor descriptor) {
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(context);
     if (project == null) return XmlElementDescriptor.EMPTY_ARRAY;
     final String namespacePrefix = context.getPrefixByNamespace(TapestryXmlExtension.getTapestryNamespace(context));
-    final XmlElementDescriptor[] namespaceElements = getElementDescriptors(project.getAvailableElements(), namespacePrefix);
+    final XmlElementDescriptor[] namespaceElements = getElementDescriptors(project.getAvailableElements(), namespacePrefix, descriptor, context);
     final String parametersPrefix = context.getPrefixByNamespace(TapestryConstants.PARAMETERS_NAMESPACE);
     final Component component = TapestryUtils.getTypeOfTag(context);
     if (parametersPrefix == null || component == null) {
       return namespaceElements;
     }
-    final XmlElementDescriptor[] parameterElements = getParameterDescriptors(component, parametersPrefix, findMixins(context));
+    final XmlElementDescriptor[] parameterElements = getParameterDescriptors(component, parametersPrefix, findMixins(context), descriptor);
     return ArrayUtil.mergeArrays(namespaceElements, parameterElements);
   }
 
   private static XmlElementDescriptor[] getElementDescriptors(@NotNull Collection<PresentationLibraryElement> elements,
-                                                              String namespacePrefix) {
+                                                              String namespacePrefix,
+                                                              TapestryNamespaceDescriptor descriptor,
+                                                              XmlTag context) {
     TapestryTagDescriptor[] descriptors = new TapestryTagDescriptor[elements.size()];
     int i = 0;
     for (PresentationLibraryElement component : elements) {
-      descriptors[i++] = new TapestryTagDescriptor(component, namespacePrefix);
+      descriptors[i++] = new TapestryTagDescriptor(component, namespacePrefix, descriptor);
     }
-    return descriptors;
+    final XmlElementDescriptor[] descriptorsFromSchema = descriptor.getSuperRootElementsDescriptors(PsiTreeUtil.getParentOfType(context, XmlDocument.class));
+    return ArrayUtil.mergeArrays(descriptors, descriptorsFromSchema);
   }
 
   private static XmlElementDescriptor[] getParameterDescriptors(@NotNull final Component component,
                                                                 final String namespacePrefix,
-                                                                List<Mixin> mixins) {
+                                                                List<Mixin> mixins, final TapestryNamespaceDescriptor descriptor) {
     final Function<TapestryParameter, XmlElementDescriptor> mapping = new Function<TapestryParameter, XmlElementDescriptor>() {
       @Override
       public XmlElementDescriptor fun(TapestryParameter parameter) {
-        return new TapestryParameterDescriptor(component, parameter, namespacePrefix);
+        return new TapestryParameterDescriptor(component, parameter, namespacePrefix, descriptor);
       }
     };
     final List<XmlElementDescriptor> result =
@@ -217,7 +221,7 @@ class DescriptorUtil {
     if (tmlDescriptor != null) return tmlDescriptor;
     XmlElementDescriptor htmlDescriptor = getHtmlTagDescriptor(tag, file);
     final List<Mixin> mixins = findMixins(tag);
-    return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag), mixins) : null;
+    return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag), mixins, TapestryXmlExtension.getTapestryTemplateDescriptor(tag)) : null;
   }
 
   @Nullable
@@ -253,20 +257,32 @@ class DescriptorUtil {
   @Nullable
   public static XmlElementDescriptor getTmlTagDescriptor(XmlTag tag) {
     final String prefix = tag.getNamespacePrefix();
-    if (TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace())) {
+    final String tagNamespace = tag.getNamespace();
+
+    if (TapestryXmlExtension.isTapestryTemplateNamespace(tagNamespace)) {
       final Component component = TapestryUtils.getTypeOfTag(tag);
       final List<Mixin> mixins = findMixins(tag);
+      final TapestryNamespaceDescriptor tapestryNamespaceDescriptor = TapestryXmlExtension.getTapestryTemplateDescriptor(tag);
+
+      if (mixins.isEmpty() && component == null) {
+        final XmlElementDescriptor descriptorFromTapestrySchema = tapestryNamespaceDescriptor.getElementDescriptor(tag.getLocalName(), tagNamespace);
+        if (descriptorFromTapestrySchema != null) {
+          return new TapestryHtmlTagDescriptor(descriptorFromTapestrySchema, null, mixins, tapestryNamespaceDescriptor);
+        }
+
+      }
       return component == null
-             ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix)
-             : new TapestryTagDescriptor(component, mixins, prefix);
+             ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix, tapestryNamespaceDescriptor)
+             : new TapestryTagDescriptor(component, mixins, prefix, tapestryNamespaceDescriptor);
     }
-    else if (TapestryConstants.PARAMETERS_NAMESPACE.equals(tag.getNamespace())) {
+    else if (TapestryConstants.PARAMETERS_NAMESPACE.equals(tagNamespace)) {
       final Component component = TapestryUtils.getTypeOfTag(tag.getParentTag());
       final String parameterName = tag.getLocalName();
       final TapestryParameter parameter = component == null ? null : component.getParameters().get(parameterName);
+      final TapestryNamespaceDescriptor tapestryNamespaceDescriptor = TapestryXmlExtension.getTapestryTemplateDescriptor(tag);
       return parameter == null
-             ? new TapestryUnknownTagDescriptor(parameterName, prefix)
-             : new TapestryParameterDescriptor(component, parameter, prefix);
+             ? new TapestryUnknownTagDescriptor(parameterName, prefix, tapestryNamespaceDescriptor)
+             : new TapestryParameterDescriptor(component, parameter, prefix, tapestryNamespaceDescriptor);
     }
     return null;
   }

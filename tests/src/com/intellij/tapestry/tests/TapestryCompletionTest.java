@@ -176,7 +176,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testTagNameWithDoctypePresent() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "frameset", "head", getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "frameset", "head", getElementTagName() ));
   }
 
   public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
@@ -240,6 +240,9 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   static final String[] CORE_5_1_0_5_PAGE_NAMES =
     {"exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus"};
+  static final String[] CORE_5_1_0_5_SCHEMA_NAMES =
+    {"t:content", "t:extend", "t:extension-point", "t:remove", "t:replacement"};
+
   static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
     {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "block", "body", "checkbox",
       "container", "datefield", "delegate", "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid",
@@ -249,9 +252,12 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   static final String[] CORE_5_1_0_5_TAG_NAMES;
 
   static {
-    CORE_5_1_0_5_TAG_NAMES = new String[CORE_5_1_0_5_ELEMENT_NAMES.length];
-    for (int i = 0; i < CORE_5_1_0_5_TAG_NAMES.length; i++) {
+    CORE_5_1_0_5_TAG_NAMES = new String[CORE_5_1_0_5_ELEMENT_NAMES.length + CORE_5_1_0_5_SCHEMA_NAMES.length];
+    for (int i = 0; i < CORE_5_1_0_5_ELEMENT_NAMES.length; i++) {
       CORE_5_1_0_5_TAG_NAMES[i] = "t:" + CORE_5_1_0_5_ELEMENT_NAMES[i];
+    }
+    for (int i = CORE_5_1_0_5_ELEMENT_NAMES.length; i < CORE_5_1_0_5_TAG_NAMES.length; i++) {
+      CORE_5_1_0_5_TAG_NAMES[i] = CORE_5_1_0_5_SCHEMA_NAMES[i - CORE_5_1_0_5_ELEMENT_NAMES.length];
     }
   }
 

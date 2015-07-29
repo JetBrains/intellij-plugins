@@ -27,15 +27,20 @@ import java.util.List;
  *         Time: 9:18:09 PM
  */
 public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
+  private final TapestryNamespaceDescriptor myNamespaceDescriptor;
   private final XmlElementDescriptor myHtmlDelegate;
   @Nullable
   private final Component myComponent;
   private final List<Mixin> myMixins;
 
-  public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate, @Nullable Component component, List<Mixin> mixins) {
+  public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate,
+                                   @Nullable Component component,
+                                   List<Mixin> mixins,
+                                   TapestryNamespaceDescriptor descriptor) {
     myHtmlDelegate = htmlDelegate;
     myComponent = component;
     myMixins = mixins;
+    myNamespaceDescriptor = descriptor;
   }
 
   public String getQualifiedName() {
@@ -48,7 +53,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
 
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
     XmlElementDescriptor[] htmlDescriptors = myHtmlDelegate.getElementsDescriptors(context);
-    XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getTmlSubelementDescriptors(context);
+    XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getTmlSubelementDescriptors(context, myNamespaceDescriptor);
     return ArrayUtil.mergeArrays(htmlDescriptors, tapestryDescriptors);
   }
 

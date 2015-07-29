@@ -49,6 +49,12 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
     return TapestryConstants.TEMPLATE_NAMESPACE;
   }
 
+  public static @Nullable TapestryNamespaceDescriptor getTapestryTemplateDescriptor(@NotNull XmlTag tag) {
+    final XmlNSDescriptor rootTagNSDescriptor = tag.getNSDescriptor(getTapestryNamespace(tag), true);
+    return rootTagNSDescriptor instanceof TapestryNamespaceDescriptor ? (TapestryNamespaceDescriptor)rootTagNSDescriptor : null;
+
+  }
+
   @Nullable
   @Override
   public String[][] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
@@ -61,13 +67,16 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
     if (rootTag == null) return namespaces;
     for (final XmlAttribute attribute : rootTag.getAttributes()) {
       if (!attribute.isNamespaceDeclaration()) continue;
-      if (TapestryConstants.PARAMETERS_NAMESPACE.equals(attribute.getValue())) {
+      final String attributeValue = attribute.getValue();
+
+      if (TapestryConstants.PARAMETERS_NAMESPACE.equals(attributeValue)) {
         namespaces[2][0] = getNamespacePrefixFromDeclaration(attribute);
       }
-      else if (TapestryConstants.TEMPLATE_NAMESPACE.equals(attribute.getValue())) {
+      else if (isTapestryTemplateNamespace(attributeValue)) {
         namespaces[1][0] = getNamespacePrefixFromDeclaration(attribute);
+        namespaces[1][1] = attributeValue;
       }
-      else if (XmlUtil.XHTML_URI.equals(attribute.getValue())) {
+      else if (XmlUtil.XHTML_URI.equals(attributeValue)) {
         namespaces[0][0] = getNamespacePrefixFromDeclaration(attribute);
       }
     }
@@ -102,10 +111,7 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
   public XmlNSDescriptor getNSDescriptor(final XmlTag element, final String namespace, final boolean strict) {
     PsiFile file = element.getContainingFile();
     if (!(file instanceof TmlFile)) return null;
-    if (TapestryConstants.TEMPLATE_NAMESPACE.equals(namespace)) return TapestryNamespaceDescriptor.INSTANCE;
-    if (TapestryConstants.PARAMETERS_NAMESPACE.equals(namespace)) return TapestryParametersNamespaceDescriptor.INSTANCE;
-    if (XmlUtil.XHTML_URI.equals(namespace)) return DescriptorUtil.getHtmlNSDescriptor((TmlFile)file);
-    return null;
+    return element.getNSDescriptor(namespace, strict);
   }
 
   @Override

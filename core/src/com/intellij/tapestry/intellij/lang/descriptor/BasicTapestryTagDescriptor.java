@@ -21,10 +21,12 @@ import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getT
  *         Time: 3:25:47 PM
  */
 public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
+  private final TapestryNamespaceDescriptor myNamespaceDescriptor;
   private final String myNamespacePrefix;
 
-  public BasicTapestryTagDescriptor(@Nullable String namespacePrefix) {
+  public BasicTapestryTagDescriptor(@Nullable String namespacePrefix, TapestryNamespaceDescriptor descriptor) {
     myNamespacePrefix = namespacePrefix;
+    myNamespaceDescriptor = descriptor;
   }
 
   protected final String getPrefixWithColon() {
@@ -36,7 +38,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
   }
 
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
-    return getTmlSubelementDescriptors(context);
+    return getTmlSubelementDescriptors(context, myNamespaceDescriptor);
   }
 
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
@@ -51,7 +53,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
   }
 
   public XmlNSDescriptor getNSDescriptor() {
-    return TapestryNamespaceDescriptor.INSTANCE;
+    return myNamespaceDescriptor;
   }
 
   /**

@@ -79,6 +79,10 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(true);
   }
 
+  public void testNewSchema() throws Throwable {
+    doTest(true);
+  }
+
   protected void doTest(boolean checkInfos, LocalInspectionTool... tools) throws Throwable {
     VirtualFile templateFile = initByComponent(true);
     myFixture.enableInspections(tools);

@@ -20,8 +20,11 @@ public class TapestryParameterDescriptor extends BasicTapestryTagDescriptor {
   private final Component myComponent;
   private final TapestryParameter myParameter;
 
-  public TapestryParameterDescriptor(Component component, @NotNull TapestryParameter parameter, @Nullable String namespacePrefix) {
-    super(namespacePrefix);
+  public TapestryParameterDescriptor(Component component,
+                                     @NotNull TapestryParameter parameter,
+                                     @Nullable String namespacePrefix,
+                                     TapestryNamespaceDescriptor descriptor) {
+    super(namespacePrefix, descriptor);
     myComponent = component;
     myParameter = parameter;
   }

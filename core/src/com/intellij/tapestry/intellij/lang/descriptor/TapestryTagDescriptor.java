@@ -25,12 +25,17 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   private final PresentationLibraryElement myComponent;
   private List<Mixin> myMixins;
 
-  public TapestryTagDescriptor(@NotNull PresentationLibraryElement component, @Nullable String prefix) {
-    this(component, Collections.<Mixin>emptyList(), prefix);
+  public TapestryTagDescriptor(@NotNull PresentationLibraryElement component,
+                               @Nullable String prefix,
+                               TapestryNamespaceDescriptor descriptor) {
+    this(component, Collections.<Mixin>emptyList(), prefix, descriptor);
   }
 
-  public TapestryTagDescriptor(@NotNull PresentationLibraryElement component, List<Mixin> mixins, @Nullable String namespacePrefix) {
-    super(namespacePrefix);
+  public TapestryTagDescriptor(@NotNull PresentationLibraryElement component,
+                               List<Mixin> mixins,
+                               @Nullable String namespacePrefix,
+                               TapestryNamespaceDescriptor descriptor) {
+    super(namespacePrefix, descriptor);
     myComponent = component;
     myMixins = mixins;
   }

@@ -34,6 +34,7 @@
     <psi.referenceContributor language="XML" implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
 
     <xml.xmlExtension implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension"/>
+    <metaDataContributor implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryMetaDataContributor"/>
 
     <xml.schemaProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestrySchemaProvider"/>
 

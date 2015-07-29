@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.xml.XmlElementDescriptor;
-import com.intellij.xml.XmlNSDescriptor;
+import com.intellij.xml.impl.schema.SchemaNSDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,13 +16,9 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jul 1, 2009
  *         Time: 3:43:26 PM
  */
-public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
-  public static final TapestryNamespaceDescriptor INSTANCE = new TapestryNamespaceDescriptor();
+public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
   private XmlFile myFile;
   private XmlElement myElement;
-
-  private TapestryNamespaceDescriptor() {
-  }
 
   public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
     return DescriptorUtil.getTmlOrHtmlTagDescriptor(tag);
@@ -33,7 +29,7 @@ public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
     XmlTag rootTag = doc.getRootTag();
     if (rootTag == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    return DescriptorUtil.getTmlSubelementDescriptors(rootTag);
+    return DescriptorUtil.getTmlSubelementDescriptors(rootTag, this);
   }
 
   @Nullable
@@ -54,6 +50,7 @@ public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
   }
 
   public void init(PsiElement element) {
+    super.init(element);
     myFile = (XmlFile)element.getContainingFile();
     myElement = (XmlElement)element;
 
@@ -64,5 +61,9 @@ public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
 
   public Object[] getDependences() {
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
+  }
+
+  public XmlElementDescriptor[] getSuperRootElementsDescriptors(XmlDocument document) {
+    return super.getRootElementsDescriptors(document);
   }
 }

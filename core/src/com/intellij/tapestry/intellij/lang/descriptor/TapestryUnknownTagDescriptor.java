@@ -14,8 +14,10 @@ import org.jetbrains.annotations.Nullable;
 public class TapestryUnknownTagDescriptor extends BasicTapestryTagDescriptor {
   private final String myQualifiedName;
 
-  public TapestryUnknownTagDescriptor(@NotNull String componentName, @Nullable String namespacePrefix) {
-    super(namespacePrefix);
+  public TapestryUnknownTagDescriptor(@NotNull String componentName,
+                                      @Nullable String namespacePrefix,
+                                      TapestryNamespaceDescriptor descriptor) {
+    super(namespacePrefix, descriptor);
     myQualifiedName = getPrefixWithColon() + componentName.toLowerCase();
   }
 
