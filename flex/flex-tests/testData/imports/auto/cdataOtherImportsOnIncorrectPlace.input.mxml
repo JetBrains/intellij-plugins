@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300">
+  <mx:Script>
+    <![CDATA[
+// line comment
+
+/**
+ * Func descr
+ */
+function func() : void
+{
+    import com.test.Foo;
+}
+
+function doSmth()
+{
+    import ccc.Ccc;
+    var foo : <caret>Foo;
+    import ddd.Ddd;
+}
+    ]]>
+  </mx:Script>
+</mx:Panel>

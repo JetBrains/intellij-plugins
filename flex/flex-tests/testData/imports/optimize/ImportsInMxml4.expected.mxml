@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" currentStateChanging="var h : mx.rpc.AbstractService;import mx.rpc.AbstractService;" >
+    <mx:creationComplete><![CDATA[
+            import com.a.ClassA;
+            import com.a.ClassB;
+
+            import mx.rpc.AbstractService;
+
+            var g:ClassB;
+            var p:ClassA;
+
+            function foo(p:AbstractService) {
+            }
+        ]]></mx:creationComplete>
+    <mx:Script><![CDATA[
+        //dummy
+        ]]></mx:Script>
+
+    <mx:Script><![CDATA[]]></mx:Script>
+
+
+</mx:Panel>
+

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" implements="mx.binding.IBindingClient">
+    <mx:creationComplete><![CDATA[
+            import com.a.ClassB;
+
+            var g:ClassB;
+        ]]></mx:creationComplete>
+</mx:Panel>

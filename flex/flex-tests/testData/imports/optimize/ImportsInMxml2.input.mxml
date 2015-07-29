@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:creationComplete><![CDATA[
+            import mx.messaging.AbstractMessageStore;
+
+            function foo(p : mx.messaging.AbstractMessageStore):void {
+        <caret>
+            }
+        ]]></mx:creationComplete>
+
+</mx:Application>

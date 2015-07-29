@@ -37,7 +37,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
 
   @Override
   protected String getBasePath() {
-    return "/plugins/JavaScriptLanguage/testData/imports/optimize";
+    return "/flex/flex-tests/testData/imports/optimize";
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
