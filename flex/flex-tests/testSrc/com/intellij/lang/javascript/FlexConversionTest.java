@@ -14,8 +14,6 @@ import java.util.List;
 
 public class FlexConversionTest extends ConversionTestBaseEx {
 
-  private static final String BASE_PATH = "/flex/ideTestData/conversion/";
-
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -46,7 +44,7 @@ public class FlexConversionTest extends ConversionTestBaseEx {
 
   @Override
   protected String getBasePath() {
-    return BASE_PATH;
+    return "/flex/flex-tests/testData/conversion/";
   }
 
   public void testFacets() throws IOException, JDOMException {

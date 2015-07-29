@@ -49,6 +49,11 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     return "/flex_scope/";
   }
 
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
   protected String getExtension() {
     return "as";
   }
