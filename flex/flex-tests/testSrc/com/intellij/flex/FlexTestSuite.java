@@ -83,6 +83,8 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(FlexInlineVariableTest.class);
     testSuite.addTestSuite(ActionScriptStubsTest.class);
     testSuite.addTestSuite(ActionScriptGenerateTest.class);
+    testSuite.addTestSuite(FlashUmlTest.class);
+    testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
 
     return testSuite;
   }
