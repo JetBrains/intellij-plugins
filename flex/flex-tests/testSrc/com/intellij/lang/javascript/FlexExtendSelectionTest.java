@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript;
 
 
+import com.intellij.flex.FlexTestUtils;
+
 /**
  * @author Konstantin.Ulitin
  */
@@ -8,7 +10,7 @@ public class FlexExtendSelectionTest extends JSBaseEditorTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/as_editor/";
+    return FlexTestUtils.getTestDataPath("as_editor/");
   }
 
   public void testSyntaxSelection3() throws Exception {
