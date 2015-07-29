@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane;
 import com.intellij.ide.projectView.impl.ProjectViewImpl;
@@ -14,7 +15,7 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

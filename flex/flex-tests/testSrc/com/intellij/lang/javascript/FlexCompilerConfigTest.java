@@ -2,6 +2,7 @@ package com.intellij.lang.javascript;
 
 import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.LinkageType;
@@ -143,7 +144,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   private static final String TEST_FLEX_SDK_NAME = "Test Flex SDK";
 
   private static String getTestDataPath() {
-    return FileUtil.toSystemIndependentName(PathManager.getHomePath()) + "/plugins/JavaScriptLanguage/testData/compilerConfig/";
+    return FlexTestUtils.getTestDataPath("compilerConfig") + "/";
   }
 
   @Override
