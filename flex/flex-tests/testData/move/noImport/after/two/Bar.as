@@ -1,0 +1,3 @@
+package two {
+  class Bar {}
+}

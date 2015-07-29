@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+      import foo.*;
+
+      var x:MoveMxmlFileWithImport_2;
+  </mx:Script>
+</mx:Application>
