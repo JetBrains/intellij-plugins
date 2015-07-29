@@ -1,0 +1,6 @@
+
+package foo {
+    function bar() {
+        var x = JSVariable2
+    }
+}

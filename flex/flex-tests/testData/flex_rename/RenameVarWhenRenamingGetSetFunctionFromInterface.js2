@@ -1,0 +1,19 @@
+package {
+  interface IFoo {
+      function get x<caret>xx():int
+      function set xxx(x:int)
+  }
+}
+
+class Foo implements IFoo {
+    [Bindable]
+    public var xxx:int;
+}
+
+function test() {
+    var x:IFoo = new Foo;
+    var x2:Foo = new Foo;
+
+    x.xxx = 1 + x.xxx;
+    x2.xxx = 1 + x2.xxx;
+}

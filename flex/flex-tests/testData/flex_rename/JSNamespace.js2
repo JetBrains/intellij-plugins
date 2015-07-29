@@ -1,0 +1,3 @@
+package foo {
+  public namespace A<caret>AA = "xxx"
+}

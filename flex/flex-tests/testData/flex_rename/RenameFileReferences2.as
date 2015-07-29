@@ -1,0 +1,1 @@
+[Embed(source="Rename<caret>FileReferences_2.as")] class C {}

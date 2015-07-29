@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" >
+   <mx:HBox>
+        <mx:Button id="p<caret>1" />
+        <mx:Button label="panel1" click="{p1}"/>
+    </mx:HBox>
+</mx:Application>

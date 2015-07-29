@@ -27,6 +27,11 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   }
 
   @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

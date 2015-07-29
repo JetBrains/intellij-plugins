@@ -1,0 +1,3 @@
+use namespace JSNamespace2
+JSNamespace2 var x;
+JSNamespace2 var x2;

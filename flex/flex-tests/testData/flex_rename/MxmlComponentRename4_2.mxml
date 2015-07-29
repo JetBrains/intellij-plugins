@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:x="*">
+  <mx:Script>
+    var x:MxmlComponentRename4 = new MxmlComponentRename4();
+  </mx:Script>
+  <x:MxmlComponentRename4 />
+</mx:Application>

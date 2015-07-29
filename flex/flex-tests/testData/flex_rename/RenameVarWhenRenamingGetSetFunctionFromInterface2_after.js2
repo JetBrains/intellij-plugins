@@ -1,0 +1,19 @@
+package {
+  interface IFoo {
+      function get yyy():int
+      function set yyy(x:int)
+  }
+}
+
+class Foo implements IFoo {
+    [Bindable]
+    public var y<caret>yy:int;
+}
+
+function test() {
+    var x:IFoo = new Foo;
+    var x2:Foo = new Foo;
+
+    x.yyy = 1 + x.yyy;
+    x2.yyy = 1 + x2.yyy;
+}

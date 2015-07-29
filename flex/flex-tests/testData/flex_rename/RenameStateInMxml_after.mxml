@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:states>
+        <mx:State name="foo2"/>
+    </mx:states>
+    <mx:Button selected.f<caret>oo2="true" includeIn="foo2"/>
+    <mx:Button>
+        <mx:selected.foo2/>
+        <mx:selected.foo2>
+          true
+        </mx:selected.foo2>
+    </mx:Button>
+</mx:Application>

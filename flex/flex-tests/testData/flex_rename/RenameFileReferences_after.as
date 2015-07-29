@@ -1,0 +1,1 @@
+include "xxx<caret>.as"

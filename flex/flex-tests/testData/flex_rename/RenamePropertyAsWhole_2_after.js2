@@ -1,0 +1,14 @@
+class Foo {
+    private var _<caret>yyy:int;
+    function get yyy():int { return _yyy; }
+    function set yyy(x:int) { _yyy = x; }
+
+    function bar() {
+        _yyy = _yyy + 2;
+        yyy = 1;
+        var x = yyy;
+        var y:Foo;
+        x = y.yyy;
+        y.yyy = 1;
+    }
+}

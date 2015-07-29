@@ -1,0 +1,4 @@
+[DefaultProperty("te<caret>st")]
+class Foo {
+    var test;
+}

@@ -58,7 +58,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

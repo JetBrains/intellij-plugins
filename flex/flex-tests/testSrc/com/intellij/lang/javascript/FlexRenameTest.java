@@ -32,6 +32,11 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
+  @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
