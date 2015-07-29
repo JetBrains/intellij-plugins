@@ -1,0 +1,7 @@
+package {
+[ResourceBundle("foo")]
+[ResourceBundle("bar")]
+public class MoveAttribute {
+<caret>[ResourceBundle("zzz")]
+}
+}

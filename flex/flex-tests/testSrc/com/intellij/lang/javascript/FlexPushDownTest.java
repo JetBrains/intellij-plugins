@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -43,7 +44,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
   }
 
   private void doTestPushDown(final String from, final int docCommentPolicy, final boolean makeAbstract, final String... toPushDown)

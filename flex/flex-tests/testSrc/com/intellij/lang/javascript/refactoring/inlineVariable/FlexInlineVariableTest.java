@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.refactoring.inlineVariable;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -9,6 +10,12 @@ public class FlexInlineVariableTest extends JSInlineVariableTestBase {
   @Override
   protected String getTestDataPath() {
     return JSTestUtils.getTestDataPath() + "/as_refactoring/inlineVariable/";
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   private void ecmaTest() throws Exception {

@@ -22,7 +22,7 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   protected ModuleType getModuleType() {

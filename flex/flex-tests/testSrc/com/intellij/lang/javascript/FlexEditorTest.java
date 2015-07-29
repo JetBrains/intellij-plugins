@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.module.ModuleType;
@@ -8,9 +9,8 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
 
-/**
- * @author Konstantin.Ulitin
- */
+import java.util.concurrent.Callable;
+
 public class FlexEditorTest extends JSBaseEditorTestCase {
 
   @Override
@@ -22,15 +22,38 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     return FlexModuleType.getInstance();
   }
 
+  protected void doGtTestWithJSSupportLoaderAndFlex() throws Exception {
+    doTestWithJSSupportLoaderAndFlex('>');
+  }
+
+  protected void doTestWithJSSupportLoaderAndFlex(final char ch) throws Exception {
+    doTestWithJSSupportLoaderAndFlex(new Callable<Void>() {
+      public Void call() throws Exception {
+        doTypingTest("mxml", String.valueOf(ch));
+        return null;
+      }
+    });
+  }
+
+  protected void doTestWithJSSupportLoaderAndFlex(final Callable<Void> call) throws Exception {
+    doTestWithJSSupport(new Callable<Object>() {
+      @Override
+      public Object call() throws Exception {
+        FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), FlexEditorTest.this.getClass());
+        return call.call();
+      }
+    });
+  }
+
   private void performCopyRefAndPasteTest() throws Exception {
     performCopyRefAndPasteTest("js2");
   }
 
   private void performCopyRefAndPasteTest(String ext) throws Exception {
     String testName = getTestName(false);
-    configureByFile( testName + "_src."+ext);
+    configureByFile(testName + "_src." + ext);
     EditorTestUtil.performReferenceCopy(getEditor());
-    configureByFile( testName + "." + ext);
+    configureByFile(testName + "." + ext);
     EditorTestUtil.performPaste(getEditor());
     checkResultByFile(testName + "_after." + ext);
   }
@@ -47,25 +70,53 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     _testInsertDeleteBracket("mxml");
   }
 
-  public void testEnter3_5() throws Exception { doEnterTestWithJSSupport("js2");}
-  public void testEnter3_6() throws Exception { doEnterTestWithJSSupport("js2");}
-  public void testEnter3_8() throws Exception { doEnterTestWithJSSupport("js2");}
-  public void testEnter3_10() throws Exception { doEnterTestWithJSSupport("js2");}
-  public void testEnter3_11() throws Exception { doEnterTestWithJSSupport("js2");}
-  public void testEnter3_12() throws Exception { doEnterTestWithJSSupport("js2");}
-  public void testEnter3_22() throws Exception { doEnterTestWithJSSupport("as");}
+  public void testEnter3_5() throws Exception {
+    doEnterTestWithJSSupport("js2");
+  }
+
+  public void testEnter3_6() throws Exception {
+    doEnterTestWithJSSupport("js2");
+  }
+
+  public void testEnter3_8() throws Exception {
+    doEnterTestWithJSSupport("js2");
+  }
+
+  public void testEnter3_10() throws Exception {
+    doEnterTestWithJSSupport("js2");
+  }
+
+  public void testEnter3_11() throws Exception {
+    doEnterTestWithJSSupport("js2");
+  }
+
+  public void testEnter3_12() throws Exception {
+    doEnterTestWithJSSupport("js2");
+  }
+
+  public void testEnter3_22() throws Exception {
+    doEnterTestWithJSSupport("as");
+  }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_3InXml() throws Exception { doEnterTestWithJSSupport("mxml");}
+  public void testEnter3_3InXml() throws Exception {
+    doEnterTestWithJSSupport("mxml");
+  }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_4InXml() throws Exception { doEnterTestWithJSSupport("mxml");}
+  public void testEnter3_4InXml() throws Exception {
+    doEnterTestWithJSSupport("mxml");
+  }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_5InXml() throws Exception { doEnterTestWithJSSupport("mxml");}
+  public void testEnter3_5InXml() throws Exception {
+    doEnterTestWithJSSupport("mxml");
+  }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_6InXml() throws Exception { doEnterTestWithJSSupport("mxml");}
+  public void testEnter3_6InXml() throws Exception {
+    doEnterTestWithJSSupport("mxml");
+  }
 
   public void testEnter8() throws Exception {
     doEnterTest(getTestName(false), "js2");
@@ -141,18 +192,20 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   public void testInsertBraceOnEnter() throws Exception {
-    _testInsertBraceOnEnter("","js2");
-    _testInsertBraceOnEnter("2","js2");
+    _testInsertBraceOnEnter("", "js2");
+    _testInsertBraceOnEnter("2", "js2");
 
     final JSCodeStyleSettings codeSettings =
       CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(JSCodeStyleSettings.class);
     try {
       codeSettings.INDENT_PACKAGE_CHILDREN = JSCodeStyleSettings.INDENT;
-      _testInsertBraceOnEnter("3","js2");
-    } finally {
+      _testInsertBraceOnEnter("3", "js2");
+    }
+    finally {
       codeSettings.INDENT_PACKAGE_CHILDREN = JSCodeStyleSettings.DO_NOT_INDENT;
     }
   }
+
   public void testSmartEnterFunction() throws Exception {
     final String testName = getTestName(false);
     doSmartEnterTest(testName + "_6", "js2");

@@ -4,6 +4,7 @@ import com.intellij.codeInspection.DefaultHighlightVisitorBasedInspection;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.InspectionToolRegistrar;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Computable;
@@ -21,7 +22,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
   protected Sdk getTestProjectSdk() {
     final JSTestUtils.TestDescriptor testDescriptor = new JSTestUtils.TestDescriptor(this);
     if (JSTestUtils.testMethodHasOption(testDescriptor, JSTestOption.WithFlexSdk)) {
-      return JSTestUtils.getSdk(testDescriptor);
+      return FlexTestUtils.getSdk(testDescriptor);
     }
     return super.getTestProjectSdk();
   }

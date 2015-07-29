@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -49,7 +50,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   private void doTest(final String sourceClassName, final String targetClassName, final String visibility, final String memberName)

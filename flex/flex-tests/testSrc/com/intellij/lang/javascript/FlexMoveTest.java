@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.execution.RunManagerEx;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -37,7 +38,7 @@ public class FlexMoveTest extends JSMoveTestBase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   public void testMovePackage() throws Exception {

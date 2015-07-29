@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
@@ -40,7 +41,7 @@ public class FlexHierarchyTest extends HierarchyViewTestBase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn) throws Exception {

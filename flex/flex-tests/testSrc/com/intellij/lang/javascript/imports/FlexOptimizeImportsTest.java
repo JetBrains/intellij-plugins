@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.imports;
 
 import com.intellij.codeInsight.actions.OptimizeImportsAction;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -31,7 +32,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
     JSTestUtils.initJSIndexes(getProject());
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   @Override

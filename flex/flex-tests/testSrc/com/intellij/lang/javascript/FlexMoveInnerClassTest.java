@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.EditorInfo;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveInnerClassProcessor;
@@ -52,7 +53,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   private void doTest(final String fromFilePath,

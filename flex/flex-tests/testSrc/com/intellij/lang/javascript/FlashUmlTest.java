@@ -9,6 +9,7 @@ import com.intellij.diagram.DiagramProvider;
 import com.intellij.diagram.settings.DiagramConfiguration;
 import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.diagram.util.UmlDataModelDumper;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -62,7 +63,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
   }
 
   @Override
@@ -274,7 +275,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private void initSdk() {
-    final Sdk sdk45 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];

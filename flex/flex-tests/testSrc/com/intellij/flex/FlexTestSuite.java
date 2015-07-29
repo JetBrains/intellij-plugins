@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.refactoring.inlineFunction.FlexInlineFunctio
 import com.intellij.lang.javascript.refactoring.inlineVariable.FlexInlineVariableTest;
 import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantTest;
 import com.intellij.lang.javascript.refactoring.introduceField.FlexIntroduceFieldTest;
+import com.intellij.lang.javascript.refactoring.introduceVariable.ActionScriptInPlaceIntroduceVariableTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -85,6 +86,8 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(ActionScriptGenerateTest.class);
     testSuite.addTestSuite(FlashUmlTest.class);
     testSuite.addTestSuite(FlexCompletionInUmlTextFieldsTest.class);
+    testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
+    testSuite.addTestSuite(ActionScriptStatementMoverTest.class);
 
     return testSuite;
   }

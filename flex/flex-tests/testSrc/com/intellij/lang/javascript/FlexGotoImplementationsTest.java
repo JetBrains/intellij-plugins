@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.hint.actions.ShowImplementationsAction;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -57,7 +58,7 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass());
   }
 
   @Override

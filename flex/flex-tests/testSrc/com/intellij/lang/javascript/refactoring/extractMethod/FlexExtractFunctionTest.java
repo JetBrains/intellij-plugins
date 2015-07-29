@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.refactoring.extractMethod;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -13,6 +14,12 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   @Override
   protected String getTestDataPath() {
     return JSTestUtils.getTestDataPath() + "/refactoring/flexExtractFunction/";
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   protected JSExtractFunctionHandler createMockHandler(JSExtractFunctionSettings extractFunctionSettings) {

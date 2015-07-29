@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -136,7 +137,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
   }
 
   public void testSdkListener() {
-    final Sdk sdk = JSTestUtils.createSdk(JSTestUtils.getPathToMockFlex(getClass(), getTestName(false)), "4.6.0");
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToMockFlex(getClass(), getTestName(false)), "4.6.0");
     RootProvider.RootSetChangedListener listener = wrapper -> {
     };
     // See IDEA-140175: if different BCs of the same module have different SDKs then the listener may be first set by FlexCompositeSdk (when

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -47,7 +48,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) throws Exception {
@@ -462,7 +463,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testGenericType() throws Exception {
     final String testName = getTestName(false);
-    JSTestUtils.addASDocToSdk(getModule(), getClass(), testName);
+    FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName);
     doTest(new String[]{testName}, "as", testName);
   }
 

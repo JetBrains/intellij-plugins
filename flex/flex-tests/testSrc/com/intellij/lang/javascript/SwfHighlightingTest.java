@@ -3,6 +3,7 @@ package com.intellij.lang.javascript;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.EditorInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.impl.DocumentImpl;
@@ -33,7 +34,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   @Override
@@ -55,7 +56,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
   @Override
   protected void doCommitModel(@NotNull final ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
-    JSTestUtils.setupFlexLib(myProject, getClass(), getTestName(false));
+    FlexTestUtils.setupFlexLib(myProject, getClass(), getTestName(false));
     if (myAfterCommitRunnable != null) {
       myAfterCommitRunnable.run();
     }

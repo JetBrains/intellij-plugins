@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript
 
+import com.intellij.flex.FlexTestUtils
 import com.intellij.lang.javascript.arrangement.ActionScriptRearranger
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -23,7 +24,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
   protected void setUp() {
     super.setUp()
 
-    def sdk = JSTestUtils.getSdk(new JSTestUtils.TestDescriptor(this))
+    def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this))
 
     ApplicationManager.application.runWriteAction(new Runnable() {
       void run() {

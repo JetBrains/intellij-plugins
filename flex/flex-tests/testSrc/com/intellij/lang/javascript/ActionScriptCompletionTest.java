@@ -68,7 +68,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected void setUpJdk() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     if (!needsJavaModule()) {
-      JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
     }
   }
 
@@ -1221,8 +1221,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testTwoSdks() throws Exception {
-    final Sdk sdk45 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk46 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];

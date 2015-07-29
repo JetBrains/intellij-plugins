@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
@@ -98,7 +99,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   protected void setUpJdk() {
     if (!needsJavaModule()) {
-      JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
     }
   }
 
@@ -117,7 +118,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   @Override
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
-    JSTestUtils.setupFlexLib(getProject(), getClass(), getTestName(false));
+    FlexTestUtils.setupFlexLib(getProject(), getClass(), getTestName(false));
     if (myAfterCommitRunnable != null) {
       myAfterCommitRunnable.run();
     }
@@ -1451,7 +1452,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testVectorObject() throws Exception {
-    final Sdk sdk45 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];

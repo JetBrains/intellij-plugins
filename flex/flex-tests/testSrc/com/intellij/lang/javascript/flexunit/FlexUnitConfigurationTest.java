@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -43,7 +44,7 @@ public class FlexUnitConfigurationTest extends CodeInsightTestCase implements Fl
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   public Object getData(final String dataId) {

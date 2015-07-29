@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.daemon.GutterMark;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator;
 import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilder;
 import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilderImpl;
@@ -33,7 +34,7 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
   protected void setUp() throws Exception {
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)

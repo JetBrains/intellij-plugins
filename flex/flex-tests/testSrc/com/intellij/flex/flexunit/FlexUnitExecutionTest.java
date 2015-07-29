@@ -19,6 +19,7 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -205,7 +206,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
 
   @Override
   protected void setUpJdk() {
-    final Sdk sdk = JSTestUtils.createSdk(FLEX4_SDK_HOME, "4.6.0");
+    final Sdk sdk = FlexTestUtils.createSdk(FLEX4_SDK_HOME, "4.6.0");
     JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       @Override
       public void consume(final ModifiableFlexBuildConfiguration configuration) {

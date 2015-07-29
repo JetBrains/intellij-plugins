@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component id="Object" class="Object" lookupOnly="true"/>
+    <component id="Number" class="Number" lookupOnly="true"/>
+    <component id="Application" class="mypackage.Application"/>
+    <component id="AddChild" class="mypackage.AddChild"/>
+    <component id="SetProperty" class="mypackage.SetProperty"/>
+    <component id="HBox" class="mypackage.HBox"/>
+    <component id="VBox" class="mypackage.VBox"/>
+    <component id="DataGrid" class="mypackage.DataGrid"/>
+    <component id="Accordition" class="mypackage.Accordition"/>
+    <component id="DataGridColumn" class="mypackage.dataGridClasses.DataGridColumn"/>
+    <component id="Tree" class="mypackage.Tree"/>
+    <component id="TextArea" class="mypackage.TextArea"/>
+    <component id="TextInput" class="mypackage.TextInput"/>
+    <component id="Transition" class="mypackage.Transition"/>
+    <component id="Image" class="mypackage.Image"/>
+    <component id="ArrayCollection" class="mypackage.ArrayCollection"/>
+
+    <component id="Button" class="mypackage.Button"/>
+    <component id="Panel" class="mypackage.Panel"/>
+    <component id="List" class="mypackage.List"/>
+    <component id="Text" class="mypackage.Text"/>
+    <component id="Canvas" class="mypackage.Canvas"/>
+    <component id="CheckBox" class="mypackage.CheckBox"/>
+    <component id="Label" class="mypackage.Label"/>
+    <component id="EmailValidator" class="mypackage.EmailValidator"/>
+    <component id="WebService" class="mypackage.WebService"/>
+    <component id="HTTPService" class="mypackage.HTTPService"/>
+    <component id="WebServiceOperation" class="mypackage.Operation"/>
+    <component id="RegExpValidator" class="mypackage.RegExpValidator"/>
+    <component id="RemoteObject" class="mypackage.RemoteObject"/>
+    <component id="RemoteObjectOperation" class="mypackage.RemoteObjectOperation"/>
+    <component id="Resize" class="mypackage.Resize"/>
+    <component id="RegExpValidator" class="mypackage.RegExpValidator"/>
+
+    <component id="Skin" class="mypackage.Skin"/>
+    <component id="HGroup" class="mypackage.HGroup"/>
+
+    <component id="FxContainer" class="mypackage.FxContainer"/>
+    <component id="SolidColor" class="mypackage.SolidColor"/>
+    <component id="Rect" class="mypackage.Rect"/>
+    <component id="Container" class="mx.core.Container"/>
+    <component id="XMLListCollection" class="mx.collections.XMLListCollection"/>
+    <component id="State" class="mypackage.State"/>
+    <component id="RadioButtonGroup" class="mx.controls.RadioButtonGroup"/>
+</componentPackage>

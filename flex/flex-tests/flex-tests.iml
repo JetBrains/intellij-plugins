@@ -10,5 +10,8 @@
     <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
     <orderEntry type="module" module-name="testFramework-JavaScript" scope="TEST" />
     <orderEntry type="module" module-name="diagram-impl" scope="TEST" />
+    <orderEntry type="module" module-name="flex" />
+    <orderEntry type="module" module-name="flex-plugin" />
+    <orderEntry type="module" module-name="flex-shared" />
   </component>
 </module>

@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.module.ModuleType;
@@ -21,6 +22,11 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
   @Override
   public String getTestDataPath() {
     return JSTestUtils.getTestDataPath();
+  }
+
+  @Override
+  protected void setUpJdk() {
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   protected ModuleType getModuleType() {

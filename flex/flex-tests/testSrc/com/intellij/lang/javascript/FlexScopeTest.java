@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
@@ -41,7 +42,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   protected String getBasePath() {
@@ -227,8 +228,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public Pair<Sdk, Sdk> prepareTwoSdks() {
-    final Sdk sdk1 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk2 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk1 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk2 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
 
     AccessToken writeAction = WriteAction.start();
     try {
@@ -252,7 +253,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testCircularDependency() throws Exception {
-    final Sdk sdk = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
     final Module module2;
     AccessToken writeAction = WriteAction.start();
     try {
@@ -412,7 +413,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testMissingSdk() throws Exception {
-    final Sdk sdk = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
@@ -433,7 +434,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testTestScope() throws Exception {
-    final Sdk sdk46 = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
+    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, true);
     final Module module2 = JSTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
     final Module module3 = JSTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
 

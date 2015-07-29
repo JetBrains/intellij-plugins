@@ -1,9 +1,11 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.execution.RunManagerEx;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.JSSupportLoader;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.LanguageNamesValidation;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -13,6 +15,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.refactoring.JSInplaceRenameHandler;
 import com.intellij.lang.refactoring.NamesValidator;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -26,6 +29,15 @@ import java.io.File;
 public class FlexRenameTest extends JSAbstractRenameTest {
   protected String getBasePath() {
     return "/flex_rename/";
+  }
+
+  @Override
+  protected void setUpJdk() {
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+  }
+
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
 
   public void testRenameBundleRef() throws Exception {

@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.refactoring.introduceConstant;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestOption;
@@ -105,7 +106,7 @@ public class FlexIntroduceConstantTest extends CodeInsightTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})

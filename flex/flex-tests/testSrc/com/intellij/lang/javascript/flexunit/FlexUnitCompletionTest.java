@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flexunit;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -45,7 +46,7 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
 

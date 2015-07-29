@@ -1,0 +1,10 @@
+package {
+  public class TTT {
+    public function TTT() {
+      var tw:* = data.name.toString();
+      trace(tw);
+      trace(tw);
+        t<caret>w = tw.replace(/[\\0\t\n\v\f\r\xa0!-]/g, function (c) { return '1' });
+    }
+  }
+}

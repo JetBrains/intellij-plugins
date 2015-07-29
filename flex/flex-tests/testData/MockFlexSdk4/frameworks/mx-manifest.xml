@@ -1,0 +1,26 @@
+<componentPackage>
+  <component id="Application" class="mx.core.Application"/>
+  <component id="Button" class="mx.controls.Button"/>
+  <component id="CheckBox" class="mx.controls.CheckBox"/>
+  <component id="TextInput" class="mx.controls.TextInput"/>
+  <component id="VBox" class="mx.containers.VBox"/>
+  <component id="HBox" class="mx.containers.HBox"/>
+  <component id="Tree" class="mx.controls.Tree"/>
+  <component id="DataGrid" class="mx.controls.DataGrid"/>
+  <component id="DataGridColumn" class="mx.controls.dataGridClasses.DataGridColumn"/>
+  <component id="TextArea" class="mx.controls.TextArea"/>
+  <component id="Repeater" class="mx.core.Repeater"/>
+  <component id="Panel" class="mx.containers.Panel"/>
+  <component id="Accordion" class="mx.containers.Accordion"/>
+  <component id="Sprite" class="flash.display.Sprite" lookupOnly="true"/>
+  <component id="XMLListCollection" class="mx.collections.XMLListCollection" lookupOnly="true"/>
+  <component id="HTTPService" class="mx.rpc.http.mxml.HTTPService" lookupOnly="true"/>
+  <component id="WebService" class="mx.rpc.soap.mxml.WebService" lookupOnly="true"/>
+  <component id="WebServiceOperation" class="mx.rpc.soap.mxml.Operation" lookupOnly="true"/>
+  <component id="State" class="mx.states.State"/>
+  <component id="RemoteObject" class="mx.rpc.remoting.RemoteObject"/>
+  <component id="RemoteObjectOperation" class="mx.rpc.remoting.mxml.Operation" lookupOnly="true"/>
+  <component id="Text" class="mx.controls.Text"/>
+  <component id="EmailValidator" class="mx.validators.EmailValidator"/>
+  <component id="Image" class="mx.controls.Image"/>
+</componentPackage>

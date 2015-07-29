@@ -2,6 +2,7 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.FlexDocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -48,7 +49,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
   }
 
   protected ModuleType getModuleType() {
@@ -367,7 +368,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
   private void doLibClassCssTest(boolean expectedForDoc, @Nullable String expectedClassName) throws Exception {
     String testName = getTestName(false);
-    String mockFlex = JSTestUtils.getPathToMockFlex(getClass(), testName) + "/MonkeyPatchingMockFlex.as";
+    String mockFlex = FlexTestUtils.getPathToMockFlex(getClass(), testName) + "/MonkeyPatchingMockFlex.as";
     VirtualFile file = LocalFileSystem.getInstance().findFileByPath(mockFlex);
     doTest(testName + ".css", file, expectedForDoc ? file : null, expectedClassName);
   }

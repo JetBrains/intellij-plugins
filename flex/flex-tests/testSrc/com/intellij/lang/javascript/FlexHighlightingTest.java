@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnusedNamespaceInspectio
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -154,7 +155,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   protected void setUpJdk() {
     if (!needsJavaModule()) {
-      JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
     }
   }
 
@@ -1176,7 +1177,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   @Override
   protected void doCommitModel(@NotNull final ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
-    JSTestUtils.setupFlexLib(myProject, getClass(), getTestName(false));
+    FlexTestUtils.setupFlexLib(myProject, getClass(), getTestName(false));
     JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), JSTestUtils.getTestDataPath() + "/flexUnit",
                                FlexUnitLibs.FLEX_UNIT_0_9_SWC, FlexUnitLibs.FLEX_UNIT_4_SWC);
     if (myAfterCommitRunnable != null) {
@@ -2299,7 +2300,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testBadResolveOfSuperClass() throws Exception {
-    final Sdk sdk = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
 
     AccessToken writeAction = WriteAction.start();
     try {
@@ -2367,7 +2368,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testFontFaceProperties() throws Throwable {
-    final Sdk sdk = JSTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     AccessToken writeAction = WriteAction.start();
     try {
       JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
