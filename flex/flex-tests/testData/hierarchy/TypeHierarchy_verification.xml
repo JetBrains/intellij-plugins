@@ -1,0 +1,8 @@
+<node text="Object ()">
+  <node text="SomeClass (mypack)" base="true">
+    <node text="SubClass2 (abc.def)"/>
+    <node text="SubClass1 (abc.def)">
+      <node text="SubSubClass1 ()"/>
+    </node>
+  </node>
+</node>

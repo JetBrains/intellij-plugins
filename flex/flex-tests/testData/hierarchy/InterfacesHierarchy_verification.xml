@@ -1,0 +1,19 @@
+<node text="Interface2 (pack)" base="true">
+  <node text="Interface3 (pack)">
+    <node text="Interface4 (pack)">
+      <node text="Interface4Impl (pack)"/>
+    </node>
+    <node text="Interface5 (pack)">
+      <node text="InterfacesHierarchy ()">
+        <node text="Interface4Impl (pack)"/>
+      </node>
+    </node>
+    <node text="Interface3Impl (pack)"/>
+  </node>
+  <node text="Interface4 (pack)">
+    <node text="Interface4Impl (pack)"/>
+  </node>
+  <node text="InterfacesHierarchy ()">
+    <node text="Interface4Impl (pack)"/>
+  </node>
+</node>

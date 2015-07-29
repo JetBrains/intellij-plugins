@@ -22,16 +22,14 @@ import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
 
 public class FlexHierarchyTest extends HierarchyViewTestBase {
 
-  private static final String BASE_PATH = "hierarchy";
-
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override
   protected String getBasePath() {
-    return BASE_PATH;
+    return "hierarchy";
   }
 
   @Override
