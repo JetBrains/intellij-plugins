@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="">
+  <mx:Script>
+    function foo() {
+      x<caret>xx
+    }
+  </mx:Script>
+  <mx:List id="xxx" />
+</mx:Application>

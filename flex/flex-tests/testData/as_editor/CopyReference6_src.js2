@@ -1,0 +1,8 @@
+package com {
+public class Qwe {
+    function aa() {
+        var v: Vector.<Q<caret>we>;
+    }
+
+}
+}

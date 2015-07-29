@@ -9,7 +9,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor;
 public class FlexInlineVariableTest extends JSInlineVariableTestBase {
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/as_refactoring/inlineVariable/";
+    return FlexTestUtils.getTestDataPath("as_refactoring/inlineVariable/");
   }
 
   @Override

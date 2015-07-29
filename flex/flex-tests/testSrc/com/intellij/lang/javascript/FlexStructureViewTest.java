@@ -43,6 +43,11 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     return BASE_PATH;
   }
 
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
   public void testECMAL4Structure() throws Exception {
 
     configureByFile(BASE_PATH + "15.js2");

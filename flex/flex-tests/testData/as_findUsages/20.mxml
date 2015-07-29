@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+   <mx:Script>
+     function aaa($param) {
+       $param = $par<caret>am;
+     }
+   </mx:Script>
+</mx:Application>

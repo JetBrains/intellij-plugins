@@ -1,0 +1,7 @@
+class yyy.XXX {
+  public var bbb;
+}
+
+class yyy.YYY {
+  protected var bbb;
+}

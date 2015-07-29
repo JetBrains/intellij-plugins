@@ -1,0 +1,3 @@
+function foo():Vector.<int> {
+    fo<caret>o();
+}

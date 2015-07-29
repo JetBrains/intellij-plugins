@@ -1,0 +1,12 @@
+package {
+class Abc {
+    function a():* {
+        return c();
+    }
+
+    private function c():int {
+        return 0;
+    }
+
+}
+}

@@ -1,0 +1,2 @@
+class Foo {}
+var x = new Foo<caret>

@@ -1,0 +1,5 @@
+class Foo {
+    function bar() {
+      var y = new F<caret>oo()
+    }
+}

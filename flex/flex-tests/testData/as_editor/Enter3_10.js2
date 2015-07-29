@@ -1,0 +1,5 @@
+class Foo {
+/**<caret>
+public static const FOO:String = "";
+native function a(p:int):int
+}

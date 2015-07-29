@@ -1,0 +1,13 @@
+package {
+public class JustStatements2_6 {
+    public function JustStatements2_6() {
+        fo<caret>o();
+    }
+
+    public function foo():void {
+//		blah-blah-blah
+        trace(123);
+//		blah-blah-blah
+    }
+}
+}

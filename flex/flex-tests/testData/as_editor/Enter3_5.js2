@@ -1,0 +1,7 @@
+/**
+ *
+ */
+native function a()
+
+/**<caret>
+function c(b) {}

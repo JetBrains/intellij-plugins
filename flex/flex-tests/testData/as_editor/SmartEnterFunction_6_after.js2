@@ -1,0 +1,3 @@
+addEventListener("change", function() {
+    <caret>
+});

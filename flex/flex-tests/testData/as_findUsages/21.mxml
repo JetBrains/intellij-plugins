@@ -1,0 +1,9 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+   <mx:Script>
+     private var aaa:int
+     function foo(bbb) {
+       a<caret>aa = bbb;  
+     }
+   </mx:Script>
+   <mx:Text onclick="foo(aaa)"/>
+</mx:Application>

@@ -17,6 +17,11 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
     return "/as_findUsages/";
   }
 
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

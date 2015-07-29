@@ -1,0 +1,57 @@
+package com {
+public class Foo {
+    private var priv;
+    protected var prot;
+    var inter;
+    public var pub;
+
+    private function fPriv() {}
+    protected function fProt() {}
+    function fInter() {}
+    public function fPub() {}
+
+    public function inlineMe() {
+        priv = null;
+        prot = null;
+        inter = null;
+        pub = null;
+        fPriv();
+        fProt();
+        fInter();
+        fPub();
+    }
+
+    function foo() {
+        inlineMe();
+    }
+}
+}
+
+package com {
+class Neighbour {
+    function neighbourFunc() {
+        new Foo().inlineMe();
+    }
+}
+}
+
+package com2 {
+import com.Foo;
+class OtherPackage {
+
+    function otherPackageFunc() {
+        var v:Foo;
+        v.inline<caret>Me();
+    }
+}
+}
+
+package com3 {
+import com.Foo;
+class SubClass extends Foo {
+    function subclassFunc() {
+        var v:Foo;
+        v.inlineMe();
+    }
+}
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    include "WithIncludedFiles1_2.as";
+  </mx:Script>
+
+  <mx:Script><![CDATA[
+    public static var ownField:String;
+    ]]></mx:Script>
+
+  <mx:Script source="WithIncludedFiles1_3.as"/>
+
+  <mx:Style source="WithIncludedFiles1_1.css"/>
+
+  <mx:Panel>
+    <mx:HGroup id="gr">
+      <mx:List>
+        <mx:itemRenderer>
+          <mx:Button label="OK">
+            <mx:Script>
+              private function fooBar():Boolean {}
+            </mx:Script>
+          </mx:Button>
+        </mx:itemRenderer>
+      </mx:List>
+    </mx:HGroup>
+  </mx:Panel>
+
+  <mx:Style>
+    .own1{}
+    .own2{
+      foo:bar
+    }
+  </mx:Style>
+
+</mx:Panel>
+
+<structure>
+<node text="WithIncludedFiles1.mxml">
+  <node text="mx:Panel">
+    <node text="mx:Script">
+      <node text="foo(b:Boolean):void"/>
+    </node>
+    <node text="mx:Script">
+      <node text="ownField:String"/>
+    </node>
+    <node text="mx:Script">
+      <node text="bar()"/>
+      <node text="p:String"/>
+    </node>
+    <node text="mx:Style">
+      <node text=".inFile"/>
+      <node text=".inFile2"/>
+    </node>
+    <node text="mx:Panel">
+      <node text="gr:HGroup">
+        <node text="mx:List">
+          <node text="mx:itemRenderer">
+            <node text="mx:Button">
+              <node text="mx:Script">
+                <node text="fooBar():Boolean"/>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+    <node text="mx:Style">
+      <node text=".own1"/>
+      <node text=".own2"/>
+    </node>
+  </node>
+</node>
+</structure>    

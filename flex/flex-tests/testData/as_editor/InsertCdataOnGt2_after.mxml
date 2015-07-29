@@ -1,0 +1,4 @@
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:onclick><![CDATA[<caret>
+      ]]></mx:onclick>
+</mx:VBox>

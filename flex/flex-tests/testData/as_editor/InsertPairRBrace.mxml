@@ -1,0 +1,3 @@
+<Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <Button label="<caret>"/>
+</Application>

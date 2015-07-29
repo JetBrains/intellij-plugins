@@ -1,0 +1,12 @@
+package xxx {
+  import yyy.YYY;
+
+  class XXX extends yyy.XXX {
+    var aaa;
+    static function staticFun() {}
+  }
+
+  class YYY extends yyy.YYY {
+    var aaa;
+  }
+}

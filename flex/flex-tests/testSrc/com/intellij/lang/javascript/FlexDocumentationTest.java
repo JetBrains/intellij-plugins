@@ -31,6 +31,11 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
+  @Override
   protected String getExtension() {
     return "js2";
   }

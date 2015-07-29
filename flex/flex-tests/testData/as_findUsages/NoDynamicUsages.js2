@@ -1,0 +1,26 @@
+package
+{
+class BugTester {
+  public function handler():void {
+    var x:Object;
+    x.data = 1;
+    var y = x.data;
+    
+    var x2:*;
+    x2.data = 1;
+    var y2 = x2.data;
+    
+    var x3;
+    x3.data = 1;
+    var y2 = x3.data;
+  }
+ }
+}
+
+class MyValueObject {
+  public var d<caret>ata:Object;
+  function i() {
+    var x = data;
+    data = x;
+  }
+}

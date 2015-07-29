@@ -1,0 +1,61 @@
+import zzz.aaa;
+
+package mypackage2 {
+  class ZZZ2 {
+    internal var c;
+  }
+}
+
+package mypackage
+{
+
+use namespace _internal_;
+
+class ZZZ extends mypackage2.ZZZ2 {
+  <caret>
+  var aaa;
+  private var ttt;
+  internal var c2;
+  private class EE {}
+}
+
+public class A15 extends ZZZ
+{
+    /**
+     *  @private
+     */
+    _internal_ static var delegate:Object;
+
+    /**
+     *  @private
+     */
+    private static var _automation:Object;
+
+    public static function get automation():Object
+    {
+        return _automation;
+    }
+
+    /**
+     * @private
+     */
+    public static function set automation(_:Object):void
+    {
+        _automation = _;
+    }
+
+    public static function get initialized():Boolean
+    {
+        return _automation != null;
+    }
+
+    /**
+     *  Registers!
+     *  @param c The component class.
+     */
+    public static function register(c:Object):void
+    {
+      automation = 1;
+    }
+}
+}

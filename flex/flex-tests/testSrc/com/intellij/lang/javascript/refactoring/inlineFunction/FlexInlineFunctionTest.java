@@ -12,7 +12,7 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/as_refactoring/inlineFunction/";
+    return FlexTestUtils.getTestDataPath("as_refactoring/inlineFunction/");
   }
 
   @Override

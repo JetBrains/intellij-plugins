@@ -1,0 +1,8 @@
+class C {
+    static var a, b;
+
+    function foo() {
+        var c = C.a + C.b;
+    }
+
+}

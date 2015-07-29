@@ -1,0 +1,7 @@
+class C {
+  /**
+   *  @private
+   *  This method allows access to native implementation
+   */
+  mx_internal final function $remove<caret>Child(child:DisplayObject):DisplayObject;
+}

@@ -1,0 +1,10 @@
+/**
+ *
+ */
+native function a():int
+
+/**
+ * <caret>
+ * @param b
+ */
+function c(b) {}

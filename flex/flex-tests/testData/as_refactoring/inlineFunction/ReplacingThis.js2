@@ -1,0 +1,12 @@
+class C {
+    var a, b;
+
+    function foo() {
+        var b:C;
+        var c = b.fo<caret>o2();
+    }
+
+    function foo2() {
+        return this.a + b;
+    }
+}

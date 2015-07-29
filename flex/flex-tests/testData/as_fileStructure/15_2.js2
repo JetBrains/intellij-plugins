@@ -1,0 +1,10 @@
+import zzz.aaa;
+
+package mypackage
+{
+
+  public class A15 extends ZZZ
+  {
+    function A15() { c2 = 1; <caret> this.c2 = 1; c3 = 1; }
+  }
+}

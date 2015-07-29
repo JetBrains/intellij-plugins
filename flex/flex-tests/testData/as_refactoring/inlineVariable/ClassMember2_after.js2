@@ -1,0 +1,9 @@
+class Test {
+    public function foo():void {}
+}
+
+class Some {
+    function bar() {
+        new Test().foo();
+    }
+}

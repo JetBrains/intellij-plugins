@@ -1,0 +1,12 @@
+class Foo {
+  var value;
+  function foo():* {
+      var x:* = value;
+      value = 1;
+      return x.value;
+  }
+  function bar():* {
+      foo().value = 1;
+      return <div><value /></div>.value;
+  }
+}

@@ -1,0 +1,16 @@
+package
+{
+public class JustStatements2_4
+{
+    public function JustStatements2_4() {
+        fo<caret>o(true);
+        var x;
+    }
+
+    public function foo(b:Boolean):void {
+        if (b) {
+            return;
+        }
+    }
+}
+}

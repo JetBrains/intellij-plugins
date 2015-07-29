@@ -1,0 +1,5 @@
+function bar(... rest) {
+    var x;
+}
+
+ba<caret>r();
