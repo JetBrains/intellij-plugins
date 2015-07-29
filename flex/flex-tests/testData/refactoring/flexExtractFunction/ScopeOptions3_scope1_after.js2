@@ -1,0 +1,18 @@
+package {
+class ClassName {
+    function xxx() {
+        var x:int = 1;
+        var y:int = 1;
+
+        function created():void {
+            var a = 1 + x + y;
+            x = 2;
+            y = 3;
+        }
+
+        created();
+        alert(x);
+        alert(y);
+    }
+}
+}

@@ -1,0 +1,9 @@
+class Foo {
+    function foo():void {}
+    /**
+     * Documentation of 'complex'.
+     */
+    function complex() {
+        <selection>foo()</selection>;
+    } 
+}

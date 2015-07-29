@@ -1,0 +1,17 @@
+package {
+class Basic6 {
+
+    public function noCompletion():void {
+        var vs:Vector.<String> = created();
+        consume(vs)
+    }
+
+    public function created():Vector.<String> {
+        var vs:Vector.<String> = new Vector.<String>[""];
+        return vs;
+    }
+
+    public function consume(s:Vector.<String>):void {}
+}
+class Vector$object {}
+}

@@ -1,0 +1,6 @@
+class A {
+    function xxx() {
+        var b = 1;
+        var a = <selection>"XXX<caret>_YYY ZZZ"</selection>
+    }
+}

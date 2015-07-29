@@ -1,0 +1,5 @@
+function foo(list:Array):Boolean {
+    return list.some(fun<caret>ction(item:String, index:int, array:Array):Boolean {
+        return item.length > 3;
+    });
+}

@@ -1,0 +1,7 @@
+<selection>
+// my comment
+package foo {
+  class Bar {}
+}
+// my comment
+</selection>

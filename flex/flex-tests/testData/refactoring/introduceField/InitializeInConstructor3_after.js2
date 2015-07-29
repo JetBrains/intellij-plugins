@@ -1,0 +1,10 @@
+public class A {
+    private var created:String;
+
+    function A() {
+        created = "foo";
+        trace(created)
+    }
+}
+
+function trace(... rest) {}

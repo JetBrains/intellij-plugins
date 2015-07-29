@@ -1,0 +1,7 @@
+public class A {
+    function A() {
+        trace(<selection>"foo"</selection>)
+    }
+}
+
+function trace(... rest) {}

@@ -1,0 +1,12 @@
+package {
+class Basic6 {
+
+    public function noCompletion():void {
+        <caret>var vs:Vector.<String> = new Vector.<String>[""];
+        consume(vs)
+    }
+
+    public function consume(s:Vector.<String>):void {}
+}
+class Vector$object {}
+}

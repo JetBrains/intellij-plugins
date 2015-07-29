@@ -1,0 +1,11 @@
+class A {
+    private var created:int;
+
+    function xxx() {
+        var a, c = created;
+    }
+
+    function A() {
+        created = 1;
+    }
+}

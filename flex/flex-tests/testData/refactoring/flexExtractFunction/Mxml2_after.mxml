@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Button click="created(event);" label="Say Hello"/>
+    <mx:Script><![CDATA[
+        public function created(event:MouseEvent):void {
+            clicked(event)
+        }
+        ]]></mx:Script>
+</mx:Application>

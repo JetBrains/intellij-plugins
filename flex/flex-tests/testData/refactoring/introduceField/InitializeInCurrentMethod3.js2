@@ -1,0 +1,5 @@
+class A {
+    function xxx(s:String) {
+        xxx(<selection>"cccccc"</selection><caret>)
+    }
+}

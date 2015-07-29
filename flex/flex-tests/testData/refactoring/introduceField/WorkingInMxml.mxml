@@ -1,0 +1,8 @@
+<mx:Application
+xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+    function xxx() {
+        var a = <selection><caret>1</selection>;
+    }
+</mx:Script>
+</mx:Application>

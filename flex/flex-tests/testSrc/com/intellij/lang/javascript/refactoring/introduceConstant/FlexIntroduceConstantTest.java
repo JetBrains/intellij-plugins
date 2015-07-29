@@ -7,7 +7,6 @@ import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -20,13 +19,21 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 
 public class FlexIntroduceConstantTest extends CodeInsightTestCase {
-  private static final String BASE_PATH = "/refactoring/introduceConstant/";
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("refactoring/introduceConstant/");
+  }
 
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
 
-  private void doTest(final String varName, final boolean replaceAll, final JSAttributeList.AccessType accessType, String fileName, String ext) throws Exception {
+  private void doTest(final String varName,
+                      final boolean replaceAll,
+                      final JSAttributeList.AccessType accessType,
+                      String fileName,
+                      String ext) throws Exception {
     doTest(varName, replaceAll, accessType, null, fileName, ext);
   }
 
@@ -71,7 +78,7 @@ public class FlexIntroduceConstantTest extends CodeInsightTestCase {
       }
     }, fileName, ext);
   }
-  
+
   private void doTest(final JSIntroduceConstantHandler handler, String fileName, String ext) throws Exception {
     configureByFile(fileName + "." + ext);
     Editor injectedEditor = BaseCodeInsightAction.getInjectedEditor(myProject, myEditor);
@@ -102,7 +109,7 @@ public class FlexIntroduceConstantTest extends CodeInsightTestCase {
   public void testInMxml() throws Exception {
     doTest("created", getTestName(false), "mxml");
   }
-  
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -122,11 +129,12 @@ public class FlexIntroduceConstantTest extends CodeInsightTestCase {
     try {
       doTest("created", false, JSAttributeList.AccessType.PRIVATE, getTestName(false), "js2");
       assertFalse(true);
-    } catch (RuntimeException ex) {
-      assertEquals(ex.getMessage(),JSBundle.message("javascript.introduce.constant.error.not.constant.expression.selected"));
+    }
+    catch (RuntimeException ex) {
+      assertEquals(ex.getMessage(), JSBundle.message("javascript.introduce.constant.error.not.constant.expression.selected"));
     }
   }
-  
+
   public void testNiceNameWhenIntroducingFromLiteral() throws Exception {
     doNiceNameTest(0);
   }
@@ -188,10 +196,5 @@ public class FlexIntroduceConstantTest extends CodeInsightTestCase {
 
   public void testIntroduceConstantInDifferentClass_4() throws Exception {
     doTest("XXX", true, JSAttributeList.AccessType.PACKAGE_LOCAL, "foo.B", getTestName(false), "js2");
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + BASE_PATH;
   }
 }

@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.refactoring.introduceField;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
@@ -11,7 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldSettings.InitializationPlace.*;
 
 public class FlexIntroduceFieldTest extends LightCodeInsightTestCase {
-  private String BASE_PATH = "/refactoring/introduceField/";
+  @NotNull
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("refactoring/introduceField/");
+  }
 
   private void doTest(String varName, final String fileName, String ext) throws Exception {
     doTest(varName, false, JSAttributeList.AccessType.PRIVATE, FieldDeclaration, fileName, ext);
@@ -117,11 +121,5 @@ public class FlexIntroduceFieldTest extends LightCodeInsightTestCase {
 
   private void introduceFieldInCurrentMethod() throws Exception {
     doTest("created", true, JSAttributeList.AccessType.PRIVATE, CurrentMethod, getTestName(false), "js2");
-  }
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + BASE_PATH;
   }
 }

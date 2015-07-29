@@ -1,0 +1,9 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    <![CDATA[
+    function foo() {
+      <selection><caret>return 1;</selection>
+    }
+    ]]>
+  </mx:Script>
+</mx:Application>

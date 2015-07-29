@@ -1,0 +1,10 @@
+<mx:Application
+xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+    private var created:int = 1;
+
+    function xxx() {
+        var a = created;
+    }
+</mx:Script>
+</mx:Application>

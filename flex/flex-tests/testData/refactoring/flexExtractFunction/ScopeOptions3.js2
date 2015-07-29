@@ -1,0 +1,13 @@
+package {
+class ClassName {
+    function xxx() {
+        var x:int = 1;
+        var y:int = 1;
+        <selection>var a = 1 + x + y;
+        x = 2;
+        y = 3;</selection>
+        alert(x);
+        alert(y);
+    }
+}
+}
