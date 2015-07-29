@@ -1,0 +1,6 @@
+.someClass {
+}
+
+* {
+  tabStyleName: "someCl<caret>ass";
+}

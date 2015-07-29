@@ -1,0 +1,7 @@
+.customFormItem {
+  labelStyleName: ali<caret>gnLeftStyle;
+}
+
+.alignLeftStyle {
+  textAlign: left;
+}
