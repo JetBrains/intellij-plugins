@@ -1,0 +1,8 @@
+// "Create Method 'create'" "true"
+class Foo {
+    internal function create():void {
+        <caret>
+    }
+}
+var foo;
+(foo as Foo).create();

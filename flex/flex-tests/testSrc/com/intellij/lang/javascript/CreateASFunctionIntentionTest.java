@@ -20,7 +20,12 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
   @Override
   @NonNls
   public String getBasePath() {
-    return "/highlighting/intention/createfunction_as";
+    return "/createfunction_as";
+  }
+
+  @Override
+  public String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)

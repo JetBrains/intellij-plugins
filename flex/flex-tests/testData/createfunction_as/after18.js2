@@ -1,0 +1,9 @@
+// "Create Method '_bbb'" "true"
+public class DDD {
+    public static function _bbb(s:String, s2:String):void {
+        <caret>
+    }
+}
+class C {
+    DDD._bbb("1","2");
+}

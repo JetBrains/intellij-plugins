@@ -1,0 +1,7 @@
+// "Create constant field '_selectionManager'" "true"
+class A {
+    private const _selectionManager<caret>:ISelectionManager = ;
+  public function getSelectionManager():ISelectionManager {
+    return _selectionManager;
+  }
+}

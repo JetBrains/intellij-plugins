@@ -1,0 +1,11 @@
+<!-- "Create field 'aaaxxx'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+    /**
+     * Hi
+     */
+    function foo() {
+      aaa<caret>xxx = 1
+    }
+</mx:Script>
+</mx:Application>

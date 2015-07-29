@@ -1,0 +1,11 @@
+// "Create Set Property 'selectionManager'" "true"
+class A {
+  public function getSelectionManager():ISelectionManager {
+    selectionManager = null;
+  }
+
+    private function set selectionManager(selectionManager:):void {
+        _selectionManager<caret> = selectionManager;
+    }
+}
+

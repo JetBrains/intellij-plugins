@@ -1,0 +1,6 @@
+// "Create Variable 'localVar'" "true"
+public class A3 {
+    function A3() {
+        local<caret>Var =1;
+    }
+}

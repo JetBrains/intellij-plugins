@@ -1,0 +1,10 @@
+// "Create Method '_bbb2'" "true"
+interface D2 {
+    function _bbb2(s:String, s2:String):void;<caret>
+}
+class C {
+  var aaa:D2
+  function C() {
+    aaa._bbb2("1","2");
+  }
+}

@@ -1,0 +1,17 @@
+// "Create field 'anyvalue'" "true"
+package yyy {
+import xxx.B;
+
+class A {
+  public function foo() {
+    var x:B = new B();
+    x.anyvalue = 1;
+  }
+}
+}
+
+package xxx {
+  public class B {
+      public var anyvalue:int;
+  }
+}

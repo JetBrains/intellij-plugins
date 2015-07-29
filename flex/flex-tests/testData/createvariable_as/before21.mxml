@@ -1,0 +1,7 @@
+<!-- "Create Variable 'localVar'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script><![CDATA[
+    function foo() {
+        local<caret>Var =1;
+    }
+]]></mx:Script></mx:Application>

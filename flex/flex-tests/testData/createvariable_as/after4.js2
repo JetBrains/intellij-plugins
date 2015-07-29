@@ -1,0 +1,8 @@
+// "Create field '_selectionManager'" "true"
+class A {
+    private var _selectionManager<caret>:ISelectionManager;
+  public function getSelectionManager():ISelectionManager {
+    return _selectionManager;
+  }
+}
+

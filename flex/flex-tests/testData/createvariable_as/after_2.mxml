@@ -1,0 +1,12 @@
+<!-- "Create field 'aaaxxx'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+    private var aaaxxx:int;
+    /**
+     * Hi
+     */
+    function foo() {
+      aaaxxx = 1
+    }
+</mx:Script>
+</mx:Application>

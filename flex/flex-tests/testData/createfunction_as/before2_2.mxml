@@ -1,0 +1,7 @@
+<!-- "Create Method 'foo22'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="fo<caret>o22('111')">
+ <mx:Script><![CDATA[
+    import mx.core.Application;
+    private function blah():void { trace(Application.application.height); }
+]]></mx:Script>
+</mx:Application>

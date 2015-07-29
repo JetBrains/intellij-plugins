@@ -1,0 +1,11 @@
+// "Create Method '_bbb'" "true"
+class D {
+    internal static function _bbb(s:String, s2:String):void {
+        <caret>
+    }
+}
+class C {
+  static function foo() {
+    D._bbb("1","2");
+  }
+}

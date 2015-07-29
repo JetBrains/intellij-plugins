@@ -1,0 +1,6 @@
+<!-- "Create Event Handler 'handleEvent'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script><![CDATA[
+removeEventListener(MouseEvent.CLICK, handle<caret>Event)
+]]></mx:Script>
+</mx:Application>

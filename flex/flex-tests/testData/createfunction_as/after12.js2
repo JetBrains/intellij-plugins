@@ -1,0 +1,35 @@
+// "Create Method 'anymethod'" "true"
+package yyy {
+import xxx.B;
+import xxx.B2;
+import xxx.B3;
+
+import zzz.Z;
+
+class before12 extends B3 {
+  public function foo() {
+    var x:B = new B();
+    anymethod(x, xxx(), xxx2());
+  }
+
+    private function anymethod(x:B, z:Z, b2:B2):void {
+        <caret>
+    }
+}
+}
+
+package xxx {
+  import zzz.Z;
+
+  public class B {}
+  public class B2 {}
+
+  public class B3 {
+      protected function xxx():Z {}
+      protected function xxx2():B2 {}
+  }
+}
+
+package zzz {
+  public class Z {};
+}

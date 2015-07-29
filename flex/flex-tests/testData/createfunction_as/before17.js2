@@ -1,0 +1,8 @@
+// "Create Method 'foo3'" "true"
+class Sub7_ {
+    var x:int;
+private function foo() : void
+{
+  fo<caret>o3(x, x); 
+}
+}

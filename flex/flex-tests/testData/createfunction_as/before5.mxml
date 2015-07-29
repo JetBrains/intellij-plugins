@@ -1,0 +1,8 @@
+<!-- "Create Method '_bbb3'" "true" -->
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="_b<caret>bb3()">
+    <mx:Script>
+        <![CDATA[
+        ]]>
+    </mx:Script>
+</mx:Application>

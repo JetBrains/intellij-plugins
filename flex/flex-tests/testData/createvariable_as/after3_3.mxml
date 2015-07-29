@@ -1,0 +1,11 @@
+<!-- "Create Event Handler 'handleEvent'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script><![CDATA[
+var xml:XML = <></>;
+var s:String = "";
+addEventListener("Foo", handleEvent)
+private function handleEvent(event:Event):void {
+    <caret>
+}
+]]></mx:Script>
+</mx:Application>

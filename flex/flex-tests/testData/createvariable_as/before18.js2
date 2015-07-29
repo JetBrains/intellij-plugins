@@ -1,0 +1,8 @@
+// "Create constant field 'ccccc'" "true"
+public class A2____ {
+}
+
+class B {
+  var v = A2____.cc<caret>ccc;
+}
+

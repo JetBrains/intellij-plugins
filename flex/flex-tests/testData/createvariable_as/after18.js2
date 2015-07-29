@@ -1,0 +1,9 @@
+// "Create constant field 'ccccc'" "true"
+public class A2____ {
+    public static const ccccc: = ;
+}
+
+class B {
+  var v = A2____.ccccc;
+}
+

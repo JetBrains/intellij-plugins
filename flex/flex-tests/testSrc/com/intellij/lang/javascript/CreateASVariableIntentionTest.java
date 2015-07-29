@@ -16,12 +16,12 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
   @Override
   @NonNls
   public String getBasePath() {
-    return "/highlighting/intention/createvariable_as";
+    return "/createvariable_as";
   }
 
   @Override
   public String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override
