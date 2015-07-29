@@ -17,10 +17,7 @@ package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -29,6 +26,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.util.DartElementLocation;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SearchResult;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +55,9 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
       }
     };
     // Send the search request and wait for results.
-    final String elementFilePath = readEnclosingFilePath(element);
-    final int elementOffset = element.getTextOffset();
-    DartAnalysisServerService.getInstance().search_findElementReferences(elementFilePath, elementOffset, searchResultProcessor);
+    final DartElementLocation elementLocation = DartElementLocation.of(element);
+    DartAnalysisServerService.getInstance()
+      .search_findElementReferences(elementLocation.file, elementLocation.offset, searchResultProcessor);
     // OK
     return true;
   }
@@ -117,16 +115,5 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
       return element.getManager().findFile(virtualFile);
     }
     return null;
-  }
-
-  @NotNull
-  private static String readEnclosingFilePath(@NotNull final PsiElement element) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-      @Override
-      public String compute() {
-        final VirtualFile elementFile = element.getContainingFile().getVirtualFile();
-        return FileUtil.toSystemDependentName(elementFile.getPath());
-      }
-    });
   }
 }
