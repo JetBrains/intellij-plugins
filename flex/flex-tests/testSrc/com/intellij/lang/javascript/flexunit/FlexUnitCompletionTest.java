@@ -31,7 +31,7 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/flexUnit";
+    return FlexTestUtils.getTestDataPath("flexUnit");
   }
 
   @Override

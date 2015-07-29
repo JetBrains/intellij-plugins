@@ -28,7 +28,7 @@ public class FlexUnitHighlightingTest extends JSDaemonAnalyzerTestCase implement
 
   @Override
   protected String getBasePath() {
-    return "highlighting/";
+    return "/highlighting/";
   }
 
   @Override
@@ -70,7 +70,7 @@ public class FlexUnitHighlightingTest extends JSDaemonAnalyzerTestCase implement
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/flexUnit/";
+    return FlexTestUtils.getTestDataPath("flexUnit");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})

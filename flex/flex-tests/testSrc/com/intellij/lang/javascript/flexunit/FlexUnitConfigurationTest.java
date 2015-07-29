@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class FlexUnitConfigurationTest extends CodeInsightTestCase implements FlexUnitLibs {
 
-  private static final String BASE_PATH = "config/";
+  private static final String BASE_PATH = "/config/";
 
   @Override
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
@@ -34,7 +34,7 @@ public class FlexUnitConfigurationTest extends CodeInsightTestCase implements Fl
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/flexUnit/";
+    return FlexTestUtils.getTestDataPath("flexUnit");
   }
 
   @Override

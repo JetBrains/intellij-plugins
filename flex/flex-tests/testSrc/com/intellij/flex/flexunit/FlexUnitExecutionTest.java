@@ -93,7 +93,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
         put(FlexUnitRunnerParameters.OutputLogLevel.Debug, "Debug_message");
       }};
 
-  private static final String BASE_PATH = "execute/";
+  private static final String BASE_PATH = "/execute/";
 
   private static final boolean BLOCK_PORT_843 = true;
 
@@ -123,7 +123,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/flexUnit/";
+    return FlexTestUtils.getTestDataPath("flexUnit");
   }
 
   @Override
