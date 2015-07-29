@@ -1183,7 +1183,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   protected void doCommitModel(@NotNull final ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
     FlexTestUtils.setupFlexLib(myProject, getClass(), getTestName(false));
-    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), JSTestUtils.getTestDataPath() + "/flexUnit",
+    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), FlexTestUtils.getTestDataPath("flexUnit"),
                                FlexUnitLibs.FLEX_UNIT_0_9_SWC, FlexUnitLibs.FLEX_UNIT_4_SWC);
     if (myAfterCommitRunnable != null) {
       myAfterCommitRunnable.run();
