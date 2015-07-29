@@ -982,6 +982,20 @@ public class DartAnalysisServerService {
     return resultRef.get();
   }
 
+  public boolean edit_getRefactoring(String kind,
+                                  String file,
+                                  int offset,
+                                  int length,
+                                  boolean validateOnly,
+                                  RefactoringOptions options,
+                                  GetRefactoringConsumer consumer) {
+    synchronized (myLock) {
+      if (myServer == null) return false;
+      myServer.edit_getRefactoring(kind, file, offset, length, validateOnly, options, consumer);
+      return true;
+    }
+  }
+
   @Nullable
   public SourceFileEdit edit_organizeDirectives(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);

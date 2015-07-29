@@ -71,10 +71,12 @@
     <codeInsight.parameterInfo language="Dart"
                                implementationClass="com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler"/>
 
-    <renamePsiElementProcessor implementation="com.jetbrains.lang.dart.ide.DartRenamePsiElementProcessor"/>
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartLanguageCodeStyleSettingsProvider"/>
     <lang.importOptimizer language="Dart" implementationClass="com.jetbrains.lang.dart.ide.imports.DartImportOptimizer"/>
+
+    <renamePsiElementProcessor implementation="com.jetbrains.lang.dart.ide.DartRenamePsiElementProcessor"/>
+    <!--<renameHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartRenameHandler"/>-->
 
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>
