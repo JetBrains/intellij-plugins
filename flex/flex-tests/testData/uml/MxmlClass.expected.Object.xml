@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="Object">
+  <node id="Object" nodeName="Class Object" name="&lt;html&gt;&lt;b&gt;Object&lt;/b&gt;&lt;/html&gt;">
+    <element name="constructor" type="*" category="Properties" visibility="PUBLIC" />
+    <element name="length" type="Number" category="Properties" visibility="PUBLIC" />
+    <element name="prototype" type="Object" category="Properties" visibility="PUBLIC" />
+    <element name="toLocaleString()" type="Object" category="Methods" visibility="PUBLIC" />
+    <element name="toSource()" type="Object" category="Methods" visibility="PUBLIC" />
+    <element name="unwatch(String)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="watch(String, Object)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="hasOwnProperty(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
+    <element name="isPrototypeOf(Object)" type="Boolean" category="Methods" visibility="PUBLIC" />
+    <element name="propertyIsEnumerable(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
+    <element name="toString()" type="String" category="Methods" visibility="PUBLIC" />
+  </node>
+</umlModel>
+

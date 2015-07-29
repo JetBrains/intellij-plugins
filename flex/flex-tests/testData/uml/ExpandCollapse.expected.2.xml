@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="com.test.Foo">
+  <node id="Root" nodeName="Class Root" name="&lt;html&gt;&lt;b&gt;Root&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.test" nodeName="Package com.test" name="&lt;html&gt;&lt;b&gt;com.test&lt;/b&gt;&lt;/html&gt;" />
+</umlModel>

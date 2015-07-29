@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="com">
+  <node id="com.A" nodeName="Class com.A" name="&lt;html&gt;&lt;b&gt;com.A&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.B" nodeName="Class com.B" name="&lt;html&gt;&lt;b&gt;com.B&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.foo" nodeName="Package com.foo" name="&lt;html&gt;&lt;b&gt;com.foo&lt;/b&gt;&lt;/html&gt;" />
+  <edge from="com.B" to="com.A" idElement="com.B" relship="GENERALIZATION" />
+</umlModel>

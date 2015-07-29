@@ -49,11 +49,11 @@ import java.util.*;
 
 public class FlashUmlTest extends CodeInsightTestCase {
 
-  private static final String BASE_PATH = "/uml/";
+  private static final String BASE_PATH = "uml/";
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

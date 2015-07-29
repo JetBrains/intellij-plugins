@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="Foo">
+  <node id="C1" nodeName="Class C1" name="&lt;html&gt;&lt;b&gt;C1&lt;/b&gt;&lt;/html&gt;">
+    <element name="v" type="Vector.&lt;C1&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="C2" nodeName="Class C2" name="&lt;html&gt;&lt;b&gt;C2&lt;/b&gt;&lt;/html&gt;">
+    <element name="v" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="C3" nodeName="Class C3" name="&lt;html&gt;&lt;b&gt;C3&lt;/b&gt;&lt;/html&gt;">
+    <element name="foo()" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="C4" nodeName="Class C4" name="&lt;html&gt;&lt;b&gt;C4&lt;/b&gt;&lt;/html&gt;" />
+  <node id="C5" nodeName="Class C5" name="&lt;html&gt;&lt;b&gt;C5&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Foo" nodeName="Class Foo" name="&lt;html&gt;&lt;b&gt;Foo&lt;/b&gt;&lt;/html&gt;">
+    <element name="c1" type="C1" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="c2" type="Vector.&lt;C2&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v" type="Foo" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="f()" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+  </node>
+  <edge from="Foo" to="C2" idElement="Foo" relship="ONE_TO_MANY" relshipLabel="c2" />
+</umlModel>
+

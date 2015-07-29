@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.uml.actions.JSCreateFieldDialog;
 import com.intellij.psi.PsiFile;
@@ -9,6 +10,10 @@ import com.intellij.util.ArrayUtil;
  * User: ksafonov
  */
 public class FlexCompletionInUmlTextFieldsTest extends FlexCompletionInTextFieldBase {
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testCreateUmlFieldType() throws Exception {
