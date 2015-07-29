@@ -16,13 +16,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Eugene.Kudelevsky
  */
-@TestDataPath("$PROJECT_ROOT/plugins/JavaScriptLanguage/testData/flex_color_gutter/")
 public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModuleFixtureBuilder> {
-  @NonNls private static final String BASE_PATH = "/plugins/JavaScriptLanguage/testData/flex_color_gutter";
-
   @Override
   protected String getBasePath() {
-    return BASE_PATH;
+    return "/flex/flex-tests/testData/flex_color_gutter";
   }
 
   @Override

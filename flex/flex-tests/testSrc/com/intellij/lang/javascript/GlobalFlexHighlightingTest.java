@@ -81,6 +81,6 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
 
   @Override
   public String getTestDataPath() {
-    return JSTestUtils.getTestDataPath() + "/global_inspections";
+    return FlexTestUtils.getTestDataPath("global_inspections");
   }
 }

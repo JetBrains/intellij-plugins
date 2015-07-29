@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>ReportingAnnotatorProblemsInMxml.mxml</file>
+    <line>7</line>
+    <description>Unresolved variable xxx #loc</description>
+  </problem>
+  <problem>
+    <file>ReportingAnnotatorProblemsInMxml.mxml</file>
+    <line>3</line>
+    <description>Unresolved type IFoo #loc</description>
+  </problem>
+</problems>
+

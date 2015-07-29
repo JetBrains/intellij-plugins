@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Button disabledColor=<info>"red"</info>/>
+  <mx:Button disabledColor=<info>"0xffffff"</info>/>
+  <mx:Button disabledColor=<info>"#ffffff"</info>/>
+  <mx:Button disabledColor=<error descr="Unknown color: 'pink'">"pink"</error>/>
+  <mx:Button disabledColor=<error descr="Unknown color: ' red'">" red"</error>/>
+  <mx:Button disabledColor=<info>"0"</info>/>
+
+  <mx:Panel headerColors="[ red, 0xffffff ]"/>
+
+  <mx:Panel headerColors=""/>
+</mx:Application>
