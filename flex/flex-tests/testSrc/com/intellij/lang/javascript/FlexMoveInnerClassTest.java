@@ -32,12 +32,12 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
   @NotNull
   @Override
   protected String getTestRoot() {
-    return "/move_inner/";
+    return "move_inner/";
   }
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

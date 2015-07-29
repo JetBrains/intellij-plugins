@@ -35,12 +35,12 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
   @NotNull
   @Override
   protected String getTestRoot() {
-    return "/moveMembers/";
+    return "moveMembers/";
   }
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

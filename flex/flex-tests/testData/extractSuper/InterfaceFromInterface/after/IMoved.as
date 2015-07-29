@@ -1,0 +1,6 @@
+package {
+public interface IMoved {
+
+
+}
+}

@@ -41,12 +41,12 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
   @NotNull
   @Override
   protected String getTestRoot() {
-    return "/extractSuper/";
+    return "extractSuper/";
   }
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override

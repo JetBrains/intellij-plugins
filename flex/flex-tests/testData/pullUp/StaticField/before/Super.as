@@ -1,0 +1,5 @@
+package {
+class Super {
+
+}
+}

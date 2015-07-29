@@ -1,0 +1,3 @@
+package {
+interface IFoo {}
+}

@@ -1,0 +1,6 @@
+package {
+public class From {
+
+
+}
+}

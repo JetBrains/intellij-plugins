@@ -29,12 +29,12 @@ public class FlexPushDownTest extends MultiFileTestCase {
   @NotNull
   @Override
   protected String getTestRoot() {
-    return "/pushDown/";
+    return "pushDown/";
   }
 
   @Override
   protected String getTestDataPath() {
-    return JSTestUtils.getTestDataPath();
+    return FlexTestUtils.getTestDataPath("");
   }
 
   @Override
