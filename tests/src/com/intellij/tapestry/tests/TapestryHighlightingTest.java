@@ -6,6 +6,9 @@ import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.util.containers.ContainerUtil;
+
+import java.util.Set;
 
 /**
  * @author Alexey Chmutov
@@ -17,6 +20,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
   protected String getBasePath() {
     return "highlighting/";
   }
+  private static final Set<String> ourTestsWithExtraLibraryComponents = ContainerUtil.newHashSet("ComponentFromJar", "LibraryMapping");
 
   public void testTmlTagNameUsingSubpackage() throws Throwable {
     addComponentToProject("other.Count");
@@ -93,6 +97,11 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(false);
   }
 
+  public void testLibraryMapping() throws Throwable {
+    addComponentToProject("Count3");
+    doTest(false);
+  }
+
   public void testNewSchema() throws Throwable {
     doTest(true);
   }
@@ -100,7 +109,9 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
   @Override
   protected void addTapestryLibraries(JavaModuleFixtureBuilder moduleBuilder) {
     super.addTapestryLibraries(moduleBuilder);
-    moduleBuilder.addLibraryJars("tapestry_5.1.0.5_additional", Util.getCommonTestDataPath() + "libs", "tapestry-upload-5.1.0.5.jar");
+    if (ourTestsWithExtraLibraryComponents.contains(getTestName(false))) {
+      moduleBuilder.addLibraryJars("tapestry_5.1.0.5_additional", Util.getCommonTestDataPath() + "libs", "tapestry-upload-5.1.0.5.jar");
+    }
   }
 
   protected void doTest(boolean checkInfos, LocalInspectionTool... tools) throws Throwable {

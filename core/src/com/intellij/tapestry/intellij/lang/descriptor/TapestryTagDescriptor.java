@@ -2,6 +2,7 @@ package com.intellij.tapestry.intellij.lang.descriptor;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
@@ -41,7 +42,12 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   }
 
   public String getDefaultName() {
-    return getPrefixWithColon() + myComponent.getName().toLowerCase().replace('/', '.');
+    Library library = myComponent.getLibrary();
+    String name = myComponent.getName().toLowerCase().replace('/', '.');
+    if (library != null && library.getShortName() != null) {
+      name = library.getShortName() + '.' + name;
+    }
+    return getPrefixWithColon() + name;
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
