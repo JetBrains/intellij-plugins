@@ -74,6 +74,7 @@ public class DartAnalysisServerService {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
+  private static final long GET_ASSISTS_TIMEOUT = 100;
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
@@ -688,6 +689,51 @@ public class DartAnalysisServerService {
     }
 
     return resultRef.get();
+  }
+
+  @NotNull
+  public List<SourceChange> edit_getAssists(@NotNull final String _filePath, final int offset, final int length) {
+    final List<SourceChange> results = Lists.newArrayList();
+    final Semaphore semaphore = new Semaphore();
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
+    synchronized (myLock) {
+      final AnalysisServer server = myServer;
+      if (server == null) return null;
+
+      final GetAssistsConsumer consumer = new GetAssistsConsumer() {
+        @Override
+        public void computedSourceChanges(List<SourceChange> sourceChanges) {
+          results.addAll(sourceChanges);
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          logError("edit_getAssists()", filePath, error);
+          semaphore.up();
+        }
+      };
+
+      semaphore.down();
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.edit_getAssists(filePath, offset, length, consumer);
+        }
+      }, "edit_getAssists(" + filePath + ", " + offset + ", " + length + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return null;
+      }
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(GET_ASSISTS_TIMEOUT);
+
+    semaphore.up();
+    return results;
   }
 
   @Nullable
