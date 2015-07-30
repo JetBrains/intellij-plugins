@@ -90,7 +90,6 @@ public interface TapestryConstants {
    */
   String MIXINS_PACKAGE = "mixins";
 
-  String[] ELEMENT_PACKAGES = {PAGES_PACKAGE, COMPONENTS_PACKAGE, MIXINS_PACKAGE};
   /**
    * Base package for Tapestry services.
    */
@@ -100,6 +99,8 @@ public interface TapestryConstants {
    * Base package for Tapestry base classes.
    */
   String BASE_PACKAGE = "base";
+
+  String[] ELEMENT_PACKAGES = {PAGES_PACKAGE, COMPONENTS_PACKAGE, BASE_PACKAGE, MIXINS_PACKAGE};
 
   /**
    * The suffix of the module builder class.

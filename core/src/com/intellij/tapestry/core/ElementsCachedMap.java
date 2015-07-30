@@ -23,13 +23,23 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
   private final boolean myCacheComponents;
   private final boolean myCachePages;
   private final boolean myCacheMixin;
+  private final boolean myCacheAbstractComponents;
 
-  public ElementsCachedMap(@NonNls String keyName, boolean cacheComponents, boolean cachePages, boolean cacheMixin) {
+  ElementsCachedMap(@NonNls String keyName, boolean cacheComponents, boolean cachePages, boolean cacheMixin) {
+    this(keyName, cacheComponents, cachePages, cacheMixin, false);
+  }
+
+  ElementsCachedMap(@NonNls String keyName,
+                           boolean cacheComponents,
+                           boolean cachePages,
+                           boolean cacheMixin,
+                           boolean cacheAbstractComponents) {
     super(keyName);
     myCacheComponents = cacheComponents;
     myCachePages = cachePages;
     myCacheMixin = cacheMixin;
-    assert myCachePages || myCacheComponents || myCacheMixin;
+    myCacheAbstractComponents = cacheAbstractComponents;
+    assert myCachePages || myCacheComponents || myCacheMixin || myCacheAbstractComponents;
   }
 
   protected Map<String, PresentationLibraryElement> computeValue(Module module) {
@@ -38,6 +48,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     assert project != null;
     for (Library library : project.getLibraries()) {
       if (myCacheComponents) computeKeyAndAddAll(map, library.getComponents().values(), library.getShortName());
+      if (myCacheAbstractComponents) computeKeyAndAddAll(map, library.getAbstractComponents().values(), library.getShortName());
       if (myCachePages) computeKeyAndAddAll(map, library.getPages().values(), library.getShortName());
       if (myCacheMixin) computeKeyAndAddAll(map, library.getMixins().values(), library.getShortName());
     }

@@ -6,7 +6,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileBasedUserDataCache;
 import com.intellij.psi.util.CachedValue;
-import com.intellij.tapestry.core.util.ClassUtils;
 import gnu.trove.THashMap;
 
 import java.util.Map;
@@ -27,24 +26,53 @@ public class MappingDataCache extends FileBasedUserDataCache<Map<String, String>
   @Override
   protected Map<String, String> doCompute(PsiFile file) {
     final Map<String, String> result = new THashMap<String, String>();
+    if (file instanceof PsiCompiledElement) {
+      PsiElement element = file.getNavigationElement();
+      if (element != file && element instanceof PsiFile) {
+        file = (PsiFile)element;
+      } else {
+        PsiElement mirror = ((PsiCompiledElement)file).getMirror();
+        if (mirror instanceof PsiFile) file = (PsiFile)mirror;
+      }
+    }
     file.accept(new JavaRecursiveElementVisitor() {
       @Override
       public void visitNewExpression(PsiNewExpression expression) {
         final PsiJavaCodeReferenceElement classReference = expression.getClassReference();
-        final String fqn = ApplicationManager.getApplication().isUnitTestMode() ? TAPESTRY_MAPPING_TEST_FQN : TAPESTRY_MAPPING_FQN;
-        if (classReference != null && fqn.equals(classReference.getQualifiedName())) {
+
+        final String classReferenceQualifiedName = classReference != null ? classReference.getQualifiedName() : null;
+        if (TAPESTRY_MAPPING_FQN.equals(classReferenceQualifiedName) ||
+            ApplicationManager.getApplication().isUnitTestMode() && TAPESTRY_MAPPING_TEST_FQN.equals(classReferenceQualifiedName)
+           ) {
           final PsiExpressionList argumentList = expression.getArgumentList();
           final PsiExpression[] expressions = argumentList == null ? null : argumentList.getExpressions();
-          if (expressions != null && expressions.length == 2 && ClassUtils.instanceOf(expressions, PsiLiteralExpression.class)) {
-            result.put(
-              StringUtil.unquoteString(expressions[0].getText()),
-              StringUtil.unquoteString(expressions[1].getText())
-            );
+          if (expressions != null && expressions.length == 2) {
+            String prefix = calculateExprValue(expressions[0]);
+            String packageName = calculateExprValue(expressions[1]);
+
+            if (prefix != null && packageName != null) {
+              result.put(prefix, packageName);
+            }
           }
         }
         super.visitNewExpression(expression);
       }
     });
     return result;
+  }
+
+  protected static String calculateExprValue(PsiExpression expression) {
+    if (expression instanceof PsiJavaReference) {
+      final PsiElement resolve = ((PsiJavaReference)expression).resolve();
+      if (resolve instanceof PsiField &&
+          ((PsiField)resolve).hasModifierProperty(PsiModifier.FINAL) &&
+          ((PsiField)resolve).hasInitializer()) {
+        final Object constantValue = ((PsiField)resolve).computeConstantValue();
+        if (constantValue instanceof String) return (String)constantValue;
+      }
+    } else if (expression instanceof PsiLiteralExpression) {
+      return StringUtil.unquoteString(expression.getText());
+    }
+    return null;
   }
 }

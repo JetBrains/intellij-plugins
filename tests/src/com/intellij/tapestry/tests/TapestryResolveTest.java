@@ -5,6 +5,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.MappingDataCache;
+import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.xml.Html5SchemaProvider;
@@ -12,6 +14,7 @@ import com.intellij.xml.util.XmlUtil;
 import org.intellij.plugins.relaxNG.compact.RncElementTypes;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -82,6 +85,28 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     final PsiFile psiFile = myFixture.configureByFile("TmlMapping.java");
     final Map<String,String> compute = cache.compute(psiFile);
     assertTrue(compute.containsKey("foo"));
+  }
+
+  public void testTmlMapping2() throws Throwable {
+    final MappingDataCache cache = new MappingDataCache();
+    final PsiFile psiFile = myFixture.configureByFile("TmlMapping2.java");
+    final Map<String,String> compute = cache.compute(psiFile);
+    assertTrue(compute.containsKey("foo"));
+  }
+
+  public void testTmlMapping3() throws Throwable {
+    myFixture.configureByFile("TmlMapping3.java");
+    final TapestryModuleSupportLoader moduleSupportLoader = TapestryModuleSupportLoader.getInstance(myModule);
+    final Collection<Library> libraries = moduleSupportLoader.getTapestryProject().getLibraries();
+    Library libraryOfInterest = null;
+
+    for(Library library:libraries) {
+      if ("dk.nesluop.librarymapping.framework".equals(library.getBasePackage())) {
+        libraryOfInterest = library;
+        break;
+      }
+    }
+    assertNotNull(libraryOfInterest);
   }
 
   public void testTmlMixin() throws Throwable {

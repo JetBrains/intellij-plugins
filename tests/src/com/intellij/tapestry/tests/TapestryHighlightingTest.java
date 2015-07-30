@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
+import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 
 /**
  * @author Alexey Chmutov
@@ -79,8 +80,27 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(true);
   }
 
+  public void testAbstractComponent() throws Throwable {
+    addAbstractComponentToProject("AbstractComponent");
+    final String tmlName = getElementTemplateFileName();
+    final VirtualFile templateFile = myFixture.copyFileToProject(tmlName, ABSTRACT_COMPONENTS_PACKAGE_PATH + tmlName);
+    myFixture.configureFromExistingVirtualFile(templateFile);
+    myFixture.enableInspections(new TelReferencesInspection());
+    myFixture.testHighlighting(true, true, true, templateFile);
+  }
+
+  public void testComponentFromJar() throws Throwable {
+    doTest(false);
+  }
+
   public void testNewSchema() throws Throwable {
     doTest(true);
+  }
+
+  @Override
+  protected void addTapestryLibraries(JavaModuleFixtureBuilder moduleBuilder) {
+    super.addTapestryLibraries(moduleBuilder);
+    moduleBuilder.addLibraryJars("tapestry_5.1.0.5_additional", Util.getCommonTestDataPath() + "libs", "tapestry-upload-5.1.0.5.jar");
   }
 
   protected void doTest(boolean checkInfos, LocalInspectionTool... tools) throws Throwable {

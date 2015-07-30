@@ -1,0 +1,9 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+          xmlns:p="tapestry:parameter">
+  <body>
+  <t:upload />
+  <t:pagelink page="servicestatus" context="user.id">"Text</t:pagelink>
+  <input t:type="upload" t:id="file" t:value="file" validate="required"/>
+  </body>
+
+</html>

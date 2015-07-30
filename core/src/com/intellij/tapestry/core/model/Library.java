@@ -57,6 +57,15 @@ public class Library implements Comparable {
   }
 
   /**
+   * Finds all abstract components of this library.
+   *
+   * @return all abstract components of this library.
+   */
+  public Map<String, PresentationLibraryElement> getAbstractComponents() {
+    return findElements(TapestryConstants.BASE_PACKAGE, _basePackage);
+  }
+
+  /**
    * Finds all pages of this library.
    *
    * @return all pages of this library.

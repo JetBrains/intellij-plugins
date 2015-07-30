@@ -156,8 +156,12 @@ public class TapestryProject {
     cachedLibraries.add(myCoreLibrary);
 
     for (String libraryShortName : libraryMapping.keySet()) {
-      for(String baseProject:libraryMapping.get(libraryShortName))
-        cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, baseProject, this, libraryShortName));
+      for(String baseProject:libraryMapping.get(libraryShortName)) {
+        final boolean coreLibrary = CORE_LIBRARY_ID.equals(libraryShortName);
+        cachedLibraries.add(new Library(
+          APPLICATION_LIBRARY_ID, baseProject, this, coreLibrary ? null : libraryShortName
+        ));
+      }
     }
 
     myCachedLibraries = cachedLibraries;
@@ -346,7 +350,7 @@ public class TapestryProject {
     return ourTemplateToElementMap.get(myModule).get(LocalizationUtils.unlocalizeFileName(templatePath));
   }
 
-  private static final ElementsCachedMap ourTemplateToElementMap = new ElementsCachedMap("ourTemplateToElementMap", true, true, false) {
+  private static final ElementsCachedMap ourTemplateToElementMap = new ElementsCachedMap("ourTemplateToElementMap", true, true, false, true) {
     @Nullable
     protected String computeKey(PresentationLibraryElement element) {
       final IResource[] resources = element.getTemplate();

@@ -417,6 +417,9 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
     if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE)) {
       elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.COMPONENTS_PACKAGE.length() + 1), false);
     }
+    else if (elementName.startsWith(TapestryConstants.BASE_PACKAGE)) {
+      elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.BASE_PACKAGE.length() + 1), false);
+    }
     else if (elementName.startsWith(TapestryConstants.PAGES_PACKAGE)) {
       elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.PAGES_PACKAGE.length() + 1), false);
     }
@@ -455,7 +458,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
       throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not under a Tapestry base package.");
     }
 
-    if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE)) {
+    if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE) || elementName.startsWith(TapestryConstants.BASE_PACKAGE)) {
       return ElementType.COMPONENT;
     }
     else if (elementName.startsWith(TapestryConstants.PAGES_PACKAGE)) {
