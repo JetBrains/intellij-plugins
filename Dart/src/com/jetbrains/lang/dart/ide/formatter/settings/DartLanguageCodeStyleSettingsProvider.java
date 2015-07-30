@@ -110,6 +110,7 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     }
     else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
       consumer.showStandardOptions("RIGHT_MARGIN",
+                                   "WRAP_ON_TYPING",
                                    "KEEP_LINE_BREAKS",
                                    "KEEP_FIRST_COLUMN_COMMENT",
                                    "BRACE_STYLE",
