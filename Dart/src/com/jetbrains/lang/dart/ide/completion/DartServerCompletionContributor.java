@@ -119,10 +119,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
             @Override
             public void handleInsert(InsertionContext context, LookupElement item) {
               if (parameterNames.isEmpty()) {
-                ParenthesesInsertHandler.NO_PARAMETERS.handleInsert(context, null);
+                ParenthesesInsertHandler.NO_PARAMETERS.handleInsert(context, item);
               }
               else {
-                ParenthesesInsertHandler.WITH_PARAMETERS.handleInsert(context, null);
+                ParenthesesInsertHandler.WITH_PARAMETERS.handleInsert(context, item);
                 // Show parameters popup.
                 final Editor editor = context.getEditor();
                 final PsiElement psiElement = lookupObject.getElement();
