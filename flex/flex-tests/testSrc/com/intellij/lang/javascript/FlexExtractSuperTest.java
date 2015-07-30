@@ -266,7 +266,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
   public void testInheritanceFromSdk() throws Exception {
-    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     doTest(new PerformAction() {
       @Override
       public void performAction(final VirtualFile rootDir, final VirtualFile rootAfter) throws Exception {

@@ -2298,8 +2298,8 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   public void testSuperclassResolveMixedRoots() throws Exception {
     // we need two SDKs so that flash.net.FileReference from SDK 4.6/playerglobal.swc
     // has more recent timestamp than its brother from SDK 4.5/airglobal.swc
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
@@ -2318,8 +2318,8 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testFieldResolveMixedRoots() throws Exception {
     // same as testSuperclassResolveMixedRoots()
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
@@ -2363,7 +2363,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testCorrectScopeForSuperclassCheck2() throws Exception { //
-    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
@@ -2384,7 +2384,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testCorrectScopeForSuperclassCheck3() throws Exception { // IDEA-91539
-    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
@@ -2399,8 +2399,8 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   public void testCorrectScopeForSuperclassCheck4() throws Exception {
     // two dependent modules, different SDKs
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
-    final Sdk sdk46 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
@@ -2431,7 +2431,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     // SDK should have no sources attached (otherwise getNavigationElement() for both classes will bring us to the same file)
     // see testData\js2_highlighting\CorrectScopeForSuperclassCheck5_src.zip
 
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
     JSTestUtils.addFlexLibrary(false, myModule, "foobar", true, getTestDataPath(), BASE_PATH + getTestName(false) + ".swc", null, null,
                                LinkageType.Merged);
 
@@ -2447,7 +2447,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testCorrectScopeForSuperclassCheck6() throws Exception {
     // monkey patching SDK class
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
 
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
@@ -2486,7 +2486,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testVectorWithSdk() throws Exception {
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];

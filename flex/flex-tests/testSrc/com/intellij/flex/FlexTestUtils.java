@@ -42,6 +42,10 @@ public class FlexTestUtils {
     return PathManager.getHomePath() + "/flex/flex-tests/testData/" + relativePath;
   }
 
+  public static String getPathToCompleteFlexSdk(final String version) {
+    return PathManager.getHomePath() + "/flex/tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk/" + version;
+  }
+
   public static void setupFlexLib(final Project project, final Class clazz, final String testName) {
     if (JSTestUtils.testMethodHasOption(clazz, testName, JSTestOption.WithFlexLib)) {
       Module[] modules = ModuleManager.getInstance(project).getModules();

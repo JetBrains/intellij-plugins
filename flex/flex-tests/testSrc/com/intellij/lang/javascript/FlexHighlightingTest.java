@@ -2305,7 +2305,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testBadResolveOfSuperClass() throws Exception {
-    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
 
     AccessToken writeAction = WriteAction.start();
     try {
@@ -2373,7 +2373,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testFontFaceProperties() throws Throwable {
-    final Sdk sdk = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     AccessToken writeAction = WriteAction.start();
     try {
       JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {

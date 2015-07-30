@@ -275,7 +275,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private void initSdk() {
-    final Sdk sdk45 = FlexTestUtils.createSdk(JSTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
