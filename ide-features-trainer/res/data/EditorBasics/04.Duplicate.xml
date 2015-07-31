@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Duplicating" passed="false" version="0.1" subtype="aimless">
+<xml type="Scenario" name="Duplicate" passed="false" version="0.1" subtype="aimless">
     <MouseBlock>
         <CopyText>public class Duplicate {
 
