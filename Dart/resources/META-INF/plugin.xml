@@ -195,68 +195,6 @@
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerGlobalInspectionTool"/>
 
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention1</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention2</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention3</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention4</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention5</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention6</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention7</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention8</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention9</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-    <intentionAction>
-      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention10</className>
-      <category>Dart</category>
-      <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName>
-    </intentionAction>
-
-
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

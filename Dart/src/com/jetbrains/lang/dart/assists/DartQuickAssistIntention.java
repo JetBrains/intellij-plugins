@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.psi.DartFile;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,12 +63,15 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    if (!(file instanceof DartFile)) {
+      return false;
+    }
     final List<SourceChange> sourceChanges = QuickAssistSet.getQuickAssists(editor, file);
-    if (sourceChanges.size() < index) {
+    if (sourceChanges.size() <= index) {
       sourceChange = null;
       return false;
     }
-    sourceChange = sourceChanges.get(index - 1);
+    sourceChange = sourceChanges.get(index);
     return true;
   }
 

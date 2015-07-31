@@ -1,3 +1,0 @@
-main() {
-  int answer = 42;
-}

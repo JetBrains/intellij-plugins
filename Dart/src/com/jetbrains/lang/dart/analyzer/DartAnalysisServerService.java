@@ -11,6 +11,7 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,6 +49,7 @@ import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -391,6 +393,8 @@ public class DartAnalysisServerService {
         updateInformationFromServer(e);
       }
     });
+
+    registerQuickAssistIntentions();
   }
 
   @NotNull
@@ -699,7 +703,7 @@ public class DartAnalysisServerService {
 
     synchronized (myLock) {
       final AnalysisServer server = myServer;
-      if (server == null) return null;
+      if (server == null) return results;
 
       final GetAssistsConsumer consumer = new GetAssistsConsumer() {
         @Override
@@ -725,14 +729,11 @@ public class DartAnalysisServerService {
 
       if (!ok) {
         stopServer();
-        return null;
+        return results;
       }
     }
 
-    final long t0 = System.currentTimeMillis();
     semaphore.waitFor(GET_ASSISTS_TIMEOUT);
-
-    semaphore.up();
     return results;
   }
 
@@ -1289,6 +1290,14 @@ public class DartAnalysisServerService {
     }
 
     return true;
+  }
+
+  private static void registerQuickAssistIntentions() {
+    final IntentionManager intentionManager = IntentionManager.getInstance();
+    for (int i = 0; i < 20; i++) {
+      final DartQuickAssistIntention intention = new DartQuickAssistIntention(i);
+      intentionManager.addAction(intention);
+    }
   }
 
   private void updateInformationFromServer(DocumentEvent e) {
