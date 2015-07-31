@@ -62,8 +62,8 @@ public class TryBlockCommandEx extends CommandEx {
         String[] strings = new String[stringArrayList.size()];
         strings = stringArrayList.toArray(strings);
 
-        lesson.hintPanel = new HintPanel(strings);
-        lesson.hintPanel.showIt(editor);
+//        lesson.hintPanel = new HintPanel(strings);
+//        lesson.hintPanel.showIt(editor);
     }
 
     private void addTryCommands(Queue<Element> elements, Element element){

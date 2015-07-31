@@ -46,7 +46,7 @@ public class WinCommandEx extends CommandEx {
                         try {
                             infoPanel.hideButton();
                             infoPanel.dispose();
-                            if (lesson.hintPanel != null) lesson.hintPanel.dispose();
+//                            if (lesson.hintPanel != null) lesson.hintPanel.dispose();
                             lesson.onNextLesson();
                         } catch (BadLessonException e1) {
                             e1.printStackTrace();

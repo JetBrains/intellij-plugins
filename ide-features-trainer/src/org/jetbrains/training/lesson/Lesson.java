@@ -3,8 +3,6 @@ package org.jetbrains.training.lesson;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.graphics.DetailPanel;
-import org.jetbrains.training.graphics.HintPanel;
 
 import java.awt.*;
 import java.io.IOException;
@@ -23,8 +21,6 @@ public class Lesson extends ToggleAction {
     private Course parentCourse;
 
     @Nullable
-    private DetailPanel infoPanel;
-    public HintPanel hintPanel;
     private boolean isPassed;
     private boolean isOpen;
 
@@ -53,7 +49,6 @@ public class Lesson extends ToggleAction {
         if (isOpen) throw new LessonIsOpenedException(this.getId() + "is opened");
         onStart();
 
-        infoPanel = new DetailPanel(infoPanelDimension);
         isOpen = true;
     }
 
@@ -61,8 +56,6 @@ public class Lesson extends ToggleAction {
         //destroy infoPanel (infoPanel = null)
         isOpen = false;
         onClose();
-
-        infoPanel = null;
     }
 
     /**
@@ -70,9 +63,6 @@ public class Lesson extends ToggleAction {
      * @return null if DetailPanel still not initialized
      */
     @Nullable
-    public DetailPanel getInfoPanel() {
-        return infoPanel;
-    }
 
     public String getId() {
         return name;

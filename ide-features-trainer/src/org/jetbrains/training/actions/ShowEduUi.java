@@ -1,4 +1,4 @@
-package org.jetbrains.training;
+package org.jetbrains.training.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

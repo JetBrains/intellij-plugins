@@ -46,24 +46,24 @@ public class TryCommandEx extends CommandEx {
             }
 
 
-        if(lesson.hintPanel == null) {
-            if (element.getAttribute("hint") != null) {
-                String hintText = element.getAttribute("hint").getValue();
-                if (element.getAttribute("action") != null) {
-                    hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
-                }
-
-                try {
-                    lesson.hintPanel = new HintPanel(new String[]{hintText});
-                    lesson.hintPanel.showIt(editor);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (FontFormatException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-        }
+//        if(lesson.hintPanel == null) {
+//            if (element.getAttribute("hint") != null) {
+//                String hintText = element.getAttribute("hint").getValue();
+//                if (element.getAttribute("action") != null) {
+//                    hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
+//                }
+//
+//                try {
+//                    lesson.hintPanel = new HintPanel(new String[]{hintText});
+//                    lesson.hintPanel.showIt(editor);
+//                } catch (IOException e1) {
+//                    e1.printStackTrace();
+//                } catch (FontFormatException e1) {
+//                    e1.printStackTrace();
+//                }
+//
+//            }
+//        }
 
         String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
@@ -89,23 +89,23 @@ public class TryCommandEx extends CommandEx {
     }
 
     private void startRecord(final Queue<Element> elements, final Element element, final Lesson lesson, final Editor editor, final AnActionEvent anActionEvent, final Document document, final String target, final MouseListenerHolder mouseListenerHolder, ActionsRecorder recorder, @Nullable String actionId) {
-        recorder.startRecording(new Runnable() {        //do when done
-            @Override
-            public void run() {
-                if(lesson.hintPanel != null) {
-                    if (element.getAttribute("hint") != null) {
-                        String hintText = element.getAttribute("hint").getValue();
-                        if (element.getAttribute("action") != null) {
-                            hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
-                        }
-
-                        lesson.hintPanel.setCheck(true, hintText);
-                    }
-                }
-
-                startNextCommand(elements, lesson, editor, anActionEvent, document, target, lesson.getInfoPanel(), mouseListenerHolder);
-            }
-        }, actionId);
+//        recorder.startRecording(new Runnable() {        //do when done
+//            @Override
+//            public void run() {
+//                if(lesson.hintPanel != null) {
+//                    if (element.getAttribute("hint") != null) {
+//                        String hintText = element.getAttribute("hint").getValue();
+//                        if (element.getAttribute("action") != null) {
+//                            hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
+//                        }
+//
+//                        lesson.hintPanel.setCheck(true, hintText);
+//                    }
+//                }
+//
+//                startNextCommand(elements, lesson, editor, anActionEvent, document, target, lesson.getInfoPanel(), mouseListenerHolder);
+//            }
+//        }, actionId);
     }
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {

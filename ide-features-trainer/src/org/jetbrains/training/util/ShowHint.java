@@ -73,16 +73,6 @@ public class ShowHint extends AnAction{
      */
     public static void showHintPanel(Lesson lesson, Editor editor, String text) {
 
-        try {
-            lesson.hintPanel = new HintPanel(new String[]{text});
-            lesson.hintPanel.show(computeLocation(editor, lesson.hintPanel.getPreferredSize()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FontFormatException e) {
-            e.printStackTrace();
-        }
-
     }
 
     private static RelativePoint computeLocation(Editor editor, Dimension dimension){
