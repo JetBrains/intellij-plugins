@@ -27,9 +27,14 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("comments/maps.stmt:97  remove blank line before beginning of body");
     KNOWN_TO_FAIL_STRICT.add("comments/top_level.unit:8");
 
+    //KNOWN_TO_FAIL_STRICT.add("regression/0000/0000.stmt:9  (indent 4)");
     KNOWN_TO_FAIL_STRICT.add("regression/0000/0041.stmt:1  (indent 8)");
     KNOWN_TO_FAIL_STRICT.add("regression/0000/0049.stmt:1");
+    //KNOWN_TO_FAIL_STRICT.add("regression/0000/0054.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0177.stmt:1");
+    KNOWN_TO_FAIL_STRICT.add("regression/0200/0201.stmt:1");
+    //KNOWN_TO_FAIL_STRICT.add("regression/0200/0217.stmt:1");
+    //KNOWN_TO_FAIL_STRICT.add("regression/other/analysis_server.unit:148  (indent 2)");
 
     KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:22  includes added whitespace");
     KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:30  in beginning of multi-line string literal");
@@ -46,6 +51,8 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("selections/selections.unit:54  across lines that get split separately");
 
     KNOWN_TO_FAIL_STRICT.add("splitting/maps.stmt:35  empty literal does not force outer split");
+    KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
+    //KNOWN_TO_FAIL_STRICT.add("splitting/invocations.stmt:20  allows chained calls on one line with multi-line last argument list");
 
     KNOWN_TO_FAIL_STRICT.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
   }

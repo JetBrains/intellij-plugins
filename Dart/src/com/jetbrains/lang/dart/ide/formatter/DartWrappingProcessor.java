@@ -291,6 +291,10 @@ public class DartWrappingProcessor {
       }
     }
 
+    if (elementType == REFERENCE_EXPRESSION && (childType == DOT || childType == QUEST_DOT)) {
+      return Wrap.createWrap(WrapType.NORMAL, true); // NORMAL,CHOP_DOWN_IF_LONG
+    }
+
     return defaultWrap;
   }
 

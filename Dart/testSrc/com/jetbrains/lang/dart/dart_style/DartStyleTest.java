@@ -57,7 +57,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
 
     KNOWN_TO_FAIL.add("regression/0000/0000.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0000.stmt:17  (indent 4)");
-    KNOWN_TO_FAIL.add("regression/0000/0000.stmt:67  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0000/0000.stmt:66  (indent 6)");
     KNOWN_TO_FAIL.add("regression/0000/0005.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0006.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0013.unit:2  no trailing whitespace before initializer comment");
@@ -83,8 +83,8 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0000/0044.stmt:50");
     KNOWN_TO_FAIL.add("regression/0000/0046.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0050.stmt:1  (indent 2)");
-    KNOWN_TO_FAIL.add("regression/0000/0055.unit:1  (indent 2)");
-    KNOWN_TO_FAIL.add("regression/0000/0055.unit:9  (indent 6)");
+    //KNOWN_TO_FAIL.add("regression/0000/0055.unit:1  (indent 2)");
+    //KNOWN_TO_FAIL.add("regression/0000/0055.unit:9  (indent 6)");
     KNOWN_TO_FAIL.add("regression/0000/0055.unit:17  (indent 12)");
     KNOWN_TO_FAIL.add("regression/0000/0056.stmt:1  (indent 8)");
     KNOWN_TO_FAIL.add("regression/0000/0057.stmt:1");
@@ -94,7 +94,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0000/0068.stmt:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0000/0068.stmt:13");
     KNOWN_TO_FAIL.add("regression/0000/0069.stmt:13");
-    KNOWN_TO_FAIL.add("regression/0000/0070.stmt:1  (indent 2)");
+    //KNOWN_TO_FAIL.add("regression/0000/0070.stmt:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0000/0072.unit:1");
     KNOWN_TO_FAIL.add("regression/0000/0075.unit:1");
     KNOWN_TO_FAIL.add("regression/0000/0076.unit:1");
@@ -112,7 +112,9 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0100/0100.stmt:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0100/0102.stmt:1  (indent 6)");
     KNOWN_TO_FAIL.add("regression/0100/0108.unit:1");
+    KNOWN_TO_FAIL.add("regression/0100/0108.unit:177");
     KNOWN_TO_FAIL.add("regression/0100/0108.unit:74  pathologically deep");
+    KNOWN_TO_FAIL.add("regression/0100/0108.unit:203");
     KNOWN_TO_FAIL.add("regression/0100/0108.unit:209");
     KNOWN_TO_FAIL.add("regression/0100/0108.unit:235");
     KNOWN_TO_FAIL.add("regression/0100/0110.stmt:1");
@@ -126,7 +128,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0100/0122.unit:1");
     KNOWN_TO_FAIL.add("regression/0100/0122.unit:12");
     KNOWN_TO_FAIL.add("regression/0100/0130.unit:1  (indent 2)");
-    KNOWN_TO_FAIL.add("regression/0100/0135.stmt:1  (indent 4)");
+    //KNOWN_TO_FAIL.add("regression/0100/0135.stmt:1  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0100/0137.stmt:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0100/0139.unit:1");
     KNOWN_TO_FAIL.add("regression/0100/0140.stmt:1  (indent 8)");
@@ -166,14 +168,16 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0200/0212.stmt:1  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0200/0217.stmt:9  (indent 2)");
     KNOWN_TO_FAIL.add("regression/0200/0218.stmt:1  (indent 2)");
+    //KNOWN_TO_FAIL.add("regression/0200/0221.unit:1");
+    //KNOWN_TO_FAIL.add("regression/0200/0221.unit:20");
     KNOWN_TO_FAIL.add("regression/0200/0221.unit:43  (indent 2)");
+    //KNOWN_TO_FAIL.add("regression/0200/0221.unit:82");
     KNOWN_TO_FAIL.add("regression/0200/0221.unit:67");
     KNOWN_TO_FAIL.add("regression/0200/0222.stmt:1");
     KNOWN_TO_FAIL.add("regression/0200/0222.stmt:7  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0200/0223.stmt:1");
     KNOWN_TO_FAIL.add("regression/0200/0224.stmt:1  (indent 4)");
-    KNOWN_TO_FAIL.add("regression/0200/0224.stmt:48  (indent 22)");
-    KNOWN_TO_FAIL.add("regression/0200/0224.stmt:49  (indent 22)");
+    KNOWN_TO_FAIL.add("regression/0200/0224.stmt:46  (indent 22)");
     KNOWN_TO_FAIL.add("regression/0200/0228.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0229.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0232.unit:1");
@@ -186,25 +190,37 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0200/0243.stmt:1  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0200/0243.stmt:16  (indent 10)");
     KNOWN_TO_FAIL.add("regression/0200/0247.unit:1  (indent 2)");
-    KNOWN_TO_FAIL.add("regression/0200/0249.stmt:1  (indent 8)");
+    //KNOWN_TO_FAIL.add("regression/0200/0249.stmt:1  (indent 8)");
     KNOWN_TO_FAIL.add("regression/0200/0250.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0256.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0257.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0258.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0259.unit:1");
 
+    KNOWN_TO_FAIL.add("regression/0300/0360.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0360.stmt:1");
     KNOWN_TO_FAIL.add("regression/0300/0364.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0368.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0369.stmt:1");
     KNOWN_TO_FAIL.add("regression/0300/0370.stmt:1");
+    KNOWN_TO_FAIL.add("regression/0300/0375.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0300/0377.stmt:1  (indent 6)");
+    KNOWN_TO_FAIL.add("regression/0300/0380.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0381.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0383.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0384.stmt:1  (indent 4)");
+    KNOWN_TO_FAIL.add("regression/0300/0388.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0389.unit:1");
+    KNOWN_TO_FAIL.add("regression/0300/0391.stmt:1");
 
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:1  (indent 2)");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:11");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:28");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:75");
     KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:99  (indent 6)");
-    KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:148  (indent 2)");
-    KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:160  (indent 2)");
+    //KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:148  (indent 2)");
+    //KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:160  (indent 2)");
+    KNOWN_TO_FAIL.add("regression/other/analysis_server.unit:217  (indent 2)");
     KNOWN_TO_FAIL.add("regression/other/dart2js.unit:1  (indent 4) preemption follows constraints");
     KNOWN_TO_FAIL.add("regression/other/pub.stmt:1  (indent 6)");
     KNOWN_TO_FAIL.add("regression/other/pub.stmt:22  (indent 4) was slow");
@@ -217,7 +233,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:138  multiple nested collections");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:150  trailing collections are not indented");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:166  all trailing collections");
-    KNOWN_TO_FAIL.add("splitting/arguments.stmt:179  non-body non-preceding argument forces all bodies to indent");
+    KNOWN_TO_FAIL.add("splitting/arguments.stmt:179  non-collection non-preceding argument forces all collections to indent");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:39  arguments, nested");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:53  force all arguments to split if an argument splits");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:71  do split empty argument list if it contains a comment");
@@ -244,49 +260,61 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/exports.unit:52  multiline first");
     KNOWN_TO_FAIL.add("splitting/exports.unit:64  multiline second");
     KNOWN_TO_FAIL.add("splitting/exports.unit:76  multiline both");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:100  successive index arguments");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:106  is");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:111  as");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:116  null coalescing operator");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:18  conditions, same operator");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:45  split operator chain around block");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:103  index expressions can split after \'[\'");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:108  index arguments nest");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:114  successive index arguments");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:120  is");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:125  as");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:130  null coalescing operator");
+    //KNOWN_TO_FAIL.add("splitting/expressions.stmt:18  conditions, same operator");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:32  conditions, same operator");
+    //KNOWN_TO_FAIL.add("splitting/expressions.stmt:45  split operator chain around block");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:55  indent previous line farther because later line is nested deeper");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:72  nested parenthesized are indented more");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:59  split operator chain around block");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:69  indent previous line farther because later line is nested deeper");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:7  space-separated adjacent strings are split if they don't fit");
+    //KNOWN_TO_FAIL.add("splitting/expressions.stmt:72  nested parenthesized are indented more");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:79  conditional operands are nested");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:86  nested parenthesized are indented more");
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:89  index expressions can split after '['");
-    KNOWN_TO_FAIL.add("splitting/expressions.stmt:94  index arguments nest");
+    KNOWN_TO_FAIL.add("splitting/expressions.stmt:93  conditional operands are nested");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:149  do nest because of nested many-arg fn");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:163  do nest because of nested many-arg method call");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:171  force named args to split on positional function");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:2  args before and after function forces nesting");
-    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:21  trailing functions do not nest");
-    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:39  arg between functions forces nesting");
-    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:67  split in middle of leading args");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:105  force both keywords to split even if first would fit on first line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:111  force split in list");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:20  import moves all shows each to their own line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:41  import moves hides each to their own line");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:57  multiline first");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:18  trailing functions do not nest");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:36  arg between functions forces nesting");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:64  split in middle of leading args");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:146  do nest because of nested many-arg fn");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:160  do nest because of nested many-arg method call");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:175  args before and after functions split independently");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:11  split before deferred");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:110  force both keywords to split even if first would fit on first line");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:116  force split in list");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:25  import moves all shows each to their own line");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:46  import moves hides each to their own line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:6  wrap import at as");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:69  multiline second");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:81  multiline both");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:103  split before all properties if they don't fit on two lines");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:62  multiline first");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:74  multiline second");
+    KNOWN_TO_FAIL.add("splitting/imports.unit:86  multiline both");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:103  split before all properties if they don't fit on two lines");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:116  unsplit cascade unsplit method");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:120  split cascade unsplit method");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:126  unsplit cascade split method");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:13  don't split before implicit receiver");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:13  don't split before implicit receiver");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:134  split cascade split method");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:145  cascade setters on method chain");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:155  conditional invocation");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:2  split all chained calls if they don't fit on one line");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:30  allow inline chains before and after a hard newline");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:38  allow an inline chain before a hard newline but not after");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:49  allow an inline chain after a hard newline but not before");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:60  nest calls one more than target");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:66  split properties after a method chain");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:75  split properties in a method chain");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:60  nest calls one more than target");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:66  split properties after a method chain");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:75  split properties in a method chain");
     KNOWN_TO_FAIL.add("splitting/invocations.stmt:84  do not split leading properties in a chain");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:91  do not split leading properties even if others splits");
-    KNOWN_TO_FAIL.add("splitting/invocations.stmt:98  split between a pair of properties");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:91  do not split leading properties even if others splits");
+    //KNOWN_TO_FAIL.add("splitting/invocations.stmt:98  split between a pair of properties");
     KNOWN_TO_FAIL.add("splitting/list_arguments.stmt:109  split before all leading args");
     KNOWN_TO_FAIL.add("splitting/list_arguments.stmt:125  unsplit trailing args");
     KNOWN_TO_FAIL.add("splitting/list_arguments.stmt:134  split before trailing args");
@@ -322,9 +350,11 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/loops.stmt:2  do not split before first clause");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:24  split multiple variable declarations");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:35  split between updaters splits everything");
-    KNOWN_TO_FAIL.add("splitting/loops.stmt:43  nest wrapped initializer");
-    KNOWN_TO_FAIL.add("splitting/loops.stmt:52  split in for-in loop");
-    KNOWN_TO_FAIL.add("splitting/loops.stmt:57  split in while condition");
+    KNOWN_TO_FAIL.add("splitting/loops.stmt:44  nest wrapped initializer");
+    KNOWN_TO_FAIL.add("splitting/loops.stmt:53  split in for-in loop");
+    KNOWN_TO_FAIL.add("splitting/loops.stmt:58  split in while condition");
+    KNOWN_TO_FAIL.add("splitting/loops.stmt:67  don't force variables to split if clauses do");
+    KNOWN_TO_FAIL.add("splitting/loops.stmt:77  don't force updates to split if clauses do");
     KNOWN_TO_FAIL.add("splitting/loops.stmt:8  split after first clause");
     KNOWN_TO_FAIL.add("splitting/map_arguments.stmt:126  split before all trailing args");
     KNOWN_TO_FAIL.add("splitting/map_arguments.stmt:150  split before one leading arg");
@@ -365,6 +395,8 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:23  parameters fit but ) does not");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:32  parameters fit but } does not");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:84  split optional onto one per line if they don't fit on one line");
+    KNOWN_TO_FAIL.add("splitting/parameters.stmt:91  split on positional default value");
+    KNOWN_TO_FAIL.add("splitting/parameters.stmt:101  split on named value");
     KNOWN_TO_FAIL.add("splitting/parameters.unit:11  indent parameters more if body is a wrapped =>");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:11  split in do-while condition");
     KNOWN_TO_FAIL.add("splitting/statements.stmt:16  split in switch value");
@@ -389,6 +421,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
 
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members"); // fails due to blank lines
+    KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
   }
 
   protected String getFileExtension() {
@@ -1052,6 +1085,10 @@ public abstract class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("regression/0200");
   }
 
+  public void test0201() throws Exception {
+    runTestInDirectory("regression/0200");
+  }
+
   public void test0203() throws Exception {
     runTestInDirectory("regression/0200");
   }
@@ -1168,6 +1205,10 @@ public abstract class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("regression/0200");
   }
 
+  public void test0360() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
   public void test0361() throws Exception {
     runTestInDirectory("regression/0300");
   }
@@ -1180,11 +1221,55 @@ public abstract class DartStyleTest extends FormatterTestCase {
     runTestInDirectory("regression/0300");
   }
 
+  public void test0369() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
   public void test0370() throws Exception {
     runTestInDirectory("regression/0300");
   }
 
+  public void test0374() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0375() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0377() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0379() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0380() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0381() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0383() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
   public void test0384() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0388() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0389() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0391() throws Exception {
     runTestInDirectory("regression/0300");
   }
 

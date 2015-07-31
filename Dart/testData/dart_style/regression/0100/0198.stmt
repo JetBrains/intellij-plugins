@@ -46,9 +46,9 @@
       addTasks(streamCtrl, count: 1);
       cursorPageNo = 1;
     }).thenExpect(
-        'pager unchanged',
-        () => {
-              taskList.currentPageNo: 2,
-              taskList.backwardPaginationDisabled: isTrue
-            });
+            'pager unchanged',
+            () => {
+                  taskList.currentPageNo: 2,
+                  taskList.backwardPaginationDisabled: isTrue
+                });
   });
