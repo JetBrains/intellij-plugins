@@ -1,5 +1,21 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jetbrains.lang.dart.ide.actions;
 
+import com.google.common.collect.Maps;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.command.CommandProcessor;
@@ -15,37 +31,36 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
+import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 
-public class DartStyleAction extends AbstractDartFileProcessingAction {
+public class DartSortMembersAction extends AbstractDartFileProcessingAction {
 
-  private static final Logger LOG = Logger.getInstance(DartStyleAction.class.getName());
+  private static final Logger LOG = Logger.getInstance(DartSortMembersAction.class.getName());
 
-  public DartStyleAction() {
-    super(DartBundle.message("dart.style.action.name"), DartBundle.message("dart.style.action.description"), DartIcons.Dart_16);
+  public DartSortMembersAction() {
+    super(DartBundle.message("dart.sort.members.action.name"), DartBundle.message("dart.sort.members.action.description"),
+          DartIcons.Dart_16);
   }
 
   @NotNull
   @Override
   protected String getActionTextForEditor() {
-    return DartBundle.message("dart.style.action.name");
+    return DartBundle.message("dart.sort.members.action.name");
   }
 
   @NotNull
   @Override
   protected String getActionTextForFiles() {
-    return DartBundle.message("dart.style.action.name.ellipsis"); // because with dialog
+    return DartBundle.message("dart.sort.members.action.name.ellipsis"); // because with dialog
   }
 
   protected void runOverEditor(@NotNull final Project project,
@@ -58,31 +73,24 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     final Runnable runnable = new Runnable() {
       public void run() {
         final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
-        final int caretOffset = editor.getCaretModel().getOffset();
-        final int lineLength = getRightMargin(project);
 
-        DartAnalysisServerService.getInstance().updateFilesContent();
-        DartAnalysisServerService.FormatResult formatResult =
-          DartAnalysisServerService.getInstance().edit_format(path, caretOffset, 0, lineLength);
+        final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+        service.updateFilesContent();
+        final SourceFileEdit fileEdit = service.edit_sortMembers(path);
 
-        if (formatResult == null) {
-          showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
-          LOG.warn("Unexpected response from edit_format, formatResult is null");
+        if (fileEdit == null) {
+          showHintLater(editor, DartBundle.message("dart.sort.members.hint.failed"), true);
+          LOG.warn("Unexpected response from edit_sortMembers, fileEdit is null");
           return;
         }
 
-        final List<SourceEdit> edits = formatResult.getEdits();
+        final List<SourceEdit> edits = fileEdit.getEdits();
         if (edits == null || edits.size() == 0) {
-          showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);
-        }
-        else if (edits.size() == 1) {
-          document.replaceString(0, document.getTextLength(), edits.get(0).getReplacement());
-          editor.getCaretModel().moveToOffset(formatResult.getOffset());
-          showHintLater(editor, DartBundle.message("dart.style.hint.success"), false);
+          showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
         }
         else {
-          showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
-          LOG.warn("Unexpected response from edit_format, formatResult.getEdits().size() = " + edits.size());
+          applySourceEdits(document, edits);
+          showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
         }
       }
     };
@@ -90,24 +98,24 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null);
+        CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null);
       }
     });
   }
 
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
-      Messages.showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("dart.style.action.name"));
+      Messages.showInfoMessage(project, DartBundle.message("dart.sort.members.files.no.dart.files"),
+                               DartBundle.message("dart.sort.members.action.name"));
       return;
     }
 
-    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", dartFiles.size()),
-                                    DartBundle.message("dart.style.action.name"), null) != Messages.OK) {
+    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.sort.members.files.dialog.question", dartFiles.size()),
+                                    DartBundle.message("dart.sort.members.action.name"), null) != Messages.OK) {
       return;
     }
 
-    final Map<VirtualFile, String> fileToNewContentMap = new THashMap<VirtualFile, String>();
-    final int lineLength = getRightMargin(project);
+    final Map<VirtualFile, SourceFileEdit> fileToFileEditMap = Maps.newHashMap();
 
     final Runnable runnable = new Runnable() {
       public void run() {
@@ -122,10 +130,9 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
           }
 
           final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-          final DartAnalysisServerService.FormatResult formatResult =
-            DartAnalysisServerService.getInstance().edit_format(path, 0, 0, lineLength);
-          if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
-            fileToNewContentMap.put(virtualFile, formatResult.getEdits().get(0).getReplacement());
+          final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_sortMembers(path);
+          if (fileEdit != null) {
+            fileToFileEditMap.put(virtualFile, fileEdit);
           }
         }
       }
@@ -134,7 +141,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     DartAnalysisServerService.getInstance().updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
-      .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.style.action.name"), true, project);
+      .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.sort.members.action.name"), true, project);
 
     if (ok) {
       final Runnable onSuccessRunnable = new Runnable() {
@@ -142,14 +149,11 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         public void run() {
           CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
 
-          for (Map.Entry<VirtualFile, String> entry : fileToNewContentMap.entrySet()) {
+          for (Map.Entry<VirtualFile, SourceFileEdit> entry : fileToFileEditMap.entrySet()) {
             final VirtualFile file = entry.getKey();
             final Document document = FileDocumentManager.getInstance().getDocument(file);
-            final String newContent = entry.getValue();
-
-            if (document != null && newContent != null) {
-              document.setText(newContent);
-            }
+            final SourceFileEdit fileEdit = entry.getValue();
+            applySourceEdits(document, fileEdit.getEdits());
           }
         }
       };
@@ -157,13 +161,18 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         @Override
         public void run() {
-          CommandProcessor.getInstance().executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null);
+          CommandProcessor.getInstance()
+            .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null);
         }
       });
     }
   }
 
-  private static int getRightMargin(@NotNull Project project) {
-    return CodeStyleSettingsManager.getSettings(project).getCommonSettings(DartLanguage.INSTANCE).RIGHT_MARGIN;
+  private static void applySourceEdits(Document document, List<SourceEdit> edits) {
+    for (SourceEdit edit : edits) {
+      final int offset = edit.getOffset();
+      final int length = edit.getLength();
+      document.replaceString(offset, offset + length, edit.getReplacement());
+    }
   }
 }
