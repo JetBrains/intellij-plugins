@@ -26,12 +26,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DartQuickAssistIntention implements IntentionAction {
+public class DartQuickAssistIntention implements IntentionAction, Comparable<IntentionAction> {
   private final int index;
   private SourceChange sourceChange;
 
   public DartQuickAssistIntention(int index) {
     this.index = index;
+  }
+
+  @Override
+  public int compareTo(IntentionAction o) {
+    if (o instanceof DartQuickAssistIntention) {
+      final DartQuickAssistIntention other = (DartQuickAssistIntention)o;
+      return index - other.index;
+    }
+    return 0;
   }
 
   @NotNull
