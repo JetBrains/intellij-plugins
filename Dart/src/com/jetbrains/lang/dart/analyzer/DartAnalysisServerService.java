@@ -608,7 +608,13 @@ public class DartAnalysisServerService {
 
           @Override
           public void onError(final RequestError error) {
-            logError("analysis_getErrors()", filePath, error);
+            if (RequestErrorCode.GET_ERRORS_INVALID_FILE.equals(error.getCode())) {
+              LOG.info(getShortErrorMessage("analysis_getErrors()", filePath, error));
+            }
+            else {
+              logError("analysis_getErrors()", filePath, error);
+            }
+
             semaphore.up();
           }
         };
@@ -889,9 +895,14 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          if (!"FORMAT_WITH_ERRORS".equals(error.getCode())) {
+          if (RequestErrorCode.FORMAT_WITH_ERRORS.equals(error.getCode()) ||
+              RequestErrorCode.FORMAT_INVALID_FILE.equals(error.getCode())) {
+            LOG.info(getShortErrorMessage("edit_format()", filePath, error));
+          }
+          else {
             logError("edit_format()", filePath, error);
           }
+
           semaphore.up();
         }
       };
@@ -940,7 +951,14 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          logError("edit_sortMembers()", filePath, error);
+          if (RequestErrorCode.SORT_MEMBERS_PARSE_ERRORS.equals(error.getCode()) ||
+              RequestErrorCode.SORT_MEMBERS_INVALID_FILE.equals(error.getCode())) {
+            LOG.info(getShortErrorMessage("edit_sortMembers()", filePath, error));
+          }
+          else {
+            logError("edit_sortMembers()", filePath, error);
+          }
+
           semaphore.up();
         }
       };
@@ -1193,18 +1211,16 @@ public class DartAnalysisServerService {
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
-    final String message = "Error from " + methodName +
-                           (filePath == null ? "" : (", file = " + filePath)) +
-                           ", SDK version = " + mySdkVersion +
-                           ", server version = " + myServerVersion +
-                           ", error code = " + error.getCode() + ": " + error.getMessage() +
-                           "\n" + partialTrace + "...";
-    if (RequestErrorCode.GET_ERRORS_INVALID_FILE.equals(error.getCode())) {
-      LOG.warn(message);
-    }
-    else {
-      LOG.error(message);
-    }
+    final String message = getShortErrorMessage(methodName, filePath, error) + "\n" + partialTrace + "...";
+    LOG.error(message);
+  }
+
+  private String getShortErrorMessage(@NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
+    return "Error from " + methodName +
+           (filePath == null ? "" : (", file = " + filePath)) +
+           ", SDK version = " + mySdkVersion +
+           ", server version = " + myServerVersion +
+           ", error code = " + error.getCode() + ": " + error.getMessage();
   }
 
   private static boolean runInPooledThreadAndWait(@NotNull final Runnable runnable,
