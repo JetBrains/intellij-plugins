@@ -502,7 +502,7 @@ public class DartConfigurable implements SearchableConfigurable {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        DumbService.getInstance(myProject).allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, runnable);
+        DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, runnable);
       }
     });
 
