@@ -42,7 +42,6 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -748,7 +747,7 @@ public class DartAnalysisServerService {
 
   public void search_findElementReferences(@NotNull final String filePath,
                                            final int offset,
-                                           @NotNull final Processor<SearchResult> processor) {
+                                           @NotNull final Consumer<SearchResult> consumer) {
     final String searchId;
     synchronized (myLock) {
       if (myServer == null) return;
@@ -809,7 +808,7 @@ public class DartAnalysisServerService {
         while ((resultSet = mySearchResultSets.poll()) != null) {
           if (!resultSet.id.equals(searchId)) continue;
           for (final SearchResult searchResult : resultSet.results) {
-            processor.process(searchResult);
+            consumer.consume(searchResult);
           }
           if (resultSet.isLast) return;
         }
