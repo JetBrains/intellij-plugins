@@ -22,6 +22,6 @@ import com.intellij.usages.rules.UsageGroupingRule;
 public class DartUnitMemberGroupRuleProvider implements FileStructureGroupRuleProvider {
   @Override
   public UsageGroupingRule getUsageGroupingRule(Project project) {
-    return new DartUnitMemberGroupingRule();
+    return new DartUnitMemberUsageGroupingRule();
   }
 }

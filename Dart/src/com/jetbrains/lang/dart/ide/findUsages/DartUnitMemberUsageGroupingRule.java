@@ -25,7 +25,7 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
 
-public class DartUnitMemberGroupingRule implements UsageGroupingRule, DumbAware {
+public class DartUnitMemberUsageGroupingRule implements UsageGroupingRule, DumbAware {
   @Override
   public UsageGroup groupUsage(@NotNull Usage usage) {
     if (!(usage instanceof PsiElementUsage)) {
