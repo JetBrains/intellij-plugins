@@ -22,17 +22,18 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.SourceChange;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-class QuickAssistSet {
-  private static List<SourceChange> lastSourceChanges = Lists.newArrayList();
-  private static long lastPsiModificationCount;
-  private static String lastFilePath;
-  private static int lastOffset;
-  private static int lastLength;
+public class QuickAssistSet {
+  private List<SourceChange> lastSourceChanges = Lists.newArrayList();
+  private long lastPsiModificationCount;
+  private String lastFilePath;
+  private int lastOffset;
+  private int lastLength;
 
-  public static synchronized List<SourceChange> getQuickAssists(final Editor editor, final PsiFile psiFile) {
+  public List<SourceChange> getQuickAssists(@NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
     final String filePath = psiFile.getVirtualFile().getPath();
     final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();

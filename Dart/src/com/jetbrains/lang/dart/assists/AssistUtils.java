@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class AssistUtils {
-  public static void applySourceChange(@NotNull Project project, @NotNull final SourceChange sourceChange) {
+  public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
       @Override
       public void run() {

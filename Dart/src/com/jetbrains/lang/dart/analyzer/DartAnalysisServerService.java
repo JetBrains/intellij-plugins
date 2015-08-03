@@ -49,6 +49,7 @@ import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
+import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -1196,7 +1197,7 @@ public class DartAnalysisServerService {
     }
   }
 
-  private void stopServer() {
+  void stopServer() {
     synchronized (myLock) {
       if (myServer != null) {
         LOG.debug("stopping server");
@@ -1308,9 +1309,13 @@ public class DartAnalysisServerService {
   }
 
   private static void registerQuickAssistIntentions() {
+    // intentions are registered not via plugin.xml for 2 reasons:
+    // - intentions amount, text and behavior are loaded dynamically
+    // - intentions registered via plugin.xml are wrapped in IntentionActionWrapper that doesn't implement Comparable (our DartQuickAssistIntention implements Comparable and order is important)
     final IntentionManager intentionManager = IntentionManager.getInstance();
+    final QuickAssistSet quickAssistSet = new QuickAssistSet();
     for (int i = 0; i < 20; i++) {
-      final DartQuickAssistIntention intention = new DartQuickAssistIntention(i);
+      final DartQuickAssistIntention intention = new DartQuickAssistIntention(quickAssistSet, i);
       intentionManager.addAction(intention);
     }
   }

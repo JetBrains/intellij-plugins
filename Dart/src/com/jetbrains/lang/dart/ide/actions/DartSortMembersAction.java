@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
@@ -89,7 +90,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
           showHintLater(editor, DartBundle.message("dart.sort.members.hint.already.good"), false);
         }
         else {
-          applySourceEdits(document, edits);
+          AssistUtils.applySourceEdits(document, edits);
           showHintLater(editor, DartBundle.message("dart.sort.members.hint.success"), false);
         }
       }
@@ -153,7 +154,9 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
             final VirtualFile file = entry.getKey();
             final Document document = FileDocumentManager.getInstance().getDocument(file);
             final SourceFileEdit fileEdit = entry.getValue();
-            applySourceEdits(document, fileEdit.getEdits());
+            if (document != null) {
+              AssistUtils.applySourceEdits(document, fileEdit.getEdits());
+            }
           }
         }
       };
@@ -165,14 +168,6 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
             .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null);
         }
       });
-    }
-  }
-
-  private static void applySourceEdits(Document document, List<SourceEdit> edits) {
-    for (SourceEdit edit : edits) {
-      final int offset = edit.getOffset();
-      final int length = edit.getLength();
-      document.replaceString(offset, offset + length, edit.getReplacement());
     }
   }
 }

@@ -28,10 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class DartQuickAssistIntention implements IntentionAction, Comparable<IntentionAction> {
+  private final QuickAssistSet quickAssistSet;
   private final int index;
   private SourceChange sourceChange;
 
-  public DartQuickAssistIntention(int index) {
+  public DartQuickAssistIntention(final QuickAssistSet quickAssistSet, final int index) {
+    this.quickAssistSet = quickAssistSet;
     this.index = index;
   }
 
@@ -47,6 +49,7 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @NotNull
   @Override
   public String getFamilyName() {
+    //noinspection DialogTitleCapitalization
     return DartBundle.message("dart.quick.assist.family.name");
   }
 
@@ -66,7 +69,7 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
     if (!(file instanceof DartFile)) {
       return false;
     }
-    final List<SourceChange> sourceChanges = QuickAssistSet.getQuickAssists(editor, file);
+    final List<SourceChange> sourceChanges = quickAssistSet.getQuickAssists(editor, file);
     if (sourceChanges.size() <= index) {
       sourceChange = null;
       return false;

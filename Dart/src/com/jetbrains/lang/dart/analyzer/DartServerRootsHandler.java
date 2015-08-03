@@ -80,6 +80,10 @@ public class DartServerRootsHandler {
 
   private void updateRoots() {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
+      DartAnalysisServerService.getInstance().stopServer();
+    }
+
     final List<String> newIncludedRoots = new SmartList<String>();
     final List<String> newExcludedRoots = new SmartList<String>();
     final Map<String, String> newPackageRoots = new SmartHashMap<String, String>();
