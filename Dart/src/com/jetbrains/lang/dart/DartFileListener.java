@@ -11,6 +11,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Computable;
@@ -199,7 +200,9 @@ public class DartFileListener extends VirtualFileAdapter {
 
     final Collection<String> libRootUrls = libInfo.getLibRootUrls();
 
-    if (existingUrls.length != libRootUrls.size() || !libRootUrls.containsAll(Arrays.asList(existingUrls))) {
+    if (isBrokenPackageMap(((LibraryEx)library).getProperties()) ||
+        existingUrls.length != libRootUrls.size() ||
+        !libRootUrls.containsAll(Arrays.asList(existingUrls))) {
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         @Override
         public void run() {
@@ -222,6 +225,18 @@ public class DartFileListener extends VirtualFileAdapter {
     }
 
     return library;
+  }
+
+  private static boolean isBrokenPackageMap(@Nullable final LibraryProperties properties) {
+    if (!(properties instanceof DartPackagesLibraryProperties)) return true;
+
+    for (Map.Entry<String, List<String>> entry : ((DartPackagesLibraryProperties)properties).getPackageNameToDirsMap().entrySet()) {
+      if (entry == null || entry.getKey() == null || entry.getValue() == null) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private static void removeDartPackagesLibraryAndDependencies(@NotNull final Project project) {

@@ -311,7 +311,11 @@ class DartUrlResolverImpl extends DartUrlResolver {
         final LibraryProperties properties = library == null ? null : library.getProperties();
 
         if (properties instanceof DartPackagesLibraryProperties) {
-          myPackagesMapFromLib.putAll(((DartPackagesLibraryProperties)properties).getPackageNameToDirsMap());
+          for (Map.Entry<String, List<String>> entry : ((DartPackagesLibraryProperties)properties).getPackageNameToDirsMap().entrySet()) {
+            if (entry != null && entry.getKey() != null && entry.getValue() != null) {
+              myPackagesMapFromLib.put(entry.getKey(), entry.getValue());
+            }
+          }
           return;
         }
       }

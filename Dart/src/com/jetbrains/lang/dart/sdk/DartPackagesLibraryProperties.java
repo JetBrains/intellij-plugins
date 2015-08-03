@@ -19,7 +19,7 @@ public class DartPackagesLibraryProperties extends LibraryProperties<DartPackage
   }
 
   @NotNull
-  @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false)
+  @MapAnnotation(surroundWithTag = false)
   public Map<String, List<String>> getPackageNameToDirsMap() {
     return myPackageNameToDirsMap;
   }
