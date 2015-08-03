@@ -40,6 +40,26 @@ public class PropertiesComponentStub extends PropertiesComponent {
     }
   }
 
+  @Override
+  public void setValue(@NotNull String name, float value, float defaultValue) {
+    if (value == defaultValue) {
+      fakeStorage.remove(name);
+    }
+    else {
+      fakeStorage.put(name, String.valueOf(value));
+    }
+  }
+
+  @Override
+  public void setValue(@NotNull String name, int value, int defaultValue) {
+    if (value == defaultValue) {
+      fakeStorage.remove(name);
+    }
+    else {
+      fakeStorage.put(name, String.valueOf(value));
+    }
+  }
+
   @NotNull
   @Override
   public String getValue(@NonNls String name, @NotNull String defaultValue) {
