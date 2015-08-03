@@ -21,6 +21,7 @@ import com.intellij.usages.Usage;
 import com.intellij.usages.UsageGroup;
 import com.intellij.usages.rules.PsiElementUsage;
 import com.intellij.usages.rules.UsageGroupingRule;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.DartClassMembers;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +29,10 @@ import org.jetbrains.annotations.NotNull;
 public class DartClassMemberGroupingRule implements UsageGroupingRule, DumbAware {
   @Override
   public UsageGroup groupUsage(@NotNull Usage usage) {
-    if (!(usage instanceof PsiElementUsage)) {
-      return null;
-    }
-    PsiElement psiElement = ((PsiElementUsage)usage).getElement();
+    PsiElement psiElement = usage instanceof PsiElementUsage ? ((PsiElementUsage)usage).getElement() : null;
+    if (psiElement == null || psiElement.getLanguage() != DartLanguage.INSTANCE) return null;
+
+    // todo Docs are not parsed perfectly and doc comment may be not a child of the corresponding function. Related to comment for DartDocUtil.getDocumentationText
 
     while (psiElement != null) {
       if (psiElement instanceof DartComponent && psiElement.getParent() instanceof DartClassMembers) {

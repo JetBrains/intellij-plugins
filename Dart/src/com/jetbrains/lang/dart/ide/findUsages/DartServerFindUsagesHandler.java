@@ -19,6 +19,7 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,6 +28,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.psi.DartReference;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SearchResult;
 import org.jetbrains.annotations.NotNull;
@@ -63,13 +65,48 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   }
 
   @Nullable
-  private static PsiElement findPsiElement(PsiElement context, Location location) {
+  private static PsiElement findPsiElement(@NotNull final PsiElement context, @NotNull final Location location) {
     final String locationFilePath = location.getFile();
     final PsiFile psiFile = findPsiFile(context, locationFilePath);
     if (psiFile != null) {
+      final TextRange locationRange = TextRange.create(location.getOffset(), location.getOffset() + location.getLength());
       final int offset = location.getOffset();
-      return psiFile.findElementAt(offset);
+      PsiElement element = psiFile.findElementAt(offset);
+      if (element == null) return null;
+
+      boolean rangeOk = element.getTextRange().contains(locationRange);
+      if (rangeOk && element instanceof DartReference) return element;
+
+      TextRange previousRange = element.getTextRange();
+      PsiElement parent;
+      while ((parent = element.getParent()) != null) {
+        final TextRange parentRange = parent.getTextRange();
+        if (rangeOk) {
+          if (!parentRange.equals(previousRange)) {
+            return element; // range became bigger, return previous that matched better
+          }
+
+          if (parent instanceof DartReference) {
+            return parent;
+          }
+          else {
+            previousRange = parentRange;
+            element = parent;
+          }
+        }
+        else {
+          rangeOk = parent.getTextRange().contains(locationRange);
+          if (rangeOk && parent instanceof DartReference) {
+            return parent;
+          }
+          else {
+            previousRange = parentRange;
+            element = parent;
+          }
+        }
+      }
     }
+
     return null;
   }
 
