@@ -80,7 +80,7 @@ public class DotPackagesFileUtil {
         return "/" + pathAfterSlashes;
       }
     }
-    else if (uri.startsWith("./") || uri.startsWith("../")) {
+    else {
       return FileUtil.toCanonicalPath(baseDir.getPath() + "/" + uri);
     }
 
