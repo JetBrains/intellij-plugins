@@ -15,6 +15,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
+import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.DartProjectComponent;
@@ -85,6 +86,11 @@ public class DartServerRootsHandler {
 
     if (sdk != null) {
       for (Project project : myTrackedProjects) {
+        final String dotIdeaPath = PathUtil.getParentPath(project.getProjectFilePath());
+        if (dotIdeaPath.endsWith("/.idea")) {
+          newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
+        }
+
         for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkGlobalLibAttached(project, sdk.getGlobalLibName())) {
 
           newPackageRoots.putAll(DartConfigurable.getContentRootPathToCustomPackageRootMap(module));
