@@ -54,8 +54,6 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent extends AbstractProjectComponent {
 
-  private static final String DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY = "DARTIUM_CHECKED_MODE_INITIALLY_ENABLED";
-
   protected DartProjectComponent(@NotNull final Project project) {
     super(project);
 
@@ -79,7 +77,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
         final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
-        initiallyEnableDartiumCheckedModeIfNeeded();
         DartiumUtil.removeUnsupportedAsyncFlag();
 
         final Collection<VirtualFile> pubspecYamlFiles =
@@ -158,19 +155,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
     }
 
     return null;
-  }
-
-  private static void initiallyEnableDartiumCheckedModeIfNeeded() {
-    if (PropertiesComponent.getInstance().getBoolean(DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY, false)) {
-      return;
-    }
-    PropertiesComponent.getInstance().setValue(DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY, "true");
-
-    final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
-    final BrowserSpecificSettings browserSpecificSettings = dartium == null ? null : dartium.getSpecificSettings();
-    if (browserSpecificSettings instanceof ChromeSettings) {
-      DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
-    }
   }
 
   private static void deleteDartSdkGlobalLibConfiguredInOldIde() {
