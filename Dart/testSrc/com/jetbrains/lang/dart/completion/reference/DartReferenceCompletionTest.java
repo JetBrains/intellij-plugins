@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.completion.reference;
 
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 
-public class DartReferenceCompletionTest extends DartCompletionTestBase {
+public abstract class DartReferenceCompletionTest extends DartCompletionTestBase {
   public DartReferenceCompletionTest() {
     super("completion", "references");
   }

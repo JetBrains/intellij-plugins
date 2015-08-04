@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.completion.keyword;
 
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 
-public class DartKeywordCompletionTest extends DartCompletionTestBase {
+public abstract class DartKeywordCompletionTest extends DartCompletionTestBase {
   public DartKeywordCompletionTest() {
     super("completion", "keywords");
   }

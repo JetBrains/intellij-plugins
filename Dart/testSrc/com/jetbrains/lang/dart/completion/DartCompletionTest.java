@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
+public abstract class DartCompletionTest extends DartCodeInsightFixtureTestCase {
 
   @Override
   protected String getBasePath() {

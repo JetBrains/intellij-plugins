@@ -6,7 +6,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-public class DartTabCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class DartTabCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return FileUtil.toSystemDependentName(DartTestUtils.BASE_TEST_DATA_PATH + "/completion/tab");

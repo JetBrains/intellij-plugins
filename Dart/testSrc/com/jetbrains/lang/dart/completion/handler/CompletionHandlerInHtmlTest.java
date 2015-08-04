@@ -1,9 +1,6 @@
 package com.jetbrains.lang.dart.completion.handler;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class CompletionHandlerInHtmlTest extends CompletionHandlerTestBase {
+public abstract class CompletionHandlerInHtmlTest extends CompletionHandlerTestBase {
   @Override
   protected String getBasePath() {
     return "/completion/handler/html/";

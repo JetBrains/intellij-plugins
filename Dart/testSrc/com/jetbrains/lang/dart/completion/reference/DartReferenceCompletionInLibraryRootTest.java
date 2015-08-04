@@ -4,7 +4,7 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 
-public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTestBase {
+public abstract class DartReferenceCompletionInLibraryRootTest extends DartCompletionTestBase {
   public DartReferenceCompletionInLibraryRootTest() {
     super("completion", "references");
   }

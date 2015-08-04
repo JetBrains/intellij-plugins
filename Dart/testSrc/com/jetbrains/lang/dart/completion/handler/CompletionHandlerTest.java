@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.completion.handler;
 
 import com.intellij.codeInsight.completion.CompletionType;
 
-public class CompletionHandlerTest extends CompletionHandlerTestBase {
+public abstract class CompletionHandlerTest extends CompletionHandlerTestBase {
   @Override
   protected String getBasePath() {
     return "/completion/handler";
