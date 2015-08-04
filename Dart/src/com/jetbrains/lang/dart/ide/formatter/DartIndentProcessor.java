@@ -217,7 +217,7 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
 
-    if (elementType == SEMICOLON && FormatterUtil.hasPrecedingSiblingOfType(node, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
+    if (elementType == SEMICOLON && FormatterUtil.isPrecededBy(node, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
       return Indent.getContinuationIndent();
     }
 
