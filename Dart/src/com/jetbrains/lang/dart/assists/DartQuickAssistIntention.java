@@ -24,13 +24,14 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class DartQuickAssistIntention implements IntentionAction, Comparable<IntentionAction> {
   private final QuickAssistSet quickAssistSet;
   private final int index;
-  private SourceChange sourceChange;
+  @Nullable private SourceChange sourceChange;
 
   public DartQuickAssistIntention(final QuickAssistSet quickAssistSet, final int index) {
     this.quickAssistSet = quickAssistSet;
@@ -56,12 +57,14 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @NotNull
   @Override
   public String getText() {
-    return sourceChange.getMessage();
+    return sourceChange == null ? "" : sourceChange.getMessage();
   }
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    AssistUtils.applySourceChange(project, sourceChange);
+    if (sourceChange != null) {
+      AssistUtils.applySourceChange(project, sourceChange);
+    }
   }
 
   @Override
