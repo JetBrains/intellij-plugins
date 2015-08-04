@@ -176,7 +176,7 @@ function([
   'other key': value,
   'third key': value
 });
->>> non-body non-preceding argument forces all bodies to indent
+>>> non-collection non-preceding argument forces all collections to indent
 function([element, element, element, element], argument,
 {'key': value, 'other key': value, 'third key': value}, () {;});
 <<<
@@ -192,7 +192,6 @@ function(
       'key': value,
       'other key': value,
       'third key': value
-    },
-    () {
-      ;
-    });
+    }, () {
+  ;
+});

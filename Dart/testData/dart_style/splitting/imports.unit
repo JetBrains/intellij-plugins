@@ -8,6 +8,11 @@ import 'package:some/very/long/import/path.dart' as path;
 <<<
 import 'package:some/very/long/import/path.dart'
     as path;
+>>> split before deferred
+import 'package:some/very/long/import/path.dart' deferred as path;
+<<<
+import 'package:some/very/long/import/path.dart'
+    deferred as path;
 >>> import keeps shows on one line
 import 'foo.dart'show Ape,Bear,Cat;
 <<<

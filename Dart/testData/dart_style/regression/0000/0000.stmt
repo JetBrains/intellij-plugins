@@ -41,8 +41,7 @@ _log(
         DartType type = localsHandler.substInContext(member.type);
         constructorArguments.add(potentiallyCheckOrTrustType(value, type));
       }
-    },
-        includeSuperAndInjectedMembers: true);
+    }, includeSuperAndInjectedMembers: true);
 >>> (indent 6)
       HLoopBlockInformation info = new HLoopBlockInformation(
           HLoopBlockInformation.loopType(loop),

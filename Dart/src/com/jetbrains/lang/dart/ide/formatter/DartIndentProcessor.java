@@ -221,6 +221,10 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
 
+    if (elementType == DOT || elementType == QUEST_DOT) {
+      return Indent.getContinuationIndent();
+    }
+
     return Indent.getNoneIndent();
   }
 

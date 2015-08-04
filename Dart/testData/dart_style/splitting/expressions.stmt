@@ -1,9 +1,23 @@
 40 columns                              |
->>> space-separated adjacent strings are not split
-var name = new Symbol("the first string" "the second string");
+>>> space-separated adjacent strings are not split if they fit
+var name = new Symbol("the first string" "the second");
 <<<
 var name = new Symbol(
-    "the first string" "the second string");
+    "the first string" "the second");
+>>> space-separated adjacent strings are split if they don't fit
+var name = new Symbol("the first very long string" "the second very longstring");
+<<<
+var name = new Symbol(
+    "the first very long string"
+    "the second very longstring");
+>>> adjacent string lines all split together;
+var text = "first" "second" "third" "fourth" "fifth";
+<<<
+var text = "first"
+    "second"
+    "third"
+    "fourth"
+    "fifth";
 >>> preserve one newline between adjacent strings
 var name = "the first string"
 "the second string"

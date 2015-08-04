@@ -1,13 +1,10 @@
 40 columns                              |
->>> args before and after function forces nesting
+>>> args before and after function do not force nesting
 method(first,() {fn;},third);
 <<<
-method(
-    first,
-    () {
-      fn;
-    },
-    third);
+method(first, () {
+  fn;
+}, third);
 >>> nothing but function args does not nest
 longFunctionName(() {;}, () {;}, () {;});
 <<<
@@ -168,14 +165,21 @@ obj.outer(
     obj.inner(() {
       body;
     }));
->>> force named args to split on positional function
+>>> do not force named args to split on positional function
 function(argument, () {;},
     named: argument, another: argument);
 <<<
-function(
-    argument,
-    () {
-      ;
-    },
-    named: argument,
-    another: argument);
+function(argument, () {
+  ;
+}, named: argument, another: argument);
+>>> args before and after functions split independently
+longFunction(argument, argument, argument, argument, argument,
+() {;}, () {;}, argument, argument, argument, argument, argument);
+<<<
+longFunction(argument, argument,
+    argument, argument, argument, () {
+  ;
+}, () {
+  ;
+}, argument, argument, argument,
+    argument, argument);

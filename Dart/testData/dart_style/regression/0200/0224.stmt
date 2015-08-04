@@ -31,16 +31,14 @@
             ]))
         .catchError(cannotGetConveyorBeltRunning)
         .then((_) => tellEveryoneDonutsAreJustAboutDone())
-        .then(
-            (_) => Future.wait([
-                  croissantFactory.start(),
-                  _giantBakingOvens.start(),
-                  butterbutterer.start()
-                ])
-                    .catchError(_handleBakingFailures)
-                    .timeout(scriptLoadingTimeout,
-                        onTimeout: _handleBakingFailures)
-                    .catchError(cannotGetConveyorBeltRunning))
+        .then((_) => Future.wait([
+              croissantFactory.start(),
+              _giantBakingOvens.start(),
+              butterbutterer.start()
+            ])
+                .catchError(_handleBakingFailures)
+                .timeout(scriptLoadingTimeout, onTimeout: _handleBakingFailures)
+                .catchError(cannotGetConveyorBeltRunning))
         .catchError(cannotGetConveyorBeltRunning)
         .then((_) {
       _logger.info("Let's eat!");

@@ -10,6 +10,11 @@ import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.containers.SortedList;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
@@ -28,6 +33,7 @@ public class DartSpacingProcessor {
   private static final TokenSet SIMPLE_LITERAL_SET =
     TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
   private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
+  private static final TokenSet DIRECTIVE_GROUPS = TokenSet.create(IMPORT_STATEMENT, EXPORT_STATEMENT, PART_STATEMENT);
 
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
@@ -65,14 +71,15 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(0, 0, nsp, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (type1 == IMPORT_STATEMENT) {
+    if (DIRECTIVE_GROUPS.contains(type1)) {
       if (type2 == MULTI_LINE_COMMENT) {
         ASTNode next = FormatterUtil.getNextNonWhitespaceSibling(node2);
         if (next != null &&
-            next.getElementType() == IMPORT_STATEMENT &&
-            isEmbeddedComment(type2, child2) &&
-            !isDirectlyPrecededByNewline(next)) {
-          return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+            next.getElementType() == type1) {
+          boolean needsNewline = isEmbeddedComment(type2, child2) && !isDirectlyPrecededByNewline(next);
+          int space = needsNewline ? 0 : 1;
+          int newline = needsNewline ? 1 : 0;
+          return Spacing.createSpacing(0, space, newline, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
       }
       if (type2 != IMPORT_STATEMENT && type2 != EXPORT_STATEMENT && !isEmbeddedComment(type2, child2)) {
@@ -720,11 +727,18 @@ public class DartSpacingProcessor {
       if (type1 == MUL) return addSingleSpaceIf(true);
     }
 
-    if (type1 == DOT || type1 == QUEST_DOT || type2 == DOT || type2 == QUEST_DOT || type1 == HASH) {
+    if (elementType == REFERENCE_EXPRESSION && (type2 == DOT || type2 == QUEST_DOT)) {
+      return createSpacingForCallChain(collectSurroundingMessageSends(), node2);
+    }
+    if (type1 == DOT || type1 == QUEST_DOT || type1 == HASH) {
       return noSpace(); // Seems odd that no plugin has a setting for spaces around DOT -- need a Lisp mode!
     }
     if (type2 == HASH) {
       return addSingleSpaceIf(parentType == SYMBOL_LITERAL_EXPRESSION); // No space before closurization.
+    }
+
+    if (type1 == RETURN && type2 != SEMICOLON) {
+      return addSingleSpaceIf(true);
     }
 
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
@@ -761,6 +775,144 @@ public class DartSpacingProcessor {
         ? 0
         : 1;
       return Spacing.createSpacing(spaces, spaces, lineBreaks, false, 0);
+    }
+  }
+
+  private static boolean doesMessageHaveArguments(ASTNode node) {
+    // node is a DOT
+    ASTNode parent = node.getTreeParent().getTreeParent();
+    if (parent == null) return false;
+    if (parent.getElementType() != CALL_EXPRESSION) return false;
+    ASTNode args = parent.getLastChildNode();
+    if (args == null) return false;
+    return args.getElementType() == ARGUMENTS;
+  }
+
+  private static Comparator<ASTNode> textRangeSorter() {
+    return new Comparator<ASTNode>() {
+      @Override
+      public int compare(ASTNode o1, ASTNode o2) {
+        return o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
+      }
+    };
+  }
+
+  private CallChain collectSurroundingMessageSends() {
+    CallChain calls = new CallChain();
+    collectPredecessorMessageSends(calls);
+    collectSuccessorMessageSends(calls);
+    return calls;
+  }
+
+  private void collectPredecessorMessageSends(CallChain calls) {
+    ASTNode node = myNode;
+    while (node != null) {
+      IElementType type = node.getElementType();
+      if (type == REFERENCE_EXPRESSION) {
+        collectDotIfMessageSend(calls, node);
+        node = node.getTreeParent();
+      } else if (type == CALL_EXPRESSION) {
+        if (hasMultilineFunctionArgument(node)) {
+          calls.isFollowedByHardNewline = true;
+          break;
+        }
+        node = node.getTreeParent();
+      } else {
+        break;
+      }
+    }
+  }
+
+  private void collectSuccessorMessageSends(CallChain calls) {
+    ASTNode node = myNode;
+    while (node != null) {
+      IElementType type = node.getElementType();
+      if (type == CALL_EXPRESSION) {
+        if (hasMultilineFunctionArgument(node)) {
+          calls.isPrecededByHardNewline = true;
+          break;
+        }
+        node = node.getFirstChildNode();
+      } else if (type == REFERENCE_EXPRESSION) {
+        collectDotIfMessageSend(calls, node);
+        node = node.getFirstChildNode();
+      } else {
+        break;
+      }
+    }
+  }
+
+  private static void collectDotIfMessageSend(CallChain calls, ASTNode node) {
+    ASTNode child = node.getFirstChildNode();
+    child = FormatterUtil.getNextNonWhitespaceSibling(child);
+    if (child != null) {
+      IElementType childType = child.getElementType();
+      if (childType == DOT || childType == QUEST_DOT || childType == HASH) {
+        calls.add(child);
+      }
+    }
+  }
+
+  private static boolean hasMultilineFunctionArgument(ASTNode node) {
+    ASTNode args = node.getLastChildNode();
+    args = args.getFirstChildNode().getTreeNext();
+    if (args.getElementType() == ARGUMENT_LIST) {
+      ASTNode arg = args.getFirstChildNode();
+      int n = 1;
+      while (arg != null) {
+        // TODO Max 9 args is totally arbitrary, possibly not even desirable.
+        if (n++ == 10 || arg.getElementType() == FUNCTION_EXPRESSION) {
+          if (arg.getText().indexOf('\n') >= 0) {
+            return true;
+          }
+        }
+        arg = arg.getTreeNext();
+      }
+    }
+    return false;
+  }
+
+  private Spacing createSpacingForCallChain(CallChain calls, ASTNode node2) {
+    // The rules involving call chains, like m.a.b().c.d(), are complex.
+    if (calls.list.size() < 2) {
+      return noSpace();
+    }
+    //if (calls.isPrecededByHardNewline) {
+    //  // Rule: allow an inline chain before a hard newline but not after.
+    //  return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    //}
+    boolean isAllProperties = true;
+    boolean mustSplit = false;
+    boolean mustStopAtNextMethod = false;
+    List<TextRange> ranges = new ArrayList<TextRange>();
+    for (ASTNode node : calls.list) {
+      if (doesMessageHaveArguments(node)) {
+        if (mustStopAtNextMethod) {
+          return Spacing.createDependentLFSpacing(0, 0, ranges, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+        isAllProperties = false;
+      }
+      else {
+        if (!isAllProperties) {
+          // Rule: split properties in a method chain.
+          mustSplit = true;
+        }
+      }
+      TextRange range = node.getTextRange();
+      ranges.add(new TextRange(range.getStartOffset() - 1, range.getEndOffset()));
+      if (node2 == node && isAllProperties) {
+        // Rule: do not split leading properties (unless too long to fit).
+        mustStopAtNextMethod = true;
+      }
+    }
+    // Not sure how to implement rule: split before all properties if they don't fit on two lines. TWO lines !?
+    if (isAllProperties && ranges.size() > 7) {
+      mustSplit = true;
+    }
+    if (mustSplit) {
+      return Spacing.createSpacing(0, 0, 1, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    } else {
+      return Spacing.createDependentLFSpacing(0, 0, ranges, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
   }
 
@@ -829,7 +981,7 @@ public class DartSpacingProcessor {
   }
 
   private static boolean isEmbeddedComment(IElementType type, Block block) {
-    return COMMENTS.contains(type) && !isDirectlyPrecededByNewline(block);
+    return COMMENTS.contains(type) && (!isDirectlyPrecededByNewline(block) || isDirectlyPrecededByBlockComment(block));
   }
 
   private static boolean isDirectlyPrecededByNewline(Block child) {
@@ -851,6 +1003,25 @@ public class DartSpacingProcessor {
           return true;
         }
         continue;
+      }
+      break;
+    }
+    return false;
+  }
+
+  private static boolean isDirectlyPrecededByBlockComment(Block child) {
+    ASTNode node = ((DartBlock)child).getNode();
+    return isDirectlyPrecededByBlockComment(node);
+  }
+
+  private static boolean isDirectlyPrecededByBlockComment(ASTNode node) {
+    while ((node = node.getTreePrev()) != null) {
+      if (node.getElementType() == WHITE_SPACE) {
+        if (node.getText().contains("\n")) return false;
+        continue;
+      }
+      if (node.getElementType() == MULTI_LINE_COMMENT) {
+        return true;
       }
       break;
     }
@@ -921,5 +1092,17 @@ public class DartSpacingProcessor {
     String comment = next.getText();
     int n = comment.indexOf('\n');
     return comment.indexOf('\n', n + 1) > 0;
+  }
+
+  private static class CallChain {
+    SortedList<ASTNode> list = new SortedList<ASTNode>(textRangeSorter());
+    boolean isPrecededByHardNewline = false;
+    boolean isFollowedByHardNewline = false;
+
+    void add(ASTNode node) {
+      if (!list.contains(node)) {
+        list.add(node);
+      }
+    }
   }
 }

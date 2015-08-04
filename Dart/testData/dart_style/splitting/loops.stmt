@@ -33,13 +33,14 @@ for (foo; bar; a++, b++) {}
 <<<
 for (foo; bar; a++, b++) {}
 >>> split between updaters splits everything
-for (foo; bar; first = 1, second = 2, third = 3) {}
+for (foo; bar; first = 1, second = 2, third = 3, fourth = 4) {}
 <<<
 for (foo;
     bar;
     first = 1,
     second = 2,
-    third = 3) {}
+    third = 3,
+    fourth = 4) {}
 >>> nest wrapped initializer
 for (very + long + initialization + expression; a; b) {}
 <<<
@@ -61,5 +62,25 @@ while (aLongConditionExpressionThatWraps) {
 <<<
 while (
     aLongConditionExpressionThatWraps) {
+  ;
+}
+>>> don't force variables to split if clauses do
+for (var a = 1, b = 2; longCondition(expression); a += b) {
+  ;
+}
+<<<
+for (var a = 1, b = 2;
+    longCondition(expression);
+    a += b) {
+  ;
+}
+>>> don't force updates to split if clauses do
+for (var a = 0; longCondition(expression); a += 1, b += 1) {
+  ;
+}
+<<<
+for (var a = 0;
+    longCondition(expression);
+    a += 1, b += 1) {
   ;
 }
