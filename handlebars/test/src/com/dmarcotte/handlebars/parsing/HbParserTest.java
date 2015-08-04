@@ -1,9 +1,9 @@
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.HbLanguage;
-import com.dmarcotte.handlebars.config.PropertiesComponentStub;
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.ide.util.PropertiesComponentImpl;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateDataLanguagePatterns;
@@ -46,7 +46,7 @@ public abstract class HbParserTest extends ParsingTestCase {
 
     final MutablePicoContainer appContainer = getApplication().getPicoContainer();
     appContainer.registerComponentInstance(PropertiesComponent.class.getName(),
-                                           new PropertiesComponentStub());
+                                           PropertiesComponentImpl.create());
     appContainer.registerComponentInstance(TemplateDataLanguageMappings.class.getName(),
                                            new TemplateDataLanguageMappings(getProject()));
     appContainer.registerComponentInstance(TemplateDataLanguagePatterns.class.getName(),

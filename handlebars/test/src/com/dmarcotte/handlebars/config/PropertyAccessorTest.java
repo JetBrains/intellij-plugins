@@ -1,5 +1,6 @@
 package com.dmarcotte.handlebars.config;
 
+import com.intellij.ide.util.PropertiesComponentImpl;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ public class PropertyAccessorTest {
 
   @Test
   public void testGetPropertyValue() {
-    PropertiesComponentStub propertiesComponent = new PropertiesComponentStub();
+    PropertiesComponentImpl propertiesComponent = PropertiesComponentImpl.create();
     String originalValue = Property.DISABLED;
 
     // simulate an existing value by setting it directly on the propertiesComponent
@@ -23,7 +24,7 @@ public class PropertyAccessorTest {
 
   @Test
   public void testGetPropertyValueDefaulting() {
-    PropertiesComponentStub propertiesComponent = new PropertiesComponentStub();
+    PropertiesComponentImpl propertiesComponent = PropertiesComponentImpl.create();
 
     String expectedValue = myTestProperty.getDefault();
     String propertyValue = new PropertyAccessor(propertiesComponent).getPropertyValue(myTestProperty);
@@ -33,7 +34,7 @@ public class PropertyAccessorTest {
 
   @Test
   public void testSetPropertyValue() {
-    PropertiesComponentStub propertiesComponent = new PropertiesComponentStub();
+    PropertiesComponentImpl propertiesComponent = PropertiesComponentImpl.create();
 
     String testValue = Property.DISABLED;
     new PropertyAccessor(propertiesComponent).setPropertyValue(myTestProperty, Property.DISABLED);
