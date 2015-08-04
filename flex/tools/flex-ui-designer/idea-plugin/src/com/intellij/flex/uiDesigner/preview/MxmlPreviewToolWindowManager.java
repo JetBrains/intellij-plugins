@@ -166,7 +166,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
         if (currentVisible) {
-          propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, "true");
+          propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, true);
 
           if (!lastPreviewChecked) {
             lastPreviewChecked = true;
