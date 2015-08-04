@@ -83,10 +83,15 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
     LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, suggestion.getCompletion());
 
+    // keywords are bold
+    if (suggestion.getKind().equals(CompletionSuggestionKind.KEYWORD)) {
+      lookup = lookup.bold();
+    }
+
     if (element != null) {
       // @deprecated
       if (element.isDeprecated()) {
-        lookup = lookup.withStrikeoutness(true);
+        lookup = lookup.strikeout();
       }
       // append type parameters
       final String typeParameters = element.getTypeParameters();
