@@ -355,4 +355,23 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', "///q<caret>z", "///q\n///<caret>z");
     doTypingTest('\n', " ///q<caret> \t ///z", " ///q \t \n ///<caret>z");
   }
+
+  public void testEnterAfterSingleLineComment() {
+    doTypingTest('\n',
+                 "Future main() async {\n" +
+                 "  Directory systemTempDir = Directory.systemTemp;\n" +
+                 "  // comment\n" +
+                 "  File file = await new File('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')\n" +
+                 "      .create(recursive: true);<caret>\n" +
+                 "  print(file.path);\n" +
+                 "}\n",
+                 "Future main() async {\n" +
+                 "  Directory systemTempDir = Directory.systemTemp;\n" +
+                 "  // comment\n" +
+                 "  File file = await new File('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')\n" +
+                 "      .create(recursive: true);\n" +
+                 "  <caret>\n" +
+                 "  print(file.path);\n" +
+                 "}\n");
+  }
 }
