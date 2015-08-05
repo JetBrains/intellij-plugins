@@ -15,74 +15,43 @@
  */
 package com.jetbrains.lang.dart.assists;
 
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.psi.DartFile;
-import org.dartlang.analysis.server.protocol.SourceChange;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public class DartQuickAssistIntention implements IntentionAction, Comparable<IntentionAction> {
-  private final QuickAssistSet quickAssistSet;
-  private final int index;
-  @Nullable private SourceChange sourceChange;
-
-  public DartQuickAssistIntention(final QuickAssistSet quickAssistSet, final int index) {
-    this.quickAssistSet = quickAssistSet;
-    this.index = index;
-  }
-
-  @Override
-  public int compareTo(IntentionAction o) {
-    if (o instanceof DartQuickAssistIntention) {
-      final DartQuickAssistIntention other = (DartQuickAssistIntention)o;
-      return index - other.index;
-    }
-    return 0;
-  }
-
+public class DartStandardQuickAssistIntention implements IntentionAction, HighPriorityAction {
   @NotNull
   @Override
   public String getFamilyName() {
     //noinspection DialogTitleCapitalization
-    return "Dart/" + DartBundle.message("dart.quick.assist.family.name");
+    return DartBundle.message("dart.quick.assist.family.name");
   }
 
+  @Nls
   @NotNull
   @Override
   public String getText() {
-    return sourceChange == null ? "" : sourceChange.getMessage();
+    return "IntentionAction stub for Dart";
   }
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    if (sourceChange != null) {
-      AssistUtils.applySourceChange(project, sourceChange);
-    }
+
   }
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (!(file instanceof DartFile)) {
-      return false;
-    }
-    final List<SourceChange> sourceChanges = quickAssistSet.getQuickAssists(editor, file);
-    if (sourceChanges.size() <= index) {
-      sourceChange = null;
-      return false;
-    }
-    sourceChange = sourceChanges.get(index);
-    return true;
+    return false;
   }
 
   @Override
   public boolean startInWriteAction() {
-    return true;
+    return false;
   }
 }

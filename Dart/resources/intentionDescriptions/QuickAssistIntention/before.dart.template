@@ -1,0 +1,3 @@
+main() {
+  var items = <int>[0, 1, 2];
+}

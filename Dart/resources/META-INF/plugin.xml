@@ -156,6 +156,12 @@
     <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartUnitMemberGroupRuleProvider"/>
     <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartClassMemberGroupRuleProvider"/>
 
+    <intentionAction>
+      <className>com.jetbrains.lang.dart.assists.DartStandardQuickAssistIntention</className>
+      <category>Dart</category>
+      <descriptionDirectoryName>QuickAssistIntention</descriptionDirectoryName>
+    </intentionAction>
+
     <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
                         serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
