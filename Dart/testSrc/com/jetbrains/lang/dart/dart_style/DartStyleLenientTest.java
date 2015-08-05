@@ -15,7 +15,6 @@ public class DartStyleLenientTest extends DartStyleTest {
   private static final Set<String> KNOWN_TO_FAIL_LENIENT = new THashSet<String>();
 
   static {
-    //KNOWN_TO_FAIL_LENIENT.add("regression/0100/0178.unit:1");
     //KNOWN_TO_FAIL_LENIENT.add("regression/0000/0083.unit:1");
   }
 
