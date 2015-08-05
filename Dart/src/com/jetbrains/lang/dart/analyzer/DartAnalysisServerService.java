@@ -460,11 +460,12 @@ public class DartAnalysisServerService {
 
   public void updateFilesContent() {
     //TODO: consider using DocumentListener to collect deltas instead of sending the whole Document.getText() each time
-    final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
-    final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
 
     synchronized (myLock) {
       if (myServer == null) return;
+
+      final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
+      final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       for (Document document : fileDocumentManager.getUnsavedDocuments()) {
