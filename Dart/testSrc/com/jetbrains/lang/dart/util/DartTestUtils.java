@@ -65,7 +65,8 @@ public class DartTestUtils {
     return "";
   }
 
-  public static void configureDartSdk(@NotNull final Module module, @NotNull final Disposable disposable, final boolean realSdk) {
+  @NotNull
+  public static DartSdk configureDartSdk(@NotNull final Module module, @NotNull final Disposable disposable, final boolean realSdk) {
     final String sdkHome;
     if (realSdk) {
       sdkHome = System.getProperty("dart.sdk");
@@ -128,6 +129,10 @@ public class DartTestUtils {
         });
       }
     });
+
+    final DartSdk dartSdk = DartSdk.getDartSdk(module.getProject());
+    Assert.assertNotNull(dartSdk);
+    return dartSdk;
   }
 
   public static List<CaretPositionInfo> extractPositionMarkers(final @NotNull Project project, final @NotNull Document document) {

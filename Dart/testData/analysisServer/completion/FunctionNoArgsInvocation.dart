@@ -1,0 +1,3 @@
+main() {
+  mai<caret>
+}
