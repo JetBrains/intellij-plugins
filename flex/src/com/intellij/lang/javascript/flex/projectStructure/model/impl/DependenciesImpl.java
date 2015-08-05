@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencies;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
-import com.intellij.openapi.components.StateStorageException;
 import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Function;
@@ -117,7 +116,7 @@ class DependenciesImpl implements ModifiableDependencies {
           return ((BuildConfigurationEntryImpl)e).getCopy();
         }
         else {
-          throw new StateStorageException("Unexpected entry type: " + e);
+          throw new RuntimeException("Unexpected entry type: " + e);
         }
       }
     }));
@@ -151,7 +150,7 @@ class DependenciesImpl implements ModifiableDependencies {
                                                    return ((StatefulDependencyEntry)entry).getState();
                                                  }
                                                  else {
-                                                   throw new StateStorageException("Unexpected entry type: " + entry);
+                                                   throw new RuntimeException("Unexpected entry type: " + entry);
                                                  }
                                                }
                                              }, new EntryState[0]);
@@ -186,7 +185,7 @@ class DependenciesImpl implements ModifiableDependencies {
         myEntries.add(bcEntry);
       }
       else {
-        throw new StateStorageException("unknown entry");
+        throw new RuntimeException("unknown entry");
       }
     }
     mySdk = state.SDK != null ? new SdkEntryImpl(state.SDK) : null;
