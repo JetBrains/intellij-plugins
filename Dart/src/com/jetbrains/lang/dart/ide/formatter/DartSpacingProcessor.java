@@ -123,8 +123,8 @@ public class DartSpacingProcessor {
         return Spacing.createSpacing(0, 0, 1, false, 0);//false here
       }
       if (parentType == CLASS_MEMBERS) {
-        if (type2 == METADATA || FormatterUtil.hasPrecedingSiblingOfType(node1, METADATA, WHITE_SPACE)) {
-          // Mulitple metadata each goes on its own line.
+        if (type2 == METADATA || FormatterUtil.isPrecededBy(node1, METADATA, WHITE_SPACE)) {
+          // Multiple metadata each goes on its own line.
           return Spacing.createSpacing(0, 0, 1, false, 0);
         }
         // Metadata on constructors and methods may be inlined.
@@ -135,8 +135,8 @@ public class DartSpacingProcessor {
           // Metadata on local variables must be on its own line.
           return Spacing.createSpacing(0, 0, 1, false, 0);
         }
-        if (type2 == METADATA || FormatterUtil.hasPrecedingSiblingOfType(node1, METADATA, WHITE_SPACE)) {
-          // Mulitple metadata each goes on its own line.
+        if (type2 == METADATA || FormatterUtil.isPrecededBy(node1, METADATA, WHITE_SPACE)) {
+          // Multiple metadata each goes on its own line.
           return Spacing.createSpacing(0, 0, 1, false, 0);
         }
         // Metadata on fields may be inlined.

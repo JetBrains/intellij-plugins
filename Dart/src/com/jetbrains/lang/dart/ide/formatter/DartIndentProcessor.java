@@ -89,7 +89,7 @@ public class DartIndentProcessor {
     if (elementType == LBRACE || elementType == RBRACE) {
       switch (braceStyle) {
         case CommonCodeStyleSettings.END_OF_LINE:
-          if (elementType == LBRACE && FormatterUtil.hasPrecedingSiblingOfType(parent, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
+          if (elementType == LBRACE && FormatterUtil.isPrecededBy(parent, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
             // Use Nystrom style rather than Allman.
             return Indent.getContinuationIndent();
           } // FALL THROUGH
