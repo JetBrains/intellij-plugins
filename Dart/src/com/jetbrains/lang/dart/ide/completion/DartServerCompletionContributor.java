@@ -88,6 +88,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       lookup = lookup.bold();
     }
 
+    boolean shouldSetSelection = true;
     if (element != null) {
       // @deprecated
       if (element.isDeprecated()) {
@@ -118,6 +119,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
       // Prepare for typing arguments, if any.
       if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
+        shouldSetSelection = false;
         final List<String> parameterNames = suggestion.getParameterNames();
         if (parameterNames != null) {
           lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
@@ -138,6 +140,21 @@ public class DartServerCompletionContributor extends CompletionContributor {
         }
       }
     }
+
+    // Use selection offset / length.
+    if (shouldSetSelection) {
+      lookup = lookup.withInsertHandler(new InsertHandler<LookupElement>() {
+        @Override
+        public void handleInsert(InsertionContext context, LookupElement item) {
+          final Editor editor = context.getEditor();
+          final int startOffset = context.getStartOffset() + suggestion.getSelectionOffset();
+          final int endOffset = startOffset + suggestion.getSelectionLength();
+          editor.getCaretModel().moveToOffset(startOffset);
+          editor.getSelectionModel().setSelection(startOffset, endOffset);
+        }
+      });
+    }
+
     return lookup;
   }
 
