@@ -15,13 +15,16 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,16 +65,39 @@ public class DartTestUtils {
     return "";
   }
 
-  public static void configureDartSdk(final @NotNull Module module, @NotNull Disposable disposable) {
+  public static void configureDartSdk(@NotNull final Module module, @NotNull final Disposable disposable, final boolean realSdk) {
+    final String sdkHome;
+    if (realSdk) {
+      sdkHome = System.getProperty("dart.sdk");
+      if (sdkHome == null) {
+        Assert.fail("To run tests that use Dart Analysis Server you need to add '-Ddart.sdk=[real SDK home]' to the VM Options field of " +
+                    "the corresponding JUnit run configuration (Run | Edit Configurations)");
+      }
+      if (!DartSdkUtil.isDartSdkHome(sdkHome)) {
+        Assert.fail("Incorrect path to the Dart SDK (" + sdkHome + ") is set as '-Ddart.sdk' VM option of " +
+                    "the corresponding JUnit run configuration (Run | Edit Configurations)");
+      }
+      VfsRootAccess.allowRootAccessTemporarily(disposable, sdkHome);
+    }
+    else {
+      sdkHome = SDK_HOME_PATH;
+    }
+
     final String dartSdkGlobalLibName;
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk != null) {
+    if (sdk != null && sdk.getHomePath().equals(sdkHome)) {
       dartSdkGlobalLibName = sdk.getGlobalLibName();
     }
     else {
       dartSdkGlobalLibName = ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
         public String compute() {
-          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(module.getProject(), SDK_HOME_PATH);
+          if (sdk != null) {
+            DartSdkGlobalLibUtil.updateDartSdkGlobalLib(module.getProject(), sdk.getGlobalLibName(), sdkHome);
+            return sdk.getGlobalLibName();
+          }
+          else {
+            return DartSdkGlobalLibUtil.createDartSdkGlobalLib(module.getProject(), sdkHome);
+          }
         }
       });
     }

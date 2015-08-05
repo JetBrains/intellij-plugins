@@ -20,8 +20,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -387,12 +385,15 @@ public class DartAnalysisServerService {
         }
       });
 
+    /*
+
     EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
       @Override
       public void beforeDocumentChange(DocumentEvent e) {
         updateInformationFromServer(e);
       }
     });
+    */
 
     registerQuickAssistIntentions();
   }
@@ -1118,13 +1119,8 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
 
-      final String testSdkHome = System.getProperty("dart.sdk");
-      if (ApplicationManager.getApplication().isUnitTestMode() && testSdkHome == null) return;
-
-      final String runtimePath =
-        FileUtil.toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome) + "/bin/dart");
-      final String analysisServerPath = FileUtil.toSystemDependentName(
-        (ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome) + "/bin/snapshots/analysis_server.dart.snapshot");
+      final String runtimePath = FileUtil.toSystemDependentName(mySdkHome + "/bin/dart");
+      final String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
 
       final DebugPrintStream debugStream = new DebugPrintStream() {
         @Override

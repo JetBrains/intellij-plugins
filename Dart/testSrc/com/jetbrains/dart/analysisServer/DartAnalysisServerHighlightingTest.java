@@ -1,13 +1,13 @@
-package com.jetbrains.lang.dart.analyzer.analysisServer;
+package com.jetbrains.dart.analysisServer;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-public abstract class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCase {
+public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable());
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
