@@ -74,7 +74,7 @@ public class DartAnalysisServerService {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
-  private static final long GET_ASSISTS_TIMEOUT = 100;
+  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
@@ -99,8 +99,8 @@ public class DartAnalysisServerService {
   @NotNull private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
   @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
 
-  @NotNull final AtomicBoolean myServerBusy = new AtomicBoolean(false);
-  @NotNull final Alarm myShowServerProgressAlarm = new Alarm();
+  @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
+  @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -211,15 +211,7 @@ public class DartAnalysisServerService {
                   new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
                     @Override
                     public void run(@NotNull ProgressIndicator indicator) {
-                      if (myServerBusy.get()) {
-                        try {
-                          synchronized (myServerBusy) {
-                            //noinspection WaitNotInLoop
-                            myServerBusy.wait();
-                          }
-                        }
-                        catch (InterruptedException e) {/* unlucky */}
-                      }
+                      waitWhileServerBusy();
                     }
                   };
 
@@ -1244,10 +1236,30 @@ public class DartAnalysisServerService {
     }
   }
 
+  public void waitWhileServerBusy_TESTS_ONLY() {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    waitWhileServerBusy();
+  }
+
+  private void waitWhileServerBusy() {
+    if (myServerBusy.get()) {
+      try {
+        synchronized (myServerBusy) {
+          if (myServerBusy.get()) {
+            //noinspection WaitNotInLoop
+            myServerBusy.wait();
+          }
+        }
+      }
+      catch (InterruptedException e) {/* unlucky */}
+    }
+  }
+
   private void stopShowingServerProgress() {
     myShowServerProgressAlarm.cancelAllRequests();
-    myServerBusy.set(false);
+
     synchronized (myServerBusy) {
+      myServerBusy.set(false);
       myServerBusy.notifyAll();
     }
   }

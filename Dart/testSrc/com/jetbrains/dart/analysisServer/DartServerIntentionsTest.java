@@ -25,6 +25,9 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
   private void doTest(@NotNull final String intentionName) {
     myFixture.configureByFile(getTestName(false) + ".dart");
 
+    // server doesn't give any assists while pub list is in progress
+    DartAnalysisServerService.getInstance().waitWhileServerBusy_TESTS_ONLY();
+
     final IntentionAction intention = myFixture.findSingleIntention(intentionName);
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
