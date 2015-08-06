@@ -51,7 +51,7 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @Override
   public String getFamilyName() {
     //noinspection DialogTitleCapitalization
-    return DartBundle.message("dart.quick.assist.family.name");
+    return "Dart/" + DartBundle.message("dart.quick.assist.family.name");
   }
 
   @NotNull
