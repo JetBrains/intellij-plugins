@@ -6,7 +6,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
@@ -14,8 +13,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationRegion;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationTarget;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
@@ -27,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class DartUriElementBase extends DartPsiCompositeElementImpl {
 
@@ -112,6 +108,9 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
             @NotNull
             @Override
             public Object[] getVariants() {
+              return EMPTY_ARRAY; // completion comes fromDAS
+
+              /*
               final Object[] superVariants = super.getVariants();
 
               if (getIndex() == 0) {
@@ -124,6 +123,7 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
               }
 
               return superVariants;
+              */
             }
           };
         }
@@ -162,6 +162,13 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
         }
 
         return new FileReference(this, range.shiftRight(shift), index, text) {
+
+          @NotNull
+          @Override
+          public Object[] getVariants() {
+            return EMPTY_ARRAY; // completion comes fromDAS
+          }
+
           @Override
           public PsiElement bindToElement(@NotNull final PsiElement element, final boolean absolute) {
             final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(getElement().getContainingFile());

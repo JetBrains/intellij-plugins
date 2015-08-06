@@ -76,7 +76,8 @@ public class DartSdkLibReference implements PsiReference {
   @NotNull
   @Override
   public Object[] getVariants() {
-    return getSdkLibUrisAsCompletionVariants(myElement);
+    return EMPTY_ARRAY; // completion comes fromDAS
+    //return getSdkLibUrisAsCompletionVariants(myElement);
   }
 
   public static Object[] getSdkLibUrisAsCompletionVariants(final PsiElement element) {
