@@ -28,12 +28,13 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -46,12 +47,16 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.util.*;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.util.Alarm;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.PathUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
@@ -116,8 +121,8 @@ public class DartAnalysisServerService {
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
-    public void computedAnalyzedFiles(List<String> directories) {
-      configureImportedLibraries(directories);
+    public void computedAnalyzedFiles(List<String> files) {
+      configureImportedLibraries(files);
     }
 
     @Override
@@ -337,6 +342,8 @@ public class DartAnalysisServerService {
   }
 
   private void configureImportedLibraries(@NotNull final Collection<String> rootsToAddToLib) {
+    // TODO Do we really need the thread check? Jaime found it was nessisary, but Alex says we shouldn't need it.
+    // TODO Revisit this, reusing source from DartFileListener
     runInEventDispatchThread(new Runnable() {
       @Override
       public void run() {
@@ -355,7 +362,7 @@ public class DartAnalysisServerService {
         runnable.run();
       }
       else {
-        ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
           public void run() {
             runnable.run();
           }
@@ -396,61 +403,28 @@ public class DartAnalysisServerService {
         }
       }
 
-
       final Set<Module> affectedModules = new THashSet<Module>();
       final Module[] modules = ModuleManager.getInstance(project).getModules();
       for (final Module module : modules) {
         if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
-          for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-            // if there is a pubspec, skip this contentRoot
-            if (contentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) continue;
-            affectedModules.add(module);
+          // if there is a pubspec, skip this contentRoot
+          if (!FilenameIndex.getVirtualFilesByName(project, PubspecYamlUtil.PUBSPEC_YAML, module.getModuleContentScope())
+            .isEmpty()) {
+            continue;
           }
+          affectedModules.add(module);
         }
       }
 
       final Library library = createDartPackagesLibrary(project, rootsToAddToLib);
-
-      for (final Module module : affectedModules) {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-        try {
-          OrderEntry existingEntry = null;
-          for (final OrderEntry entry : modifiableModel.getOrderEntries()) {
-            if (entry instanceof LibraryOrderEntry &&
-                LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)entry).getLibraryLevel()) &&
-                DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
-              existingEntry = entry;
-              break;
-            }
-          }
-
-          final boolean contains = existingEntry != null;
-          final boolean mustContain = affectedModules.contains(module);
-
-          if (contains != mustContain) {
-            if (mustContain) {
-              modifiableModel.addLibraryEntry(library);
-            }
-            else {
-              modifiableModel.removeOrderEntry(existingEntry);
-            }
-          }
-
-          if (modifiableModel.isChanged()) {
-            modifiableModel.commit();
-          }
-        }
-        finally {
-          if (!modifiableModel.isDisposed()) {
-            modifiableModel.dispose();
-          }
-        }
-      }
+      final Module[] affectedModulesArray = affectedModules.toArray(new Module[affectedModules.size()]);
+      DartFileListener.updateDependenciesOnDartPackagesLibrary(affectedModulesArray, sdk, library);
     }
   }
 
+  // TODO reuse DartFileListener#collectPackagesLibraryRoots.
   private static Library createDartPackagesLibrary(@NotNull final Project project,
-                                                         @NotNull final Collection<String> rootsToAddToLib) {
+                                                   @NotNull final Collection<String> rootsToAddToLib) {
     Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library == null) {
       final LibraryTableBase.ModifiableModel libTableModel = ProjectLibraryTable.getInstance(project).getModifiableModel();

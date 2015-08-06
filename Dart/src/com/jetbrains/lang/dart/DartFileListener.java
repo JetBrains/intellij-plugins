@@ -122,7 +122,7 @@ public class DartFileListener extends VirtualFileAdapter {
             removeDartPackagesLibraryAndDependencies(project);
           }
           else {
-            updateDependenciesOnDartPackagesLibrary(project, sdk, library);
+            updateDependenciesOnDartPackagesLibrary(ModuleManager.getInstance(project).getModules(), sdk, library);
           }
         }
         finally {
@@ -255,10 +255,10 @@ public class DartFileListener extends VirtualFileAdapter {
     }
   }
 
-  private static void updateDependenciesOnDartPackagesLibrary(@NotNull final Project project,
+  public static void updateDependenciesOnDartPackagesLibrary(@NotNull final Module[] modules,
                                                               @NotNull final DartSdk sdk,
                                                               @NotNull final Library library) {
-    for (Module module : ModuleManager.getInstance(project).getModules()) {
+    for (Module module : modules) {
       if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
         addDependencyOnDartPackagesLibrary(module, library);
       }
