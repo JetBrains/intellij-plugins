@@ -74,6 +74,7 @@
     <renamePsiElementProcessor implementation="com.jetbrains.lang.dart.ide.DartRenamePsiElementProcessor"/>
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartLanguageCodeStyleSettingsProvider"/>
+    <lang.importOptimizer language="Dart" implementationClass="com.jetbrains.lang.dart.ide.imports.DartImportOptimizer"/>
 
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>

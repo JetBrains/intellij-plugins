@@ -71,6 +71,7 @@ public class DartAnalysisServerService {
   private static final long CHECK_CANCELLED_PERIOD = 100;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+  private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
@@ -974,6 +975,64 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
+  public SourceFileEdit edit_organizeDirectives(@NotNull final String _filePath) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
+    final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      final OrganizeDirectivesConsumer consumer = new OrganizeDirectivesConsumer() {
+        @Override
+        public void computedEdit(final SourceFileEdit edit) {
+          resultRef.set(edit);
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode()) ||
+              RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
+            LOG.info(getShortErrorMessage("edit_organizeDirectives()", filePath, error));
+          }
+          else {
+            logError("edit_organizeDirectives()", filePath, error);
+          }
+
+          semaphore.up();
+        }
+      };
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.edit_organizeDirectives(filePath, consumer);
+        }
+      }, "edit_organizeDirectives(" + filePath + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return null;
+      }
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(EDIT_ORGANIZE_DIRECTIVES_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("edit_organizeDirectives() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
   public SourceFileEdit edit_sortMembers(@NotNull final String filePath) {
     final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
     final Semaphore semaphore = new Semaphore();
@@ -1318,7 +1377,7 @@ public class DartAnalysisServerService {
   }
 
   /**
-   * see {@link com.jetbrains.lang.dart.assists.DartQuickAssistIntention}
+   * see {@link DartQuickAssistIntention}
    */
   private static void registerQuickAssistIntentions() {
     final IntentionManager intentionManager = IntentionManager.getInstance();

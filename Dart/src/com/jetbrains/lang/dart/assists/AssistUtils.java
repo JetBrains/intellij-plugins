@@ -30,20 +30,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class AssistUtils {
+  public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
+    final String filePath = FileUtil.toSystemIndependentName(fileEdit.getFile());
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (file != null) {
+      final Document document = FileDocumentManager.getInstance().getDocument(file);
+      if (document != null) {
+        applySourceEdits(document, fileEdit.getEdits());
+      }
+    }
+  }
+
   public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
       @Override
       public void run() {
         final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
         for (SourceFileEdit fileEdit : fileEdits) {
-          final String filePath = FileUtil.toSystemIndependentName(fileEdit.getFile());
-          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
-          if (file != null) {
-            final Document document = FileDocumentManager.getInstance().getDocument(file);
-            if (document != null) {
-              applySourceEdits(document, fileEdit.getEdits());
-            }
-          }
+          applyFileEdit(fileEdit);
         }
       }
     }, sourceChange.getMessage(), null);
