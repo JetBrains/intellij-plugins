@@ -150,7 +150,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
           final int startOffset = context.getStartOffset() + suggestion.getSelectionOffset();
           final int endOffset = startOffset + suggestion.getSelectionLength();
           editor.getCaretModel().moveToOffset(startOffset);
-          editor.getSelectionModel().setSelection(startOffset, endOffset);
+          if (endOffset > startOffset) {
+            editor.getSelectionModel().setSelection(startOffset, endOffset);
+          }
         }
       });
     }
