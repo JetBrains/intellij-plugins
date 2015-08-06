@@ -25,7 +25,7 @@ import static com.intellij.tapestry.psi.TelTokenTypes.*;
 %eof{  return;
 %eof}
 
-IDENT=[:jletter:][:jletterdigit:]*
+IDENT=[:jletter:]([:jletterdigit:]*|-[:jletterdigit:]+)*
 INTEGER={SIGN}[:digit:]+
 DECIMAL={SIGN}{INTEGER}?\.{INTEGER}
 SIGN=[+-]?

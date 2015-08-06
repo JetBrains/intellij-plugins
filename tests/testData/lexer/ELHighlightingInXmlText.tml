@@ -3,5 +3,6 @@
     </head>
     <body>
         <a href="#" t:type="pagelink" page="startpage">my link ${rrrrr?.tt(4).r(77, -5.3, [-3,  -2]).yy}</a>
+        <p>${message:question-to-life}</p>
     </body>
 </html>
