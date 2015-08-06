@@ -18,11 +18,15 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
+import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
+import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
@@ -35,7 +39,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       @Override
       protected void addCompletions(@NotNull final CompletionParameters parameters,
                                     @NotNull final ProcessingContext context,
-                                    @NotNull final CompletionResultSet result) {
+                                    @NotNull final CompletionResultSet originalResultSet) {
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
         if (file == null) return;
 
@@ -50,15 +54,46 @@ public class DartServerCompletionContributor extends CompletionContributor {
         final String completionId = DartAnalysisServerService.getInstance().completion_getSuggestions(filePath, parameters.getOffset());
         if (completionId == null) return;
 
+        final String uriPrefix = getPrefixIfCompletingUri(parameters);
+        final CompletionResultSet resultSet = uriPrefix != null ? originalResultSet.withPrefixMatcher(uriPrefix) : originalResultSet;
+
         DartAnalysisServerService.getInstance().addCompletions(completionId, new Consumer<CompletionSuggestion>() {
           @Override
           public void consume(CompletionSuggestion suggestion) {
             final LookupElement lookupElement = createLookupElement(project, suggestion);
-            result.addElement(lookupElement);
+            resultSet.addElement(lookupElement);
           }
         });
       }
     });
+  }
+
+  @Nullable
+  private static String getPrefixIfCompletingUri(@NotNull final CompletionParameters parameters) {
+    final PsiElement psiElement = parameters.getOriginalPosition();
+    final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
+    final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
+    final PsiElement parentParentParent = parentParent instanceof DartUriElement ? parentParent.getParent() : null;
+    if (parentParentParent instanceof DartUriBasedDirective) {
+      final int uriStringOffset = ((DartUriBasedDirective)parentParentParent).getUriStringOffset();
+      if (parameters.getOffset() >= parentParent.getTextOffset() + uriStringOffset) {
+        return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextOffset());
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void beforeCompletion(@NotNull final CompletionInitializationContext context) {
+    final PsiElement psiElement = context.getFile().findElementAt(context.getStartOffset());
+    final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
+    final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
+    final PsiElement parentParentParent = parentParent instanceof DartUriElement ? parentParent.getParent() : null;
+    if (parentParentParent instanceof DartUriBasedDirective) {
+      final String uri = ((DartUriBasedDirective)parentParentParent).getUriString();
+      final int uriOffset = ((DartUriBasedDirective)parentParentParent).getUriStringOffset();
+      context.setReplacementOffset(parentParent.getTextOffset() + uriOffset + uri.length());
+    }
   }
 
   private static Icon applyOverlay(Icon base, boolean condition, Icon overlay) {
