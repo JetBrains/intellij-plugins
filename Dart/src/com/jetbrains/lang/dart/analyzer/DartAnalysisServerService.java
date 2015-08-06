@@ -1317,10 +1317,10 @@ public class DartAnalysisServerService {
     return true;
   }
 
+  /**
+   * see {@link com.jetbrains.lang.dart.assists.DartQuickAssistIntention}
+   */
   private static void registerQuickAssistIntentions() {
-    // intentions are registered not via plugin.xml for 2 reasons:
-    // - intentions amount, text and behavior are loaded dynamically
-    // - intentions registered via plugin.xml are wrapped in IntentionActionWrapper that doesn't implement Comparable (our DartQuickAssistIntention implements Comparable and order is important)
     final IntentionManager intentionManager = IntentionManager.getInstance();
     final QuickAssistSet quickAssistSet = new QuickAssistSet();
     for (int i = 0; i < 20; i++) {
