@@ -12,6 +12,7 @@ import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.intellij.openapi.wm.impl.status.IdeStatusBarImpl;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.Animator;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Created by karashevich on 27/07/15.
@@ -162,6 +163,27 @@ public class LearnUiUtil {
 
     private void highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane) {
         final HighlightComponent hc = new HighlightComponent(new Color(36, 57, 128), componentName);
+
+        final JButton gotItButton = new JButton("Text here");
+//        gotItButton.setSize();
+        gotItButton.setVisible(true);
+        gotItButton.setForeground(Color.BLACK);
+        gotItButton.setFont(UIUtil.getLabelFont());
+        gotItButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("action performed");
+                glassPane.remove(hc);
+                glassPane.remove(gotItButton);
+                glassPane.revalidate();
+                glassPane.repaint();
+            }
+        });
+        glassPane.setVisible(true);
+//        gotItButton.setLocation(new Point((int) (hc.getBounds().getLocation().getX() + hc.getBounds().getWidth() / 2),
+//                (int) (hc.getBounds().getLocation().getY() + hc.getBounds().getHeight() / 2)));
+        hc.add(gotItButton);
+
 
         final Point pt = SwingUtilities.convertPoint(myComponent, new Point(0, 0), ideRootPane);
         hc.setBounds(pt.x, pt.y, myComponent.getWidth(), myComponent.getHeight());
@@ -446,6 +468,7 @@ public class LearnUiUtil {
         private HighlightComponent(@NotNull final Color c, @Nullable String componentName) {
             myColor = c;
             myName = componentName;
+            setLayout(new GridLayout(2, 1));
         }
 
         @Override
@@ -455,7 +478,7 @@ public class LearnUiUtil {
             Color oldColor = g2d.getColor();
             g2d.setColor(myColor);
             Composite old = g2d.getComposite();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
 
             Rectangle r = getBounds();
 
@@ -477,8 +500,6 @@ public class LearnUiUtil {
             g2d.setComposite(old);
             g2d.setColor(oldColor);
             g2d.setFont(oldFont);
-
-
 
         }
     }
