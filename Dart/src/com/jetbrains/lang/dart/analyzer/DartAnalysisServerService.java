@@ -432,12 +432,14 @@ public class DartAnalysisServerService {
         }
       });
 
-    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
-      @Override
-      public void beforeDocumentChange(DocumentEvent e) {
-        updateInformationFromServer(e);
-      }
-    });
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
+        @Override
+        public void beforeDocumentChange(DocumentEvent e) {
+          updateInformationFromServer(e);
+        }
+      });
+    }
 
     registerQuickAssistIntentions();
   }
