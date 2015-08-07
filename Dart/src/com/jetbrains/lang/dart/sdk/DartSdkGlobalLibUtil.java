@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.sdk;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -33,7 +34,7 @@ public class DartSdkGlobalLibUtil {
     final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
     final String darSdkGlobalLibName = createDartSdkGlobalLib(model, sdkHomePath);
     model.commit();
-    ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+    DaemonCodeAnalyzer.getInstance(project).restart();
     return darSdkGlobalLibName;
   }
 
