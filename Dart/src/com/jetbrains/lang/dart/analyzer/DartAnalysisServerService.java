@@ -23,27 +23,22 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
@@ -62,7 +57,6 @@ import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.resolve.DartResolver;
-import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -364,51 +358,19 @@ public class DartAnalysisServerService {
       }
     };
 
-    final Set<Module> affectedModules = new THashSet<Module>();
-    final Module[] modules = ModuleManager.getInstance(project).getModules();
-    for (final Module module : modules) {
-      if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
-        // if there is a pubspec, skip this module
-        if (FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                             falseProcessor, module.getModuleContentScope(), project, null)) {
-          affectedModules.add(module);
-        }
+    final Condition<Module> moduleFilter = new Condition<Module>() {
+      @Override
+      public boolean value(final Module module) {
+        return DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName()) &&
+               FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                                falseProcessor, module.getModuleContentScope(), project, null);
       }
-    }
+    };
 
-    final Library library = createDartPackagesLibrary(project, rootsToAddToLib);
-    final Module[] affectedModulesArray = affectedModules.toArray(new Module[affectedModules.size()]);
-    DartFileListener.updateDependenciesOnDartPackagesLibrary(affectedModulesArray, sdk, library);
-  }
-
-  // TODO reuse DartFileListener#collectPackagesLibraryRoots.
-  private static Library createDartPackagesLibrary(@NotNull final Project project,
-                                                   @NotNull final Collection<String> rootsToAddToLib) {
-    Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
-    if (library == null) {
-      final LibraryTableBase.ModifiableModel libTableModel = ProjectLibraryTable.getInstance(project).getModifiableModel();
-      library = libTableModel.createLibrary(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME, DartPackagesLibraryType.LIBRARY_KIND);
-      libTableModel.commit();
-    }
-
-    final LibraryEx.ModifiableModelEx libModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-    try {
-      for (String url : libModel.getUrls(OrderRootType.CLASSES)) {
-        libModel.removeRoot(url, OrderRootType.CLASSES);
-      }
-
-      for (String packageDir : rootsToAddToLib) {
-        libModel.addRoot(VfsUtilCore.pathToUrl(packageDir), OrderRootType.CLASSES);
-      }
-
-      libModel.commit();
-    }
-    finally {
-      if (!Disposer.isDisposed(libModel)) {
-        Disposer.dispose(libModel);
-      }
-    }
-    return library;
+    final DartFileListener.DartLibInfo libInfo = new DartFileListener.DartLibInfo(true);
+    libInfo.addRoots(rootsToAddToLib);
+    final Library library = DartFileListener.updatePackagesLibraryRoots(project, libInfo);
+    DartFileListener.updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
   }
 
   public DartAnalysisServerService() {
