@@ -1258,7 +1258,9 @@ public class DartAnalysisServerService {
       try {
         myServer.start();
         myServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
-        //myServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
+        if (Registry.is("dart.projects.without.pubspec", false)) {
+          myServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
+        }
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
 
