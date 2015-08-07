@@ -93,7 +93,6 @@ public class DartAnalysisServerService {
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
@@ -316,28 +315,6 @@ public class DartAnalysisServerService {
     @Nullable
     public List<SourceEdit> getEdits() {
       return myEdits;
-    }
-  }
-
-  public static class LibraryDependenciesResult {
-    @Nullable final String[] libraries;
-
-    @Nullable final Map<String, Map<String, List<String>>> packageMap;
-
-    public LibraryDependenciesResult(@Nullable final String[] libraries,
-                                     @Nullable final Map<String, Map<String, List<String>>> packageMap) {
-      this.libraries = libraries;
-      this.packageMap = packageMap;
-    }
-
-    @Nullable
-    public String[] getLibraries() {
-      return libraries;
-    }
-
-    @Nullable
-    public Map<String, Map<String, List<String>>> getPackageMap() {
-      return packageMap;
     }
   }
 
@@ -771,57 +748,6 @@ public class DartAnalysisServerService {
     }
     finally {
       semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
-    }
-
-    return resultRef.get();
-  }
-
-  @Nullable
-  public LibraryDependenciesResult analysis_getLibraryDependencies() {
-    final Ref<LibraryDependenciesResult> resultRef = new Ref<LibraryDependenciesResult>();
-    final Semaphore semaphore = new Semaphore();
-
-    try {
-      synchronized (myLock) {
-        if (myServer == null) return null;
-
-        semaphore.down();
-
-        LOG.debug("analysis_getLibraryDependencies()");
-
-        final GetLibraryDependenciesConsumer consumer = new GetLibraryDependenciesConsumer() {
-          @Override
-          public void computedDependencies(@Nullable final String[] libraries,
-                                           @Nullable final Map<String, Map<String, List<String>>> packageMap) {
-            resultRef.set(new LibraryDependenciesResult(libraries, packageMap));
-            semaphore.up();
-          }
-
-          @Override
-          public void onError(final RequestError error) {
-            logError("analysis_getLibraryDependencies()", null, error);
-            semaphore.up();
-          }
-        };
-
-        final AnalysisServer server = myServer;
-        final boolean ok = runInPooledThreadAndWait(new Runnable() {
-          @Override
-          public void run() {
-            server.analysis_getLibraryDependencies(consumer);
-          }
-        }, "analysis_getLibraryDependencies()", SEND_REQUEST_TIMEOUT);
-
-        if (!ok) {
-          stopServer();
-          return null;
-        }
-      }
-
-      semaphore.waitFor(GET_LIBRARY_DEPENDENCIES_TIMEOUT);
-    }
-    finally {
-      semaphore.up(); // make sure to unlock semaphore so that computedDependencies() can understand when it was unlocked by timeout
     }
 
     return resultRef.get();
