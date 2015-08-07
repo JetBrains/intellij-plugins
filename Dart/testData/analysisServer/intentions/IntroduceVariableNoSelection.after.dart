@@ -1,3 +1,3 @@
 main() {
-  var i = 1 + 1;<caret>
+  var i<caret> = 1 + 1;
 }

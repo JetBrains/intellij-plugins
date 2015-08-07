@@ -1,3 +1,4 @@
 part of foo;
 
-class Bar {}
+class Bar {
+}

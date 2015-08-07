@@ -1,7 +1,7 @@
 main() {
-  <caret><selection>try {
+  try {
     print(1);
-  } on Exception catch (e) {
+  } on Exception<caret> catch (e) {
     // TODO
-  }</selection>
+  }
 }
