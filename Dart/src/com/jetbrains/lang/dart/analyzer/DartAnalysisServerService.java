@@ -27,6 +27,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -74,7 +75,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -318,88 +318,62 @@ public class DartAnalysisServerService {
     }
   }
 
-  private void configureImportedLibraries(@NotNull final Collection<String> rootsToAddToLib) {
+  private void configureImportedLibraries(@NotNull final Collection<String> filePaths) {
     final Set<Project> projects = myRootsHandler.getTrackedProjects();
     if (projects.size() != 1) return; // no idea how to map files from filePaths to several open projects
 
-    // TODO Do we really need the thread check? Jaime found it was nessisary, but Alex says we shouldn't need it.
-    // TODO Revisit this, reusing source from DartFileListener
-    runInEventDispatchThread(new Runnable() {
+    final Project project = projects.iterator().next();
+    DumbService.getInstance(project).smartInvokeLater(new Runnable() {
       @Override
       public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            doConfigureImportedLibraries(rootsToAddToLib);
-          }
-        });
+        doConfigureImportedLibraries(project, filePaths);
       }
     });
   }
 
-  private static void runInEventDispatchThread(final Runnable runnable) {
-    try {
-      if (SwingUtilities.isEventDispatchThread()) {
-        runnable.run();
-      }
-      else {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          public void run() {
-            runnable.run();
-          }
-        }, ModalityState.defaultModalityState());
+  private static void doConfigureImportedLibraries(@NotNull final Project project, @NotNull final Collection<String> filePaths) {
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null) return;
+
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    final SortedSet<String> folderPaths = new TreeSet<String>();
+    final Collection<String> rootsToAddToLib = new THashSet<String>();
+
+    for (final String path : filePaths) {
+      if (path != null) {
+        folderPaths.add(PathUtil.getParentPath(FileUtil.toSystemIndependentName(path)));
       }
     }
-    catch (Exception e) {
-      LOG.warn(e);
-    }
-  }
 
-  private void doConfigureImportedLibraries(@NotNull final Collection<String> libraries) {
-    for (final Project project : myRootsHandler.getTrackedProjects()) {
-      if (project == null) continue;
-      final DartSdk sdk = DartSdk.getDartSdk(project);
-      if (sdk == null) continue;
-
-      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-      final SortedSet<String> folderPaths = new TreeSet<String>();
-      final Collection<String> rootsToAddToLib = new THashSet<String>();
-
-      for (final String path : libraries) {
-        if (path != null) {
-          folderPaths.add(PathUtil.getParentPath(FileUtil.toSystemIndependentName(path)));
-        }
-      }
-
-      outer:
-      for (final String path : folderPaths) {
-        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path);
-        if (!path.startsWith(sdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
-          for (String configuredPath : rootsToAddToLib) {
-            if (path.startsWith(configuredPath + "/")) {
-              continue outer; // folderPaths is sorted so subfolders go after parent folder
-            }
+    outer:
+    for (final String path : folderPaths) {
+      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path);
+      if (!path.startsWith(sdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
+        for (String configuredPath : rootsToAddToLib) {
+          if (path.startsWith(configuredPath + "/")) {
+            continue outer; // folderPaths is sorted so subfolders go after parent folder
           }
-          rootsToAddToLib.add(path);
         }
+        rootsToAddToLib.add(path);
       }
-
-      final Set<Module> affectedModules = new THashSet<Module>();
-      final Module[] modules = ModuleManager.getInstance(project).getModules();
-      for (final Module module : modules) {
-        if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
-          // if there is a pubspec, skip this contentRoot
-          if (!FilenameIndex.getVirtualFilesByName(project, PubspecYamlUtil.PUBSPEC_YAML, module.getModuleContentScope())
-            .isEmpty()) {
-            continue;
-          }
-          affectedModules.add(module);
-        }
-      }
-
-      final Library library = createDartPackagesLibrary(project, rootsToAddToLib);
-      final Module[] affectedModulesArray = affectedModules.toArray(new Module[affectedModules.size()]);
-      DartFileListener.updateDependenciesOnDartPackagesLibrary(affectedModulesArray, sdk, library);
     }
+
+    final Set<Module> affectedModules = new THashSet<Module>();
+    final Module[] modules = ModuleManager.getInstance(project).getModules();
+    for (final Module module : modules) {
+      if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
+        // if there is a pubspec, skip this contentRoot
+        if (!FilenameIndex.getVirtualFilesByName(project, PubspecYamlUtil.PUBSPEC_YAML, module.getModuleContentScope())
+          .isEmpty()) {
+          continue;
+        }
+        affectedModules.add(module);
+      }
+    }
+
+    final Library library = createDartPackagesLibrary(project, rootsToAddToLib);
+    final Module[] affectedModulesArray = affectedModules.toArray(new Module[affectedModules.size()]);
+    DartFileListener.updateDependenciesOnDartPackagesLibrary(affectedModulesArray, sdk, library);
   }
 
   // TODO reuse DartFileListener#collectPackagesLibraryRoots.
