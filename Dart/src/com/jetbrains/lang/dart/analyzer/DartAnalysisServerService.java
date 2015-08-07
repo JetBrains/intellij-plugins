@@ -319,6 +319,9 @@ public class DartAnalysisServerService {
   }
 
   private void configureImportedLibraries(@NotNull final Collection<String> rootsToAddToLib) {
+    final Set<Project> projects = myRootsHandler.getTrackedProjects();
+    if (projects.size() != 1) return; // no idea how to map files from filePaths to several open projects
+
     // TODO Do we really need the thread check? Jaime found it was nessisary, but Alex says we shouldn't need it.
     // TODO Revisit this, reusing source from DartFileListener
     runInEventDispatchThread(new Runnable() {
