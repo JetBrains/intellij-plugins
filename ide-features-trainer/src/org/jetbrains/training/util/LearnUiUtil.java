@@ -162,28 +162,14 @@ public class LearnUiUtil {
     }
 
     private void highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane) {
-        final HighlightComponent hc = new HighlightComponent(new Color(36, 57, 128), componentName);
-
-        final JButton gotItButton = new JButton("Text here");
-//        gotItButton.setSize();
-        gotItButton.setVisible(true);
-        gotItButton.setForeground(Color.BLACK);
-        gotItButton.setFont(UIUtil.getLabelFont());
-        gotItButton.addActionListener(new AbstractAction() {
+        final HighlightComponent hc = new HighlightComponent(new Color(36, 57, 128), componentName, "Here is the description of the component.");
+        hc.setCloseButtonAction(new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("action performed");
+            public void run() {
                 glassPane.remove(hc);
-                glassPane.remove(gotItButton);
-                glassPane.revalidate();
-                glassPane.repaint();
             }
         });
         glassPane.setVisible(true);
-//        gotItButton.setLocation(new Point((int) (hc.getBounds().getLocation().getX() + hc.getBounds().getWidth() / 2),
-//                (int) (hc.getBounds().getLocation().getY() + hc.getBounds().getHeight() / 2)));
-        hc.add(gotItButton);
-
 
         final Point pt = SwingUtilities.convertPoint(myComponent, new Point(0, 0), ideRootPane);
         hc.setBounds(pt.x, pt.y, myComponent.getWidth(), myComponent.getHeight());
@@ -314,14 +300,14 @@ public class LearnUiUtil {
         final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
 
         JComponent editorAreaComponent = null;
-        final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area");
+        final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Here is the description of the component");
 
 
 //        final JRootPane rootPane = SwingUtilities.getRootPane(component);
         final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
 
-        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area");
+        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component");
         JComponent componentProjectWindow = null;
 
         java.util.List<Component> allComponents = getAllComponents(ideRootPane);
@@ -462,44 +448,74 @@ public class LearnUiUtil {
     }
 
     private static class HighlightComponent extends JComponent {
+        @NotNull
         private Color myColor;
+        @Nullable
         private String myName;
+        @Nullable
+        private JLabel myLabel;
+        @Nullable private JButton myCloseButton;
+        @Nullable private JLabel myDescription;
 
-        private HighlightComponent(@NotNull final Color c, @Nullable String componentName) {
+        final private int verticalSpace = 12;
+
+        private HighlightComponent(@NotNull final Color c, @Nullable String componentName, @Nullable String description) {
             myColor = c;
             myName = componentName;
-            setLayout(new GridLayout(2, 1));
+            setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+            if (componentName != null) {
+
+                myLabel = new JLabel();
+                myLabel.setText(myName);
+                myLabel.setFont(new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 38));
+                myLabel.setForeground(Color.WHITE);
+                myLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                this.add(Box.createVerticalGlue());
+                this.add(myLabel);
+                this.add(Box.createRigidArea(new Dimension(0, verticalSpace)));
+            } else {
+                this.add(Box.createVerticalGlue());
+            }
+            if (description != null) {
+                myDescription = new JLabel(description);
+                myDescription.setForeground(Color.WHITE);
+//                myDescription.setMaximumSize(new Dimension(this.getWidth() / 3, Integer.MAX_VALUE));
+                myDescription.setAlignmentX(Component.CENTER_ALIGNMENT);
+                this.add(myDescription);
+                this.add(Box.createRigidArea(new Dimension(0, verticalSpace)));
+
+            }
+
+            myCloseButton = new JButton("Got it!");
+            myCloseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            this.add(myCloseButton);
+            this.add(Box.createVerticalGlue());
+        }
+
+        public void setCloseButtonAction(final Runnable runnable){
+            if (myCloseButton != null) {
+                myCloseButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        runnable.run();
+                    }
+                });
+            }
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D)g;
-
             Color oldColor = g2d.getColor();
             g2d.setColor(myColor);
             Composite old = g2d.getComposite();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-
             Rectangle r = getBounds();
-
             g2d.fillRect(0, 0, r.width, r.height);
-
             g2d.setColor(myColor.darker());
             g2d.drawRect(0, 0, r.width - 1, r.height - 1);
-
-            g2d.setColor(JBColor.WHITE);
-            Font oldFont = g2d.getFont();
-            Font font = new Font(oldFont.getName(), Font.BOLD, 38);
-            g2d.setFont(font);
-
-            if (myName != null) {
-                int stringWidth = g2d.getFontMetrics(font).stringWidth(myName);
-                g2d.drawString(myName, (float) (r.getWidth() - stringWidth) / 2, (float) r.getHeight() / 2);
-            }
-
             g2d.setComposite(old);
             g2d.setColor(oldColor);
-            g2d.setFont(oldFont);
 
         }
     }
