@@ -1,7 +1,9 @@
 package com.intellij.tapestry.intellij.lang.reference;
 
+import com.intellij.lang.properties.references.PropertyReference;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.XmlNamedElementPattern;
 import com.intellij.patterns.XmlPatterns;
@@ -60,6 +62,25 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
           if (!(element instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
           XmlAttribute typeAttr = (XmlAttribute)element;
           return getReferenceToComponentClass(typeAttr, getValueTextRange(typeAttr));
+        }
+      });
+
+    registrar.registerReferenceProvider(
+      XmlPatterns.xmlAttributeValue("alt").with(tapestryFileCondition),
+      new PsiReferenceProvider() {
+        @NotNull
+        public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+          if (!(element instanceof XmlAttributeValue)) return PsiReference.EMPTY_ARRAY;
+          final String value = StringUtil.stripQuotesAroundValue(element.getText());
+          final String prefix = "message:";
+          if (value.startsWith(prefix)) {
+            final String key = value.substring(prefix.length());
+            final int valueStart = prefix.length() + 1;
+            return new PsiReference[] {
+              new PropertyReference(key, element, null, true, new TextRange(valueStart, valueStart + key.length()))
+            };
+          }
+          return PsiReference.EMPTY_ARRAY;
         }
       });
   }

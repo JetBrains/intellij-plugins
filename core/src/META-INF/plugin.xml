@@ -7,6 +7,7 @@
   <description>Provides Tapestry 5.1 integration.</description>
 
   <depends>com.intellij.javaee</depends>
+  <depends>com.intellij.properties</depends>
   <category>Web/JavaEE Technologies</category>
 
   <!--<helpset file="help.jar" path="/Help.hs"/>-->

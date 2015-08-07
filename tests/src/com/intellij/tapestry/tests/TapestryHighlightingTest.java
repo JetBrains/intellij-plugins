@@ -2,6 +2,7 @@ package com.intellij.tapestry.tests;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
+import com.intellij.codeInspection.unused.UnusedPropertyInspection;
 import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
@@ -104,6 +105,11 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testNewSchema() throws Throwable {
     doTest(true);
+  }
+
+  public void testPropertyReferences() throws Throwable {
+    myFixture.enableInspections(new UnusedPropertyInspection());
+    myFixture.testHighlighting(true, true, true, getTestName(false) + ".properties", getTestName(false) + ".tml");
   }
 
   @Override

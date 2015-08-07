@@ -5,9 +5,12 @@
 package com.intellij.tapestry.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
+import com.intellij.lang.properties.references.PropertyReference;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.CommonClassNames;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
@@ -34,7 +37,25 @@ public abstract class TelCompositeElementType extends IElementType implements IC
 
   public static final TelCompositeElementType EXPLICIT_BINDING = new TelCompositeElementType("ExplicitBinding") {
     public PsiElement createPsiElement(final ASTNode node) {
-      return new TelCompositeElement(node);
+      return new TelCompositeElement(node) {
+        @NotNull
+        @Override
+        public PsiReference[] getReferences() {
+          ASTNode child = getNode().findChildByType(TelTokenTypes.TAP5_EL_IDENTIFIER);
+          if (child != null && "message".equals(child.getText())) {
+            child = getNode().findChildByType(TelTokenTypes.TAP5_EL_IDENTIFIER, child.getTreeNext());
+            if (child != null) {
+              final PsiElement psi = child.getPsi();
+              final int startOffsetInParent = psi.getStartOffsetInParent();
+              return new PsiReference[]{
+                new PropertyReference(psi.getText(), this, null, true,
+                                      new TextRange(startOffsetInParent, startOffsetInParent + psi.getTextLength()))
+              };
+            }
+          }
+          return super.getReferences();
+        }
+      };
     }
   };
 

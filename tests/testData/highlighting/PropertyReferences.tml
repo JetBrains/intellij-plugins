@@ -1,0 +1,6 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+<body>
+<t:content alt="message:foo-key"/>
+${message:bar-key}
+</body>
+</html>

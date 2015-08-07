@@ -28,5 +28,6 @@
     <orderEntry type="module" module-name="database-plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="IntelliLang-java" scope="RUNTIME" />
     <orderEntry type="module" module-name="IntelliLang-xml" scope="RUNTIME" />
+    <orderEntry type="module" module-name="properties" />
   </component>
 </module>
