@@ -20,6 +20,8 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.Module;
@@ -430,15 +432,12 @@ public class DartAnalysisServerService {
         }
       });
 
-    /*
-
     EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
       @Override
       public void beforeDocumentChange(DocumentEvent e) {
         updateInformationFromServer(e);
       }
     });
-    */
 
     registerQuickAssistIntentions();
   }
@@ -938,8 +937,7 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          if (RequestErrorCode.FORMAT_WITH_ERRORS.equals(error.getCode()) ||
-              RequestErrorCode.FORMAT_INVALID_FILE.equals(error.getCode())) {
+          if (RequestErrorCode.FORMAT_WITH_ERRORS.equals(error.getCode()) || RequestErrorCode.FORMAT_INVALID_FILE.equals(error.getCode())) {
             LOG.info(getShortErrorMessage("edit_format()", filePath, error));
           }
           else {
@@ -1405,11 +1403,11 @@ public class DartAnalysisServerService {
         final int eventOffset = e.getOffset();
         final int deltaLength = e.getNewLength() - e.getOldLength();
         for (PluginNavigationRegion region : regions) {
-          if (region.offset <= eventOffset && eventOffset <= region.offset + region.length) {
-            region.length += deltaLength;
-          }
-          else if (region.offset >= eventOffset) {
+          if (eventOffset <= region.offset) {
             region.offset += deltaLength;
+          }
+          else if (region.offset < eventOffset && eventOffset <= region.offset + region.length) {
+            region.length += deltaLength;
           }
           for (PluginNavigationTarget target : region.getTargets()) {
             if (target.file.equals(filePath) && target.offset >= eventOffset) {
@@ -1481,6 +1479,11 @@ public class DartAnalysisServerService {
       for (NavigationTarget target : region.getTargetObjects()) {
         targets.add(new PluginNavigationTarget(target));
       }
+    }
+
+    @Override
+    public String toString() {
+      return "PluginNavigationRegion(" + offset + ", " + length + ")";
     }
 
     public int getOffset() {
