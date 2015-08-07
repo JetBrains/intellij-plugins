@@ -46,13 +46,12 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.*;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
@@ -358,16 +357,22 @@ public class DartAnalysisServerService {
       }
     }
 
+    final Processor<? super PsiFileSystemItem> falseProcessor = new Processor<PsiFileSystemItem>() {
+      @Override
+      public boolean process(final PsiFileSystemItem item) {
+        return false;
+      }
+    };
+
     final Set<Module> affectedModules = new THashSet<Module>();
     final Module[] modules = ModuleManager.getInstance(project).getModules();
     for (final Module module : modules) {
       if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
-        // if there is a pubspec, skip this contentRoot
-        if (!FilenameIndex.getVirtualFilesByName(project, PubspecYamlUtil.PUBSPEC_YAML, module.getModuleContentScope())
-          .isEmpty()) {
-          continue;
+        // if there is a pubspec, skip this module
+        if (FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                             falseProcessor, module.getModuleContentScope(), project, null)) {
+          affectedModules.add(module);
         }
-        affectedModules.add(module);
       }
     }
 
