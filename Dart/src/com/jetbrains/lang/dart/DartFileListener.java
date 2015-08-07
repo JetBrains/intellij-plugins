@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.search.FilenameIndex;
@@ -106,6 +107,8 @@ public class DartFileListener extends VirtualFileAdapter {
   }
 
   public static void scheduleDartPackageRootsUpdate(@NotNull final Project project) {
+    if (Registry.is("dart.projects.without.pubspec", false)) return;
+
     if (project.getUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS) == Boolean.TRUE) {
       return;
     }
