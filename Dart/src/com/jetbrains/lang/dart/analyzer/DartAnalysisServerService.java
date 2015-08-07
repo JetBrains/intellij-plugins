@@ -362,8 +362,8 @@ public class DartAnalysisServerService {
       @Override
       public boolean value(final Module module) {
         return DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName()) &&
-               FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                                falseProcessor, module.getModuleContentScope(), project, null);
+               !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                                 falseProcessor, module.getModuleContentScope(), project, null);
       }
     };
 
