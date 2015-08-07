@@ -1,4 +1,4 @@
 A a;
 
-class A {
-}<caret>
+class A<caret> {
+}
