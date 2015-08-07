@@ -15,8 +15,10 @@ import com.intellij.util.ui.Animator;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.commandsEx.util.XmlUtil;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
@@ -162,7 +164,10 @@ public class LearnUiUtil {
     }
 
     private void highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane) {
-        final HighlightComponent hc = new HighlightComponent(new Color(36, 57, 128), componentName, "Here is the description of the component.");
+        final HighlightComponent hc = new HighlightComponent(new Color(36, 57, 128), componentName, "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
+                "\n" +
+                "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
+                "\n", myComponent.getWidth());
         hc.setCloseButtonAction(new Runnable() {
             @Override
             public void run() {
@@ -300,14 +305,16 @@ public class LearnUiUtil {
         final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
 
         JComponent editorAreaComponent = null;
-        final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Here is the description of the component");
-
+        final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
+                "\n" +
+                "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
+                "\n", null);
 
 //        final JRootPane rootPane = SwingUtilities.getRootPane(component);
         final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
 
-        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component");
+        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component", null);
         JComponent componentProjectWindow = null;
 
         java.util.List<Component> allComponents = getAllComponents(ideRootPane);
@@ -455,14 +462,15 @@ public class LearnUiUtil {
         @Nullable
         private JLabel myLabel;
         @Nullable private JButton myCloseButton;
-        @Nullable private JLabel myDescription;
+        @Nullable private JLabel myDescriptionLabel;
 
         final private int verticalSpace = 12;
 
-        private HighlightComponent(@NotNull final Color c, @Nullable String componentName, @Nullable String description) {
+        private HighlightComponent(@NotNull final Color c, @Nullable String componentName, @Nullable String description, @Nullable Integer width) {
             myColor = c;
             myName = componentName;
-            setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+            BoxLayout layoutManager = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+            setLayout(layoutManager);
             if (componentName != null) {
 
                 myLabel = new JLabel();
@@ -477,11 +485,14 @@ public class LearnUiUtil {
                 this.add(Box.createVerticalGlue());
             }
             if (description != null) {
-                myDescription = new JLabel(description);
-                myDescription.setForeground(Color.WHITE);
-//                myDescription.setMaximumSize(new Dimension(this.getWidth() / 3, Integer.MAX_VALUE));
-                myDescription.setAlignmentX(Component.CENTER_ALIGNMENT);
-                this.add(myDescription);
+
+                myDescriptionLabel = new JLabel(XmlUtil.addHtmlTags(description));
+                myDescriptionLabel.setForeground(Color.WHITE);
+                if (width != null) {
+                    myDescriptionLabel.setBorder(new EmptyBorder(0, width / 3, 0, width / 3));
+                }
+                myDescriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                this.add(myDescriptionLabel);
                 this.add(Box.createRigidArea(new Dimension(0, verticalSpace)));
 
             }
