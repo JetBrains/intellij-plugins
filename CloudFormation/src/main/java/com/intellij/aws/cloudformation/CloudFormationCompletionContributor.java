@@ -8,7 +8,10 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.json.JsonLanguage;
-import com.intellij.json.psi.*;
+import com.intellij.json.psi.JsonArray;
+import com.intellij.json.psi.JsonObject;
+import com.intellij.json.psi.JsonProperty;
+import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -17,7 +20,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class CloudFormationCompletionContributor extends CompletionContributor {
   public CloudFormationCompletionContributor() {
@@ -146,7 +148,7 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
   }
 
   private void completeAttribute(PsiFile file, CompletionResultSet rs, boolean quoteResult, String resourceName) {
-    final JsonProperty resource = CloudFormationResolve.Companion.resolveEntity(file, resourceName, CloudFormationSections.Resources);
+    final JsonProperty resource = CloudFormationResolve.Companion.resolveEntity(file, resourceName, CloudFormationSections.ResourcesSingletonList);
     if (resource == null) {
       return;
     }

@@ -17,7 +17,7 @@ public open class CloudFormationResolve() {
 
     public open fun getTargetName(element: JsonStringLiteral): String = StringUtil.stripQuotesAroundValue(element.getText() ?: "")
 
-    public open fun resolveEntity(file: PsiFile, entityName: String, vararg sections: String): JsonProperty? {
+    public open fun resolveEntity(file: PsiFile, entityName: String, sections: Collection<String>): JsonProperty? {
       return sections
           .map { getSectionNode(file, it) }
           .filterNotNull()
@@ -26,7 +26,7 @@ public open class CloudFormationResolve() {
           .firstOrNull()
     }
 
-    public open fun getEntities(file: PsiFile, sections: Array<String>): Set<String> {
+    public open fun getEntities(file: PsiFile, sections: Collection<String>): Set<String> {
       val result = HashSet<String>()
 
       for (sectionName in sections)
@@ -46,7 +46,7 @@ public open class CloudFormationResolve() {
     }
 
     public open fun resolveTopLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String): JsonProperty? {
-      val mappingExpression = resolveEntity(file, mappingName, CloudFormationSections.Mappings)?.getValue() as? JsonObject
+      val mappingExpression = resolveEntity(file, mappingName, CloudFormationSections.MappingsSingletonList)?.getValue() as? JsonObject
       return mappingExpression?.findProperty(topLevelKey)
     }
 
@@ -56,7 +56,7 @@ public open class CloudFormationResolve() {
     }
 
     public open fun getTopLevelMappingKeys(file: PsiFile, mappingName: String): Array<String>? {
-      val mappingElement = resolveEntity(file, mappingName, CloudFormationSections.Mappings)
+      val mappingElement = resolveEntity(file, mappingName, CloudFormationSections.MappingsSingletonList)
       if (mappingElement == null)
       {
         return null
