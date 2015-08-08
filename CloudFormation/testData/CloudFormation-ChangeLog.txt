@@ -80,6 +80,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + CloudWatch Logs
                 + Amazon EC2
                 + Amazon ECS
+                + Amazon EFS
                 + Elastic Beanstalk
                 + Elastic Load Balancing
                 + IAM
@@ -163,6 +164,8 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::ECS::Cluster
                 + AWS::ECS::Service
                 + AWS::ECS::TaskDefinition
+                + AWS::EFS::FileSystem
+                + AWS::EFS::MountTarget
                 + AWS::ElastiCache::CacheCluster
                 + AWS::ElastiCache::ParameterGroup
                 + AWS::ElastiCache::ReplicationGroup
@@ -272,6 +275,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                   VolumesFrom
                 + Amazon ECS TaskDefinition Volumes
                 + Amazon ECS TaskDefinition Volumes Host
+                + Amazon Elastic File System FileSystem FileSystemTags
                 + Elastic Beanstalk Environment Tier
                 + Elastic Beanstalk OptionSettings Property Type
                 + Elastic Beanstalk SourceBundle Property Type
@@ -410,12 +414,25 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
-Permission requirement change 	
+
+New resources
+
+August 03, 2015
+
+Use the AWS::EFS::FileSystem resource to create an Amazon Elastic File 
+System file system and the AWS::EFS::MountTarget to create a mount point 
+for a file system.
+
+2010-05-15
+
+Permission requirement change
 
 June 11, 2015
 
 When you create or update an AWS::RDS::DBInstance resource, you must now 
-also have permission to call the ec2:DescribeAccountAttributes action. 	 
+also have permission to call the ec2:DescribeAccountAttributes action.
+
+2010-05-15
 
 New resources
 
