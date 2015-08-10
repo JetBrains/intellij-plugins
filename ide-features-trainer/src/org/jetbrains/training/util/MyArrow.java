@@ -212,8 +212,8 @@ public class MyArrow {
     public static double getAngle(Point2D zeroPoint, Point2D target) {
         double angle = (double) (Math.atan2(target.getY() - zeroPoint.getY(), target.getX() - zeroPoint.getX()));
 
-        if (angle < 0) {
-            angle += Math.PI * 2.0d;
+        if (zeroPoint.getY() > target.getY()) {
+            angle += Math.PI;
         }
 
         return angle;
