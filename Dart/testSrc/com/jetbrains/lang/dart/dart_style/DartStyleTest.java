@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.dart_style;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
@@ -214,8 +213,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/other/dart2js.unit:1  (indent 4) preemption follows constraints");
     KNOWN_TO_FAIL.add("regression/other/pub.stmt:1  (indent 6)");
     KNOWN_TO_FAIL.add("regression/other/pub.stmt:22  (indent 4) was slow");
-
-    KNOWN_TO_FAIL.add("selections/selections.stmt:26  inside comment");
 
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:105  if split before first positional, split before first named too");
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:112  if split before other positional, split before first named too");
@@ -1359,8 +1356,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
 
         SourceCode inputCode = extractSourceSelection(input, expectedOutput, isCompilationUnit);
         SourceCode expected = extractSelection(expectedOutput, isCompilationUnit);
-
-        myTextRange = new TextRange(inputCode.selectionStart, inputCode.selectionEnd());
 
         try {
           doTextTest(inputCode.text, expected.text);

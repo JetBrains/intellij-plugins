@@ -32,20 +32,6 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0177.stmt:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0200/0201.stmt:1");
 
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:22  includes added whitespace");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:30  in beginning of multi-line string literal");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:36  in middle of multi-line string literal");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:46  in end of multi-line string literal");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:52  in string interpolation");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:56  in moved comment");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:66  after comments");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.stmt:70  between adjacent comments");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.unit:13  trailing comment");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.unit:23  in zero split whitespace");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.unit:34  in soft space split whitespace");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.unit:43  in hard split whitespace");
-    KNOWN_TO_FAIL_STRICT.add("selections/selections.unit:54  across lines that get split separately");
-
     KNOWN_TO_FAIL_STRICT.add("splitting/maps.stmt:35  empty literal does not force outer split");
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
 
