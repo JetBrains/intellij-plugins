@@ -16,11 +16,15 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.commandsEx.util.XmlUtil;
+import org.jetbrains.training.ui.MiniCloseButton;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
@@ -51,7 +55,7 @@ public class LearnUiUtil {
 
         Component myComponent = null;
         String componentName = null;
-        Color color = new JBColor(new Color(39, 52, 126), new Color(39, 52, 126));
+        JBColor color = new JBColor(new Color(39, 52, 126), new Color(39, 52, 126));
 
         final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
         final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
@@ -71,7 +75,7 @@ public class LearnUiUtil {
                 }
 
                 if (myComponent != null) {
-                    highlightComponent(myComponent, componentName, ideRootPane, glassPane);
+                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true);
                 }
                 break;
             case NAVIGATION_BAR:
@@ -96,7 +100,7 @@ public class LearnUiUtil {
                 }
 
                 if (myComponent != null){
-                    highlightComponent(myComponent, componentName, ideRootPane, glassPane);
+                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true);
                 }
                 break;
 
@@ -111,7 +115,8 @@ public class LearnUiUtil {
 
                 if (myComponent != null) {
                     final Component finalMyComponent = myComponent;
-                    drawArrowFrom(glassPane, finalMyComponent);
+                    HighlightComponent highlightComponent = highlightComponent(finalMyComponent, null, ideRootPane, glassPane, new JBColor(new Color(9, 103, 202, 123), new Color(9, 103, 202, 123)), false);
+                    drawArrowFrom(glassPane, finalMyComponent, highlightComponent);
                 }
 
                 break;
@@ -163,15 +168,14 @@ public class LearnUiUtil {
 //        });
     }
 
-    private void highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane) {
-        final HighlightComponent hc = new HighlightComponent(new Color(36, 57, 128), componentName, "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
-                "\n" +
-                "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
-                "\n", myComponent.getWidth());
+    private HighlightComponent highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane, JBColor color, final boolean showCloseButton) {
+        final HighlightComponent hc = new HighlightComponent(color, componentName, null, myComponent.getWidth(), showCloseButton);
         hc.setCloseButtonAction(new Runnable() {
             @Override
             public void run() {
                 glassPane.remove(hc);
+                glassPane.revalidate();
+                glassPane.repaint();
             }
         });
         glassPane.setVisible(true);
@@ -213,12 +217,14 @@ public class LearnUiUtil {
                 glassPane.repaint();
             }
         });
+
+        return hc;
     }
 
-    private void drawArrowFrom(final JComponent glassPane, Component finalMyComponent) {
-        final Point2D p0 = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY());
+    private void drawArrowFrom(final JComponent glassPane, final Component finalMyComponent, @Nullable final HighlightComponent highlightComponent) {
+        final Point2D p1 = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY());
         final Point2D pc = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY() - 30.0d);
-        final Point2D p1 = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
+        final Point2D p0 = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
 
         final MyArrow.LineArrow myArrow = new MyArrow.LineArrow(p0, pc, p1, Color.BLACK);
         final Point2D.Double[] pointPath = myArrow.getPointPath();
@@ -227,6 +233,10 @@ public class LearnUiUtil {
         final JComponent jcomp = new JComponent() {
             @Override
             protected void paintComponent(Graphics graphics) {
+                growingArrow.setArrow(
+                        new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d),
+                        new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY() - 30.0d),
+                        new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY()));
                 growingArrow.draw((Graphics2D) graphics);
             }
         };
@@ -243,55 +253,89 @@ public class LearnUiUtil {
                 g2d.setFont(font);
 
                 int stringWidth = g2d.getFontMetrics(font).stringWidth("Status Bar");
-                g2d.drawString("Status Bar", (float) p1.getX() - 15.0f, (float) p1.getY() - 8.0f);
+                final Point2D p = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
+                g2d.drawString("Status Bar", (float) p.getX() - 15.0f, (float) p.getY() - 8.0f);
             }
         };
 
-
-        Animator animator = new Animator("Animate arrow", pointPath.length - 3, 500, false) {
-            int j = 3;
-
+        final MiniCloseButton closeButtonLabel = new MiniCloseButton(new Rectangle((int) p0.getX() + 65, (int) p0.getY() - 25, 12, 12));
+        glassPane.add(closeButtonLabel);
+        closeButtonLabel.setClickAction(new Runnable() {
             @Override
-            protected void paintCycleEnd() {
+            public void run() {
+                if (highlightComponent != null) {
+                    glassPane.remove(highlightComponent);
+                }
+                glassPane.remove(closeButtonLabel);
+                glassPane.remove(labelComponent);
+                glassPane.remove(jcomp);
+                glassPane.revalidate();
+                glassPane.repaint();
+            }
+        });
+//        closeButtonLabel.setBounds(glassPane.getBounds());
+
+        labelComponent.setBounds(glassPane.getBounds());
+        glassPane.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                super.componentResized(componentEvent);
+                labelComponent.repaint();
                 labelComponent.setBounds(glassPane.getBounds());
-                growingArrow.setArrow(p0, pc, p1);
-                glassPane.add(labelComponent);
+                jcomp.setBounds(glassPane.getBounds());
                 glassPane.revalidate();
                 glassPane.repaint();
-
-                glassPane.addComponentListener(new ComponentListener() {
-                    @Override
-                    public void componentResized(ComponentEvent componentEvent) {
-                        glassPane.remove(jcomp);
-                        glassPane.remove(labelComponent);
-                    }
-
-                    @Override
-                    public void componentMoved(ComponentEvent componentEvent) {
-                    }
-
-                    @Override
-                    public void componentShown(ComponentEvent componentEvent) {
-                    }
-
-                    @Override
-                    public void componentHidden(ComponentEvent componentEvent) {
-                        glassPane.removeAll();
-                    }
-                });
             }
+        });
+        glassPane.add(labelComponent);
+        glassPane.revalidate();
+        glassPane.repaint();
 
-            @Override
-            public void paintNow(int i, int i1, int i2) {
-                growingArrow.setArrow(p0, new Point2D.Double(p0.getX(), (p0.getY() +  pointPath[j].getY())/2), pointPath[j]);
-                glassPane.revalidate();
-                glassPane.repaint();
-                j++;
-                j = Math.min(j, pointPath.length - 1);
-            }
-        };
-        animator.reset();
-        animator.resume();
+//        Animator animator = new Animator("Animate arrow", pointPath.length - 3, 500, false) {
+//            int j = 3;
+//
+//            @Override
+//            protected void paintCycleEnd() {
+//                labelComponent.setBounds(glassPane.getBounds());
+//                growingArrow.setArrow(p0, pc, p1);
+//                glassPane.add(labelComponent);
+//                glassPane.revalidate();
+//                glassPane.repaint();
+//
+//                glassPane.addComponentListener(new ComponentListener() {
+//                    @Override
+//                    public void componentResized(ComponentEvent componentEvent) {
+//                        glassPane.remove(jcomp);
+//                        glassPane.remove(labelComponent);
+//                    }
+//
+//                    @Override
+//                    public void componentMoved(ComponentEvent componentEvent) {
+//                    }
+//
+//                    @Override
+//                    public void componentShown(ComponentEvent componentEvent) {
+//                    }
+//
+//                    @Override
+//                    public void componentHidden(ComponentEvent componentEvent) {
+//                        glassPane.removeAll();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void paintNow(int i, int i1, int i2) {
+//                growingArrow.setArrow(p0, new Point2D.Double((p1.getX() + pointPath[j].getX())/2, (p0.getY() + pointPath[j].getY())/2), pointPath[j]);
+//                glassPane.revalidate();
+//                glassPane.repaint();
+//                j++;
+//                j = Math.min(j, pointPath.length - 1);
+//            }
+//        };
+
+//       animator.reset();
+//       animator.resume();
 
         glassPane.revalidate();
         glassPane.repaint();
@@ -308,13 +352,13 @@ public class LearnUiUtil {
         final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
                 "\n" +
                 "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
-                "\n", null);
+                "\n", null, false);
 
 //        final JRootPane rootPane = SwingUtilities.getRootPane(component);
         final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
 
-        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component", null);
+        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component", null, false);
         JComponent componentProjectWindow = null;
 
         java.util.List<Component> allComponents = getAllComponents(ideRootPane);
@@ -466,7 +510,7 @@ public class LearnUiUtil {
 
         final private int verticalSpace = 12;
 
-        private HighlightComponent(@NotNull final Color c, @Nullable String componentName, @Nullable String description, @Nullable Integer width) {
+        private HighlightComponent(@NotNull final Color c, @Nullable String componentName, @Nullable String description, @Nullable Integer width, boolean showCloseButton) {
             myColor = c;
             myName = componentName;
             BoxLayout layoutManager = new BoxLayout(this, BoxLayout.PAGE_AXIS);
@@ -496,10 +540,11 @@ public class LearnUiUtil {
                 this.add(Box.createRigidArea(new Dimension(0, verticalSpace)));
 
             }
-
-            myCloseButton = new JButton("Got it!");
-            myCloseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            this.add(myCloseButton);
+            if (showCloseButton) {
+                myCloseButton = new JButton("Got it!");
+                myCloseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                this.add(myCloseButton);
+            }
             this.add(Box.createVerticalGlue());
         }
 
