@@ -20,10 +20,22 @@ public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTest
     myFixture.checkResult("{{<caret>}}");
   }
 
+  public void testBracketsNotBreakingAtEnd() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, "{{<caret>");
+    myFixture.type("}");
+    myFixture.checkResult("{{}}<caret>");
+  }
+
   public void testClosingBracketsSkipped() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "{{<caret>}}");
     myFixture.type("}");
     myFixture.checkResult("{{}<caret>}");
+  }
+
+  public void testSecondClosingBracket() {
+    myFixture.configureByText(HtmlFileType.INSTANCE, "{{}<caret>");
+    myFixture.type("}");
+    myFixture.checkResult("{{}}<caret>");
   }
 
   public void testInsertWhitespace() {
