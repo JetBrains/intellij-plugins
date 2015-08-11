@@ -15,6 +15,7 @@ import org.jetbrains.training.eduUI.EduEditor;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -52,6 +53,8 @@ public class CourseManager{
         } catch (JDOMException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }

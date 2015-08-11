@@ -3,17 +3,21 @@ package org.jetbrains.training.lesson;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.util.GenerateCourseXml;
 import org.jetbrains.training.util.MyClassLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -22,19 +26,24 @@ import java.util.ArrayList;
 public class Course extends ActionGroup{
 
     private ArrayList<Lesson> lessons;
+    @Nullable
     private String answersPath;
     private Element root;
     private String id;
     private String name;
 
-    public Course(String name, Element root) throws JDOMException, BadLessonException, BadCourseException, IOException {
+    public Course(String name, Element root) throws JDOMException, BadLessonException, BadCourseException, IOException, URISyntaxException {
         super(name, true);
         lessons = new ArrayList<Lesson>();
         this.name = name;
         this.root = root;
         initLessons();
-        answersPath = root.getAttribute("answerspath").getValue();
-        id = root.getAttribute("id").getValue();
+        if (root.getAttribute(GenerateCourseXml.COURSE_ANSWER_PATH_ATTR) != null) {
+            answersPath = root.getAttribute(GenerateCourseXml.COURSE_ANSWER_PATH_ATTR).getValue();
+        } else {
+            answersPath = null;
+        }
+        id = root.getAttribute(GenerateCourseXml.COURSE_ID_ATTR).getValue();
     }
 
     @NotNull
@@ -46,13 +55,13 @@ public class Course extends ActionGroup{
     }
 
     @Nullable
-    public static Course initCourse(String coursePath) throws BadCourseException, BadLessonException, JDOMException, IOException {
+    public static Course initCourse(String coursePath) throws BadCourseException, BadLessonException, JDOMException, IOException, URISyntaxException {
         //load xml with lessons
 
         //Check DOM with Course
         Element init_root = getRootFromPath(coursePath);
-        if(init_root.getAttribute("name") == null) return null;
-        String init_name = init_root.getAttribute("name").getValue();
+        if(init_root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR) == null) return null;
+        String init_name = init_root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
 
         return new Course(init_name, init_root);
 
@@ -65,6 +74,7 @@ public class Course extends ActionGroup{
         return document.getRootElement();
     }
 
+    @Nullable
     public String getAnswersPath() {
         return answersPath;
     }
@@ -73,61 +83,38 @@ public class Course extends ActionGroup{
         return lessons;
     }
 
-    private void initLessons() throws BadCourseException, BadLessonException, JDOMException, IOException {
+    private void initLessons() throws BadCourseException, BadLessonException, JDOMException, IOException, URISyntaxException {
 
-        name = root.getAttribute("name").getValue();
+        name = root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
 
-        if (root.getAttribute("lessonspath")!=null){
+        if (root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR)!=null){
 
             //retieve list of xml files inside lessonspath directory
-            String lessonsPath = root.getAttribute("lessonspath").getValue();
-            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
-            File dir = new File(lessonsFullpath);
+            String lessonsPath = root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR).getValue();
+//            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
+//            URL url = Course.class.getResource(lessonsFullpath);
+//            File dir = new File(Course.class.getResource("/data/" + lessonsPath).toURI());
 
-            for (String lessonFilename : dir.list()) {
+            for (Element lessonElement : root.getChildren()) {
+                if (!lessonElement.getName().equals(GenerateCourseXml.COURSE_LESSON_ELEMENT)) throw new BadCourseException("Course file is corrupted or cannot be read properly");
+
+                String lessonFilename = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_FILENAME_ATTR).toString();
                 String lessonPath = lessonsPath + lessonFilename;
                 try {
                     Scenario scn = new Scenario(lessonPath);
                     Lesson lesson = new Lesson(scn, false, this);
                     lessons.add(lesson);
                 } catch (JDOMException e) {
-                    //Scenario file is corrupted
-                    throw new BadLessonException("Probably scenario file is corrupted: " + lessonPath);
+                    //Lesson file is corrupted
+                    throw new BadLessonException("Probably lesson file is corrupted: " + lessonPath);
                 } catch (IOException e) {
-                    //Scenario file cannot be read
-                    throw new BadLessonException("Probably scenario file cannot be read: " + lessonPath);
+                    //Lesson file cannot be read
+                    throw new BadLessonException("Probably lesson file cannot be read: " + lessonPath);
                 }
             }
 
-        } else {
-
-            //Goto Lessons
-            Element lessonsRoot = root.getChild("lessons");
-            for (Element lessonEl : lessonsRoot.getChildren()) {
-                if (lessonEl.getAttribute("path") != null) {
-                    boolean lessonIsPassed = false;
-
-                    if (lessonEl.getAttribute("isPassed") != null) {
-                        lessonIsPassed = (lessonEl.getAttribute("isPassed").getValue().equals("true"));
-                    } else {
-                        throw new BadLessonException();
-                    }
-
-                    String lessonPath = lessonEl.getAttribute("path").getValue();
-                    try {
-                        Scenario scn = new Scenario(lessonPath);
-                        Lesson lesson = new Lesson(scn, lessonIsPassed, this);
-                        lessons.add(lesson);
-                    } catch (JDOMException e) {
-                        //Scenario file is corrupted
-                        throw new BadLessonException("Probably scenario file is corrupted: " + lessonPath);
-                    } catch (IOException e) {
-                        //Scenario file cannot be read
-                        throw new BadLessonException("Probably scenario file cannot be read: " + lessonPath);
-                    }
-                } else throw new BadCourseException();
-            }
         }
+
     }
 
     @Nullable
