@@ -1,2 +1,10 @@
-<xml type="Course" name="Editor Basics" version="0.2" answerspath="answers/" id="default" lessonspath="EditorBasics/">
-</xml>
+<?xml version="1.0" encoding="UTF-8"?>
+<course name="DefaultCourse" lessonsPath="EditorBasics/" version="0.3" id="default">
+  <lesson filename="01.Select.xml" />
+  <lesson filename="02.Comment.xml" />
+  <lesson filename="03.Delete.xml" />
+  <lesson filename="04.Duplicate.xml" />
+  <lesson filename="05.Move.xml" />
+  <lesson filename="06.Collapse.xml" />
+</course>
+
