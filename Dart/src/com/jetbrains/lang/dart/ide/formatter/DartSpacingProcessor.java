@@ -571,6 +571,11 @@ public class DartSpacingProcessor {
         return addLineBreak();
       }
       if (type2 == ARGUMENT_LIST) {
+        if (type1 == MULTI_LINE_COMMENT && isEmbeddedComment(type1, child1)) {
+          if (!hasNewlineInText(node1)) {
+            return addSingleSpaceIf(true);
+          }
+        }
         return addLineBreak();
       }
     }
@@ -1083,6 +1088,11 @@ public class DartSpacingProcessor {
       child = FormatterUtil.getPreviousNonWhitespaceSibling(child);
       return child != null && child.getElementType() == LBRACE;
     }
+  }
+
+  private static boolean hasNewlineInText(ASTNode node) {
+    String comment = node.getText();
+    return comment.indexOf('\n') > 0;
   }
 
   private static boolean isBlankLineAfterComment(ASTNode node) {
