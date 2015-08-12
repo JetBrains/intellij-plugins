@@ -117,7 +117,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
         assertNotNull(resolve);
         assertEquals("custom.ts", resolve.getContainingFile().getName());
         assertEquals("Component({\n" +
-                     "    selector: '[my-customer]',\n" +
+                     "    selector: 'my-customer',\n" +
                      "    properties: {\n" +
                      "        'id':'dependency'\n" +
                      "    }\n" +

@@ -65,10 +65,20 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       if (outData == null) outData = new JSElementIndexingDataImpl();
 
       JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(selectorName, decorator)
-        .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
+        .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
       elementBuilder.setUserString("adi");
-      final JSImplicitElementImpl implicitElement = elementBuilder.toImplicitElement();
-      outData.addImplicitElement(implicitElement);
+      outData.addImplicitElement(elementBuilder.toImplicitElement());
+
+      if (!"E".equals(restrict)) {
+        final int start = selectorName.indexOf('[');
+        final int end = selectorName.indexOf(']');
+        if (start == 0 && end > 0) {
+          elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
+            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
+          elementBuilder.setUserString("adi");
+          outData.addImplicitElement(elementBuilder.toImplicitElement());
+        }
+      }
     }
     return outData;
   }
@@ -82,13 +92,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final JSProperty selector = descriptor != null ? descriptor.findProperty("selector") : null;
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-      final String selectorFormat = StringUtil.unquoteString(value.getText());
-      final int start = selectorFormat.indexOf('[');
-      final int end = selectorFormat.indexOf(']');
-      if (start == 0 && end > 0) {
-        return selectorFormat.substring(start + 1, end);
-      }
-      return selectorFormat;
+      return StringUtil.unquoteString(value.getText());
     }
     return null;
   }

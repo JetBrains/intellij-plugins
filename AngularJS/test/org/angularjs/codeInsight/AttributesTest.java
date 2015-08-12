@@ -142,7 +142,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         assertNotNull(resolve);
         assertEquals("custom.ts", resolve.getContainingFile().getName());
         assertEquals("Directive({\n" +
-                     "    selector: '[my-customer]',\n" +
+                     "    selector: 'my-customer',\n" +
                      "    properties: {\n" +
                      "        'id':'dependency'\n" +
                      "    }\n" +
