@@ -7,8 +7,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.util.GenerateCourseXml;
 import org.jetbrains.training.util.MyClassLoader;
 import org.jetbrains.training.eduUI.EduEditor;
 
@@ -44,8 +46,9 @@ public class CourseManager{
 
 
         try {
-            final Course defaultCourse = Course.initCourse("DefaultCourse.xml");
-            courses.add(defaultCourse);
+//            final Course defaultCourse = Course.initCourse("EditorBasics.xml");
+//            courses.add(defaultCourse);
+            initCourses();
         } catch (BadCourseException e) {
             e.printStackTrace();
         } catch (BadLessonException e) {
@@ -56,6 +59,17 @@ public class CourseManager{
             e.printStackTrace();
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void initCourses() throws JDOMException, IOException, URISyntaxException, BadCourseException, BadLessonException {
+        Element coursesRoot = Course.getRootFromPath(GenerateCourseXml.COURSE_ALLCOURSE_FILENAME);
+        for (Element element : coursesRoot.getChildren()) {
+            if(element.getName().equals(GenerateCourseXml.COURSE_TYPE_ATTR)) {
+                String courseFilename = element.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
+                final Course course = Course.initCourse(courseFilename);
+                courses.add(course);
+            }
         }
     }
 

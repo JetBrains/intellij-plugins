@@ -12,9 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by karashevich on 18/12/14.
@@ -26,11 +24,10 @@ public class ActionsRecorder implements Disposable {
     private Document document;
     private String target;
     private boolean triggerActivated;
-    private HashMap<String, Boolean> triggerMap;
+    Queue<String> triggerQueue;
 
     private boolean disposed = false;
     private Runnable doWhenDone;
-    DocumentListener documentListener;
 
     public ActionsRecorder(Project project, Document document, String target) {
         this.project = project;
@@ -88,12 +85,13 @@ public class ActionsRecorder implements Disposable {
         if (disposed) return;
         this.doWhenDone = doWhenDone;
 
-        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
+//        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
+        triggerQueue = new LinkedList<String>();
         //set triggerMap
-        for (String anActionIdArray : actionIdArray) {
-            triggerMap.put(anActionIdArray, false);
+        for (String actionString : actionIdArray) {
+            triggerQueue.add(actionString);
         }
-        checkAction(actionIdArray);
+        checkAction();
 
     }
 
@@ -103,23 +101,16 @@ public class ActionsRecorder implements Disposable {
         if (disposed) return false;
 
         if (target == null){
-            if (triggerMap !=null) {
-                boolean result = true;
-                for (Boolean aBoolean : triggerMap.values()) {
-                    if (!aBoolean) result = false;
-                }
-                return result;
+            if (triggerQueue !=null) {
+                return (triggerQueue.size() == 0);
             } else return triggerActivated;
         } else {
+
             List<String> expected = computeTrimmedLines(target);
             List<String> actual = computeTrimmedLines(current.getText());
 
-            if (triggerMap !=null) {
-                boolean result = true;
-                for (Boolean aBoolean : triggerMap.values()) {
-                    if (!aBoolean) result = false;
-                }
-                return (expected.equals(actual) && result);
+            if (triggerQueue !=null) {
+                return (expected.equals(actual) && (triggerQueue.size() == 0));
             } else return (expected.equals(actual) && triggerActivated);
         }
 
@@ -157,8 +148,8 @@ public class ActionsRecorder implements Disposable {
                 if(actionId == null) return;
                 if (actionId.toUpperCase().equals(actionTriggerId.toUpperCase())) {
 //                    System.out.println("Action trigger has been activated.");
-                    if (triggerMap != null) {
-                        triggerMap.put(actionTriggerId, true);
+                    if (triggerQueue != null) {
+                        triggerQueue.add(actionTriggerId);
                     } else {
                         triggerActivated = true;
                     }
@@ -180,10 +171,42 @@ public class ActionsRecorder implements Disposable {
         actionManager.addAnActionListener(anActionListener);
     }
 
-    private void checkAction(String[] actionIdArray) {
-        for (String actionId : actionIdArray) {
-            checkAction(actionId);
-        }
+    private void checkAction() {
+        final ActionManager actionManager = ActionManager.getInstance();
+        if(actionManager == null) return;
+
+        final AnActionListener anActionListener = new AnActionListener() {
+            @Override
+            public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+            }
+
+            @Override
+            public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+                final String actionId = ActionManager.getInstance().getId(action);
+
+                if(actionId == null) return;
+                if (actionId.toUpperCase().equals(triggerQueue.peek().toUpperCase())) {
+//                    System.out.println("Action trigger has been activated.");
+                    triggerQueue.poll();
+                    if (triggerQueue.size() == 0) {
+                        actionManager.removeAnActionListener(this);
+                        if (isTaskSolved(document, target)) {
+                            if (doWhenDone != null)
+                                dispose();
+                            doWhenDone.run();
+                        }
+                    }
+                }
+//                System.out.println("ACTION PERFORMED: " + actionId);
+            }
+
+            @Override
+            public void beforeEditorTyping(char c, DataContext dataContext) {
+            }
+        };
+
+        actionManager.addAnActionListener(anActionListener);
+
     }
 }
 

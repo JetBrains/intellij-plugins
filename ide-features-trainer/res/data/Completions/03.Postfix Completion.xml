@@ -1,0 +1,24 @@
+<xml type="Scenario" name="Smart Type Completion" passed="false" version="0.1" subtype="aimless">
+    <MouseBlock>
+        <CopyText>import java.awt.Color;
+
+public class Main {
+    public static void main() {
+
+        float hue = 5;
+        float saturation = 10;
+        float brightness = 10;
+
+        int rgb = Color.HSBtoRGB(hue, saturation, brightness);
+        int red = (rgb &gt;&gt; 16) &amp; 0xFF;
+        int green = (rgb &gt;&gt; 8) &amp; 0xFF;
+        int blue = rgb &amp; 0xFF;
+
+    }
+}</CopyText>
+    </MouseBlock>
+    <Try description="Comment out any line with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Uncomment the line with the same shortcut" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Select several lines with &lt;b&gt;&lt;action=&quot;EditorDownWithSelection&quot;&gt;&lt;/b&gt; and comment with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" triggers="EditorDownWithSelection;CommentByLineComment"/>
+    <Win/>
+</xml>
