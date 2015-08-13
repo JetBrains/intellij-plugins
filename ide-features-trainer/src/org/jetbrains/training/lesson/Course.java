@@ -67,7 +67,7 @@ public class Course extends ActionGroup{
 
     }
 
-    private static Element getRootFromPath(String pathToFile) throws JDOMException, IOException {
+    public static Element getRootFromPath(String pathToFile) throws JDOMException, IOException {
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(pathToFile);
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(is);
@@ -98,7 +98,7 @@ public class Course extends ActionGroup{
             for (Element lessonElement : root.getChildren()) {
                 if (!lessonElement.getName().equals(GenerateCourseXml.COURSE_LESSON_ELEMENT)) throw new BadCourseException("Course file is corrupted or cannot be read properly");
 
-                String lessonFilename = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_FILENAME_ATTR).toString();
+                String lessonFilename = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_FILENAME_ATTR);
                 String lessonPath = lessonsPath + lessonFilename;
                 try {
                     Scenario scn = new Scenario(lessonPath);

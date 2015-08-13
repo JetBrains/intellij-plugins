@@ -15,6 +15,10 @@ import java.net.URISyntaxException;
  */
 public class GenerateCourseXml {
 
+    public final static String COURSE_ALLCOURSE_ATTR = "courses";
+    public final static String COURSE_ALLCOURSE_FILENAME = "courses.xml";
+    public final static String COURSE_TYPE_ATTR = "course";
+
     public final static String COURSE_NAME_ATTR = "name";
     public final static String COURSE_XML_VER_ATTR = "version";
     public final static String COURSE_ID_ATTR = "id";
@@ -28,7 +32,7 @@ public class GenerateCourseXml {
     public static void gen(String courseName, String id, String path) throws URISyntaxException {
         try {
 
-            Element course = new Element("course");
+            Element course = new Element(COURSE_TYPE_ATTR);
             course.setAttribute(COURSE_NAME_ATTR, courseName);
             course.setAttribute(COURSE_LESSONS_PATH_ATTR, path);
             course.setAttribute(COURSE_XML_VER_ATTR, COURSE_XML_VERSION);
@@ -38,27 +42,56 @@ public class GenerateCourseXml {
 
             File dir = new File(GenerateCourseXml.class.getResource("/data/" + path).toURI());
 
-            for (String lessonFilename : dir.list()) {
-                Element lesson = new Element(COURSE_LESSON_ELEMENT);
-                lesson.setAttribute(COURSE_LESSON_FILENAME_ATTR, lessonFilename);
-                doc.getRootElement().addContent(lesson);
+            for (File file : dir.listFiles()) {
+                if (file.isFile()) {
+                    Element lesson = new Element(COURSE_LESSON_ELEMENT);
+                    lesson.setAttribute(COURSE_LESSON_FILENAME_ATTR, file.getName());
+                    doc.getRootElement().addContent(lesson);
+                }
             }
-
             XMLOutputter xmlOutput = new XMLOutputter();
             xmlOutput.setFormat(Format.getPrettyFormat());
-            File outputFile = new File(GenerateCourseXml.class.getResource("/data/" + courseName + ".xml").toURI());
-            if (!outputFile.exists()) {
-                if (outputFile.createNewFile()) xmlOutput.output(doc, new FileWriter(outputFile));
-                else throw new IOException("Unable to create new file");
-            }
+            String dataPath = GenerateCourseXml.class.getResource("/data/").getPath();
+            File outputFile = new File(dataPath + courseName + ".xml");
+            outputFile.createNewFile();
             xmlOutput.output(doc, new FileWriter(outputFile));
+
 
         } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws URISyntaxException {
-        gen("DefaultCourse", "default", "EditorBasics/");
+    public static void genCourses() throws URISyntaxException, IOException {
+
+        Element courses = new Element(COURSE_ALLCOURSE_ATTR);
+        courses.setAttribute(COURSE_XML_VER_ATTR, COURSE_XML_VERSION);
+        Document doc = new Document(courses);
+        doc.setRootElement(courses);
+
+
+
+        File dir = new File(GenerateCourseXml.class.getResource("/data/").toURI());
+
+        for (File file : dir.listFiles()) {
+            if (file.isFile()) {
+                if (!file.getName().equals(COURSE_ALLCOURSE_FILENAME)) {
+                    String name = file.getName();
+                    doc.getRootElement().addContent((new Element(COURSE_TYPE_ATTR)).setAttribute(COURSE_NAME_ATTR, name));
+                }
+            }
+        }
+
+        XMLOutputter xmlOutput = new XMLOutputter();
+        xmlOutput.setFormat(Format.getPrettyFormat());
+        String dataPath = GenerateCourseXml.class.getResource("/data/").getPath();
+        File outputFile = new File(dataPath + COURSE_ALLCOURSE_FILENAME);
+        outputFile.createNewFile();
+        xmlOutput.output(doc, new FileWriter(outputFile));
+    }
+
+    public static void main(String[] args) throws URISyntaxException, IOException {
+//        gen("Completions", "completions", "Completions/");
+        genCourses();
     }
 }
