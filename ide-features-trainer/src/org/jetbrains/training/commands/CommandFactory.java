@@ -33,8 +33,8 @@ public class CommandFactory {
             case TEXT:
                 return new TextCommand();
 //
-//            case MOVECARET:
-//                return new MoveCaretCommand();
+            case MOVECARET:
+                return new MoveCaretCommand();
 //
 //            case NOCOMMAND:
 //                return new NoCommand();

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<course name="Completions" lessonsPath="Completions/" version="0.3" id="completions">
+  <lesson filename="01.Basic Completion.xml" />
+  <lesson filename="02.Smart Type Completion.xml" />
+  <lesson filename="03.Postfix Completion.xml" />
+</course>
+
