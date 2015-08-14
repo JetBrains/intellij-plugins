@@ -25,6 +25,7 @@ public class TryCommand extends Command {
     @Override
     public void execute(ExecutionList executionList) throws InterruptedException {
 
+        executionList.getEduEditor().blockCaretMovement();
 
         Element element = executionList.getElements().poll();
 //        updateDescription(element, infoPanel, editor);

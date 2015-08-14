@@ -1,24 +1,17 @@
-<xml type="Scenario" name="Smart Type Completion" passed="false" version="0.1" subtype="aimless">
+<xml type="Scenario" name="Postfix Completion" passed="false" version="0.1" subtype="aimless">
     <MouseBlock>
-        <CopyText>import java.awt.Color;
+        <CopyText>public class PostfixCompletionDemo{
 
-public class Main {
-    public static void main() {
-
-        float hue = 5;
-        float saturation = 10;
-        float brightness = 10;
-
-        int rgb = Color.HSBtoRGB(hue, saturation, brightness);
-        int red = (rgb &gt;&gt; 16) &amp; 0xFF;
-        int green = (rgb &gt;&gt; 8) &amp; 0xFF;
-        int blue = rgb &amp; 0xFF;
+    public void demonstrate(int show_times){
+        (show_times == 10)
 
     }
 }</CopyText>
+        <MoveCaret position="4:27" />
     </MouseBlock>
-    <Try description="Comment out any line with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
-    <Try description="Uncomment the line with the same shortcut" action="CommentByLineComment" trigger="CommentByLineComment"/>
-    <Try description="Select several lines with &lt;b&gt;&lt;action=&quot;EditorDownWithSelection&quot;&gt;&lt;/b&gt; and comment with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" triggers="EditorDownWithSelection;CommentByLineComment"/>
+    <Text description="Postfix code completion helps reduce backward caret jumps as you write code. It lets you transform an already typed expression to another one based on the postfix you added, the type of expression and its context."/>
+    <Try description="Put the '.' after parenthesis and you will see the list of postfix completions. Choose the if statement" trigger="EditorChooseLookupItem"/>
+    <Text description="Postfix completions list appears as the part of the instant completion list."/>
+    <Try description="If you want to filer it just press &lt;b&gt;&lt;action=&quot;InsertLiveTemplate&quot;&gt;&lt;/b&gt;"/>
     <Win/>
 </xml>

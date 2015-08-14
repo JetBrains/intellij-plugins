@@ -3,10 +3,9 @@ package org.jetbrains.training.eduUI;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.event.CaretAdapter;
+import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
@@ -20,13 +19,8 @@ import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
-import org.jetbrains.training.lesson.BadCourseException;
-import org.jetbrains.training.lesson.BadLessonException;
-import org.jetbrains.training.lesson.LessonIsOpenedException;
 import org.jetbrains.training.eduUI.panel.EduPanel;
-import org.jetbrains.training.lesson.Course;
-import org.jetbrains.training.lesson.CourseManager;
-import org.jetbrains.training.lesson.Lesson;
+import org.jetbrains.training.lesson.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -315,6 +309,19 @@ public class EduEditor implements TextEditor {
         clearEditor();
         clearLessonPanel();
         removeActionsRecorders();
+    }
+
+    public void blockCaretMovement(){
+        getEditor().getCaretModel().addCaretListener(new CaretAdapter() {
+            @Override
+            public void caretPositionChanged(CaretEvent e) {
+
+                if ((e.getCaret().getLogicalPosition().column != 18) && (e.getCaret().getLogicalPosition().line != 12)) {
+//                    e.getCaret().moveToLogicalPosition(new LogicalPosition(12, 18));
+                    System.err.println("Caret moved!");
+                }
+            }
+        });
     }
 
     private void hideButtons() {
