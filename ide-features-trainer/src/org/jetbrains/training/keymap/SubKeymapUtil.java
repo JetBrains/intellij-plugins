@@ -29,19 +29,33 @@ public class SubKeymapUtil{
     /**
      * Adding spaces to keyModifier text
      * "shift+ctrl" -> "shift + ctrl"
+     * if it is Mac replace "+" from modifiers
      */
     public static String thinOutModifiersText(String modifiersString){
         if (modifiersString.equals("")) return "";
 
-        if (modifiersString.contains("+")){
-            String[] modifiers = modifiersString.split("[ \\+]");
-            String result = "";
-            for (String modifier : modifiers) {
-                result += modifier + " + ";
+        if (SystemInfo.isMac) {
+            if (modifiersString.contains("+")) {
+                String[] modifiers = modifiersString.split("[ \\+]");
+                String result = "";
+                for (String modifier : modifiers) {
+                    result += modifier;
+                }
+                return result;
+            } else {
+                return (modifiersString);
             }
-            return result;
         } else {
-            return (modifiersString + " + ");
+            if (modifiersString.contains("+")) {
+                String[] modifiers = modifiersString.split("[ \\+]");
+                String result = "";
+                for (String modifier : modifiers) {
+                    result += modifier + " + ";
+                }
+                return result;
+            } else {
+                return (modifiersString + " + ");
+            }
         }
     }
 }
