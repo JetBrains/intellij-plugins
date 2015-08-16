@@ -60,8 +60,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         PsiElement arrayInitializingType = newExpression.getArrayInitializingType();
         if (arrayInitializingType != null) {
           JSType argType = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(arrayInitializingType.getText(), newExpression), source);
-          type = new JSGenericTypeImpl(source, type);
-          ((JSGenericTypeImpl)type).addGenericArgument(argType);
+          type = new JSGenericTypeImpl(source, type, argType);
         }
         addType(type, methodExpr);
       }
