@@ -22,13 +22,9 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 public class DartBlock extends AbstractBlock implements BlockWithParent {
   public static final List<DartBlock> DART_EMPTY = Collections.emptyList();
 
-  private static final TokenSet STATEMENTS_WITH_OPTIONAL_BRACES = TokenSet.create(
-    IF_STATEMENT, WHILE_STATEMENT, FOR_STATEMENT
-  );
+  private static final TokenSet STATEMENTS_WITH_OPTIONAL_BRACES = TokenSet.create(IF_STATEMENT, WHILE_STATEMENT, FOR_STATEMENT);
 
-  private static final TokenSet LAST_TOKENS_IN_SWITCH_CASE = TokenSet.create(
-    BREAK_STATEMENT, CONTINUE_STATEMENT, RETURN_STATEMENT
-  );
+  private static final TokenSet LAST_TOKENS_IN_SWITCH_CASE = TokenSet.create(BREAK_STATEMENT, CONTINUE_STATEMENT, RETURN_STATEMENT);
 
   private final DartIndentProcessor myIndentProcessor;
   private final DartSpacingProcessor mySpacingProcessor;
@@ -40,10 +36,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
   private BlockWithParent myParent;
   private List<DartBlock> mySubDartBlocks;
 
-  protected DartBlock(ASTNode node,
-                      Wrap wrap,
-                      Alignment alignment,
-                      CodeStyleSettings settings) {
+  protected DartBlock(ASTNode node, Wrap wrap, Alignment alignment, CodeStyleSettings settings) {
     super(node, wrap, alignment);
     mySettings = settings;
     myIndentProcessor = new DartIndentProcessor(mySettings.getCommonSettings(DartLanguage.INSTANCE));
@@ -135,12 +128,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
       return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
-    BlockWithParent potentiallyIncompleteNode = this;
-    while (potentiallyIncompleteNode instanceof DartBlock) {
-      if (((DartBlock)potentiallyIncompleteNode).isIncomplete()) {
-        return new ChildAttributes(Indent.getContinuationIndent(), null);
-      }
-      potentiallyIncompleteNode = potentiallyIncompleteNode.getParent();
+    if (myParent instanceof DartBlock && ((DartBlock)myParent).isIncomplete()) {
+      return new ChildAttributes(Indent.getContinuationIndent(), null);
     }
     return new ChildAttributes(previousBlock.getIndent(), previousBlock.getAlignment());
   }
