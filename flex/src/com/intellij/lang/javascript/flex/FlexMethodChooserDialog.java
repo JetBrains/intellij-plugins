@@ -62,7 +62,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
       myList.clearSelection();
     }
     else {
-      ListScrollingUtil.selectItem(myList, index);
+      ScrollingUtil.selectItem(myList, index);
     }
 
     setTitle(ExecutionBundle.message("choose.test.method.dialog.title"));
