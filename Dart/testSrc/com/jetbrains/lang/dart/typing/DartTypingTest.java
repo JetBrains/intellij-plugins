@@ -374,4 +374,19 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "  print(file.path);\n" +
                  "}\n");
   }
+
+  public void testEnterAfterIncompleteStatement() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds<caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds\n" +
+                 "        <caret>\n" +
+                 "  }\n" +
+                 "}");
+  }
 }
