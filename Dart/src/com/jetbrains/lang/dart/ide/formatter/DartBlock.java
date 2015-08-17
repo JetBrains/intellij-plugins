@@ -135,6 +135,13 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
       return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
+    BlockWithParent potentiallyIncompleteNode = this;
+    while (potentiallyIncompleteNode instanceof DartBlock) {
+      if (((DartBlock)potentiallyIncompleteNode).isIncomplete()) {
+        return new ChildAttributes(Indent.getContinuationIndent(), null);
+      }
+      potentiallyIncompleteNode = potentiallyIncompleteNode.getParent();
+    }
     return new ChildAttributes(previousBlock.getIndent(), previousBlock.getAlignment());
   }
 
