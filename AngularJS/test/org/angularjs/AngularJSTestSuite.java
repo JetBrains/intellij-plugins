@@ -5,6 +5,7 @@ import junit.framework.TestSuite;
 import org.angularjs.codeInsight.*;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
+import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
 
 public class AngularJSTestSuite {
@@ -24,6 +25,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(TagsTest.class);
     testSuite.addTestSuite(AngularTypedHandlerTest.class);
     testSuite.addTestSuite(FindUsagesTest.class);
+    testSuite.addTestSuite(AngularDirectiveCommentParsingTest.class);
 
     return testSuite;
   }
