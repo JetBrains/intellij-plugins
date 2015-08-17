@@ -389,4 +389,51 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "  }\n" +
                  "}");
   }
+
+  public void testEnterAfterCompleteStatement() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}");
+  }
+
+  public void testEnterAfterBlankLine() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    \n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}");
+  }
+
+  public void testEnterAfterCompleteStatementInIncompleteBlock() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>\n" +
+                 "  }\n" +
+                 "",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "");
+  }
 }
