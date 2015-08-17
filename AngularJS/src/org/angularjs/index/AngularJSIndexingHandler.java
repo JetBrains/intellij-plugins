@@ -38,8 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Dennis.Ushakov
@@ -108,11 +106,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
-  private static final String RESTRICT = "@restrict";
-  private static final String ELEMENT = "@element";
+  static final String RESTRICT = "@restrict";
+  static final String ELEMENT = "@element";
   private static final String PARAM = "@param";
-  private static final Pattern RESTRICT_PATTERN = Pattern.compile(RESTRICT + "\\s*(.*)");
-  private static final Pattern ELEMENT_PATTERN = Pattern.compile(ELEMENT + "\\s*(.*)");
 
   public static boolean isInjectable(PsiElement context) {
     final JSCallExpression call = PsiTreeUtil.getParentOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
@@ -265,8 +261,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     String param = "";
     StringBuilder attributes = new StringBuilder();
     for (String line : commentLines) {
-      restrict = getParamValue(restrict, line, RESTRICT_PATTERN, RESTRICT);
-      tag = getParamValue(tag, line, ELEMENT_PATTERN, ELEMENT);
+      restrict = getParamValue(restrict, line, RESTRICT);
+      tag = getParamValue(tag, line, ELEMENT);
       final int start = line.indexOf(PARAM);
       if (start >= 0) {
         final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
@@ -277,19 +273,20 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
-    return restrict.trim() + ";" + tag.trim() + ";" + param.trim() + ";" + attributes.toString().trim();
+    return restrict + ";" + tag + ";" + param.trim() + ";" + attributes.toString().trim();
   }
 
   public static boolean isAngularRestrictions(@Nullable String restrictions) {
     return restrictions == null || StringUtil.countChars(restrictions, ';') >= 3;
   }
 
-  private static String getParamValue(String previousValue, String line, final Pattern pattern, final String docTag) {
-    if (line.contains(docTag)) {
-      final Matcher matcher = pattern.matcher(line);
-      if (matcher.find()) {
-        previousValue = matcher.group(1);
-      }
+  static String getParamValue(String previousValue, String line, final String docTag) {
+    final int indexOfTag = line.indexOf(docTag);
+    if (indexOfTag >= 0) {
+      final int commentAtEndIndex = line.indexOf("//", indexOfTag);
+      String newValue = line.substring(indexOfTag + docTag.length(), commentAtEndIndex > 0 ? commentAtEndIndex : line.length());
+      newValue = newValue.trim();
+      if (!StringUtil.isEmpty(newValue)) return newValue;
     }
     return previousValue;
   }
