@@ -24,6 +24,7 @@ public class DartWrappingProcessor {
   private static final Key<Wrap> DART_TERNARY_EXPRESSION_WRAP_KEY = Key.create("TERNARY_EXPRESSION_WRAP_KEY");
   private static final Key<Wrap> DART_EXPRESSION_LIST_WRAP_KEY = Key.create("EXPRESSION_LIST_WRAP_KEY");
   private static final Key<Wrap> DART_ARGUMENT_LIST_WRAP_KEY = Key.create("ARGUMENT_LIST_WRAP_KEY");
+  private static final Key<Wrap> DART_TYPE_LIST_WRAP_KEY = Key.create("TYPE_LIST_WRAP_KEY");
   private static final TokenSet NAMED_ARGUMENTS = TokenSet.create(NAMED_ARGUMENT);
 
   private final ASTNode myNode;
@@ -149,20 +150,8 @@ public class DartWrappingProcessor {
     // Maps in schematic s-expr notation:
     // (MAP_LITERAL_EXPRESSION '{ (MAP_LITERAL_ENTRY expr ': expr) ', (MAP_LITERAL_ENTRY expr ': expr) '})
     if (elementType == MAP_LITERAL_EXPRESSION) {
-      Wrap wrap = null;
       // First, do persistent object management.
-      if (myNode.getFirstChildNode() == child) {
-        wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
-        if (myNode.getLastChildNode() != child) {
-          myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, wrap);
-        }
-      }
-      else {
-        wrap = myNode.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
-        if (myNode.getLastChildNode() == child) {
-          myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, null);
-        }
-      }
+      Wrap wrap = sharedWrap(child, DART_EXPRESSION_LIST_WRAP_KEY);
       // Second, decide what object to return.
       if (childType == LBRACE || childType == LBRACKET) {
         return Wrap.createWrap(WrapType.NONE, false);
@@ -290,6 +279,15 @@ public class DartWrappingProcessor {
         return Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
       }
     }
+    if (elementType == TYPE_LIST) {
+      if (childType == TYPE) {
+        Wrap wrap = sharedWrap(child, DART_TYPE_LIST_WRAP_KEY);
+        if (childType == MULTI_LINE_COMMENT) {
+          return Wrap.createWrap(WrapType.NONE, false);
+        }
+        return wrap == null ? Wrap.createWrap(WrapType.NORMAL, true) : wrap;
+      }
+    }
 
     if (elementType == REFERENCE_EXPRESSION && (childType == DOT || childType == QUEST_DOT)) {
       return Wrap.createWrap(WrapType.NORMAL, true); // NORMAL,CHOP_DOWN_IF_LONG
@@ -351,5 +349,22 @@ public class DartWrappingProcessor {
       }
     }
     return isFirst;
+  }
+
+  private Wrap sharedWrap(ASTNode child, Key<Wrap> key) {
+    Wrap wrap = null;
+    if (myNode.getFirstChildNode() == child) {
+      wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
+      if (myNode.getLastChildNode() != child) {
+        myNode.putUserData(key, wrap);
+      }
+    }
+    else {
+      wrap = myNode.getUserData(key);
+      if (myNode.getLastChildNode() == child) {
+        myNode.putUserData(key, null);
+      }
+    }
+    return wrap;
   }
 }
