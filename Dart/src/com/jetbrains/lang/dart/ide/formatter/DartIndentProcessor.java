@@ -225,6 +225,10 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
 
+    if (parentType == TYPE_LIST && elementType == TYPE) {
+      return Indent.getContinuationIndent();
+    }
+
     return Indent.getNoneIndent();
   }
 
