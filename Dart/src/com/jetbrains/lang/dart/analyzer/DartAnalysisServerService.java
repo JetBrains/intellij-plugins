@@ -479,6 +479,7 @@ public class DartAnalysisServerService {
     }
   }
 
+  @SuppressWarnings("NestedSynchronizedStatement")
   void updateVisibleFiles() {
     synchronized (myLock) {
       final List<String> newVisibleFiles = new ArrayList<String>();
@@ -494,6 +495,12 @@ public class DartAnalysisServerService {
       if (!Comparing.haveEqualElements(myVisibleFiles, newVisibleFiles)) {
         myVisibleFiles.clear();
         myVisibleFiles.addAll(newVisibleFiles);
+        synchronized (myHighlightData) {
+          myHighlightData.keySet().retainAll(myVisibleFiles);
+        }
+        synchronized (myNavigationData) {
+          myNavigationData.keySet().retainAll(myVisibleFiles);
+        }
         analysis_setPriorityFiles();
         analysis_setSubscriptions();
       }
