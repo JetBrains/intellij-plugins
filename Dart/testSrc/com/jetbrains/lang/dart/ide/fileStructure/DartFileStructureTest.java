@@ -9,7 +9,7 @@ public class DartFileStructureTest extends FileStructureTestBase {
 
   @Override
   protected void checkTree() {
-    assertSameLinesWithFile(BASE_TEST_DATA_PATH + getBasePath() + "/" + getTreeFileName(), PlatformTestUtil.print(getTree(), true).trim());
+    assertSameLinesWithFile(BASE_TEST_DATA_PATH + getBasePath() + "/" + getTreeFileName(), PlatformTestUtil.print(myPopupFixture.getTree(), true).trim());
   }
 
   @Override
