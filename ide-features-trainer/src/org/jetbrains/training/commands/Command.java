@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.training.commandsEx.util.XmlUtil;
-import org.jetbrains.training.eduUI.EduEditor;
+import org.jetbrains.training.editor.EduEditor;
 import org.jetbrains.training.graphics.DetailPanel;
 import java.util.concurrent.ExecutionException;
 
@@ -16,7 +16,7 @@ public abstract class Command {
 
     private CommandType commandType;
 
-        public enum CommandType {START, TEXT, TRY, TRYBLOCK, ACTION, REPLAY, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT, WIN}
+        public enum CommandType {START, TEXT, TRY, TRYBLOCK, ACTION, REPLAY, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT, CARETBLOCK, CARETUNBLOCK, WIN}
 
     public Command(CommandType commandType) {
         this.commandType = commandType;

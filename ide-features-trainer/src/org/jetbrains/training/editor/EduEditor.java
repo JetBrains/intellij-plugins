@@ -1,31 +1,34 @@
-package org.jetbrains.training.eduUI;
+package org.jetbrains.training.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
-import com.intellij.openapi.editor.event.CaretAdapter;
-import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
-import org.jetbrains.training.eduUI.panel.EduPanel;
+import org.jetbrains.training.editor.actions.BlockCaretAction;
+import org.jetbrains.training.eduUI.EduPanel;
 import org.jetbrains.training.lesson.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -41,6 +44,7 @@ public class EduEditor implements TextEditor {
     private VirtualFile vf;
     Course myCourse;
 
+    ArrayList<LearnActions> myLearnActions;
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
 
@@ -51,6 +55,10 @@ public class EduEditor implements TextEditor {
         eduPanel = new EduPanel(this, 275);
         myComponent.add(eduPanel, BorderLayout.WEST);
         actionsRecorders = new HashSet<ActionsRecorder>();
+
+        if (myLearnActions == null) {
+            myLearnActions = new ArrayList<LearnActions>();
+        }
     }
 
     private FileEditor getDefaultEditor() {
@@ -311,18 +319,6 @@ public class EduEditor implements TextEditor {
         removeActionsRecorders();
     }
 
-    public void blockCaretMovement(){
-        getEditor().getCaretModel().addCaretListener(new CaretAdapter() {
-            @Override
-            public void caretPositionChanged(CaretEvent e) {
-
-                if ((e.getCaret().getLogicalPosition().column != 18) && (e.getCaret().getLogicalPosition().line != 12)) {
-//                    e.getCaret().moveToLogicalPosition(new LogicalPosition(12, 18));
-                    System.err.println("Caret moved!");
-                }
-            }
-        });
-    }
 
     private void hideButtons() {
         eduPanel.hideButtons();
@@ -334,5 +330,34 @@ public class EduEditor implements TextEditor {
         myDefaultEditor.getComponent().setVisible(true);
         myComponent = myDefaultEditor.getComponent();
         myComponent.add(eduPanel, BorderLayout.WEST);
+    }
+
+    public void blockCaret(){
+
+        for (LearnActions myLearnAction : myLearnActions) {
+            if(myLearnAction instanceof BlockCaretAction) return;
+        }
+
+        BlockCaretAction blockCaretAction = new BlockCaretAction(getEditor());
+        blockCaretAction.addActionHandler(new Runnable() {
+            @Override
+            public void run() {
+                //System.out.println("caret movement handled");
+            }
+        });
+        myLearnActions.add(blockCaretAction);
+    }
+
+    public void unblockCaret() {
+        ArrayList<BlockCaretAction> myBlockActions = new ArrayList<BlockCaretAction>();
+
+        for (LearnActions myLearnAction : myLearnActions) {
+            if(myLearnAction instanceof BlockCaretAction) {
+                myBlockActions.add((BlockCaretAction) myLearnAction);
+                ((BlockCaretAction) myLearnAction).unregisterAction();
+            }
+        }
+
+        myLearnActions.removeAll(myBlockActions);
     }
 }

@@ -1,4 +1,4 @@
-package org.jetbrains.training.eduUI;
+package org.jetbrains.training.editor;
 
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
@@ -12,7 +12,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.training.lesson.CourseManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
