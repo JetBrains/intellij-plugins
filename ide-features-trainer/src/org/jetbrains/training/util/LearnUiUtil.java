@@ -2,7 +2,12 @@ package org.jetbrains.training.util;
 
 import com.intellij.ide.navigationToolbar.NavBarRootPaneExtension;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.impl.EditorImpl;
+import com.intellij.openapi.fileEditor.impl.EditorComposite;
+import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
+import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
@@ -11,6 +16,7 @@ import com.intellij.openapi.wm.impl.IdeGlassPaneImpl;
 import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.intellij.openapi.wm.impl.status.IdeStatusBarImpl;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.util.ui.Animator;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.commandsEx.util.XmlUtil;
 import org.jetbrains.training.ui.MiniCloseButton;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -26,6 +33,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -49,6 +58,39 @@ public class LearnUiUtil {
 
     public static LearnUiUtil getInstance(){
         return INSTANCE;
+    }
+    
+    public void drawIcon(Project project, Editor editor) throws IOException {
+        final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
+        final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
+        final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
+
+        java.util.List<Component> allComponents = getAllComponents(ideRootPane);
+
+        JBLayeredPane jblp = null;
+        for (Component cmp : allComponents) {
+            if(cmp instanceof JBLayeredPane) {
+                jblp = (JBLayeredPane) cmp;
+                break;
+            }
+        }
+
+        final BufferedImage image = ImageIO.read(MyClassLoader.getInstance().getImageResourceAsStream("secure25.png"));
+        JComponent imageComp = new JComponent(){
+            @Override
+            public void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.drawImage(image, 0, 0, null);
+            }
+        };
+        final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - image.getWidth() - 15;
+        final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - image.getHeight() - 15;
+
+        imageComp.setBounds((int) x0, (int) y0, image.getWidth(), image.getHeight());
+        assert jblp != null;
+        jblp.add(imageComp, 0);
+        jblp.revalidate();
+        jblp.repaint();
     }
 
     public void highlightIdeComponent(IdeComponent ic, Project project){
