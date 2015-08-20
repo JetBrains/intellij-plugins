@@ -23,6 +23,7 @@ import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.editor.actions.BlockCaretAction;
 import org.jetbrains.training.eduUI.EduPanel;
 import org.jetbrains.training.lesson.*;
+import org.jetbrains.training.util.LearnUiUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -332,7 +333,13 @@ public class EduEditor implements TextEditor {
         myComponent.add(eduPanel, BorderLayout.WEST);
     }
 
-    public void blockCaret(){
+    public void blockCaret() {
+
+        try {
+            LearnUiUtil.getInstance().drawIcon(myProject, getEditor());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for (LearnActions myLearnAction : myLearnActions) {
             if(myLearnAction instanceof BlockCaretAction) return;

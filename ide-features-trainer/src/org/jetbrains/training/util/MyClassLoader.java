@@ -8,6 +8,7 @@ import java.io.InputStream;
 public class MyClassLoader {
 
     final public static String RESPATH = "/data/";
+    final public static String IMGPATH = "/img/";
 
     public static final MyClassLoader INSTANCE = new MyClassLoader();
 
@@ -17,6 +18,10 @@ public class MyClassLoader {
 
     public InputStream getResourceAsStream(String path){
         return this.getClass().getResourceAsStream(RESPATH + path);
+    }
+
+    public InputStream getImageResourceAsStream(String path){
+        return this.getClass().getResourceAsStream(IMGPATH + path);
     }
 
     public String getDataPath(){

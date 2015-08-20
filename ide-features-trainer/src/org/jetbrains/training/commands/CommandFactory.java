@@ -77,6 +77,9 @@ public class CommandFactory {
 
             case CARETUNBLOCK:
                 return new CaretUnblockCommand();
+
+            case SHOWLINENUMBER:
+                return new ShowLineNumberCommand();
         }
 
         return new NoCommand();
