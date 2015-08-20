@@ -64,10 +64,14 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
 
   @Override
   protected void tearDown() throws Exception {
-    for (Editor editor : myEditorsToRelease) {
-      EditorFactory.getInstance().releaseEditor(editor);
+    try {
+      for (Editor editor : myEditorsToRelease) {
+        EditorFactory.getInstance().releaseEditor(editor);
+      }
     }
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
 
   protected void checkTextFieldCompletion(JSExpressionCodeFragment fragment,
