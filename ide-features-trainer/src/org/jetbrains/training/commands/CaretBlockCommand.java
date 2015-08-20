@@ -13,7 +13,6 @@ public class CaretBlockCommand extends Command {
     public void execute(ExecutionList executionList) {
         //Block caret and perform next command
         executionList.getEduEditor().blockCaret();
-
         executionList.getElements().poll();
         startNextCommand(executionList);
 
