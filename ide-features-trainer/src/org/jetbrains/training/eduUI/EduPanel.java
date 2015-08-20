@@ -1,11 +1,11 @@
-package org.jetbrains.training.eduUI.panel;
+package org.jetbrains.training.eduUI;
 
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.training.lesson.BadCourseException;
 import org.jetbrains.training.lesson.BadLessonException;
 import org.jetbrains.training.lesson.LessonIsOpenedException;
 import org.jetbrains.training.commandsEx.util.XmlUtil;
-import org.jetbrains.training.eduUI.EduEditor;
+import org.jetbrains.training.editor.EduEditor;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.CourseManager;
 import org.jetbrains.training.lesson.Lesson;

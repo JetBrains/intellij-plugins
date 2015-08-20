@@ -12,7 +12,7 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.util.GenerateCourseXml;
 import org.jetbrains.training.util.MyClassLoader;
-import org.jetbrains.training.eduUI.EduEditor;
+import org.jetbrains.training.editor.EduEditor;
 
 import java.awt.*;
 import java.io.IOException;

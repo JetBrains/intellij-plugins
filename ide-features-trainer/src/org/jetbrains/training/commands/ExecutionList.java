@@ -1,12 +1,11 @@
 package org.jetbrains.training.commands;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.editor.MouseListenerHolder;
-import org.jetbrains.training.eduUI.EduEditor;
+import org.jetbrains.training.editor.EduEditor;
 import org.jetbrains.training.lesson.Lesson;
 
 import java.util.Queue;

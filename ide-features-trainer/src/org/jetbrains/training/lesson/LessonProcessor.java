@@ -1,8 +1,6 @@
 package org.jetbrains.training.lesson;
 
-import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +9,7 @@ import org.jetbrains.training.commands.CommandFactory;
 import org.jetbrains.training.commands.ExecutionList;
 import org.jetbrains.training.commandsEx.CommandEx;
 import org.jetbrains.training.editor.MouseListenerHolder;
-import org.jetbrains.training.eduUI.EduEditor;
+import org.jetbrains.training.editor.EduEditor;
 
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -47,6 +45,14 @@ public class LessonProcessor {
                     }
                     elements.add(new Element(Command.CommandType.MOUSEUNBLOCK.toString())); //add unblock element
                 }
+            } else if (isCaretBlock(el)) {
+                if (el.getChildren() != null) {
+                    elements.add(el); //add block element
+                    for(Element el1 : el.getChildren()){
+                        elements.add(el1); //add inner elements
+                    }
+                    elements.add(new Element(Command.CommandType.CARETUNBLOCK.toString())); //add unblock element
+                }
             } else {
                 elements.add(el);
             }
@@ -68,7 +74,11 @@ public class LessonProcessor {
     }
 
     private static boolean isMouseBlock(Element el){
-        return el.getName().toUpperCase().equals(CommandEx.CommandType.MOUSEBLOCK.toString());
+        return el.getName().toUpperCase().equals(Command.CommandType.MOUSEBLOCK.toString());
+    }
+
+    private static boolean isCaretBlock(Element el){
+        return el.getName().toUpperCase().equals(Command.CommandType.CARETBLOCK.toString());
     }
 
 

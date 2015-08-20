@@ -71,6 +71,12 @@ public class CommandFactory {
 
             case MOUSEUNBLOCK:
                 return new MouseUnblockCommand();
+
+            case CARETBLOCK:
+                return new CaretBlockCommand();
+
+            case CARETUNBLOCK:
+                return new CaretUnblockCommand();
         }
 
         return new NoCommand();
