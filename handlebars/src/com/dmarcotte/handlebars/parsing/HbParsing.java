@@ -117,11 +117,11 @@ public class HbParsing {
    * statement
    * : block
    * | mustache (HB_CUSTOMIZATION we check `block` before `mustache` because our custom "{{else" gets incorrectly parsed as a broken
-   *             mustache if we parse this first)
+   * mustache if we parse this first)
    * | rawBlock
    * | partial
    * | ESCAPE_CHAR (HB_CUSTOMIZATION the official Handlebars lexer just throws out the escape char;
-   *                it's convenient for us to keep it so that we can highlight it)
+   * it's convenient for us to keep it so that we can highlight it)
    * | CONTENT
    * | COMMENT
    * ;
@@ -147,7 +147,7 @@ public class HbParsing {
           parseProgram(builder);
           parseInverseAndProgram(builder);
           parseCloseBlock(builder);
-          blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
+          blockMarker.done(BLOCK_WRAPPER);
         }
         else {
           return false;
@@ -162,7 +162,7 @@ public class HbParsing {
           parseProgram(builder);
           parseInverseChain(builder);
           parseCloseBlock(builder);
-          blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
+          blockMarker.done(BLOCK_WRAPPER);
         }
         else {
           return false;
@@ -207,7 +207,7 @@ public class HbParsing {
           builder.advanceLexer(); // eat non-HB content
         }
         parseCloseRawBlock(builder);
-        blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
+        blockMarker.done(BLOCK_WRAPPER);
       }
       else {
         return false;
@@ -269,7 +269,8 @@ public class HbParsing {
     if (parseINVERSE(builder)) {
       parseProgram(builder);
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
@@ -345,7 +346,7 @@ public class HbParsing {
     PsiBuilder.Marker openInverseBlockStacheMarker = builder.mark();
 
     if (!parseLeafToken(builder, OPEN_INVERSE)) {
-        return false;
+      return false;
     }
 
     if (parseSexpr(builder)) {
@@ -372,7 +373,7 @@ public class HbParsing {
 
     PsiBuilder.Marker mustacheNameMark = builder.mark();
     parsePath(builder);
-    mustacheNameMark.done(HbTokenTypes.MUSTACHE_NAME);
+    mustacheNameMark.done(MUSTACHE_NAME);
     parseLeafTokenGreedy(builder, CLOSE_RAW_BLOCK);
     closeRawBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
@@ -393,7 +394,7 @@ public class HbParsing {
 
     PsiBuilder.Marker mustacheNameMark = builder.mark();
     parsePath(builder);
-    mustacheNameMark.done(HbTokenTypes.MUSTACHE_NAME);
+    mustacheNameMark.done(MUSTACHE_NAME);
     parseLeafTokenGreedy(builder, CLOSE);
     closeBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
@@ -451,9 +452,8 @@ public class HbParsing {
 
   /**
    * HB_CUSTOMIZATION: we don't parse an INVERSE token like the wycats/handlebars grammar since we lex "else" as
-   *                   an individual token so we can highlight it distinctly.  This method parses {{^}} and {{else}}
-   *                   as a unit to synthesize INVERSE
-   *
+   * an individual token so we can highlight it distinctly.  This method parses {{^}} and {{else}}
+   * as a unit to synthesize INVERSE
    */
   private boolean parseINVERSE(PsiBuilder builder) {
     PsiBuilder.Marker simpleInverseMarker = builder.mark();
@@ -511,7 +511,7 @@ public class HbParsing {
     if (!parsePath(builder)) {
       // not a path, try to parse dataName
       if (parseDataName(builder)) {
-        mustacheNameMarker.done(HbTokenTypes.MUSTACHE_NAME);
+        mustacheNameMarker.done(MUSTACHE_NAME);
         sexprMarker.drop();
         return true;
       }
@@ -522,7 +522,7 @@ public class HbParsing {
       }
     }
 
-    mustacheNameMarker.done(HbTokenTypes.MUSTACHE_NAME);
+    mustacheNameMarker.done(MUSTACHE_NAME);
 
     // try to extend the 'path' we found to 'path hash'
     PsiBuilder.Marker hashMarker = builder.mark();
@@ -727,9 +727,20 @@ public class HbParsing {
    * : ID EQUALS param
    */
   private boolean parseHashSegment(PsiBuilder builder) {
-    return parseLeafToken(builder, ID)
-           && parseLeafToken(builder, EQUALS)
-           && parseParam(builder);
+    final PsiBuilder.Marker hash = builder.mark();
+
+    boolean result = parseLeafToken(builder, ID)
+                     && parseLeafToken(builder, EQUALS)
+                     && parseParam(builder);
+
+    if (result) {
+      hash.done(HASH);
+    }
+    else {
+      hash.drop();
+    }
+
+    return result;
   }
 
   /**
@@ -747,7 +758,8 @@ public class HbParsing {
       pathMarker.drop();
       partialNameMarker.done(PARTIAL_NAME);
       return true;
-    } else {
+    }
+    else {
       pathMarker.rollbackTo();
     }
 
@@ -789,14 +801,16 @@ public class HbParsing {
         PsiBuilder.Marker optionalIdMarker = builder.mark();
         if (parseLeafToken(builder, ID)) {
           optionalIdMarker.drop();
-        } else {
+        }
+        else {
           optionalIdMarker.rollbackTo();
           break;
         }
       }
       parseLeafToken(builder, CLOSE_BLOCK_PARAMS);
       return true;
-    } else {
+    }
+    else {
       blockParamsMarker.rollbackTo();
       return false;
     }
@@ -804,14 +818,15 @@ public class HbParsing {
 
   /**
    * dataName
-   *  : DATA path
-   *  ;
+   * : DATA path
+   * ;
    */
   private boolean parseDataName(PsiBuilder builder) {
     PsiBuilder.Marker prefixMarker = builder.mark();
-    if (parseLeafToken(builder, HbTokenTypes.DATA_PREFIX)) {
+    if (parseLeafToken(builder, DATA_PREFIX)) {
       prefixMarker.drop();
-    } else {
+    }
+    else {
       prefixMarker.rollbackTo();
       return false;
     }
@@ -955,14 +970,14 @@ public class HbParsing {
       while (!builder.eof()
              && builder.getTokenType() != expectedToken
              && !RECOVERY_SET.contains(builder.getTokenType())) {
-          builder.advanceLexer();
+        builder.advanceLexer();
       }
 
       recordLeafTokenError(expectedToken, unexpectedTokensMarker);
     }
 
     if (!builder.eof() && builder.getTokenType() == expectedToken) {
-       parseLeafToken(builder, expectedToken);
+      parseLeafToken(builder, expectedToken);
     }
   }
 

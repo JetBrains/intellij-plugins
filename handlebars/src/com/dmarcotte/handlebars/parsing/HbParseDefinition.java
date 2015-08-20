@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -45,60 +46,65 @@ public class HbParseDefinition implements ParserDefinition {
 
   @NotNull
   public PsiElement createElement(ASTNode node) {
-    if (node.getElementType() == HbTokenTypes.BLOCK_WRAPPER) {
+    final IElementType elementType = node.getElementType();
+    if (elementType == HbTokenTypes.BLOCK_WRAPPER) {
       return new HbBlockWrapperImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.OPEN_BLOCK_STACHE) {
+    if (elementType == HbTokenTypes.OPEN_BLOCK_STACHE) {
       return new HbOpenBlockMustacheImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.OPEN_INVERSE_BLOCK_STACHE) {
+    if (elementType == HbTokenTypes.OPEN_INVERSE_BLOCK_STACHE) {
       return new HbOpenInverseBlockMustacheImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.CLOSE_BLOCK_STACHE) {
+    if (elementType == HbTokenTypes.CLOSE_BLOCK_STACHE) {
       return new HbCloseBlockMustacheImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.MUSTACHE) {
+    if (elementType == HbTokenTypes.MUSTACHE) {
       return new HbSimpleMustacheImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.MUSTACHE_NAME) {
+    if (elementType == HbTokenTypes.MUSTACHE_NAME) {
       return new HbMustacheNameImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.PATH) {
+    if (elementType == HbTokenTypes.PATH) {
       return new HbPathImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.DATA) {
+    if (elementType == HbTokenTypes.DATA) {
       return new HbDataImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.PARAM) {
+    if (elementType == HbTokenTypes.PARAM) {
       return new HbParamImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.PARTIAL_STACHE) {
+    if (elementType == HbTokenTypes.PARTIAL_STACHE) {
       return new HbPartialImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.PARTIAL_NAME) {
+    if (elementType == HbTokenTypes.PARTIAL_NAME) {
       return new HbPartialNameImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.SIMPLE_INVERSE) {
+    if (elementType == HbTokenTypes.SIMPLE_INVERSE) {
       return new HbSimpleInverseImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.STATEMENTS) {
+    if (elementType == HbTokenTypes.STATEMENTS) {
       return new HbStatementsImpl(node);
     }
 
-    if (node.getElementType() == HbTokenTypes.COMMENT) {
+    if (elementType == HbTokenTypes.COMMENT) {
       return new HbCommentImpl(node);
+    }
+
+    if (elementType == HbTokenTypes.HASH) {
+      return new HbHashImpl(node);
     }
 
     return new HbPsiElementImpl(node);
