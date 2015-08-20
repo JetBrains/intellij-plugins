@@ -1,13 +1,9 @@
-package org.jetbrains.training.eduUI.panel;
+package org.jetbrains.training.eduUI;
 
-import com.intellij.ui.RoundedLineBorder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.BorderUIResource;
 import java.awt.*;
 
 /**

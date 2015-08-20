@@ -1,4 +1,4 @@
-package org.jetbrains.training.eduUI.panel;
+package org.jetbrains.training.eduUI;
 
 import org.jetbrains.annotations.Nullable;
 
