@@ -1,4 +1,5 @@
 <xml type="Scenario" name="Collapse" passed="false" version="0.1" subtype="aimless">
+    <ShowLineNumber/>
     <MouseBlock>
         <CopyText>public class Car{
 

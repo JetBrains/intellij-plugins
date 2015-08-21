@@ -335,11 +335,11 @@ public class EduEditor implements TextEditor {
 
     public void blockCaret() {
 
-        try {
-            LearnUiUtil.getInstance().drawIcon(myProject, getEditor());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            LearnUiUtil.getInstance().drawIcon(myProject, getEditor());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         for (LearnActions myLearnAction : myLearnActions) {
             if(myLearnAction instanceof BlockCaretAction) return;
