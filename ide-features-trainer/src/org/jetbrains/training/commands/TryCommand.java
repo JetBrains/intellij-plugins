@@ -1,7 +1,9 @@
 package org.jetbrains.training.commands;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
+import org.jetbrains.training.check.Check;
 import org.jetbrains.training.util.MyClassLoader;
 import org.jetbrains.training.commandsEx.ActionCommandEx;
 import org.jetbrains.training.keymap.KeymapUtil;
@@ -27,6 +29,7 @@ public class TryCommand extends Command {
 
 
         Element element = executionList.getElements().poll();
+        Check check = null;
 //        updateDescription(element, infoPanel, editor);
 
         String myTarget = executionList.getTarget();
@@ -53,40 +56,57 @@ public class TryCommand extends Command {
         executionList.getEduEditor().registerActionsRecorder(recorder);
         //TODO: Make recorder disposable
 
+        if (element.getAttribute("check") != null) {
+            String checkClassString = element.getAttribute("check").getValue();
+            try {
+                Class myCheck = Class.forName(checkClassString);
+                check = (Check) myCheck.newInstance();
+                check.set(executionList.getProject(), executionList.getEduEditor());
+                check.before();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (element.getAttribute("trigger") != null) {
             String actionId = element.getAttribute("trigger").getValue();
-            startRecord(executionList, recorder, actionId);
+            startRecord(executionList, recorder, actionId, check);
         } else if(element.getAttribute("triggers") != null) {
             String actionIds = element.getAttribute("triggers").getValue();
             String[] actionIdArray = actionIds.split(";");
-            startRecord(executionList, recorder, actionIdArray);
+            startRecord(executionList, recorder, actionIdArray, check);
         } else {
-            startRecord(executionList, recorder);
+            startRecord(executionList, recorder, check);
         }
-    }
-
-    private void startRecord(ExecutionList executionList, ActionsRecorder recorder) {
 
     }
 
-    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId) {
+    private void startRecord(ExecutionList executionList, ActionsRecorder recorder, @Nullable Check check) {
+
+    }
+
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId, @Nullable Check check) {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
                 executionList.getEduEditor().passExercise();
                 startNextCommand(executionList);
             }
-        }, actionId);
+        }, actionId, check);
     }
 
-    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray){
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray, @Nullable Check check ){
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
                 executionList.getEduEditor().passExercise();
                 startNextCommand(executionList);
             }
-        }, actionIdArray);
+        }, actionIdArray, check);
     }
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {

@@ -7,10 +7,15 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.util.PsiEditorUtil;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.check.Check;
 
 import java.util.*;
 
@@ -26,8 +31,13 @@ public class ActionsRecorder implements Disposable {
     private boolean triggerActivated;
     Queue<String> triggerQueue;
 
+    DocumentListener myDocumentListener;
+    AnActionListener myAnActionListener;
+
     private boolean disposed = false;
     private Runnable doWhenDone;
+    @Nullable
+    Check check = null;
 
     public ActionsRecorder(Project project, Document document, String target) {
         this.project = project;
@@ -70,18 +80,13 @@ public class ActionsRecorder implements Disposable {
 //        document.addDocumentListener(documentListener, this);
     }
 
-    public void startRecording(final Runnable doWhenDone, final @Nullable String actionId) {
-        if(actionId != null && !actionId.equals("") && ActionManager.getInstance().getAction(actionId) != null) {
-            checkAction(actionId);
-            startRecording(doWhenDone);
-        } else {
-            triggerActivated = true;
-            startRecording(doWhenDone);
-        }
+    public void startRecording(final Runnable doWhenDone, final @Nullable String actionId, @Nullable Check check) {
+        final String[] stringArray = {actionId};
+        startRecording(doWhenDone, stringArray, check);
 
     }
-    public void startRecording(final Runnable doWhenDone, final String[] actionIdArray){
-
+    public void startRecording(final Runnable doWhenDone, final String[] actionIdArray, @Nullable Check check){
+        if (check != null) this.check = check;
         if (disposed) return;
         this.doWhenDone = doWhenDone;
 
@@ -102,16 +107,16 @@ public class ActionsRecorder implements Disposable {
 
         if (target == null){
             if (triggerQueue !=null) {
-                return (triggerQueue.size() == 0);
-            } else return triggerActivated;
+                return (triggerQueue.size() == 0 && (check == null ? true : check.check()));
+            } else return (triggerActivated && (check == null ? true : check.check()));
         } else {
 
             List<String> expected = computeTrimmedLines(target);
             List<String> actual = computeTrimmedLines(current.getText());
 
             if (triggerQueue !=null) {
-                return (expected.equals(actual) && (triggerQueue.size() == 0));
-            } else return (expected.equals(actual) && triggerActivated);
+                return ((expected.equals(actual) && (triggerQueue.size() == 0)) && (check == null ? true : check.check()));
+            } else return ((expected.equals(actual) && triggerActivated ) && (check == null ? true : check.check()));
         }
 
     }
@@ -131,51 +136,13 @@ public class ActionsRecorder implements Disposable {
         return ls;
     }
 
-    private void checkAction(final String actionTriggerId){
-
-        final ActionManager actionManager = ActionManager.getInstance();
-        if(actionManager == null) return;
-
-        final AnActionListener anActionListener = new AnActionListener() {
-            @Override
-            public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-            }
-
-            @Override
-            public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-                final String actionId = ActionManager.getInstance().getId(action);
-
-                if(actionId == null) return;
-                if (actionId.toUpperCase().equals(actionTriggerId.toUpperCase())) {
-//                    System.out.println("Action trigger has been activated.");
-                    if (triggerQueue != null) {
-                        triggerQueue.add(actionTriggerId);
-                    } else {
-                        triggerActivated = true;
-                    }
-                    actionManager.removeAnActionListener(this);
-                    if(isTaskSolved(document, target)) {
-                        if(doWhenDone != null)
-                            dispose();
-                            doWhenDone.run();
-                    }
-                }
-//                System.out.println("ACTION PERFORMED: " + actionId);
-            }
-
-            @Override
-            public void beforeEditorTyping(char c, DataContext dataContext) {
-            }
-        };
-
-        actionManager.addAnActionListener(anActionListener);
-    }
-
     private void checkAction() {
         final ActionManager actionManager = ActionManager.getInstance();
         if(actionManager == null) return;
 
-        final AnActionListener anActionListener = new AnActionListener() {
+
+
+        myAnActionListener = new AnActionListener() {
             @Override
             public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
             }
@@ -185,19 +152,19 @@ public class ActionsRecorder implements Disposable {
                 final String actionId = ActionManager.getInstance().getId(action);
 
                 if(actionId == null) return;
+                if(triggerQueue.size() == 0) return;
                 if (actionId.toUpperCase().equals(triggerQueue.peek().toUpperCase())) {
 //                    System.out.println("Action trigger has been activated.");
                     triggerQueue.poll();
                     if (triggerQueue.size() == 0) {
-                        actionManager.removeAnActionListener(this);
                         if (isTaskSolved(document, target)) {
+                            actionManager.removeAnActionListener(this);
                             if (doWhenDone != null)
                                 dispose();
                             doWhenDone.run();
                         }
                     }
                 }
-//                System.out.println("ACTION PERFORMED: " + actionId);
             }
 
             @Override
@@ -205,8 +172,34 @@ public class ActionsRecorder implements Disposable {
             }
         };
 
-        actionManager.addAnActionListener(anActionListener);
+        myDocumentListener = new DocumentListener() {
+            @Override
+            public void beforeDocumentChange(DocumentEvent event) {
 
+            }
+
+            @Override
+            public void documentChanged(DocumentEvent event) {
+                if (triggerQueue.size() == 0) {
+                    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
+                    if (isTaskSolved(document, target)) {
+                        removeListeners(document, actionManager);
+                        if (doWhenDone != null)
+                            dispose();
+                        doWhenDone.run();
+                    }
+                }
+            }
+        };
+
+        document.addDocumentListener(myDocumentListener);
+        actionManager.addAnActionListener(myAnActionListener);
+
+    }
+
+    private void removeListeners(Document document, ActionManager actionManager){
+        document.removeDocumentListener(myDocumentListener);
+        actionManager.removeAnActionListener(myAnActionListener);
     }
 }
 
