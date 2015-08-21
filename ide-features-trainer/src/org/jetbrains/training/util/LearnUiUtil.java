@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
@@ -76,17 +77,27 @@ public class LearnUiUtil {
         }
 
         final BufferedImage image = ImageIO.read(MyClassLoader.getInstance().getImageResourceAsStream("secure25.png"));
+//        final Icon icon = IconLoader.getIcon("/img/secure25.png");
+
         JComponent imageComp = new JComponent(){
             @Override
             public void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g;
-                g2d.drawImage(image, 0, 0, null);
+                AlphaComposite ac = java.awt.AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
+                g2d.setComposite(ac);
+                g2d.drawImage(image, null, 0, 0);
+//                icon.paintIcon(this, g2d, 0, 0);
             }
         };
-        final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - image.getWidth() - 15;
-        final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - image.getHeight() - 15;
+        final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - 50;
+        final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - 55;
 
+//        final double x0 = editor.getComponent().getVisibleRect().getX() + editor.getComponent().getBounds().getWidth() - icon.getIconWidth() - 15;
+//        final double y0 = editor.getComponent().getVisibleRect().getY() + editor.getComponent().getBounds().getHeight() - icon.getIconHeight() - 15;
+
+//        imageComp.setBounds((int) x0, (int) y0, icon.getIconWidth(), icon.getIconHeight());
         imageComp.setBounds((int) x0, (int) y0, image.getWidth(), image.getHeight());
+
         assert jblp != null;
         jblp.add(imageComp, 0);
         jblp.revalidate();
