@@ -22,7 +22,6 @@ import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
-import org.intellij.plugins.markdown.lang.lexer.MarkdownLexerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -30,7 +29,7 @@ import java.util.Map;
 
 public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
 
-    protected final Lexer lexer = new MarkdownLexerAdapter();
+    protected final Lexer lexer = new MarkdownHighlightingLexer();
 
     protected static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<IElementType, TextAttributesKey>();
 
