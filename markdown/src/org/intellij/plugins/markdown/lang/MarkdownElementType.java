@@ -16,6 +16,9 @@
 package org.intellij.plugins.markdown.lang;
 
 import com.intellij.psi.tree.IElementType;
+import org.intellij.markdown.MarkdownElementTypes;
+import org.intellij.markdown.MarkdownTokenTypes;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +30,7 @@ import java.util.Map;
 public class MarkdownElementType extends IElementType {
 
   @NotNull
-  private static final Map<org.intellij.markdown.IElementType, MarkdownElementType> markdownToPlatformTypeMap = new HashMap<org.intellij.markdown.IElementType, MarkdownElementType>();
+  private static final Map<org.intellij.markdown.IElementType, IElementType> markdownToPlatformTypeMap = new HashMap<org.intellij.markdown.IElementType, IElementType>();
   @NotNull
   private static final Map<IElementType, org.intellij.markdown.IElementType> platformToMarkdownTypeMap = new HashMap<IElementType, org.intellij.markdown.IElementType>();
 
@@ -41,7 +44,7 @@ public class MarkdownElementType extends IElementType {
     return MessageFormat.format("Markdown:{0}", super.toString());
   }
 
-  @Nullable
+  @Contract("!null -> !null")
   public synchronized static IElementType platformType(@Nullable org.intellij.markdown.IElementType markdownType) {
     if (markdownType == null) {
       return null;
@@ -50,13 +53,21 @@ public class MarkdownElementType extends IElementType {
     if (markdownToPlatformTypeMap.containsKey(markdownType)) {
       return markdownToPlatformTypeMap.get(markdownType);
     }
-    final MarkdownElementType result = new MarkdownElementType(markdownType.toString());
+
+    final IElementType result;
+    if (markdownType == MarkdownElementTypes.PARAGRAPH
+      || markdownType == MarkdownTokenTypes.ATX_CONTENT
+      || markdownType == MarkdownTokenTypes.SETEXT_CONTENT) {
+      result = new MarkdownLazyElementType(markdownType.toString());
+    } else {
+      result = new MarkdownElementType(markdownType.toString());
+    }
     markdownToPlatformTypeMap.put(markdownType, result);
     platformToMarkdownTypeMap.put(result, markdownType);
     return result;
   }
 
-  @Nullable
+  @Contract("!null -> !null")
   public synchronized static org.intellij.markdown.IElementType markdownType(@Nullable IElementType platformType) {
     if (platformType == null) {
       return null;

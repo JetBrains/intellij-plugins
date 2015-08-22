@@ -38,7 +38,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = AttributeDescriptorsHolder.INSTANCE.get();
 
-  @Nullable
+  @NotNull
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     final Map<String, TextAttributesKey> result = new HashMap<String, TextAttributesKey>();
 

@@ -34,7 +34,12 @@ public class MarkdownParserTest extends ParsingTestCase {
   }
 
   public void testColorsAndFontsSample() throws IOException {
-    final String demoText = new MarkdownColorSettingsPage().getDemoText();
+    final MarkdownColorSettingsPage colorSettingsPage = new MarkdownColorSettingsPage();
+    String demoText = colorSettingsPage.getDemoText();
+    for (String tag : colorSettingsPage.getAdditionalHighlightingTagToDescriptorMap().keySet()) {
+      demoText = demoText.replaceAll("<" + tag + ">", "");
+      demoText = demoText.replaceAll("</" + tag + ">", "");
+    }
     doCodeTest(demoText);
   }
 

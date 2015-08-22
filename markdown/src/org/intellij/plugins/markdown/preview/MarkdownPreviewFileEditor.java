@@ -15,10 +15,11 @@ import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.lexer.MarkdownLexer;
-import org.intellij.markdown.parser.LexerBasedTokensCache;
+import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.markdown.parser.TokensCache;
 import org.intellij.markdown.parser.dialects.commonmark.CommonMarkMarkerProcessor;
+import org.intellij.markdown.parser.sequentialparsers.LexerBasedTokensCache;
+import org.intellij.markdown.parser.sequentialparsers.TokensCache;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.jetbrains.annotations.NotNull;
@@ -128,10 +129,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     }
 
     String text = myDocument.getText();
-    final TokensCache tokensCache = new LexerBasedTokensCache(new MarkdownLexer(text));
-    final ASTNode parsedTree = new MarkdownParser(CommonMarkMarkerProcessor.Factory.INSTANCE$)
-      .parse(MarkdownElementTypes.MARKDOWN_FILE, tokensCache);
-    final String html = new HtmlGenerator(text, parsedTree).generateHtml();
+    final ASTNode parsedTree = new MarkdownParser(CommonMarkMarkerProcessor.Factory.INSTANCE$).buildMarkdownTreeFromString(text);
+    final String html = new HtmlGenerator(text, parsedTree, LinkMap.Builder.buildLinkMap(parsedTree, text)).generateHtml();
 
     myPanel.setHtml("<html><head></head>" + html + "</html>");
   }
