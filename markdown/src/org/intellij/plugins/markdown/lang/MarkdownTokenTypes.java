@@ -28,7 +28,7 @@ public interface MarkdownTokenTypes extends TokenType {
 
   IElementType BLOCK_QUOTE = platformType(org.intellij.markdown.MarkdownTokenTypes.BLOCK_QUOTE);
 
-  IElementType HTML_BLOCK = platformType(org.intellij.markdown.MarkdownTokenTypes.HTML_BLOCK);
+  IElementType HTML_BLOCK = platformType(org.intellij.markdown.MarkdownElementTypes.HTML_BLOCK);
 
   IElementType SINGLE_QUOTE = platformType(org.intellij.markdown.MarkdownTokenTypes.SINGLE_QUOTE);
   IElementType DOUBLE_QUOTE = platformType(org.intellij.markdown.MarkdownTokenTypes.DOUBLE_QUOTE);
@@ -49,12 +49,11 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType LINK_ID = platformType(org.intellij.markdown.MarkdownTokenTypes.LINK_ID);
   IElementType ATX_HEADER = platformType(org.intellij.markdown.MarkdownTokenTypes.ATX_HEADER);
   IElementType EMPH = platformType(org.intellij.markdown.MarkdownTokenTypes.EMPH);
-  IElementType TILDE = platformType(org.intellij.markdown.MarkdownTokenTypes.TILDE);
+  //IElementType TILDE = platformType(org.intellij.markdown.MarkdownTokenTypes.TILDE);
 
   IElementType BACKTICK = platformType(org.intellij.markdown.MarkdownTokenTypes.BACKTICK);
   IElementType ESCAPED_BACKTICKS = platformType(org.intellij.markdown.MarkdownTokenTypes.ESCAPED_BACKTICKS);
 
-  IElementType TAG_NAME = platformType(org.intellij.markdown.MarkdownTokenTypes.TAG_NAME);
   IElementType LIST_BULLET = platformType(org.intellij.markdown.MarkdownTokenTypes.LIST_BULLET);
   IElementType URL = platformType(org.intellij.markdown.MarkdownTokenTypes.URL);
   IElementType HORIZONTAL_RULE = platformType(org.intellij.markdown.MarkdownTokenTypes.HORIZONTAL_RULE);
@@ -66,7 +65,7 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType CODE_FENCE_END = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE_FENCE_END);
   IElementType LINK_TITLE = platformType(org.intellij.markdown.MarkdownTokenTypes.LINK_TITLE);
 
-  IElementType GFM_AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.GFM_AUTOLINK);
+  //IElementType GFM_AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.GFM_AUTOLINK);
   IElementType AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.AUTOLINK);
   IElementType EMAIL_AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.EMAIL_AUTOLINK);
   IElementType HTML_TAG = platformType(org.intellij.markdown.MarkdownTokenTypes.HTML_TAG);

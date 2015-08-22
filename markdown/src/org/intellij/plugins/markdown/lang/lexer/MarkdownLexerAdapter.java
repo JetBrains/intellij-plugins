@@ -24,17 +24,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class MarkdownLexerAdapter extends LexerBase {
   @NotNull
-  private MarkdownLexer delegateLexer = new MarkdownLexer("");
-
-  private int startOffset;
+  private MarkdownLexer delegateLexer = new MarkdownLexer("", 0, 0);
 
   private int endOffset;
 
   @Override
   public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
-    this.startOffset = startOffset;
     this.endOffset = endOffset;
-    delegateLexer = new MarkdownLexer(buffer.subSequence(startOffset, endOffset).toString());
+    delegateLexer = new MarkdownLexer(buffer, startOffset, endOffset);
   }
 
   @Override
@@ -50,12 +47,12 @@ public class MarkdownLexerAdapter extends LexerBase {
 
   @Override
   public int getTokenStart() {
-    return delegateLexer.getTokenStart() + startOffset;
+    return delegateLexer.getTokenStart();
   }
 
   @Override
   public int getTokenEnd() {
-    return delegateLexer.getTokenEnd() + startOffset;
+    return delegateLexer.getTokenEnd();
   }
 
   @Override
