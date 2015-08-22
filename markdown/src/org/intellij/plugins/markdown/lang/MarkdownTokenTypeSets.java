@@ -32,4 +32,11 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
   TokenSet REFERENCE_LINK_SET = TokenSet.create(FULL_REFERENCE_LINK, SHORT_REFERENCE_LINK);
 
   TokenSet LIST_MARKERS = TokenSet.create(MarkdownTokenTypes.LIST_BULLET, MarkdownTokenTypes.LIST_NUMBER);
+
+  TokenSet INLINE_HOLDING_ELEMENT_TYPES =
+    TokenSet.create(MarkdownElementTypes.PARAGRAPH,
+                    MarkdownTokenTypes.ATX_CONTENT,
+                    MarkdownTokenTypes.SETEXT_CONTENT);
+
+
 }

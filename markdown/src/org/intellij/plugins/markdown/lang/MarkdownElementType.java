@@ -30,9 +30,11 @@ import java.util.Map;
 public class MarkdownElementType extends IElementType {
 
   @NotNull
-  private static final Map<org.intellij.markdown.IElementType, IElementType> markdownToPlatformTypeMap = new HashMap<org.intellij.markdown.IElementType, IElementType>();
+  private static final Map<org.intellij.markdown.IElementType, IElementType> markdownToPlatformTypeMap =
+    new HashMap<org.intellij.markdown.IElementType, IElementType>();
   @NotNull
-  private static final Map<IElementType, org.intellij.markdown.IElementType> platformToMarkdownTypeMap = new HashMap<IElementType, org.intellij.markdown.IElementType>();
+  private static final Map<IElementType, org.intellij.markdown.IElementType> platformToMarkdownTypeMap =
+    new HashMap<IElementType, org.intellij.markdown.IElementType>();
 
   public MarkdownElementType(@NotNull @NonNls String debugName) {
     super(debugName, MarkdownLanguage.INSTANCE);
@@ -56,10 +58,11 @@ public class MarkdownElementType extends IElementType {
 
     final IElementType result;
     if (markdownType == MarkdownElementTypes.PARAGRAPH
-      || markdownType == MarkdownTokenTypes.ATX_CONTENT
-      || markdownType == MarkdownTokenTypes.SETEXT_CONTENT) {
+        || markdownType == MarkdownTokenTypes.ATX_CONTENT
+        || markdownType == MarkdownTokenTypes.SETEXT_CONTENT) {
       result = new MarkdownLazyElementType(markdownType.toString());
-    } else {
+    }
+    else {
       result = new MarkdownElementType(markdownType.toString());
     }
     markdownToPlatformTypeMap.put(markdownType, result);
