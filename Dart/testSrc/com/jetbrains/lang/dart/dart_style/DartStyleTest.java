@@ -264,7 +264,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:93  conditional operands are nested");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:149  do nest because of nested many-arg fn");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:163  do nest because of nested many-arg method call");
-    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:171  force named args to split on positional function");
+    KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:171  args before and after functions split independently");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:2  args before and after function forces nesting");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:18  trailing functions do not nest");
     KNOWN_TO_FAIL.add("splitting/function_arguments.stmt:36  arg between functions forces nesting");
@@ -350,12 +350,19 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/maps.stmt:29  split indirect outer");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:53  force multi-line because of contained block");
     KNOWN_TO_FAIL.add("splitting/maps.stmt:88  preserve newlines in maps containing a line comment");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:108  list inside method chain");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:110  list inside method chain");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:125  binary operators in ascending precedence");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:127  binary operators in ascending precedence");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:138  binary operators in descending precedence");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:140  binary operators in descending precedence");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:151  mixed multiplicative operators");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:153  mixed multiplicative operators");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:159  mixed additive operators");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:161  mixed additive operators");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:167  mixed shift operators");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:169  mixed shift operators");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:189  choose extra nesting if it leads to better solution");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:19  nested expression indentation");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:191  choose extra nesting if it leads to better solution");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:29  does not extra indent when multiple levels of nesting happen on one line");
@@ -363,9 +370,11 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:48  function inside a collection");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:60  function inside an argument list");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:7  prefers to wrap before '.'");
-    KNOWN_TO_FAIL.add("splitting/mixed.stmt:71  unnested function inside nested expression");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:77  nested function inside nested expression");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:79  nested function inside nested expression");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:90  wrap before =>");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:92  wrap before =>");
+    KNOWN_TO_FAIL.add("splitting/mixed.stmt:96  wrap after =>");
     KNOWN_TO_FAIL.add("splitting/mixed.stmt:98  wrap after =>");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:2  many parameters");
     KNOWN_TO_FAIL.add("splitting/parameters.stmt:23  parameters fit but ) does not");
@@ -1190,6 +1199,10 @@ public abstract class DartStyleTest extends FormatterTestCase {
   }
 
   public void test0364() throws Exception {
+    runTestInDirectory("regression/0300");
+  }
+
+  public void test0366() throws Exception {
     runTestInDirectory("regression/0300");
   }
 

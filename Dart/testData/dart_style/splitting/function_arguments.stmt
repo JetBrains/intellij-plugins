@@ -137,34 +137,30 @@ longFunctionName(() {
 }, b: () {
   ;
 });
->>> don't nest because of nested 1-arg fn
+>>> do not nest because of nested 1-arg fn
 outer(inner(() {body;}));
 <<<
 outer(inner(() {
   body;
 }));
->>> do nest because of nested many-arg fn
+>>> do not nest because of nested many-arg fn
 outer(argument, inner(() {body;}));
 <<<
-outer(
-    argument,
-    inner(() {
-      body;
-    }));
->>> don't nest because of nested 1-arg method call
-obj.outer(obj.inner(() {body;}));
-<<<
-obj.outer(obj.inner(() {
+outer(argument, inner(() {
   body;
 }));
->>> do nest because of nested many-arg method call
-obj.outer(argument, obj.inner(() {body;}));
+>>> do not nest because of nested 1-arg method call
+obj.outer(a.b.c.fn(() {body;}));
 <<<
-obj.outer(
-    argument,
-    obj.inner(() {
-      body;
-    }));
+obj.outer(a.b.c.fn(() {
+  body;
+}));
+>>> do not nest because of nested many-arg method call
+obj.outer(argument, a.b.c.fn(() {body;}));
+<<<
+obj.outer(argument, a.b.c.fn(() {
+  body;
+}));
 >>> do not force named args to split on positional function
 function(argument, () {;},
     named: argument, another: argument);
