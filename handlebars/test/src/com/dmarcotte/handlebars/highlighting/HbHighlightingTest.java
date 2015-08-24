@@ -48,6 +48,10 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
     doTest("hbs");
   }
 
+  public void testInvalidElementStackOverflow() {
+    myFixture.configureByFile(getTestName(true) + ".hbs");
+  }
+
   private void enableInspections() {
     myFixture.enableInspections(HtmlUnknownTagInspection.class);
   }
