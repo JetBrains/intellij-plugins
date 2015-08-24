@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.config;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.Language;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,8 +43,10 @@ public class HbConfig {
     setBooleanPropertyValue(AUTO_COLLAPSE_BLOCKS, enabled);
   }
 
+  @NotNull
   public static Language getCommenterLanguage() {
-    return Language.findLanguageByID(getStringPropertyValue(COMMENTER_LANGUAGE_ID));
+    final Language id = Language.findLanguageByID(getStringPropertyValue(COMMENTER_LANGUAGE_ID));
+    return id == null ? HTMLLanguage.INSTANCE : id;
   }
 
   public static void setCommenterLanguage(Language language) {
