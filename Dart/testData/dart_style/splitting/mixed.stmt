@@ -71,11 +71,9 @@ function(
 >>> unnested function inside nested expression
 function(argument, function(() {;}));
 <<<
-function(
-    argument,
-    function(() {
-      ;
-    }));
+function(argument, function(() {
+  ;
+}));
 >>> nested function inside nested expression
 function(argument, function(() {;}, argument, () {;}));
 <<<
