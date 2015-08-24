@@ -41,9 +41,12 @@ public class HbParsing {
   }
 
   public void parse() {
-    parseRoot(builder);
+    while (!builder.eof()) {
+      parseRoot(builder);
 
-    if (!builder.eof()) {
+      if (builder.eof()) {
+        break;
+      }
       // jumped out of the parser prematurely... try and figure out what's tripping it up,
       // then jump back in
 
@@ -62,8 +65,6 @@ public class HbParsing {
         builder.advanceLexer();
         problemMark.error(HbBundle.message("hb.parsing.invalid"));
       }
-
-      parse();
     }
   }
 
@@ -72,10 +73,6 @@ public class HbParsing {
    * : program EOF
    */
   private void parseRoot(PsiBuilder builder) {
-    if (builder.eof()) {
-      return;
-    }
-
     parseProgram(builder);
   }
 
