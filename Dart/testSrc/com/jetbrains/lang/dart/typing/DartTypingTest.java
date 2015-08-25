@@ -492,4 +492,11 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "var x = '123456789012345'\n" +
                  "    '\\t8901234567890123'");
   }
+
+  public void testAutoIndentMultilineString() {
+    doTypingTest('\n',
+                 "var q = '''<caret>",
+                 "var q = '''\n" +
+                 "<caret>");
+  }
 }
