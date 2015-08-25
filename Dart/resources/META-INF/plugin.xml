@@ -44,6 +44,8 @@
     <lang.parserDefinition language="Dart" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
 
     <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInDocLineCommentHandler"/>
+    <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInStringHandler" order="first"/>
+    <lang.lineWrapStrategy language="Dart" implementationClass="com.jetbrains.lang.dart.ide.editor.DartLineWrapPositionStrategy"/>
 
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
 
