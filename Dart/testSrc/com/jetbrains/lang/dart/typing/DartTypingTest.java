@@ -2,8 +2,11 @@ package com.jetbrains.lang.dart.typing;
 
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class DartTypingTest extends DartCodeInsightFixtureTestCase {
@@ -435,5 +438,58 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "    <caret>\n" +
                  "  }\n" +
                  "");
+  }
+
+  public void testEnterBetweenEmptyStringQuotes() {
+    // Checks single quotes.
+    doTypingTest('\n',
+                 "var x = '<caret>'",
+                 "var x = ''\n" +
+                 "    '<caret>'");
+  }
+
+  public void testEnterBetweenStringQuotes() {
+    // Checks single quotes.
+    doTypingTest('\n',
+                 "var x = 'content<caret>'",
+                 "var x = 'content'\n" +
+                 "    '<caret>'");
+  }
+
+  public void testEnterMidString() {
+    doTypingTest('\n',
+                 "var x = 'content<caret>and stuff'",
+                 "var x = 'content'\n" +
+                 "    '<caret>and stuff'");
+  }
+
+  public void testAutoWrapString() {
+    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
+    settings.RIGHT_MARGIN = 42;
+    doTypingTest('3',
+                 "var x = '12345678901234567890123456789012<caret>'",
+                 "var x = '123456789012345678901234567890'\n" +
+                 "    '123<caret>'");
+  }
+
+  public void testAutoWrapCascade() {
+    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
+    settings.RIGHT_MARGIN = 42;
+    doTypingTest('3',
+                 "var x = a123456789012345..b890123456789012<caret>",
+                 "var x = a123456789012345\n" +
+                 "  ..b8901234567890123");
+  }
+
+  public void testAutoWrapStringEscape() {
+    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
+    settings.RIGHT_MARGIN = 42;
+    doTypingTest('3',
+                 "var x = '123456789012345\\t890123456789012<caret>'",
+                 "var x = '123456789012345'\n" +
+                 "    '\\t8901234567890123'");
   }
 }
