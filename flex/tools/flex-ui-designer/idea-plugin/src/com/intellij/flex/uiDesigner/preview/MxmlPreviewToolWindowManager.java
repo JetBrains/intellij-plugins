@@ -142,7 +142,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
 
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-    toolWindowVisible = propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false);
+    toolWindowVisible = propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE);
     if (toolWindowVisible) {
       toolWindow.show(null);
     }
