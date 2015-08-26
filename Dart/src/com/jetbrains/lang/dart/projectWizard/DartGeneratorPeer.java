@@ -226,12 +226,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     final DartProjectTemplate template = myCreateSampleProjectCheckBox.isSelected()
                                          ? (DartProjectTemplate)myTemplatesList.getSelectedValue() : null;
-    if (template == null) {
-      PropertiesComponent.getInstance().unsetValue(DART_PROJECT_TEMPLATE);
-    }
-    else {
-      PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template.getName());
-    }
+    PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template == null ? null : template.getName());
 
     return new DartProjectWizardData(sdkPath, dartiumPath, myDartiumSettingsCurrent, template);
   }
