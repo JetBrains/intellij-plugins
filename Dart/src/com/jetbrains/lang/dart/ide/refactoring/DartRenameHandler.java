@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -69,14 +70,20 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
     return isAvailableOnDataContext(dataContext);
   }
 
+  @NotNull
+  @VisibleForTesting
+  public static ServerRenameRefactoring createServerRenameRefactoring(PsiElement element) {
+    final DartElementLocation elementLocation = DartElementLocation.of(element);
+    return new ServerRenameRefactoring(elementLocation.file, elementLocation.offset, 0);
+  }
+
   private static void showRenameDialog(@NotNull Project project, Editor editor, DataContext context) {
     final PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
     if (element == null) {
       return;
     }
 
-    final DartElementLocation elementLocation = DartElementLocation.of(element);
-    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(elementLocation.file, elementLocation.offset, 0);
+    final ServerRenameRefactoring refactoring = createServerRenameRefactoring(element);
 
     // Validate initial status.
     {
