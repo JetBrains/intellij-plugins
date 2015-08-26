@@ -17,7 +17,7 @@ public class FilterSwfLoadUnloadMessagesAction extends ToggleAction implements D
   }
 
   public void setSelected(final AnActionEvent e, final boolean state) {
-    PropertiesComponent.getInstance(e.getProject()).setValue(FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY, String.valueOf(state));
+    PropertiesComponent.getInstance(e.getProject()).setValue(FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY, state, true);
   }
 
   public static boolean isFilterEnabled(final @NotNull Project project) {

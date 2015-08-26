@@ -200,12 +200,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
 
     if (myTargetDirectory != null) {
       if (myCreateTestSourceFolderCheckBox.isVisible()) {
-        if (myCreateTestSourceFolderCheckBox.isSelected()) {
-          PropertiesComponent.getInstance(myModule.getProject()).unsetValue(CREATE_TEST_SOURCE_FOLDER_KEY);
-        }
-        else {
-          PropertiesComponent.getInstance(myModule.getProject()).setValue(CREATE_TEST_SOURCE_FOLDER_KEY, "false");
-        }
+        PropertiesComponent.getInstance(myModule.getProject()).setValue(CREATE_TEST_SOURCE_FOLDER_KEY, myCreateTestSourceFolderCheckBox.isSelected(), true);
       }
 
       super.doOKAction();
