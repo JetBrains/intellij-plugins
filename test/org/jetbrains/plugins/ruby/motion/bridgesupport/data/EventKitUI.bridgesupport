@@ -1,0 +1,166 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<enum value='0' name='EKCalendarChooserDisplayAllCalendars'/>
+<enum value='1' name='EKCalendarChooserDisplayWritableCalendarsOnly'/>
+<enum value='1' name='EKCalendarChooserSelectionStyleMultiple'/>
+<enum value='0' name='EKCalendarChooserSelectionStyleSingle'/>
+<enum value='0' name='EKEventEditViewActionCanceled'/>
+<enum value='0' name='EKEventEditViewActionCancelled'/>
+<enum value='2' name='EKEventEditViewActionDeleted'/>
+<enum value='1' name='EKEventEditViewActionSaved'/>
+<enum value='2' name='EKEventViewActionDeleted'/>
+<enum value='0' name='EKEventViewActionDone'/>
+<enum value='1' name='EKEventViewActionResponded'/>
+<class name='EKCalendarChooser'>
+<method selector='delegate'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initWithSelectionStyle:displayStyle:eventStore:'>
+<arg type='i' declared_type='EKCalendarChooserSelectionStyle' index='0' name='selectionStyle'/>
+<arg type='i' declared_type='EKCalendarChooserDisplayStyle' index='1' name='displayStyle'/>
+<arg type='@' declared_type='EKEventStore*' index='2' name='eventStore'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='selectedCalendars'>
+<retval type='@' declared_type='NSSet*'/>
+</method>
+<method selector='selectionStyle'>
+<retval type='i' declared_type='EKCalendarChooserSelectionStyle'/>
+</method>
+<method selector='setDelegate:'>
+<arg type='@' declared_type='id' index='0' name='delegate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setSelectedCalendars:'>
+<arg type='@' declared_type='NSSet*' index='0' name='selectedCalendars'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setShowsCancelButton:'>
+<arg type='B' declared_type='BOOL' index='0' name='showsCancelButton'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setShowsDoneButton:'>
+<arg type='B' declared_type='BOOL' index='0' name='showsDoneButton'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='showsCancelButton'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='showsDoneButton'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+</class>
+<class name='EKEventEditViewController'>
+<method selector='editViewDelegate'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='event'>
+<retval type='@' declared_type='EKEvent*'/>
+</method>
+<method selector='eventStore'>
+<retval type='@' declared_type='EKEventStore*'/>
+</method>
+<method selector='setEditViewDelegate:'>
+<arg type='@' declared_type='id' index='0' name='editViewDelegate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setEvent:'>
+<arg type='@' declared_type='EKEvent*' index='0' name='event'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setEventStore:'>
+<arg type='@' declared_type='EKEventStore*' index='0' name='eventStore'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='EKEventViewController'>
+<method selector='allowsCalendarPreview'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='allowsEditing'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='delegate'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='event'>
+<retval type='@' declared_type='EKEvent*'/>
+</method>
+<method selector='setAllowsCalendarPreview:'>
+<arg type='B' declared_type='BOOL' index='0' name='allowsCalendarPreview'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setAllowsEditing:'>
+<arg type='B' declared_type='BOOL' index='0' name='allowsEditing'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setDelegate:'>
+<arg type='@' declared_type='id' index='0' name='delegate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setEvent:'>
+<arg type='@' declared_type='EKEvent*' index='0' name='event'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='calendarChooserDidCancel:'>
+<arg type='@' declared_type='EKCalendarChooser*' index='0' name='calendarChooser'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='calendarChooserDidFinish:'>
+<arg type='@' declared_type='EKCalendarChooser*' index='0' name='calendarChooser'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='calendarChooserSelectionDidChange:'>
+<arg type='@' declared_type='EKCalendarChooser*' index='0' name='calendarChooser'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='eventEditViewController:didCompleteWithAction:'>
+<arg type='@' declared_type='EKEventEditViewController*' index='0' name='controller'/>
+<arg type='i' declared_type='EKEventEditViewAction' index='1' name='action'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='eventEditViewControllerDefaultCalendarForNewEvents:'>
+<arg type='@' declared_type='EKEventEditViewController*' index='0' name='controller'/>
+<retval type='@' declared_type='EKCalendar*'/>
+</method>
+<method selector='eventViewController:didCompleteWithAction:'>
+<arg type='@' declared_type='EKEventViewController*' index='0' name='controller'/>
+<arg type='i' declared_type='EKEventViewAction' index='1' name='action'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<informal_protocol name='EKCalendarChooserDelegate'>
+<method type='v12@0:4@8' selector='calendarChooserDidCancel:'>
+<arg type='@' declared_type='EKCalendarChooser*' index='0' name='calendarChooser'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v12@0:4@8' selector='calendarChooserDidFinish:'>
+<arg type='@' declared_type='EKCalendarChooser*' index='0' name='calendarChooser'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v12@0:4@8' selector='calendarChooserSelectionDidChange:'>
+<arg type='@' declared_type='EKCalendarChooser*' index='0' name='calendarChooser'/>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+<informal_protocol name='EKEventEditViewDelegate'>
+<method type='v16@0:4@8i12' selector='eventEditViewController:didCompleteWithAction:'>
+<arg type='@' declared_type='EKEventEditViewController*' index='0' name='controller'/>
+<arg type='i' declared_type='EKEventEditViewAction' index='1' name='action'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='@12@0:4@8' selector='eventEditViewControllerDefaultCalendarForNewEvents:'>
+<arg type='@' declared_type='EKEventEditViewController*' index='0' name='controller'/>
+<retval type='@' declared_type='EKCalendar*'/>
+</method>
+</informal_protocol>
+<informal_protocol name='EKEventViewDelegate'>
+<method type='v16@0:4@8i12' selector='eventViewController:didCompleteWithAction:'>
+<arg type='@' declared_type='EKEventViewController*' index='0' name='controller'/>
+<arg type='i' declared_type='EKEventViewAction' index='1' name='action'/>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+</signatures>

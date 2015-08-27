@@ -1,0 +1,722 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct type='{MIDIControlTransform=&quot;controlType&quot;C&quot;remappedControlType&quot;C&quot;controlNumber&quot;S&quot;transform&quot;S&quot;param&quot;s}' name='MIDIControlTransform'>
+<field type='C' name='controlType' declared_type='MIDITransformControlType'/>
+<field type='C' name='remappedControlType' declared_type='MIDITransformControlType'/>
+<field type='S' name='controlNumber' declared_type='UInt16'/>
+<field type='S' name='transform' declared_type='MIDITransformType'/>
+<field type='s' name='param' declared_type='SInt16'/>
+</struct>
+<struct type='{MIDIDriverInterface=&quot;_reserved&quot;^v&quot;QueryInterface&quot;^?&quot;AddRef&quot;^?&quot;Release&quot;^?&quot;FindDevices&quot;^?&quot;Start&quot;^?&quot;Stop&quot;^?&quot;Configure&quot;^?&quot;Send&quot;^?&quot;EnableSource&quot;^?&quot;Flush&quot;^?&quot;Monitor&quot;^?}' name='MIDIDriverInterface'>
+<field type='^v' name='_reserved' declared_type='void*'/>
+<field type='^?' function_pointer='true' name='QueryInterface' declared_type='HRESULT (*)(void *, REFIID, LPVOID *)'>
+<arg type='^v' declared_type='void*'/>
+<arg type='{_REFIID=CCCCCCCCCCCCCCCC}' declared_type='REFIID'/>
+<arg type='^^v' declared_type='LPVOID*'/>
+<retval type='l' declared_type='HRESULT'/>
+</field>
+<field type='^?' function_pointer='true' name='AddRef' declared_type='ULONG (*)(void *)'>
+<arg type='^v' declared_type='void*'/>
+<retval type='L' declared_type='ULONG'/>
+</field>
+<field type='^?' function_pointer='true' name='Release' declared_type='ULONG (*)(void *)'>
+<arg type='^v' declared_type='void*'/>
+<retval type='L' declared_type='ULONG'/>
+</field>
+<field type='^?' function_pointer='true' name='FindDevices' declared_type='OSStatus (*)(MIDIDriverRef, MIDIDeviceListRef)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{OpaqueMIDIDeviceList=}' declared_type='MIDIDeviceListRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='Start' declared_type='OSStatus (*)(MIDIDriverRef, MIDIDeviceListRef)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{OpaqueMIDIDeviceList=}' declared_type='MIDIDeviceListRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='Stop' declared_type='OSStatus (*)(MIDIDriverRef)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='Configure' declared_type='OSStatus (*)(MIDIDriverRef, MIDIDeviceRef)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{OpaqueMIDIDevice=}' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='Send' declared_type='OSStatus (*)(MIDIDriverRef, MIDIPacketList *, void *, void *)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' const='true' declared_type='MIDIPacketList*'/>
+<arg type='^v' declared_type='void*'/>
+<arg type='^v' declared_type='void*'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='EnableSource' declared_type='OSStatus (*)(MIDIDriverRef, MIDIEndpointRef, Boolean)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+<arg type='B' declared_type='Boolean'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='Flush' declared_type='OSStatus (*)(MIDIDriverRef, MIDIEndpointRef, void *, void *)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+<arg type='^v' declared_type='void*'/>
+<arg type='^v' declared_type='void*'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+<field type='^?' function_pointer='true' name='Monitor' declared_type='OSStatus (*)(MIDIDriverRef, MIDIEndpointRef, MIDIPacketList *)'>
+<arg type='^^{MIDIDriverInterface}' declared_type='MIDIDriverRef'/>
+<arg type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' const='true' declared_type='MIDIPacketList*'/>
+<retval type='l' declared_type='OSStatus'/>
+</field>
+</struct>
+<struct type='{MIDIIOErrorNotification=&quot;messageID&quot;i&quot;messageSize&quot;I&quot;driverDevice&quot;^{OpaqueMIDIDevice}&quot;errorCode&quot;i}' name='MIDIIOErrorNotification'>
+<field type='l' name='messageID' declared_type='MIDINotificationMessageID'/>
+<field type='L' name='messageSize' declared_type='UInt32'/>
+<field type='^{OpaqueMIDIDevice=}' name='driverDevice' declared_type='MIDIDeviceRef'/>
+<field type='l' name='errorCode' declared_type='OSStatus'/>
+</struct>
+<struct type='{MIDINotification=&quot;messageID&quot;i&quot;messageSize&quot;I}' name='MIDINotification'>
+<field type='l' name='messageID' declared_type='MIDINotificationMessageID'/>
+<field type='L' name='messageSize' declared_type='UInt32'/>
+</struct>
+<struct type='{MIDIObjectAddRemoveNotification=&quot;messageID&quot;i&quot;messageSize&quot;I&quot;parent&quot;^v&quot;parentType&quot;i&quot;child&quot;^v&quot;childType&quot;i}' name='MIDIObjectAddRemoveNotification'>
+<field type='l' name='messageID' declared_type='MIDINotificationMessageID'/>
+<field type='L' name='messageSize' declared_type='UInt32'/>
+<field type='^v' name='parent' declared_type='MIDIObjectRef'/>
+<field type='l' name='parentType' declared_type='MIDIObjectType'/>
+<field type='^v' name='child' declared_type='MIDIObjectRef'/>
+<field type='l' name='childType' declared_type='MIDIObjectType'/>
+</struct>
+<struct type='{MIDIObjectPropertyChangeNotification=&quot;messageID&quot;i&quot;messageSize&quot;I&quot;object&quot;^v&quot;objectType&quot;i&quot;propertyName&quot;^{__CFString}}' name='MIDIObjectPropertyChangeNotification'>
+<field type='l' name='messageID' declared_type='MIDINotificationMessageID'/>
+<field type='L' name='messageSize' declared_type='UInt32'/>
+<field type='^v' name='object' declared_type='MIDIObjectRef'/>
+<field type='l' name='objectType' declared_type='MIDIObjectType'/>
+<field type='^{__CFString=}' name='propertyName' declared_type='CFStringRef'/>
+</struct>
+<struct type='{MIDIPacket=&quot;timeStamp&quot;Q&quot;length&quot;S&quot;data&quot;[256C]}' name='MIDIPacket'>
+<field type='Q' name='timeStamp' declared_type='MIDITimeStamp'/>
+<field type='S' name='length' declared_type='UInt16'/>
+<field type='[256C]' name='data' declared_type='Byte*'/>
+</struct>
+<struct type='{MIDIPacketList=&quot;numPackets&quot;I&quot;packet&quot;[1{MIDIPacket=&quot;timeStamp&quot;Q&quot;length&quot;S&quot;data&quot;[256C]}]}' name='MIDIPacketList'>
+<field type='L' name='numPackets' declared_type='UInt32'/>
+<field type='[1{MIDIPacket=&quot;timeStamp&quot;Q&quot;length&quot;S&quot;data&quot;[256C]}]' name='packet' declared_type='MIDIPacket*'/>
+</struct>
+<struct type='{MIDISysexSendRequest=&quot;destination&quot;^{OpaqueMIDIEndpoint}&quot;data&quot;*&quot;bytesToSend&quot;I&quot;complete&quot;B&quot;reserved&quot;[3C]&quot;completionProc&quot;^?&quot;completionRefCon&quot;^v}' name='MIDISysexSendRequest'>
+<field type='^{OpaqueMIDIEndpoint=}' name='destination' declared_type='MIDIEndpointRef'/>
+<field type='*' const='true' name='data' declared_type='Byte*'/>
+<field type='L' name='bytesToSend' declared_type='UInt32'/>
+<field type='B' name='complete' declared_type='Boolean'/>
+<field type='[3C]' name='reserved' declared_type='Byte*'/>
+<field type='^?' function_pointer='true' name='completionProc' declared_type='MIDICompletionProc'>
+<arg type='^{MIDISysexSendRequest=^{OpaqueMIDIEndpoint}*IB[3C]^?^v}' declared_type='MIDISysexSendRequest*'/>
+<retval type='v' declared_type='void'/>
+</field>
+<field type='^v' name='completionRefCon' declared_type='void*'/>
+</struct>
+<struct type='{MIDIThruConnectionEndpoint=&quot;endpointRef&quot;^{OpaqueMIDIEndpoint}&quot;uniqueID&quot;i}' name='MIDIThruConnectionEndpoint'>
+<field type='^{OpaqueMIDIEndpoint=}' name='endpointRef' declared_type='MIDIEndpointRef'/>
+<field type='l' name='uniqueID' declared_type='MIDIUniqueID'/>
+</struct>
+<struct type='{MIDIThruConnectionParams=&quot;version&quot;I&quot;numSources&quot;I&quot;sources&quot;[8{MIDIThruConnectionEndpoint=&quot;endpointRef&quot;^{OpaqueMIDIEndpoint}&quot;uniqueID&quot;i}]&quot;numDestinations&quot;I&quot;destinations&quot;[8{MIDIThruConnectionEndpoint=&quot;endpointRef&quot;^{OpaqueMIDIEndpoint}&quot;uniqueID&quot;i}]&quot;channelMap&quot;[16C]&quot;lowVelocity&quot;C&quot;highVelocity&quot;C&quot;lowNote&quot;C&quot;highNote&quot;C&quot;noteNumber&quot;{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}&quot;velocity&quot;{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}&quot;keyPressure&quot;{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}&quot;channelPressure&quot;{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}&quot;programChange&quot;{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}&quot;pitchBend&quot;{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}&quot;filterOutSysEx&quot;C&quot;filterOutMTC&quot;C&quot;filterOutBeatClock&quot;C&quot;filterOutTuneRequest&quot;C&quot;reserved2&quot;[3C]&quot;filterOutAllControls&quot;C&quot;numControlTransforms&quot;S&quot;numMaps&quot;S&quot;reserved3&quot;[4S]}' name='MIDIThruConnectionParams'>
+<field type='L' name='version' declared_type='UInt32'/>
+<field type='L' name='numSources' declared_type='UInt32'/>
+<field type='[8{MIDIThruConnectionEndpoint=&quot;endpointRef&quot;^{OpaqueMIDIEndpoint}&quot;uniqueID&quot;i}]' name='sources' declared_type='MIDIThruConnectionEndpoint*'/>
+<field type='L' name='numDestinations' declared_type='UInt32'/>
+<field type='[8{MIDIThruConnectionEndpoint=&quot;endpointRef&quot;^{OpaqueMIDIEndpoint}&quot;uniqueID&quot;i}]' name='destinations' declared_type='MIDIThruConnectionEndpoint*'/>
+<field type='[16C]' name='channelMap' declared_type='UInt8*'/>
+<field type='C' name='lowVelocity' declared_type='UInt8'/>
+<field type='C' name='highVelocity' declared_type='UInt8'/>
+<field type='C' name='lowNote' declared_type='UInt8'/>
+<field type='C' name='highNote' declared_type='UInt8'/>
+<field type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='noteNumber' declared_type='MIDITransform'/>
+<field type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='velocity' declared_type='MIDITransform'/>
+<field type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='keyPressure' declared_type='MIDITransform'/>
+<field type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='channelPressure' declared_type='MIDITransform'/>
+<field type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='programChange' declared_type='MIDITransform'/>
+<field type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='pitchBend' declared_type='MIDITransform'/>
+<field type='C' name='filterOutSysEx' declared_type='UInt8'/>
+<field type='C' name='filterOutMTC' declared_type='UInt8'/>
+<field type='C' name='filterOutBeatClock' declared_type='UInt8'/>
+<field type='C' name='filterOutTuneRequest' declared_type='UInt8'/>
+<field type='[3C]' name='reserved2' declared_type='UInt8*'/>
+<field type='C' name='filterOutAllControls' declared_type='UInt8'/>
+<field type='S' name='numControlTransforms' declared_type='UInt16'/>
+<field type='S' name='numMaps' declared_type='UInt16'/>
+<field type='[4S]' name='reserved3' declared_type='UInt16*'/>
+</struct>
+<struct type='{MIDITransform=&quot;transform&quot;S&quot;param&quot;s}' name='MIDITransform'>
+<field type='S' name='transform' declared_type='MIDITransformType'/>
+<field type='s' name='param' declared_type='SInt16'/>
+</struct>
+<struct type='{MIDIValueMap=&quot;value&quot;[128C]}' name='MIDIValueMap'>
+<field type='[128C]' name='value' declared_type='UInt8*'/>
+</struct>
+<opaque type='^{OpaqueMIDIClient=}' name='MIDIClientRef'/>
+<opaque type='^{OpaqueMIDIDeviceList=}' name='MIDIDeviceListRef'/>
+<opaque type='^{OpaqueMIDIDevice=}' name='MIDIDeviceRef'/>
+<opaque type='^{OpaqueMIDIEndpoint=}' name='MIDIEndpointRef'/>
+<opaque type='^{OpaqueMIDIEntity=}' name='MIDIEntityRef'/>
+<opaque type='^{OpaqueMIDIPort=}' name='MIDIPortRef'/>
+<opaque type='^{OpaqueMIDISetup=}' name='MIDISetupRef'/>
+<opaque type='^{OpaqueMIDIThruConnection=}' name='MIDIThruConnectionRef'/>
+<constant type='@' const='true' name='MIDINetworkBonjourServiceType' declared_type='NSString*'/>
+<constant type='@' const='true' name='MIDINetworkNotificationContactsDidChange' declared_type='NSString*'/>
+<constant type='@' const='true' name='MIDINetworkNotificationSessionDidChange' declared_type='NSString*'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyAdvanceScheduleTimeMuSec' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyCanRoute' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyConnectionUniqueID' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyDeviceID' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyDisplayName' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyDriverDeviceEditorApp' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyDriverOwner' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyDriverVersion' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyImage' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyIsBroadcast' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyIsDrumMachine' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyIsEffectUnit' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyIsEmbeddedEntity' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyIsMixer' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyIsSampler' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyManufacturer' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyMaxReceiveChannels' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyMaxSysExSpeed' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyMaxTransmitChannels' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyModel' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyName' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyNameConfiguration' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyOffline' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyPanDisruptsStereo' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyPrivate' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceiveChannels' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceivesBankSelectLSB' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceivesBankSelectMSB' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceivesClock' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceivesMTC' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceivesNotes' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyReceivesProgramChanges' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertySingleRealtimeEntity' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertySupportsGeneralMIDI' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertySupportsMMC' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertySupportsShowControl' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitChannels' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitsBankSelectLSB' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitsBankSelectMSB' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitsClock' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitsMTC' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitsNotes' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyTransmitsProgramChanges' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' const='true' name='kMIDIPropertyUniqueID' declared_type='CFStringRef'/>
+<enum value='2' name='MIDINetworkConnectionPolicy_Anyone'/>
+<enum value='1' name='MIDINetworkConnectionPolicy_HostsInContactList'/>
+<enum value='0' name='MIDINetworkConnectionPolicy_NoOne'/>
+<enum value='1' name='kMIDIControlType_14Bit'/>
+<enum value='5' name='kMIDIControlType_14BitNRPN'/>
+<enum value='3' name='kMIDIControlType_14BitRPN'/>
+<enum value='0' name='kMIDIControlType_7Bit'/>
+<enum value='4' name='kMIDIControlType_7BitNRPN'/>
+<enum value='2' name='kMIDIControlType_7BitRPN'/>
+<enum value='-10843' name='kMIDIIDNotUnique'/>
+<enum value='-10830' name='kMIDIInvalidClient'/>
+<enum value='-10831' name='kMIDIInvalidPort'/>
+<enum value='0' name='kMIDIInvalidUniqueID'/>
+<enum value='-10838' name='kMIDIMessageSendErr'/>
+<enum value='7' name='kMIDIMsgIOError'/>
+<enum value='2' name='kMIDIMsgObjectAdded'/>
+<enum value='3' name='kMIDIMsgObjectRemoved'/>
+<enum value='4' name='kMIDIMsgPropertyChanged'/>
+<enum value='6' name='kMIDIMsgSerialPortOwnerChanged'/>
+<enum value='1' name='kMIDIMsgSetupChanged'/>
+<enum value='5' name='kMIDIMsgThruConnectionsChanged'/>
+<enum value='-10833' name='kMIDINoConnection'/>
+<enum value='-10837' name='kMIDINoCurrentSetup'/>
+<enum value='-10842' name='kMIDIObjectNotFound'/>
+<enum value='3' name='kMIDIObjectType_Destination'/>
+<enum value='0' name='kMIDIObjectType_Device'/>
+<enum value='1' name='kMIDIObjectType_Entity'/>
+<enum value='19' name='kMIDIObjectType_ExternalDestination'/>
+<enum value='16' name='kMIDIObjectType_ExternalDevice'/>
+<enum value='17' name='kMIDIObjectType_ExternalEntity'/>
+<enum value='16' name='kMIDIObjectType_ExternalMask'/>
+<enum value='18' name='kMIDIObjectType_ExternalSource'/>
+<enum value='-1' name='kMIDIObjectType_Other'/>
+<enum value='2' name='kMIDIObjectType_Source'/>
+<enum value='-10839' name='kMIDIServerStartErr'/>
+<enum value='-10840' name='kMIDISetupFormatErr'/>
+<enum value='8' name='kMIDIThruConnection_MaxEndpoints'/>
+<enum value='8' name='kMIDITransform_Add'/>
+<enum value='1' name='kMIDITransform_FilterOut'/>
+<enum value='2' name='kMIDITransform_MapControl'/>
+<enum value='12' name='kMIDITransform_MapValue'/>
+<enum value='11' name='kMIDITransform_MaxValue'/>
+<enum value='10' name='kMIDITransform_MinValue'/>
+<enum value='0' name='kMIDITransform_None'/>
+<enum value='9' name='kMIDITransform_Scale'/>
+<enum value='-10834' name='kMIDIUnknownEndpoint'/>
+<enum value='-10835' name='kMIDIUnknownProperty'/>
+<enum value='-10832' name='kMIDIWrongEndpointType'/>
+<enum value='-10836' name='kMIDIWrongPropertyType'/>
+<enum value='-10841' name='kMIDIWrongThread'/>
+<function name='MIDIClientCreate'>
+<arg type='^{__CFString=}' name='name' declared_type='CFStringRef'/>
+<arg type='^?' function_pointer='true' name='notifyProc' declared_type='MIDINotifyProc'>
+<arg type='^{MIDINotification=iI}' const='true' declared_type='MIDINotification*'/>
+<arg type='^v' declared_type='void*'/>
+<retval type='v' declared_type='void'/>
+</arg>
+<arg type='^v' name='notifyRefCon' declared_type='void*'/>
+<arg type='^^{OpaqueMIDIClient}' name='outClient' declared_type='MIDIClientRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIClientDispose'>
+<arg type='^{OpaqueMIDIClient=}' name='client' declared_type='MIDIClientRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDestinationCreate'>
+<arg type='^{OpaqueMIDIClient=}' name='client' declared_type='MIDIClientRef'/>
+<arg type='^{__CFString=}' name='name' declared_type='CFStringRef'/>
+<arg type='^?' function_pointer='true' name='readProc' declared_type='MIDIReadProc'>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' const='true' declared_type='MIDIPacketList*'/>
+<arg type='^v' declared_type='void*'/>
+<arg type='^v' declared_type='void*'/>
+<retval type='v' declared_type='void'/>
+</arg>
+<arg type='^v' name='refCon' declared_type='void*'/>
+<arg type='^^{OpaqueMIDIEndpoint}' name='outDest' declared_type='MIDIEndpointRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDeviceAddEntity'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<arg type='^{__CFString=}' name='name' declared_type='CFStringRef'/>
+<arg type='B' name='embedded' declared_type='Boolean'/>
+<arg type='L' name='numSourceEndpoints' declared_type='ItemCount'/>
+<arg type='L' name='numDestinationEndpoints' declared_type='ItemCount'/>
+<arg type='^^{OpaqueMIDIEntity}' name='newEntity' declared_type='MIDIEntityRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDeviceCreate'>
+<arg type='^^{MIDIDriverInterface}' name='owner' declared_type='MIDIDriverRef'/>
+<arg type='^{__CFString=}' name='name' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='manufacturer' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='model' declared_type='CFStringRef'/>
+<arg type='^^{OpaqueMIDIDevice}' name='outDevice' declared_type='MIDIDeviceRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDeviceDispose'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDeviceGetEntity'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<arg type='L' name='entityIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIEntity=}' declared_type='MIDIEntityRef'/>
+</function>
+<function name='MIDIDeviceGetNumberOfEntities'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIDeviceListAddDevice'>
+<arg type='^{OpaqueMIDIDeviceList=}' name='devList' declared_type='MIDIDeviceListRef'/>
+<arg type='^{OpaqueMIDIDevice=}' name='dev' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDeviceListDispose'>
+<arg type='^{OpaqueMIDIDeviceList=}' name='devList' declared_type='MIDIDeviceListRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIDeviceListGetDevice'>
+<arg type='^{OpaqueMIDIDeviceList=}' name='devList' declared_type='MIDIDeviceListRef'/>
+<arg type='L' name='index0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIDevice=}' declared_type='MIDIDeviceRef'/>
+</function>
+<function name='MIDIDeviceListGetNumberOfDevices'>
+<arg type='^{OpaqueMIDIDeviceList=}' name='devList' declared_type='MIDIDeviceListRef'/>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIDeviceRemoveEntity'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<arg type='^{OpaqueMIDIEntity=}' name='entity' declared_type='MIDIEntityRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEndpointDispose'>
+<arg type='^{OpaqueMIDIEndpoint=}' name='endpt' declared_type='MIDIEndpointRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEndpointGetEntity'>
+<arg type='^{OpaqueMIDIEndpoint=}' name='inEndpoint' declared_type='MIDIEndpointRef'/>
+<arg type='^^{OpaqueMIDIEntity}' name='outEntity' declared_type='MIDIEntityRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEndpointGetRefCons'>
+<arg type='^{OpaqueMIDIEndpoint=}' name='endpt' declared_type='MIDIEndpointRef'/>
+<arg type='^^v' name='ref1' declared_type='void**'/>
+<arg type='^^v' name='ref2' declared_type='void**'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEndpointSetRefCons'>
+<arg type='^{OpaqueMIDIEndpoint=}' name='endpt' declared_type='MIDIEndpointRef'/>
+<arg type='^v' name='ref1' declared_type='void*'/>
+<arg type='^v' name='ref2' declared_type='void*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEntityAddOrRemoveEndpoints'>
+<arg type='^{OpaqueMIDIEntity=}' name='entity' declared_type='MIDIEntityRef'/>
+<arg type='L' name='numSourceEndpoints' declared_type='ItemCount'/>
+<arg type='L' name='numDestinationEndpoints' declared_type='ItemCount'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEntityGetDestination'>
+<arg type='^{OpaqueMIDIEntity=}' name='entity' declared_type='MIDIEntityRef'/>
+<arg type='L' name='destIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+</function>
+<function name='MIDIEntityGetDevice'>
+<arg type='^{OpaqueMIDIEntity=}' name='inEntity' declared_type='MIDIEntityRef'/>
+<arg type='^^{OpaqueMIDIDevice}' name='outDevice' declared_type='MIDIDeviceRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIEntityGetNumberOfDestinations'>
+<arg type='^{OpaqueMIDIEntity=}' name='entity' declared_type='MIDIEntityRef'/>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIEntityGetNumberOfSources'>
+<arg type='^{OpaqueMIDIEntity=}' name='entity' declared_type='MIDIEntityRef'/>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIEntityGetSource'>
+<arg type='^{OpaqueMIDIEntity=}' name='entity' declared_type='MIDIEntityRef'/>
+<arg type='L' name='sourceIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+</function>
+<function name='MIDIExternalDeviceCreate'>
+<arg type='^{__CFString=}' name='name' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='manufacturer' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='model' declared_type='CFStringRef'/>
+<arg type='^^{OpaqueMIDIDevice}' name='outDevice' declared_type='MIDIDeviceRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIFlushOutput'>
+<arg type='^{OpaqueMIDIEndpoint=}' name='dest' declared_type='MIDIEndpointRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIGetDestination'>
+<arg type='L' name='destIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+</function>
+<function name='MIDIGetDevice'>
+<arg type='L' name='deviceIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIDevice=}' declared_type='MIDIDeviceRef'/>
+</function>
+<function name='MIDIGetDriverDeviceList'>
+<arg type='^^{MIDIDriverInterface}' name='driver' declared_type='MIDIDriverRef'/>
+<retval type='^{OpaqueMIDIDeviceList=}' declared_type='MIDIDeviceListRef'/>
+</function>
+<function name='MIDIGetDriverIORunLoop'>
+<retval type='^{__CFRunLoop=}' declared_type='CFRunLoopRef'/>
+</function>
+<function name='MIDIGetExternalDevice'>
+<arg type='L' name='deviceIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIDevice=}' declared_type='MIDIDeviceRef'/>
+</function>
+<function name='MIDIGetNumberOfDestinations'>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIGetNumberOfDevices'>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIGetNumberOfExternalDevices'>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIGetNumberOfSources'>
+<retval type='L' declared_type='ItemCount'/>
+</function>
+<function name='MIDIGetSource'>
+<arg type='L' name='sourceIndex0' declared_type='ItemCount'/>
+<retval type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+</function>
+<function name='MIDIInputPortCreate'>
+<arg type='^{OpaqueMIDIClient=}' name='client' declared_type='MIDIClientRef'/>
+<arg type='^{__CFString=}' name='portName' declared_type='CFStringRef'/>
+<arg type='^?' function_pointer='true' name='readProc' declared_type='MIDIReadProc'>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' const='true' declared_type='MIDIPacketList*'/>
+<arg type='^v' declared_type='void*'/>
+<arg type='^v' declared_type='void*'/>
+<retval type='v' declared_type='void'/>
+</arg>
+<arg type='^v' name='refCon' declared_type='void*'/>
+<arg type='^^{OpaqueMIDIPort}' name='outPort' declared_type='MIDIPortRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectFindByUniqueID'>
+<arg type='l' name='inUniqueID' declared_type='MIDIUniqueID'/>
+<arg type='^^v' name='outObject' declared_type='MIDIObjectRef*'/>
+<arg type='^i' name='outObjectType' declared_type='MIDIObjectType*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectGetDataProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^^{__CFData}' name='outData' declared_type='CFDataRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectGetDictionaryProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^^{__CFDictionary}' name='outDict' declared_type='CFDictionaryRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectGetIntegerProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^i' name='outValue' declared_type='SInt32*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectGetProperties'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^^v' name='outProperties' declared_type='CFPropertyListRef*'/>
+<arg type='B' name='deep' declared_type='Boolean'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectGetStringProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^^{__CFString}' name='str' declared_type='CFStringRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectRemoveProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectSetDataProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^{__CFData=}' name='data' declared_type='CFDataRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectSetDictionaryProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^{__CFDictionary=}' name='data' declared_type='CFDictionaryRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectSetIntegerProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='l' name='value' declared_type='SInt32'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIObjectSetStringProperty'>
+<arg type='^v' name='obj' declared_type='MIDIObjectRef'/>
+<arg type='^{__CFString=}' name='propertyID' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='str' declared_type='CFStringRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIOutputPortCreate'>
+<arg type='^{OpaqueMIDIClient=}' name='client' declared_type='MIDIClientRef'/>
+<arg type='^{__CFString=}' name='portName' declared_type='CFStringRef'/>
+<arg type='^^{OpaqueMIDIPort}' name='outPort' declared_type='MIDIPortRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIPacketListAdd'>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' name='pktlist' declared_type='MIDIPacketList*'/>
+<arg type='L' name='listSize' declared_type='ByteCount'/>
+<arg type='^{MIDIPacket=QS[256C]}' name='curPacket' declared_type='MIDIPacket*'/>
+<arg type='Q' name='time' declared_type='MIDITimeStamp'/>
+<arg type='L' name='nData' declared_type='ByteCount'/>
+<arg type='*' const='true' name='data' declared_type='Byte*'/>
+<retval type='^{MIDIPacket=QS[256C]}' declared_type='MIDIPacket*'/>
+</function>
+<function name='MIDIPacketListInit'>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' name='pktlist' declared_type='MIDIPacketList*'/>
+<retval type='^{MIDIPacket=QS[256C]}' declared_type='MIDIPacket*'/>
+</function>
+<function name='MIDIPortConnectSource'>
+<arg type='^{OpaqueMIDIPort=}' name='port' declared_type='MIDIPortRef'/>
+<arg type='^{OpaqueMIDIEndpoint=}' name='source' declared_type='MIDIEndpointRef'/>
+<arg type='^v' name='connRefCon' declared_type='void*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIPortDisconnectSource'>
+<arg type='^{OpaqueMIDIPort=}' name='port' declared_type='MIDIPortRef'/>
+<arg type='^{OpaqueMIDIEndpoint=}' name='source' declared_type='MIDIEndpointRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIPortDispose'>
+<arg type='^{OpaqueMIDIPort=}' name='port' declared_type='MIDIPortRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIReceived'>
+<arg type='^{OpaqueMIDIEndpoint=}' name='src' declared_type='MIDIEndpointRef'/>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' const='true' name='pktlist' declared_type='MIDIPacketList*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIRestart'>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISend'>
+<arg type='^{OpaqueMIDIPort=}' name='port' declared_type='MIDIPortRef'/>
+<arg type='^{OpaqueMIDIEndpoint=}' name='dest' declared_type='MIDIEndpointRef'/>
+<arg type='^{MIDIPacketList=I[1{MIDIPacket=QS[256C]}]}' const='true' name='pktlist' declared_type='MIDIPacketList*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISendSysex'>
+<arg type='^{MIDISysexSendRequest=^{OpaqueMIDIEndpoint}*IB[3C]^?^v}' name='request' declared_type='MIDISysexSendRequest*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISetupAddDevice'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISetupAddExternalDevice'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISetupRemoveDevice'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISetupRemoveExternalDevice'>
+<arg type='^{OpaqueMIDIDevice=}' name='device' declared_type='MIDIDeviceRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDISourceCreate'>
+<arg type='^{OpaqueMIDIClient=}' name='client' declared_type='MIDIClientRef'/>
+<arg type='^{__CFString=}' name='name' declared_type='CFStringRef'/>
+<arg type='^^{OpaqueMIDIEndpoint}' name='outSrc' declared_type='MIDIEndpointRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIThruConnectionCreate'>
+<arg type='^{__CFString=}' name='inPersistentOwnerID' declared_type='CFStringRef'/>
+<arg type='^{__CFData=}' name='inConnectionParams' declared_type='CFDataRef'/>
+<arg type='^^{OpaqueMIDIThruConnection}' name='outConnection' declared_type='MIDIThruConnectionRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIThruConnectionDispose'>
+<arg type='^{OpaqueMIDIThruConnection=}' name='connection' declared_type='MIDIThruConnectionRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIThruConnectionFind'>
+<arg type='^{__CFString=}' name='inPersistentOwnerID' declared_type='CFStringRef'/>
+<arg type='^^{__CFData}' name='outConnectionList' declared_type='CFDataRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIThruConnectionGetParams'>
+<arg type='^{OpaqueMIDIThruConnection=}' name='connection' declared_type='MIDIThruConnectionRef'/>
+<arg type='^^{__CFData}' name='outConnectionParams' declared_type='CFDataRef*'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<function name='MIDIThruConnectionParamsInitialize'>
+<arg type='^{MIDIThruConnectionParams=II[8{MIDIThruConnectionEndpoint=^{OpaqueMIDIEndpoint}i}]I[8{MIDIThruConnectionEndpoint=^{OpaqueMIDIEndpoint}i}][16C]CCCC{MIDITransform=Ss}{MIDITransform=Ss}{MIDITransform=Ss}{MIDITransform=Ss}{MIDITransform=Ss}{MIDITransform=Ss}CCCC[3C]CSS[4S]}' name='inConnectionParams' declared_type='MIDIThruConnectionParams*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='MIDIThruConnectionSetParams'>
+<arg type='^{OpaqueMIDIThruConnection=}' name='connection' declared_type='MIDIThruConnectionRef'/>
+<arg type='^{__CFData=}' name='inConnectionParams' declared_type='CFDataRef'/>
+<retval type='l' declared_type='OSStatus'/>
+</function>
+<class name='MIDINetworkConnection'>
+<method class_method='true' selector='connectionWithHost:'>
+<arg type='@' index='0' name='host' declared_type='MIDINetworkHost*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='host'>
+<retval type='@' declared_type='MIDINetworkHost*'/>
+</method>
+</class>
+<class name='MIDINetworkHost'>
+<method selector='address'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='hasSameAddressAs:'>
+<arg type='@' index='0' name='other' declared_type='MIDINetworkHost*'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method class_method='true' selector='hostWithName:address:port:'>
+<arg type='@' index='0' name='name' declared_type='NSString*'/>
+<arg type='@' index='1' name='address' declared_type='NSString*'/>
+<arg type='I' index='2' name='port' declared_type='NSUInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method class_method='true' selector='hostWithName:netService:'>
+<arg type='@' index='0' name='name' declared_type='NSString*'/>
+<arg type='@' index='1' name='netService' declared_type='NSNetService*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method class_method='true' selector='hostWithName:netServiceName:netServiceDomain:'>
+<arg type='@' index='0' name='name' declared_type='NSString*'/>
+<arg type='@' index='1' name='netServiceName' declared_type='NSString*'/>
+<arg type='@' index='2' name='netServiceDomain' declared_type='NSString*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='name'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='netServiceDomain'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='netServiceName'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='port'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+</class>
+<class name='MIDINetworkSession'>
+<method selector='addConnection:'>
+<arg type='@' index='0' name='connection' declared_type='MIDINetworkConnection*'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='addContact:'>
+<arg type='@' index='0' name='contact' declared_type='MIDINetworkHost*'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='connectionPolicy'>
+<retval type='I' declared_type='MIDINetworkConnectionPolicy'/>
+</method>
+<method selector='connections'>
+<retval type='@' declared_type='NSSet*'/>
+</method>
+<method selector='contacts'>
+<retval type='@' declared_type='NSSet*'/>
+</method>
+<method class_method='true' selector='defaultSession'>
+<retval type='@' declared_type='MIDINetworkSession*'/>
+</method>
+<method selector='destinationEndpoint'>
+<retval type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+</method>
+<method selector='isEnabled'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='localName'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='networkName'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='networkPort'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method selector='removeConnection:'>
+<arg type='@' index='0' name='connection' declared_type='MIDINetworkConnection*'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='removeContact:'>
+<arg type='@' index='0' name='contact' declared_type='MIDINetworkHost*'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='setConnectionPolicy:'>
+<arg type='I' index='0' name='connectionPolicy' declared_type='MIDINetworkConnectionPolicy'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setEnabled:'>
+<arg type='B' index='0' name='enabled' declared_type='BOOL'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='sourceEndpoint'>
+<retval type='^{OpaqueMIDIEndpoint=}' declared_type='MIDIEndpointRef'/>
+</method>
+</class>
+</signatures>

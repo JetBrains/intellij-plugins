@@ -1,0 +1,804 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct name='CFHostClientContext' type='{CFHostClientContext=&quot;version&quot;i&quot;info&quot;^v&quot;retain&quot;^?&quot;release&quot;^?&quot;copyDescription&quot;^?}'>
+<field declared_type='CFIndex' name='version' type='l'/>
+<field declared_type='void*' name='info' type='^v'/>
+<field function_pointer='true' declared_type='CFAllocatorRetainCallBack' name='retain' type='^?'>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='void*' type='^v' const='true'/>
+</field>
+<field function_pointer='true' declared_type='CFAllocatorReleaseCallBack' name='release' type='^?'>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field function_pointer='true' declared_type='CFAllocatorCopyDescriptionCallBack' name='copyDescription' type='^?'>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</field>
+</struct>
+<struct name='CFNetServiceClientContext' type='{CFNetServiceClientContext=&quot;version&quot;i&quot;info&quot;^v&quot;retain&quot;^?&quot;release&quot;^?&quot;copyDescription&quot;^?}'>
+<field declared_type='CFIndex' name='version' type='l'/>
+<field declared_type='void*' name='info' type='^v'/>
+<field function_pointer='true' declared_type='CFAllocatorRetainCallBack' name='retain' type='^?'>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='void*' type='^v' const='true'/>
+</field>
+<field function_pointer='true' declared_type='CFAllocatorReleaseCallBack' name='release' type='^?'>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field function_pointer='true' declared_type='CFAllocatorCopyDescriptionCallBack' name='copyDescription' type='^?'>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</field>
+</struct>
+<cftype name='CFHTTPAuthenticationRef' type='^{_CFHTTPAuthentication=}'/>
+<cftype name='CFHTTPMessageRef' type='^{__CFHTTPMessage=}'/>
+<cftype name='CFHostRef' type='^{__CFHost=}'/>
+<cftype name='CFNetDiagnosticRef' type='^{__CFNetDiagnostic=}'/>
+<cftype name='CFNetServiceBrowserRef' type='^{__CFNetServiceBrowser=}'/>
+<cftype name='CFNetServiceMonitorRef' type='^{__CFNetServiceMonitor=}'/>
+<cftype name='CFNetServiceRef' type='^{__CFNetService=}'/>
+<constant declared_type='CFStringRef' name='kCFDNSServiceFailureKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFErrorDomainCFNetwork' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFErrorDomainWinSock' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceGroup' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceLink' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceModDate' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceMode' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceName' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceOwner' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceSize' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPResourceType' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFFTPStatusCodeKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFGetAddrInfoFailureKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationAccountDomain' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationPassword' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationSchemeBasic' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationSchemeDigest' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationSchemeNTLM' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationSchemeNegotiate' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPAuthenticationUsername' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPVersion1_0' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFHTTPVersion1_1' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFNetworkProxiesHTTPEnable' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFNetworkProxiesHTTPPort' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFNetworkProxiesHTTPProxy' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFNetworkProxiesProxyAutoConfigEnable' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFNetworkProxiesProxyAutoConfigURLString' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyAutoConfigurationHTTPResponseKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyAutoConfigurationURLKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyHostNameKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyPasswordKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyPortNumberKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeAutoConfigurationURL' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeFTP' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeHTTP' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeHTTPS' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeNone' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyTypeSOCKS' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFProxyUsernameKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFSOCKSNegotiationMethodKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFSOCKSStatusCodeKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFSOCKSVersionKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='SInt32' name='kCFStreamErrorDomainFTP' type='l' const='true'/>
+<constant declared_type='SInt32' name='kCFStreamErrorDomainHTTP' type='l' const='true'/>
+<constant declared_type='SInt32' name='kCFStreamErrorDomainMach' type='l' const='true'/>
+<constant declared_type='SInt32' name='kCFStreamErrorDomainNetDB' type='l' const='true'/>
+<constant declared_type='SInt32' name='kCFStreamErrorDomainNetServices' type='l' const='true'/>
+<constant declared_type='int' name='kCFStreamErrorDomainSOCKS' type='i' const='true'/>
+<constant declared_type='int' name='kCFStreamErrorDomainSSL' type='i' const='true'/>
+<constant declared_type='SInt32' name='kCFStreamErrorDomainSystemConfiguration' type='l' const='true'/>
+<constant declared_type='CFIndex' name='kCFStreamErrorDomainWinSock' type='l' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPAttemptPersistentConnection' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPFetchResourceInfo' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPFileTransferOffset' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPPassword' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPProxy' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPProxyHost' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPProxyPassword' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPProxyPort' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPProxyUser' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPResourceSize' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPUsePassiveMode' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyFTPUserName' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPAttemptPersistentConnection' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPFinalRequest' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPFinalURL' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPProxy' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPProxyHost' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPProxyPort' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPRequestBytesWrittenCount' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPResponseHeader' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPSProxyHost' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPSProxyPort' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyHTTPShouldAutoredirect' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyProxyLocalBypass' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySOCKSPassword' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySOCKSProxy' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySOCKSProxyHost' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySOCKSProxyPort' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySOCKSUser' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySOCKSVersion' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySSLPeerCertificates' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySSLPeerTrust' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySSLSettings' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertyShouldCloseNativeSocket' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySocketRemoteHost' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySocketRemoteNetService' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamPropertySocketSecurityLevel' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLAllowsAnyRoot' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLAllowsExpiredCertificates' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLAllowsExpiredRoots' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLCertificates' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLIsServer' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLLevel' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLPeerName' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSSLValidatesCertificateChain' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSOCKSVersion4' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSOCKSVersion5' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSecurityLevelNegotiatedSSL' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSecurityLevelNone' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSecurityLevelSSLv2' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSecurityLevelSSLv3' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFStreamSocketSecurityLevelTLSv1' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFURLErrorFailingURLErrorKey' type='^{__CFString=}' const='true'/>
+<constant declared_type='CFStringRef' name='kCFURLErrorFailingURLStringErrorKey' type='^{__CFString=}' const='true'/>
+<enum value='300' name='kCFErrorHTTPAuthenticationTypeUnsupported'/>
+<enum value='301' name='kCFErrorHTTPBadCredentials'/>
+<enum value='307' name='kCFErrorHTTPBadProxyCredentials'/>
+<enum value='305' name='kCFErrorHTTPBadURL'/>
+<enum value='302' name='kCFErrorHTTPConnectionLost'/>
+<enum value='303' name='kCFErrorHTTPParseFailure'/>
+<enum value='306' name='kCFErrorHTTPProxyConnectionFailure'/>
+<enum value='304' name='kCFErrorHTTPRedirectionLoopDetected'/>
+<enum value='310' name='kCFErrorHTTPSProxyConnectionFailure'/>
+<enum value='309' name='kCFErrorPACFileAuth'/>
+<enum value='308' name='kCFErrorPACFileError'/>
+<enum value='200' name='kCFFTPErrorUnexpectedStatusCode'/>
+<enum value='-4000' name='kCFHTTPCookieCannotParseCookieFile'/>
+<enum value='0' name='kCFHostAddresses'/>
+<enum value='1' name='kCFHostErrorHostNotFound'/>
+<enum value='2' name='kCFHostErrorUnknown'/>
+<enum value='1' name='kCFHostNames'/>
+<enum value='2' name='kCFHostReachability'/>
+<enum value='-66557' name='kCFNetDiagnosticConnectionDown'/>
+<enum value='-66558' name='kCFNetDiagnosticConnectionIndeterminate'/>
+<enum value='-66559' name='kCFNetDiagnosticConnectionUp'/>
+<enum value='-66560' name='kCFNetDiagnosticErr'/>
+<enum value='0' name='kCFNetDiagnosticNoErr'/>
+<enum value='-72004' name='kCFNetServiceErrorBadArgument'/>
+<enum value='-72005' name='kCFNetServiceErrorCancel'/>
+<enum value='-72001' name='kCFNetServiceErrorCollision'/>
+<enum value='-73000' name='kCFNetServiceErrorDNSServiceFailure'/>
+<enum value='-72003' name='kCFNetServiceErrorInProgress'/>
+<enum value='-72006' name='kCFNetServiceErrorInvalid'/>
+<enum value='-72002' name='kCFNetServiceErrorNotFound'/>
+<enum value='-72007' name='kCFNetServiceErrorTimeout'/>
+<enum value='-72000' name='kCFNetServiceErrorUnknown'/>
+<enum value='4' name='kCFNetServiceFlagIsDefault'/>
+<enum value='2' name='kCFNetServiceFlagIsDomain'/>
+<enum value='4' name='kCFNetServiceFlagIsRegistrationDomain'/>
+<enum value='1' name='kCFNetServiceFlagMoreComing'/>
+<enum value='1' name='kCFNetServiceFlagNoAutoRename'/>
+<enum value='8' name='kCFNetServiceFlagRemove'/>
+<enum value='1' name='kCFNetServiceMonitorTXT'/>
+<enum value='-72004' name='kCFNetServicesErrorBadArgument'/>
+<enum value='-72005' name='kCFNetServicesErrorCancel'/>
+<enum value='-72001' name='kCFNetServicesErrorCollision'/>
+<enum value='-72003' name='kCFNetServicesErrorInProgress'/>
+<enum value='-72006' name='kCFNetServicesErrorInvalid'/>
+<enum value='-72002' name='kCFNetServicesErrorNotFound'/>
+<enum value='-72007' name='kCFNetServicesErrorTimeout'/>
+<enum value='-72000' name='kCFNetServicesErrorUnknown'/>
+<enum value='112' name='kCFSOCKS4ErrorIdConflict'/>
+<enum value='111' name='kCFSOCKS4ErrorIdentdFailed'/>
+<enum value='110' name='kCFSOCKS4ErrorRequestFailed'/>
+<enum value='113' name='kCFSOCKS4ErrorUnknownStatusCode'/>
+<enum value='122' name='kCFSOCKS5ErrorBadCredentials'/>
+<enum value='121' name='kCFSOCKS5ErrorBadResponseAddr'/>
+<enum value='120' name='kCFSOCKS5ErrorBadState'/>
+<enum value='124' name='kCFSOCKS5ErrorNoAcceptableMethod'/>
+<enum value='123' name='kCFSOCKS5ErrorUnsupportedNegotiationMethod'/>
+<enum value='100' name='kCFSOCKSErrorUnknownClientVersion'/>
+<enum value='101' name='kCFSOCKSErrorUnsupportedServerVersion'/>
+<enum value='-1002' name='kCFStreamErrorHTTPAuthenticationBadPassword'/>
+<enum value='-1001' name='kCFStreamErrorHTTPAuthenticationBadUserName'/>
+<enum value='-1000' name='kCFStreamErrorHTTPAuthenticationTypeUnsupported'/>
+<enum value='-3' name='kCFStreamErrorHTTPBadURL'/>
+<enum value='-1' name='kCFStreamErrorHTTPParseFailure'/>
+<enum value='-2' name='kCFStreamErrorHTTPRedirectionLoop'/>
+<enum value='93' name='kCFStreamErrorSOCKS4IdConflict'/>
+<enum value='92' name='kCFStreamErrorSOCKS4IdentdFailed'/>
+<enum value='91' name='kCFStreamErrorSOCKS4RequestFailed'/>
+<enum value='2' name='kCFStreamErrorSOCKS4SubDomainResponse'/>
+<enum value='1' name='kCFStreamErrorSOCKS5BadResponseAddr'/>
+<enum value='2' name='kCFStreamErrorSOCKS5BadState'/>
+<enum value='4' name='kCFStreamErrorSOCKS5SubDomainMethod'/>
+<enum value='5' name='kCFStreamErrorSOCKS5SubDomainResponse'/>
+<enum value='3' name='kCFStreamErrorSOCKS5SubDomainUserPass'/>
+<enum value='0' name='kCFStreamErrorSOCKSSubDomainNone'/>
+<enum value='1' name='kCFStreamErrorSOCKSSubDomainVersionCode'/>
+<enum value='3' name='kCFStreamErrorSOCKSUnknownClientVersion'/>
+<enum value='0' name='kCFStreamSocketSecurityNone'/>
+<enum value='1' name='kCFStreamSocketSecuritySSLv2'/>
+<enum value='3' name='kCFStreamSocketSecuritySSLv23'/>
+<enum value='2' name='kCFStreamSocketSecuritySSLv3'/>
+<enum value='4' name='kCFStreamSocketSecurityTLSv1'/>
+<enum value='-1011' name='kCFURLErrorBadServerResponse'/>
+<enum value='-1000' name='kCFURLErrorBadURL'/>
+<enum value='-1019' name='kCFURLErrorCallIsActive'/>
+<enum value='-999' name='kCFURLErrorCancelled'/>
+<enum value='-3002' name='kCFURLErrorCannotCloseFile'/>
+<enum value='-1004' name='kCFURLErrorCannotConnectToHost'/>
+<enum value='-3000' name='kCFURLErrorCannotCreateFile'/>
+<enum value='-1016' name='kCFURLErrorCannotDecodeContentData'/>
+<enum value='-1015' name='kCFURLErrorCannotDecodeRawData'/>
+<enum value='-1003' name='kCFURLErrorCannotFindHost'/>
+<enum value='-2000' name='kCFURLErrorCannotLoadFromNetwork'/>
+<enum value='-3005' name='kCFURLErrorCannotMoveFile'/>
+<enum value='-3001' name='kCFURLErrorCannotOpenFile'/>
+<enum value='-1017' name='kCFURLErrorCannotParseResponse'/>
+<enum value='-3004' name='kCFURLErrorCannotRemoveFile'/>
+<enum value='-3003' name='kCFURLErrorCannotWriteToFile'/>
+<enum value='-1205' name='kCFURLErrorClientCertificateRejected'/>
+<enum value='-1206' name='kCFURLErrorClientCertificateRequired'/>
+<enum value='-1006' name='kCFURLErrorDNSLookupFailed'/>
+<enum value='-1103' name='kCFURLErrorDataLengthExceedsMaximum'/>
+<enum value='-1020' name='kCFURLErrorDataNotAllowed'/>
+<enum value='-3006' name='kCFURLErrorDownloadDecodingFailedMidStream'/>
+<enum value='-3007' name='kCFURLErrorDownloadDecodingFailedToComplete'/>
+<enum value='-1100' name='kCFURLErrorFileDoesNotExist'/>
+<enum value='-1101' name='kCFURLErrorFileIsDirectory'/>
+<enum value='-1007' name='kCFURLErrorHTTPTooManyRedirects'/>
+<enum value='-1018' name='kCFURLErrorInternationalRoamingOff'/>
+<enum value='-1005' name='kCFURLErrorNetworkConnectionLost'/>
+<enum value='-1102' name='kCFURLErrorNoPermissionsToReadFile'/>
+<enum value='-1009' name='kCFURLErrorNotConnectedToInternet'/>
+<enum value='-1010' name='kCFURLErrorRedirectToNonExistentLocation'/>
+<enum value='-1021' name='kCFURLErrorRequestBodyStreamExhausted'/>
+<enum value='-1008' name='kCFURLErrorResourceUnavailable'/>
+<enum value='-1200' name='kCFURLErrorSecureConnectionFailed'/>
+<enum value='-1201' name='kCFURLErrorServerCertificateHasBadDate'/>
+<enum value='-1203' name='kCFURLErrorServerCertificateHasUnknownRoot'/>
+<enum value='-1204' name='kCFURLErrorServerCertificateNotYetValid'/>
+<enum value='-1202' name='kCFURLErrorServerCertificateUntrusted'/>
+<enum value='-1001' name='kCFURLErrorTimedOut'/>
+<enum value='-998' name='kCFURLErrorUnknown'/>
+<enum value='-1002' name='kCFURLErrorUnsupportedURL'/>
+<enum value='-1013' name='kCFURLErrorUserAuthenticationRequired'/>
+<enum value='-1012' name='kCFURLErrorUserCancelledAuthentication'/>
+<enum value='-1014' name='kCFURLErrorZeroByteResource'/>
+<enum value='255' name='kSOCKS5NoAcceptableMethod'/>
+<function name='CFFTPCreateParsedResourceListing'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='UInt8*' name='buffer' type='*' const='true'/>
+<arg declared_type='CFIndex' name='bufferLength' type='l'/>
+<arg declared_type='CFDictionaryRef*' name='parsed' type='^^{__CFDictionary}'/>
+<retval declared_type='CFIndex' type='l'/>
+</function>
+<function name='CFHTTPAuthenticationAppliesToRequest'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPAuthenticationCopyDomains'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CFHTTPAuthenticationCopyMethod'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFHTTPAuthenticationCopyRealm'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFHTTPAuthenticationCreateFromResponse'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFHTTPMessageRef' name='response' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFHTTPAuthenticationRef' type='^{_CFHTTPAuthentication=}'/>
+</function>
+<function name='CFHTTPAuthenticationGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CFHTTPAuthenticationIsValid'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPAuthenticationRequiresAccountDomain'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPAuthenticationRequiresOrderedRequests'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPAuthenticationRequiresUserNameAndPassword'>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageAddAuthentication'>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFHTTPMessageRef' name='authenticationFailureResponse' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFStringRef' name='username' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='password' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='authenticationScheme' type='^{__CFString=}'/>
+<arg declared_type='Boolean' name='forProxy' type='B'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageAppendBytes'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='UInt8*' name='newBytes' type='*' const='true'/>
+<arg declared_type='CFIndex' name='numBytes' type='l'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageApplyCredentialDictionary'>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<arg declared_type='CFDictionaryRef' name='dict' type='^{__CFDictionary=}'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageApplyCredentials'>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFHTTPAuthenticationRef' name='auth' type='^{_CFHTTPAuthentication=}'/>
+<arg declared_type='CFStringRef' name='username' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='password' type='^{__CFString=}'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageCopyAllHeaderFields'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CFHTTPMessageCopyBody'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CFHTTPMessageCopyHeaderFieldValue'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFStringRef' name='headerField' type='^{__CFString=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFHTTPMessageCopyRequestMethod'>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFHTTPMessageCopyRequestURL'>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFURLRef' type='^{__CFURL=}'/>
+</function>
+<function name='CFHTTPMessageCopyResponseStatusLine'>
+<arg declared_type='CFHTTPMessageRef' name='response' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFHTTPMessageCopySerializedMessage'>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CFHTTPMessageCopyVersion'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFHTTPMessageCreateCopy'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFHTTPMessageRef' type='^{__CFHTTPMessage=}'/>
+</function>
+<function name='CFHTTPMessageCreateEmpty'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='Boolean' name='isRequest' type='B'/>
+<retval declared_type='CFHTTPMessageRef' type='^{__CFHTTPMessage=}'/>
+</function>
+<function name='CFHTTPMessageCreateRequest'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFStringRef' name='requestMethod' type='^{__CFString=}'/>
+<arg declared_type='CFURLRef' name='url' type='^{__CFURL=}'/>
+<arg declared_type='CFStringRef' name='httpVersion' type='^{__CFString=}'/>
+<retval declared_type='CFHTTPMessageRef' type='^{__CFHTTPMessage=}'/>
+</function>
+<function name='CFHTTPMessageCreateResponse'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFIndex' name='statusCode' type='l'/>
+<arg declared_type='CFStringRef' name='statusDescription' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='httpVersion' type='^{__CFString=}'/>
+<retval declared_type='CFHTTPMessageRef' type='^{__CFHTTPMessage=}'/>
+</function>
+<function name='CFHTTPMessageGetResponseStatusCode'>
+<arg declared_type='CFHTTPMessageRef' name='response' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFIndex' type='l'/>
+</function>
+<function name='CFHTTPMessageGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CFHTTPMessageIsHeaderComplete'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageIsRequest'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHTTPMessageSetBody'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFDataRef' name='bodyData' type='^{__CFData=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFHTTPMessageSetHeaderFieldValue'>
+<arg declared_type='CFHTTPMessageRef' name='message' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFStringRef' name='headerField' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='value' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFHostCancelInfoResolution'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='CFHostInfoType' name='info' type='i'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFHostCreateCopy'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFHostRef' name='host' type='^{__CFHost=}'/>
+<retval declared_type='CFHostRef' type='^{__CFHost=}'/>
+</function>
+<function name='CFHostCreateWithAddress'>
+<arg declared_type='CFAllocatorRef' name='allocator' type='^{__CFAllocator=}'/>
+<arg declared_type='CFDataRef' name='addr' type='^{__CFData=}'/>
+<retval declared_type='CFHostRef' type='^{__CFHost=}'/>
+</function>
+<function name='CFHostCreateWithName'>
+<arg declared_type='CFAllocatorRef' name='allocator' type='^{__CFAllocator=}'/>
+<arg declared_type='CFStringRef' name='hostname' type='^{__CFString=}'/>
+<retval declared_type='CFHostRef' type='^{__CFHost=}'/>
+</function>
+<function name='CFHostGetAddressing'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='Boolean*' name='hasBeenResolved' type='^B'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CFHostGetNames'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='Boolean*' name='hasBeenResolved' type='^B'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CFHostGetReachability'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='Boolean*' name='hasBeenResolved' type='^B'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CFHostGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CFHostScheduleWithRunLoop'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFHostSetClient'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg function_pointer='true' declared_type='CFHostClientCallBack' name='clientCB' type='^?'>
+<arg declared_type='CFHostRef' type='^{__CFHost=}'/>
+<arg declared_type='CFHostInfoType' type='i'/>
+<arg declared_type='CFStreamError*' type='^{_CFStreamError=ii}' const='true'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='CFHostClientContext*' name='clientContext' type='^{CFHostClientContext=i^v^?^?^?}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHostStartInfoResolution'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='CFHostInfoType' name='info' type='i'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFHostUnscheduleFromRunLoop'>
+<arg declared_type='CFHostRef' name='theHost' type='^{__CFHost=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetDiagnosticCopyNetworkStatusPassively'>
+<arg declared_type='CFNetDiagnosticRef' name='details' type='^{__CFNetDiagnostic=}'/>
+<arg declared_type='CFStringRef*' name='description' type='^^{__CFString}'/>
+<retval declared_type='CFNetDiagnosticStatus' type='l'/>
+</function>
+<function name='CFNetDiagnosticCreateWithStreams'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFReadStreamRef' name='readStream' type='^{__CFReadStream=}'/>
+<arg declared_type='CFWriteStreamRef' name='writeStream' type='^{__CFWriteStream=}'/>
+<retval declared_type='CFNetDiagnosticRef' type='^{__CFNetDiagnostic=}'/>
+</function>
+<function name='CFNetDiagnosticCreateWithURL'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFURLRef' name='url' type='^{__CFURL=}'/>
+<retval declared_type='CFNetDiagnosticRef' type='^{__CFNetDiagnostic=}'/>
+</function>
+<function name='CFNetDiagnosticDiagnoseProblemInteractively'>
+<arg declared_type='CFNetDiagnosticRef' name='details' type='^{__CFNetDiagnostic=}'/>
+<retval declared_type='CFNetDiagnosticStatus' type='l'/>
+</function>
+<function name='CFNetDiagnosticSetName'>
+<arg declared_type='CFNetDiagnosticRef' name='details' type='^{__CFNetDiagnostic=}'/>
+<arg declared_type='CFStringRef' name='name' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceBrowserCreate'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg function_pointer='true' declared_type='CFNetServiceBrowserClientCallBack' name='clientCB' type='^?'>
+<arg declared_type='CFNetServiceBrowserRef' type='^{__CFNetServiceBrowser=}'/>
+<arg declared_type='CFOptionFlags' type='L'/>
+<arg declared_type='CFTypeRef' type='^v'/>
+<arg declared_type='CFStreamError*' type='^{_CFStreamError=ii}'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='CFNetServiceClientContext*' name='clientContext' type='^{CFNetServiceClientContext=i^v^?^?^?}'/>
+<retval declared_type='CFNetServiceBrowserRef' type='^{__CFNetServiceBrowser=}'/>
+</function>
+<function name='CFNetServiceBrowserGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CFNetServiceBrowserInvalidate'>
+<arg declared_type='CFNetServiceBrowserRef' name='browser' type='^{__CFNetServiceBrowser=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceBrowserScheduleWithRunLoop'>
+<arg declared_type='CFNetServiceBrowserRef' name='browser' type='^{__CFNetServiceBrowser=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceBrowserSearchForDomains'>
+<arg declared_type='CFNetServiceBrowserRef' name='browser' type='^{__CFNetServiceBrowser=}'/>
+<arg declared_type='Boolean' name='registrationDomains' type='B'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceBrowserSearchForServices'>
+<arg declared_type='CFNetServiceBrowserRef' name='browser' type='^{__CFNetServiceBrowser=}'/>
+<arg declared_type='CFStringRef' name='domain' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='serviceType' type='^{__CFString=}'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceBrowserStopSearch'>
+<arg declared_type='CFNetServiceBrowserRef' name='browser' type='^{__CFNetServiceBrowser=}'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceBrowserUnscheduleFromRunLoop'>
+<arg declared_type='CFNetServiceBrowserRef' name='browser' type='^{__CFNetServiceBrowser=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceCancel'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceCreate'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFStringRef' name='domain' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='serviceType' type='^{__CFString=}'/>
+<arg declared_type='CFStringRef' name='name' type='^{__CFString=}'/>
+<arg declared_type='SInt32' name='port' type='l'/>
+<retval declared_type='CFNetServiceRef' type='^{__CFNetService=}'/>
+</function>
+<function name='CFNetServiceCreateCopy'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFNetServiceRef' name='service' type='^{__CFNetService=}'/>
+<retval declared_type='CFNetServiceRef' type='^{__CFNetService=}'/>
+</function>
+<function name='CFNetServiceCreateDictionaryWithTXTData'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFDataRef' name='txtRecord' type='^{__CFData=}'/>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CFNetServiceCreateTXTDataWithDictionary'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFDictionaryRef' name='keyValuePairs' type='^{__CFDictionary=}'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CFNetServiceGetAddressing'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CFNetServiceGetDomain'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFNetServiceGetName'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFNetServiceGetPortNumber'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='SInt32' type='l'/>
+</function>
+<function name='CFNetServiceGetTXTData'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CFNetServiceGetTargetHost'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFNetServiceGetType'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CFNetServiceGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CFNetServiceMonitorCreate'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg function_pointer='true' declared_type='CFNetServiceMonitorClientCallBack' name='clientCB' type='^?'>
+<arg declared_type='CFNetServiceMonitorRef' type='^{__CFNetServiceMonitor=}'/>
+<arg declared_type='CFNetServiceRef' type='^{__CFNetService=}'/>
+<arg declared_type='CFNetServiceMonitorType' type='i'/>
+<arg declared_type='CFDataRef' type='^{__CFData=}'/>
+<arg declared_type='CFStreamError*' type='^{_CFStreamError=ii}'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='CFNetServiceClientContext*' name='clientContext' type='^{CFNetServiceClientContext=i^v^?^?^?}'/>
+<retval declared_type='CFNetServiceMonitorRef' type='^{__CFNetServiceMonitor=}'/>
+</function>
+<function name='CFNetServiceMonitorGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CFNetServiceMonitorInvalidate'>
+<arg declared_type='CFNetServiceMonitorRef' name='monitor' type='^{__CFNetServiceMonitor=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceMonitorScheduleWithRunLoop'>
+<arg declared_type='CFNetServiceMonitorRef' name='monitor' type='^{__CFNetServiceMonitor=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceMonitorStart'>
+<arg declared_type='CFNetServiceMonitorRef' name='monitor' type='^{__CFNetServiceMonitor=}'/>
+<arg declared_type='CFNetServiceMonitorType' name='recordType' type='i'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceMonitorStop'>
+<arg declared_type='CFNetServiceMonitorRef' name='monitor' type='^{__CFNetServiceMonitor=}'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceMonitorUnscheduleFromRunLoop'>
+<arg declared_type='CFNetServiceMonitorRef' name='monitor' type='^{__CFNetServiceMonitor=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceRegisterWithOptions'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg declared_type='CFOptionFlags' name='options' type='L'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceResolveWithTimeout'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg declared_type='CFTimeInterval' name='timeout' type='d'/>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceScheduleWithRunLoop'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetServiceSetClient'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg function_pointer='true' declared_type='CFNetServiceClientCallBack' name='clientCB' type='^?'>
+<arg declared_type='CFNetServiceRef' type='^{__CFNetService=}'/>
+<arg declared_type='CFStreamError*' type='^{_CFStreamError=ii}'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='CFNetServiceClientContext*' name='clientContext' type='^{CFNetServiceClientContext=i^v^?^?^?}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceSetTXTData'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg declared_type='CFDataRef' name='txtRecord' type='^{__CFData=}'/>
+<retval declared_type='Boolean' type='B'/>
+</function>
+<function name='CFNetServiceUnscheduleFromRunLoop'>
+<arg declared_type='CFNetServiceRef' name='theService' type='^{__CFNetService=}'/>
+<arg declared_type='CFRunLoopRef' name='runLoop' type='^{__CFRunLoop=}'/>
+<arg declared_type='CFStringRef' name='runLoopMode' type='^{__CFString=}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFNetworkCopyProxiesForAutoConfigurationScript'>
+<arg declared_type='CFStringRef' name='proxyAutoConfigurationScript' type='^{__CFString=}'/>
+<arg declared_type='CFURLRef' name='targetURL' type='^{__CFURL=}'/>
+<arg declared_type='CFErrorRef*' name='error' type='^^{__CFError}'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CFNetworkCopyProxiesForURL'>
+<arg declared_type='CFURLRef' name='url' type='^{__CFURL=}'/>
+<arg declared_type='CFDictionaryRef' name='proxySettings' type='^{__CFDictionary=}'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CFNetworkCopySystemProxySettings'>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CFNetworkExecuteProxyAutoConfigurationScript'>
+<arg declared_type='CFStringRef' name='proxyAutoConfigurationScript' type='^{__CFString=}'/>
+<arg declared_type='CFURLRef' name='targetURL' type='^{__CFURL=}'/>
+<arg function_pointer='true' declared_type='CFProxyAutoConfigurationResultCallback' name='cb' type='^?'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='CFArrayRef' type='^{__CFArray=}'/>
+<arg declared_type='CFErrorRef' type='^{__CFError=}'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='CFStreamClientContext*' name='clientContext' type='^{_CFStreamClientContext=i^v^?^?^?}'/>
+<retval declared_type='CFRunLoopSourceRef' type='^{__CFRunLoopSource=}'/>
+</function>
+<function name='CFNetworkExecuteProxyAutoConfigurationURL'>
+<arg declared_type='CFURLRef' name='proxyAutoConfigURL' type='^{__CFURL=}'/>
+<arg declared_type='CFURLRef' name='targetURL' type='^{__CFURL=}'/>
+<arg function_pointer='true' declared_type='CFProxyAutoConfigurationResultCallback' name='cb' type='^?'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='CFArrayRef' type='^{__CFArray=}'/>
+<arg declared_type='CFErrorRef' type='^{__CFError=}'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='CFStreamClientContext*' name='clientContext' type='^{_CFStreamClientContext=i^v^?^?^?}'/>
+<retval declared_type='CFRunLoopSourceRef' type='^{__CFRunLoopSource=}'/>
+</function>
+<function name='CFReadStreamCreateForHTTPRequest'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFHTTPMessageRef' name='request' type='^{__CFHTTPMessage=}'/>
+<retval declared_type='CFReadStreamRef' type='^{__CFReadStream=}'/>
+</function>
+<function name='CFReadStreamCreateForStreamedHTTPRequest'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFHTTPMessageRef' name='requestHeaders' type='^{__CFHTTPMessage=}'/>
+<arg declared_type='CFReadStreamRef' name='requestBody' type='^{__CFReadStream=}'/>
+<retval declared_type='CFReadStreamRef' type='^{__CFReadStream=}'/>
+</function>
+<function name='CFReadStreamCreateWithFTPURL'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFURLRef' name='ftpURL' type='^{__CFURL=}'/>
+<retval declared_type='CFReadStreamRef' type='^{__CFReadStream=}'/>
+</function>
+<function name='CFSocketStreamSOCKSGetError' inline='true'>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}' const='true'/>
+<retval declared_type='SInt32' type='l'/>
+</function>
+<function name='CFSocketStreamSOCKSGetErrorSubdomain' inline='true'>
+<arg declared_type='CFStreamError*' name='error' type='^{_CFStreamError=ii}' const='true'/>
+<retval declared_type='SInt32' type='l'/>
+</function>
+<function name='CFStreamCreatePairWithSocketToCFHost'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFHostRef' name='host' type='^{__CFHost=}'/>
+<arg declared_type='SInt32' name='port' type='l'/>
+<arg declared_type='CFReadStreamRef*' name='readStream' type='^^{__CFReadStream}'/>
+<arg declared_type='CFWriteStreamRef*' name='writeStream' type='^^{__CFWriteStream}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFStreamCreatePairWithSocketToNetService'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFNetServiceRef' name='service' type='^{__CFNetService=}'/>
+<arg declared_type='CFReadStreamRef*' name='readStream' type='^^{__CFReadStream}'/>
+<arg declared_type='CFWriteStreamRef*' name='writeStream' type='^^{__CFWriteStream}'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CFWriteStreamCreateWithFTPURL'>
+<arg declared_type='CFAllocatorRef' name='alloc' type='^{__CFAllocator=}'/>
+<arg declared_type='CFURLRef' name='ftpURL' type='^{__CFURL=}'/>
+<retval declared_type='CFWriteStreamRef' type='^{__CFWriteStream=}'/>
+</function>
+</signatures>

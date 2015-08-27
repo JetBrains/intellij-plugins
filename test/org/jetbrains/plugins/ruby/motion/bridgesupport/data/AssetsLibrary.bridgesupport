@@ -1,0 +1,309 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant name='ALAssetPropertyDate' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetPropertyDuration' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetPropertyLocation' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetPropertyOrientation' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetPropertyRepresentations' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetPropertyType' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetPropertyURLs' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetTypePhoto' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetTypeUnknown' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetTypeVideo' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetsGroupPropertyName' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetsGroupPropertyPersistentID' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetsGroupPropertyType' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetsGroupPropertyURL' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetsLibraryChangedNotification' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALAssetsLibraryErrorDomain' declared_type='NSString*' type='@' const='true'/>
+<constant name='ALErrorInvalidProperty' declared_type='NSString*' type='@' const='true'/>
+<enum name='ALAssetOrientationDown' value='1'/>
+<enum name='ALAssetOrientationDownMirrored' value='5'/>
+<enum name='ALAssetOrientationLeft' value='2'/>
+<enum name='ALAssetOrientationLeftMirrored' value='6'/>
+<enum name='ALAssetOrientationRight' value='3'/>
+<enum name='ALAssetOrientationRightMirrored' value='7'/>
+<enum name='ALAssetOrientationUp' value='0'/>
+<enum name='ALAssetOrientationUpMirrored' value='4'/>
+<enum name='ALAssetsGroupAlbum' value='2'/>
+<enum name='ALAssetsGroupAll' value='4294967295'/>
+<enum name='ALAssetsGroupEvent' value='4'/>
+<enum name='ALAssetsGroupFaces' value='8'/>
+<enum name='ALAssetsGroupLibrary' value='1'/>
+<enum name='ALAssetsGroupPhotoStream' value='32'/>
+<enum name='ALAssetsGroupSavedPhotos' value='16'/>
+<enum name='ALAssetsLibraryAccessGloballyDeniedError' value='-3312'/>
+<enum name='ALAssetsLibraryAccessUserDeniedError' value='-3311'/>
+<enum name='ALAssetsLibraryDataUnavailableError' value='-3310'/>
+<enum name='ALAssetsLibraryUnknownError' value='-1'/>
+<enum name='ALAssetsLibraryWriteBusyError' value='-3301'/>
+<enum name='ALAssetsLibraryWriteDataEncodingError' value='-3304'/>
+<enum name='ALAssetsLibraryWriteDiskSpaceError' value='-3305'/>
+<enum name='ALAssetsLibraryWriteFailedError' value='-3300'/>
+<enum name='ALAssetsLibraryWriteIncompatibleDataError' value='-3303'/>
+<enum name='ALAssetsLibraryWriteInvalidDataError' value='-3302'/>
+<class name='ALAsset'>
+<method selector='aspectRatioThumbnail'>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='defaultRepresentation'>
+<retval declared_type='ALAssetRepresentation*' type='@'/>
+</method>
+<method selector='isEditable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='originalAsset'>
+<retval declared_type='ALAsset*' type='@'/>
+</method>
+<method selector='representationForUTI:'>
+<arg name='representationUTI' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='ALAssetRepresentation*' type='@'/>
+</method>
+<method selector='setImageData:metadata:completionBlock:'>
+<arg name='imageData' declared_type='NSData*' type='@' index='0'/>
+<arg name='metadata' declared_type='NSDictionary*' type='@' index='1'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteImageCompletionBlock' type='@?' index='2'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoAtPath:completionBlock:'>
+<arg name='videoPathURL' declared_type='NSURL*' type='@' index='0'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteVideoCompletionBlock' type='@?' index='1'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='thumbnail'>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='valueForProperty:'>
+<arg name='property' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='writeModifiedImageDataToSavedPhotosAlbum:metadata:completionBlock:'>
+<arg name='imageData' declared_type='NSData*' type='@' index='0'/>
+<arg name='metadata' declared_type='NSDictionary*' type='@' index='1'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteImageCompletionBlock' type='@?' index='2'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='writeModifiedVideoAtPathToSavedPhotosAlbum:completionBlock:'>
+<arg name='videoPathURL' declared_type='NSURL*' type='@' index='0'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteVideoCompletionBlock' type='@?' index='1'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='ALAssetRepresentation'>
+<method selector='CGImageWithOptions:'>
+<arg name='options' declared_type='NSDictionary*' type='@' index='0'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='UTI'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='dimensions'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='filename'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='fullResolutionImage'>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='fullScreenImage'>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='getBytes:fromOffset:length:error:'>
+<arg name='buffer' declared_type='uint8_t*' type='*' index='0'/>
+<arg name='offset' declared_type='long long' type='q' index='1'/>
+<arg name='length' declared_type='NSUInteger' type='I' index='2'/>
+<arg name='error' declared_type='NSError**' type='^@' index='3'/>
+<retval declared_type='NSUInteger' type='I'/>
+</method>
+<method selector='metadata'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='orientation'>
+<retval declared_type='ALAssetOrientation' type='i'/>
+</method>
+<method selector='scale'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='size'>
+<retval declared_type='long long' type='q'/>
+</method>
+<method selector='url'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+</class>
+<class name='ALAssetsFilter'>
+<method selector='allAssets' class_method='true'>
+<retval declared_type='ALAssetsFilter*' type='@'/>
+</method>
+<method selector='allPhotos' class_method='true'>
+<retval declared_type='ALAssetsFilter*' type='@'/>
+</method>
+<method selector='allVideos' class_method='true'>
+<retval declared_type='ALAssetsFilter*' type='@'/>
+</method>
+</class>
+<class name='ALAssetsGroup'>
+<method selector='addAsset:'>
+<arg name='asset' declared_type='ALAsset*' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='enumerateAssetsAtIndexes:options:usingBlock:'>
+<arg name='indexSet' declared_type='NSIndexSet*' type='@' index='0'/>
+<arg name='options' declared_type='NSEnumerationOptions' type='I' index='1'/>
+<arg function_pointer='true' name='enumerationBlock' declared_type='ALAssetsGroupEnumerationResultsBlock' type='@?' index='2'>
+<arg declared_type='ALAsset*' type='@'/>
+<arg declared_type='NSUInteger' type='I'/>
+<arg declared_type='BOOL*' type='^B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='enumerateAssetsUsingBlock:'>
+<arg function_pointer='true' name='enumerationBlock' declared_type='ALAssetsGroupEnumerationResultsBlock' type='@?' index='0'>
+<arg declared_type='ALAsset*' type='@'/>
+<arg declared_type='NSUInteger' type='I'/>
+<arg declared_type='BOOL*' type='^B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='enumerateAssetsWithOptions:usingBlock:'>
+<arg name='options' declared_type='NSEnumerationOptions' type='I' index='0'/>
+<arg function_pointer='true' name='enumerationBlock' declared_type='ALAssetsGroupEnumerationResultsBlock' type='@?' index='1'>
+<arg declared_type='ALAsset*' type='@'/>
+<arg declared_type='NSUInteger' type='I'/>
+<arg declared_type='BOOL*' type='^B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isEditable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='numberOfAssets'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='posterImage'>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='setAssetsFilter:'>
+<arg name='filter' declared_type='ALAssetsFilter*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='valueForProperty:'>
+<arg name='property' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='ALAssetsLibrary'>
+<method selector='addAssetsGroupAlbumWithName:resultBlock:failureBlock:'>
+<arg name='name' declared_type='NSString*' type='@' index='0'/>
+<arg function_pointer='true' name='resultBlock' declared_type='ALAssetsLibraryGroupResultBlock' type='@?' index='1'>
+<arg declared_type='ALAssetsGroup*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg function_pointer='true' name='failureBlock' declared_type='ALAssetsLibraryAccessFailureBlock' type='@?' index='2'>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='assetForURL:resultBlock:failureBlock:'>
+<arg name='assetURL' declared_type='NSURL*' type='@' index='0'/>
+<arg function_pointer='true' name='resultBlock' declared_type='ALAssetsLibraryAssetForURLResultBlock' type='@?' index='1'>
+<arg declared_type='ALAsset*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg function_pointer='true' name='failureBlock' declared_type='ALAssetsLibraryAccessFailureBlock' type='@?' index='2'>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='enumerateGroupsWithTypes:usingBlock:failureBlock:'>
+<arg name='types' declared_type='ALAssetsGroupType' type='I' index='0'/>
+<arg function_pointer='true' name='enumerationBlock' declared_type='ALAssetsLibraryGroupsEnumerationResultsBlock' type='@?' index='1'>
+<arg declared_type='ALAssetsGroup*' type='@'/>
+<arg declared_type='BOOL*' type='^B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg function_pointer='true' name='failureBlock' declared_type='ALAssetsLibraryAccessFailureBlock' type='@?' index='2'>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='groupForURL:resultBlock:failureBlock:'>
+<arg name='groupURL' declared_type='NSURL*' type='@' index='0'/>
+<arg function_pointer='true' name='resultBlock' declared_type='ALAssetsLibraryGroupResultBlock' type='@?' index='1'>
+<arg declared_type='ALAssetsGroup*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg function_pointer='true' name='failureBlock' declared_type='ALAssetsLibraryAccessFailureBlock' type='@?' index='2'>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoAtPathIsCompatibleWithSavedPhotosAlbum:'>
+<arg name='videoPathURL' declared_type='NSURL*' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='writeImageDataToSavedPhotosAlbum:metadata:completionBlock:'>
+<arg name='imageData' declared_type='NSData*' type='@' index='0'/>
+<arg name='metadata' declared_type='NSDictionary*' type='@' index='1'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteImageCompletionBlock' type='@?' index='2'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='writeImageToSavedPhotosAlbum:metadata:completionBlock:'>
+<arg name='imageRef' declared_type='CGImageRef' type='^{CGImage=}' index='0'/>
+<arg name='metadata' declared_type='NSDictionary*' type='@' index='1'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteImageCompletionBlock' type='@?' index='2'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='writeImageToSavedPhotosAlbum:orientation:completionBlock:'>
+<arg name='imageRef' declared_type='CGImageRef' type='^{CGImage=}' index='0'/>
+<arg name='orientation' declared_type='ALAssetOrientation' type='i' index='1'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteImageCompletionBlock' type='@?' index='2'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='writeVideoAtPathToSavedPhotosAlbum:completionBlock:'>
+<arg name='videoPathURL' declared_type='NSURL*' type='@' index='0'/>
+<arg function_pointer='true' name='completionBlock' declared_type='ALAssetsLibraryWriteVideoCompletionBlock' type='@?' index='1'>
+<arg declared_type='NSURL*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+</signatures>

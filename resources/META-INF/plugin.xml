@@ -1,0 +1,65 @@
+<idea-plugin version="2">
+  <name>RubyMotion support</name>
+  <id>org.jetbrains.plugins.ruby.motion</id>
+  <description><![CDATA[
+  RubyMotion framework support<br>
+  RubyMotion lets you quickly develop cross-platform native apps for iOS, Android and OS X using Ruby language.
+  ]]></description>
+  <vendor>JetBrains</vendor>
+
+  <depends>com.intellij.modules.ultimate</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.RubyMotionUtil"
+                        serviceImplementation="org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl"/>
+    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader"
+                        serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader" />
+    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder"
+                        serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder"/>
+    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"
+                        serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"/>
+    <applicationService serviceInterface="com.jetbrains.cidr.execution.debugger.CidrEvaluatorHelper"
+                        serviceImplementation="org.jetbrains.plugins.ruby.motion.run.MotionEvaluatorHelper"/>
+
+    <projectService serviceInterface="com.jetbrains.cidr.CocoaDocumentationManager"
+                    serviceImplementation="org.jetbrains.plugins.ruby.motion.MotionDocumentationManager"/>
+
+    <moduleService serviceInterface="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache"
+                   serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache" />
+    <moduleService serviceInterface="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionSymbolsCache"
+                   serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionSymbolsCache"/>
+
+    <xdebugger.breakpointType implementation="org.jetbrains.plugins.ruby.motion.run.MotionLineBreakpointType"/>
+    <xdebugger.breakpointType implementation="org.jetbrains.plugins.ruby.motion.run.MotionExceptionBreakpointType"/>
+
+    <facetType implementation="org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacetType"/>
+
+    <fileTypeFactory implementation="org.jetbrains.plugins.ruby.motion.RubyMotionFileTypesLoader"/>
+
+    <directoryProjectConfigurator implementation="org.jetbrains.plugins.ruby.motion.RubyMotionFacetConfigurator"
+                                  order="after sdk"/>
+    <directoryProjectGenerator implementation="org.jetbrains.plugins.ruby.motion.RubyMotionGenerator"/>
+
+    <lang.substitutor language="PlistBase" implementationClass="org.jetbrains.plugins.ruby.motion.RubyMotionPListLanguageSubstitutor"/>
+
+
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.ruby">
+    <runConfigurationExtension implementation="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension"/>
+    <implicitRequireProvider implementation="org.jetbrains.plugins.ruby.motion.RubyMotionRequireProvider"/>
+    <!--RubyMotion completion provider should go before base because it customizes same elements as base does in the different way-->
+    <completionProvider implementation="org.jetbrains.plugins.ruby.motion.RubyMotionCompletionProvider" order="before base"/>
+    <symbolProvider implementation="org.jetbrains.plugins.ruby.motion.RubyMotionSymbolProvider"/>
+    <rubyTypeProvider implementation="org.jetbrains.plugins.ruby.motion.RubyMotionTypeProvider"/>
+    <paramDefProvider implementation="org.jetbrains.plugins.ruby.motion.paramdefs.RubyMotionParamdefsProvider"/>
+    <rake.rakeConsoleModifier implementation="org.jetbrains.plugins.ruby.motion.run.SimulatorRakeConsoleModifier"/>
+    <overriddenMethodGenerator implementation="org.jetbrains.plugins.ruby.motion.RubyMotionOverriddenMethodGenerator"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.debugger">
+    <languageSupportFactory implementation="org.jetbrains.plugins.ruby.motion.run.MotionDebuggerLanguageSupportFactory" />
+    <customValueRendererFactory implementation="org.jetbrains.plugins.ruby.motion.run.renderers.MotionValueRendererFactory"/>
+  </extensions>
+</idea-plugin>

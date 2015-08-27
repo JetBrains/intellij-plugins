@@ -1,0 +1,121 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant type='^{__CFString=}' name='kUTExportedTypeDeclarationsKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTImportedTypeDeclarationsKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTagClassFilenameExtension' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTagClassMIMEType' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeAliasFile' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeAliasRecord' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeAppleICNS' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeAppleProtectedMPEG4Audio' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeApplication' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeApplicationBundle' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeApplicationFile' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeArchive' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeAudio' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeAudiovisualContent' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeBMP' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeBundle' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeCHeader' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeCPlusPlusHeader' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeCPlusPlusSource' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeCSource' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeCompositeContent' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeConformsToKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeContact' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeContent' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeData' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeDescriptionKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeDirectory' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeDiskImage' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeFileURL' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeFlatRTFD' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeFolder' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeFramework' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeGIF' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeHTML' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeICO' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeIconFileKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeIdentifierKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeImage' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeInkText' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeItem' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeJPEG' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeJPEG2000' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeJavaSource' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMP3' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMPEG' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMPEG4' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMPEG4Audio' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMessage' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMountPoint' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeMovie' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeObjectiveCPlusPlusSource' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeObjectiveCSource' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypePDF' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypePICT' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypePNG' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypePackage' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypePlainText' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeQuickTimeImage' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeQuickTimeMovie' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeRTF' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeRTFD' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeReferenceURLKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeResolvable' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeSourceCode' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeSymLink' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeTIFF' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeTXNTextAndMultimediaData' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeTagSpecificationKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeText' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeURL' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeUTF16ExternalPlainText' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeUTF16PlainText' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeUTF8PlainText' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeVCard' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeVersionKey' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeVideo' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeVolume' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeWebArchive' const='true' declared_type='CFStringRef'/>
+<constant type='^{__CFString=}' name='kUTTypeXML' const='true' declared_type='CFStringRef'/>
+<function name='UTTypeConformsTo'>
+<arg type='^{__CFString=}' name='inUTI' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inConformsToUTI' declared_type='CFStringRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='UTTypeCopyDeclaration'>
+<arg type='^{__CFString=}' name='inUTI' declared_type='CFStringRef'/>
+<retval type='^{__CFDictionary=}' declared_type='CFDictionaryRef'/>
+</function>
+<function name='UTTypeCopyDeclaringBundleURL'>
+<arg type='^{__CFString=}' name='inUTI' declared_type='CFStringRef'/>
+<retval type='^{__CFURL=}' declared_type='CFURLRef'/>
+</function>
+<function name='UTTypeCopyDescription'>
+<arg type='^{__CFString=}' name='inUTI' declared_type='CFStringRef'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</function>
+<function name='UTTypeCopyPreferredTagWithClass'>
+<arg type='^{__CFString=}' name='inUTI' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inTagClass' declared_type='CFStringRef'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</function>
+<function name='UTTypeCreateAllIdentifiersForTag'>
+<arg type='^{__CFString=}' name='inTagClass' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inTag' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inConformingToUTI' declared_type='CFStringRef'/>
+<retval type='^{__CFArray=}' declared_type='CFArrayRef'/>
+</function>
+<function name='UTTypeCreatePreferredIdentifierForTag'>
+<arg type='^{__CFString=}' name='inTagClass' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inTag' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inConformingToUTI' declared_type='CFStringRef'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</function>
+<function name='UTTypeEqual'>
+<arg type='^{__CFString=}' name='inUTI1' declared_type='CFStringRef'/>
+<arg type='^{__CFString=}' name='inUTI2' declared_type='CFStringRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+</signatures>

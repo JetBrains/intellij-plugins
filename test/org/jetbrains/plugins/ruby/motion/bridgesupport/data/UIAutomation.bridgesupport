@@ -1,0 +1,3065 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct name='CDStruct_11f37819' type='{_CDStruct_11f37819=&quot;_field1&quot;L&quot;_field2&quot;^@&quot;_field3&quot;^L&quot;_field4&quot;[5L]}'>
+<field name='_field1' declared_type='unsigned long' type='L'/>
+<field name='_field2' declared_type='id*' type='^@'/>
+<field name='_field3' declared_type='unsigned long*' type='^L'/>
+<field name='_field4' declared_type='unsigned long*' type='[5L]'/>
+</struct>
+<struct name='CDStruct_141d6fc6' type='{_CDStruct_141d6fc6=&quot;_field1&quot;i&quot;_field2&quot;i&quot;_field3&quot;{CGPoint=&quot;x&quot;f&quot;y&quot;f}&quot;_field4&quot;{CGPoint=&quot;x&quot;f&quot;y&quot;f}&quot;_field5&quot;I&quot;_field6&quot;Q&quot;_field7&quot;^v&quot;_field8&quot;i&quot;_field9&quot;i&quot;_field10&quot;I&quot;_field11&quot;*}'>
+<field name='_field1' declared_type='int' type='i'/>
+<field name='_field2' declared_type='int' type='i'/>
+<field name='_field3' declared_type='struct CGPoint' type='{CGPoint=&quot;x&quot;f&quot;y&quot;f}'/>
+<field name='_field4' declared_type='struct CGPoint' type='{CGPoint=&quot;x&quot;f&quot;y&quot;f}'/>
+<field name='_field5' declared_type='unsigned int' type='I'/>
+<field name='_field6' declared_type='unsigned long long' type='Q'/>
+<field name='_field7' declared_type='void*' type='^v'/>
+<field name='_field8' declared_type='int' type='i'/>
+<field name='_field9' declared_type='int' type='i'/>
+<field name='_field10' declared_type='unsigned int' type='I'/>
+<field name='_field11' declared_type='char*' type='*'/>
+</struct>
+<!--TODO: These definitions of CoreGraphics structs should not be included, otherwise-->
+<!--the actual definitions in CoreGraphics.bridgesupport will not be used.-->
+<!--<struct name='CGAffineTransform' type='{CGAffineTransform=&quot;_field1&quot;f&quot;_field2&quot;f&quot;_field3&quot;f&quot;_field4&quot;f&quot;_field5&quot;f&quot;_field6&quot;f}'>-->
+<!--<field name='_field1' declared_type='float' type='f'/>-->
+<!--<field name='_field2' declared_type='float' type='f'/>-->
+<!--<field name='_field3' declared_type='float' type='f'/>-->
+<!--<field name='_field4' declared_type='float' type='f'/>-->
+<!--<field name='_field5' declared_type='float' type='f'/>-->
+<!--<field name='_field6' declared_type='float' type='f'/>-->
+<!--</struct>-->
+<!--<struct name='CGPoint' type='{CGPoint=&quot;x&quot;f&quot;y&quot;f}'>-->
+<!--<field name='x' declared_type='float' type='f'/>-->
+<!--<field name='y' declared_type='float' type='f'/>-->
+<!--</struct>-->
+<!--<struct name='CGSize' type='{CGSize=&quot;_field1&quot;f&quot;_field2&quot;f}'>-->
+<!--<field name='_field1' declared_type='float' type='f'/>-->
+<!--<field name='_field2' declared_type='float' type='f'/>-->
+<!--</struct>-->
+<class name='NSArray'>
+<method selector='_uiaUniqueIndexOfObject:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='ancestry'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='axError'>
+<retval declared_type='long' type='l'/>
+</method>
+<method selector='axuiElementRef'>
+<retval declared_type='struct __AXUIElement*' type='^{__AXUIElement=}'/>
+</method>
+<method selector='centerPoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='checkIsValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='childWithTestingTrait:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='children'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='description'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstElementOfAttribute:withValue:forAttribute:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='int' type='i' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='parent'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='performAXAction:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='performAXAction:withValue:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='pid'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='rect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='registerObserver:forAXNotifications:' class_method='true'>
+<arg name='arg1' declared_type='struct __AXObserver*' type='^{__AXObserver=}' index='0'/>
+<arg name='arg2' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setValue:forAttribute:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='int' type='i' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='stringForAXError:' class_method='true'>
+<arg name='arg1' declared_type='long' type='l' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForAXNotification:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForAllKnownAttributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForAttributes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForTraits:' class_method='true'>
+<arg name='arg1' declared_type='unsigned long long' type='Q' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='traits'>
+<retval declared_type='unsigned long long' type='Q'/>
+</method>
+<method selector='traitsNumber'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxElementAtPosition:' class_method='true'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxElementWithAXUIElementRef:' class_method='true'>
+<arg name='arg1' declared_type='struct __AXUIElement*' type='^{__AXUIElement=}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxFocusedApplicationElement' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxSystemWideElement' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForAttribute:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForAttribute:parameter:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valuesForAllKnownAttributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valuesForAttributes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='NSValue'>
+<method selector='height'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='origin'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='size'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='width'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='x'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='y'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAActionSheet'>
+<method selector='cancelButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAAlert'>
+<method selector='_moreToOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='cancelButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='defaultButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAApplication'>
+<method selector='_axMainWindow'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_bundle'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_invalidate'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='actionSheet'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='alert'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='attributeKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bundleID'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bundlePath'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bundleVersion'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='editingMenu'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='init'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='interfaceOrientation'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='isCameraIrisOpen'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isVisible'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyWindow'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyboard'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='mainWindow'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='navigationBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='preferencesValueForKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingSynonymStrings'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setPreferencesValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='stateDescription'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='statusBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='switcherScrollView'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tabBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toolbar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='version'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='windows'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAButton'>
+<method selector='scriptingActionExpressionShouldFavorTapOffset'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAElement'>
+<method selector='_classForSimpleUIAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='Class' type='#'/>
+</method>
+<method selector='_convertPointFromCurrentInterfaceOrientation:' class_method='true'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='struct CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='_convertPointToCurrentInterfaceOrientation:' class_method='true'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='struct CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='_convertRectFromCurrentInterfaceOrientation:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_convertRectToCurrentInterfaceOrientation:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_countsString' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_createdTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_delayForAnimationsInProgress'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_delayForTimeInterval:' class_method='true'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_dragInsideWithOptions:withFlick:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_elementAtPosition:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementForSimpleUIAXElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementForUIAXElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementWithUIAXElement:parent:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementsForUIAXElements:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementsForUIAXElements:axFilter:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementsOfClass:forSelector:'>
+<arg name='arg1' declared_type='Class' type='#' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_emptyCaches'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_hitPointForObject:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_hitPointFromDictionary:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_hitpoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_initWithUIAXElement:parent:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_inspectConfirmElement:forAXAncestry:index:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='unsigned int*' type='^I' index='2'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_inspectedElementForAXAncestry:index:triedKeys:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='unsigned int*' type='^I' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_inspectedToManyRelationship:forAXAncestry:index:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='unsigned int*' type='^I' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_inspectedToOneRelationship:forAXAncestry:index:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='unsigned int*' type='^I' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_invalidate'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_invocationForInvoker:selector:arguments:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<arg name='arg3' declared_type='char*' type='*' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsEscapedStringForString:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsMethodCallStringForInvoker:selector:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsMethodNameForSelector:' class_method='true'>
+<arg name='arg1' declared_type='SEL' type=':' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForDictionary:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForInvocation:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForInvocationPath:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForObject:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForRect:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForString:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_jsStringForUIAElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_lastAccessedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_liveCount' class_method='true'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_logInfo'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_logInfoWithChildren'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_logVerbosity:format:' class_method='true'>
+<arg name='arg1' declared_type='unsigned int' type='I' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_maxCount' class_method='true'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_nameForAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_objectWithPatienceInvocationFromUIAObject:selector:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_patienceForAttribute:value:'>
+<arg name='arg1' declared_type='SEL' type=':' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_patienceInvocationPathForUIAObject:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_patienceRetryInterval' class_method='true'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_performInvocationPath:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_predicateForPredicateOrString:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_prepareForAction:'>
+<arg name='arg1' declared_type='SEL' type=':' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_rectFromDictionary:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_rotateWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_scriptingSynonymsForSubElement:maxCount:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='unsigned int' type='I' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_selfPatienceInvocation'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_setLastAccessedTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_setPatienceInvocation:forUIAObject:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_setPatienceRetryInterval:' class_method='true'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_setSelfPatienceInvocation:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_shouldAllowSettingValue'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_synonymToManyRelationshipKeys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_transformToRotateFromInterfaceOrientation:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='struct CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</method>
+<method selector='_transformToRotateToInterfaceOrientation:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='struct CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</method>
+<method selector='_tryHitpoint:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_uiaClassForClass:' class_method='true'>
+<arg name='arg1' declared_type='Class' type='#' index='0'/>
+<retval declared_type='Class' type='#'/>
+</method>
+<method selector='_uiaHitpoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_uiaRect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_valueForAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_waitForInvocationPath:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='actionSheet'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='actionSheets'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='activate'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='activityIndicators'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='allKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='allKeys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='ancestry'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='attributeKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='attributeKeys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='attributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='buttons'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='checkIsValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='chopPatience'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='className'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='copyWithZone:'>
+<arg name='arg1' declared_type='struct _NSZone*' type='^{_NSZone=}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='description'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dom'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='doubleTap'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='dragInsideWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='editingMenus'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elementAtPoint:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elementAtPosition:' class_method='true'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elementForUIAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='flickInsideWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='hasKeyboardFocus'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hash'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='hint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hitpoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='images'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='init'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initialize' class_method='true'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isEqual:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVisible'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyboard'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyboards'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='label'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='links'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='logAXInfo'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logAXTree'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logElement'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logElementTree'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='navigationBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='navigationBars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pageIndicators'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='parentElement'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='patience' class_method='true'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='pickers'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pid'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='popPatience' class_method='true'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='popover'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='popovers'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='progressIndicators'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pushPatience:' class_method='true'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='rect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='redo'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='rotateWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scriptingActionExpressionShouldFavorTapOffset'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingFavoredSynonymString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingInvocationFullExpressionString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingInvocationString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingSynonymFullExpressionString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingSynonymStrings'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollDown'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollLeft'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollRight'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollToElementWithName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollToElementWithPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollToElementWithValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollToVisible'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollUp'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='searchBars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='secureTextFields'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='segmentedControls'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setPatience:' class_method='true'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sliders'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='staticTexts'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='switches'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tabBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tabBars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tableViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tap'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='tapWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='target'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textFields'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toManyRelationshipKeys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toManyRelationships'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationships'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toolbar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toolbars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='touchAndHold:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='twoFingerTap'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='type'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxElement'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='undo'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='url'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForUndefinedKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='waitForInvalid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='webViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAElementArray'>
+<method selector='_arrayWithArray:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_cacheArray:atPtr:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id*' const='true' type='^@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_cachedArrayAtPtr:' class_method='true'>
+<arg name='arg1' declared_type='id*' const='true' type='^@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_initWithArray:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_isStillFreshAtTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_lastAccessedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_liveCount' class_method='true'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_maxCount' class_method='true'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_objectWithPatienceInvocationFromUIAObject:selector:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_refreshedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_removeCachedArrayAtPtr:' class_method='true'>
+<arg name='arg1' declared_type='id*' const='true' type='^@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_scriptingIndexSynonymsForElement:maxCount:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='unsigned int' type='I' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_selfPatienceInvocation'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_setArray:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_setLastAccessedTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_setSelfPatienceInvocation:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_withClass:'>
+<arg name='arg1' declared_type='Class' type='#' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_withName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_withPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_withValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='count'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='description'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elementOfClass:atIndex:'>
+<arg name='arg1' declared_type='Class' type='#' index='0'/>
+<arg name='arg2' declared_type='unsigned int' type='I' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstWithName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstWithPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstWithValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hash'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='initialize' class_method='true'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isEqual:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isEqualToArray:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='logElementTrees'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logElements'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='nsArray'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='objectAtIndex:'>
+<arg name='arg1' declared_type='unsigned int' type='I' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingFavoredIndexSynonymForElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingIndexSynonymsForElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingInvocationFullExpressionString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingInvocationString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withClass:'>
+<arg name='arg1' declared_type='Class' type='#' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAElementNil'>
+<method selector='_elementNilWithInvocation:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_elementNilWithPatienceInvocation:'>
+<arg name='arg1' declared_type='SEL' type=':' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_initWithInvocation:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_isStillFreshAtTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_lastAccessedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_liveCount' class_method='true'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_logInfoWithChildren'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_maxCount' class_method='true'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_objectWithPatienceInvocationFromUIAObject:selector:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='SEL' type=':' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_raiseInvalidElementAction'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_refreshedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_selfPatienceInvocation'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_setLastAccessedTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_setSelfPatienceInvocation:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='actionSheet'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='actionSheets'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='activate'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='activityIndicators'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='alert'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='ancestry'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='architecture'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bundleID'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bundlePath'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bundleVersion'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='buttons'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='cancelButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='cells'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='checkIsValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='choose'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='containsObject:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='contentArea'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='count'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='countByEnumeratingWithState:objects:count:'>
+<arg name='arg1' declared_type='CDStruct_11f37819*' type='^{_CDStruct_11f37819=L^@^L[5L]}' index='0'/>
+<arg name='arg2' declared_type='id*' type='^@' index='1'/>
+<arg name='arg3' declared_type='unsigned int' type='I' index='2'/>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='defaultButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='depth'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dismiss'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='dom'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='doubleTap'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='dragInsideWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='dragToValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='editingMenu'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='editingMenus'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elementOfClass:atIndex:'>
+<arg name='arg1' declared_type='Class' type='#' index='0'/>
+<arg name='arg2' declared_type='unsigned int' type='I' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstWithName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstWithPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstWithValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='flickInsideWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='goToNextPage'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='goToPreviousPage'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='groups'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hasKeyboardFocus'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hasOpenMenu'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='headers'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='helpTag'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hitpoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='images'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='indexOfObject:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='isBackgroundApp'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isCameraIrisOpen'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isFront'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isSeparatorItem'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVisible'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyEquivalent'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyEquivalentModifiers'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyWindow'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyboard'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keyboards'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keys'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='label'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='leftButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='links'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='localizations'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='localizedStringForKey:value:table:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='logAXInfo'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logAXTree'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logElement'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logElementTree'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mainWindow'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='maxValue'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='minValue'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='navigationBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='navigationBars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='nsArray'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='numberOfCells'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='objectAtIndex:'>
+<arg name='arg1' declared_type='unsigned int' type='I' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='objectEnumerator'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='orientation'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pageCount'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pageIndex'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pageIndicators'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='parentElement'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pickers'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pid'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='popover'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='progressIndicators'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='rect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='reverseObjectEnumerator'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='rightButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='rotateWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scriptingInvocationFullExpressionString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingInvocationString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollDown'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollLeft'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollRight'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollToElementWithName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollToElementWithPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollToElementWithValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scrollToVisible'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollUp'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scrollViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='searchBars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='secureTextFields'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='segmentedControls'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='selectPage:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='selectValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='selectedButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='selectedValue'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sliders'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stateDescription'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='staticTexts'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='statusBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='switcherScrollView'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='switches'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tabBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tabBars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tableViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tap'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='tapWithOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='target'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textFields'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textLength'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toolbar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toolbars'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='touchAndHold:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='twoFingerTap'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='url'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='values'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='version'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='visibleCells'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='visibleFrame'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='visibleGroups'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='waitForInvalid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='webViews'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='wheels'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='windows'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withPredicate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='withValue:forKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAHost'>
+<method selector='performTaskWithPath:arguments:timeout:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAKey'>
+<method selector='_delayForAnimationsInProgress'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scriptingActionExpressionShouldFavorTapOffset'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAKeyboard'>
+<method selector='_typeKeyForString:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='init'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='interKeyDelay'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='interKeyDelayVariance'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='setInterKeyDelay:'>
+<arg name='interKeyDelay' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setInterKeyDelayVariance:'>
+<arg name='interKeyDelayVariance' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='typeString:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='UIALink'>
+<method selector='scriptingActionExpressionShouldFavorTapOffset'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIANavigationBar'>
+<method selector='_moreToOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_navBarShouldAcceptAXElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='leftButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='rightButton'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAPageIndicator'>
+<method selector='_flipPages:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='goToNextPage'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='goToPreviousPage'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='pageCount'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pageIndex'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='selectPage:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='UIAPicker'>
+<method selector='_moreToManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='wheels'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAPickerWheel'>
+<method selector='_spinWheel:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='selectValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='values'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAPopover'>
+<method selector='dismiss'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='UIARecorder'>
+<method selector='_handEnded:'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_handStarted:'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_releaseEvents'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_scriptingStringForOffsetWithScreenPoint:inRect:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_scriptingStringForPoint:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='currentAction'>
+<retval declared_type='UIARecorderAction*' type='@'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='defaultRecorder' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='flushDragExpressions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='flushKeystrokes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='flushTapExpression:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='handleAlert'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='handleEvent:'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='handleOrientationChange'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='init'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isRecording'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='lastActionTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='markNewActionAndLog:'>
+<arg name='arg1' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='pendingTapExpression'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='postElementNotFoundAtPoint:description:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='postMutlitouchGestureDetected'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='postRecordedExpression:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='postStaleEventMessage'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='previousAXElement'>
+<retval declared_type='UIAXElement*' type='@'/>
+</method>
+<method selector='setCurrentAction:'>
+<arg name='currentAction' declared_type='UIARecorderAction*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDelegate:'>
+<arg name='delegate' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setIsRecording:'>
+<arg name='isRecording' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLastActionTime:'>
+<arg name='lastActionTime' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPendingTapExpression:'>
+<arg name='pendingTapExpression' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPreviousAXElement:'>
+<arg name='previousAXElement' declared_type='UIAXElement*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='start'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='stop'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='uiaTarget'>
+<retval declared_type='UIATarget*' type='@'/>
+</method>
+</class>
+<class name='UIARecorderAction'>
+<method selector='_elementCanScroll:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_initWithGSEventRecord:'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='actionType'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='actionWithGSEventRecord:' class_method='true'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='axElement'>
+<retval declared_type='UIAXElement*' type='@'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='duration'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='element'>
+<retval declared_type='UIAElement*' type='@'/>
+</method>
+<method selector='elementCanScroll'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='endLocation'>
+<retval declared_type='struct CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='eventRecord'>
+<retval declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}'/>
+</method>
+<method selector='expression'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='expressionForElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isCancelEvent'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='keyName'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='points'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setActionType:'>
+<arg name='actionType' declared_type='int' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setAxElement:'>
+<arg name='axElement' declared_type='UIAXElement*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setElement:'>
+<arg name='element' declared_type='UIAElement*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setElementCanScroll:'>
+<arg name='elementCanScroll' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEndLocation:'>
+<arg name='endLocation' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEventRecord:'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setExpression:'>
+<arg name='expression' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setKeyName:'>
+<arg name='keyName' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPoints:'>
+<arg name='points' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setStartLocation:'>
+<arg name='startLocation' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTouchCount:'>
+<arg name='touchCount' declared_type='unsigned int' type='I' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='startLocation'>
+<retval declared_type='struct CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='touchCount'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='updateWithGSEventRecord:'>
+<arg name='arg1' declared_type='CDStruct_141d6fc6*' type='^{_CDStruct_141d6fc6=ii{CGPoint=ff}{CGPoint=ff}IQ^viiI*}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='UIAScreen'>
+<method selector='_initWithUIScreen:parent:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_uiScreen'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_uiaApplicationFrame'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='applicationFrame'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='attributeKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='bounds'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='copyWithZone:'>
+<arg name='arg1' declared_type='struct _NSZone*' type='^{_NSZone=}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='description'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scale'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiScreen'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIASegmentedControl'>
+<method selector='selectedButton'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIASlider'>
+<method selector='dragToValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAStaticText'>
+<method selector='_shouldAllowSettingValue'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</class>
+<class name='UIASwitch'>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setValue:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIASyntheticEvents'>
+<method selector='_convertLocation:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='struct CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='_doubleTapSpeedFromDefaults'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='_moveLastTouchPoint:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_sendDownEvent:upEvent:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='int' type='i' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_sendDownEvent:upEvent:duration:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='int' type='i' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_sendEventMessage:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_sendHandEventWithPointArray:indentifierArray:pointCount:'>
+<arg name='arg1' declared_type='struct CGPoint*' type='^{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='int*' type='^i' index='1'/>
+<arg name='arg3' declared_type='int' type='i' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_sendSimpleEvent:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickLock'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickMenu'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickVolumeDown'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickVolumeUp'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdLock:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdMenu:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdVolumeDown:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdVolumeUp:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='init'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='liftUp:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='lockDevice'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendAccelerometerX:Y:Z:'>
+<arg name='arg1' declared_type='float' type='f' index='0'/>
+<arg name='arg2' declared_type='float' type='f' index='1'/>
+<arg name='arg3' declared_type='float' type='f' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendAccelerometerX:Y:Z:duration:'>
+<arg name='arg1' declared_type='float' type='f' index='0'/>
+<arg name='arg2' declared_type='float' type='f' index='1'/>
+<arg name='arg3' declared_type='float' type='f' index='2'/>
+<arg name='arg4' declared_type='double' type='d' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendDoubleFingerTap:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendDoubleTap:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendDragWithStartPoint:endPoint:duration:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendDragWithStartPoint:endPoint:duration:withFlick:inRect:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<arg name='arg4' declared_type='BOOL' type='B' index='3'/>
+<arg name='arg5' declared_type='id' type='@' index='4'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendFlickWithStartPoint:endPoint:duration:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendMultifingerDragWithPointArray:numPoints:duration:numFingers:'>
+<arg name='arg1' declared_type='struct CGPoint*' type='^{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='int' type='i' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<arg name='arg4' declared_type='int' type='i' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendPinchCloseWithStartPoint:endPoint:duration:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendPinchCloseWithStartPoint:endPoint:duration:inRect:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<arg name='arg4' declared_type='id' type='@' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendPinchOpenWithStartPoint:endPoint:duration:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendPinchOpenWithStartPoint:endPoint:duration:inRect:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<!--<arg name='arg4' declared_type='id' type='@' index='3'/>-->
+<arg name='arg4' declared_type='struct CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendRotate:withRadius:rotation:duration:touchCount:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='arg2' declared_type='float' type='f' index='1'/>
+<arg name='arg3' declared_type='float' type='f' index='2'/>
+<arg name='arg4' declared_type='float' type='f' index='3'/>
+<arg name='arg5' declared_type='unsigned int' type='I' index='4'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendTap:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sendTaps:location:withNumberOfTouches:inRect:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='struct CGPoint' type='{CGPoint=ff}' index='1'/>
+<arg name='arg3' declared_type='int' type='i' index='2'/>
+<!--<arg name='arg4' declared_type='id' type='@' index='3'/>-->
+<arg name='arg4' declared_type='struct CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setOrientation:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRinger:'>
+<arg name='arg1' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='shake'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sharedEventGenerator' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='touchDown:'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='UIATabBar'>
+<method selector='selectedButton'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIATableCell'>
+<method selector='_classForSimpleUIAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='Class' type='#'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingActionExpressionShouldFavorTapOffset'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIATableGroup'>
+<method selector='_classForSimpleUIAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='Class' type='#'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIATableView'>
+<method selector='_classForSimpleUIAXElement:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='Class' type='#'/>
+</method>
+<method selector='_emptyCaches'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_moreToManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='cellCount'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='cells'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='firstVisibleCellIndex'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='groups'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='lastVisibleCellIndex'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='visibleCells'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='visibleGroups'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIATarget'>
+<method selector='_dragFrom:to:forDuration:withTouchCount:withFlick:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<arg name='arg4' declared_type='int' type='i' index='3'/>
+<arg name='arg5' declared_type='BOOL' type='B' index='4'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_handleAlert'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_interfaceOrientation'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_invalidate'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_lastAnimationEndedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_locationForObject:withOptions:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_lockBar'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_screenIsLocked'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_screenIsOff'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_setLastAnimationEndedTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_systemVersionDictionary'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_tapOptionalObject:tapCount:touchCount:tapOffset:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='double' type='d' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<arg name='arg4' declared_type='id' type='@' index='3'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_tapRequiredObject:tapCount:touchCount:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='double' type='d' index='1'/>
+<arg name='arg3' declared_type='double' type='d' index='2'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_updateInterfaceOrientation'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='applications'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='attributeKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='captureRect:withName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='captureScreenWithName:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='checkIsValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='clickLock'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickMenu'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickVolumeDown'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='clickVolumeUp'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='deactivateApp'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='deactivateAppForDuration:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='delayForTimeInterval:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='deviceOrientation'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='doubleTap:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='dragFrom:to:forDuration:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='flickFrom:to:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='frontMostApp'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hash'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='holdLock:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdMenu:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdVolumeDown:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='holdVolumeUp:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='host'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='imageFromRect:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='init'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isEqual:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='lastCommandTime'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='localTarget' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='localizedStringForKey:value:table:bundlePath:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<arg name='arg4' declared_type='id' type='@' index='3'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='lock'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='lockForDuration:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='logElementTakesScreenshot'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mainScreen'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='model'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='name'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='patience'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='pinchCloseFrom:to:forDuration:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='pinchOpenFrom:to:forDuration:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='id' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='popPatience'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='pushPatience:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='reactivateApp'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='rect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='rotate:withOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scriptingFavoredSynonymString'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingSynonymStrings'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setDelegate:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDeviceOrientation:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setLocation:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setLocation:withOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setLogElementTakesScreenshot:'>
+<arg name='logElementTakesScreenshot' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPassiveEventListeningMode:withDelay:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPatience:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRinger:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTargetClipboard:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTextViewValueMaxLength:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVerboseOptions:'>
+<arg name='arg1' declared_type='unsigned int' type='I' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='shake'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='startupDate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='systemBuild'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='systemName'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='systemVersion'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='tap:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='tap:withOptions:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='targetClipboard'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textViewValueMaxLength'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='toManyRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='toOneRelationshipKeys' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='touch:andHold:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='twoFingerTap:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='uiaxSystemWideElement'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uniqueIdentifier'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='unlock'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='upTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='verboseOptions'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+</class>
+<class name='UIATextField'>
+<method selector='_textFieldShouldAcceptAXElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='scriptingActionExpressionShouldFavorTapOffset'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAWindow'>
+<method selector='_uiaContentArea'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_windowShouldAcceptAXElement:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='contentArea'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='elements'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='UIAXElement'>
+<method selector='_attributeForString:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_copyTraitsNumber'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_creationTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_hasNonzeroSize'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='_initWithAXUIElementRef:'>
+<arg name='arg1' declared_type='struct __AXUIElement*' type='^{__AXUIElement=}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_invalidate'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_lastAccessedTime'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='_objectForCFTypeRef:' class_method='true'>
+<arg name='arg1' declared_type='void*' type='^v' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_parameterizedAttributeForString:' class_method='true'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='_parameterizedAttributeNumbers' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_parameterizedAttributeStrings' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_parameterizedAttributesForStringsDictionary' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_raiseAXErrorAPIDisabled' class_method='true'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_raiseIfAXErrorAPIDisabled:' class_method='true'>
+<arg name='arg1' declared_type='long' type='l' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_regularAttributeNumbers' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_regularAttributeStrings' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_regularAttributesForStringsDictionary' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_setLastAccessedTime:'>
+<arg name='arg1' declared_type='double' type='d' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_setValidForAXError:'>
+<arg name='arg1' declared_type='long' type='l' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='_stringForAttribute:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_stringForParameterizedAttribute:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_stringsForParameterizedAttributesDictionary' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_stringsForRegularAttributesDictionary' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_stringsForTraitsDictionary' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_traitNumbers' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='_traitStrings' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='ancestry'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='axError'>
+<retval declared_type='long' type='l'/>
+</method>
+<method selector='axuiElementRef'>
+<retval declared_type='struct __AXUIElement*' type='^{__AXUIElement=}'/>
+</method>
+<method selector='centerPoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='checkIsValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='childWithTestingTrait:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='children'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dealloc'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='description'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='finalize'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='firstElementOfAttribute:withValue:forAttribute:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='int' type='i' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='hash'>
+<retval declared_type='unsigned int' type='I'/>
+</method>
+<method selector='initialize' class_method='true'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isEqual:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='logAXAncestry'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logAXInfo'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='logAXTree'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='parent'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='performAXAction:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='performAXAction:withValue:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='pid'>
+<retval declared_type='int' type='i'/>
+</method>
+<method selector='rect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='registerObserver:forAXNotifications:' class_method='true'>
+<arg name='arg1' declared_type='struct __AXObserver*' type='^{__AXObserver=}' index='0'/>
+<arg name='arg2' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setValue:forAttribute:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='int' type='i' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='stringForAXError:' class_method='true'>
+<arg name='arg1' declared_type='long' type='l' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForAXNotification:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForAllKnownAttributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForAttributes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='stringForTraits:' class_method='true'>
+<arg name='arg1' declared_type='unsigned long long' type='Q' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='traits'>
+<retval declared_type='unsigned long long' type='Q'/>
+</method>
+<method selector='traitsNumber'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxElementAtCenterPoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxElementAtPosition:' class_method='true'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxElementWithAXUIElementRef:' class_method='true'>
+<arg name='arg1' declared_type='struct __AXUIElement*' type='^{__AXUIElement=}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxFocusedApplicationElement' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='uiaxSystemWideElement' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForAttribute:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForAttribute:parameter:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valueForUndefinedKey:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valuesForAllKnownAttributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='valuesForAttributes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<informal_protocol name='UIAXElement'>
+<method type='@8@0:4' selector='ancestry'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='l8@0:4' selector='axError'>
+<retval declared_type='long' type='l'/>
+</method>
+<method type='^{__AXUIElement=}8@0:4' selector='axuiElementRef'>
+<retval declared_type='struct __AXUIElement*' type='^{__AXUIElement=}'/>
+</method>
+<method type='@8@0:4' selector='centerPoint'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='B8@0:4' selector='checkIsValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='@12@0:4@8' selector='childWithTestingTrait:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@8@0:4' selector='children'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@8@0:4' selector='description'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@20@0:4i8@12i16' selector='firstElementOfAttribute:withValue:forAttribute:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<arg name='arg3' declared_type='int' type='i' index='2'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='B8@0:4' selector='isValid'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='@8@0:4' selector='parent'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='B12@0:4i8' selector='performAXAction:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='B16@0:4i8@12' selector='performAXAction:withValue:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='i8@0:4' selector='pid'>
+<retval declared_type='int' type='i'/>
+</method>
+<method type='@8@0:4' selector='rect'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='B16@0:4^{__AXObserver=}8B12' selector='registerObserver:forAXNotifications:' class_method='true'>
+<arg name='arg1' declared_type='struct __AXObserver*' type='^{__AXObserver=}' index='0'/>
+<arg name='arg2' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='B16@0:4@8i12' selector='setValue:forAttribute:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<arg name='arg2' declared_type='int' type='i' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='@12@0:4l8' selector='stringForAXError:' class_method='true'>
+<arg name='arg1' declared_type='long' type='l' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@12@0:4i8' selector='stringForAXNotification:' class_method='true'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@8@0:4' selector='stringForAllKnownAttributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@12@0:4@8' selector='stringForAttributes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@16@0:4Q8' selector='stringForTraits:' class_method='true'>
+<arg name='arg1' declared_type='unsigned long long' type='Q' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='Q8@0:4' selector='traits'>
+<retval declared_type='unsigned long long' type='Q'/>
+</method>
+<method type='@8@0:4' selector='traitsNumber'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@16@0:4{CGPoint=ff}8' selector='uiaxElementAtPosition:' class_method='true'>
+<arg name='arg1' declared_type='struct CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@12@0:4^{__AXUIElement=}8' selector='uiaxElementWithAXUIElementRef:' class_method='true'>
+<arg name='arg1' declared_type='struct __AXUIElement*' type='^{__AXUIElement=}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@8@0:4' selector='uiaxFocusedApplicationElement' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@8@0:4' selector='uiaxSystemWideElement' class_method='true'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@12@0:4i8' selector='valueForAttribute:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@16@0:4i8@12' selector='valueForAttribute:parameter:'>
+<arg name='arg1' declared_type='int' type='i' index='0'/>
+<arg name='arg2' declared_type='id' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@8@0:4' selector='valuesForAllKnownAttributes'>
+<retval declared_type='id' type='@'/>
+</method>
+<method type='@12@0:4@8' selector='valuesForAttributes:'>
+<arg name='arg1' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+</informal_protocol>
+</signatures>

@@ -1,0 +1,86 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant const='true' type='@' name='NKIssueDownloadCompletedNotification' declared_type='NSString*'/>
+<enum name='NKIssueContentStatusAvailable' value='2'/>
+<enum name='NKIssueContentStatusDownloading' value='1'/>
+<enum name='NKIssueContentStatusNone' value='0'/>
+<class name='NKAssetDownload'>
+<method selector='URLRequest'>
+<retval type='@' declared_type='NSURLRequest*'/>
+</method>
+<method selector='downloadWithDelegate:'>
+<arg type='@' index='0' name='delegate' declared_type='id'/>
+<retval type='@' declared_type='NSURLConnection*'/>
+</method>
+<method selector='identifier'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='issue'>
+<retval type='@' declared_type='NKIssue*'/>
+</method>
+<method selector='setUserInfo:'>
+<arg type='@' index='0' name='userInfo' declared_type='NSDictionary*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='userInfo'>
+<retval type='@' declared_type='NSDictionary*'/>
+</method>
+</class>
+<class name='NKIssue'>
+<method selector='addAssetWithRequest:'>
+<arg type='@' index='0' name='request' declared_type='NSURLRequest*'/>
+<retval type='@' declared_type='NKAssetDownload*'/>
+</method>
+<method selector='contentURL'>
+<retval type='@' declared_type='NSURL*'/>
+</method>
+<method selector='date'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='downloadingAssets'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='name'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='status'>
+<retval type='i' declared_type='NKIssueContentStatus'/>
+</method>
+</class>
+<class name='NKLibrary'>
+<method selector='addIssueWithName:date:'>
+<arg type='@' index='0' name='name' declared_type='NSString*'/>
+<arg type='@' index='1' name='date' declared_type='NSDate*'/>
+<retval type='@' declared_type='NKIssue*'/>
+</method>
+<method selector='currentlyReadingIssue'>
+<retval type='@' declared_type='NKIssue*'/>
+</method>
+<method selector='downloadingAssets'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='issueWithName:'>
+<arg type='@' index='0' name='name' declared_type='NSString*'/>
+<retval type='@' declared_type='NKIssue*'/>
+</method>
+<method selector='issues'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='removeIssue:'>
+<arg type='@' index='0' name='issue' declared_type='NKIssue*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setCurrentlyReadingIssue:'>
+<arg type='@' index='0' name='currentlyReadingIssue' declared_type='NKIssue*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method class_method='true' selector='sharedLibrary'>
+<retval type='@' declared_type='NKLibrary*'/>
+</method>
+</class>
+<class name='NSURLConnection'>
+<method selector='newsstandAssetDownload'>
+<retval type='@' declared_type='NKAssetDownload*'/>
+</method>
+</class>
+</signatures>

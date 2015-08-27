@@ -1,0 +1,3358 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant declared_type='NSString*' name='AVAssetExportPreset1280x720' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPreset1920x1080' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPreset640x480' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPreset960x540' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPresetAppleM4A' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPresetHighestQuality' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPresetLowQuality' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPresetMediumQuality' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetExportPresetPassthrough' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetImageGeneratorApertureModeCleanAperture' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetImageGeneratorApertureModeEncodedPixels' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAssetImageGeneratorApertureModeProductionAperture' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionCategoryAmbient' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionCategoryAudioProcessing' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionCategoryPlayAndRecord' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionCategoryPlayback' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionCategoryRecord' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionCategorySoloAmbient' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionModeDefault' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionModeGameChat' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionModeMeasurement' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionModeVideoRecording' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVAudioSessionModeVoiceChat' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureDeviceSubjectAreaDidChangeNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureDeviceWasConnectedNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureDeviceWasDisconnectedNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureInputPortFormatDescriptionDidChangeNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionDidStartRunningNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionDidStopRunningNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionErrorKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionInterruptionEndedNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPreset1280x720' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPreset1920x1080' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPreset352x288' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPreset640x480' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPresetHigh' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPresetLow' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPresetMedium' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPresetPhoto' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPresetiFrame1280x720' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionPresetiFrame960x540' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionRuntimeErrorNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVCaptureSessionWasInterruptedNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVChannelLayoutKey' type='@' const='true'/>
+<constant declared_type='CFTimeInterval' name='AVCoreAnimationBeginTimeAtZero' type='d' const='true'/>
+<constant declared_type='NSString*' name='AVEncoderAudioQualityKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVEncoderBitDepthHintKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVEncoderBitRateKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVEncoderBitRatePerChannelKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorDeviceKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorFileSizeKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorMediaSubTypeKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorMediaTypeKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorPIDKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorRecordingSuccessfullyFinishedKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVErrorTimeKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileType3GPP' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeAIFC' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeAIFF' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeAMR' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeAppleM4A' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeAppleM4V' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeCoreAudioFormat' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeMPEG4' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeQuickTimeMovie' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFileTypeWAVE' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFormatIDKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVFoundationErrorDomain' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLayerVideoGravityResize' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLayerVideoGravityResizeAspect' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLayerVideoGravityResizeAspectFill' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLinearPCMBitDepthKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLinearPCMIsBigEndianKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLinearPCMIsFloatKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVLinearPCMIsNonInterleaved' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicAudible' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicContainsOnlyForcedSubtitles' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicDescribesMusicAndSoundForAccessibility' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicDescribesVideoForAccessibility' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicFrameBased' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicIsAuxiliaryContent' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicIsMainProgramContent' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicLegible' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicTranscribesSpokenDialogForAccessibility' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaCharacteristicVisual' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeAudio' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeClosedCaption' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeMuxed' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeSubtitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeText' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeTimecode' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeTimedMetadata' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMediaTypeVideo' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyAuthor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyCopyright' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyGenre' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyLocation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyPerformer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyRecordingYear' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadata3GPUserDataKeyTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyAlbumName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyArtwork' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyAuthor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyContributor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyCopyrights' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyCreationDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyCreator' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyFormat' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyIdentifier' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyLanguage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyLastModifiedDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyLocation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyMake' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyModel' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyPublisher' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyRelation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeySoftware' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeySource' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeySubject' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataCommonKeyType' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataFormatID3Metadata' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataFormatQuickTimeMetadata' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataFormatQuickTimeUserData' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataFormatiTunesMetadata' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyAlbumSortOrder' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyAlbumTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyAttachedPicture' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyAudioEncryption' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyAudioSeekPointIndex' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyBand' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyBeatsPerMinute' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyComments' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyCommercialInformation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyCommerical' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyComposer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyConductor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyContentGroupDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyContentType' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyCopyright' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyCopyrightInformation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEncodedBy' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEncodedWith' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEncodingTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEncryption' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEqualization' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEqualization2' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyEventTimingCodes' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyFileOwner' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyFileType' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyGeneralEncapsulatedObject' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyGroupIdentifier' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyInitialKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyInternationalStandardRecordingCode' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyInternetRadioStationName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyInternetRadioStationOwner' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyInvolvedPeopleList_v23' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyInvolvedPeopleList_v24' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyLanguage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyLeadPerformer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyLength' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyLink' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyLyricist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyMPEGLocationLookupTable' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyMediaType' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyModifiedBy' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyMood' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyMusicCDIdentifier' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyMusicianCreditsList' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOfficialArtistWebpage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOfficialAudioFileWebpage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOfficialAudioSourceWebpage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOfficialInternetRadioStationHomepage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOfficialPublisherWebpage' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOriginalAlbumTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOriginalArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOriginalFilename' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOriginalLyricist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOriginalReleaseTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOriginalReleaseYear' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyOwnership' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPartOfASet' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPayment' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPerformerSortOrder' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPlayCounter' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPlaylistDelay' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPopularimeter' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPositionSynchronization' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPrivate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyProducedNotice' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyPublisher' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyRecommendedBufferSize' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyRecordingDates' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyRecordingTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyRelativeVolumeAdjustment' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyRelativeVolumeAdjustment2' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyReleaseTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyReverb' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySeek' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySetSubtitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySignature' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySize' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySubTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySynchronizedLyric' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeySynchronizedTempoCodes' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyTaggingTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyTermsOfUse' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyTitleDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyTitleSortOrder' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyTrackNumber' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyUniqueFileIdentifier' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyUnsynchronizedLyric' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyUserText' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyUserURL' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataID3MetadataKeyYear' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataISOUserDataKeyCopyright' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataKeySpaceCommon' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataKeySpaceID3' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataKeySpaceQuickTimeMetadata' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataKeySpaceQuickTimeUserData' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataKeySpaceiTunes' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyAlbum' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyArranger' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyArtwork' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyAuthor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyCameraFrameReadoutTime' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyCameraIdentifier' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyCollectionUser' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyComment' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyComposer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyCopyright' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyCreationDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyCredits' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyDirectionFacing' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyDirectionMotion' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyDirector' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyDisplayName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyEncodedBy' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyGenre' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyInformation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyKeywords' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyLocationBody' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyLocationDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyLocationISO6709' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyLocationName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyLocationNote' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyLocationRole' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyMake' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyModel' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyOriginalArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyPerformer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyPhonogramRights' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyProducer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyPublisher' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyRatingUser' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeySoftware' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyYear' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeMetadataKeyiXML' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyAlbum' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyArranger' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyAuthor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyChapter' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyComment' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyComposer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyCopyright' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyCreationDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyCredits' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyDirector' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyDisclaimer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyEncodedBy' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyFullName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyGenre' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyHostComputer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyInformation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyKeywords' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyLocationISO6709' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyMake' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyModel' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyOriginalArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyOriginalFormat' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyOriginalSource' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyPerformers' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyPhonogramRights' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyProducer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyProduct' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyPublisher' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeySoftware' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeySpecialPlaybackRequirements' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyTaggedCharacteristic' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyTrack' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyTrackName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyURLLink' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyWarning' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataQuickTimeUserDataKeyWriter' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyAccountKind' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyAcknowledgement' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyAlbum' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyAlbumArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyAppleID' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyArranger' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyArtDirector' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyArtistID' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyAuthor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyBeatsPerMin' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyComposer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyConductor' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyContentRating' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyCopyright' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyCoverArt' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyCredits' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyDescription' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyDirector' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyDiscCompilation' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyDiscNumber' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyEQ' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyEncodedBy' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyEncodingTool' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyExecProducer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyGenreID' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyGrouping' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyLinerNotes' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyLyrics' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyOnlineExtras' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyOriginalArtist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyPerformer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyPhonogramRights' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyPlaylistID' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyPredefinedGenre' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyProducer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyPublisher' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyRecordCompany' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyReleaseDate' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeySoloist' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeySongID' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeySongName' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeySoundEngineer' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyThanks' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyTrackNumber' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyTrackSubTitle' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyUserComment' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVMetadataiTunesMetadataKeyUserGenre' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVNumberOfChannelsKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVPlayerItemDidPlayToEndTimeNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVPlayerItemFailedToPlayToEndTimeErrorKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVPlayerItemFailedToPlayToEndTimeNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVPlayerItemTimeJumpedNotification' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVSampleRateConverterAudioQualityKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVSampleRateKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVURLAssetPreferPreciseDurationAndTimingKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVURLAssetReferenceRestrictionsKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoAverageBitRateKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCleanApertureHeightKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCleanApertureHorizontalOffsetKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCleanApertureKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCleanApertureVerticalOffsetKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCleanApertureWidthKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCodecH264' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCodecJPEG' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCodecKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoCompressionPropertiesKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoHeightKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoMaxKeyFrameIntervalKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoPixelAspectRatioHorizontalSpacingKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoPixelAspectRatioKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoPixelAspectRatioVerticalSpacingKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Baseline30' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Baseline31' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Baseline41' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Main30' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Main31' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Main32' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelH264Main41' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoProfileLevelKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoQualityKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoScalingModeFit' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoScalingModeKey' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoScalingModeResize' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoScalingModeResizeAspect' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoScalingModeResizeAspectFill' type='@' const='true'/>
+<constant declared_type='NSString*' name='AVVideoWidthKey' type='@' const='true'/>
+<enum value='5' name='AVAssetExportSessionStatusCancelled'/>
+<enum value='3' name='AVAssetExportSessionStatusCompleted'/>
+<enum value='2' name='AVAssetExportSessionStatusExporting'/>
+<enum value='4' name='AVAssetExportSessionStatusFailed'/>
+<enum value='0' name='AVAssetExportSessionStatusUnknown'/>
+<enum value='1' name='AVAssetExportSessionStatusWaiting'/>
+<enum value='2' name='AVAssetImageGeneratorCancelled'/>
+<enum value='1' name='AVAssetImageGeneratorFailed'/>
+<enum value='0' name='AVAssetImageGeneratorSucceeded'/>
+<enum value='4' name='AVAssetReaderStatusCancelled'/>
+<enum value='2' name='AVAssetReaderStatusCompleted'/>
+<enum value='3' name='AVAssetReaderStatusFailed'/>
+<enum value='1' name='AVAssetReaderStatusReading'/>
+<enum value='0' name='AVAssetReaderStatusUnknown'/>
+<enum value='65535' name='AVAssetReferenceRestrictionForbidAll'/>
+<enum value='4' name='AVAssetReferenceRestrictionForbidCrossSiteReference'/>
+<enum value='8' name='AVAssetReferenceRestrictionForbidLocalReferenceToLocal'/>
+<enum value='2' name='AVAssetReferenceRestrictionForbidLocalReferenceToRemote'/>
+<enum value='0' name='AVAssetReferenceRestrictionForbidNone'/>
+<enum value='1' name='AVAssetReferenceRestrictionForbidRemoteReferenceToLocal'/>
+<enum value='4' name='AVAssetWriterStatusCancelled'/>
+<enum value='2' name='AVAssetWriterStatusCompleted'/>
+<enum value='3' name='AVAssetWriterStatusFailed'/>
+<enum value='0' name='AVAssetWriterStatusUnknown'/>
+<enum value='1' name='AVAssetWriterStatusWriting'/>
+<enum value='96' name='AVAudioQualityHigh'/>
+<enum value='32' name='AVAudioQualityLow'/>
+<enum value='127' name='AVAudioQualityMax'/>
+<enum value='64' name='AVAudioQualityMedium'/>
+<enum value='0' name='AVAudioQualityMin'/>
+<enum value='1' name='AVAudioSessionInterruptionFlags_ShouldResume'/>
+<enum value='1' name='AVAudioSessionSetActiveFlags_NotifyOthersOnDeactivation'/>
+<enum value='1' name='AVCaptureDevicePositionBack'/>
+<enum value='2' name='AVCaptureDevicePositionFront'/>
+<enum value='1' name='AVCaptureExposureModeAutoExpose'/>
+<enum value='2' name='AVCaptureExposureModeContinuousAutoExposure'/>
+<enum value='0' name='AVCaptureExposureModeLocked'/>
+<enum value='2' name='AVCaptureFlashModeAuto'/>
+<enum value='0' name='AVCaptureFlashModeOff'/>
+<enum value='1' name='AVCaptureFlashModeOn'/>
+<enum value='1' name='AVCaptureFocusModeAutoFocus'/>
+<enum value='2' name='AVCaptureFocusModeContinuousAutoFocus'/>
+<enum value='0' name='AVCaptureFocusModeLocked'/>
+<enum value='2' name='AVCaptureTorchModeAuto'/>
+<enum value='0' name='AVCaptureTorchModeOff'/>
+<enum value='1' name='AVCaptureTorchModeOn'/>
+<enum value='4' name='AVCaptureVideoOrientationLandscapeLeft'/>
+<enum value='3' name='AVCaptureVideoOrientationLandscapeRight'/>
+<enum value='1' name='AVCaptureVideoOrientationPortrait'/>
+<enum value='2' name='AVCaptureVideoOrientationPortraitUpsideDown'/>
+<enum value='1' name='AVCaptureWhiteBalanceModeAutoWhiteBalance'/>
+<enum value='2' name='AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance'/>
+<enum value='0' name='AVCaptureWhiteBalanceModeLocked'/>
+<enum value='-11836' name='AVErrorApplicationIsNotAuthorized'/>
+<enum value='-11824' name='AVErrorCompositionTrackSegmentsNotContiguous'/>
+<enum value='-11835' name='AVErrorContentIsNotAuthorized'/>
+<enum value='-11831' name='AVErrorContentIsProtected'/>
+<enum value='-11821' name='AVErrorDecodeFailed'/>
+<enum value='-11833' name='AVErrorDecoderNotFound'/>
+<enum value='-11839' name='AVErrorDecoderTemporarilyUnavailable'/>
+<enum value='-11804' name='AVErrorDeviceAlreadyUsedByAnotherSession'/>
+<enum value='-11815' name='AVErrorDeviceInUseByAnotherApplication'/>
+<enum value='-11837' name='AVErrorDeviceIsNotAvailableInBackground'/>
+<enum value='-11817' name='AVErrorDeviceLockedForConfigurationByAnotherProcess'/>
+<enum value='-11814' name='AVErrorDeviceNotConnected'/>
+<enum value='-11808' name='AVErrorDeviceWasDisconnected'/>
+<enum value='-11807' name='AVErrorDiskFull'/>
+<enum value='-11834' name='AVErrorEncoderNotFound'/>
+<enum value='-11840' name='AVErrorEncoderTemporarilyUnavailable'/>
+<enum value='-11820' name='AVErrorExportFailed'/>
+<enum value='-11823' name='AVErrorFileAlreadyExists'/>
+<enum value='-11829' name='AVErrorFileFailedToParse'/>
+<enum value='-11828' name='AVErrorFileFormatNotRecognized'/>
+<enum value='-11825' name='AVErrorInvalidCompositionTrackSegmentDuration'/>
+<enum value='-11827' name='AVErrorInvalidCompositionTrackSegmentSourceDuration'/>
+<enum value='-11826' name='AVErrorInvalidCompositionTrackSegmentSourceStartTime'/>
+<enum value='-11843' name='AVErrorInvalidOutputURLPathExtension'/>
+<enum value='-11822' name='AVErrorInvalidSourceMedia'/>
+<enum value='-11841' name='AVErrorInvalidVideoComposition'/>
+<enum value='-11810' name='AVErrorMaximumDurationReached'/>
+<enum value='-11811' name='AVErrorMaximumFileSizeReached'/>
+<enum value='-11813' name='AVErrorMaximumNumberOfSamplesForFileFormatReached'/>
+<enum value='-11830' name='AVErrorMaximumStillImageCaptureRequestsExceeded'/>
+<enum value='-11809' name='AVErrorMediaChanged'/>
+<enum value='-11812' name='AVErrorMediaDiscontinuity'/>
+<enum value='-11819' name='AVErrorMediaServicesWereReset'/>
+<enum value='-11805' name='AVErrorNoDataCaptured'/>
+<enum value='-11832' name='AVErrorNoImageAtTime'/>
+<enum value='-11838' name='AVErrorOperationNotSupportedForAsset'/>
+<enum value='-11801' name='AVErrorOutOfMemory'/>
+<enum value='-11842' name='AVErrorReferenceForbiddenByReferencePolicy'/>
+<enum value='-11806' name='AVErrorSessionConfigurationChanged'/>
+<enum value='-11803' name='AVErrorSessionNotRunning'/>
+<enum value='-11818' name='AVErrorSessionWasInterrupted'/>
+<enum value='-11800' name='AVErrorUnknown'/>
+<enum value='4' name='AVKeyValueStatusCancelled'/>
+<enum value='3' name='AVKeyValueStatusFailed'/>
+<enum value='2' name='AVKeyValueStatusLoaded'/>
+<enum value='1' name='AVKeyValueStatusLoading'/>
+<enum value='0' name='AVKeyValueStatusUnknown'/>
+<enum value='0' name='AVPlayerActionAtItemEndAdvance'/>
+<enum value='2' name='AVPlayerActionAtItemEndNone'/>
+<enum value='1' name='AVPlayerActionAtItemEndPause'/>
+<enum value='2' name='AVPlayerItemStatusFailed'/>
+<enum value='1' name='AVPlayerItemStatusReadyToPlay'/>
+<enum value='0' name='AVPlayerItemStatusUnknown'/>
+<enum value='2' name='AVPlayerStatusFailed'/>
+<enum value='1' name='AVPlayerStatusReadyToPlay'/>
+<enum value='0' name='AVPlayerStatusUnknown'/>
+<function name='AVMakeRectWithAspectRatioInsideRect'>
+<arg declared_type='CGSize' name='aspectRatio' type='{CGSize=ff}'/>
+<arg declared_type='CGRect' name='boundingRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<class name='AVAsset'>
+<method class_method='true' selector='assetWithURL:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='availableChapterLocales'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='availableMediaCharacteristicsWithMediaSelectionOptions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='availableMetadataFormats'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='cancelLoading'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='chapterMetadataGroupsWithTitleLocale:containingItemsWithCommonKeys:'>
+<arg index='0' declared_type='NSLocale*' name='locale' type='@'/>
+<arg index='1' declared_type='NSArray*' name='commonKeys' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='commonMetadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='creationDate'>
+<retval declared_type='AVMetadataItem*' type='@'/>
+</method>
+<method selector='duration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='hasProtectedContent'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isCompatibleWithSavedPhotosAlbum'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isComposable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isExportable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isPlayable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isReadable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='lyrics'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='mediaSelectionGroupForMediaCharacteristic:'>
+<arg index='0' declared_type='NSString*' name='mediaCharacteristic' type='@'/>
+<retval declared_type='AVMediaSelectionGroup*' type='@'/>
+</method>
+<method selector='metadataForFormat:'>
+<arg index='0' declared_type='NSString*' name='format' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='naturalSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='preferredRate'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='preferredTransform'>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</method>
+<method selector='preferredVolume'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='providesPreciseDurationAndTiming'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='referenceRestrictions'>
+<retval declared_type='AVAssetReferenceRestrictions' type='I'/>
+</method>
+<method selector='trackWithTrackID:'>
+<arg index='0' declared_type='CMPersistentTrackID' name='trackID' type='i'/>
+<retval declared_type='AVAssetTrack*' type='@'/>
+</method>
+<method selector='tracks'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='tracksWithMediaCharacteristic:'>
+<arg index='0' declared_type='NSString*' name='mediaCharacteristic' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='tracksWithMediaType:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='unusedTrackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+</class>
+<class name='AVAssetExportSession'>
+<method class_method='true' selector='allExportPresets'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='asset'>
+<retval declared_type='AVAsset*' type='@'/>
+</method>
+<method selector='audioMix'>
+<retval declared_type='AVAudioMix*' type='@'/>
+</method>
+<method selector='cancelExport'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='error'>
+<retval declared_type='NSError*' type='@'/>
+</method>
+<method selector='estimatedOutputFileLength'>
+<retval declared_type='long long' type='q'/>
+</method>
+<method selector='exportAsynchronouslyWithCompletionHandler:'>
+<arg index='0' declared_type='void (^)(void)' name='handler' function_pointer='true' type='@?'>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method class_method='true' selector='exportPresetsCompatibleWithAsset:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='exportSessionWithAsset:presetName:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<arg index='1' declared_type='NSString*' name='presetName' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='fileLengthLimit'>
+<retval declared_type='long long' type='q'/>
+</method>
+<method selector='initWithAsset:presetName:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<arg index='1' declared_type='NSString*' name='presetName' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='maxDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='metadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='outputFileType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='outputURL'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+<method selector='presetName'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='progress'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='setAudioMix:'>
+<arg index='0' declared_type='AVAudioMix*' name='audioMix' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setFileLengthLimit:'>
+<arg index='0' declared_type='long long' name='fileLengthLimit' type='q'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMetadata:'>
+<arg index='0' declared_type='NSArray*' name='metadata' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setOutputFileType:'>
+<arg index='0' declared_type='NSString*' name='outputFileType' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setOutputURL:'>
+<arg index='0' declared_type='NSURL*' name='outputURL' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setShouldOptimizeForNetworkUse:'>
+<arg index='0' declared_type='BOOL' name='shouldOptimizeForNetworkUse' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoComposition:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='shouldOptimizeForNetworkUse'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='status'>
+<retval declared_type='AVAssetExportSessionStatus' type='i'/>
+</method>
+<method selector='supportedFileTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+<method selector='videoComposition'>
+<retval declared_type='AVVideoComposition*' type='@'/>
+</method>
+</class>
+<class name='AVAssetImageGenerator'>
+<method selector='apertureMode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='appliesPreferredTrackTransform'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='assetImageGeneratorWithAsset:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='AVAssetImageGenerator*' type='@'/>
+</method>
+<method selector='cancelAllCGImageGeneration'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='copyCGImageAtTime:actualTime:error:'>
+<arg index='0' declared_type='CMTime' name='requestedTime' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='CMTime*' name='actualTime' type='^{_CMTime=qiIq}'/>
+<arg index='2' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</method>
+<method selector='generateCGImagesAsynchronouslyForTimes:completionHandler:'>
+<arg index='0' declared_type='NSArray*' name='requestedTimes' type='@'/>
+<arg index='1' declared_type='AVAssetImageGeneratorCompletionHandler' name='handler' function_pointer='true' type='@?'>
+<arg declared_type='CMTime' type='{_CMTime=qiIq}'/>
+<arg declared_type='CGImageRef' type='^{CGImage=}'/>
+<arg declared_type='CMTime' type='{_CMTime=qiIq}'/>
+<arg declared_type='AVAssetImageGeneratorResult' type='i'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='initWithAsset:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='maximumSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='requestedTimeToleranceAfter'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='requestedTimeToleranceBefore'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='setApertureMode:'>
+<arg index='0' declared_type='NSString*' name='apertureMode' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setAppliesPreferredTrackTransform:'>
+<arg index='0' declared_type='BOOL' name='appliesPreferredTrackTransform' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMaximumSize:'>
+<arg index='0' declared_type='CGSize' name='maximumSize' type='{CGSize=ff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRequestedTimeToleranceAfter:'>
+<arg index='0' declared_type='CMTime' name='requestedTimeToleranceAfter' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRequestedTimeToleranceBefore:'>
+<arg index='0' declared_type='CMTime' name='requestedTimeToleranceBefore' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoComposition:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoComposition'>
+<retval declared_type='AVVideoComposition*' type='@'/>
+</method>
+</class>
+<class name='AVAssetReader'>
+<method selector='addOutput:'>
+<arg index='0' declared_type='AVAssetReaderOutput*' name='output' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='asset'>
+<retval declared_type='AVAsset*' type='@'/>
+</method>
+<method class_method='true' selector='assetReaderWithAsset:error:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='AVAssetReader*' type='@'/>
+</method>
+<method selector='canAddOutput:'>
+<arg index='0' declared_type='AVAssetReaderOutput*' name='output' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='cancelReading'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='error'>
+<retval declared_type='NSError*' type='@'/>
+</method>
+<method selector='initWithAsset:error:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='outputs'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='startReading'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='status'>
+<retval declared_type='AVAssetReaderStatus' type='i'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+</class>
+<class name='AVAssetReaderAudioMixOutput'>
+<method class_method='true' selector='assetReaderAudioMixOutputWithAudioTracks:audioSettings:'>
+<arg index='0' declared_type='NSArray*' name='audioTracks' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='audioSettings' type='@'/>
+<retval declared_type='AVAssetReaderAudioMixOutput*' type='@'/>
+</method>
+<method selector='audioMix'>
+<retval declared_type='AVAudioMix*' type='@'/>
+</method>
+<method selector='audioSettings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='audioTracks'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='initWithAudioTracks:audioSettings:'>
+<arg index='0' declared_type='NSArray*' name='audioTracks' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='audioSettings' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setAudioMix:'>
+<arg index='0' declared_type='AVAudioMix*' name='audioMix' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVAssetReaderOutput'>
+<method selector='alwaysCopiesSampleData'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='copyNextSampleBuffer'>
+<retval declared_type='CMSampleBufferRef' type='^{cftypeCMSampleBuffer=}'/>
+</method>
+<method selector='mediaType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='setAlwaysCopiesSampleData:'>
+<arg index='0' declared_type='BOOL' name='alwaysCopiesSampleData' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVAssetReaderTrackOutput'>
+<method class_method='true' selector='assetReaderTrackOutputWithTrack:outputSettings:'>
+<arg index='0' declared_type='AVAssetTrack*' name='track' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='outputSettings' type='@'/>
+<retval declared_type='AVAssetReaderTrackOutput*' type='@'/>
+</method>
+<method selector='initWithTrack:outputSettings:'>
+<arg index='0' declared_type='AVAssetTrack*' name='track' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='outputSettings' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='outputSettings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='track'>
+<retval declared_type='AVAssetTrack*' type='@'/>
+</method>
+</class>
+<class name='AVAssetReaderVideoCompositionOutput'>
+<method class_method='true' selector='assetReaderVideoCompositionOutputWithVideoTracks:videoSettings:'>
+<arg index='0' declared_type='NSArray*' name='videoTracks' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='videoSettings' type='@'/>
+<retval declared_type='AVAssetReaderVideoCompositionOutput*' type='@'/>
+</method>
+<method selector='initWithVideoTracks:videoSettings:'>
+<arg index='0' declared_type='NSArray*' name='videoTracks' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='videoSettings' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setVideoComposition:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoComposition'>
+<retval declared_type='AVVideoComposition*' type='@'/>
+</method>
+<method selector='videoSettings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='videoTracks'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVAssetTrack'>
+<method selector='asset'>
+<retval declared_type='AVAsset*' type='@'/>
+</method>
+<method selector='availableMetadataFormats'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='commonMetadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='estimatedDataRate'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='extendedLanguageTag'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='formatDescriptions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='hasMediaCharacteristic:'>
+<arg index='0' declared_type='NSString*' name='mediaCharacteristic' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isPlayable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isSelfContained'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='languageCode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='mediaType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='metadataForFormat:'>
+<arg index='0' declared_type='NSString*' name='format' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='naturalSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='naturalTimeScale'>
+<retval declared_type='CMTimeScale' type='i'/>
+</method>
+<method selector='nominalFrameRate'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='preferredTransform'>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</method>
+<method selector='preferredVolume'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='samplePresentationTimeForTrackTime:'>
+<arg index='0' declared_type='CMTime' name='trackTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='segmentForTrackTime:'>
+<arg index='0' declared_type='CMTime' name='trackTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='AVAssetTrackSegment*' type='@'/>
+</method>
+<method selector='segments'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+<method selector='totalSampleDataLength'>
+<retval declared_type='long long' type='q'/>
+</method>
+<method selector='trackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+</class>
+<class name='AVAssetTrackSegment'>
+<method selector='isEmpty'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='timeMapping'>
+<retval declared_type='CMTimeMapping' type='{_CMTimeMapping={?={?=qiIq}{?=qiIq}}{?={?=qiIq}{?=qiIq}}}'/>
+</method>
+</class>
+<class name='AVAssetWriter'>
+<method selector='addInput:'>
+<arg index='0' declared_type='AVAssetWriterInput*' name='input' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method class_method='true' selector='assetWriterWithURL:fileType:error:'>
+<arg index='0' declared_type='NSURL*' name='outputURL' type='@'/>
+<arg index='1' declared_type='NSString*' name='outputFileType' type='@'/>
+<arg index='2' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='AVAssetWriter*' type='@'/>
+</method>
+<method selector='availableMediaTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='canAddInput:'>
+<arg index='0' declared_type='AVAssetWriterInput*' name='input' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='canApplyOutputSettings:forMediaType:'>
+<arg index='0' declared_type='NSDictionary*' name='outputSettings' type='@'/>
+<arg index='1' declared_type='NSString*' name='mediaType' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='cancelWriting'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='endSessionAtSourceTime:'>
+<arg index='0' declared_type='CMTime' name='endTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='error'>
+<retval declared_type='NSError*' type='@'/>
+</method>
+<method selector='finishWriting'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithURL:fileType:error:'>
+<arg index='0' declared_type='NSURL*' name='outputURL' type='@'/>
+<arg index='1' declared_type='NSString*' name='outputFileType' type='@'/>
+<arg index='2' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='inputs'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='metadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='movieFragmentInterval'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='movieTimeScale'>
+<retval declared_type='CMTimeScale' type='i'/>
+</method>
+<method selector='outputFileType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='outputURL'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+<method selector='setMetadata:'>
+<arg index='0' declared_type='NSArray*' name='metadata' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMovieFragmentInterval:'>
+<arg index='0' declared_type='CMTime' name='movieFragmentInterval' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMovieTimeScale:'>
+<arg index='0' declared_type='CMTimeScale' name='movieTimeScale' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setShouldOptimizeForNetworkUse:'>
+<arg index='0' declared_type='BOOL' name='shouldOptimizeForNetworkUse' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='shouldOptimizeForNetworkUse'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='startSessionAtSourceTime:'>
+<arg index='0' declared_type='CMTime' name='startTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='startWriting'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='status'>
+<retval declared_type='AVAssetWriterStatus' type='i'/>
+</method>
+</class>
+<class name='AVAssetWriterInput'>
+<method selector='appendSampleBuffer:'>
+<arg index='0' declared_type='CMSampleBufferRef' name='sampleBuffer' type='^{cftypeCMSampleBuffer=}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='assetWriterInputWithMediaType:outputSettings:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='outputSettings' type='@'/>
+<retval declared_type='AVAssetWriterInput*' type='@'/>
+</method>
+<method selector='expectsMediaDataInRealTime'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithMediaType:outputSettings:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='outputSettings' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isReadyForMoreMediaData'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='markAsFinished'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mediaTimeScale'>
+<retval declared_type='CMTimeScale' type='i'/>
+</method>
+<method selector='mediaType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='metadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='outputSettings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='requestMediaDataWhenReadyOnQueue:usingBlock:'>
+<arg index='0' declared_type='dispatch_queue_t' name='queue' type='^{dispatch_queue_s=}'/>
+<arg index='1' declared_type='void (^)(void)' name='block' function_pointer='true' type='@?'>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setExpectsMediaDataInRealTime:'>
+<arg index='0' declared_type='BOOL' name='expectsMediaDataInRealTime' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMediaTimeScale:'>
+<arg index='0' declared_type='CMTimeScale' name='mediaTimeScale' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMetadata:'>
+<arg index='0' declared_type='NSArray*' name='metadata' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTransform:'>
+<arg index='0' declared_type='CGAffineTransform' name='transform' type='{CGAffineTransform=ffffff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='transform'>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</method>
+</class>
+<class name='AVAssetWriterInputPixelBufferAdaptor'>
+<method selector='appendPixelBuffer:withPresentationTime:'>
+<arg index='0' declared_type='CVPixelBufferRef' name='pixelBuffer' type='^{__CVBuffer=}'/>
+<arg index='1' declared_type='CMTime' name='presentationTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='assetWriterInput'>
+<retval declared_type='AVAssetWriterInput*' type='@'/>
+</method>
+<method class_method='true' selector='assetWriterInputPixelBufferAdaptorWithAssetWriterInput:sourcePixelBufferAttributes:'>
+<arg index='0' declared_type='AVAssetWriterInput*' name='input' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='sourcePixelBufferAttributes' type='@'/>
+<retval declared_type='AVAssetWriterInputPixelBufferAdaptor*' type='@'/>
+</method>
+<method selector='initWithAssetWriterInput:sourcePixelBufferAttributes:'>
+<arg index='0' declared_type='AVAssetWriterInput*' name='input' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='sourcePixelBufferAttributes' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pixelBufferPool'>
+<retval declared_type='CVPixelBufferPoolRef' type='^{__CVPixelBufferPool=}'/>
+</method>
+<method selector='sourcePixelBufferAttributes'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+</class>
+<class name='AVAudioMix'>
+<method selector='inputParameters'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVAudioMixInputParameters'>
+<method selector='getVolumeRampForTime:startVolume:endVolume:timeRange:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='float*' name='startVolume' type='^f'/>
+<arg index='2' declared_type='float*' name='endVolume' type='^f'/>
+<arg index='3' declared_type='CMTimeRange*' name='timeRange' type='^{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='trackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+</class>
+<class name='AVAudioPlayer'>
+<method selector='averagePowerForChannel:'>
+<arg index='0' declared_type='NSUInteger' name='channelNumber' type='I'/>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='currentTime'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='data'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='deviceCurrentTime'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='duration'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='enableRate'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithContentsOfURL:error:'>
+<arg index='0' declared_type='NSURL*' name='url' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithData:error:'>
+<arg index='0' declared_type='NSData*' name='data' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isMeteringEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isPlaying'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='numberOfChannels'>
+<retval declared_type='NSUInteger' type='I'/>
+</method>
+<method selector='numberOfLoops'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='pan'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='pause'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peakPowerForChannel:'>
+<arg index='0' declared_type='NSUInteger' name='channelNumber' type='I'/>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='play'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='playAtTime:'>
+<arg index='0' declared_type='NSTimeInterval' name='time' type='d'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='prepareToPlay'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='rate'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='setCurrentTime:'>
+<arg index='0' declared_type='NSTimeInterval' name='currentTime' type='d'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDelegate:'>
+<arg index='0' declared_type='id' name='delegate' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnableRate:'>
+<arg index='0' declared_type='BOOL' name='enableRate' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMeteringEnabled:'>
+<arg index='0' declared_type='BOOL' name='meteringEnabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setNumberOfLoops:'>
+<arg index='0' declared_type='NSInteger' name='numberOfLoops' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPan:'>
+<arg index='0' declared_type='float' name='pan' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRate:'>
+<arg index='0' declared_type='float' name='rate' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVolume:'>
+<arg index='0' declared_type='float' name='volume' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='settings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='stop'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='updateMeters'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='url'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+<method selector='volume'>
+<retval declared_type='float' type='f'/>
+</method>
+</class>
+<class name='AVAudioRecorder'>
+<method selector='averagePowerForChannel:'>
+<arg index='0' declared_type='NSUInteger' name='channelNumber' type='I'/>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='currentTime'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='deleteRecording'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithURL:settings:error:'>
+<arg index='0' declared_type='NSURL*' name='url' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='settings' type='@'/>
+<arg index='2' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isMeteringEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isRecording'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='pause'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peakPowerForChannel:'>
+<arg index='0' declared_type='NSUInteger' name='channelNumber' type='I'/>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='prepareToRecord'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='record'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='recordForDuration:'>
+<arg index='0' declared_type='NSTimeInterval' name='duration' type='d'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setDelegate:'>
+<arg index='0' declared_type='id' name='delegate' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMeteringEnabled:'>
+<arg index='0' declared_type='BOOL' name='meteringEnabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='settings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='stop'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='updateMeters'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='url'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+</class>
+<class name='AVAudioSession'>
+<method selector='category'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='currentHardwareInputNumberOfChannels'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='currentHardwareOutputNumberOfChannels'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='currentHardwareSampleRate'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='inputIsAvailable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='preferredHardwareSampleRate'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='preferredIOBufferDuration'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='setActive:error:'>
+<arg index='0' declared_type='BOOL' name='beActive' type='B'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setActive:withFlags:error:'>
+<arg index='0' declared_type='BOOL' name='beActive' type='B'/>
+<arg index='1' declared_type='NSInteger' name='flags' type='i'/>
+<arg index='2' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setCategory:error:'>
+<arg index='0' declared_type='NSString*' name='theCategory' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setDelegate:'>
+<arg index='0' declared_type='id' name='delegate' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMode:error:'>
+<arg index='0' declared_type='NSString*' name='theMode' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setPreferredHardwareSampleRate:error:'>
+<arg index='0' declared_type='double' name='sampleRate' type='d'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setPreferredIOBufferDuration:error:'>
+<arg index='0' declared_type='NSTimeInterval' name='duration' type='d'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='sharedInstance'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='AVCaptureAudioChannel'>
+<method selector='averagePowerLevel'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='peakHoldLevel'>
+<retval declared_type='float' type='f'/>
+</method>
+</class>
+<class name='AVCaptureAudioDataOutput'>
+<method selector='sampleBufferCallbackQueue'>
+<retval declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}'/>
+</method>
+<method selector='sampleBufferDelegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setSampleBufferDelegate:queue:'>
+<arg index='0' declared_type='id' name='sampleBufferDelegate' type='@'/>
+<arg index='1' declared_type='dispatch_queue_t' name='sampleBufferCallbackQueue' type='^{dispatch_queue_s=}'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVCaptureConnection'>
+<method selector='audioChannels'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='inputPorts'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='isActive'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVideoMaxFrameDurationSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVideoMinFrameDurationSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVideoMirrored'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVideoMirroringSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isVideoOrientationSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='output'>
+<retval declared_type='AVCaptureOutput*' type='@'/>
+</method>
+<method selector='setEnabled:'>
+<arg index='0' declared_type='BOOL' name='enabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoMaxFrameDuration:'>
+<arg index='0' declared_type='CMTime' name='videoMaxFrameDuration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoMinFrameDuration:'>
+<arg index='0' declared_type='CMTime' name='videoMinFrameDuration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoMirrored:'>
+<arg index='0' declared_type='BOOL' name='videoMirrored' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoOrientation:'>
+<arg index='0' declared_type='AVCaptureVideoOrientation' name='videoOrientation' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoScaleAndCropFactor:'>
+<arg index='0' declared_type='CGFloat' name='videoScaleAndCropFactor' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoMaxFrameDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='videoMaxScaleAndCropFactor'>
+<retval declared_type='CGFloat' type='f'/>
+</method>
+<method selector='videoMinFrameDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='videoOrientation'>
+<retval declared_type='AVCaptureVideoOrientation' type='i'/>
+</method>
+<method selector='videoScaleAndCropFactor'>
+<retval declared_type='CGFloat' type='f'/>
+</method>
+</class>
+<class name='AVCaptureDevice'>
+<method class_method='true' selector='defaultDeviceWithMediaType:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<retval declared_type='AVCaptureDevice*' type='@'/>
+</method>
+<method class_method='true' selector='deviceWithUniqueID:'>
+<arg index='0' declared_type='NSString*' name='deviceUniqueID' type='@'/>
+<retval declared_type='AVCaptureDevice*' type='@'/>
+</method>
+<method class_method='true' selector='devices'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='devicesWithMediaType:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='exposureMode'>
+<retval declared_type='AVCaptureExposureMode' type='i'/>
+</method>
+<method selector='exposurePointOfInterest'>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='flashMode'>
+<retval declared_type='AVCaptureFlashMode' type='i'/>
+</method>
+<method selector='focusMode'>
+<retval declared_type='AVCaptureFocusMode' type='i'/>
+</method>
+<method selector='focusPointOfInterest'>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='hasFlash'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='hasMediaType:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='hasTorch'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isAdjustingExposure'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isAdjustingFocus'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isAdjustingWhiteBalance'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isConnected'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isExposureModeSupported:'>
+<arg index='0' declared_type='AVCaptureExposureMode' name='exposureMode' type='i'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isExposurePointOfInterestSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isFlashActive'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isFlashAvailable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isFlashModeSupported:'>
+<arg index='0' declared_type='AVCaptureFlashMode' name='flashMode' type='i'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isFocusModeSupported:'>
+<arg index='0' declared_type='AVCaptureFocusMode' name='focusMode' type='i'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isFocusPointOfInterestSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isSubjectAreaChangeMonitoringEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isTorchAvailable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isTorchModeSupported:'>
+<arg index='0' declared_type='AVCaptureTorchMode' name='torchMode' type='i'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isWhiteBalanceModeSupported:'>
+<arg index='0' declared_type='AVCaptureWhiteBalanceMode' name='whiteBalanceMode' type='i'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='localizedName'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='lockForConfiguration:'>
+<arg index='0' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='modelID'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='position'>
+<retval declared_type='AVCaptureDevicePosition' type='i'/>
+</method>
+<method selector='setExposureMode:'>
+<arg index='0' declared_type='AVCaptureExposureMode' name='exposureMode' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setExposurePointOfInterest:'>
+<arg index='0' declared_type='CGPoint' name='exposurePointOfInterest' type='{CGPoint=ff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setFlashMode:'>
+<arg index='0' declared_type='AVCaptureFlashMode' name='flashMode' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setFocusMode:'>
+<arg index='0' declared_type='AVCaptureFocusMode' name='focusMode' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setFocusPointOfInterest:'>
+<arg index='0' declared_type='CGPoint' name='focusPointOfInterest' type='{CGPoint=ff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSubjectAreaChangeMonitoringEnabled:'>
+<arg index='0' declared_type='BOOL' name='subjectAreaChangeMonitoringEnabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTorchMode:'>
+<arg index='0' declared_type='AVCaptureTorchMode' name='torchMode' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setWhiteBalanceMode:'>
+<arg index='0' declared_type='AVCaptureWhiteBalanceMode' name='whiteBalanceMode' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='supportsAVCaptureSessionPreset:'>
+<arg index='0' declared_type='NSString*' name='preset' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='torchLevel'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='torchMode'>
+<retval declared_type='AVCaptureTorchMode' type='i'/>
+</method>
+<method selector='uniqueID'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='unlockForConfiguration'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='whiteBalanceMode'>
+<retval declared_type='AVCaptureWhiteBalanceMode' type='i'/>
+</method>
+</class>
+<class name='AVCaptureDeviceInput'>
+<method selector='device'>
+<retval declared_type='AVCaptureDevice*' type='@'/>
+</method>
+<method class_method='true' selector='deviceInputWithDevice:error:'>
+<arg index='0' declared_type='AVCaptureDevice*' name='device' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithDevice:error:'>
+<arg index='0' declared_type='AVCaptureDevice*' name='device' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='AVCaptureFileOutput'>
+<method selector='isRecording'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='maxRecordedDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='maxRecordedFileSize'>
+<retval declared_type='int64_t' type='q'/>
+</method>
+<method selector='minFreeDiskSpaceLimit'>
+<retval declared_type='int64_t' type='q'/>
+</method>
+<method selector='outputFileURL'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+<method selector='recordedDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='recordedFileSize'>
+<retval declared_type='int64_t' type='q'/>
+</method>
+<method selector='setMaxRecordedDuration:'>
+<arg index='0' declared_type='CMTime' name='maxRecordedDuration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMaxRecordedFileSize:'>
+<arg index='0' declared_type='int64_t' name='maxRecordedFileSize' type='q'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMinFreeDiskSpaceLimit:'>
+<arg index='0' declared_type='int64_t' name='minFreeDiskSpaceLimit' type='q'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='startRecordingToOutputFileURL:recordingDelegate:'>
+<arg index='0' declared_type='NSURL*' name='outputFileURL' type='@'/>
+<arg index='1' declared_type='id' name='delegate' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='stopRecording'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVCaptureInput'>
+<method selector='ports'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVCaptureInputPort'>
+<method selector='formatDescription'>
+<retval declared_type='CMFormatDescriptionRef' type='^{cftypeCMFormatDescription=}'/>
+</method>
+<method selector='input'>
+<retval declared_type='AVCaptureInput*' type='@'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mediaType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='setEnabled:'>
+<arg index='0' declared_type='BOOL' name='enabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVCaptureMovieFileOutput'>
+<method selector='metadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='movieFragmentInterval'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='setMetadata:'>
+<arg index='0' declared_type='NSArray*' name='metadata' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMovieFragmentInterval:'>
+<arg index='0' declared_type='CMTime' name='movieFragmentInterval' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVCaptureOutput'>
+<method selector='connectionWithMediaType:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<retval declared_type='AVCaptureConnection*' type='@'/>
+</method>
+<method selector='connections'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVCaptureSession'>
+<method selector='addInput:'>
+<arg index='0' declared_type='AVCaptureInput*' name='input' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='addOutput:'>
+<arg index='0' declared_type='AVCaptureOutput*' name='output' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='beginConfiguration'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='canAddInput:'>
+<arg index='0' declared_type='AVCaptureInput*' name='input' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='canAddOutput:'>
+<arg index='0' declared_type='AVCaptureOutput*' name='output' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='canSetSessionPreset:'>
+<arg index='0' declared_type='NSString*' name='preset' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='commitConfiguration'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='inputs'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='isInterrupted'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isRunning'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='outputs'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='removeInput:'>
+<arg index='0' declared_type='AVCaptureInput*' name='input' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeOutput:'>
+<arg index='0' declared_type='AVCaptureOutput*' name='output' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sessionPreset'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='setSessionPreset:'>
+<arg index='0' declared_type='NSString*' name='sessionPreset' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='startRunning'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='stopRunning'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVCaptureStillImageOutput'>
+<method selector='availableImageDataCVPixelFormatTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='availableImageDataCodecTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='captureStillImageAsynchronouslyFromConnection:completionHandler:'>
+<arg index='0' declared_type='AVCaptureConnection*' name='connection' type='@'/>
+<arg index='1' declared_type='void (^)(CMSampleBufferRef, NSError *)' name='handler' function_pointer='true' type='@?'>
+<arg declared_type='CMSampleBufferRef' type='^{cftypeCMSampleBuffer=}'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isCapturingStillImage'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='jpegStillImageNSDataRepresentation:'>
+<arg index='0' declared_type='CMSampleBufferRef' name='jpegSampleBuffer' type='^{cftypeCMSampleBuffer=}'/>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='outputSettings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='setOutputSettings:'>
+<arg index='0' declared_type='NSDictionary*' name='outputSettings' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVCaptureVideoDataOutput'>
+<method selector='alwaysDiscardsLateVideoFrames'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='availableVideoCVPixelFormatTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='availableVideoCodecTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='minFrameDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='sampleBufferCallbackQueue'>
+<retval declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}'/>
+</method>
+<method selector='sampleBufferDelegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setAlwaysDiscardsLateVideoFrames:'>
+<arg index='0' declared_type='BOOL' name='alwaysDiscardsLateVideoFrames' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMinFrameDuration:'>
+<arg index='0' declared_type='CMTime' name='minFrameDuration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSampleBufferDelegate:queue:'>
+<arg index='0' declared_type='id' name='sampleBufferDelegate' type='@'/>
+<arg index='1' declared_type='dispatch_queue_t' name='sampleBufferCallbackQueue' type='^{dispatch_queue_s=}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoSettings:'>
+<arg index='0' declared_type='NSDictionary*' name='videoSettings' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoSettings'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+</class>
+<class name='AVCaptureVideoPreviewLayer'>
+<method selector='automaticallyAdjustsMirroring'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithSession:'>
+<arg index='0' declared_type='AVCaptureSession*' name='session' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isMirrored'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isMirroringSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isOrientationSupported'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='layerWithSession:'>
+<arg index='0' declared_type='AVCaptureSession*' name='session' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='orientation'>
+<retval declared_type='AVCaptureVideoOrientation' type='i'/>
+</method>
+<method selector='session'>
+<retval declared_type='AVCaptureSession*' type='@'/>
+</method>
+<method selector='setAutomaticallyAdjustsMirroring:'>
+<arg index='0' declared_type='BOOL' name='automaticallyAdjustsMirroring' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMirrored:'>
+<arg index='0' declared_type='BOOL' name='mirrored' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setOrientation:'>
+<arg index='0' declared_type='AVCaptureVideoOrientation' name='orientation' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSession:'>
+<arg index='0' declared_type='AVCaptureSession*' name='session' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoGravity:'>
+<arg index='0' declared_type='NSString*' name='videoGravity' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoGravity'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='AVComposition'>
+<method selector='naturalSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='tracks'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVCompositionTrack'>
+<method selector='segments'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVCompositionTrackSegment'>
+<method class_method='true' selector='compositionTrackSegmentWithTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='AVCompositionTrackSegment*' type='@'/>
+</method>
+<method class_method='true' selector='compositionTrackSegmentWithURL:trackID:sourceTimeRange:targetTimeRange:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<arg index='1' declared_type='CMPersistentTrackID' name='trackID' type='i'/>
+<arg index='2' declared_type='CMTimeRange' name='sourceTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='3' declared_type='CMTimeRange' name='targetTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='AVCompositionTrackSegment*' type='@'/>
+</method>
+<method selector='initWithTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithURL:trackID:sourceTimeRange:targetTimeRange:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<arg index='1' declared_type='CMPersistentTrackID' name='trackID' type='i'/>
+<arg index='2' declared_type='CMTimeRange' name='sourceTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='3' declared_type='CMTimeRange' name='targetTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isEmpty'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='sourceTrackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+<method selector='sourceURL'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+</class>
+<class name='AVMediaSelectionGroup'>
+<method selector='allowsEmptySelection'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mediaSelectionOptionWithPropertyList:'>
+<arg index='0' declared_type='id' name='plist' type='@'/>
+<retval declared_type='AVMediaSelectionOption*' type='@'/>
+</method>
+<method class_method='true' selector='mediaSelectionOptionsFromArray:withLocale:'>
+<arg index='0' declared_type='NSArray*' name='array' type='@'/>
+<arg index='1' declared_type='NSLocale*' name='locale' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='mediaSelectionOptionsFromArray:withMediaCharacteristics:'>
+<arg index='0' declared_type='NSArray*' name='array' type='@'/>
+<arg index='1' declared_type='NSArray*' name='mediaCharacteristics' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='mediaSelectionOptionsFromArray:withoutMediaCharacteristics:'>
+<arg index='0' declared_type='NSArray*' name='array' type='@'/>
+<arg index='1' declared_type='NSArray*' name='mediaCharacteristics' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='options'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='playableMediaSelectionOptionsFromArray:'>
+<arg index='0' declared_type='NSArray*' name='array' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVMediaSelectionOption'>
+<method selector='associatedMediaSelectionOptionInMediaSelectionGroup:'>
+<arg index='0' declared_type='AVMediaSelectionGroup*' name='mediaSelectionGroup' type='@'/>
+<retval declared_type='AVMediaSelectionOption*' type='@'/>
+</method>
+<method selector='availableMetadataFormats'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='commonMetadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='hasMediaCharacteristic:'>
+<arg index='0' declared_type='NSString*' name='mediaCharacteristic' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isPlayable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='locale'>
+<retval declared_type='NSLocale*' type='@'/>
+</method>
+<method selector='mediaSubTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='mediaType'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='metadataForFormat:'>
+<arg index='0' declared_type='NSString*' name='format' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='propertyList'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='AVMetadataItem'>
+<method selector='commonKey'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='dataValue'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='dateValue'>
+<retval declared_type='NSDate*' type='@'/>
+</method>
+<method selector='duration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='extraAttributes'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='key'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keySpace'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='loadValuesAsynchronouslyForKeys:completionHandler:'>
+<arg index='0' declared_type='NSArray*' name='keys' type='@'/>
+<arg index='1' declared_type='void (^)(void)' name='handler' function_pointer='true' type='@?'>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='locale'>
+<retval declared_type='NSLocale*' type='@'/>
+</method>
+<method class_method='true' selector='metadataItemsFromArray:withKey:keySpace:'>
+<arg index='0' declared_type='NSArray*' name='array' type='@'/>
+<arg index='1' declared_type='id' name='key' type='@'/>
+<arg index='2' declared_type='NSString*' name='keySpace' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='metadataItemsFromArray:withLocale:'>
+<arg index='0' declared_type='NSArray*' name='array' type='@'/>
+<arg index='1' declared_type='NSLocale*' name='locale' type='@'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='numberValue'>
+<retval declared_type='NSNumber*' type='@'/>
+</method>
+<method selector='statusOfValueForKey:error:'>
+<arg index='0' declared_type='NSString*' name='key' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='AVKeyValueStatus' type='i'/>
+</method>
+<method selector='stringValue'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='time'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='AVMutableAudioMix'>
+<method class_method='true' selector='audioMix'>
+<retval declared_type='AVMutableAudioMix*' type='@'/>
+</method>
+<method selector='inputParameters'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setInputParameters:'>
+<arg index='0' declared_type='NSArray*' name='inputParameters' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVMutableAudioMixInputParameters'>
+<method class_method='true' selector='audioMixInputParameters'>
+<retval declared_type='AVMutableAudioMixInputParameters*' type='@'/>
+</method>
+<method class_method='true' selector='audioMixInputParametersWithTrack:'>
+<arg index='0' declared_type='AVAssetTrack*' name='track' type='@'/>
+<retval declared_type='AVMutableAudioMixInputParameters*' type='@'/>
+</method>
+<method selector='setTrackID:'>
+<arg index='0' declared_type='CMPersistentTrackID' name='trackID' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVolume:atTime:'>
+<arg index='0' declared_type='float' name='volume' type='f'/>
+<arg index='1' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVolumeRampFromStartVolume:toEndVolume:timeRange:'>
+<arg index='0' declared_type='float' name='startVolume' type='f'/>
+<arg index='1' declared_type='float' name='endVolume' type='f'/>
+<arg index='2' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='trackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+</class>
+<class name='AVMutableComposition'>
+<method selector='addMutableTrackWithMediaType:preferredTrackID:'>
+<arg index='0' declared_type='NSString*' name='mediaType' type='@'/>
+<arg index='1' declared_type='CMPersistentTrackID' name='preferredTrackID' type='i'/>
+<retval declared_type='AVMutableCompositionTrack*' type='@'/>
+</method>
+<method class_method='true' selector='composition'>
+<retval declared_type='AVMutableComposition*' type='@'/>
+</method>
+<method selector='insertEmptyTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='insertTimeRange:ofAsset:atTime:error:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='1' declared_type='AVAsset*' name='asset' type='@'/>
+<arg index='2' declared_type='CMTime' name='startTime' type='{_CMTime=qiIq}'/>
+<arg index='3' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mutableTrackCompatibleWithTrack:'>
+<arg index='0' declared_type='AVAssetTrack*' name='track' type='@'/>
+<retval declared_type='AVMutableCompositionTrack*' type='@'/>
+</method>
+<method selector='naturalSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='removeTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeTrack:'>
+<arg index='0' declared_type='AVCompositionTrack*' name='track' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scaleTimeRange:toDuration:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='1' declared_type='CMTime' name='duration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setNaturalSize:'>
+<arg index='0' declared_type='CGSize' name='naturalSize' type='{CGSize=ff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='tracks'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='AVMutableCompositionTrack'>
+<method selector='extendedLanguageTag'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='insertEmptyTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='insertTimeRange:ofTrack:atTime:error:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='1' declared_type='AVAssetTrack*' name='track' type='@'/>
+<arg index='2' declared_type='CMTime' name='startTime' type='{_CMTime=qiIq}'/>
+<arg index='3' declared_type='NSError**' name='error' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='insertTimeRanges:ofTracks:atTime:error:'>
+<arg index='0' declared_type='NSArray*' name='timeRanges' type='@'/>
+<arg index='1' declared_type='NSArray*' name='tracks' type='@'/>
+<arg index='2' declared_type='CMTime' name='startTime' type='{_CMTime=qiIq}'/>
+<arg index='3' declared_type='NSError**' name='error' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='languageCode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='naturalTimeScale'>
+<retval declared_type='CMTimeScale' type='i'/>
+</method>
+<method selector='preferredTransform'>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</method>
+<method selector='preferredVolume'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='removeTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scaleTimeRange:toDuration:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='1' declared_type='CMTime' name='duration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='segments'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setExtendedLanguageTag:'>
+<arg index='0' declared_type='NSString*' name='extendedLanguageTag' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLanguageCode:'>
+<arg index='0' declared_type='NSString*' name='languageCode' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setNaturalTimeScale:'>
+<arg index='0' declared_type='CMTimeScale' name='naturalTimeScale' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPreferredTransform:'>
+<arg index='0' declared_type='CGAffineTransform' name='preferredTransform' type='{CGAffineTransform=ffffff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPreferredVolume:'>
+<arg index='0' declared_type='float' name='preferredVolume' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSegments:'>
+<arg index='0' declared_type='NSArray*' name='segments' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='validateTrackSegments:error:'>
+<arg index='0' declared_type='NSArray*' name='trackSegments' type='@'/>
+<arg index='1' declared_type='NSError**' name='error' type='^@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</class>
+<class name='AVMutableMetadataItem'>
+<method selector='duration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='extraAttributes'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='key'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='keySpace'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='locale'>
+<retval declared_type='NSLocale*' type='@'/>
+</method>
+<method class_method='true' selector='metadataItem'>
+<retval declared_type='AVMutableMetadataItem*' type='@'/>
+</method>
+<method selector='setDuration:'>
+<arg index='0' declared_type='CMTime' name='duration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setExtraAttributes:'>
+<arg index='0' declared_type='NSDictionary*' name='extraAttributes' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setKey:'>
+<arg index='0' declared_type='id' name='key' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setKeySpace:'>
+<arg index='0' declared_type='NSString*' name='keySpace' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLocale:'>
+<arg index='0' declared_type='NSLocale*' name='locale' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTime:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setValue:'>
+<arg index='0' declared_type='id' name='value' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='time'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='AVMutableTimedMetadataGroup'>
+<method selector='items'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setItems:'>
+<arg index='0' declared_type='NSArray*' name='items' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+</class>
+<class name='AVMutableVideoComposition'>
+<method selector='animationTool'>
+<retval declared_type='AVVideoCompositionCoreAnimationTool*' type='@'/>
+</method>
+<method selector='frameDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='instructions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='renderScale'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='renderSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='setAnimationTool:'>
+<arg index='0' declared_type='AVVideoCompositionCoreAnimationTool*' name='animationTool' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setFrameDuration:'>
+<arg index='0' declared_type='CMTime' name='frameDuration' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setInstructions:'>
+<arg index='0' declared_type='NSArray*' name='instructions' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRenderScale:'>
+<arg index='0' declared_type='float' name='renderScale' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRenderSize:'>
+<arg index='0' declared_type='CGSize' name='renderSize' type='{CGSize=ff}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method class_method='true' selector='videoComposition'>
+<retval declared_type='AVMutableVideoComposition*' type='@'/>
+</method>
+</class>
+<class name='AVMutableVideoCompositionInstruction'>
+<method selector='backgroundColor'>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</method>
+<method selector='enablePostProcessing'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='layerInstructions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setBackgroundColor:'>
+<arg index='0' declared_type='CGColorRef' name='backgroundColor' type='^{CGColor=}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnablePostProcessing:'>
+<arg index='0' declared_type='BOOL' name='enablePostProcessing' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLayerInstructions:'>
+<arg index='0' declared_type='NSArray*' name='layerInstructions' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+<method class_method='true' selector='videoCompositionInstruction'>
+<retval declared_type='AVMutableVideoCompositionInstruction*' type='@'/>
+</method>
+</class>
+<class name='AVMutableVideoCompositionLayerInstruction'>
+<method selector='setOpacity:atTime:'>
+<arg index='0' declared_type='float' name='opacity' type='f'/>
+<arg index='1' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setOpacityRampFromStartOpacity:toEndOpacity:timeRange:'>
+<arg index='0' declared_type='float' name='startOpacity' type='f'/>
+<arg index='1' declared_type='float' name='endOpacity' type='f'/>
+<arg index='2' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTrackID:'>
+<arg index='0' declared_type='CMPersistentTrackID' name='trackID' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTransform:atTime:'>
+<arg index='0' declared_type='CGAffineTransform' name='transform' type='{CGAffineTransform=ffffff}'/>
+<arg index='1' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTransformRampFromStartTransform:toEndTransform:timeRange:'>
+<arg index='0' declared_type='CGAffineTransform' name='startTransform' type='{CGAffineTransform=ffffff}'/>
+<arg index='1' declared_type='CGAffineTransform' name='endTransform' type='{CGAffineTransform=ffffff}'/>
+<arg index='2' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='trackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+<method class_method='true' selector='videoCompositionLayerInstruction'>
+<retval declared_type='AVMutableVideoCompositionLayerInstruction*' type='@'/>
+</method>
+<method class_method='true' selector='videoCompositionLayerInstructionWithAssetTrack:'>
+<arg index='0' declared_type='AVAssetTrack*' name='track' type='@'/>
+<retval declared_type='AVMutableVideoCompositionLayerInstruction*' type='@'/>
+</method>
+</class>
+<class name='AVPlayer'>
+<method selector='actionAtItemEnd'>
+<retval declared_type='AVPlayerActionAtItemEnd' type='i'/>
+</method>
+<method selector='addBoundaryTimeObserverForTimes:queue:usingBlock:'>
+<arg index='0' declared_type='NSArray*' name='times' type='@'/>
+<arg index='1' declared_type='dispatch_queue_t' name='queue' type='^{dispatch_queue_s=}'/>
+<arg index='2' declared_type='void (^)(void)' name='block' function_pointer='true' type='@?'>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='addPeriodicTimeObserverForInterval:queue:usingBlock:'>
+<arg index='0' declared_type='CMTime' name='interval' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='dispatch_queue_t' name='queue' type='^{dispatch_queue_s=}'/>
+<arg index='2' declared_type='void (^)(CMTime)' name='block' function_pointer='true' type='@?'>
+<arg declared_type='CMTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='allowsAirPlayVideo'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='currentItem'>
+<retval declared_type='AVPlayerItem*' type='@'/>
+</method>
+<method selector='currentTime'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='error'>
+<retval declared_type='NSError*' type='@'/>
+</method>
+<method selector='initWithPlayerItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='item' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithURL:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isAirPlayVideoActive'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isClosedCaptionDisplayEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='pause'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='play'>
+<retval declared_type='void' type='v'/>
+</method>
+<method class_method='true' selector='playerWithPlayerItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='item' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method class_method='true' selector='playerWithURL:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='rate'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='removeTimeObserver:'>
+<arg index='0' declared_type='id' name='observer' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='replaceCurrentItemWithPlayerItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='item' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:completionHandler:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='void (^)(BOOL)' name='completionHandler' function_pointer='true' type='@?'>
+<arg declared_type='BOOL' type='B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:toleranceBefore:toleranceAfter:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='CMTime' name='toleranceBefore' type='{_CMTime=qiIq}'/>
+<arg index='2' declared_type='CMTime' name='toleranceAfter' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:toleranceBefore:toleranceAfter:completionHandler:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='CMTime' name='toleranceBefore' type='{_CMTime=qiIq}'/>
+<arg index='2' declared_type='CMTime' name='toleranceAfter' type='{_CMTime=qiIq}'/>
+<arg index='3' declared_type='void (^)(BOOL)' name='completionHandler' function_pointer='true' type='@?'>
+<arg declared_type='BOOL' type='B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setActionAtItemEnd:'>
+<arg index='0' declared_type='AVPlayerActionAtItemEnd' name='actionAtItemEnd' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setAllowsAirPlayVideo:'>
+<arg index='0' declared_type='BOOL' name='allowsAirPlayVideo' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setClosedCaptionDisplayEnabled:'>
+<arg index='0' declared_type='BOOL' name='closedCaptionDisplayEnabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRate:'>
+<arg index='0' declared_type='float' name='rate' type='f'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setUsesAirPlayVideoWhileAirPlayScreenIsActive:'>
+<arg index='0' declared_type='BOOL' name='usesAirPlayVideoWhileAirPlayScreenIsActive' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='status'>
+<retval declared_type='AVPlayerStatus' type='i'/>
+</method>
+<method selector='usesAirPlayVideoWhileAirPlayScreenIsActive'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</class>
+<class name='AVPlayerItem'>
+<method selector='accessLog'>
+<retval declared_type='AVPlayerItemAccessLog*' type='@'/>
+</method>
+<method selector='asset'>
+<retval declared_type='AVAsset*' type='@'/>
+</method>
+<method selector='audioMix'>
+<retval declared_type='AVAudioMix*' type='@'/>
+</method>
+<method selector='canPlayFastForward'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='canPlayFastReverse'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='cancelPendingSeeks'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='currentDate'>
+<retval declared_type='NSDate*' type='@'/>
+</method>
+<method selector='currentTime'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='duration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='error'>
+<retval declared_type='NSError*' type='@'/>
+</method>
+<method selector='errorLog'>
+<retval declared_type='AVPlayerItemErrorLog*' type='@'/>
+</method>
+<method selector='forwardPlaybackEndTime'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='initWithAsset:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithURL:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isPlaybackBufferEmpty'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isPlaybackBufferFull'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isPlaybackLikelyToKeepUp'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='loadedTimeRanges'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='playerItemWithAsset:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='AVPlayerItem*' type='@'/>
+</method>
+<method class_method='true' selector='playerItemWithURL:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<retval declared_type='AVPlayerItem*' type='@'/>
+</method>
+<method selector='presentationSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+<method selector='reversePlaybackEndTime'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='seekToDate:'>
+<arg index='0' declared_type='NSDate*' name='date' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='seekToTime:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:completionHandler:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='void (^)(BOOL)' name='completionHandler' function_pointer='true' type='@?'>
+<arg declared_type='BOOL' type='B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:toleranceBefore:toleranceAfter:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='CMTime' name='toleranceBefore' type='{_CMTime=qiIq}'/>
+<arg index='2' declared_type='CMTime' name='toleranceAfter' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekToTime:toleranceBefore:toleranceAfter:completionHandler:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='CMTime' name='toleranceBefore' type='{_CMTime=qiIq}'/>
+<arg index='2' declared_type='CMTime' name='toleranceAfter' type='{_CMTime=qiIq}'/>
+<arg index='3' declared_type='void (^)(BOOL)' name='completionHandler' function_pointer='true' type='@?'>
+<arg declared_type='BOOL' type='B'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='seekableTimeRanges'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='selectMediaOption:inMediaSelectionGroup:'>
+<arg index='0' declared_type='AVMediaSelectionOption*' name='mediaSelectionOption' type='@'/>
+<arg index='1' declared_type='AVMediaSelectionGroup*' name='mediaSelectionGroup' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='selectedMediaOptionInMediaSelectionGroup:'>
+<arg index='0' declared_type='AVMediaSelectionGroup*' name='mediaSelectionGroup' type='@'/>
+<retval declared_type='AVMediaSelectionOption*' type='@'/>
+</method>
+<method selector='setAudioMix:'>
+<arg index='0' declared_type='AVAudioMix*' name='audioMix' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setForwardPlaybackEndTime:'>
+<arg index='0' declared_type='CMTime' name='forwardPlaybackEndTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setReversePlaybackEndTime:'>
+<arg index='0' declared_type='CMTime' name='reversePlaybackEndTime' type='{_CMTime=qiIq}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoComposition:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='status'>
+<retval declared_type='AVPlayerItemStatus' type='i'/>
+</method>
+<method selector='stepByCount:'>
+<arg index='0' declared_type='NSInteger' name='stepCount' type='i'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='timedMetadata'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='tracks'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='videoComposition'>
+<retval declared_type='AVVideoComposition*' type='@'/>
+</method>
+</class>
+<class name='AVPlayerItemAccessLog'>
+<method selector='events'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='extendedLogData'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='extendedLogDataStringEncoding'>
+<retval declared_type='NSStringEncoding' type='I'/>
+</method>
+</class>
+<class name='AVPlayerItemAccessLogEvent'>
+<method selector='URI'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='durationWatched'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='indicatedBitrate'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='numberOfBytesTransferred'>
+<retval declared_type='long long' type='q'/>
+</method>
+<method selector='numberOfDroppedVideoFrames'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='numberOfSegmentsDownloaded'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='numberOfServerAddressChanges'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='numberOfStalls'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='observedBitrate'>
+<retval declared_type='double' type='d'/>
+</method>
+<method selector='playbackSessionID'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='playbackStartDate'>
+<retval declared_type='NSDate*' type='@'/>
+</method>
+<method selector='playbackStartOffset'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='segmentsDownloadedDuration'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='serverAddress'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='AVPlayerItemErrorLog'>
+<method selector='events'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='extendedLogData'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='extendedLogDataStringEncoding'>
+<retval declared_type='NSStringEncoding' type='I'/>
+</method>
+</class>
+<class name='AVPlayerItemErrorLogEvent'>
+<method selector='URI'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='date'>
+<retval declared_type='NSDate*' type='@'/>
+</method>
+<method selector='errorComment'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='errorDomain'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='errorStatusCode'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='playbackSessionID'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='serverAddress'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='AVPlayerItemTrack'>
+<method selector='assetTrack'>
+<retval declared_type='AVAssetTrack*' type='@'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setEnabled:'>
+<arg index='0' declared_type='BOOL' name='enabled' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVPlayerLayer'>
+<method selector='isReadyForDisplay'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='player'>
+<retval declared_type='AVPlayer*' type='@'/>
+</method>
+<method class_method='true' selector='playerLayerWithPlayer:'>
+<arg index='0' declared_type='AVPlayer*' name='player' type='@'/>
+<retval declared_type='AVPlayerLayer*' type='@'/>
+</method>
+<method selector='setPlayer:'>
+<arg index='0' declared_type='AVPlayer*' name='player' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVideoGravity:'>
+<arg index='0' declared_type='NSString*' name='videoGravity' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='videoGravity'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='AVQueuePlayer'>
+<method selector='advanceToNextItem'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='canInsertItem:afterItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='item' type='@'/>
+<arg index='1' declared_type='AVPlayerItem*' name='afterItem' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithItems:'>
+<arg index='0' declared_type='NSArray*' name='items' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='insertItem:afterItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='item' type='@'/>
+<arg index='1' declared_type='AVPlayerItem*' name='afterItem' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='items'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='queuePlayerWithItems:'>
+<arg index='0' declared_type='NSArray*' name='items' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='removeAllItems'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='item' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='AVSynchronizedLayer'>
+<method selector='playerItem'>
+<retval declared_type='AVPlayerItem*' type='@'/>
+</method>
+<method selector='setPlayerItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='playerItem' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method class_method='true' selector='synchronizedLayerWithPlayerItem:'>
+<arg index='0' declared_type='AVPlayerItem*' name='playerItem' type='@'/>
+<retval declared_type='AVSynchronizedLayer*' type='@'/>
+</method>
+</class>
+<class name='AVTimedMetadataGroup'>
+<method selector='initWithItems:timeRange:'>
+<arg index='0' declared_type='NSArray*' name='items' type='@'/>
+<arg index='1' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='items'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+</class>
+<class name='AVURLAsset'>
+<method selector='URL'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+<method class_method='true' selector='URLAssetWithURL:options:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='options' type='@'/>
+<retval declared_type='AVURLAsset*' type='@'/>
+</method>
+<method class_method='true' selector='audiovisualMIMETypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='audiovisualTypes'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='compatibleTrackForCompositionTrack:'>
+<arg index='0' declared_type='AVCompositionTrack*' name='compositionTrack' type='@'/>
+<retval declared_type='AVAssetTrack*' type='@'/>
+</method>
+<method selector='initWithURL:options:'>
+<arg index='0' declared_type='NSURL*' name='URL' type='@'/>
+<arg index='1' declared_type='NSDictionary*' name='options' type='@'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method class_method='true' selector='isPlayableExtendedMIMEType:'>
+<arg index='0' declared_type='NSString*' name='extendedMIMEType' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</class>
+<class name='AVVideoComposition'>
+<method selector='animationTool'>
+<retval declared_type='AVVideoCompositionCoreAnimationTool*' type='@'/>
+</method>
+<method selector='frameDuration'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='instructions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='isValidForAsset:timeRange:validationDelegate:'>
+<arg index='0' declared_type='AVAsset*' name='asset' type='@'/>
+<arg index='1' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='2' declared_type='id' name='validationDelegate' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='renderScale'>
+<retval declared_type='float' type='f'/>
+</method>
+<method selector='renderSize'>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+</class>
+<class name='AVVideoCompositionCoreAnimationTool'>
+<method class_method='true' selector='videoCompositionCoreAnimationToolWithAdditionalLayer:asTrackID:'>
+<arg index='0' declared_type='CALayer*' name='layer' type='@'/>
+<arg index='1' declared_type='CMPersistentTrackID' name='trackID' type='i'/>
+<retval declared_type='AVVideoCompositionCoreAnimationTool*' type='@'/>
+</method>
+<method class_method='true' selector='videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:inLayer:'>
+<arg index='0' declared_type='CALayer*' name='videoLayer' type='@'/>
+<arg index='1' declared_type='CALayer*' name='animationLayer' type='@'/>
+<retval declared_type='AVVideoCompositionCoreAnimationTool*' type='@'/>
+</method>
+</class>
+<class name='AVVideoCompositionInstruction'>
+<method selector='backgroundColor'>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</method>
+<method selector='enablePostProcessing'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='layerInstructions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setBackgroundColor:'>
+<arg index='0' declared_type='CGColorRef' name='backgroundColor' type='^{CGColor=}'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='timeRange'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+</class>
+<class name='AVVideoCompositionLayerInstruction'>
+<method selector='getOpacityRampForTime:startOpacity:endOpacity:timeRange:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='float*' name='startOpacity' type='^f'/>
+<arg index='2' declared_type='float*' name='endOpacity' type='^f'/>
+<arg index='3' declared_type='CMTimeRange*' name='timeRange' type='^{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='getTransformRampForTime:startTransform:endTransform:timeRange:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='CGAffineTransform*' name='startTransform' type='^{CGAffineTransform=ffffff}'/>
+<arg index='2' declared_type='CGAffineTransform*' name='endTransform' type='^{CGAffineTransform=ffffff}'/>
+<arg index='3' declared_type='CMTimeRange*' name='timeRange' type='^{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='trackID'>
+<retval declared_type='CMPersistentTrackID' type='i'/>
+</method>
+</class>
+<class name='NSCoder'>
+<method selector='decodeCMTimeForKey:'>
+<arg index='0' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method selector='decodeCMTimeMappingForKey:'>
+<arg index='0' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='CMTimeMapping' type='{_CMTimeMapping={?={?=qiIq}{?=qiIq}}{?={?=qiIq}{?=qiIq}}}'/>
+</method>
+<method selector='decodeCMTimeRangeForKey:'>
+<arg index='0' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+<method selector='encodeCMTime:forKey:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<arg index='1' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='encodeCMTimeMapping:forKey:'>
+<arg index='0' declared_type='CMTimeMapping' name='timeMapping' type='{_CMTimeMapping={?={?=qiIq}{?=qiIq}}{?={?=qiIq}{?=qiIq}}}'/>
+<arg index='1' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='encodeCMTimeRange:forKey:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<arg index='1' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='audioPlayerBeginInterruption:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioPlayerDecodeErrorDidOccur:error:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<arg index='1' declared_type='NSError*' name='error' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioPlayerDidFinishPlaying:successfully:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<arg index='1' declared_type='BOOL' name='flag' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioPlayerEndInterruption:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioPlayerEndInterruption:withFlags:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<arg index='1' declared_type='NSUInteger' name='flags' type='I'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioRecorderBeginInterruption:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioRecorderDidFinishRecording:successfully:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<arg index='1' declared_type='BOOL' name='flag' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioRecorderEncodeErrorDidOccur:error:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<arg index='1' declared_type='NSError*' name='error' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioRecorderEndInterruption:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='audioRecorderEndInterruption:withFlags:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<arg index='1' declared_type='NSUInteger' name='flags' type='I'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='beginInterruption'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:'>
+<arg index='0' declared_type='AVCaptureFileOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='NSURL*' name='outputFileURL' type='@'/>
+<arg index='2' declared_type='NSArray*' name='connections' type='@'/>
+<arg index='3' declared_type='NSError*' name='error' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='captureOutput:didOutputSampleBuffer:fromConnection:'>
+<arg index='0' declared_type='AVCaptureOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='CMSampleBufferRef' name='sampleBuffer' type='^{cftypeCMSampleBuffer=}'/>
+<arg index='2' declared_type='AVCaptureConnection*' name='connection' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='captureOutput:didStartRecordingToOutputFileAtURL:fromConnections:'>
+<arg index='0' declared_type='AVCaptureFileOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='NSURL*' name='fileURL' type='@'/>
+<arg index='2' declared_type='NSArray*' name='connections' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='endInterruption'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='endInterruptionWithFlags:'>
+<arg index='0' declared_type='NSUInteger' name='flags' type='I'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='inputIsAvailableChanged:'>
+<arg index='0' declared_type='BOOL' name='isInputAvailable' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='loadValuesAsynchronouslyForKeys:completionHandler:'>
+<arg index='0' declared_type='NSArray*' name='keys' type='@'/>
+<arg index='1' declared_type='void (^)(void)' name='handler' function_pointer='true' type='@?'>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='statusOfValueForKey:error:'>
+<arg index='0' declared_type='NSString*' name='key' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='AVKeyValueStatus' type='i'/>
+</method>
+<method selector='videoComposition:shouldContinueValidatingAfterFindingEmptyTimeRange:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='videoComposition:shouldContinueValidatingAfterFindingInvalidTimeRangeInInstruction:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='AVVideoCompositionInstruction*' name='videoCompositionInstruction' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='videoComposition:shouldContinueValidatingAfterFindingInvalidTrackIDInInstruction:layerInstruction:asset:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='AVVideoCompositionInstruction*' name='videoCompositionInstruction' type='@'/>
+<arg index='2' declared_type='AVVideoCompositionLayerInstruction*' name='layerInstruction' type='@'/>
+<arg index='3' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='videoComposition:shouldContinueValidatingAfterFindingInvalidValueForKey:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</class>
+<class name='NSValue'>
+<method selector='CMTimeMappingValue'>
+<retval declared_type='CMTimeMapping' type='{_CMTimeMapping={?={?=qiIq}{?=qiIq}}{?={?=qiIq}{?=qiIq}}}'/>
+</method>
+<method selector='CMTimeRangeValue'>
+<retval declared_type='CMTimeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+</method>
+<method selector='CMTimeValue'>
+<retval declared_type='CMTime' type='{_CMTime=qiIq}'/>
+</method>
+<method class_method='true' selector='valueWithCMTime:'>
+<arg index='0' declared_type='CMTime' name='time' type='{_CMTime=qiIq}'/>
+<retval declared_type='NSValue*' type='@'/>
+</method>
+<method class_method='true' selector='valueWithCMTimeMapping:'>
+<arg index='0' declared_type='CMTimeMapping' name='timeMapping' type='{_CMTimeMapping={?={?=qiIq}{?=qiIq}}{?={?=qiIq}{?=qiIq}}}'/>
+<retval declared_type='NSValue*' type='@'/>
+</method>
+<method class_method='true' selector='valueWithCMTimeRange:'>
+<arg index='0' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='NSValue*' type='@'/>
+</method>
+</class>
+<informal_protocol name='AVAsynchronousKeyValueLoading'>
+<method type='v16@0:4@8@?12' selector='loadValuesAsynchronouslyForKeys:completionHandler:'>
+<arg index='0' declared_type='NSArray*' name='keys' type='@'/>
+<arg index='1' declared_type='void (^)(void)' name='handler' function_pointer='true' type='@?'>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='i16@0:4@8^@12' selector='statusOfValueForKey:error:'>
+<arg index='0' declared_type='NSString*' name='key' type='@'/>
+<arg index='1' declared_type='NSError**' name='outError' type='^@'/>
+<retval declared_type='AVKeyValueStatus' type='i'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVAudioPlayerDelegate'>
+<method type='v12@0:4@8' selector='audioPlayerBeginInterruption:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8@12' selector='audioPlayerDecodeErrorDidOccur:error:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<arg index='1' declared_type='NSError*' name='error' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8B12' selector='audioPlayerDidFinishPlaying:successfully:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<arg index='1' declared_type='BOOL' name='flag' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4@8' selector='audioPlayerEndInterruption:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8I12' selector='audioPlayerEndInterruption:withFlags:'>
+<arg index='0' declared_type='AVAudioPlayer*' name='player' type='@'/>
+<arg index='1' declared_type='NSUInteger' name='flags' type='I'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVAudioRecorderDelegate'>
+<method type='v12@0:4@8' selector='audioRecorderBeginInterruption:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8B12' selector='audioRecorderDidFinishRecording:successfully:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<arg index='1' declared_type='BOOL' name='flag' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8@12' selector='audioRecorderEncodeErrorDidOccur:error:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<arg index='1' declared_type='NSError*' name='error' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4@8' selector='audioRecorderEndInterruption:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8I12' selector='audioRecorderEndInterruption:withFlags:'>
+<arg index='0' declared_type='AVAudioRecorder*' name='recorder' type='@'/>
+<arg index='1' declared_type='NSUInteger' name='flags' type='I'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVAudioSessionDelegate'>
+<method type='v8@0:4' selector='beginInterruption'>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v8@0:4' selector='endInterruption'>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4I8' selector='endInterruptionWithFlags:'>
+<arg index='0' declared_type='NSUInteger' name='flags' type='I'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4B8' selector='inputIsAvailableChanged:'>
+<arg index='0' declared_type='BOOL' name='isInputAvailable' type='B'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVCaptureAudioDataOutputSampleBufferDelegate'>
+<method type='v20@0:4@8^{cftypeCMSampleBuffer=}12@16' selector='captureOutput:didOutputSampleBuffer:fromConnection:'>
+<arg index='0' declared_type='AVCaptureOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='CMSampleBufferRef' name='sampleBuffer' type='^{cftypeCMSampleBuffer=}'/>
+<arg index='2' declared_type='AVCaptureConnection*' name='connection' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVCaptureFileOutputRecordingDelegate'>
+<method type='v24@0:4@8@12@16@20' selector='captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:'>
+<arg index='0' declared_type='AVCaptureFileOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='NSURL*' name='outputFileURL' type='@'/>
+<arg index='2' declared_type='NSArray*' name='connections' type='@'/>
+<arg index='3' declared_type='NSError*' name='error' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v20@0:4@8@12@16' selector='captureOutput:didStartRecordingToOutputFileAtURL:fromConnections:'>
+<arg index='0' declared_type='AVCaptureFileOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='NSURL*' name='fileURL' type='@'/>
+<arg index='2' declared_type='NSArray*' name='connections' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVCaptureVideoDataOutputSampleBufferDelegate'>
+<method type='v20@0:4@8^{cftypeCMSampleBuffer=}12@16' selector='captureOutput:didOutputSampleBuffer:fromConnection:'>
+<arg index='0' declared_type='AVCaptureOutput*' name='captureOutput' type='@'/>
+<arg index='1' declared_type='CMSampleBufferRef' name='sampleBuffer' type='^{cftypeCMSampleBuffer=}'/>
+<arg index='2' declared_type='AVCaptureConnection*' name='connection' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='AVVideoCompositionValidationHandling'>
+<method type='B60@0:4@8{?={?=qiIq}{?=qiIq}}12' selector='videoComposition:shouldContinueValidatingAfterFindingEmptyTimeRange:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='CMTimeRange' name='timeRange' type='{_CMTimeRange={?=qiIq}{?=qiIq}}'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='B16@0:4@8@12' selector='videoComposition:shouldContinueValidatingAfterFindingInvalidTimeRangeInInstruction:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='AVVideoCompositionInstruction*' name='videoCompositionInstruction' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='B24@0:4@8@12@16@20' selector='videoComposition:shouldContinueValidatingAfterFindingInvalidTrackIDInInstruction:layerInstruction:asset:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='AVVideoCompositionInstruction*' name='videoCompositionInstruction' type='@'/>
+<arg index='2' declared_type='AVVideoCompositionLayerInstruction*' name='layerInstruction' type='@'/>
+<arg index='3' declared_type='AVAsset*' name='asset' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method type='B16@0:4@8@12' selector='videoComposition:shouldContinueValidatingAfterFindingInvalidValueForKey:'>
+<arg index='0' declared_type='AVVideoComposition*' name='videoComposition' type='@'/>
+<arg index='1' declared_type='NSString*' name='key' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</informal_protocol>
+</signatures>

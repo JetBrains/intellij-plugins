@@ -1,0 +1,103 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant declared_type='NSString*' const='true' type='@' name='ACAccountStoreDidChangeNotification'/>
+<constant declared_type='NSString*' const='true' type='@' name='ACAccountTypeIdentifierTwitter'/>
+<constant declared_type='NSString*' const='true' type='@' name='ACErrorDomain'/>
+<enum value='5' name='ACErrorAccountAlreadyExists'/>
+<enum value='3' name='ACErrorAccountAuthenticationFailed'/>
+<enum value='2' name='ACErrorAccountMissingRequiredProperty'/>
+<enum value='6' name='ACErrorAccountNotFound'/>
+<enum value='4' name='ACErrorAccountTypeInvalid'/>
+<enum value='7' name='ACErrorPermissionDenied'/>
+<enum value='1' name='ACErrorUnknown'/>
+<class name='ACAccount'>
+<method selector='accountDescription'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='accountType'>
+<retval declared_type='ACAccountType*' type='@'/>
+</method>
+<method selector='credential'>
+<retval declared_type='ACAccountCredential*' type='@'/>
+</method>
+<method selector='identifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='initWithAccountType:'>
+<arg declared_type='ACAccountType*' index='0' type='@' name='type'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setAccountDescription:'>
+<arg declared_type='NSString*' index='0' type='@' name='accountDescription'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setAccountType:'>
+<arg declared_type='ACAccountType*' index='0' type='@' name='accountType'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCredential:'>
+<arg declared_type='ACAccountCredential*' index='0' type='@' name='credential'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setUsername:'>
+<arg declared_type='NSString*' index='0' type='@' name='username'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='username'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='ACAccountCredential'>
+<method selector='initWithOAuthToken:tokenSecret:'>
+<arg declared_type='NSString*' index='0' type='@' name='token'/>
+<arg declared_type='NSString*' index='1' type='@' name='secret'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='ACAccountStore'>
+<method selector='accountTypeWithAccountTypeIdentifier:'>
+<arg declared_type='NSString*' index='0' type='@' name='typeIdentifier'/>
+<retval declared_type='ACAccountType*' type='@'/>
+</method>
+<method selector='accountWithIdentifier:'>
+<arg declared_type='NSString*' index='0' type='@' name='identifier'/>
+<retval declared_type='ACAccount*' type='@'/>
+</method>
+<method selector='accounts'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='accountsWithAccountType:'>
+<arg declared_type='ACAccountType*' index='0' type='@' name='accountType'/>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='requestAccessToAccountsWithType:withCompletionHandler:'>
+<arg declared_type='ACAccountType*' index='0' type='@' name='accountType'/>
+<arg declared_type='ACAccountStoreRequestAccessCompletionHandler' index='1' function_pointer='true' type='@?' name='handler'>
+<arg declared_type='BOOL' type='B'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='saveAccount:withCompletionHandler:'>
+<arg declared_type='ACAccount*' index='0' type='@' name='account'/>
+<arg declared_type='ACAccountStoreSaveCompletionHandler' index='1' function_pointer='true' type='@?' name='completionHandler'>
+<arg declared_type='BOOL' type='B'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='ACAccountType'>
+<method selector='accessGranted'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='accountTypeDescription'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='identifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+</signatures>

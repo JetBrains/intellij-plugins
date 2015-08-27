@@ -1,0 +1,550 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant const='true' name='EKErrorDomain' type='@' declared_type='NSString*'/>
+<constant const='true' name='EKEventStoreChangedNotification' type='@' declared_type='NSString*'/>
+<enum name='EKCalendarEventAvailabilityBusy' value='1'/>
+<enum name='EKCalendarEventAvailabilityFree' value='2'/>
+<enum name='EKCalendarEventAvailabilityNone' value='0'/>
+<enum name='EKCalendarEventAvailabilityTentative' value='4'/>
+<enum name='EKCalendarEventAvailabilityUnavailable' value='8'/>
+<enum name='EKCalendarTypeBirthday' value='4'/>
+<enum name='EKCalendarTypeCalDAV' value='1'/>
+<enum name='EKCalendarTypeExchange' value='2'/>
+<enum name='EKCalendarTypeLocal' value='0'/>
+<enum name='EKCalendarTypeSubscription' value='3'/>
+<enum name='EKErrorAlarmGreaterThanRecurrence' value='8'/>
+<enum name='EKErrorCalendarHasNoSource' value='14'/>
+<enum name='EKErrorCalendarIsImmutable' value='16'/>
+<enum name='EKErrorCalendarReadOnly' value='6'/>
+<enum name='EKErrorCalendarSourceCannotBeModified' value='15'/>
+<enum name='EKErrorDatesInverted' value='4'/>
+<enum name='EKErrorDurationGreaterThanRecurrence' value='7'/>
+<enum name='EKErrorEventNotMutable' value='0'/>
+<enum name='EKErrorInternalFailure' value='5'/>
+<enum name='EKErrorInvalidSpan' value='13'/>
+<enum name='EKErrorInvitesCannotBeMoved' value='12'/>
+<enum name='EKErrorLast' value='18'/>
+<enum name='EKErrorNoCalendar' value='1'/>
+<enum name='EKErrorNoEndDate' value='3'/>
+<enum name='EKErrorNoStartDate' value='2'/>
+<enum name='EKErrorObjectBelongsToDifferentStore' value='11'/>
+<enum name='EKErrorSourceDoesNotAllowCalendarAddDelete' value='17'/>
+<enum name='EKErrorStartDateCollidesWithOtherOccurrence' value='10'/>
+<enum name='EKErrorStartDateTooFarInFuture' value='9'/>
+<enum name='EKEventAvailabilityBusy' value='0'/>
+<enum name='EKEventAvailabilityFree' value='1'/>
+<enum name='EKEventAvailabilityNotSupported' value='-1'/>
+<enum name='EKEventAvailabilityTentative' value='2'/>
+<enum name='EKEventAvailabilityUnavailable' value='3'/>
+<enum name='EKEventStatusCanceled' value='3'/>
+<enum name='EKEventStatusConfirmed' value='1'/>
+<enum name='EKEventStatusNone' value='0'/>
+<enum name='EKEventStatusTentative' value='2'/>
+<enum name='EKFriday' value='6'/>
+<enum name='EKMonday' value='2'/>
+<enum name='EKParticipantRoleChair' value='3'/>
+<enum name='EKParticipantRoleNonParticipant' value='4'/>
+<enum name='EKParticipantRoleOptional' value='2'/>
+<enum name='EKParticipantRoleRequired' value='1'/>
+<enum name='EKParticipantRoleUnknown' value='0'/>
+<enum name='EKParticipantStatusAccepted' value='2'/>
+<enum name='EKParticipantStatusCompleted' value='6'/>
+<enum name='EKParticipantStatusDeclined' value='3'/>
+<enum name='EKParticipantStatusDelegated' value='5'/>
+<enum name='EKParticipantStatusInProcess' value='7'/>
+<enum name='EKParticipantStatusPending' value='1'/>
+<enum name='EKParticipantStatusTentative' value='4'/>
+<enum name='EKParticipantStatusUnknown' value='0'/>
+<enum name='EKParticipantTypeGroup' value='4'/>
+<enum name='EKParticipantTypePerson' value='1'/>
+<enum name='EKParticipantTypeResource' value='3'/>
+<enum name='EKParticipantTypeRoom' value='2'/>
+<enum name='EKParticipantTypeUnknown' value='0'/>
+<enum name='EKRecurrenceFrequencyDaily' value='0'/>
+<enum name='EKRecurrenceFrequencyMonthly' value='2'/>
+<enum name='EKRecurrenceFrequencyWeekly' value='1'/>
+<enum name='EKRecurrenceFrequencyYearly' value='3'/>
+<enum name='EKSaturday' value='7'/>
+<enum name='EKSourceTypeBirthdays' value='5'/>
+<enum name='EKSourceTypeCalDAV' value='2'/>
+<enum name='EKSourceTypeExchange' value='1'/>
+<enum name='EKSourceTypeLocal' value='0'/>
+<enum name='EKSourceTypeMobileMe' value='3'/>
+<enum name='EKSourceTypeSubscribed' value='4'/>
+<enum name='EKSpanFutureEvents' value='1'/>
+<enum name='EKSpanThisEvent' value='0'/>
+<enum name='EKSunday' value='1'/>
+<enum name='EKThursday' value='5'/>
+<enum name='EKTuesday' value='3'/>
+<enum name='EKWednesday' value='4'/>
+<class name='EKAlarm'>
+<method selector='absoluteDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method class_method='true' selector='alarmWithAbsoluteDate:'>
+<arg index='0' name='date' type='@' declared_type='NSDate*'/>
+<retval type='@' declared_type='EKAlarm*'/>
+</method>
+<method class_method='true' selector='alarmWithRelativeOffset:'>
+<arg index='0' name='offset' type='d' declared_type='NSTimeInterval'/>
+<retval type='@' declared_type='EKAlarm*'/>
+</method>
+<method selector='relativeOffset'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='setAbsoluteDate:'>
+<arg index='0' name='absoluteDate' type='@' declared_type='NSDate*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setRelativeOffset:'>
+<arg index='0' name='relativeOffset' type='d' declared_type='NSTimeInterval'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='EKCalendar'>
+<method selector='CGColor'>
+<retval type='^{CGColor=}' declared_type='CGColorRef'/>
+</method>
+<method selector='allowsContentModifications'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='calendarIdentifier'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method class_method='true' selector='calendarWithEventStore:'>
+<arg index='0' name='eventStore' type='@' declared_type='EKEventStore*'/>
+<retval type='@' declared_type='EKCalendar*'/>
+</method>
+<method selector='isImmutable'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='isSubscribed'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='setCGColor:'>
+<arg index='0' name='CGColor' type='^{CGColor=}' declared_type='CGColorRef'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setSource:'>
+<arg index='0' name='source' type='@' declared_type='EKSource*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setTitle:'>
+<arg index='0' name='title' type='@' declared_type='NSString*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='source'>
+<retval type='@' declared_type='EKSource*'/>
+</method>
+<method selector='supportedEventAvailabilities'>
+<retval type='I' declared_type='EKCalendarEventAvailabilityMask'/>
+</method>
+<method selector='title'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='type'>
+<retval type='i' declared_type='EKCalendarType'/>
+</method>
+</class>
+<class name='EKCalendarItem'>
+<method selector='URL'>
+<retval type='@' declared_type='NSURL*'/>
+</method>
+<method selector='UUID'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='addAlarm:'>
+<arg index='0' name='alarm' type='@' declared_type='EKAlarm*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='addRecurrenceRule:'>
+<arg index='0' name='rule' type='@' declared_type='EKRecurrenceRule*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='alarms'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='attendees'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='calendar'>
+<retval type='@' declared_type='EKCalendar*'/>
+</method>
+<method selector='creationDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='hasAlarms'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='hasAttendees'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='hasNotes'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='hasRecurrenceRules'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='lastModifiedDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='location'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='notes'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='recurrenceRules'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='removeAlarm:'>
+<arg index='0' name='alarm' type='@' declared_type='EKAlarm*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='removeRecurrenceRule:'>
+<arg index='0' name='rule' type='@' declared_type='EKRecurrenceRule*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setAlarms:'>
+<arg index='0' name='alarms' type='@' declared_type='NSArray*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setCalendar:'>
+<arg index='0' name='calendar' type='@' declared_type='EKCalendar*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setLocation:'>
+<arg index='0' name='location' type='@' declared_type='NSString*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setNotes:'>
+<arg index='0' name='notes' type='@' declared_type='NSString*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setRecurrenceRules:'>
+<arg index='0' name='recurrenceRules' type='@' declared_type='NSArray*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setTimeZone:'>
+<arg index='0' name='timeZone' type='@' declared_type='NSTimeZone*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setTitle:'>
+<arg index='0' name='title' type='@' declared_type='NSString*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setURL:'>
+<arg index='0' name='URL' type='@' declared_type='NSURL*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='timeZone'>
+<retval type='@' declared_type='NSTimeZone*'/>
+</method>
+<method selector='title'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+<class name='EKEvent'>
+<method selector='availability'>
+<retval type='i' declared_type='EKEventAvailability'/>
+</method>
+<method selector='birthdayPersonID'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='compareStartDateWithEvent:'>
+<arg index='0' name='other' type='@' declared_type='EKEvent*'/>
+<retval type='i' declared_type='NSComparisonResult'/>
+</method>
+<method selector='endDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='eventIdentifier'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method class_method='true' selector='eventWithEventStore:'>
+<arg index='0' name='eventStore' type='@' declared_type='EKEventStore*'/>
+<retval type='@' declared_type='EKEvent*'/>
+</method>
+<method selector='isAllDay'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='isDetached'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='organizer'>
+<retval type='@' declared_type='EKParticipant*'/>
+</method>
+<method selector='recurrenceRule'>
+<retval type='@' declared_type='EKRecurrenceRule*'/>
+</method>
+<method selector='refresh'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='setAllDay:'>
+<arg index='0' name='allDay' type='B' declared_type='BOOL'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setAvailability:'>
+<arg index='0' name='availability' type='i' declared_type='EKEventAvailability'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setEndDate:'>
+<arg index='0' name='endDate' type='@' declared_type='NSDate*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setRecurrenceRule:'>
+<arg index='0' name='recurrenceRule' type='@' declared_type='EKRecurrenceRule*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setStartDate:'>
+<arg index='0' name='startDate' type='@' declared_type='NSDate*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='startDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='status'>
+<retval type='i' declared_type='EKEventStatus'/>
+</method>
+</class>
+<class name='EKEventStore'>
+<method selector='calendarWithIdentifier:'>
+<arg index='0' name='identifier' type='@' declared_type='NSString*'/>
+<retval type='@' declared_type='EKCalendar*'/>
+</method>
+<method selector='calendars'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='commit:'>
+<arg index='0' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='defaultCalendarForNewEvents'>
+<retval type='@' declared_type='EKCalendar*'/>
+</method>
+<method selector='enumerateEventsMatchingPredicate:usingBlock:'>
+<arg index='0' name='predicate' type='@' declared_type='NSPredicate*'/>
+<arg index='1' name='block' type='@?' function_pointer='true' declared_type='EKEventSearchCallback'>
+<arg type='@' declared_type='EKEvent*'/>
+<arg type='^B' declared_type='BOOL*'/>
+<retval type='v' declared_type='void'/>
+</arg>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='eventStoreIdentifier'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='eventWithIdentifier:'>
+<arg index='0' name='identifier' type='@' declared_type='NSString*'/>
+<retval type='@' declared_type='EKEvent*'/>
+</method>
+<method selector='eventsMatchingPredicate:'>
+<arg index='0' name='predicate' type='@' declared_type='NSPredicate*'/>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='predicateForEventsWithStartDate:endDate:calendars:'>
+<arg index='0' name='startDate' type='@' declared_type='NSDate*'/>
+<arg index='1' name='endDate' type='@' declared_type='NSDate*'/>
+<arg index='2' name='calendars' type='@' declared_type='NSArray*'/>
+<retval type='@' declared_type='NSPredicate*'/>
+</method>
+<method selector='refreshSourcesIfNecessary'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='removeCalendar:commit:error:'>
+<arg index='0' name='calendar' type='@' declared_type='EKCalendar*'/>
+<arg index='1' name='commit' type='B' declared_type='BOOL'/>
+<arg index='2' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='removeEvent:span:commit:error:'>
+<arg index='0' name='event' type='@' declared_type='EKEvent*'/>
+<arg index='1' name='span' type='i' declared_type='EKSpan'/>
+<arg index='2' name='commit' type='B' declared_type='BOOL'/>
+<arg index='3' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='removeEvent:span:error:'>
+<arg index='0' name='event' type='@' declared_type='EKEvent*'/>
+<arg index='1' name='span' type='i' declared_type='EKSpan'/>
+<arg index='2' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='reset'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='saveCalendar:commit:error:'>
+<arg index='0' name='calendar' type='@' declared_type='EKCalendar*'/>
+<arg index='1' name='commit' type='B' declared_type='BOOL'/>
+<arg index='2' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='saveEvent:span:commit:error:'>
+<arg index='0' name='event' type='@' declared_type='EKEvent*'/>
+<arg index='1' name='span' type='i' declared_type='EKSpan'/>
+<arg index='2' name='commit' type='B' declared_type='BOOL'/>
+<arg index='3' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='saveEvent:span:error:'>
+<arg index='0' name='event' type='@' declared_type='EKEvent*'/>
+<arg index='1' name='span' type='i' declared_type='EKSpan'/>
+<arg index='2' name='error' type='^@' declared_type='NSError**'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='sourceWithIdentifier:'>
+<arg index='0' name='identifier' type='@' declared_type='NSString*'/>
+<retval type='@' declared_type='EKSource*'/>
+</method>
+<method selector='sources'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+</class>
+<class name='EKObject'>
+<method selector='hasChanges'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='isNew'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='refresh'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='reset'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='rollback'>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='EKParticipant'>
+<method selector='ABRecordWithAddressBook:'>
+<arg index='0' name='addressBook' type='@' declared_type='ABAddressBookRef'/>
+<retval type='@' declared_type='ABRecordRef'/>
+</method>
+<method selector='URL'>
+<retval type='@' declared_type='NSURL*'/>
+</method>
+<method selector='name'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='participantRole'>
+<retval type='i' declared_type='EKParticipantRole'/>
+</method>
+<method selector='participantStatus'>
+<retval type='i' declared_type='EKParticipantStatus'/>
+</method>
+<method selector='participantType'>
+<retval type='i' declared_type='EKParticipantType'/>
+</method>
+</class>
+<class name='EKRecurrenceDayOfWeek'>
+<method selector='dayOfTheWeek'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method class_method='true' selector='dayOfWeek:'>
+<arg index='0' name='dayOfTheWeek' type='i' declared_type='NSInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method class_method='true' selector='dayOfWeek:weekNumber:'>
+<arg index='0' name='dayOfTheWeek' type='i' declared_type='NSInteger'/>
+<arg index='1' name='weekNumber' type='i' declared_type='NSInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initWithDayOfTheWeek:weekNumber:'>
+<arg index='0' name='dayOfTheWeek' type='i' declared_type='NSInteger'/>
+<arg index='1' name='weekNumber' type='i' declared_type='NSInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='weekNumber'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+</class>
+<class name='EKRecurrenceEnd'>
+<method selector='endDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='occurrenceCount'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method class_method='true' selector='recurrenceEndWithEndDate:'>
+<arg index='0' name='endDate' type='@' declared_type='NSDate*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method class_method='true' selector='recurrenceEndWithOccurrenceCount:'>
+<arg index='0' name='occurrenceCount' type='I' declared_type='NSUInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+</class>
+<class name='EKRecurrenceRule'>
+<method selector='calendarIdentifier'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='daysOfTheMonth'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='daysOfTheWeek'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='daysOfTheYear'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='firstDayOfTheWeek'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='frequency'>
+<retval type='i' declared_type='EKRecurrenceFrequency'/>
+</method>
+<method selector='initRecurrenceWithFrequency:interval:daysOfTheWeek:daysOfTheMonth:monthsOfTheYear:weeksOfTheYear:daysOfTheYear:setPositions:end:'>
+<arg index='0' name='type' type='i' declared_type='EKRecurrenceFrequency'/>
+<arg index='1' name='interval' type='i' declared_type='NSInteger'/>
+<arg index='2' name='days' type='@' declared_type='NSArray*'/>
+<arg index='3' name='monthDays' type='@' declared_type='NSArray*'/>
+<arg index='4' name='months' type='@' declared_type='NSArray*'/>
+<arg index='5' name='weeksOfTheYear' type='@' declared_type='NSArray*'/>
+<arg index='6' name='daysOfTheYear' type='@' declared_type='NSArray*'/>
+<arg index='7' name='setPositions' type='@' declared_type='NSArray*'/>
+<arg index='8' name='end' type='@' declared_type='EKRecurrenceEnd*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initRecurrenceWithFrequency:interval:end:'>
+<arg index='0' name='type' type='i' declared_type='EKRecurrenceFrequency'/>
+<arg index='1' name='interval' type='i' declared_type='NSInteger'/>
+<arg index='2' name='end' type='@' declared_type='EKRecurrenceEnd*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='interval'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='monthsOfTheYear'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='recurrenceEnd'>
+<retval type='@' declared_type='EKRecurrenceEnd*'/>
+</method>
+<method selector='setPositions'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='setRecurrenceEnd:'>
+<arg index='0' name='recurrenceEnd' type='@' declared_type='EKRecurrenceEnd*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='weeksOfTheYear'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+</class>
+<class name='EKSource'>
+<method selector='calendars'>
+<retval type='@' declared_type='NSSet*'/>
+</method>
+<method selector='sourceIdentifier'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='sourceType'>
+<retval type='i' declared_type='EKSourceType'/>
+</method>
+<method selector='title'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+</signatures>

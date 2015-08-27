@@ -1,0 +1,235 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant declared_type='NSString*' type='@' name='SKErrorDomain' const='true'/>
+<enum name='SKErrorClientInvalid' value='1'/>
+<enum name='SKErrorPaymentCancelled' value='2'/>
+<enum name='SKErrorPaymentInvalid' value='3'/>
+<enum name='SKErrorPaymentNotAllowed' value='4'/>
+<enum name='SKErrorUnknown' value='0'/>
+<enum name='SKPaymentTransactionStateFailed' value='2'/>
+<enum name='SKPaymentTransactionStatePurchased' value='1'/>
+<enum name='SKPaymentTransactionStatePurchasing' value='0'/>
+<enum name='SKPaymentTransactionStateRestored' value='3'/>
+<class name='NSObject'>
+<method selector='paymentQueue:removedTransactions:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<arg declared_type='NSArray*' type='@' name='transactions' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='paymentQueue:restoreCompletedTransactionsFailedWithError:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<arg declared_type='NSError*' type='@' name='error' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='paymentQueue:updatedTransactions:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<arg declared_type='NSArray*' type='@' name='transactions' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='paymentQueueRestoreCompletedTransactionsFinished:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='productsRequest:didReceiveResponse:'>
+<arg declared_type='SKProductsRequest*' type='@' name='request' index='0'/>
+<arg declared_type='SKProductsResponse*' type='@' name='response' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='request:didFailWithError:'>
+<arg declared_type='SKRequest*' type='@' name='request' index='0'/>
+<arg declared_type='NSError*' type='@' name='error' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='requestDidFinish:'>
+<arg declared_type='SKRequest*' type='@' name='request' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='SKMutablePayment'>
+<method selector='productIdentifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='quantity'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='requestData'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='setProductIdentifier:'>
+<arg declared_type='NSString*' type='@' name='productIdentifier' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setQuantity:'>
+<arg declared_type='NSInteger' type='i' name='quantity' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRequestData:'>
+<arg declared_type='NSData*' type='@' name='requestData' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='SKPayment'>
+<method class_method='true' selector='paymentWithProduct:'>
+<arg declared_type='SKProduct*' type='@' name='product' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method class_method='true' selector='paymentWithProductIdentifier:'>
+<arg declared_type='NSString*' type='@' name='identifier' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='productIdentifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='quantity'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='requestData'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+</class>
+<class name='SKPaymentQueue'>
+<method selector='addPayment:'>
+<arg declared_type='SKPayment*' type='@' name='payment' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='addTransactionObserver:'>
+<arg declared_type='id' type='@' name='observer' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method class_method='true' selector='canMakePayments'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='defaultQueue'>
+<retval declared_type='SKPaymentQueue*' type='@'/>
+</method>
+<method selector='finishTransaction:'>
+<arg declared_type='SKPaymentTransaction*' type='@' name='transaction' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeTransactionObserver:'>
+<arg declared_type='id' type='@' name='observer' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='restoreCompletedTransactions'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='transactions'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='SKPaymentTransaction'>
+<method selector='error'>
+<retval declared_type='NSError*' type='@'/>
+</method>
+<method selector='originalTransaction'>
+<retval declared_type='SKPaymentTransaction*' type='@'/>
+</method>
+<method selector='payment'>
+<retval declared_type='SKPayment*' type='@'/>
+</method>
+<method selector='transactionDate'>
+<retval declared_type='NSDate*' type='@'/>
+</method>
+<method selector='transactionIdentifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='transactionReceipt'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+<method selector='transactionState'>
+<retval declared_type='SKPaymentTransactionState' type='i'/>
+</method>
+</class>
+<class name='SKProduct'>
+<method selector='localizedDescription'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='localizedTitle'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='price'>
+<retval declared_type='NSDecimalNumber*' type='@'/>
+</method>
+<method selector='priceLocale'>
+<retval declared_type='NSLocale*' type='@'/>
+</method>
+<method selector='productIdentifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='SKProductsRequest'>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithProductIdentifiers:'>
+<arg declared_type='NSSet*' type='@' name='productIdentifiers' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setDelegate:'>
+<arg declared_type='id' type='@' name='delegate' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='SKProductsResponse'>
+<method selector='invalidProductIdentifiers'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='products'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+</class>
+<class name='SKRequest'>
+<method selector='cancel'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setDelegate:'>
+<arg declared_type='id' type='@' name='delegate' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='start'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<informal_protocol name='SKPaymentTransactionObserver'>
+<method type='v16@0:4@8@12' selector='paymentQueue:removedTransactions:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<arg declared_type='NSArray*' type='@' name='transactions' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8@12' selector='paymentQueue:restoreCompletedTransactionsFailedWithError:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<arg declared_type='NSError*' type='@' name='error' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v16@0:4@8@12' selector='paymentQueue:updatedTransactions:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<arg declared_type='NSArray*' type='@' name='transactions' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4@8' selector='paymentQueueRestoreCompletedTransactionsFinished:'>
+<arg declared_type='SKPaymentQueue*' type='@' name='queue' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='SKProductsRequestDelegate'>
+<method type='v16@0:4@8@12' selector='productsRequest:didReceiveResponse:'>
+<arg declared_type='SKProductsRequest*' type='@' name='request' index='0'/>
+<arg declared_type='SKProductsResponse*' type='@' name='response' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='SKRequestDelegate'>
+<method type='v16@0:4@8@12' selector='request:didFailWithError:'>
+<arg declared_type='SKRequest*' type='@' name='request' index='0'/>
+<arg declared_type='NSError*' type='@' name='error' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4@8' selector='requestDidFinish:'>
+<arg declared_type='SKRequest*' type='@' name='request' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+</signatures>

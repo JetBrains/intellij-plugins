@@ -1,0 +1,879 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaEntityPropertyPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAlbumArtist'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAlbumArtistPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAlbumPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAlbumTitle'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAlbumTrackCount'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAlbumTrackNumber'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyArtist'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyArtistPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyArtwork'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyAssetURL'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyBeatsPerMinute'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyComments'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyComposer'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyComposerPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyDiscCount'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyDiscNumber'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyGenre'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyGenrePersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyIsCompilation'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyLastPlayedDate'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyLyrics'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyMediaType'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyPlayCount'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyPlaybackDuration'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyPodcastPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyPodcastTitle'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyRating'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyReleaseDate'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertySkipCount'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyTitle'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaItemPropertyUserGrouping'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaLibraryDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaPlaybackIsPreparedToPlayDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaPlaylistPropertyName'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaPlaylistPropertyPersistentID'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaPlaylistPropertyPlaylistAttributes'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMediaPlaylistPropertySeedItems'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMovieDurationAvailableNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMovieMediaTypesAvailableNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMovieNaturalSizeAvailableNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerContentPreloadDidFinishNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerDidEnterFullscreenNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerDidExitFullscreenNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerFullscreenAnimationCurveUserInfoKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerFullscreenAnimationDurationUserInfoKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerIsAirPlayVideoActiveDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerLoadStateDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerNowPlayingMovieDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerPlaybackDidFinishNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerPlaybackDidFinishReasonUserInfoKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerPlaybackStateDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerScalingModeDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerThumbnailErrorKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerThumbnailImageKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerThumbnailImageRequestDidFinishNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerThumbnailTimeKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataKeyDataType'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataKeyInfo'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataKeyLanguageCode'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataKeyMIMEType'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataKeyName'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataUpdatedNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerTimedMetadataUserInfoKey'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerWillEnterFullscreenNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMoviePlayerWillExitFullscreenNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMovieSourceTypeAvailableNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMusicPlayerControllerNowPlayingItemDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMusicPlayerControllerPlaybackStateDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPMusicPlayerControllerVolumeDidChangeNotification'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPNowPlayingInfoPropertyChapterCount'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPNowPlayingInfoPropertyChapterNumber'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPNowPlayingInfoPropertyElapsedPlaybackTime'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPNowPlayingInfoPropertyPlaybackQueueCount'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPNowPlayingInfoPropertyPlaybackQueueIndex'/>
+<constant type='@' const='true' declared_type='NSString*' name='MPNowPlayingInfoPropertyPlaybackRate'/>
+<enum value='1' name='MPMediaGroupingAlbum'/>
+<enum value='3' name='MPMediaGroupingAlbumArtist'/>
+<enum value='2' name='MPMediaGroupingArtist'/>
+<enum value='4' name='MPMediaGroupingComposer'/>
+<enum value='5' name='MPMediaGroupingGenre'/>
+<enum value='6' name='MPMediaGroupingPlaylist'/>
+<enum value='7' name='MPMediaGroupingPodcastTitle'/>
+<enum value='0' name='MPMediaGroupingTitle'/>
+<enum value='4' name='MPMediaPlaylistAttributeGenius'/>
+<enum value='0' name='MPMediaPlaylistAttributeNone'/>
+<enum value='1' name='MPMediaPlaylistAttributeOnTheGo'/>
+<enum value='2' name='MPMediaPlaylistAttributeSmart'/>
+<enum value='1' name='MPMediaPredicateComparisonContains'/>
+<enum value='0' name='MPMediaPredicateComparisonEqualTo'/>
+<enum value='-1' name='MPMediaTypeAny'/>
+<enum value='255' name='MPMediaTypeAnyAudio'/>
+<enum value='65280' name='MPMediaTypeAnyVideo'/>
+<enum value='4' name='MPMediaTypeAudioBook'/>
+<enum value='8' name='MPMediaTypeAudioITunesU'/>
+<enum value='256' name='MPMediaTypeMovie'/>
+<enum value='1' name='MPMediaTypeMusic'/>
+<enum value='2048' name='MPMediaTypeMusicVideo'/>
+<enum value='2' name='MPMediaTypePodcast'/>
+<enum value='512' name='MPMediaTypeTVShow'/>
+<enum value='4096' name='MPMediaTypeVideoITunesU'/>
+<enum value='1024' name='MPMediaTypeVideoPodcast'/>
+<enum value='0' name='MPMovieControlModeDefault'/>
+<enum value='2' name='MPMovieControlModeHidden'/>
+<enum value='1' name='MPMovieControlModeVolumeOnly'/>
+<enum value='1' name='MPMovieControlStyleDefault'/>
+<enum value='1' name='MPMovieControlStyleEmbedded'/>
+<enum value='2' name='MPMovieControlStyleFullscreen'/>
+<enum value='0' name='MPMovieControlStyleNone'/>
+<enum value='0' name='MPMovieFinishReasonPlaybackEnded'/>
+<enum value='1' name='MPMovieFinishReasonPlaybackError'/>
+<enum value='2' name='MPMovieFinishReasonUserExited'/>
+<enum value='1' name='MPMovieLoadStatePlayable'/>
+<enum value='2' name='MPMovieLoadStatePlaythroughOK'/>
+<enum value='4' name='MPMovieLoadStateStalled'/>
+<enum value='0' name='MPMovieLoadStateUnknown'/>
+<enum value='2' name='MPMovieMediaTypeMaskAudio'/>
+<enum value='0' name='MPMovieMediaTypeMaskNone'/>
+<enum value='1' name='MPMovieMediaTypeMaskVideo'/>
+<enum value='3' name='MPMoviePlaybackStateInterrupted'/>
+<enum value='2' name='MPMoviePlaybackStatePaused'/>
+<enum value='1' name='MPMoviePlaybackStatePlaying'/>
+<enum value='5' name='MPMoviePlaybackStateSeekingBackward'/>
+<enum value='4' name='MPMoviePlaybackStateSeekingForward'/>
+<enum value='0' name='MPMoviePlaybackStateStopped'/>
+<enum value='0' name='MPMovieRepeatModeNone'/>
+<enum value='1' name='MPMovieRepeatModeOne'/>
+<enum value='2' name='MPMovieScalingModeAspectFill'/>
+<enum value='1' name='MPMovieScalingModeAspectFit'/>
+<enum value='3' name='MPMovieScalingModeFill'/>
+<enum value='0' name='MPMovieScalingModeNone'/>
+<enum value='1' name='MPMovieSourceTypeFile'/>
+<enum value='2' name='MPMovieSourceTypeStreaming'/>
+<enum value='0' name='MPMovieSourceTypeUnknown'/>
+<enum value='1' name='MPMovieTimeOptionExact'/>
+<enum value='0' name='MPMovieTimeOptionNearestKeyFrame'/>
+<enum value='3' name='MPMusicPlaybackStateInterrupted'/>
+<enum value='2' name='MPMusicPlaybackStatePaused'/>
+<enum value='1' name='MPMusicPlaybackStatePlaying'/>
+<enum value='5' name='MPMusicPlaybackStateSeekingBackward'/>
+<enum value='4' name='MPMusicPlaybackStateSeekingForward'/>
+<enum value='0' name='MPMusicPlaybackStateStopped'/>
+<enum value='3' name='MPMusicRepeatModeAll'/>
+<enum value='0' name='MPMusicRepeatModeDefault'/>
+<enum value='1' name='MPMusicRepeatModeNone'/>
+<enum value='2' name='MPMusicRepeatModeOne'/>
+<enum value='3' name='MPMusicShuffleModeAlbums'/>
+<enum value='0' name='MPMusicShuffleModeDefault'/>
+<enum value='1' name='MPMusicShuffleModeOff'/>
+<enum value='2' name='MPMusicShuffleModeSongs'/>
+<function name='MPVolumeSettingsAlertHide'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='MPVolumeSettingsAlertIsVisible'>
+<retval type='B' declared_type='BOOL'/>
+</function>
+<function name='MPVolumeSettingsAlertShow'>
+<retval type='v' declared_type='void'/>
+</function>
+<class name='MPMediaEntity'>
+<method selector='canFilterByProperty:' class_method='true'>
+<arg type='@' index='0' declared_type='NSString*' name='property'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='enumerateValuesForProperties:usingBlock:'>
+<arg type='@' index='0' declared_type='NSSet*' name='properties'/>
+<arg type='@?' function_pointer='true' index='1' declared_type='void (^)(NSString *, id, BOOL *)' name='block'>
+<arg type='@' declared_type='NSString*'/>
+<arg type='@' declared_type='id'/>
+<arg type='^B' declared_type='BOOL*'/>
+<retval type='v' declared_type='void'/>
+</arg>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='valueForProperty:'>
+<arg type='@' index='0' declared_type='NSString*' name='property'/>
+<retval type='@' declared_type='id'/>
+</method>
+</class>
+<class name='MPMediaItem'>
+<method selector='persistentIDPropertyForGroupingType:' class_method='true'>
+<arg type='i' index='0' declared_type='MPMediaGrouping' name='groupingType'/>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='titlePropertyForGroupingType:' class_method='true'>
+<arg type='i' index='0' declared_type='MPMediaGrouping' name='groupingType'/>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+<class name='MPMediaItemArtwork'>
+<method selector='bounds'>
+<retval type='{CGRect={CGPoint=ff}{CGSize=ff}}' declared_type='CGRect'/>
+</method>
+<method selector='imageCropRect'>
+<retval type='{CGRect={CGPoint=ff}{CGSize=ff}}' declared_type='CGRect'/>
+</method>
+<method selector='imageWithSize:'>
+<arg type='{CGSize=ff}' index='0' declared_type='CGSize' name='size'/>
+<retval type='@' declared_type='UIImage*'/>
+</method>
+<method selector='initWithImage:'>
+<arg type='@' index='0' declared_type='UIImage*' name='image'/>
+<retval type='@' declared_type='id'/>
+</method>
+</class>
+<class name='MPMediaItemCollection'>
+<method selector='collectionWithItems:' class_method='true'>
+<arg type='@' index='0' declared_type='NSArray*' name='items'/>
+<retval type='@' declared_type='MPMediaItemCollection*'/>
+</method>
+<method selector='count'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method selector='initWithItems:'>
+<arg type='@' index='0' declared_type='NSArray*' name='items'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='items'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='mediaTypes'>
+<retval type='i' declared_type='MPMediaType'/>
+</method>
+<method selector='representativeItem'>
+<retval type='@' declared_type='MPMediaItem*'/>
+</method>
+</class>
+<class name='MPMediaLibrary'>
+<method selector='beginGeneratingLibraryChangeNotifications'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='defaultMediaLibrary' class_method='true'>
+<retval type='@' declared_type='MPMediaLibrary*'/>
+</method>
+<method selector='endGeneratingLibraryChangeNotifications'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='lastModifiedDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+</class>
+<class name='MPMediaPickerController'>
+<method selector='allowsPickingMultipleItems'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='delegate'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='init'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initWithMediaTypes:'>
+<arg type='i' index='0' declared_type='MPMediaType' name='mediaTypes'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='mediaTypes'>
+<retval type='i' declared_type='MPMediaType'/>
+</method>
+<method selector='prompt'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='setAllowsPickingMultipleItems:'>
+<arg type='B' index='0' declared_type='BOOL' name='allowsPickingMultipleItems'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setDelegate:'>
+<arg type='@' index='0' declared_type='id' name='delegate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setPrompt:'>
+<arg type='@' index='0' declared_type='NSString*' name='prompt'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='MPMediaPropertyPredicate'>
+<method selector='comparisonType'>
+<retval type='i' declared_type='MPMediaPredicateComparison'/>
+</method>
+<method selector='predicateWithValue:forProperty:' class_method='true'>
+<arg type='@' index='0' declared_type='id' name='value'/>
+<arg type='@' index='1' declared_type='NSString*' name='property'/>
+<retval type='@' declared_type='MPMediaPropertyPredicate*'/>
+</method>
+<method selector='predicateWithValue:forProperty:comparisonType:' class_method='true'>
+<arg type='@' index='0' declared_type='id' name='value'/>
+<arg type='@' index='1' declared_type='NSString*' name='property'/>
+<arg type='i' index='2' declared_type='MPMediaPredicateComparison' name='comparisonType'/>
+<retval type='@' declared_type='MPMediaPropertyPredicate*'/>
+</method>
+<method selector='property'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='value'>
+<retval type='@' declared_type='id'/>
+</method>
+</class>
+<class name='MPMediaQuery'>
+<method selector='addFilterPredicate:'>
+<arg type='@' index='0' declared_type='MPMediaPredicate*' name='predicate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='albumsQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='artistsQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='audiobooksQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='collectionSections'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='collections'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='compilationsQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='composersQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='filterPredicates'>
+<retval type='@' declared_type='NSSet*'/>
+</method>
+<method selector='genresQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='groupingType'>
+<retval type='i' declared_type='MPMediaGrouping'/>
+</method>
+<method selector='init'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initWithFilterPredicates:'>
+<arg type='@' index='0' declared_type='NSSet*' name='filterPredicates'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='itemSections'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='items'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='playlistsQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='podcastsQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+<method selector='removeFilterPredicate:'>
+<arg type='@' index='0' declared_type='MPMediaPredicate*' name='predicate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setFilterPredicates:'>
+<arg type='@' index='0' declared_type='NSSet*' name='filterPredicates'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setGroupingType:'>
+<arg type='i' index='0' declared_type='MPMediaGrouping' name='groupingType'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='songsQuery' class_method='true'>
+<retval type='@' declared_type='MPMediaQuery*'/>
+</method>
+</class>
+<class name='MPMediaQuerySection'>
+<method selector='range'>
+<retval type='{_NSRange=II}' declared_type='NSRange'/>
+</method>
+<method selector='title'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+<class name='MPMovieAccessLog'>
+<method selector='events'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='extendedLogData'>
+<retval type='@' declared_type='NSData*'/>
+</method>
+<method selector='extendedLogDataStringEncoding'>
+<retval type='I' declared_type='NSStringEncoding'/>
+</method>
+</class>
+<class name='MPMovieAccessLogEvent'>
+<method selector='URI'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='durationWatched'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='indicatedBitrate'>
+<retval type='d' declared_type='double'/>
+</method>
+<method selector='numberOfBytesTransferred'>
+<retval type='q' declared_type='int64_t'/>
+</method>
+<method selector='numberOfDroppedVideoFrames'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='numberOfSegmentsDownloaded'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method selector='numberOfServerAddressChanges'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method selector='numberOfStalls'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='observedBitrate'>
+<retval type='d' declared_type='double'/>
+</method>
+<method selector='playbackSessionID'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='playbackStartDate'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='playbackStartOffset'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='segmentsDownloadedDuration'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='serverAddress'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+<class name='MPMovieErrorLog'>
+<method selector='events'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='extendedLogData'>
+<retval type='@' declared_type='NSData*'/>
+</method>
+<method selector='extendedLogDataStringEncoding'>
+<retval type='I' declared_type='NSStringEncoding'/>
+</method>
+</class>
+<class name='MPMovieErrorLogEvent'>
+<method selector='URI'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='date'>
+<retval type='@' declared_type='NSDate*'/>
+</method>
+<method selector='errorComment'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='errorDomain'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='errorStatusCode'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='playbackSessionID'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='serverAddress'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+<class name='MPMoviePlayerController'>
+<method selector='accessLog'>
+<retval type='@' declared_type='MPMovieAccessLog*'/>
+</method>
+<method selector='allowsAirPlay'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='backgroundColor'>
+<retval type='@' declared_type='UIColor*'/>
+</method>
+<method selector='backgroundView'>
+<retval type='@' declared_type='UIView*'/>
+</method>
+<method selector='cancelAllThumbnailImageRequests'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='contentURL'>
+<retval type='@' declared_type='NSURL*'/>
+</method>
+<method selector='controlStyle'>
+<retval type='i' declared_type='MPMovieControlStyle'/>
+</method>
+<method selector='duration'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='endPlaybackTime'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='errorLog'>
+<retval type='@' declared_type='MPMovieErrorLog*'/>
+</method>
+<method selector='initWithContentURL:'>
+<arg type='@' index='0' declared_type='NSURL*' name='url'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initialPlaybackTime'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='isAirPlayVideoActive'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='isFullscreen'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='loadState'>
+<retval type='i' declared_type='MPMovieLoadState'/>
+</method>
+<method selector='movieControlMode'>
+<retval type='i' declared_type='MPMovieControlMode'/>
+</method>
+<method selector='movieMediaTypes'>
+<retval type='i' declared_type='MPMovieMediaTypeMask'/>
+</method>
+<method selector='movieSourceType'>
+<retval type='i' declared_type='MPMovieSourceType'/>
+</method>
+<method selector='naturalSize'>
+<retval type='{CGSize=ff}' declared_type='CGSize'/>
+</method>
+<method selector='playableDuration'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='playbackState'>
+<retval type='i' declared_type='MPMoviePlaybackState'/>
+</method>
+<method selector='repeatMode'>
+<retval type='i' declared_type='MPMovieRepeatMode'/>
+</method>
+<method selector='requestThumbnailImagesAtTimes:timeOption:'>
+<arg type='@' index='0' declared_type='NSArray*' name='playbackTimes'/>
+<arg type='i' index='1' declared_type='MPMovieTimeOption' name='option'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='scalingMode'>
+<retval type='i' declared_type='MPMovieScalingMode'/>
+</method>
+<method selector='setAllowsAirPlay:'>
+<arg type='B' index='0' declared_type='BOOL' name='allowsAirPlay'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setBackgroundColor:'>
+<arg type='@' index='0' declared_type='UIColor*' name='backgroundColor'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setContentURL:'>
+<arg type='@' index='0' declared_type='NSURL*' name='contentURL'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setControlStyle:'>
+<arg type='i' index='0' declared_type='MPMovieControlStyle' name='controlStyle'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setEndPlaybackTime:'>
+<arg type='d' index='0' declared_type='NSTimeInterval' name='endPlaybackTime'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setFullscreen:'>
+<arg type='B' index='0' declared_type='BOOL' name='fullscreen'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setFullscreen:animated:'>
+<arg type='B' index='0' declared_type='BOOL' name='fullscreen'/>
+<arg type='B' index='1' declared_type='BOOL' name='animated'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setInitialPlaybackTime:'>
+<arg type='d' index='0' declared_type='NSTimeInterval' name='initialPlaybackTime'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setMovieControlMode:'>
+<arg type='i' index='0' declared_type='MPMovieControlMode' name='movieControlMode'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setMovieSourceType:'>
+<arg type='i' index='0' declared_type='MPMovieSourceType' name='movieSourceType'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setRepeatMode:'>
+<arg type='i' index='0' declared_type='MPMovieRepeatMode' name='repeatMode'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setScalingMode:'>
+<arg type='i' index='0' declared_type='MPMovieScalingMode' name='scalingMode'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setShouldAutoplay:'>
+<arg type='B' index='0' declared_type='BOOL' name='shouldAutoplay'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setUseApplicationAudioSession:'>
+<arg type='B' index='0' declared_type='BOOL' name='useApplicationAudioSession'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='shouldAutoplay'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='thumbnailImageAtTime:timeOption:'>
+<arg type='d' index='0' declared_type='NSTimeInterval' name='playbackTime'/>
+<arg type='i' index='1' declared_type='MPMovieTimeOption' name='option'/>
+<retval type='@' declared_type='UIImage*'/>
+</method>
+<method selector='timedMetadata'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='useApplicationAudioSession'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='view'>
+<retval type='@' declared_type='UIView*'/>
+</method>
+</class>
+<class name='MPMoviePlayerViewController'>
+<method selector='initWithContentURL:'>
+<arg type='@' index='0' declared_type='NSURL*' name='contentURL'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='moviePlayer'>
+<retval type='@' declared_type='MPMoviePlayerController*'/>
+</method>
+<method selector='shouldAutorotateToInterfaceOrientation:'>
+<arg type='i' index='0' declared_type='UIInterfaceOrientation' name='toInterfaceOrientation'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+</class>
+<class name='MPMusicPlayerController'>
+<method selector='applicationMusicPlayer' class_method='true'>
+<retval type='@' declared_type='MPMusicPlayerController*'/>
+</method>
+<method selector='beginGeneratingPlaybackNotifications'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='beginSeekingBackward'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='beginSeekingForward'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='currentPlaybackTime'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='endGeneratingPlaybackNotifications'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='endSeeking'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='iPodMusicPlayer' class_method='true'>
+<retval type='@' declared_type='MPMusicPlayerController*'/>
+</method>
+<method selector='indexOfNowPlayingItem'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method selector='nowPlayingItem'>
+<retval type='@' declared_type='MPMediaItem*'/>
+</method>
+<method selector='pause'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='play'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='playbackState'>
+<retval type='i' declared_type='MPMusicPlaybackState'/>
+</method>
+<method selector='repeatMode'>
+<retval type='i' declared_type='MPMusicRepeatMode'/>
+</method>
+<method selector='setCurrentPlaybackTime:'>
+<arg type='d' index='0' declared_type='NSTimeInterval' name='currentPlaybackTime'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setNowPlayingItem:'>
+<arg type='@' index='0' declared_type='MPMediaItem*' name='nowPlayingItem'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setQueueWithItemCollection:'>
+<arg type='@' index='0' declared_type='MPMediaItemCollection*' name='itemCollection'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setQueueWithQuery:'>
+<arg type='@' index='0' declared_type='MPMediaQuery*' name='query'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setRepeatMode:'>
+<arg type='i' index='0' declared_type='MPMusicRepeatMode' name='repeatMode'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setShuffleMode:'>
+<arg type='i' index='0' declared_type='MPMusicShuffleMode' name='shuffleMode'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setVolume:'>
+<arg type='f' index='0' declared_type='float' name='volume'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='shuffleMode'>
+<retval type='i' declared_type='MPMusicShuffleMode'/>
+</method>
+<method selector='skipToBeginning'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='skipToNextItem'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='skipToPreviousItem'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='stop'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='volume'>
+<retval type='f' declared_type='float'/>
+</method>
+</class>
+<class name='MPNowPlayingInfoCenter'>
+<method selector='defaultCenter' class_method='true'>
+<retval type='@' declared_type='MPNowPlayingInfoCenter*'/>
+</method>
+<method selector='nowPlayingInfo'>
+<retval type='@' declared_type='NSDictionary*'/>
+</method>
+<method selector='setNowPlayingInfo:'>
+<arg type='@' index='0' declared_type='NSDictionary*' name='nowPlayingInfo'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='MPTimedMetadata'>
+<method selector='allMetadata'>
+<retval type='@' declared_type='NSDictionary*'/>
+</method>
+<method selector='key'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='keyspace'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='timestamp'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='value'>
+<retval type='@' declared_type='id'/>
+</method>
+</class>
+<class name='MPVolumeView'>
+<method selector='setShowsRouteButton:'>
+<arg type='B' index='0' declared_type='BOOL' name='showsRouteButton'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setShowsVolumeSlider:'>
+<arg type='B' index='0' declared_type='BOOL' name='showsVolumeSlider'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='showsRouteButton'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='showsVolumeSlider'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='sizeThatFits:'>
+<arg type='{CGSize=ff}' index='0' declared_type='CGSize' name='size'/>
+<retval type='{CGSize=ff}' declared_type='CGSize'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='beginSeekingBackward'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='beginSeekingForward'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='currentPlaybackRate'>
+<retval type='f' declared_type='float'/>
+</method>
+<method selector='currentPlaybackTime'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method selector='endSeeking'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='isPreparedToPlay'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='mediaPicker:didPickMediaItems:'>
+<arg type='@' index='0' declared_type='MPMediaPickerController*' name='mediaPicker'/>
+<arg type='@' index='1' declared_type='MPMediaItemCollection*' name='mediaItemCollection'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='mediaPickerDidCancel:'>
+<arg type='@' index='0' declared_type='MPMediaPickerController*' name='mediaPicker'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='pause'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='play'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='prepareToPlay'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setCurrentPlaybackRate:'>
+<arg type='f' index='0' declared_type='float' name='currentPlaybackRate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setCurrentPlaybackTime:'>
+<arg type='d' index='0' declared_type='NSTimeInterval' name='currentPlaybackTime'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='stop'>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='UIViewController'>
+<method selector='dismissMoviePlayerViewControllerAnimated'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='presentMoviePlayerViewControllerAnimated:'>
+<arg type='@' index='0' declared_type='MPMoviePlayerViewController*' name='moviePlayerViewController'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<informal_protocol name='MPMediaPickerControllerDelegate'>
+<method type='v16@0:4@8@12' selector='mediaPicker:didPickMediaItems:'>
+<arg type='@' index='0' declared_type='MPMediaPickerController*' name='mediaPicker'/>
+<arg type='@' index='1' declared_type='MPMediaItemCollection*' name='mediaItemCollection'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v12@0:4@8' selector='mediaPickerDidCancel:'>
+<arg type='@' index='0' declared_type='MPMediaPickerController*' name='mediaPicker'/>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+<informal_protocol name='MPMediaPlayback'>
+<method type='v8@0:4' selector='beginSeekingBackward'>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v8@0:4' selector='beginSeekingForward'>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='f8@0:4' selector='currentPlaybackRate'>
+<retval type='f' declared_type='float'/>
+</method>
+<method type='d8@0:4' selector='currentPlaybackTime'>
+<retval type='d' declared_type='NSTimeInterval'/>
+</method>
+<method type='v8@0:4' selector='endSeeking'>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='B8@0:4' selector='isPreparedToPlay'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method type='v8@0:4' selector='pause'>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v8@0:4' selector='play'>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v8@0:4' selector='prepareToPlay'>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v12@0:4f8' selector='setCurrentPlaybackRate:'>
+<arg type='f' index='0' declared_type='float' name='currentPlaybackRate'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v16@0:4d8' selector='setCurrentPlaybackTime:'>
+<arg type='d' index='0' declared_type='NSTimeInterval' name='currentPlaybackTime'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v8@0:4' selector='stop'>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+</signatures>
