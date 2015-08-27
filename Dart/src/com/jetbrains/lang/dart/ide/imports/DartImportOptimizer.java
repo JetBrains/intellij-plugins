@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.ide.imports;
 
 import com.intellij.lang.ImportOptimizer;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;

@@ -17,17 +17,17 @@ package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.psi.PsiElement;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.assists.AssistUtils;
-import com.jetbrains.lang.dart.ide.refactoring.DartRenameHandler;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRenameRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.dartlang.analysis.server.protocol.SourceChange;
+import org.jetbrains.annotations.NotNull;
 
 public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
 
@@ -42,9 +42,34 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
+  public void testCheckFinalConditionsNameFatalError() throws Throwable {
+    final String testName = getTestName(false);
+    final ServerRenameRefactoring refactoring = createRenameRefactoring(testName + ".dart", "test = 0");
+    // initial status OK
+    final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
+    assertTrue(initialConditions.isOK());
+    // final (actually options) status has a fatal error
+    refactoring.setNewName("bad name");
+    final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
+    assertTrue(finalConditions.hasFatalError());
+  }
+
+  public void testCheckInitialConditionsCannotCreate() throws Throwable {
+    final String testName = getTestName(false);
+    final ServerRenameRefactoring refactoring = createRenameRefactoring(testName + ".dart", "345");
+    final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
+    assertNotNull(initialConditions);
+    assertTrue(initialConditions.hasFatalError());
+  }
+
   public void testClass() throws Throwable {
     final String testName = getTestName(false);
     doTest(testName + ".dart", "Test { // in B", "NewName");
+  }
+
+  public void testConstructorDefaultToNamed() throws Throwable {
+    final String testName = getTestName(false);
+    doTest(testName + ".dart", "AAA() {}", "newName");
   }
 
   public void testLocalVariable() throws Throwable {
@@ -57,23 +82,27 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
     doTest(testName + ".dart", "test() {} // B", "newName");
   }
 
-  private void doTest(final String filePath, String atString, String newName) {
+  @NotNull
+  private ServerRenameRefactoring createRenameRefactoring(String filePath, String atString) {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-
     final PsiFile psiFile = myFixture.configureByFile(filePath);
     myFixture.doHighlighting(); // make sure server is warmed up
     // find the Element to rename
     final Document document = myFixture.getDocument(psiFile);
     final int offset = document.getText().indexOf(atString);
-    final PsiElement element = PsiTreeUtil.findElementOfClassAtOffset(psiFile, offset, PsiElement.class, true);
-    assertNotNull(element);
+    return new ServerRenameRefactoring(getSystemPath(psiFile), offset, 0);
+  }
+
+  private void doTest(final String filePath, String atString, String newName) {
+    final ServerRenameRefactoring refactoring = createRenameRefactoring(filePath, atString);
     // check initial conditions
-    final ServerRenameRefactoring refactoring = DartRenameHandler.createServerRenameRefactoring(element);
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
+    assertNotNull(initialConditions);
     assertTrue(initialConditions.isOK());
     // check final conditions
     refactoring.setNewName(newName);
     final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
+    assertNotNull(finalConditions);
     assertTrue(finalConditions.isOK());
     // apply the SourceChange
     final SourceChange change = refactoring.getChange();
@@ -86,5 +115,12 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
     });
     // validate
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
+  }
+
+  @NotNull
+  private static String getSystemPath(PsiFile psiFile) {
+    final VirtualFile virtualFile = psiFile.getVirtualFile();
+    final String path = virtualFile.getPath();
+    return FileUtil.toSystemDependentName(path);
   }
 }

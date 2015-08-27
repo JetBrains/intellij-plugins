@@ -17,6 +17,8 @@ package com.jetbrains.lang.dart.ide.refactoring;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The LTK wrapper around the Analysis Server 'Rename' refactoring.
@@ -26,25 +28,28 @@ public class ServerRenameRefactoring extends ServerRefactoring {
   private String elementKindName;
   private String oldName;
 
-  public ServerRenameRefactoring(String file, int offset, int length) {
-    super(RefactoringKind.RENAME, "Rename", file, offset, length);
+  public ServerRenameRefactoring(@NotNull String file, int offset, int length) {
+    super(RefactoringKind.RENAME, file, offset, length);
   }
 
+  @NotNull
   public String getElementKindName() {
     return elementKindName;
   }
 
+  @NotNull
   public String getOldName() {
     return oldName;
   }
 
   @Override
+  @Nullable
   protected RefactoringOptions getOptions() {
     return options;
   }
 
   @Override
-  protected void setFeedback(RefactoringFeedback _feedback) {
+  protected void setFeedback(@NotNull RefactoringFeedback _feedback) {
     RenameFeedback feedback = (RenameFeedback)_feedback;
     elementKindName = WordUtils.capitalize(feedback.getElementKindName());
     oldName = feedback.getOldName();
@@ -53,7 +58,7 @@ public class ServerRenameRefactoring extends ServerRefactoring {
     }
   }
 
-  public void setNewName(String newName) {
+  public void setNewName(@NotNull String newName) {
     options.setNewName(newName);
     setOptions(true, null);
   }

@@ -15,6 +15,9 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring.status;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An immutable object representing an entry in the list in {@link RefactoringStatus}. A refactoring
  * status entry consists of a severity, a message and a context object.
@@ -23,25 +26,25 @@ public class RefactoringStatusEntry {
   /**
    * The severity level.
    */
-  private final RefactoringStatusSeverity severity;
+  @NotNull private final RefactoringStatusSeverity severity;
 
   /**
    * The message of the status entry.
    */
-  private final String message;
+  @NotNull private final String message;
 
   /**
    * The {@link RefactoringStatusContext} which can be used to show more detailed information
    * regarding this status entry in the UI. May be {@code null} indicating that no context is
    * available.
    */
-  private final RefactoringStatusContext context;
+  @Nullable private final RefactoringStatusContext context;
 
-  public RefactoringStatusEntry(RefactoringStatusSeverity severity, String message) {
+  public RefactoringStatusEntry(@NotNull RefactoringStatusSeverity severity, @NotNull String message) {
     this(severity, message, null);
   }
 
-  public RefactoringStatusEntry(RefactoringStatusSeverity severity, String message, RefactoringStatusContext ctx) {
+  public RefactoringStatusEntry(@NotNull RefactoringStatusSeverity severity, @NotNull String message, RefactoringStatusContext ctx) {
     this.severity = severity;
     this.message = message;
     this.context = ctx;
@@ -52,6 +55,7 @@ public class RefactoringStatusEntry {
    * information regarding this status entry in the UI. The method may return {@code null}
    * indicating that no context is available.
    */
+  @Nullable
   public RefactoringStatusContext getContext() {
     return context;
   }
@@ -59,6 +63,7 @@ public class RefactoringStatusEntry {
   /**
    * @return the message of the status entry.
    */
+  @NotNull
   public String getMessage() {
     return message;
   }
@@ -66,6 +71,7 @@ public class RefactoringStatusEntry {
   /**
    * @return the severity level.
    */
+  @NotNull
   public RefactoringStatusSeverity getSeverity() {
     return severity;
   }
