@@ -15,27 +15,37 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.rename.RenameHandler;
+import com.intellij.refactoring.ui.NameSuggestionsField;
+import com.intellij.refactoring.ui.RefactoringDialog;
+import com.intellij.xml.util.XmlStringUtil;
+import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.ide.actions.AbstractDartFileProcessingAction;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartNamedElement;
-import com.jetbrains.lang.dart.util.DartElementLocation;
+import org.dartlang.analysis.server.protocol.SourceChange;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class DartRenameHandler implements RenameHandler, TitledHandler {
   @Override
@@ -55,14 +65,7 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
 
   @Override
   public boolean isAvailableOnDataContext(DataContext dataContext) {
-    final PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (element instanceof DartNamedElement) {
-      return true;
-    }
-    if (element instanceof DartComponent) {
-      return true;
-    }
-    return false;
+    return true;
   }
 
   @Override
@@ -70,52 +73,70 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
     return isAvailableOnDataContext(dataContext);
   }
 
-  @NotNull
-  @VisibleForTesting
-  public static ServerRenameRefactoring createServerRenameRefactoring(PsiElement element) {
-    final DartElementLocation elementLocation = DartElementLocation.of(element);
-    return new ServerRenameRefactoring(elementLocation.file, elementLocation.offset, 0);
-  }
-
-  private static void showRenameDialog(@NotNull Project project, Editor editor, DataContext context) {
-    final PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
-    if (element == null) {
+  private static void showRenameDialog(@NotNull Project project, @Nullable Editor editor, DataContext context) {
+    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(context);
+    final VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(context);
+    if (psiFile == null || virtualFile == null) {
       return;
     }
-
-    final ServerRenameRefactoring refactoring = createServerRenameRefactoring(element);
-
+    // Prepare the offset in the editor or of the selected element.
+    final int offset;
+    {
+      final Caret caret = CommonDataKeys.CARET.getData(context);
+      final PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
+      if (caret != null) {
+        offset = caret.getOffset();
+      }
+      else if (element != null) {
+        offset = element.getTextOffset();
+      }
+      else {
+        return;
+      }
+    }
+    // Create the refactoring.
+    final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(path, offset, 0);
     // Validate initial status.
     {
       final RefactoringStatus initialStatus = refactoring.checkInitialConditions();
-      if (initialStatus == null) {
-        return;
-      }
       if (initialStatus.hasError()) {
-        Messages.showErrorDialog(project, initialStatus.getMessage(), "Error");
+        if (editor != null) {
+          final String message = initialStatus.getMessage();
+          assert message != null;
+          AbstractDartFileProcessingAction.showHintLater(editor, message, true);
+        }
         return;
       }
     }
-
-    RenameDialog.showRenameDialog(context, new DartRenameDialog(project, element, editor, refactoring));
+    // Show the rename dialog.
+    new DartRenameDialog(project, editor, refactoring).show();
   }
 }
 
-class DartRenameDialog extends RenameDialog {
-  private final ServerRenameRefactoring myRefactoring;
+class DartRenameDialog extends RefactoringDialog {
+  @Nullable private final Editor myEditor;
+  @NotNull private final ServerRenameRefactoring myRefactoring;
+  @NotNull private final String myOldName;
+
+  private final JLabel myNewNamePrefix = new JLabel("");
+  private NameSuggestionsField myNameSuggestionsField;
+
   private boolean myHasPendingRequests;
   private RefactoringStatus myOptionsStatus;
 
-  public DartRenameDialog(@NotNull Project project,
-                          @NotNull PsiElement element,
-                          Editor editor,
-                          @NotNull ServerRenameRefactoring refactoring) {
-    super(project, element, null, editor);
+  public DartRenameDialog(@NotNull Project project, @Nullable Editor editor, @NotNull ServerRenameRefactoring refactoring) {
+    super(project, true);
+    myEditor = editor;
     myRefactoring = refactoring;
+    myOldName = myRefactoring.getOldName();
+    setTitle("Rename " + myRefactoring.getElementKindName());
+    createNewNameComponent();
+    init();
     // Listen for responses.
     myRefactoring.setListener(new ServerRefactoring.ServerRefactoringListener() {
       @Override
-      public void requestStateChanged(final boolean hasPendingRequests, final RefactoringStatus optionsStatus) {
+      public void requestStateChanged(final boolean hasPendingRequests, @NotNull final RefactoringStatus optionsStatus) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
           @Override
           public void run() {
@@ -130,9 +151,8 @@ class DartRenameDialog extends RenameDialog {
 
   @Override
   protected void canRun() throws ConfigurationException {
-    if (myRefactoring == null) return;
     // the same name
-    if (Comparing.strEqual(getNewName(), myRefactoring.getOldName())) {
+    if (Comparing.strEqual(getNewName(), myOldName)) {
       throw new ConfigurationException(null);
     }
     // has pending requests
@@ -146,13 +166,48 @@ class DartRenameDialog extends RenameDialog {
   }
 
   @Override
+  protected JComponent createCenterPanel() {
+    return null;
+  }
+
+  @Override
+  protected JComponent createNorthPanel() {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbConstraints = new GridBagConstraints();
+
+    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.weighty = 0;
+    gbConstraints.weightx = 1;
+    gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
+    gbConstraints.fill = GridBagConstraints.BOTH;
+    JLabel nameLabel = new JLabel();
+    panel.add(nameLabel, gbConstraints);
+    nameLabel.setText(XmlStringUtil.wrapInHtml(XmlTagUtilBase.escapeString(getLabelText(), false)));
+
+    gbConstraints.insets = new Insets(0, 0, 4, 0);
+    gbConstraints.gridwidth = 1;
+    gbConstraints.fill = GridBagConstraints.NONE;
+    gbConstraints.weightx = 0;
+    gbConstraints.gridx = 0;
+    gbConstraints.anchor = GridBagConstraints.WEST;
+    panel.add(myNewNamePrefix, gbConstraints);
+
+    gbConstraints.insets = new Insets(0, 0, 8, 0);
+    gbConstraints.gridwidth = 2;
+    gbConstraints.fill = GridBagConstraints.BOTH;
+    gbConstraints.weightx = 1;
+    gbConstraints.gridx = 0;
+    gbConstraints.weighty = 1;
+    panel.add(myNameSuggestionsField.getComponent(), gbConstraints);
+
+    return panel;
+  }
+
+  @Override
   protected void doAction() {
     // Validate final status.
     {
       final RefactoringStatus finalStatus = myRefactoring.checkFinalConditions();
-      if (finalStatus == null) {
-        return;
-      }
       if (finalStatus.hasError()) {
         Messages.showErrorDialog(myProject, finalStatus.getMessage(), "Error");
         return;
@@ -162,16 +217,58 @@ class DartRenameDialog extends RenameDialog {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        AssistUtils.applySourceChange(myProject, myRefactoring.getChange());
+        final SourceChange change = myRefactoring.getChange();
+        assert change != null;
+        AssistUtils.applySourceChange(myProject, change);
         close(DialogWrapper.OK_EXIT_CODE);
       }
     });
   }
 
   @Override
-  protected void processNewNameChanged() {
+  public JComponent getPreferredFocusedComponent() {
+    return myNameSuggestionsField.getFocusableComponent();
+  }
+
+  @Override
+  protected boolean hasPreviewButton() {
+    return false;
+  }
+
+  private void createNewNameComponent() {
+    String[] suggestedNames = getSuggestedNames();
+    myNameSuggestionsField = new NameSuggestionsField(suggestedNames, myProject, FileTypes.PLAIN_TEXT, myEditor) {
+      @Override
+      protected boolean shouldSelectAll() {
+        return myEditor == null || myEditor.getSettings().isPreselectRename();
+      }
+    };
+    myNameSuggestionsField.addDataChangedListener(new NameSuggestionsField.DataChanged() {
+      @Override
+      public void dataChanged() {
+        processNewNameChanged();
+      }
+    });
+  }
+
+  @NotNull
+  private String getLabelText() {
+    @NonNls final String kindName = myRefactoring.getElementKindName();
+    final String oldName = myOldName.isEmpty() ? "<empty>" : myOldName;
+    return "Rename " + kindName.toLowerCase() + " '" + oldName + "' and its usages to:";
+  }
+
+  private String getNewName() {
+    return myNameSuggestionsField.getEnteredName().trim();
+  }
+
+  @NotNull
+  private String[] getSuggestedNames() {
+    return new String[]{myOldName};
+  }
+
+  private void processNewNameChanged() {
     final String newName = getNewName();
     myRefactoring.setNewName(newName);
-    super.processNewNameChanged();
   }
 }
