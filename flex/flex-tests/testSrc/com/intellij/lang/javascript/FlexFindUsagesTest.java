@@ -136,6 +136,11 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
     assertEquals(3, references.length);
   }
 
+  public void testBaseMethod() throws Exception {
+    final PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
+    assertEquals(2, references.length);
+  }
+
   public void testInheritorCall() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(2, references.length);
