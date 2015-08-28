@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver.idea.config;
 
-import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupItem;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -121,7 +121,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       result = result.withPrefixMatcher(prefix);
       for (String key : JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS) {
         if (key.startsWith(prefix)) {
-          result.addElement(LookupItem.fromString(key + ":"));
+          result.addElement(LookupElementBuilder.create(key + ":"));
         }
       }
     }
@@ -192,7 +192,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       VirtualFile[] children = parentFile.getChildren();
       Character dirSeparatorSuffix = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
       if (parentFile.isDirectory()) {
-        result.addElement(LookupItem.fromString(".."));
+        result.addElement(LookupElementBuilder.create(".."));
       }
       for (VirtualFile child : children) {
         if (child.isDirectory() || !directoryExpected) {
@@ -200,7 +200,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
           if (child.isDirectory() && dirSeparatorSuffix != null) {
             name += dirSeparatorSuffix;
           }
-          result.addElement(LookupItem.fromString(name));
+          result.addElement(LookupElementBuilder.create(name));
         }
       }
     }
