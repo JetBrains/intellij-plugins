@@ -41,8 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
-import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.io.*;
+import org.jetbrains.util.concurrency.AsyncPromise;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -121,13 +121,13 @@ final class PubServerService extends NetService {
 
   @Override
   protected void configureConsole(@NotNull final TextConsoleBuilder consoleBuilder) {
-    consoleBuilder.addFilter(new DartConsoleFilter(project, firstServedDir));
-    consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, firstServedDir.getParent().getPath()));
+    consoleBuilder.addFilter(new DartConsoleFilter(getProject(), firstServedDir));
+    consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(getProject(), firstServedDir.getParent().getPath()));
     consoleBuilder.addFilter(new UrlFilter());
   }
 
   public boolean isPubServerProcessAlive() {
-    return processHandler.has() && !processHandler.getResult().isProcessTerminated();
+    return getProcessHandler().has() && !getProcessHandler().getResult().isProcessTerminated();
   }
 
   public void sendToPubServer(@NotNull final ChannelHandlerContext clientContext,
@@ -136,13 +136,13 @@ final class PubServerService extends NetService {
                               @NotNull final String pathForPubServer) {
     clientRequest.retain();
 
-    if (processHandler.has()) {
+    if (getProcessHandler().has()) {
       sendToServer(servedDir, clientContext, clientRequest, pathForPubServer);
     }
     else {
       firstServedDir = servedDir;
 
-      processHandler.get()
+      getProcessHandler().get()
         .done(new Consumer<OSProcessHandler>() {
           @Override
           public void consume(OSProcessHandler osProcessHandler) {
