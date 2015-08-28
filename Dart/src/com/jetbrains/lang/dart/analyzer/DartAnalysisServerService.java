@@ -211,7 +211,7 @@ public class DartAnalysisServerService {
                 ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
 
       if (isFatal) {
-        onServerStopped();
+        stopServer();
       }
     }
 
