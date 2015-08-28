@@ -373,6 +373,15 @@ public class DartSpacingProcessor {
       if (type2 == TYPE_PARAMETERS) {
         return noSpace();
       }
+      if (type2 == INTERFACES || type2 == MIXINS) {
+        ASTNode typeNameNode = FormatterUtil.getNextNonWhitespaceSibling(myNode.getFirstChildNode());
+        ASTNode bodyNode = myNode.getLastChildNode();
+        if (typeNameNode != null && bodyNode != null) {
+          // For some reason we need to start at the beginning of the type name, not the end.
+          TextRange range = TextRange.create(typeNameNode.getTextRange().getStartOffset(), bodyNode.getStartOffset());
+          return Spacing.createDependentLFSpacing(1, 1, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+      }
       return Spacing.createSpacing(1, 1, 0, false, 0);
     }
     if (elementType == MIXIN_APPLICATION) {
@@ -578,6 +587,13 @@ public class DartSpacingProcessor {
         }
         return addLineBreak();
       }
+    }
+
+    if ((elementType == INTERFACES || elementType == MIXINS) && type2 == TYPE_LIST) {
+      return Spacing.createDependentLFSpacing(1, 1, myNode.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+    if (elementType == TYPE_LIST && type2 == TYPE) {
+      return Spacing.createDependentLFSpacing(1, 1, myNode.getTreeParent().getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
     if (type1 == LBRACKET && type2 == RBRACKET) {

@@ -170,10 +170,8 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0200/0223.stmt:1");
     KNOWN_TO_FAIL.add("regression/0200/0224.stmt:1  (indent 4)");
     KNOWN_TO_FAIL.add("regression/0200/0224.stmt:46  (indent 22)");
-    KNOWN_TO_FAIL.add("regression/0200/0228.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0229.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0232.unit:1");
-    KNOWN_TO_FAIL.add("regression/0200/0235.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0236.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0237.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0238.unit:1");
@@ -186,7 +184,6 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("regression/0200/0256.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0257.unit:1");
     KNOWN_TO_FAIL.add("regression/0200/0258.unit:1");
-    KNOWN_TO_FAIL.add("regression/0200/0259.unit:1");
 
     KNOWN_TO_FAIL.add("regression/0300/0360.unit:1");
     KNOWN_TO_FAIL.add("regression/0300/0360.stmt:1");
@@ -229,12 +226,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/arguments.stmt:98  only named arguments and split");
     KNOWN_TO_FAIL.add("splitting/arrows.stmt:7  newline before fn expression should not force => to split");
     KNOWN_TO_FAIL.add("splitting/assignments.stmt:8  initializer doesn't fit one line, wrap inside, keep name");
-    KNOWN_TO_FAIL.add("splitting/classes.unit:106  multiline mixin with multiline interface");
-    KNOWN_TO_FAIL.add("splitting/classes.unit:126  force implements to split even if it would fit after with");
-    KNOWN_TO_FAIL.add("splitting/classes.unit:59  one interface per line");
-    KNOWN_TO_FAIL.add("splitting/classes.unit:77  one mixin per line");
-    KNOWN_TO_FAIL.add("splitting/classes.unit:86  multiline mixin with single-line interface");
-    KNOWN_TO_FAIL.add("splitting/classes.unit:97  single-line mixin with multiline interface");
+    KNOWN_TO_FAIL.add("splitting/classes.unit:7");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:35  try to keep constructor call together");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:41  splits before ':' if the parameter list does not fit on one line");
     KNOWN_TO_FAIL.add("splitting/constructors.unit:51  indent parameters more if body is a wrapped =>");
