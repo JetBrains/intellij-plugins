@@ -2,6 +2,7 @@ package org.jetbrains.training.check;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaTokenType;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.java.IJavaElementType;
@@ -44,7 +45,7 @@ public class CheckCountCommentedLine implements Check{
 
     private int calc(PsiElement psiElement){
 
-        if (psiElement.getNode().getElementType() == IJavaElementType.find((short) 381 )) return 1;
+        if (psiElement.getNode().getElementType() == JavaTokenType.END_OF_LINE_COMMENT) return 1;
         else if(psiElement.getChildren().length == 0) return 0;
         else {
             int result = 0;

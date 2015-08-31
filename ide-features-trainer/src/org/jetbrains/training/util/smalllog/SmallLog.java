@@ -1,7 +1,6 @@
 package org.jetbrains.training.util.smalllog;
 
 import com.intellij.ui.components.JBScrollPane;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.util.smalllog.actions.*;
 import shortcutter.Shortcutter;
@@ -56,7 +55,7 @@ public class SmallLog extends JFrame{
     }
 
 
-    public void addLine(Type type, String text, @Nullable String shortcutText) throws Exception {
+    public void addLine(org.jetbrains.training.util.smalllog.Type type, String text, @Nullable String shortcutText) throws Exception {
         new AddAction(this, type, text).execute();
     }
 
