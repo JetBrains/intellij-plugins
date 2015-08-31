@@ -9,6 +9,6 @@
 }</CopyText>
     </MouseBlock>
     <Try description="Duplicate any line with &lt;b&gt;&lt;action=&quot;EditorDuplicate&quot;&gt;&lt;/b&gt;" action="EditorDuplicate" trigger="EditorDuplicate"/>
-    <Try description="You can do the same thing with a bunch of lines. Just select two ore more lines and duplicate with &lt;b&gt;&lt;action=&quot;EditorDuplicate&quot;&gt;&lt;/b&gt;" action="EditorDuplicate" trigger="EditorDuplicate"/>
+    <Try description="You can do the same thing with a bunch of lines. Just select two ore more lines and duplicate with &lt;b&gt;&lt;action=&quot;EditorDuplicate&quot;&gt;&lt;/b&gt;" action="EditorDuplicate" trigger="EditorDuplicate" check="org.jetbrains.training.check.CheckSelectedLines"/>
     <Win/>
 </xml>

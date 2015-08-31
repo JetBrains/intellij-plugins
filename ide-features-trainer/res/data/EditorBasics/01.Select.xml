@@ -20,6 +20,7 @@
     }
 }</CopyText>
     </MouseBlock>
+    <MoveCaret position="9:9"/>
     <Try description="Put cursor before any word. Select it with &lt;b&gt;&lt;action=&quot;EditorNextWordWithSelection&quot;&gt;&lt;/b&gt;" action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection"/>
     <Try description="Now let's select the whole line with &lt;b&gt;&lt;action=&quot;EditorSelectWord&quot;&gt;&lt;/b&gt;" action="EditorSelectWord" trigger="EditorSelectWord"/>
     <Text description="You may increase your selection with &lt;b&gt;&lt;action=&quot;EditorSelectWord&quot;&gt;&lt;/b&gt; until your file will be selected"/>

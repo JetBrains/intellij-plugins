@@ -7,11 +7,13 @@
 
     }
 }</CopyText>
-        <MoveCaret position="4:27" />
-    </MouseBlock>
+<CaretBlock>
+    <MoveCaret position="4:27" />
     <Text description="Postfix code completion helps reduce backward caret jumps as you write code. It lets you transform an already typed expression to another one based on the postfix you added, the type of expression and its context."/>
     <Try description="Put the '.' after parenthesis and you will see the list of postfix completions. Choose the if statement" trigger="EditorChooseLookupItem"/>
     <Text description="Postfix completions list appears as the part of the instant completion list."/>
     <Try description="If you want to filer it just press &lt;b&gt;&lt;action=&quot;InsertLiveTemplate&quot;&gt;&lt;/b&gt;" trigger="InsertLiveTemplate"/>
     <Win/>
+</CaretBlock>
+</MouseBlock>
 </xml>

@@ -2,40 +2,49 @@ package org.jetbrains.training.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
+import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.editor.actions.BlockCaretAction;
+import org.jetbrains.training.editor.actions.LearnActions;
 import org.jetbrains.training.eduUI.EduPanel;
 import org.jetbrains.training.lesson.*;
-import org.jetbrains.training.util.LearnUiUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
 public class EduEditor implements TextEditor {
+
+    public final int balloonDelay = 3000;
 
     private Project myProject;
     private FileEditor myDefaultEditor;
@@ -44,6 +53,35 @@ public class EduEditor implements TextEditor {
     private HashSet<ActionsRecorder> actionsRecorders;
     private VirtualFile vf;
     Course myCourse;
+
+    private MouseListener[] myMouseListeners;
+    private MouseMotionListener[] myMouseMotionListeners;
+    private MouseListener myMouseDummyListener;
+    private boolean mouseBlocked;
+
+    public void setMyMouseListeners(MouseListener[] myMouseListeners) {
+        this.myMouseListeners = myMouseListeners;
+    }
+
+    public void setMyMouseMotionListeners(MouseMotionListener[] myMouseMotionListeners) {
+        this.myMouseMotionListeners = myMouseMotionListeners;
+    }
+
+    public MouseListener[] getMyMouseListeners() {
+        return myMouseListeners;
+    }
+
+    public MouseMotionListener[] getMyMouseMotionListeners() {
+        return myMouseMotionListeners;
+    }
+
+    public boolean isMouseBlocked() {
+        return mouseBlocked;
+    }
+
+    public void setMouseBlocked(boolean mouseBlocked) {
+        this.mouseBlocked = mouseBlocked;
+    }
 
     ArrayList<LearnActions> myLearnActions;
 
@@ -60,6 +98,8 @@ public class EduEditor implements TextEditor {
         if (myLearnActions == null) {
             myLearnActions = new ArrayList<LearnActions>();
         }
+
+        mouseBlocked = false;
     }
 
     private FileEditor getDefaultEditor() {
@@ -318,6 +358,7 @@ public class EduEditor implements TextEditor {
         clearEditor();
         clearLessonPanel();
         removeActionsRecorders();
+        if (isMouseBlocked()) restoreMouseActions();
     }
 
 
@@ -349,7 +390,11 @@ public class EduEditor implements TextEditor {
         blockCaretAction.addActionHandler(new Runnable() {
             @Override
             public void run() {
-                //System.out.println("caret movement handled");
+                try {
+                    showCaretBlockedBalloon();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         myLearnActions.add(blockCaretAction);
@@ -366,5 +411,123 @@ public class EduEditor implements TextEditor {
         }
 
         myLearnActions.removeAll(myBlockActions);
+    }
+
+    public void grabMouseActions(){
+        MouseListener[] mouseListeners = getEditor().getContentComponent().getMouseListeners();
+        setMyMouseListeners(getEditor().getContentComponent().getMouseListeners());
+
+        for (MouseListener mouseListener : mouseListeners) {
+            getEditor().getContentComponent().removeMouseListener(mouseListener);
+        }
+
+        //kill all mouse (motion) listeners
+        MouseMotionListener[] mouseMotionListeners = getEditor().getContentComponent().getMouseMotionListeners();
+        setMyMouseMotionListeners(getEditor().getContentComponent().getMouseMotionListeners());
+
+        for (MouseMotionListener mouseMotionListener : mouseMotionListeners) {
+            getEditor().getContentComponent().removeMouseMotionListener(mouseMotionListener);
+        }
+
+        myMouseDummyListener  = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                try {
+                    showCaretBlockedBalloon();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                try {
+                    showCaretBlockedBalloon();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+                try {
+                    showCaretBlockedBalloon();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        getEditor().getContentComponent().addMouseListener(myMouseDummyListener);
+
+        setMouseBlocked(true);
+    }
+
+    public void restoreMouseActions(){
+        if (getMyMouseListeners() != null) {
+            for (MouseListener myMouseListener : getMyMouseListeners()) {
+                getEditor().getContentComponent().addMouseListener(myMouseListener);
+            }
+        }
+
+        if (getMyMouseMotionListeners() != null) {
+            for (MouseMotionListener myMouseMotionListener : getMyMouseMotionListeners()) {
+                getEditor().getContentComponent().addMouseMotionListener(myMouseMotionListener);
+            }
+        }
+
+        if(myMouseDummyListener != null) getEditor().getContentComponent().removeMouseListener(myMouseDummyListener);
+
+        setMyMouseListeners(null);
+        setMyMouseMotionListeners(null);
+        setMouseBlocked(false);
+    }
+
+    private static void showBalloon(Editor editor, String text, final int delay) throws InterruptedException {
+        if (editor == null) return;
+
+        int offset = editor.getCaretModel().getCurrentCaret().getOffset();
+        VisualPosition position = editor.offsetToVisualPosition(offset);
+        Point point = editor.visualPositionToXY(position);
+
+        String balloonText = text;
+
+
+        BalloonBuilder builder =
+                JBPopupFactory.getInstance().
+                        createHtmlTextBalloonBuilder(balloonText, null, UIUtil.getLabelBackground(), null)
+                        .setHideOnClickOutside(false)
+                        .setCloseButtonEnabled(true)
+                        .setHideOnKeyOutside(false);
+        final Balloon myBalloon = builder.createBalloon();
+
+        myBalloon.show(new RelativePoint(editor.getContentComponent(), point), Balloon.Position.above);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(delay);
+                    myBalloon.hide();
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        }).start();
+
+    }
+
+    private void showCaretBlockedBalloon() throws InterruptedException {
+        showBalloon(getEditor(), "Caret is blocked in this lesson", balloonDelay);
+    }
+
+    public void selectIt() {
+        HashSet<FileEditor> selectedEditors = new HashSet<FileEditor>(Arrays.asList(FileEditorManager.getInstance(myProject).getSelectedEditors()));
+        if (!selectedEditors.contains(this)) {
+//            FileEditorManager.getInstance(myProject).setSelectedEditor(vf, EduEditorProvider.EDITOR_TYPE_ID);
+            FileEditorManager.getInstance(myProject).openEditor(new OpenFileDescriptor(myProject, vf), true);
+
+        }
     }
 }

@@ -22,12 +22,16 @@ public class SmartCompletionDemo{
     }
 
 }</CopyText>
+<CaretBlock>
     <MoveCaret position="13:19"/>
-    </MouseBlock>
+    <TypeText> </TypeText>
     <Text description="Smart Type Code Completion filters the suggestion list and includes only those types that are applicable to the current context."/>
     <Try description="Press &lt;b&gt;&lt;action=&quot;SmartTypeCompletion&quot;&gt;&lt;/b&gt; to see the list of suitable ways to complete. Choose the first one by pressing &lt;b&gt;&lt;action=&quot;EditorEnter&quot;&gt;&lt;/b&gt;" triggers="SmartTypeCompletion;EditorChooseLookupItem"/>
     <MoveCaret position="19:16"/>
+    <TypeText> </TypeText>
     <Text description="Smart Type Code Completion can also suggest a code for return."/>
     <Try description="Press &lt;b&gt;&lt;action=&quot;SmartTypeCompletion&quot;&gt;&lt;/b&gt; twice to see Lookup menu for return. Choose the first one by pressing &lt;b&gt;&lt;action=&quot;EditorEnter&quot;&gt;&lt;/b&gt;" triggers="SmartTypeCompletion;SmartTypeCompletion;EditorChooseLookupItem"/>
     <Win/>
+</CaretBlock>
+</MouseBlock>
 </xml>

@@ -9,11 +9,23 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDocumentManager;
+import com.intellij.pom.PomManager;
+import com.intellij.pom.PomModel;
+import com.intellij.pom.PomModelAspect;
+import com.intellij.pom.event.PomModelListener;
+import com.intellij.pom.tree.TreeAspect;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.DocumentCommitProcessor;
+import com.intellij.psi.impl.migration.PsiMigrationManager;
+import com.intellij.psi.impl.source.tree.ChangeUtil;
 import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.psi.util.PsiUtil;
+import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.check.Check;
 
@@ -149,6 +161,7 @@ public class ActionsRecorder implements Disposable {
 
             @Override
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
                 final String actionId = ActionManager.getInstance().getId(action);
 
                 if(actionId == null) return;
@@ -172,6 +185,7 @@ public class ActionsRecorder implements Disposable {
             }
         };
 
+
         myDocumentListener = new DocumentListener() {
             @Override
             public void beforeDocumentChange(DocumentEvent event) {
@@ -179,15 +193,21 @@ public class ActionsRecorder implements Disposable {
             }
 
             @Override
-            public void documentChanged(DocumentEvent event) {
-                if (triggerQueue.size() == 0) {
-                    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
-                    if (isTaskSolved(document, target)) {
-                        removeListeners(document, actionManager);
-                        if (doWhenDone != null)
-                            dispose();
-                        doWhenDone.run();
-                    }
+            public void documentChanged(final DocumentEvent event) {
+                if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
+                    PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (triggerQueue.size() == 0) {
+                                if (isTaskSolved(document, target)) {
+                                    removeListeners(document, actionManager);
+                                    if (doWhenDone != null)
+                                        dispose();
+                                    doWhenDone.run();
+                                }
+                            }
+                        }
+                    });
                 }
             }
         };

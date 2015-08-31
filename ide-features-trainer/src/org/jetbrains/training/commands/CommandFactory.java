@@ -54,8 +54,8 @@ public class CommandFactory {
 //            case REPLAY:
 //                return new ReplayCommand();
 //
-//            case TYPETEXT:
-//                return new TypeTextCommand();
+            case TYPETEXT:
+                return new TypeTextCommand();
 //
 //            case TRAVERSECARET:
 //                return new TraverseCaretCommand();

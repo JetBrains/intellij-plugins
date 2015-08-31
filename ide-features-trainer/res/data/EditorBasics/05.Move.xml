@@ -14,11 +14,15 @@
     }
 
 }</CopyText>
-    </MouseBlock>
     <ShowLineNumber/>
-    <Text description="You can rearrange lines sequence with one shortcut instead of 3 actions: copy, delete and paste"/>
-    <Try description="Put cursor to the 6 line and pull it down with &lt;b&gt;&lt;action=&quot;MoveLineDown&quot;&gt;&lt;/b&gt;" trigger="MoveLineDown"/>
-    <Try description="It works in a opposite way also &lt;b&gt;&lt;action=&quot;MoveLineUp&quot;&gt;&lt;/b&gt;" trigger="MoveLineUp"/>
-    <Try description="Go to line 10 and move the whole statement up with &lt;b&gt;&lt;action=&quot;MoveStatementUp&quot;&gt;&lt;/b&gt;" trigger="MoveStatementUp"/>
-    <Win/>
+    <CaretBlock>
+        <MoveCaret position="6:9"/>
+        <Text description="You can rearrange lines sequence with one shortcut instead of 3 actions: copy, delete and paste"/>
+        <Try description="Pull down the line where cursor stands with &lt;b&gt;&lt;action=&quot;MoveLineDown&quot;&gt;&lt;/b&gt;" trigger="MoveLineDown"/>
+        <Try description="It works in a opposite way also &lt;b&gt;&lt;action=&quot;MoveLineUp&quot;&gt;&lt;/b&gt;" trigger="MoveLineUp"/>
+        <MoveCaret position="10:5"/>
+        <Try description="Now try to move the whole statement up with &lt;b&gt;&lt;action=&quot;MoveStatementUp&quot;&gt;&lt;/b&gt;" trigger="MoveStatementUp"/>
+        <Win/>
+    </CaretBlock>
+    </MouseBlock>
 </xml>

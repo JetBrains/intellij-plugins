@@ -41,7 +41,17 @@ public class LessonProcessor {
                 if (el.getChildren() != null) {
                     elements.add(el); //add block element
                     for(Element el1 : el.getChildren()){
-                        elements.add(el1); //add inner elements
+                        if (isCaretBlock(el1)) {
+                            if (el1.getChildren() != null) {
+                                elements.add(el1); //add block element
+                                for (Element el2 : el1.getChildren()) {
+                                    elements.add(el2); //add inner elements
+                                }
+                                elements.add(new Element(Command.CommandType.CARETUNBLOCK.toString())); //add unblock element
+                            }
+                        } else {
+                            elements.add(el1); //add inner elements
+                        }
                     }
                     elements.add(new Element(Command.CommandType.MOUSEUNBLOCK.toString())); //add unblock element
                 }

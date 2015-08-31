@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class EduEditorProvider implements FileEditorProvider, DumbAware {
 
 
-    static final private String EDITOR_TYPE_ID = "EduEditor";
+    public static final String EDITOR_TYPE_ID = "EduEditor";
     final private com.intellij.openapi.fileEditor.FileEditorProvider defaultTextEditorProvider = TextEditorProvider.getInstance();
     HashMap<VirtualFile, EduEditor> fileEduEditorMap;
 
