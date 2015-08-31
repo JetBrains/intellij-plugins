@@ -147,11 +147,10 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
     LookupElement[] items = doTest("");
     assertNotNull(items);
     assertTrue(items.length > 1);
-    assertTrue(items[0].getLookupString().startsWith("first"));
-    assertTrue(items[1].getLookupString().startsWith("second"));
-    assertTrue(items[2].getLookupString().startsWith("undefined"));
-    assertTrue(items[3].getLookupString().startsWith("choose color"));
-    assertFalse(items[4].getLookupString().startsWith("choose color"));
+    assertTrue(items[0].getLookupString().startsWith("choose color"));
+    assertTrue(items[1].getLookupString().startsWith("first"));
+    assertTrue(items[2].getLookupString().startsWith("second"));
+    assertTrue(items[3].getLookupString().startsWith("undefined"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
