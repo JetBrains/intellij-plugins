@@ -3,6 +3,7 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.codeInsight.actions.OptimizeImportsAction;
 import com.intellij.ide.DataManager;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartOptimizeImportsTest extends CodeInsightFixtureTestCase {
@@ -19,6 +20,7 @@ public class DartOptimizeImportsTest extends CodeInsightFixtureTestCase {
   }
 
   private void doTest(final String... filePaths) {
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByFiles(filePaths);
     myFixture.doHighlighting(); // make sure server is warmed up
     OptimizeImportsAction.actionPerformedImpl(DataManager.getInstance().getDataContext(myFixture.getEditor().getContentComponent()));
