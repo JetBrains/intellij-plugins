@@ -7,8 +7,6 @@ import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
@@ -19,12 +17,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
+import org.jdesktop.swingx.action.ActionManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.editor.actions.BlockCaretAction;
 import org.jetbrains.training.editor.actions.LearnActions;
-import org.jetbrains.training.eduUI.EduPanel;
+import org.jetbrains.training.editor.eduUI.EduPanel;
 import org.jetbrains.training.lesson.*;
 
 import javax.swing.*;
@@ -359,6 +358,11 @@ public class EduEditor implements TextEditor {
         clearLessonPanel();
         removeActionsRecorders();
         if (isMouseBlocked()) restoreMouseActions();
+        if (myLearnActions != null) {
+            for (LearnActions myLearnAction : myLearnActions) {
+                myLearnAction.unregisterAction();
+            }
+        }
     }
 
 
