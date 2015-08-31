@@ -15,6 +15,8 @@
  */
 package com.jetbrains.lang.dart.assists;
 
+import com.google.common.collect.Maps;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
@@ -26,6 +28,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -40,26 +43,35 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class AssistUtils {
   public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
-    final String filePath = fileEdit.getFile();
-    final VirtualFile file = findVirtualFileByPath(filePath);
+    final VirtualFile file = findVirtualFile(fileEdit);
     if (file != null) {
-      final Document document = FileDocumentManager.getInstance().getDocument(file);
-      if (document != null) {
-        applySourceEdits(document, fileEdit.getEdits());
-      }
+      applyFileEdit(file, fileEdit);
     }
   }
 
   public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
+    final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange);
+    // ensure not read-only
+    {
+      final Set<VirtualFile> files = changeMap.keySet();
+      final boolean okToWrite = FileModificationService.getInstance().prepareVirtualFilesForWrite(project, files);
+      if (!okToWrite) {
+        return;
+      }
+    }
+    // do apply the change
     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
       @Override
       public void run() {
-        final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
-        for (SourceFileEdit fileEdit : fileEdits) {
-          applyFileEdit(fileEdit);
+        for (Map.Entry<VirtualFile, SourceFileEdit> entry : changeMap.entrySet()) {
+          final VirtualFile file = entry.getKey();
+          final SourceFileEdit fileEdit = entry.getValue();
+          applyFileEdit(file, fileEdit);
         }
         runLinkedEdits(project, sourceChange);
       }
@@ -74,6 +86,27 @@ public class AssistUtils {
     }
   }
 
+  @NotNull
+  public static Map<VirtualFile, SourceFileEdit> getContentFilesChanges(@NotNull final Project project,
+                                                                        @NotNull final SourceChange sourceChange) {
+    final Map<VirtualFile, SourceFileEdit> map = Maps.newHashMap();
+    final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
+    for (SourceFileEdit fileEdit : fileEdits) {
+      final VirtualFile file = findVirtualFile(fileEdit);
+      if (file != null && isInContent(project, file)) {
+        map.put(file, fileEdit);
+      }
+    }
+    return map;
+  }
+
+  private static void applyFileEdit(@NotNull VirtualFile file, @NotNull SourceFileEdit fileEdit) {
+    final Document document = FileDocumentManager.getInstance().getDocument(file);
+    if (document != null) {
+      applySourceEdits(document, fileEdit.getEdits());
+    }
+  }
+
   private static ChangeTarget findChangeTarget(@NotNull Project project, final SourceChange sourceChange) {
     for (LinkedEditGroup group : sourceChange.getLinkedEditGroups()) {
       final List<Position> positions = group.getPositions();
@@ -81,7 +114,7 @@ public class AssistUtils {
         final Position position = positions.get(0);
         final String path = position.getFile();
         // find VirtualFile
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
+        VirtualFile virtualFile = findVirtualFileByPath(path);
         if (virtualFile == null) {
           return null;
         }
@@ -97,10 +130,19 @@ public class AssistUtils {
     return null;
   }
 
+  private static VirtualFile findVirtualFile(@NotNull SourceFileEdit fileEdit) {
+    final String path = FileUtil.toSystemIndependentName(fileEdit.getFile());
+    return findVirtualFileByPath(path);
+  }
+
   @Nullable
-  private static VirtualFile findVirtualFileByPath(String fileName) {
-    final String filePath = FileUtil.toSystemIndependentName(fileName);
-    return LocalFileSystem.getInstance().findFileByPath(filePath);
+  private static VirtualFile findVirtualFileByPath(String path) {
+    path = FileUtil.toSystemIndependentName(path);
+    return LocalFileSystem.getInstance().findFileByPath(path);
+  }
+
+  private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {
+    return ProjectRootManager.getInstance(project).getFileIndex().isInContent(file);
   }
 
   @Nullable

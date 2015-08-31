@@ -16,6 +16,8 @@
 package com.jetbrains.lang.dart.ide.refactoring.status;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -23,13 +25,13 @@ import java.util.List;
  * Outcome of a condition checking operation.
  */
 public class RefactoringStatus {
-  private final List<RefactoringStatusEntry> entries = Lists.newArrayList();
-  private RefactoringStatusSeverity severity = RefactoringStatusSeverity.OK;
+  @NotNull private final List<RefactoringStatusEntry> entries = Lists.newArrayList();
+  @NotNull private RefactoringStatusSeverity severity = RefactoringStatusSeverity.OK;
 
   /**
    * Adds given {@link RefactoringStatusEntry} and updates {@link #severity}.
    */
-  public void addEntry(RefactoringStatusEntry entry) {
+  public void addEntry(@NotNull RefactoringStatusEntry entry) {
     entries.add(entry);
     severity = max(severity, entry.getSeverity());
   }
@@ -37,28 +39,28 @@ public class RefactoringStatus {
   /**
    * Adds a <code>ERROR</code> entry filled with the given message to this status.
    */
-  public void addError(String msg) {
+  public void addError(@NotNull String msg) {
     addError(msg, null);
   }
 
   /**
    * Adds a <code>ERROR</code> entry filled with the given message and status to this status.
    */
-  public void addError(String msg, RefactoringStatusContext context) {
+  public void addError(@NotNull String msg, @Nullable RefactoringStatusContext context) {
     addEntry(new RefactoringStatusEntry(RefactoringStatusSeverity.ERROR, msg, context));
   }
 
   /**
    * Adds a <code>FATAL</code> entry filled with the given message to this status.
    */
-  public void addFatalError(String msg) {
+  public void addFatalError(@NotNull String msg) {
     addFatalError(msg, null);
   }
 
   /**
    * Adds a <code>FATAL</code> entry filled with the given message and status to this status.
    */
-  public void addFatalError(String msg, RefactoringStatusContext context) {
+  public void addFatalError(@NotNull String msg, @Nullable RefactoringStatusContext context) {
     addEntry(new RefactoringStatusEntry(RefactoringStatusSeverity.FATAL, msg, context));
   }
 
@@ -72,7 +74,7 @@ public class RefactoringStatus {
   /**
    * Adds a <code>WARNING</code> entry filled with the given message and status to this status.
    */
-  public void addWarning(String msg, RefactoringStatusContext context) {
+  public void addWarning(@NotNull String msg, @Nullable RefactoringStatusContext context) {
     addEntry(new RefactoringStatusEntry(RefactoringStatusSeverity.WARNING, msg, context));
   }
 
@@ -80,6 +82,7 @@ public class RefactoringStatus {
    * @return the copy of this {@link RefactoringStatus} with {@link RefactoringStatusSeverity#ERROR}
    * replaced with {@link RefactoringStatusSeverity#FATAL}.
    */
+  @NotNull
   public RefactoringStatus escalateErrorToFatal() {
     RefactoringStatus result = new RefactoringStatus();
     for (RefactoringStatusEntry entry : entries) {
@@ -95,6 +98,7 @@ public class RefactoringStatus {
   /**
    * @return the {@link RefactoringStatusEntry}s.
    */
+  @NotNull
   public List<RefactoringStatusEntry> getEntries() {
     return entries;
   }
@@ -103,6 +107,7 @@ public class RefactoringStatus {
    * @return the RefactoringStatusEntry with the highest severity, or <code>null</code> if no
    * entries are present.
    */
+  @Nullable
   public RefactoringStatusEntry getEntryWithHighestSeverity() {
     if (entries.isEmpty()) {
       return null;
@@ -117,9 +122,10 @@ public class RefactoringStatus {
   }
 
   /**
-   * @return the message from the {@link RefactoringStatusEntry} with highest severity; may be
+   * Return the message from the {@link RefactoringStatusEntry} with the highest severity; may be
    * <code>null</code> if not entries are present.
    */
+  @Nullable
   public String getMessage() {
     RefactoringStatusEntry entry = getEntryWithHighestSeverity();
     if (entry == null) {
@@ -131,6 +137,7 @@ public class RefactoringStatus {
   /**
    * @return the current severity of the {@link RefactoringStatus}.
    */
+  @NotNull
   public RefactoringStatusSeverity getSeverity() {
     return severity;
   }
@@ -184,7 +191,7 @@ public class RefactoringStatus {
    * of its current severity and the parameter's severity. Merging with <code>null</code> is allowed
    * - it has no effect.
    */
-  public void merge(RefactoringStatus other) {
+  public void merge(@Nullable RefactoringStatus other) {
     if (other == null) {
       return;
     }
@@ -209,6 +216,7 @@ public class RefactoringStatus {
   /**
    * @return the new {@link RefactoringStatus} with {@link RefactoringStatusSeverity#ERROR}.
    */
+  @NotNull
   public static RefactoringStatus createErrorStatus(String msg) {
     RefactoringStatus status = new RefactoringStatus();
     status.addError(msg);
@@ -218,6 +226,7 @@ public class RefactoringStatus {
   /**
    * @return the new {@link RefactoringStatus} with {@link RefactoringStatusSeverity#FATAL}.
    */
+  @NotNull
   public static RefactoringStatus createFatalErrorStatus(String msg) {
     RefactoringStatus status = new RefactoringStatus();
     status.addFatalError(msg);
@@ -227,6 +236,7 @@ public class RefactoringStatus {
   /**
    * @return the new {@link RefactoringStatus} with {@link RefactoringStatusSeverity#FATAL}.
    */
+  @NotNull
   public static RefactoringStatus createFatalErrorStatus(String msg, RefactoringStatusContext context) {
     RefactoringStatus status = new RefactoringStatus();
     status.addFatalError(msg, context);
@@ -236,6 +246,7 @@ public class RefactoringStatus {
   /**
    * @return the new {@link RefactoringStatus} with {@link RefactoringStatusSeverity#WARNING}.
    */
+  @NotNull
   public static RefactoringStatus createWarningStatus(String msg) {
     RefactoringStatus status = new RefactoringStatus();
     status.addWarning(msg);
@@ -245,7 +256,8 @@ public class RefactoringStatus {
   /**
    * @return the {@link Enum} value with maximal ordinal.
    */
-  private static <T extends Enum<T>> T max(T a, T b) {
+  @NotNull
+  private static <T extends Enum<T>> T max(@NotNull T a, @NotNull T b) {
     if (b.ordinal() > a.ordinal()) {
       return b;
     }

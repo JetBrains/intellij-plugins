@@ -28,6 +28,7 @@ import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusEntry;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusSeverity;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -38,33 +39,32 @@ import java.util.concurrent.TimeUnit;
  * The LTK wrapper around an Analysis Server refactoring.
  */
 public abstract class ServerRefactoring {
-  protected final String kind;
+  @NotNull protected final String kind;
 
-  private final String name;
-  private final String file;
+  @NotNull private final String file;
   private final int offset;
   private final int length;
 
   private final Set<Integer> pendingRequestIds = Sets.newHashSet();
-  private RefactoringStatus serverErrorStatus;
-  private RefactoringStatus initialStatus;
-  private RefactoringStatus optionsStatus;
-  private RefactoringStatus finalStatus;
-  private SourceChange change;
+  @Nullable private RefactoringStatus serverErrorStatus;
+  @Nullable private RefactoringStatus initialStatus;
+  @Nullable private RefactoringStatus optionsStatus;
+  @Nullable private RefactoringStatus finalStatus;
+  @Nullable private SourceChange change;
 
   private int lastId = 0;
-  private ServerRefactoringListener listener;
+  @Nullable private ServerRefactoringListener listener;
 
-  public ServerRefactoring(String kind, String name, String file, int offset, int length) {
+  public ServerRefactoring(@NotNull String kind, @NotNull String file, int offset, int length) {
     this.kind = kind;
-    this.name = name;
     this.file = file;
     this.offset = offset;
     this.length = length;
   }
 
+  @NotNull
   public RefactoringStatus checkFinalConditions() {
-    ProgressManager.getInstance().run(new Task.Modal(null, "Checking initial conditions", true) {
+    ProgressManager.getInstance().run(new Task.Modal(null, "Checking final conditions", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         setOptions(false, indicator);
@@ -73,9 +73,13 @@ public abstract class ServerRefactoring {
     if (serverErrorStatus != null) {
       return serverErrorStatus;
     }
-    return finalStatus;
+    RefactoringStatus result = new RefactoringStatus();
+    result.merge(optionsStatus);
+    result.merge(finalStatus);
+    return result;
   }
 
+  @NotNull
   public RefactoringStatus checkInitialConditions() {
     ProgressManager.getInstance().run(new Task.Modal(null, "Checking initial conditions", true) {
       @Override
@@ -86,28 +90,29 @@ public abstract class ServerRefactoring {
     if (serverErrorStatus != null) {
       return serverErrorStatus;
     }
-    return initialStatus;
+    if (initialStatus != null) {
+      return  initialStatus;
+    }
+    return new RefactoringStatus();
   }
 
+  @Nullable
   public SourceChange getChange() {
     return change;
-  }
-
-  public String getName() {
-    return name;
   }
 
   /**
    * Returns this {@link RefactoringOptions} subclass instance.
    */
+  @Nullable
   protected abstract RefactoringOptions getOptions();
 
   /**
    * Sets the received {@link RefactoringFeedback}.
    */
-  protected abstract void setFeedback(RefactoringFeedback feedback);
+  protected abstract void setFeedback(@NotNull RefactoringFeedback feedback);
 
-  public void setListener(ServerRefactoringListener listener) {
+  public void setListener(@Nullable ServerRefactoringListener listener) {
     this.listener = listener;
   }
 
@@ -186,7 +191,7 @@ public abstract class ServerRefactoring {
     }
   }
 
-  private static RefactoringStatusSeverity toProblemSeverity(String severity) {
+  private static RefactoringStatusSeverity toProblemSeverity(@NotNull String severity) {
     if (RefactoringProblemSeverity.FATAL.equals(severity)) {
       return RefactoringStatusSeverity.FATAL;
     }
@@ -199,7 +204,7 @@ public abstract class ServerRefactoring {
     return RefactoringStatusSeverity.OK;
   }
 
-  private static RefactoringStatus toRefactoringStatus(List<RefactoringProblem> problems) {
+  private static RefactoringStatus toRefactoringStatus(@NotNull List<RefactoringProblem> problems) {
     RefactoringStatus status = new RefactoringStatus();
     for (RefactoringProblem problem : problems) {
       final String serverSeverity = problem.getSeverity();
@@ -211,6 +216,6 @@ public abstract class ServerRefactoring {
   }
 
   public interface ServerRefactoringListener {
-    void requestStateChanged(boolean hasPendingRequests, RefactoringStatus optionsStatus);
+    void requestStateChanged(boolean hasPendingRequests, @NotNull RefactoringStatus optionsStatus);
   }
 }

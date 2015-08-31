@@ -131,7 +131,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     presentation.setText(getActionTextForFiles());
   }
 
-  protected static void showHintLater(@NotNull final Editor editor, @NotNull final String text, final boolean error) {
+  public static void showHintLater(@NotNull final Editor editor, @NotNull final String text, final boolean error) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
