@@ -108,6 +108,7 @@ public class DartAnalysisServerService {
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
   @NotNull private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
   @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
+  @NotNull private final Map<String, List<OverrideMember>> myOverrideData = Maps.newHashMap();
 
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
@@ -166,6 +167,15 @@ public class DartAnalysisServerService {
         // Force (re)highlighting.
         forceFileAnnotation(file);
       }
+    }
+
+    @Override
+    public void computedOverrides(String file, List<OverrideMember> overrides) {
+      synchronized (myOverrideData) {
+        file = FileUtil.toSystemIndependentName(file);
+        myOverrideData.put(file, overrides);
+      }
+      forceFileAnnotation(file);
     }
 
     @Override
@@ -479,6 +489,21 @@ public class DartAnalysisServerService {
     }
   }
 
+  /**
+   * Returns {@link OverrideMember}s for the given file.
+   * Empty, but not null.
+   */
+  @NotNull
+  public List<OverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
+    synchronized (myOverrideData) {
+      List<OverrideMember> regions = myOverrideData.get(file.getPath());
+      if (regions == null) {
+        return OverrideMember.EMPTY_LIST;
+      }
+      return regions;
+    }
+  }
+
   @SuppressWarnings("NestedSynchronizedStatement")
   void updateVisibleFiles() {
     synchronized (myLock) {
@@ -500,6 +525,9 @@ public class DartAnalysisServerService {
         }
         synchronized (myNavigationData) {
           myNavigationData.keySet().retainAll(myVisibleFiles);
+        }
+        synchronized (myOverrideData) {
+          myOverrideData.keySet().retainAll(myVisibleFiles);
         }
         analysis_setPriorityFiles();
         analysis_setSubscriptions();
@@ -1164,8 +1192,9 @@ public class DartAnalysisServerService {
       if (myServer == null) return false;
 
       final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
-      subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
+      subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
+      subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
 
       if (LOG.isDebugEnabled()) {
         LOG.debug("analysis_setSubscriptions, subscriptions:\n" + subscriptions);
