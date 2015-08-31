@@ -85,7 +85,7 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
   }
 
   @Override
-  public boolean hasStructType(CidrPhysicalValue value, EvaluationContext context) throws ExecutionException {
+  public boolean hasStructType(@NotNull CidrPhysicalValue value, EvaluationContext context) throws ExecutionException {
     if (super.hasStructType(value, context)) {
       return true;
     }
