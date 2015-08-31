@@ -4,14 +4,16 @@ import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.JstdServerSettings;
-import com.intellij.execution.ui.layout.impl.JBRunnerTabs;
 import com.intellij.ide.browsers.BrowserSettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.TabbedPaneWrapper;
+import com.intellij.ui.border.CustomLineBorder;
+import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
@@ -25,7 +27,7 @@ public class JstdToolWindowSession {
 
   private final Project myProject;
   private final ActionToolbar myToolbar;
-  private final JBRunnerTabs myTabs;
+  private final TabbedPaneWrapper myTabs;
   private final JPanel myRootPanel;
   private final JstdServerSettingsTab mySettingsTab;
   private JstdServerConsoleTab myConsoleTab;
@@ -33,17 +35,11 @@ public class JstdToolWindowSession {
   public JstdToolWindowSession(@NotNull Project project) {
     myProject = project;
     myToolbar = createActionToolbar();
-    myTabs = new JBRunnerTabs(project, ActionManager.getInstance(), IdeFocusManager.getInstance(project), myProject);
-    myTabs.getPresentation()
-      .setInnerInsets(new Insets(0, 0, 0, 0))
-      .setPaintBorder(0, 0, 0, 0)
-      .setPaintFocus(false)
-      .setRequestFocusOnLastFocusedComponent(true);
-    myTabs.setTabDraggingEnabled(false);
+    myTabs = new TabbedPaneWrapper(myProject);
     myTabs.getComponent().setBorder(IdeBorderFactory.createEmptyBorder(0, 2, 0, 0));
 
     mySettingsTab = new JstdServerSettingsTab(myProject);
-    myTabs.addTab(mySettingsTab.getTabInfo());
+    addTab(mySettingsTab.getTabInfo());
 
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && server.isProcessRunning()) {
@@ -51,8 +47,13 @@ public class JstdToolWindowSession {
     }
 
     myRootPanel = new JPanel(new BorderLayout(0, 0));
+    myToolbar.getComponent().setBorder(new CustomLineBorder(JBColor.border(), 0, 0, 0, 1));
     myRootPanel.add(myToolbar.getComponent(), BorderLayout.WEST);
-    myRootPanel.add(myTabs, BorderLayout.CENTER);
+    myRootPanel.add(myTabs.getComponent(), BorderLayout.CENTER);
+  }
+
+  private void addTab(@NotNull TabInfo tabInfo) {
+    myTabs.addTab(tabInfo.getText(), tabInfo.getComponent());
   }
 
   @NotNull
@@ -88,7 +89,7 @@ public class JstdToolWindowSession {
   private JstdServerConsoleTab getOrRegisterConsoleContent() {
     if (myConsoleTab == null) {
       myConsoleTab = new JstdServerConsoleTab(myProject, myProject);
-      myTabs.addTab(myConsoleTab.getTabInfo());
+      addTab(myConsoleTab.getTabInfo());
     }
     return myConsoleTab;
   }
@@ -104,7 +105,7 @@ public class JstdToolWindowSession {
     }, myProject);
     JstdServerConsoleTab consoleTab = getOrRegisterConsoleContent();
     consoleTab.attachToServer(server);
-    myTabs.select(consoleTab.getTabInfo(), true);
+    myTabs.setSelectedTitle(consoleTab.getTabInfo().getText());
   }
 
   private void showServerStartupError(@NotNull Throwable error) {
