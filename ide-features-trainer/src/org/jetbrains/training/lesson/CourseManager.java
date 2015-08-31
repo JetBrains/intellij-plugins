@@ -185,6 +185,7 @@ public class CourseManager{
 
 
         EduEditor eduEditor = getEduEditor(project, vf);
+        eduEditor.selectIt();
 
         //Process lesson
         LessonProcessor.process(lesson, eduEditor, project, eduEditor.getEditor().getDocument(), target);

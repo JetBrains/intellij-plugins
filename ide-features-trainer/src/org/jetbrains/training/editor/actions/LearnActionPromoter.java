@@ -1,6 +1,5 @@
-package org.jetbrains.training.editor;
+package org.jetbrains.training.editor.actions;
 
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPromoter;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
