@@ -1,6 +1,7 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCase {
@@ -16,6 +17,7 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
   }
 
   private void doHighlightingTest() {
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting();
   }

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.ide.refactoring.DartRenameHandler;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRenameRefactoring;
@@ -57,6 +58,8 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
   }
 
   private void doTest(final String filePath, String atString, String newName) {
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+
     final PsiFile psiFile = myFixture.configureByFile(filePath);
     myFixture.doHighlighting(); // make sure server is warmed up
     // find the Element to rename

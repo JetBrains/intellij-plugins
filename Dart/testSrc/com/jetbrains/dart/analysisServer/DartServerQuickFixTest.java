@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,8 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   private void doQuickFixTest(@NotNull final String intentionStartText,
                               @Nullable final VirtualFile fileUpdatedByFix,
                               boolean fixAvailable) {
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+
     final PsiFile initialFile = myFixture.configureByFile(getTestName(false) + ".dart");
 
     final IntentionAction quickFix = myFixture.findSingleIntention(intentionStartText);
@@ -69,6 +72,8 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   }
 
   public void testCreatePartFile() throws Throwable {
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+
     myFixture.configureByFile(getTestName(false) + ".dart");
 
     final IntentionAction quickFix = myFixture.findSingleIntention("Create file 'CreatePartFile_part.dart'");
