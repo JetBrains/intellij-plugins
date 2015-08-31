@@ -499,4 +499,18 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "var q = '''\n" +
                  "<caret>");
   }
+
+  public void testEnterMidRawString() {
+    doTypingTest('\n',
+                 "var x = r'content<caret>and stuff'",
+                 "var x = r'content'\n" +
+                 "    r'<caret>and stuff'");
+  }
+
+  public void testEnterMidInterpolatedString() {
+    doTypingTest('\n',
+                 "var x = 'content<caret>and $some stuff'",
+                 "var x = 'content'\n" +
+                 "    '<caret>and $some stuff'");
+  }
 }

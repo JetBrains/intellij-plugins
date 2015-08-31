@@ -235,6 +235,10 @@ public class DartIndentProcessor {
       }
     }
 
+    if (elementType == RAW_SINGLE_QUOTED_STRING && parentType == STRING_LITERAL_EXPRESSION && superParentType == VAR_INIT) {
+      return Indent.getContinuationIndent();
+    }
+
     return Indent.getNoneIndent();
   }
 
