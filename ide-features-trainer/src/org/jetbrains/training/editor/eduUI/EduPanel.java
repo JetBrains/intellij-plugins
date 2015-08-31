@@ -1,4 +1,4 @@
-package org.jetbrains.training.eduUI;
+package org.jetbrains.training.editor.eduUI;
 
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.training.lesson.BadCourseException;
