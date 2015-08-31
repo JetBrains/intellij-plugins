@@ -1,6 +1,7 @@
 <xml type="Scenario" name="Collapse" passed="false" version="0.1" subtype="aimless">
     <ShowLineNumber/>
     <MouseBlock>
+    <CaretBlock>
         <CopyText>public class Car{
 
     String model;
@@ -30,11 +31,13 @@
     }
 
 }</CopyText>
-    </MouseBlock>
+    <MoveCaret position="11:9"/>
     <Text description="Sometimes you need to collapse some code to read it better"/>
-    <Try description="Put cursor to the 11 line and collapse code with &lt;b&gt;&lt;action=&quot;CollapseRegion&quot;&gt;&lt;/b&gt;" trigger="CollapseRegion"/>
+    <Try description="Try to collapse code with &lt;b&gt;&lt;action=&quot;CollapseRegion&quot;&gt;&lt;/b&gt;" trigger="CollapseRegion"/>
     <Try description="To expand code region try &lt;b&gt;&lt;action=&quot;ExpandRegion&quot;&gt;&lt;/b&gt;" trigger="ExpandRegion"/>
     <Try description="If you want to collapse all regions in code use &lt;b&gt;&lt;action=&quot;CollapseAllRegions&quot;&gt;&lt;/b&gt;" trigger="CollapseAllRegions"/>
     <Try description="And &lt;b&gt;&lt;action=&quot;ExpandAllRegions&quot;&gt;&lt;/b&gt; in a back way" trigger="ExpandAllRegions"/>
     <Win/>
+</CaretBlock>
+</MouseBlock>
 </xml>

@@ -22,7 +22,7 @@ public class MouseUnblockCommandEx extends CommandEx {
     @Override
     public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) {
         //Unblock mouse and perform next
-        mouseListenerHolder.restoreListeners(editor);
+//        mouseListenerHolder.restoreListeners(editor);
         elements.poll();
         startNextCommand(elements, lesson, editor, e, document, target ,infoPanel, mouseListenerHolder);
     }

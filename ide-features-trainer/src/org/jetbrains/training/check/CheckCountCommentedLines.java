@@ -10,7 +10,7 @@ import org.jetbrains.training.editor.EduEditor;
 /**
  * Created by karashevich on 21/08/15.
  */
-public class CheckCountCommentedLine implements Check{
+public class CheckCountCommentedLines implements Check{
 
     Project project;
     EduEditor eduEditor;
@@ -29,7 +29,7 @@ public class CheckCountCommentedLine implements Check{
 
     @Override
     public boolean check() {
-        return countCommentedLines() == countComments - 1;
+        return countCommentedLines() >= countComments + 2;
     }
 
     public int countCommentedLines(){

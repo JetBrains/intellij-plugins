@@ -3,9 +3,7 @@ package org.jetbrains.training.editor.actions;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.training.editor.LearnActions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,7 +18,7 @@ public class BlockCaretAction extends DumbAwareAction implements LearnActions{
 
 
     public BlockCaretAction(@NotNull Editor editor){
-        super(LEARN_BLOCK_EDITOR_CARET);
+        super(LEARN_BLOCK_EDITOR_CARET_ACTION);
         actionHandlers = new ArrayList<Runnable>();
 
         this.editor = editor;
