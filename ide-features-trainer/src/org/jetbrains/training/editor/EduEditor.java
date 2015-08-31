@@ -362,7 +362,9 @@ public class EduEditor implements TextEditor {
             for (LearnActions myLearnAction : myLearnActions) {
                 myLearnAction.unregisterAction();
             }
+            myLearnActions.clear();
         }
+
     }
 
 
