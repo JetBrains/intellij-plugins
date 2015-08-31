@@ -56,6 +56,7 @@ public class BlockCaretAction extends DumbAwareAction implements LearnActions{
         this.registerCustomShortcutSet(shortcutSet, editor.getComponent());
     }
 
+    @Override
     public void unregisterAction(){
         this.unregisterCustomShortcutSet(editor.getComponent());
     }

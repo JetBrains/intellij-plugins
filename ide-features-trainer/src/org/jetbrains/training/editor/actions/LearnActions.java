@@ -9,4 +9,6 @@ public interface LearnActions {
     @NonNls
     final public static String LEARN_BLOCK_EDITOR_CARET_ACTION = "LearnBlockEditorCaretAction";
     final public static String LEARN_BLOCK_MOUSE_ACTION = "LearnBlockMouseAction";
+
+    public void unregisterAction();
 }
