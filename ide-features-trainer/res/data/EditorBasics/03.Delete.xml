@@ -23,7 +23,7 @@
     }
 }</CopyText>
     </MouseBlock>
-    <Try description="Delete line where your cursor at with &lt;b&gt;&lt;action=&quot;EditorDeleteLine&quot;&gt;&lt;/b&gt;" action="EditorDeleteLine" trigger="EditorDeleteLine"/>
-    <Try description="To restore deleted line just press &lt;b&gt;&lt;action=&quot;$Undo&quot;&gt;&lt;/b&gt;" action="$Undo" trigger="$Undo"/>
+    <Try description="Delete line where your cursor at with &lt;action=&quot;EditorDeleteLine&quot;&gt;" action="EditorDeleteLine" trigger="EditorDeleteLine"/>
+    <Try description="To restore deleted line just press &lt;action=&quot;$Undo&quot;&gt;" action="$Undo" trigger="$Undo"/>
     <Win/>
 </xml>

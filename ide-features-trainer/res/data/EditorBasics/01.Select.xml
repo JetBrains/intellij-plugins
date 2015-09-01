@@ -21,10 +21,10 @@
 }</CopyText>
     </MouseBlock>
     <MoveCaret position="9:9"/>
-    <Try description="Put cursor before any word. Select it with &lt;b&gt;&lt;action=&quot;EditorNextWordWithSelection&quot;&gt;&lt;/b&gt;" action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection"/>
-    <Try description="Now let's select the whole line with &lt;b&gt;&lt;action=&quot;EditorSelectWord&quot;&gt;&lt;/b&gt;" action="EditorSelectWord" trigger="EditorSelectWord"/>
-    <Text description="You may increase your selection with &lt;b&gt;&lt;action=&quot;EditorSelectWord&quot;&gt;&lt;/b&gt; until your file will be selected"/>
-    <Try description="To decrease selection use &lt;b&gt;&lt;action=&quot;EditorUnSelectWord&quot;&gt;&lt;/b&gt;" action="EditorUnSelectWord" trigger="EditorUnSelectWord"/>
-    <Try description="Select the whole file with &lt;b&gt;&lt;action=&quot;$SelectAll&quot;&gt;&lt;/b&gt;" action="$SelectAll" trigger="$SelectAll"/>
+    <Try description="Put cursor before any word. Select it with &lt;action=&quot;EditorNextWordWithSelection&quot;&gt;" action="EditorNextWordWithSelection" trigger="EditorNextWordWithSelection"/>
+    <Try description="Now let's select the whole line with &lt;action=&quot;EditorSelectWord&quot;&gt;" action="EditorSelectWord" trigger="EditorSelectWord"/>
+    <Text description="You may increase your selection with &lt;action=&quot;EditorSelectWord&quot;&gt; until your file will be selected"/>
+    <Try description="To decrease selection use &lt;action=&quot;EditorUnSelectWord&quot;&gt;" action="EditorUnSelectWord" trigger="EditorUnSelectWord"/>
+    <Try description="Select the whole file with &lt;action=&quot;$SelectAll&quot;&gt;" action="$SelectAll" trigger="$SelectAll"/>
     <Win/>
 </xml>

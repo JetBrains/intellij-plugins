@@ -27,17 +27,17 @@ public class CompletionDemo implements Runnable{
     <CaretBlock>
         <TypeText> </TypeText>
         <Text description="By default IDEA completes your code instantly. "/>
-        <Text description="Start typing &quot;Ran&quot; right where a cursor at and you will see Lookup Menu of completions."/>
-        <Try description="You can choose first item from Lookup menu by typing &lt;b&gt;&lt;action=&quot;EditorEnter&quot;&gt;&lt;/b&gt;" trigger="EditorChooseLookupItem"/>
-        <Try description="To activate Basic Completion action type &lt;b&gt;&lt;action=&quot;CodeCompletion&quot;&gt;&lt;/b&gt; and you will see lookup menu again" trigger="CodeCompletion"/>
-        <Try description="Tap &lt;b&gt;&lt;action=&quot;EditorEnter&quot;&gt;&lt;/b&gt; to choose top item from lookup menu" trigger="EditorChooseLookupItem"/>
+        <Text description="Start typing &lt;code&gt;Ran&lt;/code&gt; right where a cursor at and you will see Lookup Menu of completions."/>
+        <Try description="You can choose first item from Lookup menu by typing &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
+        <Try description="To activate Basic Completion action type &lt;action=&quot;CodeCompletion&quot;&gt; and you will see lookup menu again" trigger="CodeCompletion"/>
+        <Try description="Tap &lt;action=&quot;EditorEnter&quot;&gt; to choose top item from lookup menu" trigger="EditorChooseLookupItem"/>
         <MoveCaret position="20:32"/>
         <TypeText> </TypeText>
-        <Try description="Now try to enter the text &quot;emp&quot; and you will see Completion list again. Tap &lt;b&gt;&lt;action=&quot;CodeCompletion&quot;&gt;&lt;/b&gt; action and IDEA suggests you list with &quot;Collections.Collections.emptyList()&quot;" trigger="CodeCompletion"/>
-        <Try description="Ok, let's choose it by clicking &lt;b&gt;&lt;action=&quot;EditorEnter&quot;&gt;&lt;/b&gt;" trigger="EditorChooseLookupItem"/>
+        <Try description="Now try to enter the text &lt;code&gt;emp&lt;/code&gt; and you will see Completion list again. Tap &lt;action=&quot;CodeCompletion&quot;&gt; action and IDEA suggests you list with &lt;code&gt;Collections.Collections.emptyList()&lt;/code&gt;" trigger="CodeCompletion"/>
+        <Try description="Ok, let's choose it by clicking &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
         <MoveCaret position="22:27"/>
         <Text description="Sometimes you need to find completions for static constants or methods"/>
-        <Try description="Tap &lt;b&gt;&lt;action=&quot;CodeCompletion&quot;&gt;&lt;/b&gt; twice to invoke Code Completion increase search level" triggers="CodeCompletion;CodeCompletion"/>
+        <Try description="Tap &lt;action=&quot;CodeCompletion&quot;&gt; twice to invoke Code Completion increase search level" triggers="CodeCompletion;CodeCompletion"/>
     </CaretBlock>
     </MouseBlock>
     <Win/>

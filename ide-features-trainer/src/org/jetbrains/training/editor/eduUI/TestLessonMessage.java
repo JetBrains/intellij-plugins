@@ -31,9 +31,9 @@ public class TestLessonMessage {
                 jl.setBackground(Color.PINK);
                 jl.repaint();
 
-                LessonMessage lm = new LessonMessage(jl, shortcutPanel);
+//                LessonMessage lm = new LessonMessage(jl, shortcutPanel);
 
-                frame.add(lm.getPanel());
+//                frame.add(lm.getPanel());
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);

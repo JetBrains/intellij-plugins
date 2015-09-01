@@ -6,51 +6,55 @@ package org.jetbrains.training.graphics;
 import org.jetbrains.training.util.MyClassLoader;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 public class JTextPaneDemo extends JFrame {
-    static SimpleAttributeSet ITALIC_GRAY = new SimpleAttributeSet();
-
-    static SimpleAttributeSet BOLD_BLACK = new SimpleAttributeSet();
-
-    static SimpleAttributeSet BLACK = new SimpleAttributeSet();
-
-    static SimpleAttributeSet ROBOTO = new SimpleAttributeSet();
-
-    static SimpleAttributeSet CODE = new SimpleAttributeSet();
 
     JTextPane textPane = new JTextPane();
 
-    // Best to reuse attribute sets as much as possible.
+    static SimpleAttributeSet REGULAR = new SimpleAttributeSet();
+    static SimpleAttributeSet BOLD = new SimpleAttributeSet();
+    static SimpleAttributeSet ROBOTO = new SimpleAttributeSet();
+    static SimpleAttributeSet CODE = new SimpleAttributeSet();
+
+    static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
+
     static {
-        StyleConstants.setForeground(ITALIC_GRAY, Color.gray);
-        StyleConstants.setItalic(ITALIC_GRAY, true);
-        StyleConstants.setFontFamily(ITALIC_GRAY, "Helvetica");
-        StyleConstants.setFontSize(ITALIC_GRAY, 14);
+        initStyleConstants();
+    }
+
+    private static void initStyleConstants() {
+        StyleConstants.setFontFamily(REGULAR, "Dialog");
+        StyleConstants.setFontSize(REGULAR, 12);
+        StyleConstants.setForeground(REGULAR, Color.BLACK);
+
+        StyleConstants.setFontFamily(BOLD, "Dialog");
+        StyleConstants.setFontSize(BOLD, 12);
+        StyleConstants.setBold(BOLD, true);
+        StyleConstants.setForeground(BOLD, Color.BLACK);
+        StyleConstants.setLineSpacing(REGULAR, 16);
+
 
         StyleConstants.setForeground(CODE, Color.BLUE);
         StyleConstants.setFontFamily(CODE, "Monospaced");
-        StyleConstants.setFontSize(CODE, 14);
+        StyleConstants.setFontSize(CODE, 12);
 
+        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0);
+        StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
+        StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 10.5f);
+        StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f);
+        StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f);
+    }
 
-        StyleConstants.setForeground(BOLD_BLACK, Color.black);
-        StyleConstants.setBold(BOLD_BLACK, true);
-        StyleConstants.setFontFamily(BOLD_BLACK, "Helvetica");
-        StyleConstants.setFontSize(BOLD_BLACK, 14);
+    public JTextPaneDemo() {
+        super("JTextPane Demo");
 
-        StyleConstants.setForeground(BLACK, Color.black);
-        StyleConstants.setFontFamily(BLACK, "Helvetica");
-        StyleConstants.setFontSize(BLACK, 14);
 
 
         final String customFontPath = "roboto.ttf";
@@ -68,46 +72,24 @@ public class JTextPaneDemo extends JFrame {
         StyleConstants.setFontSize(ROBOTO, 14);
 
 
-    }
 
-    public JTextPaneDemo() {
-        super("JTextPane Demo");
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.black, Color.GRAY));
-        JLabel jLabel = new JLabel("ctrl + up");
-        jLabel.setBackground(Color.PINK);
-        jLabel.setBorder(new LineBorder(Color.RED,1, true));
-        panel.add(jLabel, BorderLayout.CENTER);
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.PAGE_AXIS));
 
         textPane.setEditable(false);
 
-        JScrollPane scrollPane = new JScrollPane(textPane);
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
-
+        textPane.setParagraphAttributes(PARAGRAPH_STYLE, true);
+        insertText("\n<html>Put cursor before any word. Select it with </html>", REGULAR);
+        insertText("Meta + Up", BOLD);
         setEndSelection();
-        textPane.insertIcon(new ImageIcon("java2sLogo.GIF"));
-        insertText("\nWebsite for: www.java2s.com \n\n", BOLD_BLACK);
-
+        insertText("\nNow let's select the whole line with ", REGULAR);
+        insertText("Meta + Alt + Up", BOLD);
         setEndSelection();
-        insertText("                                    ", BLACK);
-        setEndSelection();
-        insertText("\n Roboto font test Roboto font test Roboto font test Roboto font test Roboto font test", ROBOTO);
-        insertText("\uF0FC", ROBOTO);
-        setEndSelection();
-        insertText("\nSome code here", CODE);
-        setEndSelection();
-        insertText("\n      Java            "
-                        + "                                    " + "Source\n\n",
-                ITALIC_GRAY);
-
-        insertText(" and Support. \n", BLACK);
-        textPane.insertComponent(jLabel);
-
-
-        setEndSelection();
-
 
         setSize(500, 450);
+        jPanel.add(textPane);
+
+        add(jPanel);
         setVisible(true);
     }
 
