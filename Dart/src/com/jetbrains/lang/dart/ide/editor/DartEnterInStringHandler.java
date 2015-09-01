@@ -31,35 +31,28 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
     Document document = editor.getDocument();
     ASTNode token = psiAtOffset.getNode();
     IElementType type = token.getElementType();
+    if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
+      return Result.DefaultSkipIndent; // Multiline string gets no indent
+    }
     if (type == DartTokenTypes.RAW_SINGLE_QUOTED_STRING) {
       char quote = token.getText().charAt(1);
       breakString("r" + quote, String.valueOf(quote), caretOffsetRef, caretAdvanceRef, document);
       return Result.Default;
     }
-    if (type == DartTokenTypes.REGULAR_STRING_PART) {
-      token = token.getTreeNext();
-      if (token == null) return Result.Continue; // Can't happen with current grammar.
+    while ((token = token.getTreeParent()) != null) {
       type = token.getElementType();
-      // At this point we might have type == TokenType.ERROR_ELEMENT if the string is unterminated.
-      // We're ignoring that case since we don't have a rich enough set of signals to deduce where or
-      // even if an additional quote should be added. Since strings are by default terminated it should be rare.
-      if (type == DartTokenTypes.SHORT_TEMPLATE_ENTRY) {
-        token = psiAtOffset.getNode().getTreePrev();
-        if (token == null) return Result.Continue;
-        if (token.getElementType() == DartTokenTypes.OPEN_QUOTE) {
+      if (type == DartTokenTypes.STRING_LITERAL_EXPRESSION) {
+        token = token.getFirstChildNode();
+        if (token == null) return Result.Continue; // Can't happen with current grammar.
+        type = token.getElementType();
+        if (type == DartTokenTypes.OPEN_QUOTE) {
           String quote = token.getText().trim();
           if (quote.length() == 1) {
             breakString(quote, quote, caretOffsetRef, caretAdvanceRef, document);
             return Result.Default;
           }
+          return Result.DefaultSkipIndent; // Multiline string gets no indent
         }
-      }
-    }
-    if (type == DartTokenTypes.CLOSING_QUOTE) {
-      String quote = token.getText().trim();
-      if (quote.length() == 1) {
-        breakString(quote, quote, caretOffsetRef, caretAdvanceRef, document);
-        return Result.Default;
       }
     }
     return Result.Continue;
