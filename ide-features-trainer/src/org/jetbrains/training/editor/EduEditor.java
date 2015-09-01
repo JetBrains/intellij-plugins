@@ -24,6 +24,7 @@ import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.editor.actions.BlockCaretAction;
 import org.jetbrains.training.editor.actions.LearnActions;
 import org.jetbrains.training.editor.eduUI.EduPanel;
+import org.jetbrains.training.editor.eduUI.Message;
 import org.jetbrains.training.lesson.*;
 
 import javax.swing.*;
@@ -274,6 +275,10 @@ public class EduEditor implements TextEditor {
 
     public void addMessage(String message){
         eduPanel.addMessage(message);
+    }
+
+    public void addMessage(Message[] messages) {
+        eduPanel.addMessage(messages);
     }
 
     public void passExercise() {
@@ -536,4 +541,6 @@ public class EduEditor implements TextEditor {
 
         }
     }
+
+
 }

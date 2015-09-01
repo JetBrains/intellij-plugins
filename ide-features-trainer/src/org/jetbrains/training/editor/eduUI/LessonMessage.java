@@ -10,32 +10,29 @@ import java.awt.*;
  * Created by karashevich on 30/06/15.
  */
 public class LessonMessage {
-    @NotNull
-    private JLabel message;
-    @Nullable
-    private ShortcutLabel shortcut;
 
+    private Message[] myMessages;
+    private int start;
+    private int end;
 
-    public LessonMessage(@NotNull JLabel message, @Nullable ShortcutLabel shortcut) {
-        this.message = message;
-        this.shortcut = shortcut;
+    LessonMessage(String text, int start, int end){
+        myMessages = new Message[1];
+        myMessages[0] = new Message(text, Message.MessageType.TEXT_REGULAR);
+        this.start = start;
+        this.end = end;
     }
 
-    public JLabel getLabel(){
-        return message;
+    LessonMessage(Message[] messages, int start, int end){
+        myMessages =  messages.clone();
+        this.start = start;
+        this.end = end;
     }
 
-    public JPanel getPanel(){
-        JPanel c = new JPanel();
-
-        c.setLayout(new BoxLayout(c, BoxLayout.LINE_AXIS));
-        c.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        c.add(message);
-        message.setAlignmentX(Component.LEFT_ALIGNMENT);
-        if (shortcut != null) {
-            c.add(shortcut);
-        }
-        return c;
+    public int getStart() {
+        return start;
     }
 
+    public int getEnd() {
+        return end;
+    }
 }

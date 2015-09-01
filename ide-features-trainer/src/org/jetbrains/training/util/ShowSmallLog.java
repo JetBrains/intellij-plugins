@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.training.util.smalllog.SmallLog;
-import shortcutter.WrongShortcutException;
 
 import java.awt.*;
 

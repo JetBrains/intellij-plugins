@@ -3,8 +3,9 @@ package org.jetbrains.training.commands;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.commandsEx.util.XmlUtil;
+import org.jetbrains.training.util.XmlUtil;
 import org.jetbrains.training.editor.EduEditor;
+import org.jetbrains.training.editor.eduUI.Message;
 import org.jetbrains.training.graphics.DetailPanel;
 import java.util.concurrent.ExecutionException;
 
@@ -29,12 +30,12 @@ public abstract class Command {
     protected void updateHTMLDescription(String htmlText, EduEditor eduEditor){
 //        if (element.getAttribute("description") != null) {
 //            String description =(element.getAttribute("description").getValue());
-//            description = XmlUtil.replaceWithActionShortcut(description);
+//            description = XmlUtil.extractActions(description);
 //
 //            updateHTMLDescription(element, infoPanel, editor, description);
 //        }
-        htmlText = XmlUtil.replaceWithActionShortcut(htmlText);
-        eduEditor.addMessage(htmlText);
+        final Message[] messages = XmlUtil.extractAll(new Message[]{new Message(htmlText, Message.MessageType.TEXT_REGULAR)});
+        eduEditor.addMessage(messages);
     }
 
     protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor, final String htmlText){
