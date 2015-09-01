@@ -4,25 +4,34 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodePathSettings;
+import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.ui.content.Content;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 public class KarmaUtil {
 
   public static final String NODE_PACKAGE_NAME = "karma";
-  private static final String[] FILE_NAME_SUFFIXES = new String[] {".conf.js", "-conf.js", ".config.js", "-config.js", "karma.conf.coffee"};
+  private static final String[] BEFORE_EXT_PARTS = new String[] {".conf", "-conf"};
+  private static final String[] EXTENSIONS = {"js", "coffee", "es6", "ts"};
 
   private KarmaUtil() {
   }
@@ -36,10 +45,43 @@ public class KarmaUtil {
     }
   }
 
+  @NotNull
+  public static List<VirtualFile> listPossibleConfigFilesInProject(@NotNull Project project) {
+    GlobalSearchScope contentScope = ProjectScope.getContentScope(project);
+    GlobalSearchScope scope = contentScope.intersectWith(GlobalSearchScope.notScope(ProjectScope.getLibrariesScope(project)));
+    List<VirtualFile> result = ContainerUtil.newArrayList();
+    List<FileType> fileTypes = JavaScriptFileType.getFileTypesCompilableToJavaScript();
+    for (FileType type : fileTypes) {
+      Collection<VirtualFile> files = FileTypeIndex.getFiles(type, scope);
+      for (VirtualFile file : files) {
+        if (file != null && file.isValid() && !file.isDirectory() && isKarmaConfigFile(file.getNameSequence())) {
+          if (!JSLibraryUtil.isProbableLibraryFile(file)) {
+            result.add(file);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public static boolean isKarmaConfigFile(@NotNull CharSequence filename) {
-    for (String suffix : FILE_NAME_SUFFIXES) {
-      if (StringUtil.endsWith(filename, suffix)) {
-        return true;
+    int len = filename.length();
+    int extensionInd = StringUtil.lastIndexOf(filename, '.', 0, len);
+    if (extensionInd == -1) {
+      return false;
+    }
+    boolean extMatched = false;
+    for (String ext : EXTENSIONS) {
+      if (ext.length() == len - extensionInd - 1 && StringUtil.endsWith(filename, ext)) {
+        extMatched = true;
+        break;
+      }
+    }
+    if (extMatched) {
+      for (String beforeExt : BEFORE_EXT_PARTS) {
+        if (CharArrayUtil.regionMatches(filename, extensionInd - beforeExt.length(), beforeExt)) {
+          return true;
+        }
       }
     }
     return false;

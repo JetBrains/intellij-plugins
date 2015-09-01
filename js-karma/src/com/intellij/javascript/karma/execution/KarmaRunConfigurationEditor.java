@@ -7,8 +7,6 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodePathSettings;
 import com.intellij.javascript.nodejs.NodeUIUtil;
-import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -20,9 +18,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
@@ -38,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -123,6 +117,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       }
     });
 
+    //noinspection DialogTitleCapitalization
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       karmaPackageDirPathComponent,
@@ -142,7 +137,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       @NotNull
       @Override
       public List<String> produce() {
-        List<VirtualFile> newFiles = listPossibleConfigFilesInProject(project);
+        List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
         List<String> newFilePaths = ContainerUtil.map(newFiles, new Function<VirtualFile, String>() {
           @Override
           public String fun(VirtualFile file) {
@@ -161,21 +156,6 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
     );
     return textFieldWithHistoryWithBrowseButton;
-  }
-
-  @NotNull
-  private static List<VirtualFile> listPossibleConfigFilesInProject(@NotNull Project project) {
-    GlobalSearchScope scope = ProjectScope.getContentScope(project);
-    Collection<VirtualFile> files = FileTypeIndex.getFiles(JavaScriptFileType.INSTANCE, scope);
-    List<VirtualFile> result = ContainerUtil.newArrayList();
-    for (VirtualFile file : files) {
-      if (file != null && file.isValid() && !file.isDirectory() && KarmaUtil.isKarmaConfigFile(file.getNameSequence())) {
-        if (!JSLibraryUtil.isProbableLibraryFile(file)) {
-          result.add(file);
-        }
-      }
-    }
-    return result;
   }
 
   @Override
