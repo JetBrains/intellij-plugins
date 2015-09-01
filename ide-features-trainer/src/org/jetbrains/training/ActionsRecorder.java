@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -195,17 +196,22 @@ public class ActionsRecorder implements Disposable {
             @Override
             public void documentChanged(final DocumentEvent event) {
                 if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
-                    PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (triggerQueue.size() == 0) {
-                                if (isTaskSolved(document, target)) {
-                                    removeListeners(document, actionManager);
-                                    if (doWhenDone != null)
-                                        dispose();
-                                    doWhenDone.run();
+                            PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (triggerQueue.size() == 0) {
+                                        if (isTaskSolved(document, target)) {
+                                            removeListeners(document, actionManager);
+                                            if (doWhenDone != null)
+                                                dispose();
+                                            doWhenDone.run();
+                                        }
+                                    }
                                 }
-                            }
+                            });
                         }
                     });
                 }

@@ -17,8 +17,8 @@ public class Main {
     }
 }</CopyText>
     </MouseBlock>
-    <Try description="Comment out any line with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
+    <Try description="Comment out any line with &lt;action=&quot;CommentByLineComment&quot;&gt;" action="CommentByLineComment" trigger="CommentByLineComment"/>
     <Try description="Uncomment the line with the same shortcut" action="CommentByLineComment" trigger="CommentByLineComment" check="org.jetbrains.training.check.CheckCountCommentedLine"/>
-    <Try description="Select several lines with &lt;b&gt;&lt;action=&quot;EditorDownWithSelection&quot;&gt;&lt;/b&gt; and comment with &lt;b&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/b&gt;" action="CommentByLineComment" triggers="EditorDownWithSelection;CommentByLineComment" check="org.jetbrains.training.check.CheckCountCommentedLines"/>
+    <Try description="Select several lines with &lt;action=&quot;EditorDownWithSelection&quot;&gt; and comment with &lt;action=&quot;CommentByLineComment&quot;&gt;" action="CommentByLineComment" triggers="EditorDownWithSelection;CommentByLineComment" check="org.jetbrains.training.check.CheckCountCommentedLines"/>
     <Win/>
 </xml>

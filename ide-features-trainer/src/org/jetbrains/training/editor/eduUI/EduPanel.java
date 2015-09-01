@@ -4,7 +4,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.training.lesson.BadCourseException;
 import org.jetbrains.training.lesson.BadLessonException;
 import org.jetbrains.training.lesson.LessonIsOpenedException;
-import org.jetbrains.training.commandsEx.util.XmlUtil;
 import org.jetbrains.training.editor.EduEditor;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.CourseManager;
@@ -30,10 +29,11 @@ public class EduPanel extends JPanel {
     private EduEditor eduEditor;
     private int width;
 
-    //Lesson panel stuff
+    //Lesson panel items
     private JPanel lessonPanel;
     private JLabel lessonNameLabel; //Name of the current lesson
-    private JPanel lessonMessageContainer; //Contains lesson's messages
+    @Deprecated private JPanel lessonMessageContainer; //Contains lesson's messages
+    private LessonMessagePane lessonMessagePane;
     private JButton lessonNextButton;
     private ArrayList<LessonMessage> messages;
 
@@ -71,6 +71,9 @@ public class EduPanel extends JPanel {
     private Color lessonInactiveColor;
     private Font lessonsFont;
     private Font allLessonsFont;
+
+
+
 
     public EduPanel(EduEditor eduEditor, int width){
         super();
@@ -180,8 +183,6 @@ public class EduPanel extends JPanel {
             lessonInactiveColor = new Color(104, 159, 220);
             lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
             allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
-
-
         }
 
     }
@@ -197,11 +198,14 @@ public class EduPanel extends JPanel {
         lessonNameLabel.setFont(lessonNameFont);
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        lessonMessageContainer = new JPanel();
-        messages = new ArrayList<LessonMessage>();
-        lessonMessageContainer.setLayout(new BoxLayout(lessonMessageContainer, BoxLayout.Y_AXIS));
-        lessonMessageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
-
+//        lessonMessageContainer = new JPanel();
+//        messages = new ArrayList<LessonMessage>();
+//        lessonMessageContainer.setLayout(new BoxLayout(lessonMessageContainer, BoxLayout.Y_AXIS));
+//        lessonMessageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lessonMessagePane = new LessonMessagePane();
+        lessonMessagePane.setFocusable(false);
+        //Set lessonMessagePane UI
+        lessonMessagePane.setBackground(background);
 
         //Set label UI
         lessonNextButton = new JButton("Next");
@@ -212,10 +216,11 @@ public class EduPanel extends JPanel {
 
         lessonPanel.add(lessonNameLabel);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
-        lessonPanel.add(lessonMessageContainer);
+        lessonPanel.add(lessonMessagePane);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
         lessonPanel.add(lessonNextButton);
     }
+
 
     public void setLessonName(String lessonName){
         lessonNameLabel.setText(lessonName);
@@ -224,16 +229,25 @@ public class EduPanel extends JPanel {
         this.repaint();
     }
 
-    public void addMessage(String text){
-        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
-        newLabel.setFont(messageFont);
-        final LessonMessage lessonMessage = new LessonMessage(newLabel, null);
-        messages.add(lessonMessage);
-        final JPanel lessonMessagePanel = lessonMessage.getPanel();
-        lessonMessagePanel.setBackground(background);
-        lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
+//    public void addMessage(String text){
+//        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
+//        newLabel.setFont(messageFont);
+//        final LessonMessage lessonMessage = new LessonMessage(newLabel, null);
+//        messages.add(lessonMessage);
+//        final JPanel lessonMessagePanel = lessonMessage.getPanel();
+//        lessonMessagePanel.setBackground(background);
+//        lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
+//
+//        lessonMessageContainer.add(lessonMessagePanel);
+//
+//        //Pack lesson panel
+//        lessonPanel.revalidate();
+//        this.revalidate();
+//        this.repaint();
+//    }
 
-        lessonMessageContainer.add(lessonMessagePanel);
+    public void addMessage(String text){
+        lessonMessagePane.addMessage(text);
 
         //Pack lesson panel
         lessonPanel.revalidate();
@@ -241,35 +255,47 @@ public class EduPanel extends JPanel {
         this.repaint();
     }
 
-    public void addMessage(String text, String shortcut){
-        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
-        newLabel.setFont(messageFont);
-        final LessonMessage lessonMessage = new LessonMessage(newLabel, new ShortcutLabel(shortcut,shortcutFont, shortcutTextColor, shortcutBckColor, shortcutBorderColor));
-        messages.add(lessonMessage);
-        final JPanel lessonMessagePanel = lessonMessage.getPanel();
-        lessonMessagePanel.setBackground(background);
-        lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
+    public void addMessage(Message[] messages) {
+        lessonMessagePane.addMessage(messages);
 
-        lessonMessageContainer.add(lessonMessagePanel);
+        //Pack lesson panel
+        lessonPanel.revalidate();
         this.revalidate();
         this.repaint();
+
     }
 
+
+//    public void addMessage(String text, String shortcut){
+//        JLabel newLabel = new JLabel(XmlUtil.addHtmlTags(text));
+//        newLabel.setFont(messageFont);
+//        final LessonMessage lessonMessage = new LessonMessage(newLabel, new ShortcutLabel(shortcut,shortcutFont, shortcutTextColor, shortcutBckColor, shortcutBorderColor));
+//        messages.add(lessonMessage);
+//        final JPanel lessonMessagePanel = lessonMessage.getPanel();
+//        lessonMessagePanel.setBackground(background);
+//        lessonMessagePanel.setBorder(new EmptyBorder(0, 0, messageGap, 0));
+//
+//        lessonMessageContainer.add(lessonMessagePanel);
+//        this.revalidate();
+//        this.repaint();
+//    }
+
     public void setPreviousMessagesPassed(){
-        if (messages == null) return;
-        for (LessonMessage message : messages) {
-//            message.setForeground(passedColor);
-            if (message.getLabel().getForeground() != passedColor) {
-                message.getLabel().setForeground(passedColor);
-            }
-        }
-
-        //add to last message check mark
-        LessonMessage lastMessage = messages.get(messages.size() - 1);
-        String text = XmlUtil.removeHtmlTags(lastMessage.getLabel().getText());
-        text += " ✔";
-        lastMessage.getLabel().setText(XmlUtil.addHtmlTags(text));
-
+        lessonMessagePane.passPreviousMessages();
+//        if (messages == null) return;
+//        for (LessonMessage message : messages) {
+////            message.setForeground(passedColor);
+//            if (message.getLabel().getForeground() != passedColor) {
+//                message.getLabel().setForeground(passedColor);
+//            }
+//        }
+//
+//        //add to last message check mark
+//        LessonMessage lastMessage = messages.get(messages.size() - 1);
+//        String text = XmlUtil.removeHtmlTags(lastMessage.getLabel().getText());
+//        text += " ✔";
+//        lastMessage.getLabel().setText(XmlUtil.addHtmlTags(text));
+//
     }
 
     public void setLessonPassed(){
@@ -299,7 +325,7 @@ public class EduPanel extends JPanel {
         Course course = lesson.getCourse();
         final ArrayList<Lesson> myLessons = course.getLessons();
 
-        //if course conrtains one lesson only
+        //if course contains one lesson only
         if (myLessons.size() == 1) return;
         //cleat AllLessons region
         if(lessonsLabels.size() > 0) {
@@ -378,8 +404,9 @@ public class EduPanel extends JPanel {
 //            lessonMessageContainer.remove(messages.get(0).getPanel());
 //            messages.remove(0);
 //        }
-        lessonMessageContainer.removeAll();
-        messages.clear();
+//        lessonMessageContainer.removeAll();
+        lessonMessagePane.clear();
+//        messages.clear();
         this.revalidate();
         this.repaint();
     }
@@ -409,6 +436,17 @@ public class EduPanel extends JPanel {
 
     public void hideNextButton() {
         lessonNextButton.setVisible(false);
+    }
+
+    public static void main(String[] args) {
+        EduPanel eduPanel = new EduPanel(null, 350);
+        JFrame frame = new JFrame("Test EduPanel");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(eduPanel);
+        frame.setSize(350, 800);
+        frame.setVisible(true);
+
+        eduPanel.addMessage("Hey!");
     }
 
 }
