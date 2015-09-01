@@ -513,4 +513,46 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "var x = 'content'\n" +
                  "    '<caret>and $some stuff'");
   }
+
+  public void testEnterBetweenInterpolations() {
+    doTypingTest('\n',
+                 "var a = '$x and <caret> also $y';",
+                 "var a = '$x and '\n" +
+                 "    '<caret> also $y';");
+  }
+
+  public void testEnterBeforeInterpolation() {
+    doTypingTest('\n',
+                 "var a = \"see <caret>$y\";",
+                 "var a = \"see \"\n" +
+                 "    \"<caret>$y\";");
+  }
+
+  public void testEnterBeforeInterpolationSequence() {
+    doTypingTest('\n',
+                 "var a = \"see <caret>$y${z}\";",
+                 "var a = \"see \"\n" +
+                 "    \"<caret>$y${z}\";");
+  }
+
+  public void testEnterBeforeInterpolatedExpr() {
+    doTypingTest('\n',
+                 "var a = 'see <caret> also ${y}';",
+                 "var a = 'see '\n" +
+                 "    '<caret> also ${y}';");
+  }
+
+  public void testEnterInMultilineString() {
+    doTypingTest('\n',
+                 "var a = '''some<caret>content''';",
+                 "var a = '''some\n" +
+                 "<caret>content''';");
+  }
+
+  public void testEnterInRawMultilineString() {
+    doTypingTest('\n',
+                 "var a = r'''some<caret>content''';",
+                 "var a = r'''some\n" +
+                 "<caret>content''';");
+  }
 }
