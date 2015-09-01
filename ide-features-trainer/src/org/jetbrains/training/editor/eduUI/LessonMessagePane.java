@@ -1,5 +1,9 @@
 package org.jetbrains.training.editor.eduUI;
 
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -20,6 +24,7 @@ public class LessonMessagePane extends JTextPane {
     static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
 
     private ArrayList<LessonMessage> lessonMessages = new ArrayList<LessonMessage>();
+    private Color passedColor = Color.GRAY;
 
     LessonMessagePane(){
         super();
@@ -30,18 +35,17 @@ public class LessonMessagePane extends JTextPane {
 
     private static void initStyleConstants() {
         //TODO: Change FamilyFont to UiUtil fonts
-        StyleConstants.setFontFamily(REGULAR, "Dialog");
+        StyleConstants.setFontFamily(REGULAR, UIUtil.getLabelFont().getFamily());
         StyleConstants.setFontSize(REGULAR, 12);
         StyleConstants.setForeground(REGULAR, Color.BLACK);
 
-        StyleConstants.setFontFamily(BOLD, "Dialog");
-        StyleConstants.setFontSize(BOLD, 12);
+        StyleConstants.setFontFamily(BOLD, UIUtil.getLabelFont().getFamily());
+        StyleConstants.setFontSize(BOLD, 13);
         StyleConstants.setBold(BOLD, true);
         StyleConstants.setForeground(BOLD, Color.BLACK);
-        StyleConstants.setLineSpacing(REGULAR, 16);
 
         StyleConstants.setForeground(CODE, Color.BLUE);
-        StyleConstants.setFontFamily(CODE, "Monospaced");
+        StyleConstants.setFontFamily(CODE, EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
         StyleConstants.setFontSize(CODE, 12);
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0);
@@ -51,6 +55,16 @@ public class LessonMessagePane extends JTextPane {
         StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f);
     }
 
+    public void setUI(Color regularFontColor,
+                      Color shortcutColor,
+                      Color codeFontColor,
+                      Color passedColor){
+        StyleConstants.setForeground(REGULAR, regularFontColor);
+        StyleConstants.setForeground(BOLD, shortcutColor);
+        StyleConstants.setForeground(CODE, codeFontColor);
+        this.passedColor = passedColor;
+
+    }
 
     public void addMessage(String text) {
         try {
@@ -100,7 +114,7 @@ public class LessonMessagePane extends JTextPane {
 
     public void passPreviousMessages() {
         Style passedStyle = this.addStyle("PassedStyle", null);
-        StyleConstants.setForeground(passedStyle, Color.GRAY);
+        StyleConstants.setForeground(passedStyle, passedColor);
         final StyledDocument doc = getStyledDocument();
         if (lessonMessages.size() > 0) {
             doc.setCharacterAttributes(0, lessonMessages.get(lessonMessages.size() - 1).getEnd(), passedStyle, false);
