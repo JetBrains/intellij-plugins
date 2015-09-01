@@ -20,6 +20,7 @@ import com.intellij.navigation.NavigationItemFileStatus;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.SmartPointerManager;
@@ -43,7 +44,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   public DartComponentUsageGroup(@NotNull DartComponent element) {
     myFile = element.getContainingFile().getVirtualFile();
-    myText = element.getName();
+    myText = StringUtil.notNullize(element.getName());
     myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
     myIcon = element.getIcon(Iconable.ICON_FLAG_VISIBILITY | Iconable.ICON_FLAG_READ_STATUS);
   }
