@@ -307,8 +307,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.SelectFirstItem})
   public void testMxmlColorAttributeValueCompletion1() throws Exception {
     defaultTest();
   }
