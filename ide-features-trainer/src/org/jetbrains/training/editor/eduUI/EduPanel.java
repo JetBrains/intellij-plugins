@@ -56,6 +56,7 @@ public class EduPanel extends JPanel {
     private Font shortcutFont;
     private Color passedColor; //TODO: should be replaced with UI scheme color
     private Color lessonPassedColor;
+    private Color lessonCodeColor;
 
     //separator UI
     private Color separatorColor;
@@ -71,8 +72,6 @@ public class EduPanel extends JPanel {
     private Color lessonInactiveColor;
     private Font lessonsFont;
     private Font allLessonsFont;
-
-
 
 
     public EduPanel(EduEditor eduEditor, int width){
@@ -144,12 +143,10 @@ public class EduPanel extends JPanel {
             defaultTextColor = new Color(30, 30, 30);
             passedColor = new Color(105, 105, 105);
             lessonPassedColor = new Color(49, 140, 64);
+            lessonCodeColor = new Color(31, 55, 128);
 
             //shortcut UI
-            shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
-            shortcutBckColor = Color.WHITE;
-            shortcutBorderColor = Color.BLACK;
-            shortcutTextColor = Color.BLACK;
+            shortcutTextColor = new Color(12, 12, 12);
 
             //separator UI
             separatorColor = new Color(222, 222, 222);
@@ -165,15 +162,14 @@ public class EduPanel extends JPanel {
             background = new Color(50, 50, 50);
             lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
             messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-            defaultTextColor = new Color(228, 228, 228);
+            defaultTextColor = new Color(208, 208, 208);
             passedColor = new Color(103, 103, 103);
             lessonPassedColor = new Color(7, 140, 45);
+            lessonCodeColor = new Color(85, 161, 255);
 
             //shortcut UI
-            shortcutFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 10);
-            shortcutBckColor = Color.WHITE;
-            shortcutBorderColor = Color.BLACK;
-            shortcutTextColor = Color.BLACK;
+            shortcutTextColor = new Color(200, 200, 200);
+
 
             //separator UI
             separatorColor = new Color(149, 149, 149);
@@ -206,6 +202,7 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setFocusable(false);
         //Set lessonMessagePane UI
         lessonMessagePane.setBackground(background);
+        lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, passedColor);
 
         //Set label UI
         lessonNextButton = new JButton("Next");
