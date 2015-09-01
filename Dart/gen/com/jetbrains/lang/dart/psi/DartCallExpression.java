@@ -10,7 +10,10 @@ public interface DartCallExpression extends DartExpression, DartReference {
   @NotNull
   DartArguments getArguments();
 
-  @NotNull
+  @Nullable
   DartExpression getExpression();
+
+  @Nullable
+  DartNewTearOff getNewTearOff();
 
 }

@@ -262,7 +262,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitLibraryNameElement(@NotNull DartLibraryNameElement o) {
-    visitPsiNameIdentifierOwner(o);
+    visitPsiCompositeElement(o);
   }
 
   public void visitLibraryReferenceList(@NotNull DartLibraryReferenceList o) {
@@ -346,6 +346,10 @@ public class DartVisitor extends PsiElementVisitor {
   public void visitNewExpression(@NotNull DartNewExpression o) {
     visitExpression(o);
     // visitReference(o);
+  }
+
+  public void visitNewTearOff(@NotNull DartNewTearOff o) {
+    visitPsiCompositeElement(o);
   }
 
   public void visitNormalFormalParameter(@NotNull DartNormalFormalParameter o) {
@@ -460,6 +464,10 @@ public class DartVisitor extends PsiElementVisitor {
     // visitReference(o);
   }
 
+  public void visitSuperTearOffExpression(@NotNull DartSuperTearOffExpression o) {
+    visitExpression(o);
+  }
+
   public void visitSuperclass(@NotNull DartSuperclass o) {
     visitPsiCompositeElement(o);
   }
@@ -474,6 +482,10 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitSymbolLiteralExpression(@NotNull DartSymbolLiteralExpression o) {
     visitExpression(o);
+  }
+
+  public void visitTearOff(@NotNull DartTearOff o) {
+    visitPsiCompositeElement(o);
   }
 
   public void visitTernaryExpression(@NotNull DartTernaryExpression o) {
@@ -583,10 +595,6 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitUriBasedDirective(@NotNull DartUriBasedDirective o) {
     visitPsiCompositeElement(o);
-  }
-
-  public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
-    visitElement(o);
   }
 
   public void visitPsiCompositeElement(@NotNull DartPsiCompositeElement o) {

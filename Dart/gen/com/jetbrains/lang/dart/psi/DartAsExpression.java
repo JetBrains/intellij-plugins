@@ -7,8 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface DartAsExpression extends DartExpression, DartReference {
 
-  @NotNull
+  @Nullable
   DartExpression getExpression();
+
+  @Nullable
+  DartNewTearOff getNewTearOff();
 
   @NotNull
   DartType getType();

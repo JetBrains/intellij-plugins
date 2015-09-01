@@ -37,7 +37,7 @@ Dart File
             REFERENCE_EXPRESSION
               ID
                 PsiElement(IDENTIFIER)('x')
-        PsiErrorElement:'(', '.', <, <qualified reference expression>, IDENTIFIER, get, operator or set expected, got ';'
+        PsiErrorElement:'#', '(', '.', <, <qualified reference expression>, IDENTIFIER, get, operator or set expected, got ';'
           PsiElement(;)(';')
       PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE

@@ -266,6 +266,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == NEW_EXPRESSION) {
       r = newExpression(b, 0);
     }
+    else if (t == NEW_TEAR_OFF) {
+      r = newTearOff(b, 0);
+    }
     else if (t == NORMAL_FORMAL_PARAMETER) {
       r = normalFormalParameter(b, 0);
     }
@@ -344,6 +347,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == SUPER_EXPRESSION) {
       r = superExpression(b, 0);
     }
+    else if (t == SUPER_TEAR_OFF_EXPRESSION) {
+      r = superTearOffExpression(b, 0);
+    }
     else if (t == SUPERCLASS) {
       r = superclass(b, 0);
     }
@@ -355,6 +361,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     }
     else if (t == SYMBOL_LITERAL_EXPRESSION) {
       r = symbolLiteralExpression(b, 0);
+    }
+    else if (t == TEAR_OFF) {
+      r = tearOff(b, 0);
     }
     else if (t == TERNARY_EXPRESSION) {
       r = ternaryExpression(b, 0);
@@ -431,8 +440,8 @@ public class DartParser implements PsiParser, LightPsiParser {
       LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
       NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
       REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
-      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
-      THROW_EXPRESSION, VALUE_EXPRESSION),
+      SUPER_EXPRESSION, SUPER_TEAR_OFF_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION,
+      THIS_EXPRESSION, THROW_EXPRESSION, VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -1004,7 +1013,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
+  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression | superTearOffExpression)*
   static boolean callOrArrayAccessOrQualifiedRefExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression")) return false;
     int c = current_position_(b);
@@ -1016,7 +1025,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // callExpression | arrayAccessExpression | qualifiedReferenceExpression
+  // callExpression | arrayAccessExpression | qualifiedReferenceExpression | superTearOffExpression
   private static boolean callOrArrayAccessOrQualifiedRefExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression_0")) return false;
     boolean r;
@@ -1024,6 +1033,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = callExpression(b, l + 1);
     if (!r) r = arrayAccessExpression(b, l + 1);
     if (!r) r = qualifiedReferenceExpression(b, l + 1);
+    if (!r) r = superTearOffExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1689,7 +1699,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
-  //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
+  //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' | '#'
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
@@ -1710,7 +1720,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
-  //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
+  //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' | '#'
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
@@ -1769,7 +1779,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, QUEST_QUEST_EQ);
     if (!r) r = consumeToken(b, QUEST_QUEST);
     if (!r) r = consumeToken(b, QUEST);
-    if (!r) r = consumeToken(b, ABSTRACT);
+    if (!r) r = expression_recover_0_46(b, l + 1);
     if (!r) r = consumeToken(b, AS);
     if (!r) r = consumeToken(b, ASSERT);
     if (!r) r = consumeToken(b, ASYNC);
@@ -1836,6 +1846,18 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, REGULAR_STRING_PART);
     if (!r) r = consumeToken(b, SHORT_TEMPLATE_ENTRY_START);
     if (!r) r = consumeToken(b, TRUE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '#'
+  //                                  'abstract'
+  private static boolean expression_recover_0_46(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "expression_recover_0_46")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, HASH);
+    r = r && consumeToken(b, ABSTRACT);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4241,6 +4263,40 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'new' type tearOff ('.' << nonStrictID >>)?
+  public static boolean newTearOff(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newTearOff")) return false;
+    if (!nextTokenIs(b, NEW)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, null);
+    r = consumeToken(b, NEW);
+    r = r && type(b, l + 1);
+    r = r && tearOff(b, l + 1);
+    p = r; // pin = 3
+    r = r && newTearOff_3(b, l + 1);
+    exit_section_(b, l, m, NEW_TEAR_OFF, r, p, null);
+    return r || p;
+  }
+
+  // ('.' << nonStrictID >>)?
+  private static boolean newTearOff_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newTearOff_3")) return false;
+    newTearOff_3_0(b, l + 1);
+    return true;
+  }
+
+  // '.' << nonStrictID >>
+  private static boolean newTearOff_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newTearOff_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DOT);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // block // Guard to break tie with map literal.  todo why ';'?
   //                                | functionDeclarationWithBody ';'?
   //                                | forStatement ';'?
@@ -4710,6 +4766,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // literalExpression |
   //                      functionExpression |
+  //                      newTearOff |
   //                      newExpression | // constant object expression is also parsed as newExpression
   //                      refOrThisOrSuperOrParenExpression |
   //                      throwExpression
@@ -4719,6 +4776,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = literalExpression(b, l + 1);
     if (!r) r = functionExpression(b, l + 1);
+    if (!r) r = newTearOff(b, l + 1);
     if (!r) r = newExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
     if (!r) r = throwExpression(b, l + 1);
@@ -4810,12 +4868,12 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // << nonStrictID >>
+  // tearOffReferenceExpression
   public static boolean referenceExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "referenceExpression")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, "<reference expression>");
-    r = nonStrictID(b, l + 1);
+    r = tearOffReferenceExpression(b, l + 1);
     exit_section_(b, l, m, REFERENCE_EXPRESSION, r, false, null);
     return r;
   }
@@ -5169,6 +5227,17 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // << nonStrictID >>
+  public static boolean simpleReferenceExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleReferenceExpression")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _COLLAPSE_, "<simple reference expression>");
+    r = nonStrictID(b, l + 1);
+    exit_section_(b, l, m, REFERENCE_EXPRESSION, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // !'}'
   static boolean simple_scope_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simple_scope_recover")) return false;
@@ -5493,6 +5562,59 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // tearOff (( << nonStrictID >> ('=' expression)?) | userDefinableOperator)
+  public static boolean superTearOffExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "superTearOffExpression")) return false;
+    if (!nextTokenIs(b, HASH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = tearOff(b, l + 1);
+    r = r && superTearOffExpression_1(b, l + 1);
+    exit_section_(b, m, SUPER_TEAR_OFF_EXPRESSION, r);
+    return r;
+  }
+
+  // ( << nonStrictID >> ('=' expression)?) | userDefinableOperator
+  private static boolean superTearOffExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "superTearOffExpression_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = superTearOffExpression_1_0(b, l + 1);
+    if (!r) r = userDefinableOperator(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // << nonStrictID >> ('=' expression)?
+  private static boolean superTearOffExpression_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "superTearOffExpression_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nonStrictID(b, l + 1);
+    r = r && superTearOffExpression_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('=' expression)?
+  private static boolean superTearOffExpression_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "superTearOffExpression_1_0_1")) return false;
+    superTearOffExpression_1_0_1_0(b, l + 1);
+    return true;
+  }
+
+  // '=' expression
+  private static boolean superTearOffExpression_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "superTearOffExpression_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EQ);
+    r = r && expression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |
   //                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
   //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'sync' | 'typedef' | 'var' | 'void' | '{' |
@@ -5649,6 +5771,88 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, VOID);
     if (!r) r = userDefinableOperator(b, l + 1);
     if (!r) r = simpleQualifiedReferenceExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // HASH
+  public static boolean tearOff(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOff")) return false;
+    if (!nextTokenIs(b, HASH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, HASH);
+    exit_section_(b, m, TEAR_OFF, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // simpleReferenceExpression ( tearOff  (( << nonStrictID >> ('=' expression)?) | userDefinableOperator))?
+  public static boolean tearOffReferenceExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _COLLAPSE_, "<tear off reference expression>");
+    r = simpleReferenceExpression(b, l + 1);
+    r = r && tearOffReferenceExpression_1(b, l + 1);
+    exit_section_(b, l, m, REFERENCE_EXPRESSION, r, false, null);
+    return r;
+  }
+
+  // ( tearOff  (( << nonStrictID >> ('=' expression)?) | userDefinableOperator))?
+  private static boolean tearOffReferenceExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression_1")) return false;
+    tearOffReferenceExpression_1_0(b, l + 1);
+    return true;
+  }
+
+  // tearOff  (( << nonStrictID >> ('=' expression)?) | userDefinableOperator)
+  private static boolean tearOffReferenceExpression_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = tearOff(b, l + 1);
+    r = r && tearOffReferenceExpression_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ( << nonStrictID >> ('=' expression)?) | userDefinableOperator
+  private static boolean tearOffReferenceExpression_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = tearOffReferenceExpression_1_0_1_0(b, l + 1);
+    if (!r) r = userDefinableOperator(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // << nonStrictID >> ('=' expression)?
+  private static boolean tearOffReferenceExpression_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nonStrictID(b, l + 1);
+    r = r && tearOffReferenceExpression_1_0_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('=' expression)?
+  private static boolean tearOffReferenceExpression_1_0_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression_1_0_1_0_1")) return false;
+    tearOffReferenceExpression_1_0_1_0_1_0(b, l + 1);
+    return true;
+  }
+
+  // '=' expression
+  private static boolean tearOffReferenceExpression_1_0_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tearOffReferenceExpression_1_0_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EQ);
+    r = r && expression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
