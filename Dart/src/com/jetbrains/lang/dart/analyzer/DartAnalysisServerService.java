@@ -91,6 +91,7 @@ public class DartAnalysisServerService {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
@@ -597,8 +598,8 @@ public class DartAnalysisServerService {
   }
 
   public boolean updateRoots(@NotNull final List<String> includedRoots,
-                          @NotNull final List<String> excludedRoots,
-                          @Nullable final Map<String, String> packageRoots) {
+                             @NotNull final List<String> excludedRoots,
+                             @Nullable final Map<String, String> packageRoots) {
     AnalysisServer server = myServer;
     if (server == null) {
       return false;
@@ -837,6 +838,34 @@ public class DartAnalysisServerService {
     }
   }
 
+  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final String _filePath, final int offset, final boolean superOnly) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+    final List<TypeHierarchyItem> results = Lists.newArrayList();
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return results;
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.search_getTypeHierarchy(filePath, offset, new GetTypeHierarchyConsumer() {
+      @Override
+      public void computedHierarchy(List<TypeHierarchyItem> hierarchyItems) {
+        results.addAll(hierarchyItems);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        logError("search_getTypeHierarchy()", filePath, error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_TYPE_HIERARCHY_TIMEOUT);
+    return results;
+  }
+
   @Nullable
   public String completion_getSuggestions(@NotNull final String filePath, final int offset) {
     final Ref<String> resultRef = new Ref<String>();
@@ -913,12 +942,12 @@ public class DartAnalysisServerService {
   }
 
   public boolean edit_getRefactoring(String kind,
-                                  String file,
-                                  int offset,
-                                  int length,
-                                  boolean validateOnly,
-                                  RefactoringOptions options,
-                                  GetRefactoringConsumer consumer) {
+                                     String file,
+                                     int offset,
+                                     int length,
+                                     boolean validateOnly,
+                                     RefactoringOptions options,
+                                     GetRefactoringConsumer consumer) {
     synchronized (myLock) {
       if (myServer == null) return false;
       myServer.edit_getRefactoring(kind, file, offset, length, validateOnly, options, consumer);
@@ -1063,7 +1092,9 @@ public class DartAnalysisServerService {
       mySdkHome = sdk.getHomePath();
 
       final String runtimePath = FileUtil.toSystemDependentName(mySdkHome + "/bin/dart");
-      final String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
+
+      String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
+      analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
       final DebugPrintStream debugStream = new DebugPrintStream() {
         @Override
