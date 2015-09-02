@@ -66,7 +66,7 @@ public class LearnUiUtil {
             }
         }
 
-        final BufferedImage image = ImageIO.read(MyClassLoader.getInstance().getImageResourceAsStream("secure25.png"));
+        final BufferedImage image = MyClassLoader.getInstance().getImageResourceAsStream("secure25.png");
 //        final Icon icon = IconLoader.getIcon("/img/secure25.png");
 
         JComponent imageComp = new JComponent(){

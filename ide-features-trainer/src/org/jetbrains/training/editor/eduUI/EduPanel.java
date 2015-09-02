@@ -8,6 +8,7 @@ import org.jetbrains.training.editor.EduEditor;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.CourseManager;
 import org.jetbrains.training.lesson.Lesson;
+import org.jetbrains.training.util.MyClassLoader;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -191,7 +192,7 @@ public class EduPanel extends JPanel {
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.Y_AXIS));
         lessonPanel.setBackground(background);
 
-        lessonNameLabel = new JLabel("Comment");
+        lessonNameLabel = new JLabel();
         lessonNameLabel.setFont(lessonNameFont);
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -204,6 +205,7 @@ public class EduPanel extends JPanel {
         //Set lessonMessagePane UI
         lessonMessagePane.setBackground(background);
         lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, passedColor);
+        lessonMessagePane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         //Set label UI
         lessonNextButton = new JButton("Next");
@@ -213,7 +215,7 @@ public class EduPanel extends JPanel {
 
 
         lessonPanel.add(lessonNameLabel);
-        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
+//        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
         lessonPanel.add(lessonMessagePane);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
         lessonPanel.add(lessonNextButton);
@@ -301,7 +303,11 @@ public class EduPanel extends JPanel {
     }
 
     public void setLessonPassed(){
-        lessonNameLabel.setText(lessonNameLabel.getText() + " ✔");
+        Image image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");  //this generates an image file
+        ImageIcon checkmarkIcon = new ImageIcon(image);
+
+        lessonNameLabel.setIcon(checkmarkIcon);
+        lessonNameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
         lessonNameLabel.setForeground(lessonPassedColor);
         lessonNextButton.setVisible(true);
         this.repaint();
@@ -322,6 +328,9 @@ public class EduPanel extends JPanel {
 
 
     public void setAllLessons(final Lesson lesson){
+        Image image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");  //this generates an image file
+        ImageIcon checkmarkIcon = new ImageIcon(image);
+
         if(lesson == null) return;
         if(lesson.getCourse() == null) return;
         Course course = lesson.getCourse();
@@ -350,11 +359,13 @@ public class EduPanel extends JPanel {
         for (int i = 0; i < myLessons.size(); i++) {
             Lesson currentLesson = myLessons.get(i);
             String id = currentLesson.getId();
-            if (currentLesson.isPassed()) id = id + " ✔";
+//            if (currentLesson.isPassed()) id = id + " ✔";
 
             if (lesson.equals(currentLesson)){
                 //selected lesson
                 final JLabel e = new JLabel(id);
+                if (currentLesson.isPassed()) e.setIcon(checkmarkIcon);
+                e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setForeground(lessonActiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
                 e.setFont(lessonsFont);
@@ -362,6 +373,8 @@ public class EduPanel extends JPanel {
                 coursePanel.add(e);
             } else {
                 final JLabel e = new JLabel(id);
+                if (currentLesson.isPassed()) e.setIcon(checkmarkIcon);
+                e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 e.setForeground(lessonInactiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
@@ -407,6 +420,7 @@ public class EduPanel extends JPanel {
 //            messages.remove(0);
 //        }
 //        lessonMessageContainer.removeAll();
+        lessonNameLabel.setIcon(null);
         lessonMessagePane.clear();
 //        messages.clear();
         this.revalidate();
