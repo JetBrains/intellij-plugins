@@ -12,6 +12,7 @@ import org.jetbrains.training.lesson.Lesson;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,7 +55,7 @@ public class EduPanel extends JPanel {
     private Color shortcutBckColor;
     private Color shortcutBorderColor;
     private Font shortcutFont;
-    private Color passedColor; //TODO: should be replaced with UI scheme color
+    private Color passedColor;
     private Color lessonPassedColor;
     private Color lessonCodeColor;
 
@@ -278,7 +279,11 @@ public class EduPanel extends JPanel {
 //    }
 
     public void setPreviousMessagesPassed(){
-        lessonMessagePane.passPreviousMessages();
+        try {
+            lessonMessagePane.passPreviousMessages();
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
 //        if (messages == null) return;
 //        for (LessonMessage message : messages) {
 ////            message.setForeground(passedColor);

@@ -54,7 +54,6 @@ public class TryCommand extends Command {
 
         final ActionsRecorder recorder = new ActionsRecorder(executionList.getEditor().getProject(), executionList.getEditor().getDocument(), executionList.getTarget());
         executionList.getEduEditor().registerActionsRecorder(recorder);
-        //TODO: Make recorder disposable
 
         if (element.getAttribute("check") != null) {
             String checkClassString = element.getAttribute("check").getValue();
