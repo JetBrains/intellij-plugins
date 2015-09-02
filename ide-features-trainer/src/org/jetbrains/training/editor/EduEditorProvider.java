@@ -38,9 +38,12 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         if(fileEduEditorMap.containsKey(file)){
             EduEditor eduEditor = fileEduEditorMap.get(file);
-            eduEditor.updateMyDefaultEditor();
-
-            return eduEditor;
+            if(!eduEditor.getEditor().getProject().isDisposed()) {
+                return eduEditor;
+            } else {
+                fileEduEditorMap.remove(file);
+                return TextEditorProvider.getInstance().createEditor(project, file);
+            }
         } else {
             EduEditor eduEditor = new EduEditor(project, file);
             fileEduEditorMap.put(file, eduEditor);
