@@ -16,20 +16,6 @@ import java.util.concurrent.ExecutionException;
 public class ShowEduUi extends AnAction{
     @Override
     public void actionPerformed(final AnActionEvent anActionEvent) {
-        boolean focusEditor = true;
-
-        final Project project = anActionEvent.getProject();
-
-        final VirtualFile vf;
-//        vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
-        //TODO: remove const "scratch" here
-
-//        vf = ScratchRootType.getInstance().createScratchFile(anActionEvent.getProject(), "SCRATCH_FILE", Language.findLanguageByID("JAVA"), "");
-//        CourseManager.getInstance().registerVirtaulFile(CourseManager.getInstance().getAnyCourse(), vf);
-
-        //Open file with EduEditorProvider
-//        FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(vf, true, true);
-
 
         final Lesson lesson = CourseManager.getInstance().getCourseById("default").giveNotPassedLesson();
         try {
