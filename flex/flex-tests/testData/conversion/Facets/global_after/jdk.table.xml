@@ -1,4 +1,4 @@
-<ProjectJdkTableImpl>
+<state>
   <jdk version="2">
     <name value="some_flex_sdk" />
     <type value="Flex SDK Type" />
@@ -131,4 +131,4 @@
     </roots>
     <additional />
   </jdk>
-</ProjectJdkTableImpl>
+</state>
