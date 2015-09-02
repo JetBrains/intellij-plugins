@@ -1,3 +1,3 @@
 main() {
-  for (<caret>)
+  for<caret>
 }

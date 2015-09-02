@@ -81,7 +81,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   }
 
   public void testCaretPlacementInFor() throws Throwable {
-    doTest("for ()");
+    doTest("for");
   }
 
   public void testUriCompletionByTab() throws Throwable {
