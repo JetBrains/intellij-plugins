@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.editor.EduEditorProvider;
 import org.jetbrains.training.util.GenerateCourseXml;
 import org.jetbrains.training.util.MyClassLoader;
 import org.jetbrains.training.editor.EduEditor;
@@ -202,12 +203,18 @@ public class CourseManager{
             for (FileEditor curEditor : allEditors) {
                 if(curEditor instanceof EduEditor) editorIsFind = true;
             }
-            if (!editorIsFind) FileEditorManager.getInstance(project).openEditor(descriptor, true);
+            if (!editorIsFind) {
+//              close other editors with this file
+                FileEditorManager.getInstance(project).closeFile(vf);
+                ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
+                FileEditorManager.getInstance(project).openEditor(descriptor, true);
+            }
         }
         final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(vf);
 
         EduEditor eduEditor = null;
         if (selectedEditor instanceof EduEditor) eduEditor = (EduEditor) selectedEditor;
+        else eduEditor = (EduEditor) (new EduEditorProvider()).createEditor(project, vf);
         return eduEditor;
     }
 
