@@ -278,6 +278,16 @@ public class DartProjectComponent extends AbstractProjectComponent {
     if (withRootPackagesFolder) {
       newExcludedPackagesUrls.add(root.getUrl() + "/packages");
     }
+    else {
+      // Folders like packages/PathPackage and packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) are symlinks to local 'lib' folders. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
+      // Empty nodes like 'ThisProject (ThisProject/lib)' are added to Project Structure by DartTreeStructureProvider
+      final DartUrlResolver resolver = DartUrlResolver.getInstance(module.getProject(), pubspecYamlFile);
+      resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
+        public void consume(final String packageName, final VirtualFile packageDir) {
+          newExcludedPackagesUrls.add(root.getUrl() + "/packages/" + packageName);
+        }
+      });
+    }
 
     final VirtualFile binFolder = root.findChild("bin");
     if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
@@ -289,15 +299,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
     appendPackagesFolders(newExcludedPackagesUrls, root.findChild("test"), fileIndex, withRootPackagesFolder);
     appendPackagesFolders(newExcludedPackagesUrls, root.findChild("tool"), fileIndex, withRootPackagesFolder);
     appendPackagesFolders(newExcludedPackagesUrls, root.findChild("web"), fileIndex, withRootPackagesFolder);
-
-    // Folders like packages/PathPackage and packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) are symlinks to local 'lib' folders. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
-    // Empty nodes like 'ThisProject (ThisProject/lib)' are added to Project Structure by DartTreeStructureProvider
-    final DartUrlResolver resolver = DartUrlResolver.getInstance(module.getProject(), pubspecYamlFile);
-    resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
-      public void consume(final String packageName, final VirtualFile packageDir) {
-        newExcludedPackagesUrls.add(root.getUrl() + "/packages/" + packageName);
-      }
-    });
 
     return newExcludedPackagesUrls;
   }
