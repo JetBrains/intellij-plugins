@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.PomManager;
 import com.intellij.pom.PomModel;
@@ -58,10 +59,13 @@ public class ActionsRecorder implements Disposable {
         this.target = target;
         this.triggerActivated = false;
         this.doWhenDone = null;
+
+        Disposer.register(project, this);
     }
 
     @Override
     public void dispose() {
+        removeListeners(document, ActionManager.getInstance());
         disposed = true;
     }
 
@@ -188,6 +192,8 @@ public class ActionsRecorder implements Disposable {
 
 
         myDocumentListener = new DocumentListener() {
+
+
             @Override
             public void beforeDocumentChange(DocumentEvent event) {
 
@@ -220,12 +226,13 @@ public class ActionsRecorder implements Disposable {
 
         document.addDocumentListener(myDocumentListener);
         actionManager.addAnActionListener(myAnActionListener);
-
     }
 
     private void removeListeners(Document document, ActionManager actionManager){
-        document.removeDocumentListener(myDocumentListener);
-        actionManager.removeAnActionListener(myAnActionListener);
+        if (myAnActionListener != null) actionManager.removeAnActionListener(myAnActionListener);
+        if (myDocumentListener != null) document.removeDocumentListener(myDocumentListener);
+        myAnActionListener = null;
+        myDocumentListener = null;
     }
 }
 
