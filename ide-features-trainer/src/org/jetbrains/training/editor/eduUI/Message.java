@@ -9,7 +9,7 @@ public class Message {
 
 
 
-    public enum MessageType {TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE;}
+    public enum MessageType {TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, CHECK}
     @NotNull
     private String messageText;
 

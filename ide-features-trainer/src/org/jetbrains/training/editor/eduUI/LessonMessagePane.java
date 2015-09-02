@@ -1,7 +1,9 @@
 package org.jetbrains.training.editor.eduUI;
 
+import com.intellij.execution.process.OSProcessManager;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -34,7 +36,6 @@ public class LessonMessagePane extends JTextPane {
     }
 
     private static void initStyleConstants() {
-        //TODO: Change FamilyFont to UiUtil fonts
         StyleConstants.setFontFamily(REGULAR, UIUtil.getLabelFont().getFamily());
         StyleConstants.setFontSize(REGULAR, 12);
         StyleConstants.setForeground(REGULAR, Color.BLACK);
@@ -103,6 +104,10 @@ public class LessonMessagePane extends JTextPane {
                         getDocument().insertString(getDocument().getLength(), message.getText(), CODE);
                         break;
 
+                    case CHECK:
+                        getDocument().insertString(getDocument().getLength(), message.getText(), ROBOTO);
+                        break;
+
                 }
             } catch (BadLocationException e) {
                 e.printStackTrace();
@@ -112,13 +117,23 @@ public class LessonMessagePane extends JTextPane {
         lessonMessages.add(new LessonMessage(messages, start, end));
     }
 
-    public void passPreviousMessages() {
-        Style passedStyle = this.addStyle("PassedStyle", null);
-        StyleConstants.setForeground(passedStyle, passedColor);
-        final StyledDocument doc = getStyledDocument();
+    public void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
-            doc.setCharacterAttributes(0, lessonMessages.get(lessonMessages.size() - 1).getEnd(), passedStyle, false);
-        }
+            final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
+            if(SystemInfo.isMac) {
+                lessonMessage.appendMacCheck();
+                getDocument().insertString(getDocument().getLength(), " ✓", BOLD);
+            } else {
+                lessonMessage.appendWinCheck();
+                getDocument().insertString(getDocument().getLength(), " ", ROBOTO);
+            }
+
+            Style passedStyle = this.addStyle("PassedStyle", null);
+            StyleConstants.setForeground(passedStyle, passedColor);
+            final StyledDocument doc = getStyledDocument();
+
+            doc.setCharacterAttributes(0, lessonMessage.getEnd(), passedStyle, false);
+        } else return;
     }
 
     public void clear() {
