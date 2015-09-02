@@ -1,5 +1,10 @@
 package org.jetbrains.training.util;
 
+import org.jetbrains.annotations.Nullable;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -20,8 +25,15 @@ public class MyClassLoader {
         return this.getClass().getResourceAsStream(RESPATH + path);
     }
 
-    public InputStream getImageResourceAsStream(String path){
-        return this.getClass().getResourceAsStream(IMGPATH + path);
+    @Nullable
+    public BufferedImage getImageResourceAsStream(String path){
+        InputStream in = this.getClass().getResourceAsStream(IMGPATH + path);
+        try {
+            return ImageIO.read(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getDataPath(){
