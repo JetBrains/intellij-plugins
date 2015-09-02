@@ -7,10 +7,12 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.util.Condition;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.SpeedSearchBase;
 import com.intellij.util.NullableConsumer;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +25,7 @@ import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkUtil;
 import org.jetbrains.plugins.ruby.ruby.sdk.jruby.JRubySdkType;
 import org.jetbrains.plugins.ruby.ruby.ui.RubySdkRenderer;
 import org.jetbrains.plugins.ruby.utils.RubyUIUtil;
+import org.jetbrains.plugins.ruby.version.management.rbenv.gemsets.RbenvGemsetManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +42,13 @@ import java.util.List;
 public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   private static final String ADD_RUBY_SDK = "Add Ruby SDK...";
   private static final int COMBO_WIDTH = PlatformUtils.isRubyMine() ? 320 : 150;
+
+  public static final Condition<Sdk> IS_PURE_RBENV_SDK = new Condition<Sdk>() {
+    @Override
+    public boolean value(Sdk sdk) {
+      return RbenvGemsetManager.getInstance().getRbenvGemset(sdk) == null;
+    }
+  };
 
   private final RubyMotionSettingsHolder mySettingsHolder;
   private ComboBox myRubyInterpreterComboBox;
@@ -130,13 +140,15 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   }
 
   private void refreshSdkList() {
-    final List<Sdk> sdkList = new ArrayList<Sdk>();
+    List<Sdk> sdkList = new ArrayList<Sdk>();
     for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(RubySdkType.getInstance())) {
       final RubyRemoteInterpreterManager manager = RubyRemoteInterpreterManager.getInstance();
       if (!RubySdkUtil.isRuby18(sdk) && !manager.isRemoteSdk(sdk)) {
         sdkList.add(sdk);
       }
     }
+
+    sdkList = ContainerUtil.filter(sdkList, IS_PURE_RBENV_SDK);
 
     myRubyInterpreterComboBox.setModel(RubyUIUtil.createSdkComboboxModel(sdkList, null, ADD_RUBY_SDK));
   }
