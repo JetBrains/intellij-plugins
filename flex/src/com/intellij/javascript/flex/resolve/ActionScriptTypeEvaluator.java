@@ -96,14 +96,15 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
-    final JSCallExpression poll = myCallExpressionsToApply.poll();// MyClass(anyVar) is cast to MyClass
+    final JSElement peek = myJSElementsToApply.peek();
+    if (peek instanceof JSCallExpression) myJSElementsToApply.pop(); // MyClass(anyVar) is cast to MyClass
     addType(type, resolveResult);
-    if (poll != null) myCallExpressionsToApply.push(poll);
+    if (peek instanceof JSCallExpression) myJSElementsToApply.push(peek);
   }
 
   @Override
   protected boolean useVariableType(JSType type) {
-    return myCallExpressionsToApply.isEmpty() && super.useVariableType(type);
+    return myJSElementsToApply.isEmpty() && super.useVariableType(type);
   }
 
   @Override
