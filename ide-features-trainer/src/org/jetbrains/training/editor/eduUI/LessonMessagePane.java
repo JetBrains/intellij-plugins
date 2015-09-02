@@ -41,7 +41,7 @@ public class LessonMessagePane extends JTextPane {
         StyleConstants.setForeground(REGULAR, Color.BLACK);
 
         StyleConstants.setFontFamily(BOLD, UIUtil.getLabelFont().getFamily());
-        StyleConstants.setFontSize(BOLD, 13);
+        StyleConstants.setFontSize(BOLD, 12);
         StyleConstants.setBold(BOLD, true);
         StyleConstants.setForeground(BOLD, Color.BLACK);
 
@@ -125,7 +125,7 @@ public class LessonMessagePane extends JTextPane {
                 getDocument().insertString(getDocument().getLength(), " ✓", BOLD);
             } else {
                 lessonMessage.appendWinCheck();
-                getDocument().insertString(getDocument().getLength(), " ", ROBOTO);
+                getDocument().insertString(getDocument().getLength(), " \uF0FC", ROBOTO);
             }
 
             Style passedStyle = this.addStyle("PassedStyle", null);
