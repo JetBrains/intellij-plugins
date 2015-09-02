@@ -22,6 +22,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -415,12 +416,10 @@ public class FlexUtils {
         final String macroName = builder.substring(startIndex + 2, endIndex);
         final String macroValue;
         if (PathMacrosImpl.MODULE_DIR_MACRO_NAME.equals(macroName)) {
-          final VirtualFile moduleFile = module.getModuleFile();
-          macroValue = moduleFile == null ? null : moduleFile.getParent().getPath();
+          macroValue = ModuleUtilCore.getModuleDirPath(module);
         }
         else if (PathMacrosImpl.PROJECT_DIR_MACRO_NAME.equals(macroName)) {
-          final VirtualFile baseDir = module.getProject().getBaseDir();
-          macroValue = baseDir == null ? null : baseDir.getPath();
+          macroValue = module.getProject().getBasePath();
         }
         else if (PathMacrosImpl.USER_HOME_MACRO_NAME.equals(macroName)) {
           macroValue = StringUtil.trimEnd((StringUtil.trimEnd(SystemProperties.getUserHome(), "/")), "\\");
