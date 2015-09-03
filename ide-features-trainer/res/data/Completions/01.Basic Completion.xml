@@ -1,5 +1,6 @@
 <xml type="Scenario" name="Basic Completion" passed="false" version="0.1" subtype="aimless">
     <MouseBlock>
+        <ExpandAllBlocks/>
         <CopyText>import java.lang.*;
 import java.util.*;
 
@@ -16,9 +17,7 @@ public class CompletionDemo implements Runnable{
         Random random = new
     }
 
-
     public CompletionDemo() {
-        List&lt;String&gt; strings =
         byte b = MAX_VALUE
     }
 }
@@ -31,11 +30,7 @@ public class CompletionDemo implements Runnable{
         <Try description="You can choose first item from Lookup menu by typing &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
         <Try description="To activate Basic Completion action type &lt;action=&quot;CodeCompletion&quot;&gt; and you will see lookup menu again" trigger="CodeCompletion"/>
         <Try description="Tap &lt;action=&quot;EditorEnter&quot;&gt; to choose top item from lookup menu" trigger="EditorChooseLookupItem"/>
-        <MoveCaret position="20:32"/>
-        <TypeText> </TypeText>
-        <Try description="Now try to enter the text &lt;code&gt;emp&lt;/code&gt; and you will see Completion list again. Tap &lt;action=&quot;CodeCompletion&quot;&gt; action and IDEA suggests you list with &lt;code&gt;Collections.Collections.emptyList()&lt;/code&gt;" trigger="CodeCompletion"/>
-        <Try description="Ok, let's choose it by clicking &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
-        <MoveCaret position="22:27"/>
+        <MoveCaret position="19:27"/>
         <Text description="Sometimes you need to find completions for static constants or methods"/>
         <Try description="Tap &lt;action=&quot;CodeCompletion&quot;&gt; twice to invoke Code Completion increase search level" triggers="CodeCompletion;CodeCompletion"/>
     </CaretBlock>
