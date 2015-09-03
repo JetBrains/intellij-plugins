@@ -99,6 +99,23 @@ public class CourseManager{
         return mapCourseVirtualFile.containsValue(virtualFile);
     }
 
+    public void unregisterVirtaulFile(VirtualFile virtualFile){
+        if(!mapCourseVirtualFile.containsValue(virtualFile)) return;
+        for (Course course : mapCourseVirtualFile.keySet()) {
+            if(mapCourseVirtualFile.get(course).equals(virtualFile)) {
+                mapCourseVirtualFile.remove(course);
+                return;
+            }
+        }
+    }
+
+    public void unregisterCourse(Course course){
+        mapCourseVirtualFile.remove(course);
+    }
+
+
+
+
     public synchronized void openLesson(final Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         if (lesson == null) throw new BadLessonException("Cannot open \"null\" lesson");
@@ -196,7 +213,7 @@ public class CourseManager{
     private EduEditor getEduEditor(Project project, VirtualFile vf) {
         OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
         final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
-        if(allEditors == null) {
+        if(allEditors == null || allEditors.length == 0) {
             FileEditorManager.getInstance(project).openEditor(descriptor, true);
         } else {
             boolean editorIsFind = false;

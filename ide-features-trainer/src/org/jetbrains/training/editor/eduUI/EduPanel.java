@@ -303,7 +303,11 @@ public class EduPanel extends JPanel {
     }
 
     public void setLessonPassed(){
-        Image image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");  //this generates an image file
+        Image image;
+        if(!UIUtil.isUnderDarcula())
+                image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGreen.png");
+        else
+                image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGreenDarcula.png");
         ImageIcon checkmarkIcon = new ImageIcon(image);
 
         lessonNameLabel.setIcon(checkmarkIcon);
@@ -328,8 +332,18 @@ public class EduPanel extends JPanel {
 
 
     public void setAllLessons(final Lesson lesson){
-        Image image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");  //this generates an image file
+        Image image;
+        Image imageSelected;
+        if(!UIUtil.isUnderDarcula()) {
+            image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkBlue.png");  //this generates an image file
+            imageSelected = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGray.png");  //this generates an image file
+        } else {
+            image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkBlueDarcula.png");  //this generates an image fileImage image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");
+            imageSelected = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGray.png");  //this generates an image fileImage image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");
+        }
         ImageIcon checkmarkIcon = new ImageIcon(image);
+        ImageIcon checkmarkIconSelected = new ImageIcon(imageSelected);
+
 
         if(lesson == null) return;
         if(lesson.getCourse() == null) return;
@@ -364,7 +378,7 @@ public class EduPanel extends JPanel {
             if (lesson.equals(currentLesson)){
                 //selected lesson
                 final JLabel e = new JLabel(id);
-                if (currentLesson.isPassed()) e.setIcon(checkmarkIcon);
+                if (currentLesson.isPassed()) e.setIcon(checkmarkIconSelected);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setForeground(lessonActiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
