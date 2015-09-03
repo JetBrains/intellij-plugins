@@ -211,7 +211,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
         JSClass targetClass = null;
         for (int i = 0; i < references.length; i++) {
           if (references[i] == expression) {
-            targetClass = referencedClasses[i];
+            targetClass = i < referencedClasses.length ? referencedClasses[i] : null;
             break;
           }
         }
