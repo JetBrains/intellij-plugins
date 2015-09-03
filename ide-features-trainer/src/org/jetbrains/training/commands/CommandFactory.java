@@ -80,6 +80,9 @@ public class CommandFactory {
 
             case SHOWLINENUMBER:
                 return new ShowLineNumberCommand();
+
+            case EXPANDALLBLOCKS:
+                return new ExpandAllBlocksCommand();
         }
 
         return new NoCommand();
