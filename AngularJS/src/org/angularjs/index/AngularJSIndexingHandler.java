@@ -435,11 +435,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   @Override
   public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator,
-                                          JSReferenceExpression expression,
-                                          PsiElement parent,
                                           PsiElement resolveResult,
                                           boolean hasSomeType) {
-    if (!AngularIndexUtil.hasAngularJS(expression.getProject())) return false;
+    if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject())) return false;
 
     if (resolveResult instanceof JSDefinitionExpression) {
       final PsiElement resolveParent = resolveResult.getParent();
