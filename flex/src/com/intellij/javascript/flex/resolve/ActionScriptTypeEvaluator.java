@@ -36,14 +36,15 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromDialectSpecificElements(JSReferenceExpression expression, PsiElement resolveResult) {
+  protected boolean addTypeFromDialectSpecificElements(PsiElement resolveResult) {
     if (resolveResult instanceof JSPackageWrapper) {
-      if (myTypeProcessor instanceof PsiScopeProcessor) {
+      JSReferenceExpression expression = myProcessedExpression;
+      if (myTypeProcessor instanceof PsiScopeProcessor && expression != null) {
         if (myTypeProcessor instanceof ResolveProcessor) ((ResolveProcessor)myTypeProcessor).prefixResolved();
         resolveResult.processDeclarations((PsiScopeProcessor)myTypeProcessor, ResolveState.initial(), expression, expression);
-      } else {
-        addType(((JSQualifiedNamedElement)resolveResult).getQualifiedName(),
-                expression);
+      }
+      else {
+        addType(((JSQualifiedNamedElement)resolveResult).getQualifiedName(), resolveResult);
       }
       return true;
     }
@@ -83,10 +84,13 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement resolveResult) {
+  protected void addTypeFromClass(PsiElement resolveResult) {
     if (resolveResult instanceof JSFunction) {
       resolveResult = resolveResult.getParent();
     }
+    JSReferenceExpression expression = myProcessedExpression;
+    if (expression == null) return;
+
     PsiElement parent = expression.getParent();
     if (parent instanceof JSExpression) parent = JSUtils.unparenthesize((JSExpression)parent);
     String psiElementType = parent instanceof JSReferenceExpression ||
@@ -111,9 +115,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromElementResolveResult(JSReferenceExpression expression,
-                                                    PsiElement resolveResult,
-                                                    boolean hasSomeType) {
+  protected boolean addTypeFromElementResolveResult(PsiElement resolveResult, boolean hasSomeType) {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
       resolveResult = ((JSOffsetBasedImplicitElement)resolveResult).getElementAtOffset();
     }
@@ -153,7 +155,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
       return hasSomeType;
     }
-    return super.addTypeFromElementResolveResult(expression, resolveResult, hasSomeType);
+    return super.addTypeFromElementResolveResult(resolveResult, hasSomeType);
   }
 
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
