@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -82,10 +83,12 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement parent, PsiElement resolveResult) {
+  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement resolveResult) {
     if (resolveResult instanceof JSFunction) {
       resolveResult = resolveResult.getParent();
     }
+    PsiElement parent = expression.getParent();
+    if (parent instanceof JSExpression) parent = JSUtils.unparenthesize((JSExpression)parent);
     String psiElementType = parent instanceof JSReferenceExpression ||
                             JSResolveUtil.isExprInStrictTypeContext(expression) ||
                             PsiTreeUtil.getChildOfType(expression, JSE4XNamespaceReference.class) != null || // TODO avoid it
@@ -109,7 +112,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
   @Override
   protected boolean addTypeFromElementResolveResult(JSReferenceExpression expression,
-                                                    PsiElement parent,
                                                     PsiElement resolveResult,
                                                     boolean hasSomeType) {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
@@ -151,7 +153,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
       return hasSomeType;
     }
-    return super.addTypeFromElementResolveResult(expression, parent, resolveResult, hasSomeType);
+    return super.addTypeFromElementResolveResult(expression, resolveResult, hasSomeType);
   }
 
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
