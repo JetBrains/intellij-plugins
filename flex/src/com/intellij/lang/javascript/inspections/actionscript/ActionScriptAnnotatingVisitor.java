@@ -687,8 +687,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final JSClass[] superClasses = jsClass.getSuperClasses();
         final JSAttributeList attributeList = superClasses.length > 0 ? superClasses[0].getAttributeList() : null;
         if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) {
-          final JSReferenceExpression[] referencesToSuper = extendsList.getExpressions();
-          if (referencesToSuper != null && referencesToSuper.length == 1) {
+          final JSExpression[] referencesToSuper = extendsList.getExpressions();
+          if (referencesToSuper.length == 1) {
             myHolder.createErrorAnnotation(referencesToSuper[0], JSBundle.message("javascript.validation.message.extend.final.class",
                                                                                   superClasses[0].getQualifiedName()));
           }

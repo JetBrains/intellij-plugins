@@ -2,6 +2,7 @@ package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
@@ -41,12 +42,10 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
         for (JSClass clazz : XmlBackedJSClassImpl.getClasses(file)) {
           JSReferenceList supers = getSupers(clazz);
           if (supers != null) {
-            final JSReferenceExpression[] expressions = supers.getExpressions();
-            if (expressions != null) {
-              for (JSReferenceExpression expr : expressions) {
-                String s = expr.getReferencedName();
-                if (s != null) result.put(s, null);
-              }
+            final JSExpression[] expressions = supers.getExpressions();
+            for (JSExpression expr : expressions) {
+              String s = expr instanceof JSReferenceExpression ? ((JSReferenceExpression)expr).getReferenceName() : null;
+              if (s != null) result.put(s, null);
             }
           }
         }

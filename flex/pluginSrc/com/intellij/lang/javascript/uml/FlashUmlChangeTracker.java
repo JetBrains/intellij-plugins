@@ -5,12 +5,12 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.project.Project;
@@ -206,7 +206,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
         }
 
         JSReferenceList refList = (JSReferenceList)expression.getParent();
-        final JSReferenceExpression[] references = refList.getExpressions();
+        final JSExpression[] references = refList.getExpressions();
         final JSClass[] referencedClasses = refList.getReferencedClasses();
         JSClass targetClass = null;
         for (int i = 0; i < references.length; i++) {

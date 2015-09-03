@@ -852,8 +852,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
       if (list != null) {
         ActionScriptAnnotatingVisitor.checkActionScriptImplementedMethods(jsClass, reportingClient);
-        for(JSReferenceExpression expr:list.getExpressions()) {
-          PsiElement element = expr.resolve();
+
+        for (JSClass element : list.getReferencedClasses()) {
           if (element == jsClass) {
             reportingClient.reportError(
               refToImplementsNode(tag), // TODO: list is artificial node without context, cannot bind to it
@@ -862,7 +862,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
             continue;
           }
 
-          if (element instanceof JSClass && !((JSClass)element).isInterface()) {
+          if (element != null && !element.isInterface()) {
             reportingClient.reportError(
               refToImplementsNode(tag),
               JSBundle.message("javascript.validation.message.interface.name.expected.here"),
