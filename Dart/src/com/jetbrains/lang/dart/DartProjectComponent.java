@@ -1,13 +1,11 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.ProjectTopics;
-import com.intellij.ide.browsers.BrowserSpecificSettings;
-import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.chrome.ChromeSettings;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
@@ -18,9 +16,7 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,12 +35,9 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider;
-import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashSet;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,15 +67,12 @@ public class DartProjectComponent extends AbstractProjectComponent {
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
+        deleteDartSdkGlobalLibConfiguredInVeryOldIde();
+
         ensureCorrectDartSdkLibName();
         updateDependenciesOnDartSdkLib();
 
         removeJSBreakpointsInDartFiles(myProject);
-
-        final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
-        deleteDartSdkGlobalLibConfiguredInOldIde();
-
-        final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
         DartiumUtil.removeUnsupportedAsyncFlag();
 
@@ -93,17 +83,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
           final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, myProject);
           if (module != null && FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope())) {
             excludeBuildAndPackagesFolders(module, pubspecYamlFile);
-
-            if (dartSdkGlobalLibName != null &&
-                dartSdkWasEnabledInOldModel &&
-                ModuleType.get(module) instanceof WebModuleTypeBase &&
-                !DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, dartSdkGlobalLibName)) {
-              ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                public void run() {
-                  DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkGlobalLibName);
-                }
-              });
-            }
           }
         }
       }
@@ -277,37 +256,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     }
   }
 
-  @Nullable
-  private static String importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(final @NotNull Project project) {
-    final String oldDartSdkPath = PropertiesComponent.getInstance().getValue("dart_sdk_path");
-    PropertiesComponent.getInstance().unsetValue("dart_sdk_path");
-
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-
-    if (sdk != null) {
-      return sdk.getGlobalLibName();
-    }
-    else if (DartSdkUtil.isDartSdkHome(oldDartSdkPath)) {
-      if (DartiumUtil.getDartiumBrowser() == null) {
-        // configure even if getDartiumPathForSdk() returns null
-        final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
-        final BrowserSpecificSettings browserSpecificSettings = browser.getSpecificSettings();
-        if (browserSpecificSettings instanceof ChromeSettings) {
-          DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
-        }
-      }
-
-      return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
-        public String compute() {
-          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(project, oldDartSdkPath);
-        }
-      });
-    }
-
-    return null;
-  }
-
-  private static void deleteDartSdkGlobalLibConfiguredInOldIde() {
+  private static void deleteDartSdkGlobalLibConfiguredInVeryOldIde() {
     final LibraryEx library = (LibraryEx)ApplicationLibraryTable.getApplicationTable().getLibraryByName("Dart SDK");
     final PersistentLibraryKind<?> kind = library == null ? null : library.getKind();
     if (library != null && kind != null && "javaScript".equals(kind.getKindId())) {
@@ -317,40 +266,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       });
     }
-  }
-
-  private static boolean hasJSLibraryMappingToOldDartSdkGlobalLib(final @NotNull Project project) {
-/*
-    Mapping to old 'Dart SDK' global lib is removed when ScriptingLibraryManager is loaded if 'Dart SDK' lib does not exist. That's why we use hacky way.
-    One more bonus is that it works even if JavaScript plugin is disabled and in IntelliJ IDEA Community Edition
-
-    <?xml version="1.0" encoding="UTF-8"?>
-    <project version="4">
-      <component name="JavaScriptLibraryMappings">
-        <file url="PROJECT" libraries="{Dart SDK}" />
-        <excludedPredefinedLibrary name="HTML5 / EcmaScript 5" />
-      </component>
-    </project>
-*/
-    final File jsLibraryMappingsFile = new File(project.getBasePath() + "/.idea/jsLibraryMappings.xml");
-    if (jsLibraryMappingsFile.isFile()) {
-      try {
-        final Element rootElement = JDOMUtil.load(jsLibraryMappingsFile);
-        for (final Element componentElement : rootElement.getChildren("component")) {
-          if ("JavaScriptLibraryMappings".equals(componentElement.getAttributeValue("name"))) {
-            for (final Element fileElement : componentElement.getChildren("file")) {
-              if ("PROJECT".equals(fileElement.getAttributeValue("url")) &&
-                  "{Dart SDK}".equals(fileElement.getAttributeValue("libraries"))) {
-                return true;
-              }
-            }
-          }
-        }
-      }
-      catch (Throwable ignore) {/* unlucky */}
-    }
-
-    return false;
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
