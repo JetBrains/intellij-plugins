@@ -49,7 +49,7 @@
                      groupName="JsTestDriver"
                      displayName="Add JsTestDriver assertion framework support"
                      shortName="JstdAssertionFrameworkSupport"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkSupportInspection"
         />
@@ -57,7 +57,7 @@
                      groupName="JsTestDriver"
                      displayName="Add QUnit JsTestDriver adapter"
                      shortName="QUnitAdapterSupport"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.qunit.QUnitAdapterSupportInspection"
         />
@@ -65,7 +65,7 @@
                      groupName="JsTestDriver"
                      displayName="Add Jasmine JsTestDriver adapter"
                      shortName="JasmineAdapterSupport"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportInspection"
         />
@@ -73,7 +73,7 @@
                      groupName="JsTestDriver"
                      displayName="Reports about JsTestDriver TestCase without tests"
                      shortName="JsTestDriverTestCaseWithoutTests"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JsTestDriverTestCaseWithoutTestsInspection"
         />
@@ -95,7 +95,7 @@
 
   <change-notes>
     <![CDATA[
-Plugin version: ${version}, <a href="https://confluence.jetbrains.com/display/WI/Patched+JsTestDriver-1.3.5">patched JsTestDriver-1.3.5</a>
+Bundled with <a href="https://confluence.jetbrains.com/display/WI/Patched+JsTestDriver-1.3.5">patched JsTestDriver-1.3.5</a>
   ]]>
   </change-notes>
 </idea-plugin>

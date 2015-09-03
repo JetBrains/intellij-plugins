@@ -19,6 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractMethodBasedInspection extends JSInspection {
 
+  @Override
+  public boolean isEnabledByDefault() {
+    return false;
+  }
+
   protected abstract boolean isSuitableElement(@NotNull JSFile jsFile, @NotNull JSCallExpression callExpression);
 
   protected abstract IntentionAction getFix();
