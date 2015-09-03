@@ -62,7 +62,7 @@ public abstract class ServerRefactoring {
     this.length = length;
   }
 
-  @NotNull
+  @Nullable
   public RefactoringStatus checkFinalConditions() {
     ProgressManager.getInstance().run(new Task.Modal(null, "Checking final conditions", true) {
       @Override
@@ -73,13 +73,16 @@ public abstract class ServerRefactoring {
     if (serverErrorStatus != null) {
       return serverErrorStatus;
     }
+    if (finalStatus == null) {
+      return null;
+    }
     RefactoringStatus result = new RefactoringStatus();
     result.merge(optionsStatus);
     result.merge(finalStatus);
     return result;
   }
 
-  @NotNull
+  @Nullable
   public RefactoringStatus checkInitialConditions() {
     ProgressManager.getInstance().run(new Task.Modal(null, "Checking initial conditions", true) {
       @Override
@@ -90,10 +93,7 @@ public abstract class ServerRefactoring {
     if (serverErrorStatus != null) {
       return serverErrorStatus;
     }
-    if (initialStatus != null) {
-      return  initialStatus;
-    }
-    return new RefactoringStatus();
+    return initialStatus;
   }
 
   @Nullable

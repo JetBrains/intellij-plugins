@@ -100,6 +100,9 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
     // Validate initial status.
     {
       final RefactoringStatus initialStatus = refactoring.checkInitialConditions();
+      if (initialStatus == null) {
+        return;
+      }
       if (initialStatus.hasError()) {
         if (editor != null) {
           final String message = initialStatus.getMessage();

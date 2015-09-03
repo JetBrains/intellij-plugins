@@ -1363,10 +1363,12 @@ public class DartAnalysisServerService {
   public static class PluginNavigationTarget {
     private final String file;
     private int offset;
+    private final String kind;
 
     private PluginNavigationTarget(NavigationTarget target) {
       file = FileUtil.toSystemIndependentName(target.getFile());
       offset = target.getOffset();
+      kind = target.getKind();
     }
 
     public String getFile() {
@@ -1375,6 +1377,10 @@ public class DartAnalysisServerService {
 
     public int getOffset() {
       return offset;
+    }
+
+    public String getKind() {
+      return kind;
     }
   }
 
