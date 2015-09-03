@@ -7,21 +7,23 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbModePermission;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ModuleScopeSelectorComponent;
-import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,9 +32,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Sergey Simonchik
- */
 public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
   private static final Logger LOG = Logger.getInstance(ChooseScopeAndCreateLibraryDialog.class);
@@ -149,13 +148,19 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    ErrorMessage errorMessage = ApplicationManager.getApplication().runWriteAction(new Computable<ErrorMessage>() {
+    final Ref<ErrorMessage> errorMessageRef = Ref.create();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
-      @Nullable
-      public ErrorMessage compute() {
-        return createLibraryAndAssociate();
+      public void run() {
+        DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, new Runnable() {
+          @Override
+          public void run() {
+            errorMessageRef.set(createLibraryAndAssociate());
+          }
+        });
       }
     });
+    ErrorMessage errorMessage = errorMessageRef.get();
     if (errorMessage != null) {
       Messages.showErrorDialog(errorMessage.getDescription(), "Adding " + myLibraryHelper.getJsLibraryName());
       LOG.warn(errorMessage.getDescription(), errorMessage.getThrowable());
