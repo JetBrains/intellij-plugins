@@ -209,7 +209,7 @@ public class EduPanel extends JPanel {
 
         //Set label UI
         lessonNextButton = new JButton("Next");
-        lessonNextButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+//        lessonNextButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNextButton.setVisible(false);
         lessonNextButton.setBackground(background);
 
@@ -218,7 +218,6 @@ public class EduPanel extends JPanel {
 //        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
         lessonPanel.add(lessonMessagePane);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
-        lessonPanel.add(lessonNextButton);
     }
 
 
@@ -313,8 +312,21 @@ public class EduPanel extends JPanel {
         lessonNameLabel.setIcon(checkmarkIcon);
         lessonNameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
         lessonNameLabel.setForeground(lessonPassedColor);
-        lessonNextButton.setVisible(true);
+        showNextButton();
         this.repaint();
+    }
+
+    private void showNextButton() {
+        lessonMessagePane.setSelectionStart(lessonMessagePane.getDocument().getLength());
+        lessonMessagePane.setSelectionEnd(lessonMessagePane.getDocument().getLength());
+        try {
+            lessonMessagePane.getDocument().insertString(lessonMessagePane.getDocument().getLength(), "\n", lessonMessagePane.getDefaultAttributeSet());
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        lessonMessagePane.insertComponent(lessonNextButton);
+        lessonNextButton.setVisible(true);
+        lessonMessagePane.repaint();
     }
 
 
