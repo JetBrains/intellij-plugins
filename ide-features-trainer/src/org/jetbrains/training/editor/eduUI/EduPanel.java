@@ -1,5 +1,6 @@
 package org.jetbrains.training.editor.eduUI;
 
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.training.lesson.BadCourseException;
 import org.jetbrains.training.lesson.BadLessonException;
@@ -302,12 +303,8 @@ public class EduPanel extends JPanel {
     }
 
     public void setLessonPassed(){
-        Image image;
-        if(!UIUtil.isUnderDarcula())
-                image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGreen.png");
-        else
-                image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGreenDarcula.png");
-        ImageIcon checkmarkIcon = new ImageIcon(image);
+
+        Icon checkmarkIcon = IconLoader.getIcon(EduIcons.CHECKMARK_GREEN);
 
         lessonNameLabel.setIcon(checkmarkIcon);
         lessonNameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
@@ -344,18 +341,8 @@ public class EduPanel extends JPanel {
 
 
     public void setAllLessons(final Lesson lesson){
-        Image image;
-        Image imageSelected;
-        if(!UIUtil.isUnderDarcula()) {
-            image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkBlue.png");  //this generates an image file
-            imageSelected = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGray.png");  //this generates an image file
-        } else {
-            image = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkBlueDarcula.png");  //this generates an image fileImage image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");
-            imageSelected = MyClassLoader.getInstance().getImageResourceAsStream("checkmarkGray.png");  //this generates an image fileImage image = MyClassLoader.getInstance().getImageResourceAsStream("checkmark.png");
-        }
-        ImageIcon checkmarkIcon = new ImageIcon(image);
-        ImageIcon checkmarkIconSelected = new ImageIcon(imageSelected);
-
+        Icon checkmarkIcon = IconLoader.getIcon(EduIcons.CHECKMARK_BLUE);
+        Icon checkmarkIconSelected = IconLoader.getIcon(EduIcons.CHECKMARK_GRAY);
 
         if(lesson == null) return;
         if(lesson.getCourse() == null) return;
