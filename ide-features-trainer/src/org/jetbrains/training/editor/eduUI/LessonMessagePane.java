@@ -140,4 +140,8 @@ public class LessonMessagePane extends JTextPane {
         setText("");
         lessonMessages.clear();
     }
+
+    public AttributeSet getDefaultAttributeSet() {
+        return REGULAR;
+    }
 }
