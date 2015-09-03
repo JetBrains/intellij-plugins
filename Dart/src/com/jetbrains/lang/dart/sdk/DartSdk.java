@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Key;
@@ -14,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartProjectComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,11 +60,11 @@ public class DartSdk {
         public Result<DartSdk> compute() {
           final DartSdk sdk = getGlobalDartSdk();
           if (sdk == null) {
-            return new Result<DartSdk>(null, ProjectRootManager.getInstance(project));
+            return new Result<DartSdk>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
           }
 
           List<Object> dependencies = new ArrayList<Object>(3);
-          dependencies.add(ProjectRootManager.getInstance(project));
+          dependencies.add(DartProjectComponent.getProjectRootsModificationTracker(project));
           ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
           ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
 
