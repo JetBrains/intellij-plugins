@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.sdk;
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
+import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
@@ -20,21 +21,17 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
   }
 
   @Nullable
-  public Icon getIcon() {
+  @Override
+  public Icon getIcon(@Nullable LibraryProperties properties) {
     return DartIcons.Dart_16;
   }
 
   @Nullable
   public DummyLibraryProperties detect(@NotNull final List<VirtualFile> classesRoots) {
-    for (VirtualFile root : classesRoots) {
-      if (isDartSdkLibRoot(root)) {
-        return DummyLibraryProperties.INSTANCE;
-      }
-    }
-    return null;
+    return classesRoots.size() == 1 && isDartSdkLibRoot(classesRoots.get(0)) ? DummyLibraryProperties.INSTANCE : null;
   }
 
-  public static boolean isDartSdkLibRoot(final VirtualFile root) {
+  public static boolean isDartSdkLibRoot(@NotNull final VirtualFile root) {
     return root.isInLocalFileSystem() &&
            root.isDirectory() &&
            root.getName().equals("lib") &&
