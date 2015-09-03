@@ -7,14 +7,15 @@ import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.WebModuleTypeBase;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
@@ -29,6 +30,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PairConsumer;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XSourcePosition;
@@ -38,6 +40,7 @@ import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashSet;
@@ -48,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
@@ -70,6 +74,9 @@ public class DartProjectComponent extends AbstractProjectComponent {
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
+        ensureCorrectDartSdkLibName();
+        updateDependenciesOnDartSdkLib();
+
         removeJSBreakpointsInDartFiles(myProject);
 
         final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
@@ -101,6 +108,149 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       }
     });
+  }
+
+  private static void ensureCorrectDartSdkLibName() {
+    // Make sure "Dart SDK" global lib has correct roots (if possible); delete global libs like "Dart SDK (2)".
+
+    Library correctlyNamedSdkLib = null;
+    boolean mainDartSdkLibIsCorrect = false;
+    Library incorrectSdkLibWithCorrectRoots = null;
+    final List<Library> libsToDelete = new SmartList<Library>();
+
+    for (final Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
+      final String libraryName = library.getName();
+      if (libraryName != null && isDartSdkLibName(libraryName)) {
+        if (libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+          correctlyNamedSdkLib = library;
+        }
+        else {
+          libsToDelete.add(library);
+        }
+
+        if (mainDartSdkLibIsCorrect) {
+          continue;
+        }
+
+        final VirtualFile[] roots = library.getFiles(OrderRootType.CLASSES);
+        if (roots.length == 1 && DartSdkLibraryPresentationProvider.isDartSdkLibRoot(roots[0])) {
+          if (libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+            mainDartSdkLibIsCorrect = true;
+          }
+          else {
+            incorrectSdkLibWithCorrectRoots = library;
+          }
+        }
+      }
+    }
+
+    if (!mainDartSdkLibIsCorrect && incorrectSdkLibWithCorrectRoots != null || !libsToDelete.isEmpty()) {
+      final Library finalCorrectlyNamedSdkLib = correctlyNamedSdkLib;
+      final boolean finalCorrectSdkLibExists = mainDartSdkLibIsCorrect;
+      final Library finalIncorrectSdkLibWithCorrectRoots = incorrectSdkLibWithCorrectRoots;
+
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          if (!finalCorrectSdkLibExists && finalIncorrectSdkLibWithCorrectRoots != null) {
+            if (finalCorrectlyNamedSdkLib != null) {
+              ApplicationLibraryTable.getApplicationTable().removeLibrary(finalCorrectlyNamedSdkLib);
+            }
+
+            libsToDelete.remove(finalIncorrectSdkLibWithCorrectRoots);
+            final Library.ModifiableModel libModel = finalIncorrectSdkLibWithCorrectRoots.getModifiableModel();
+            libModel.setName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+            libModel.commit();
+          }
+
+          if (!libsToDelete.isEmpty()) {
+            final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+            for (Library library : libsToDelete) {
+              model.removeLibrary(library);
+            }
+            model.commit();
+          }
+        }
+      });
+    }
+  }
+
+  private static boolean isDartSdkLibName(@NotNull final String libraryName) {
+    return libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME) ||
+           (libraryName.startsWith(DartSdk.DART_SDK_GLOBAL_LIB_NAME + " (") &&
+            libraryName.length() == (DartSdk.DART_SDK_GLOBAL_LIB_NAME + " (2)").length() &&
+            libraryName.endsWith(")"));
+  }
+
+  private void updateDependenciesOnDartSdkLib() {
+    // for performance reasons avoid taking write action and modifiable models if not needed
+    if (!haveIncorrectModuleDependencies()) return;
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final Collection<ModifiableRootModel> modelsToCommit = new SmartList<ModifiableRootModel>();
+
+        for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
+          boolean hasCorrectDependency = false;
+          boolean needsCorrectDependency = false;
+          final List<OrderEntry> orderEntriesToRemove = new SmartList<OrderEntry>();
+
+          final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+
+          for (final OrderEntry orderEntry : model.getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry &&
+                LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
+              final String libraryName = ((LibraryOrderEntry)orderEntry).getLibraryName();
+              if (libraryName == null) continue;
+
+              if (libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+                hasCorrectDependency = true;
+              }
+              else if (isDartSdkLibName(libraryName)) {
+                needsCorrectDependency = true;
+                orderEntriesToRemove.add(orderEntry);
+              }
+            }
+          }
+
+          if (needsCorrectDependency && !hasCorrectDependency || !orderEntriesToRemove.isEmpty()) {
+            if (needsCorrectDependency && !hasCorrectDependency) {
+              model.addInvalidLibrary(DartSdk.DART_SDK_GLOBAL_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
+            }
+
+            for (OrderEntry entry : orderEntriesToRemove) {
+              model.removeOrderEntry(entry);
+            }
+
+            modelsToCommit.add(model);
+          }
+          else {
+            model.dispose();
+          }
+        }
+
+        if (!modelsToCommit.isEmpty()) {
+          ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(myProject).getModifiableModel());
+        }
+      }
+    });
+  }
+
+  private boolean haveIncorrectModuleDependencies() {
+    for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
+      for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+        if (orderEntry instanceof LibraryOrderEntry &&
+            LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
+          final String libraryName = ((LibraryOrderEntry)orderEntry).getLibraryName();
+          if (libraryName != null && !libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME) && isDartSdkLibName(libraryName)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   private static void removeJSBreakpointsInDartFiles(final Project project) {

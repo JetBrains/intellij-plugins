@@ -187,7 +187,7 @@ public class DartSdkGlobalLibUtil {
 
   private static boolean isOrderEntryPointingToThisGlobalLib(final @NotNull OrderEntry orderEntry, final @NotNull String globalLibName) {
     return orderEntry instanceof LibraryOrderEntry &&
-           ((LibraryOrderEntry)orderEntry).getLibraryLevel() == LibraryTablesRegistrar.APPLICATION_LEVEL &&
+           LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
            globalLibName.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
   }
 

@@ -34,7 +34,7 @@ public class DartSdkLibraryPresentationProvider extends LibraryPresentationProvi
     return null;
   }
 
-  static boolean isDartSdkLibRoot(final VirtualFile root) {
+  public static boolean isDartSdkLibRoot(final VirtualFile root) {
     return root.isInLocalFileSystem() &&
            root.isDirectory() &&
            root.getName().equals("lib") &&
