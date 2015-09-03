@@ -95,8 +95,7 @@ public class DartServerRootsHandler {
           newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
         }
 
-        for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkGlobalLibAttached(project, sdk.getGlobalLibName())) {
-
+        for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(project)) {
           newPackageRoots.putAll(DartConfigurable.getContentRootPathToCustomPackageRootMap(module));
 
           final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);

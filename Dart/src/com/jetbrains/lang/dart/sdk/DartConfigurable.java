@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.sdk;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.SmartHashMap;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
@@ -382,8 +383,7 @@ public class DartConfigurable implements SearchableConfigurable {
     myModulesWithDartSdkLibAttachedInitial.clear();
 
     if (mySdkInitial != null) {
-      myModulesWithDartSdkLibAttachedInitial
-        .addAll(DartSdkGlobalLibUtil.getModulesWithDartSdkGlobalLibAttached(myProject, mySdkInitial.getGlobalLibName()));
+      myModulesWithDartSdkLibAttachedInitial.addAll(DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(myProject));
     }
 
     myDartSupportEnabledInitial = !myModulesWithDartSdkLibAttachedInitial.isEmpty();
@@ -438,32 +438,21 @@ public class DartConfigurable implements SearchableConfigurable {
 
   @Override
   public void apply() throws ConfigurationException {
-    // similar to DartProjectGenerator.setupSdkAndDartium()
+    // similar to DartModuleBuilder.setupSdkAndDartium()
     final Runnable runnable = new Runnable() {
       @Override
       public void run() {
         if (myEnableDartSupportCheckBox.isSelected()) {
           final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
-          final String initialSdkHomePath = mySdkInitial == null ? "" : mySdkInitial.getHomePath();
 
           if (DartSdkUtil.isDartSdkHome(sdkHomePath)) {
-            final String dartSdkGlobalLibName;
-
-            if (mySdkInitial == null) {
-              dartSdkGlobalLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(myProject, sdkHomePath);
-            }
-            else {
-              dartSdkGlobalLibName = mySdkInitial.getGlobalLibName();
-
-              if (!sdkHomePath.equals(initialSdkHomePath)) {
-                DartSdkGlobalLibUtil.updateDartSdkGlobalLib(myProject, dartSdkGlobalLibName, sdkHomePath);
-              }
-            }
+            DartSdkGlobalLibUtil.ensureDartSdkConfigured(sdkHomePath);
+            DaemonCodeAnalyzer.getInstance(myProject).restart();
 
             final Module[] modules = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
                                      ? myModulesCheckboxTreeTable.getCheckedNodes(Module.class)
                                      : ModuleManager.getInstance(myProject).getModules();
-            DartSdkGlobalLibUtil.updateDependencyOnDartSdkGlobalLib(myProject, modules, dartSdkGlobalLibName);
+            DartSdkGlobalLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
 
             for (Module module : ModuleManager.getInstance(myProject).getModules()) {
               if (ArrayUtil.contains(module, modules)) {
@@ -489,7 +478,7 @@ public class DartConfigurable implements SearchableConfigurable {
         }
         else {
           if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
-            DartSdkGlobalLibUtil.detachDartSdkGlobalLib(myModulesWithDartSdkLibAttachedInitial, mySdkInitial.getGlobalLibName());
+            DartSdkGlobalLibUtil.disableDartSdk(myModulesWithDartSdkLibAttachedInitial);
           }
 
           for (final Module module : ModuleManager.getInstance(myProject).getModules()) {

@@ -54,7 +54,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
     if (fileIndex.isInLibraryClasses(file)) {
       if (sdk != null && file.getPath().startsWith(sdk.getHomePath() + "/")) {
-        return getDartSdkResolveScope(project, sdk);
+        return getDartSdkResolveScope(project);
       }
 
       return getLibraryAndSdkScope(project, file, sdk);
@@ -83,11 +83,11 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
   }
 
   @Nullable
-  private static GlobalSearchScope getDartSdkResolveScope(@NotNull final Project project, @NotNull final DartSdk sdk) {
+  private static GlobalSearchScope getDartSdkResolveScope(@NotNull final Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<GlobalSearchScope>() {
       @Override
       public Result<GlobalSearchScope> compute() {
-        final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(sdk.getGlobalLibName());
+        final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
         final LibraryScope scope = library == null ? null : new LibraryScope(project, library);
         return new Result<GlobalSearchScope>(scope, ProjectRootManager.getInstance(project));
       }
@@ -100,7 +100,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
     return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<GlobalSearchScope>() {
       @Override
       public Result<GlobalSearchScope> compute() {
-        final GlobalSearchScope sdkScope = sdk == null ? null : getDartSdkResolveScope(project, sdk);
+        final GlobalSearchScope sdkScope = sdk == null ? null : getDartSdkResolveScope(project);
 
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
         final Set<VirtualFile> roots = new THashSet<VirtualFile>();

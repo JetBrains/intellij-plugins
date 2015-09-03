@@ -209,11 +209,24 @@ public class DartProjectComponent extends AbstractProjectComponent {
           }
         }
 
-        if (!modelsToCommit.isEmpty()) {
-          ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(myProject).getModifiableModel());
-        }
+        commitModifiableModels(myProject, modelsToCommit);
       }
     });
+  }
+
+  public static void commitModifiableModels(@NotNull final Project project, @NotNull final Collection<ModifiableRootModel> modelsToCommit) {
+    if (!modelsToCommit.isEmpty()) {
+      try {
+        ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(project).getModifiableModel());
+      }
+      finally {
+        for (ModifiableRootModel model : modelsToCommit) {
+          if (!model.isDisposed()) {
+            model.dispose();
+          }
+        }
+      }
+    }
   }
 
   private boolean haveIncorrectModuleDependencies() {

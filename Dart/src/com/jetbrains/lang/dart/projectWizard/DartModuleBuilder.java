@@ -18,8 +18,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
@@ -126,28 +126,13 @@ public class DartModuleBuilder extends ModuleBuilder {
       final LibraryTable.ModifiableModel libraryTableModifiableModel =
         ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel();
 
-      final DartSdk sdk = DartSdk.findDartSdkAmongGlobalLibs(libraryTableModifiableModel.getLibraries());
-      final String dartSdkLibName;
-
-      if (sdk == null) {
-        dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(libraryTableModifiableModel, wizardData.dartSdkPath);
-      }
-      else {
-        dartSdkLibName = sdk.getGlobalLibName();
-
-        if (!wizardData.dartSdkPath.equals(sdk.getHomePath())) {
-          DartSdkGlobalLibUtil.updateDartSdkGlobalLib(libraryTableModifiableModel, dartSdkLibName, wizardData.dartSdkPath);
-        }
-      }
-
-      final Library dartSdkGlobalLib = libraryTableModifiableModel.getLibraryByName(dartSdkLibName);
-      assert dartSdkGlobalLib != null;
+      DartSdkGlobalLibUtil.ensureDartSdkConfigured(libraryTableModifiableModel, wizardData.dartSdkPath);
 
       if (libraryTableModifiableModel.isChanged()) {
         libraryTableModifiableModel.commit();
       }
 
-      modifiableRootModel.addLibraryEntry(dartSdkGlobalLib);
+      modifiableRootModel.addInvalidLibrary(DartSdk.DART_SDK_GLOBAL_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
     }
 
     DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(wizardData.dartiumPath), wizardData.dartiumSettings);

@@ -375,7 +375,7 @@ public class DartAnalysisServerService {
     final Condition<Module> moduleFilter = new Condition<Module>() {
       @Override
       public boolean value(final Module module) {
-        return DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName()) &&
+        return DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
                !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
                                                  falseProcessor, module.getModuleContentScope(), project, null);
       }
