@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.commands.Command;
 import org.jetbrains.training.commands.CommandFactory;
 import org.jetbrains.training.commands.ExecutionList;
-import org.jetbrains.training.commandsEx.CommandEx;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.editor.EduEditor;
 

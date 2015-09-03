@@ -1,9 +1,5 @@
 package org.jetbrains.training.commands;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.editor.actionSystem.EditorAction;
-
 /**
  * Created by karashevich on 30/01/15.
  */
