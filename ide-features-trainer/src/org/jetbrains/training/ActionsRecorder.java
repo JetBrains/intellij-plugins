@@ -30,6 +30,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.check.Check;
+import org.jetbrains.training.editor.EduEditor;
 
 import java.util.*;
 
@@ -53,14 +54,14 @@ public class ActionsRecorder implements Disposable {
     @Nullable
     Check check = null;
 
-    public ActionsRecorder(Project project, Document document, String target) {
+    public ActionsRecorder(Project project, Document document, String target, EduEditor eduEditor) {
         this.project = project;
         this.document = document;
         this.target = target;
         this.triggerActivated = false;
         this.doWhenDone = null;
 
-        Disposer.register(project, this);
+        Disposer.register(eduEditor, this);
     }
 
     @Override

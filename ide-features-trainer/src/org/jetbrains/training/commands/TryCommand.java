@@ -52,7 +52,7 @@ public class TryCommand extends Command {
         //Show button "again"
 //        updateButton(element, elements, lesson, editor, e, document, myTarget, infoPanel, mouseListenerHolder);
 
-        final ActionsRecorder recorder = new ActionsRecorder(executionList.getEditor().getProject(), executionList.getEditor().getDocument(), executionList.getTarget());
+        final ActionsRecorder recorder = new ActionsRecorder(executionList.getEditor().getProject(), executionList.getEditor().getDocument(), executionList.getTarget(), executionList.getEduEditor());
         executionList.getEduEditor().registerActionsRecorder(recorder);
 
         if (element.getAttribute("check") != null) {

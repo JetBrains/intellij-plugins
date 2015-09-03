@@ -52,6 +52,8 @@ public class EduEditor implements TextEditor {
     final private EduPanel eduPanel;
     private HashSet<ActionsRecorder> actionsRecorders;
     private VirtualFile vf;
+
+    private boolean isDisposed = false;
     Course myCourse;
 
     private MouseListener[] myMouseListeners;
@@ -184,6 +186,8 @@ public class EduEditor implements TextEditor {
 
     @Override
     public void dispose() {
+        isDisposed = true;
+        if (myCourse != null) CourseManager.getInstance().unregisterCourse(myCourse);
         Disposer.dispose(myDefaultEditor);
     }
 
@@ -250,6 +254,10 @@ public class EduEditor implements TextEditor {
         if (myDefaultEditor instanceof TextEditor) {
             ((TextEditor)myDefaultEditor).navigateTo(navigatable);
         }
+    }
+
+    public boolean isDisposed() {
+        return isDisposed;
     }
 
     public static void deleteGuardedBlocks(@NotNull final Document document) {
@@ -356,6 +364,7 @@ public class EduEditor implements TextEditor {
     }
 
     public void initLesson(Lesson lesson) {
+        myCourse = lesson.getCourse();
         eduPanel.setLessonName(lesson.getId());
         hideButtons();
         initAllLessons(lesson);

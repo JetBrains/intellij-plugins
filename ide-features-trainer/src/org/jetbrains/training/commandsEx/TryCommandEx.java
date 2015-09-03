@@ -77,7 +77,7 @@ public class TryCommandEx extends CommandEx {
         //Show button "again"
         updateButton(element, elements, lesson, editor, e, document, myTarget, infoPanel, mouseListenerHolder);
 
-        final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, myTarget);
+        final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, myTarget, null);
         //TODO: Make recorder disposable
 
         if (element.getAttribute("trigger") != null) {

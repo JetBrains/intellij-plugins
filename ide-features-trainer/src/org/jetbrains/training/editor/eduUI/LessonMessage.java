@@ -46,7 +46,7 @@ public class LessonMessage {
     }
 
     public void appendWinCheck() {
-        final Message message = new Message(" ", Message.MessageType.CHECK);
+        final Message message = new Message(" \uF0FC", Message.MessageType.CHECK);
         myMessages.add(message);
         this.end += 2;
     }
