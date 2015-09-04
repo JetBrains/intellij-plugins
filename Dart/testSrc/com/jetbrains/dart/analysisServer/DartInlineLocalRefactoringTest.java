@@ -16,7 +16,6 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -43,22 +42,21 @@ public class DartInlineLocalRefactoringTest extends CodeInsightFixtureTestCase {
 
   public void testTest() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", "vvv =");
+    doTest(testName + ".dart");
   }
 
   @NotNull
-  private ServerInlineLocalRefactoring createInlineLocalRefactoring(String filePath, String atString) {
+  private ServerInlineLocalRefactoring createInlineLocalRefactoring(String filePath) {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     final PsiFile psiFile = myFixture.configureByFile(filePath);
     myFixture.doHighlighting(); // make sure server is warmed up
     // find the Element to rename
-    final Document document = myFixture.getDocument(psiFile);
-    final int offset = document.getText().indexOf(atString);
+    final int offset = getEditor().getCaretModel().getOffset();
     return new ServerInlineLocalRefactoring(getSystemPath(psiFile), offset, 0);
   }
 
-  private void doTest(String filePath, String atString) {
-    final ServerInlineLocalRefactoring refactoring = createInlineLocalRefactoring(filePath, atString);
+  private void doTest(String filePath) {
+    final ServerInlineLocalRefactoring refactoring = createInlineLocalRefactoring(filePath);
     // check initial conditions
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);

@@ -1,5 +1,5 @@
 main() {
-  var vvv = 1 + 2;
+  var <caret>vvv = 1 + 2;
   print(vvv);
   print(vvv * 3);
 }

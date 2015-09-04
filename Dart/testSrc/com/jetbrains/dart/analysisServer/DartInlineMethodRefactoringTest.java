@@ -16,7 +16,6 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -43,37 +42,36 @@ public class DartInlineMethodRefactoringTest extends CodeInsightFixtureTestCase 
 
   public void testFunctionSingle() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", "foo(10, ", false);
+    doTest(testName + ".dart", false);
   }
 
   public void testFunctionAll() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", "foo(10, ", true);
+    doTest(testName + ".dart", true);
   }
 
   public void testMethod() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", "foo(10, ", true);
+    doTest(testName + ".dart", true);
   }
 
   public void testSetter() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", "foo = 1", true);
+    doTest(testName + ".dart", true);
   }
 
   @NotNull
-  private ServerInlineMethodRefactoring createRefactoring(String filePath, String atString) {
+  private ServerInlineMethodRefactoring createRefactoring(String filePath) {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     final PsiFile psiFile = myFixture.configureByFile(filePath);
     myFixture.doHighlighting(); // make sure server is warmed up
     // find the Element to rename
-    final Document document = myFixture.getDocument(psiFile);
-    final int offset = document.getText().indexOf(atString);
+    final int offset = getEditor().getCaretModel().getOffset();
     return new ServerInlineMethodRefactoring(getSystemPath(psiFile), offset, 0);
   }
 
-  private void doTest(String filePath, String atString, boolean all) {
-    final ServerInlineMethodRefactoring refactoring = createRefactoring(filePath, atString);
+  private void doTest(String filePath, boolean all) {
+    final ServerInlineMethodRefactoring refactoring = createRefactoring(filePath);
     // check initial conditions
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);

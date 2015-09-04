@@ -3,6 +3,6 @@ main() {
   var b = foo(10, 20) * 5;
 }
 
-foo(int a, int b) {
+foo<caret>(int a, int b) {
   return a + b;
 }
