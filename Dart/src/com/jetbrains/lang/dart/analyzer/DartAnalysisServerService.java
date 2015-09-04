@@ -849,7 +849,7 @@ public class DartAnalysisServerService {
     }
 
     final CountDownLatch latch = new CountDownLatch(1);
-    server.search_getTypeHierarchy(filePath, offset, new GetTypeHierarchyConsumer() {
+    server.search_getTypeHierarchy(filePath, offset, superOnly, new GetTypeHierarchyConsumer() {
       @Override
       public void computedHierarchy(List<TypeHierarchyItem> hierarchyItems) {
         results.addAll(hierarchyItems);
@@ -1131,7 +1131,7 @@ public class DartAnalysisServerService {
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
 
-        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, false, true, false));
+        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
 
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
