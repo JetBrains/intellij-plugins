@@ -66,8 +66,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
 
   protected void runOverEditor(@NotNull final Project project,
                                @NotNull final Editor editor,
-                               @NotNull final PsiFile psiFile,
-                               @NotNull final DartSdk sdk) {
+                               @NotNull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 

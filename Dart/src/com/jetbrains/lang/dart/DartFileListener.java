@@ -129,7 +129,7 @@ public class DartFileListener extends VirtualFileAdapter {
             final Condition<Module> moduleFilter = new Condition<Module>() {
               @Override
               public boolean value(final Module module) {
-                return DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName());
+                return DartSdkGlobalLibUtil.isDartSdkEnabled(module);
               }
             };
 
@@ -172,7 +172,7 @@ public class DartFileListener extends VirtualFileAdapter {
       if (dotPackagesFile != null &&
           !dotPackagesFile.isDirectory() &&
           module != null &&
-          DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
+          DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
         final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
         if (packagesMap != null) {
           for (Map.Entry<String, String> entry : packagesMap.entrySet()) {

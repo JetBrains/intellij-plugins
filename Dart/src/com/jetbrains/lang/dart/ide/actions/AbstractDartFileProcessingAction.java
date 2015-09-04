@@ -71,13 +71,13 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
     if (editor != null) {
       final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-      if (!isApplicableFile(psiFile, sdk)) return;
-      runOverEditor(project, editor, psiFile, sdk);
+      if (!isApplicableFile(psiFile)) return;
+      runOverEditor(project, editor, psiFile);
     }
     else {
       final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
       if (filesAndDirs != null) {
-        final List<VirtualFile> files = getApplicableVirtualFiles(project, sdk, filesAndDirs);
+        final List<VirtualFile> files = getApplicableVirtualFiles(project, filesAndDirs);
         runOverFiles(project, files);
       }
     }
@@ -91,8 +91,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
   protected abstract void runOverEditor(@NotNull final Project project,
                                         @NotNull final Editor editor,
-                                        @NotNull final PsiFile psiFile,
-                                        @NotNull final DartSdk sdk);
+                                        @NotNull final PsiFile psiFile);
 
   protected abstract void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles);
 
@@ -116,7 +115,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
       // visible for any Dart file, but enabled for applicable only
       presentation.setVisible(psiFile != null && psiFile.getFileType() == DartFileType.INSTANCE);
-      presentation.setEnabled(isApplicableFile(psiFile, sdk));
+      presentation.setEnabled(isApplicableFile(psiFile));
       presentation.setText(getActionTextForEditor());
       return;
     }
@@ -127,7 +126,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       return;
     }
 
-    presentation.setEnabledAndVisible(mayHaveApplicableDartFiles(project, sdk, filesAndDirs));
+    presentation.setEnabledAndVisible(mayHaveApplicableDartFiles(project, filesAndDirs));
     presentation.setText(getActionTextForFiles());
   }
 
@@ -151,7 +150,6 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
   @NotNull
   private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project,
-                                                             @NotNull final DartSdk dartSdk,
                                                              @NotNull final VirtualFile[] filesAndDirs) {
     final List<VirtualFile> result = new SmartList<VirtualFile>();
 
@@ -166,7 +164,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
           dirScope = dirScope.union(GlobalSearchScopesCore.directoryScope(project, fileOrDir, true));
         }
       }
-      else if (isApplicableFile(project, dartSdk, fileOrDir)) {
+      else if (isApplicableFile(project, fileOrDir)) {
         result.add(fileOrDir);
       }
     }
@@ -174,7 +172,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     if (dirScope != null) {
       for (VirtualFile file : FileTypeIndex
         .getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project).intersectWith(dirScope))) {
-        if (isApplicableFile(project, dartSdk, file)) {
+        if (isApplicableFile(project, file)) {
           result.add(file);
         }
       }
@@ -183,26 +181,26 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     return result;
   }
 
-  private static boolean isApplicableFile(@NotNull final Project project, @NotNull final DartSdk dartSdk, @NotNull final VirtualFile file) {
+  private static boolean isApplicableFile(@NotNull final Project project, @NotNull final VirtualFile file) {
     if (file.getFileType() != DartFileType.INSTANCE) return false;
 
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null) return false;
 
-    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, dartSdk.getGlobalLibName())) return false;
+    if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return false;
 
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(project, file)) return false;
 
     return true;
   }
 
-  private static boolean isApplicableFile(@Nullable final PsiFile psiFile, @NotNull final DartSdk sdk) {
+  private static boolean isApplicableFile(@Nullable final PsiFile psiFile) {
     if (psiFile == null || psiFile.getVirtualFile() == null || psiFile.getFileType() != DartFileType.INSTANCE) return false;
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) return false;
 
-    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return false;
+    if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return false;
 
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
 
@@ -210,10 +208,9 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   private static boolean mayHaveApplicableDartFiles(@NotNull final Project project,
-                                                    @NotNull final DartSdk dartSdk,
                                                     @NotNull final VirtualFile[] files) {
     for (VirtualFile fileOrDir : files) {
-      if (!fileOrDir.isDirectory() && isApplicableFile(project, dartSdk, fileOrDir)) {
+      if (!fileOrDir.isDirectory() && isApplicableFile(project, fileOrDir)) {
         return true;
       }
     }

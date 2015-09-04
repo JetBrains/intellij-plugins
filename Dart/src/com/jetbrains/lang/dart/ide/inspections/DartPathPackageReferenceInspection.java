@@ -70,7 +70,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
     final DartSdk sdk = DartSdk.getDartSdk(holder.getProject());
-    if (module == null || sdk == null || !DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
+    if (module == null || sdk == null || !DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
       return super.buildVisitor(holder, isOnTheFly);
     }
 

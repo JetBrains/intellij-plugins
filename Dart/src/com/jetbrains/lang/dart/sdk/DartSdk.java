@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Key;
@@ -14,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartProjectComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,12 +27,10 @@ public class DartSdk {
 
   private final @NotNull String myHomePath;
   private final @NotNull String myVersion;
-  private final @NotNull String myGlobalLibName;
 
-  private DartSdk(@NotNull final String homePath, @NotNull final String version, final @NotNull String globalLibName) {
+  private DartSdk(@NotNull final String homePath, @NotNull final String version) {
     myHomePath = homePath;
     myVersion = version;
-    myGlobalLibName = globalLibName;
   }
 
   @NotNull
@@ -46,11 +44,6 @@ public class DartSdk {
   @NotNull
   public String getVersion() {
     return myVersion;
-  }
-
-  @NotNull
-  public String getGlobalLibName() {
-    return myGlobalLibName;
   }
 
   /**
@@ -67,11 +60,11 @@ public class DartSdk {
         public Result<DartSdk> compute() {
           final DartSdk sdk = getGlobalDartSdk();
           if (sdk == null) {
-            return new Result<DartSdk>(null, ProjectRootManager.getInstance(project));
+            return new Result<DartSdk>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
           }
 
           List<Object> dependencies = new ArrayList<Object>(3);
-          dependencies.add(ProjectRootManager.getInstance(project));
+          dependencies.add(DartProjectComponent.getProjectRootsModificationTracker(project));
           ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
           ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
 
@@ -90,18 +83,24 @@ public class DartSdk {
     return findDartSdkAmongGlobalLibs(ApplicationLibraryTable.getApplicationTable().getLibraries());
   }
 
+  @Nullable
   public static DartSdk findDartSdkAmongGlobalLibs(final Library[] globalLibraries) {
     for (final Library library : globalLibraries) {
-      final String libraryName = library.getName();
-      if (libraryName != null && libraryName.startsWith(DART_SDK_GLOBAL_LIB_NAME)) {
-        for (final VirtualFile root : library.getFiles(OrderRootType.CLASSES)) {
-          if (DartSdkLibraryPresentationProvider.isDartSdkLibRoot(root)) {
-            final String homePath = root.getParent().getPath();
-            final String version = StringUtil.notNullize(DartSdkUtil.getSdkVersion(homePath), UNKNOWN_VERSION);
-            return new DartSdk(homePath, version, libraryName);
-          }
-        }
+      if (DART_SDK_GLOBAL_LIB_NAME.equals(library.getName())) {
+        return getSdkByLibrary(library);
       }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  static DartSdk getSdkByLibrary(@NotNull final Library library) {
+    final VirtualFile[] roots = library.getFiles(OrderRootType.CLASSES);
+    if (roots.length == 1 && DartSdkLibraryPresentationProvider.isDartSdkLibRoot(roots[0])) {
+      final String homePath = roots[0].getParent().getPath();
+      final String version = StringUtil.notNullize(DartSdkUtil.getSdkVersion(homePath), UNKNOWN_VERSION);
+      return new DartSdk(homePath, version);
     }
 
     return null;

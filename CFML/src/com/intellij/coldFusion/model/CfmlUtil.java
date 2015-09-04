@@ -60,7 +60,7 @@ public class CfmlUtil {
     base = module == null ? null : module.getModuleFile();
     base = base == null ? null : base.getParent();
 
-    if (libtag != null && libtag.startsWith("/")) {
+    if (libtag.startsWith("/")) {
       libtag = libtag.substring("/".length());
     }
 

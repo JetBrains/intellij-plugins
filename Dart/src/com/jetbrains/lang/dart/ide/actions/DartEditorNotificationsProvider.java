@@ -54,7 +54,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName())) {
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
       final Module module = ModuleUtilCore.findModuleForFile(vFile, myProject);
-      if (module != null && sdk != null && DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
+      if (module != null && sdk != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
         return new PubActionsPanel();
       }
     }
@@ -80,12 +80,12 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       if (module == null) return null;
 
       // SDK not enabled for this module
-      if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
+      if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) {
         final String message = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
                                ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                                : DartBundle.message("dart.support.is.not.enabled.for.project");
         final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
-        panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module, sdk.getGlobalLibName()));
+        panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module));
         panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(myProject));
         return panel;
       }
@@ -123,22 +123,19 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
   private static class EnableDartSupportForModule implements Runnable {
     private final Module myModule;
-    private final String myDartSdkGlobalLibName;
 
-    public EnableDartSupportForModule(@NotNull final Module module, @NotNull final String dartSdkGlobalLibName) {
+    public EnableDartSupportForModule(@NotNull final Module module) {
       this.myModule = module;
-      this.myDartSdkGlobalLibName = dartSdkGlobalLibName;
     }
 
     @Override
     public void run() {
-      ApplicationManager.getApplication().runWriteAction(
-        new Runnable() {
-          public void run() {
-            DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(myModule, myDartSdkGlobalLibName);
-          }
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          DartSdkGlobalLibUtil.enableDartSdk(myModule);
         }
-      );
+      });
     }
   }
 

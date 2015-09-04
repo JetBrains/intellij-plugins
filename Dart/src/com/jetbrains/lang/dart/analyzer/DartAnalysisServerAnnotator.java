@@ -77,7 +77,7 @@ public class DartAnalysisServerAnnotator
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
 
-    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return false;
+    if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return false;
 
     if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return false;
 
