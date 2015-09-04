@@ -8,6 +8,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.*;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,10 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       return null;
     }
     KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
-    final RunContentDescriptor descriptor = new RunContentBuilder(executionResult, environment).showRunContent(environment.getContentToReuse());
+    final RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, environment);
+    if (consoleView == null) {
+      return descriptor;
+    }
 
     KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (!server.areBrowsersReady()) {

@@ -18,32 +18,30 @@ import com.intellij.util.CatchingConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaRunProfileState implements RunProfileState {
 
   private static final Logger LOG = Logger.getInstance(KarmaRunProfileState.class);
 
   private final Project myProject;
-  private final ExecutionEnvironment myExecutionEnvironment;
+  private final KarmaRunConfiguration myRunConfiguration;
+  private final ExecutionEnvironment myEnvironment;
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDirPath;
   private final KarmaRunSettings myRunSettings;
   private final KarmaExecutionType myExecutionType;
 
   public KarmaRunProfileState(@NotNull Project project,
-                              @NotNull ExecutionEnvironment executionEnvironment,
+                              @NotNull KarmaRunConfiguration runConfiguration,
+                              @NotNull ExecutionEnvironment environment,
                               @NotNull String nodeInterpreterPath,
-                              @NotNull String karmaPackageDirPath,
-                              @NotNull KarmaRunSettings runSettings,
-                              @NotNull Executor executor) {
+                              @NotNull String karmaPackageDirPath) {
     myProject = project;
-    myExecutionEnvironment = executionEnvironment;
+    myRunConfiguration = runConfiguration;
+    myEnvironment = environment;
     myNodeInterpreterPath = nodeInterpreterPath;
     myKarmaPackageDirPath = karmaPackageDirPath;
-    myRunSettings = runSettings;
-    myExecutionType = findExecutionType(executor);
+    myRunSettings = runConfiguration.getRunSettings();
+    myExecutionType = findExecutionType(myEnvironment.getExecutor());
   }
 
   @Override
@@ -77,7 +75,7 @@ public class KarmaRunProfileState implements RunProfileState {
         new CatchingConsumer<KarmaServer, Exception>() {
           @Override
           public void consume(KarmaServer server) {
-            RunnerAndConfigurationSettings configuration = myExecutionEnvironment.getRunnerAndConfigurationSettings();
+            RunnerAndConfigurationSettings configuration = myEnvironment.getRunnerAndConfigurationSettings();
             if (configuration != null) {
               ProgramRunnerUtil.executeConfiguration(myProject, configuration, executor);
             }
@@ -99,7 +97,7 @@ public class KarmaRunProfileState implements RunProfileState {
                                            @NotNull KarmaServer server) throws ExecutionException {
     server.getWatcher().flush();
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
-                                                              myExecutionEnvironment,
+                                                              myRunConfiguration,
                                                               executor,
                                                               server,
                                                               myNodeInterpreterPath,

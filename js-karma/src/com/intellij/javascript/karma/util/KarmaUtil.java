@@ -1,5 +1,12 @@
 package com.intellij.javascript.karma.util;
 
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.RunProfileStarter;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.RunContentBuilder;
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
@@ -130,5 +137,24 @@ public class KarmaUtil {
       }
     }
     return null;
+  }
+
+  @NotNull
+  public static RunContentDescriptor createDefaultDescriptor(@NotNull ExecutionResult executionResult,
+                                                             @NotNull ExecutionEnvironment environment) {
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
+    return contentBuilder.showRunContent(environment.getContentToReuse());
+  }
+
+  @NotNull
+  public static RunProfileStarter createDefaultRunProfileStarter(@NotNull final ExecutionResult executionResult) {
+    return new RunProfileStarter() {
+      @Nullable
+      @Override
+      public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment)
+        throws ExecutionException {
+        return createDefaultDescriptor(executionResult, environment);
+      }
+    };
   }
 }
