@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImpl;
-import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.impl.*;
@@ -169,11 +169,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   protected void dumpExtendsList(Traits it) {
     if (!it.base.isStarReference()) {
-      new JSReferenceListStubImpl(
-        new String[] {getTypeRef(it.base, null)},
-        parents.getLast(),
-        JSElementTypes.EXTENDS_LIST
-      );
+      JSStubElementTypes.DEFAULT_EXTENDS_LIST.createStub(new String[] {getTypeRef(it.base, null)}, parents.getLast());
     }
   }
 
@@ -187,7 +183,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
       for (Multiname name : it.interfaces) {
         interfaces[i++] = getTypeRef(name, null);
       }
-      new JSReferenceListStubImpl(interfaces, parents.getLast(), anInterface ? JSElementTypes.EXTENDS_LIST:JSElementTypes.IMPLEMENTS_LIST);
+      new JSReferenceListStubImpl(interfaces, parents.getLast(), anInterface ? JSStubElementTypes.DEFAULT_EXTENDS_LIST : JSStubElementTypes.IMPLEMENTS_LIST);
     }
   }
 }
