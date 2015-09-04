@@ -53,7 +53,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     initLivePackageNameToDirMap();
 
     if (myPubspecYamlFile == null) {
-      initPackagesMapfromLib(contextFile);
+      initPackagesMapFromLib(contextFile);
     }
   }
 
@@ -267,7 +267,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     if (dotPackagesFile != null &&
         !dotPackagesFile.isDirectory() &&
         myDartSdk != null &&
-        StringUtil.compareVersionNumbers(myDartSdk.getVersion(), "1.12") > 0) {
+        StringUtil.compareVersionNumbers(myDartSdk.getVersion(), "1.12") >= 0) {
       final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
       if (packagesMap != null) {
         for (Map.Entry<String, String> entry : packagesMap.entrySet()) {
@@ -297,7 +297,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     }
   }
 
-  private void initPackagesMapfromLib(final @NotNull VirtualFile contextFile) {
+  private void initPackagesMapFromLib(final @NotNull VirtualFile contextFile) {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
 
     final List<OrderEntry> orderEntries = module != null
