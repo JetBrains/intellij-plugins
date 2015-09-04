@@ -71,6 +71,27 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
     return null;
   }
 
+  @Nullable
+  public static DartComponent findDartComponent(Project project, String filePath, int offset) {
+    if (filePath == null) {
+      return null;
+    }
+    filePath = FileUtil.toSystemIndependentName(filePath);
+
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (virtualFile == null) {
+      return null;
+    }
+
+    final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+    if (psiFile == null) {
+      return null;
+    }
+
+    final PsiElement elementAtOffset = psiFile.findElementAt(offset);
+    return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponent.class);
+  }
+
   private static void addDartComponent(List<DartComponent> components, Project project, OverriddenMember member) {
     final DartComponent component = findDartComponent(project, member);
     if (component != null) {
@@ -105,27 +126,6 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       return findDartComponent(project, location.getFile(), location.getOffset());
     }
     return null;
-  }
-
-  @Nullable
-  private static DartComponent findDartComponent(Project project, String filePath, int offset) {
-    if (filePath == null) {
-      return null;
-    }
-    filePath = FileUtil.toSystemIndependentName(filePath);
-
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (virtualFile == null) {
-      return null;
-    }
-
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-    if (psiFile == null) {
-      return null;
-    }
-
-    final PsiElement elementAtOffset = psiFile.findElementAt(offset);
-    return PsiTreeUtil.getParentOfType(elementAtOffset, DartComponent.class);
   }
 
   @Nullable

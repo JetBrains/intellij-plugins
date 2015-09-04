@@ -89,6 +89,7 @@
                                     <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>-->
 
     <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>
+    <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>-->
 
     <codeInsight.overrideMethod language="Dart"
                                 implementationClass="com.jetbrains.lang.dart.ide.generation.DartOverrideMethodHandler"/>
