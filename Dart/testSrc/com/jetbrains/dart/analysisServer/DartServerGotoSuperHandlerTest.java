@@ -22,7 +22,7 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-public abstract class DartServerGotoSuperHandlerTest extends CodeInsightFixtureTestCase {
+public class DartServerGotoSuperHandlerTest extends CodeInsightFixtureTestCase {
 
   protected String getBasePath() {
     return "/analysisServer/gotoSuper";
