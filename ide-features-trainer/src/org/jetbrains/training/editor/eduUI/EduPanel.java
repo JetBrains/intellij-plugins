@@ -1,6 +1,8 @@
 package org.jetbrains.training.editor.eduUI;
 
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.training.lesson.BadCourseException;
 import org.jetbrains.training.lesson.BadLessonException;
@@ -9,7 +11,6 @@ import org.jetbrains.training.editor.EduEditor;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.CourseManager;
 import org.jetbrains.training.lesson.Lesson;
-import org.jetbrains.training.util.MyClassLoader;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -138,51 +139,26 @@ public class EduPanel extends JPanel {
         //course UI
         lessonGap = 10;
 
-        //Look and feel differences
-        if (!UIUtil.isUnderDarcula()) {
-            background = new Color(250, 250, 250);
-            lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
-            messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-            defaultTextColor = new Color(30, 30, 30);
-            passedColor = new Color(105, 105, 105);
-            lessonPassedColor = new Color(49, 140, 64);
-            lessonCodeColor = new Color(31, 55, 128);
+        //UI colors and fonts
+        background = new JBColor(Gray._250, Gray._50);
+        lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
+        messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+        defaultTextColor = new JBColor(Gray._30, Gray._208);
+        passedColor = new JBColor(Gray._105, Gray._103);
+        lessonPassedColor = new JBColor(new Color(49, 140, 64), new Color(7, 140, 45));
+        lessonCodeColor = new JBColor(new Color(31, 55, 128), new Color(85, 161, 255));
 
-            //shortcut UI
-            shortcutTextColor = new Color(12, 12, 12);
+        //shortcut UI
+        shortcutTextColor = new JBColor(Gray._12, Gray._200);
 
-            //separator UI
-            separatorColor = new Color(222, 222, 222);
+        //separator UI
+        separatorColor = new JBColor(Gray._222, Gray._149);
 
-            //course UI
-            lessonActiveColor = new Color(167, 167, 167);
-            lessonInactiveColor = new Color(17, 96, 166);
-            lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-            allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
-
-        } else  {
-
-            background = new Color(50, 50, 50);
-            lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
-            messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-            defaultTextColor = new Color(208, 208, 208);
-            passedColor = new Color(103, 103, 103);
-            lessonPassedColor = new Color(7, 140, 45);
-            lessonCodeColor = new Color(85, 161, 255);
-
-            //shortcut UI
-            shortcutTextColor = new Color(200, 200, 200);
-
-
-            //separator UI
-            separatorColor = new Color(149, 149, 149);
-
-            //course UI
-            lessonActiveColor = new Color(202, 202, 202);
-            lessonInactiveColor = new Color(104, 159, 220);
-            lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
-            allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
-        }
+        //course UI
+        lessonActiveColor = new JBColor(Gray._167, Gray._202);
+        lessonInactiveColor = new JBColor(new Color(17, 96, 166), new Color(104, 159, 220));
+        lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+        allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
 
     }
 
@@ -372,7 +348,6 @@ public class EduPanel extends JPanel {
         for (int i = 0; i < myLessons.size(); i++) {
             Lesson currentLesson = myLessons.get(i);
             String id = currentLesson.getId();
-//            if (currentLesson.isPassed()) id = id + " ✔";
 
             if (lesson.equals(currentLesson)){
                 //selected lesson
