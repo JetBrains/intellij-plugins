@@ -89,7 +89,7 @@ public class Course extends ActionGroup{
 
         if (root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR)!=null){
 
-            //retieve list of xml files inside lessonspath directory
+            //retrieve list of xml files inside lessonspath directory
             String lessonsPath = root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR).getValue();
 //            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
 //            URL url = Course.class.getResource(lessonsFullpath);
