@@ -943,7 +943,7 @@ public class DartAnalysisServerService {
   }
 
   public boolean edit_getRefactoring(String kind,
-                                     String file,
+                                     String filePath,
                                      int offset,
                                      int length,
                                      boolean validateOnly,
@@ -951,7 +951,7 @@ public class DartAnalysisServerService {
                                      GetRefactoringConsumer consumer) {
     synchronized (myLock) {
       if (myServer == null) return false;
-      myServer.edit_getRefactoring(kind, file, offset, length, validateOnly, options, consumer);
+      myServer.edit_getRefactoring(kind, FileUtil.toSystemDependentName(filePath), offset, length, validateOnly, options, consumer);
       return true;
     }
   }
