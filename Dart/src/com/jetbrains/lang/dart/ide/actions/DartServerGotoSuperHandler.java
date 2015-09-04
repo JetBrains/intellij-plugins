@@ -27,7 +27,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
@@ -50,46 +49,30 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
     if (inClass == null || inComponent == null || inComponent.getComponentName() == null) {
       return;
     }
-    final DartComponentType inComponentType = DartComponentType.typeOf(inComponent);
+    final boolean isInClass = inComponent instanceof DartClass;
     // ask for the super type hierarchy
     final String filePath = file.getVirtualFile().getPath();
     final int offset = inComponent.getComponentName().getTextOffset();
     final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance().search_getTypeHierarchy(filePath, offset, true);
     // build list of DartComponent(s)
     final List<DartComponent> supers = Lists.newArrayList();
-    boolean first = true;
-    for (TypeHierarchyItem item : items) {
-      // ignore the first, it is the seed element
-      if (first) {
-        first = false;
-        continue;
-      }
-      // prepare Element for the current item
-      final Element itemElement;
-      if (inComponentType == DartComponentType.CLASS) {
-        itemElement = item.getClassElement();
-        // ignore Object
-        if (itemElement != null && "Object".equals(itemElement.getName())) {
-          continue;
+    if (!items.isEmpty()) {
+      TypeHierarchyItem seed = items.get(0);
+      {
+        final Integer superIndex = seed.getSuperclass();
+        if (superIndex != null) {
+          final TypeHierarchyItem superItem = items.get(superIndex);
+          addSuperComponent(project, supers, isInClass, superItem);
         }
       }
-      else {
-        itemElement = item.getMemberElement();
-      }
-      if (itemElement == null) {
-        continue;
-      }
-      // find the DartComponent
-      final Location itemLocation = itemElement.getLocation();
-      final DartComponent itemComponent =
-        DartServerOverrideMarkerProvider.findDartComponent(project, itemLocation.getFile(), itemLocation.getOffset());
-      if (itemComponent != null) {
-        supers.add(itemComponent);
+      for (int superIndex : seed.getInterfaces()) {
+        final TypeHierarchyItem superItem = items.get(superIndex);
+        addSuperComponent(project, supers, isInClass, superItem);
       }
     }
     // prepare the title
     final String title;
-    if (inComponentType == DartComponentType.CLASS) {
+    if (isInClass) {
       title = DartBundle.message("goto.super.class.chooser.title");
     }
     else {
@@ -108,5 +91,25 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
   @Override
   public boolean startInWriteAction() {
     return false;
+  }
+
+  private static void addSuperComponent(@NotNull Project project, List<DartComponent> supers, boolean isInClass, TypeHierarchyItem item) {
+    final Element classElement = item.getClassElement();
+    // ignore Object
+    if (classElement != null && "Object".equals(classElement.getName())) {
+      return;
+    }
+    // prepare Element for the current item
+    final Element itemElement = isInClass ? item.getClassElement() : item.getMemberElement();
+    if (itemElement == null) {
+      return;
+    }
+    // find the DartComponent
+    final Location itemLocation = itemElement.getLocation();
+    final DartComponent itemComponent =
+      DartServerOverrideMarkerProvider.findDartComponent(project, itemLocation.getFile(), itemLocation.getOffset());
+    if (itemComponent != null) {
+      supers.add(itemComponent);
+    }
   }
 }
