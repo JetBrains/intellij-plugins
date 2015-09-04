@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Set;
 
 public class DartRenameHandler implements RenameHandler, TitledHandler {
   @Override
@@ -222,7 +223,8 @@ class DartRenameDialog extends RefactoringDialog {
       public void run() {
         final SourceChange change = myRefactoring.getChange();
         assert change != null;
-        AssistUtils.applySourceChange(myProject, change);
+        final Set<String> excludedIds = myRefactoring.getPotentialEdits();
+        AssistUtils.applySourceChange(myProject, change, excludedIds);
         close(DialogWrapper.OK_EXIT_CODE);
       }
     });

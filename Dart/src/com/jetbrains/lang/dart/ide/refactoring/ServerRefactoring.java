@@ -51,6 +51,7 @@ public abstract class ServerRefactoring {
   @Nullable private RefactoringStatus optionsStatus;
   @Nullable private RefactoringStatus finalStatus;
   @Nullable private SourceChange change;
+  @NotNull private final Set<String> potentialEdits = Sets.newHashSet();
 
   private int lastId = 0;
   @Nullable private ServerRefactoringListener listener;
@@ -107,6 +108,11 @@ public abstract class ServerRefactoring {
   @Nullable
   protected abstract RefactoringOptions getOptions();
 
+  @NotNull
+  public Set<String> getPotentialEdits() {
+    return potentialEdits;
+  }
+
   /**
    * Sets the received {@link RefactoringFeedback}.
    */
@@ -135,7 +141,7 @@ public abstract class ServerRefactoring {
                                          List<RefactoringProblem> finalProblems,
                                          RefactoringFeedback feedback,
                                          SourceChange _change,
-                                         List<String> potentialEdits) {
+                                         List<String> _potentialEdits) {
           if (feedback != null) {
             setFeedback(feedback);
           }
@@ -143,6 +149,10 @@ public abstract class ServerRefactoring {
           optionsStatus = toRefactoringStatus(optionsProblems);
           finalStatus = toRefactoringStatus(finalProblems);
           change = _change;
+          potentialEdits.clear();
+          if (_potentialEdits != null) {
+            potentialEdits.addAll(_potentialEdits);
+          }
           latch.countDown();
           requestDone(id);
         }

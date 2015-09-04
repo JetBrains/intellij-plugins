@@ -34,7 +34,6 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
@@ -64,9 +63,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     return DartBundle.message("dart.sort.members.action.name.ellipsis"); // because with dialog
   }
 
-  protected void runOverEditor(@NotNull final Project project,
-                               @NotNull final Editor editor,
-                               @NotNull final PsiFile psiFile) {
+  protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 

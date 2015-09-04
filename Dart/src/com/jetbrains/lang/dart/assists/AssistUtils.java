@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.assists;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -48,13 +49,25 @@ import java.util.Set;
 
 public class AssistUtils {
   public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
+    final Set<String> excludedIds = Sets.newHashSet();
+    applyFileEdit(fileEdit, excludedIds);
+  }
+
+  public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit, @NotNull final Set<String> excludedIds) {
     final VirtualFile file = findVirtualFile(fileEdit);
     if (file != null) {
-      applyFileEdit(file, fileEdit);
+      applyFileEdit(file, fileEdit, excludedIds);
     }
   }
 
   public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
+    Set<String> excludedIds = Sets.newHashSet();
+    applySourceChange(project, sourceChange, excludedIds);
+  }
+
+  public static void applySourceChange(@NotNull final Project project,
+                                       @NotNull final SourceChange sourceChange,
+                                       @NotNull final Set<String> excludedIds) {
     final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange);
     // ensure not read-only
     {
@@ -71,7 +84,7 @@ public class AssistUtils {
         for (Map.Entry<VirtualFile, SourceFileEdit> entry : changeMap.entrySet()) {
           final VirtualFile file = entry.getKey();
           final SourceFileEdit fileEdit = entry.getValue();
-          applyFileEdit(file, fileEdit);
+          applyFileEdit(file, fileEdit, excludedIds);
         }
         runLinkedEdits(project, sourceChange);
       }
@@ -79,7 +92,17 @@ public class AssistUtils {
   }
 
   public static void applySourceEdits(@NotNull final Document document, @NotNull final List<SourceEdit> edits) {
+    final Set<String> excludedIds = Sets.newHashSet();
+    applySourceEdits(document, edits, excludedIds);
+  }
+
+  public static void applySourceEdits(@NotNull final Document document,
+                                      @NotNull final List<SourceEdit> edits,
+                                      @NotNull final Set<String> excludedIds) {
     for (SourceEdit edit : edits) {
+      if (excludedIds.contains(edit.getId())) {
+        continue;
+      }
       final int offset = edit.getOffset();
       final int length = edit.getLength();
       document.replaceString(offset, offset + length, edit.getReplacement());
@@ -100,10 +123,12 @@ public class AssistUtils {
     return map;
   }
 
-  private static void applyFileEdit(@NotNull VirtualFile file, @NotNull SourceFileEdit fileEdit) {
+  private static void applyFileEdit(@NotNull final VirtualFile file,
+                                    @NotNull final SourceFileEdit fileEdit,
+                                    @NotNull final Set<String> excludedIds) {
     final Document document = FileDocumentManager.getInstance().getDocument(file);
     if (document != null) {
-      applySourceEdits(document, fileEdit.getEdits());
+      applySourceEdits(document, fileEdit.getEdits(), excludedIds);
     }
   }
 
