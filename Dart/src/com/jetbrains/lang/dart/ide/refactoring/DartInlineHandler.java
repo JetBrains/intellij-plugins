@@ -70,7 +70,8 @@ public class DartInlineHandler extends InlineActionHandler {
     final ServerRefactoring refactoring;
     if (ElementKind.LOCAL_VARIABLE.equals(context.kind)) {
       refactoring = new ServerInlineLocalRefactoring(context.filePath, context.offset, 0);
-    } else {
+    }
+    else {
       refactoring = new ServerInlineMethodRefactoring(context.filePath, context.offset, 0);
     }
     // validate initial status
@@ -179,7 +180,7 @@ class InlineRefactoringContext {
 }
 
 class InlineMethodDialog extends InlineOptionsDialog {
-  public static final String REFACTORING_NAME = RefactoringBundle.message("inline.variable.title");
+  public static final String REFACTORING_NAME = RefactoringBundle.message("inline.method.title");
   private final ServerInlineMethodRefactoring refactoring;
 
   protected InlineMethodDialog(Project project, PsiElement element, ServerInlineMethodRefactoring refactoring) {
@@ -201,7 +202,7 @@ class InlineMethodDialog extends InlineOptionsDialog {
 
   @Override
   protected String getBorderTitle() {
-    return "getBorderTitle";
+    return RefactoringBundle.message("inline.method.border.title"); // not used actually
   }
 
   @Override

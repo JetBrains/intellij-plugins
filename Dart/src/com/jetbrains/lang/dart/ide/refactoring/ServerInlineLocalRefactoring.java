@@ -18,6 +18,7 @@ import org.dartlang.analysis.server.protocol.InlineLocalVariableFeedback;
 import org.dartlang.analysis.server.protocol.RefactoringFeedback;
 import org.dartlang.analysis.server.protocol.RefactoringKind;
 import org.dartlang.analysis.server.protocol.RefactoringOptions;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * LTK wrapper around Analysis Server 'Inline Local' refactoring.
@@ -44,7 +45,7 @@ public class ServerInlineLocalRefactoring extends ServerRefactoring {
   }
 
   @Override
-  protected void setFeedback(RefactoringFeedback _feedback) {
+  protected void setFeedback(@NotNull RefactoringFeedback _feedback) {
     InlineLocalVariableFeedback feedback = (InlineLocalVariableFeedback) _feedback;
     variableName = feedback.getName();
     occurrences = feedback.getOccurrences();

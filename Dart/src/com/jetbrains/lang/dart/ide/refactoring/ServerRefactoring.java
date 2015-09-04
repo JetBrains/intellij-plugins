@@ -116,7 +116,7 @@ public abstract class ServerRefactoring {
     this.listener = listener;
   }
 
-  protected void setOptions(boolean validateOnly, ProgressIndicator indicator) {
+  protected void setOptions(boolean validateOnly, @Nullable ProgressIndicator indicator) {
     // add a new pending request ID
     final int id;
     synchronized (pendingRequestIds) {
