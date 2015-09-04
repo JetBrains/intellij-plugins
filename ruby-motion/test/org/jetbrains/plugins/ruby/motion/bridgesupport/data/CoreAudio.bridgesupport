@@ -1,0 +1,389 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct name='AudioBuffer' type='{AudioBuffer=&quot;mNumberChannels&quot;I&quot;mDataByteSize&quot;I&quot;mData&quot;^v}'>
+<field name='mNumberChannels' declared_type='UInt32' type='L'/>
+<field name='mDataByteSize' declared_type='UInt32' type='L'/>
+<field name='mData' declared_type='void*' type='^v'/>
+</struct>
+<struct name='AudioBufferList' type='{AudioBufferList=&quot;mNumberBuffers&quot;I&quot;mBuffers&quot;[1{AudioBuffer=&quot;mNumberChannels&quot;I&quot;mDataByteSize&quot;I&quot;mData&quot;^v}]}'>
+<field name='mNumberBuffers' declared_type='UInt32' type='L'/>
+<field name='mBuffers' declared_type='AudioBuffer*' type='[1{AudioBuffer=&quot;mNumberChannels&quot;I&quot;mDataByteSize&quot;I&quot;mData&quot;^v}]'/>
+</struct>
+<struct name='AudioChannelDescription' type='{AudioChannelDescription=&quot;mChannelLabel&quot;I&quot;mChannelFlags&quot;I&quot;mCoordinates&quot;[3f]}'>
+<field name='mChannelLabel' declared_type='AudioChannelLabel' type='L'/>
+<field name='mChannelFlags' declared_type='UInt32' type='L'/>
+<field name='mCoordinates' declared_type='Float32*' type='[3f]'/>
+</struct>
+<struct name='AudioChannelLayout' type='{AudioChannelLayout=&quot;mChannelLayoutTag&quot;I&quot;mChannelBitmap&quot;I&quot;mNumberChannelDescriptions&quot;I&quot;mChannelDescriptions&quot;[1{AudioChannelDescription=&quot;mChannelLabel&quot;I&quot;mChannelFlags&quot;I&quot;mCoordinates&quot;[3f]}]}'>
+<field name='mChannelLayoutTag' declared_type='AudioChannelLayoutTag' type='L'/>
+<field name='mChannelBitmap' declared_type='UInt32' type='L'/>
+<field name='mNumberChannelDescriptions' declared_type='UInt32' type='L'/>
+<field name='mChannelDescriptions' declared_type='AudioChannelDescription*' type='[1{AudioChannelDescription=&quot;mChannelLabel&quot;I&quot;mChannelFlags&quot;I&quot;mCoordinates&quot;[3f]}]'/>
+</struct>
+<struct name='AudioClassDescription' type='{AudioClassDescription=&quot;mType&quot;I&quot;mSubType&quot;I&quot;mManufacturer&quot;I}'>
+<field name='mType' declared_type='OSType' type='L'/>
+<field name='mSubType' declared_type='OSType' type='L'/>
+<field name='mManufacturer' declared_type='OSType' type='L'/>
+</struct>
+<struct name='AudioStreamBasicDescription' type='{AudioStreamBasicDescription=&quot;mSampleRate&quot;d&quot;mFormatID&quot;I&quot;mFormatFlags&quot;I&quot;mBytesPerPacket&quot;I&quot;mFramesPerPacket&quot;I&quot;mBytesPerFrame&quot;I&quot;mChannelsPerFrame&quot;I&quot;mBitsPerChannel&quot;I&quot;mReserved&quot;I}'>
+<field name='mSampleRate' declared_type='Float64' type='d'/>
+<field name='mFormatID' declared_type='UInt32' type='L'/>
+<field name='mFormatFlags' declared_type='UInt32' type='L'/>
+<field name='mBytesPerPacket' declared_type='UInt32' type='L'/>
+<field name='mFramesPerPacket' declared_type='UInt32' type='L'/>
+<field name='mBytesPerFrame' declared_type='UInt32' type='L'/>
+<field name='mChannelsPerFrame' declared_type='UInt32' type='L'/>
+<field name='mBitsPerChannel' declared_type='UInt32' type='L'/>
+<field name='mReserved' declared_type='UInt32' type='L'/>
+</struct>
+<struct name='AudioStreamPacketDescription' type='{AudioStreamPacketDescription=&quot;mStartOffset&quot;q&quot;mVariableFramesInPacket&quot;I&quot;mDataByteSize&quot;I}'>
+<field name='mStartOffset' declared_type='SInt64' type='q'/>
+<field name='mVariableFramesInPacket' declared_type='UInt32' type='L'/>
+<field name='mDataByteSize' declared_type='UInt32' type='L'/>
+</struct>
+<struct name='AudioTimeStamp' type='{AudioTimeStamp=&quot;mSampleTime&quot;d&quot;mHostTime&quot;Q&quot;mRateScalar&quot;d&quot;mWordClockTime&quot;Q&quot;mSMPTETime&quot;{SMPTETime=&quot;mSubframes&quot;s&quot;mSubframeDivisor&quot;s&quot;mCounter&quot;I&quot;mType&quot;I&quot;mFlags&quot;I&quot;mHours&quot;s&quot;mMinutes&quot;s&quot;mSeconds&quot;s&quot;mFrames&quot;s}&quot;mFlags&quot;I&quot;mReserved&quot;I}'>
+<field name='mSampleTime' declared_type='Float64' type='d'/>
+<field name='mHostTime' declared_type='UInt64' type='Q'/>
+<field name='mRateScalar' declared_type='Float64' type='d'/>
+<field name='mWordClockTime' declared_type='UInt64' type='Q'/>
+<field name='mSMPTETime' declared_type='SMPTETime' type='{SMPTETime=&quot;mSubframes&quot;s&quot;mSubframeDivisor&quot;s&quot;mCounter&quot;I&quot;mType&quot;I&quot;mFlags&quot;I&quot;mHours&quot;s&quot;mMinutes&quot;s&quot;mSeconds&quot;s&quot;mFrames&quot;s}'/>
+<field name='mFlags' declared_type='UInt32' type='L'/>
+<field name='mReserved' declared_type='UInt32' type='L'/>
+</struct>
+<struct name='AudioValueRange' type='{AudioValueRange=&quot;mMinimum&quot;d&quot;mMaximum&quot;d}'>
+<field name='mMinimum' declared_type='Float64' type='d'/>
+<field name='mMaximum' declared_type='Float64' type='d'/>
+</struct>
+<struct name='AudioValueTranslation' type='{AudioValueTranslation=&quot;mInputData&quot;^v&quot;mInputDataSize&quot;I&quot;mOutputData&quot;^v&quot;mOutputDataSize&quot;I}'>
+<field name='mInputData' declared_type='void*' type='^v'/>
+<field name='mInputDataSize' declared_type='UInt32' type='L'/>
+<field name='mOutputData' declared_type='void*' type='^v'/>
+<field name='mOutputDataSize' declared_type='UInt32' type='L'/>
+</struct>
+<struct name='SMPTETime' type='{SMPTETime=&quot;mSubframes&quot;s&quot;mSubframeDivisor&quot;s&quot;mCounter&quot;I&quot;mType&quot;I&quot;mFlags&quot;I&quot;mHours&quot;s&quot;mMinutes&quot;s&quot;mSeconds&quot;s&quot;mFrames&quot;s}'>
+<field name='mSubframes' declared_type='SInt16' type='s'/>
+<field name='mSubframeDivisor' declared_type='SInt16' type='s'/>
+<field name='mCounter' declared_type='UInt32' type='L'/>
+<field name='mType' declared_type='UInt32' type='L'/>
+<field name='mFlags' declared_type='UInt32' type='L'/>
+<field name='mHours' declared_type='SInt16' type='s'/>
+<field name='mMinutes' declared_type='SInt16' type='s'/>
+<field name='mSeconds' declared_type='SInt16' type='s'/>
+<field name='mFrames' declared_type='SInt16' type='s'/>
+</struct>
+<enum name='CA_PREFER_FIXED_POINT' value='1'/>
+<enum name='COREAUDIOTYPES_VERSION' value='1051'/>
+<enum name='kAppleLosslessFormatFlag_16BitSourceData' value='1'/>
+<enum name='kAppleLosslessFormatFlag_20BitSourceData' value='2'/>
+<enum name='kAppleLosslessFormatFlag_24BitSourceData' value='3'/>
+<enum name='kAppleLosslessFormatFlag_32BitSourceData' value='4'/>
+<enum name='kAudioChannelBit_Center' value='4'/>
+<enum name='kAudioChannelBit_CenterSurround' value='256'/>
+<enum name='kAudioChannelBit_LFEScreen' value='8'/>
+<enum name='kAudioChannelBit_Left' value='1'/>
+<enum name='kAudioChannelBit_LeftCenter' value='64'/>
+<enum name='kAudioChannelBit_LeftSurround' value='16'/>
+<enum name='kAudioChannelBit_LeftSurroundDirect' value='512'/>
+<enum name='kAudioChannelBit_Right' value='2'/>
+<enum name='kAudioChannelBit_RightCenter' value='128'/>
+<enum name='kAudioChannelBit_RightSurround' value='32'/>
+<enum name='kAudioChannelBit_RightSurroundDirect' value='1024'/>
+<enum name='kAudioChannelBit_TopBackCenter' value='65536'/>
+<enum name='kAudioChannelBit_TopBackLeft' value='32768'/>
+<enum name='kAudioChannelBit_TopBackRight' value='131072'/>
+<enum name='kAudioChannelBit_TopCenterSurround' value='2048'/>
+<enum name='kAudioChannelBit_VerticalHeightCenter' value='8192'/>
+<enum name='kAudioChannelBit_VerticalHeightLeft' value='4096'/>
+<enum name='kAudioChannelBit_VerticalHeightRight' value='16384'/>
+<enum name='kAudioChannelCoordinates_Azimuth' value='0'/>
+<enum name='kAudioChannelCoordinates_BackFront' value='1'/>
+<enum name='kAudioChannelCoordinates_Distance' value='2'/>
+<enum name='kAudioChannelCoordinates_DownUp' value='2'/>
+<enum name='kAudioChannelCoordinates_Elevation' value='1'/>
+<enum name='kAudioChannelCoordinates_LeftRight' value='0'/>
+<enum name='kAudioChannelFlags_AllOff' value='0'/>
+<enum name='kAudioChannelFlags_Meters' value='4'/>
+<enum name='kAudioChannelFlags_RectangularCoordinates' value='1'/>
+<enum name='kAudioChannelFlags_SphericalCoordinates' value='2'/>
+<enum name='kAudioChannelLabel_Ambisonic_W' value='200'/>
+<enum name='kAudioChannelLabel_Ambisonic_X' value='201'/>
+<enum name='kAudioChannelLabel_Ambisonic_Y' value='202'/>
+<enum name='kAudioChannelLabel_Ambisonic_Z' value='203'/>
+<enum name='kAudioChannelLabel_Center' value='3'/>
+<enum name='kAudioChannelLabel_CenterSurround' value='9'/>
+<enum name='kAudioChannelLabel_CenterSurroundDirect' value='44'/>
+<enum name='kAudioChannelLabel_ClickTrack' value='304'/>
+<enum name='kAudioChannelLabel_DialogCentricMix' value='43'/>
+<enum name='kAudioChannelLabel_Discrete' value='400'/>
+<enum name='kAudioChannelLabel_Discrete_0' value='65536'/>
+<enum name='kAudioChannelLabel_Discrete_1' value='65537'/>
+<enum name='kAudioChannelLabel_Discrete_10' value='65546'/>
+<enum name='kAudioChannelLabel_Discrete_11' value='65547'/>
+<enum name='kAudioChannelLabel_Discrete_12' value='65548'/>
+<enum name='kAudioChannelLabel_Discrete_13' value='65549'/>
+<enum name='kAudioChannelLabel_Discrete_14' value='65550'/>
+<enum name='kAudioChannelLabel_Discrete_15' value='65551'/>
+<enum name='kAudioChannelLabel_Discrete_2' value='65538'/>
+<enum name='kAudioChannelLabel_Discrete_3' value='65539'/>
+<enum name='kAudioChannelLabel_Discrete_4' value='65540'/>
+<enum name='kAudioChannelLabel_Discrete_5' value='65541'/>
+<enum name='kAudioChannelLabel_Discrete_6' value='65542'/>
+<enum name='kAudioChannelLabel_Discrete_65535' value='131071'/>
+<enum name='kAudioChannelLabel_Discrete_7' value='65543'/>
+<enum name='kAudioChannelLabel_Discrete_8' value='65544'/>
+<enum name='kAudioChannelLabel_Discrete_9' value='65545'/>
+<enum name='kAudioChannelLabel_ForeignLanguage' value='305'/>
+<enum name='kAudioChannelLabel_Haptic' value='45'/>
+<enum name='kAudioChannelLabel_HeadphonesLeft' value='301'/>
+<enum name='kAudioChannelLabel_HeadphonesRight' value='302'/>
+<enum name='kAudioChannelLabel_HearingImpaired' value='40'/>
+<enum name='kAudioChannelLabel_LFE2' value='37'/>
+<enum name='kAudioChannelLabel_LFEScreen' value='4'/>
+<enum name='kAudioChannelLabel_Left' value='1'/>
+<enum name='kAudioChannelLabel_LeftCenter' value='7'/>
+<enum name='kAudioChannelLabel_LeftSurround' value='5'/>
+<enum name='kAudioChannelLabel_LeftSurroundDirect' value='10'/>
+<enum name='kAudioChannelLabel_LeftTotal' value='38'/>
+<enum name='kAudioChannelLabel_LeftWide' value='35'/>
+<enum name='kAudioChannelLabel_MS_Mid' value='204'/>
+<enum name='kAudioChannelLabel_MS_Side' value='205'/>
+<enum name='kAudioChannelLabel_Mono' value='42'/>
+<enum name='kAudioChannelLabel_Narration' value='41'/>
+<enum name='kAudioChannelLabel_RearSurroundLeft' value='33'/>
+<enum name='kAudioChannelLabel_RearSurroundRight' value='34'/>
+<enum name='kAudioChannelLabel_Right' value='2'/>
+<enum name='kAudioChannelLabel_RightCenter' value='8'/>
+<enum name='kAudioChannelLabel_RightSurround' value='6'/>
+<enum name='kAudioChannelLabel_RightSurroundDirect' value='11'/>
+<enum name='kAudioChannelLabel_RightTotal' value='39'/>
+<enum name='kAudioChannelLabel_RightWide' value='36'/>
+<enum name='kAudioChannelLabel_TopBackCenter' value='17'/>
+<enum name='kAudioChannelLabel_TopBackLeft' value='16'/>
+<enum name='kAudioChannelLabel_TopBackRight' value='18'/>
+<enum name='kAudioChannelLabel_TopCenterSurround' value='12'/>
+<enum name='kAudioChannelLabel_Unknown' value='4294967295'/>
+<enum name='kAudioChannelLabel_Unused' value='0'/>
+<enum name='kAudioChannelLabel_UseCoordinates' value='100'/>
+<enum name='kAudioChannelLabel_VerticalHeightCenter' value='14'/>
+<enum name='kAudioChannelLabel_VerticalHeightLeft' value='13'/>
+<enum name='kAudioChannelLabel_VerticalHeightRight' value='15'/>
+<enum name='kAudioChannelLabel_XY_X' value='206'/>
+<enum name='kAudioChannelLabel_XY_Y' value='207'/>
+<enum name='kAudioChannelLayoutTag_AAC_3_0' value='7471107'/>
+<enum name='kAudioChannelLayoutTag_AAC_4_0' value='7602180'/>
+<enum name='kAudioChannelLayoutTag_AAC_5_0' value='7864325'/>
+<enum name='kAudioChannelLayoutTag_AAC_5_1' value='8126470'/>
+<enum name='kAudioChannelLayoutTag_AAC_6_0' value='9240582'/>
+<enum name='kAudioChannelLayoutTag_AAC_6_1' value='9306119'/>
+<enum name='kAudioChannelLayoutTag_AAC_7_0' value='9371655'/>
+<enum name='kAudioChannelLayoutTag_AAC_7_1' value='8323080'/>
+<enum name='kAudioChannelLayoutTag_AAC_Octagonal' value='9437192'/>
+<enum name='kAudioChannelLayoutTag_AAC_Quadraphonic' value='7077892'/>
+<enum name='kAudioChannelLayoutTag_AC3_1_0_1' value='9764866'/>
+<enum name='kAudioChannelLayoutTag_AC3_2_1_1' value='10027012'/>
+<enum name='kAudioChannelLayoutTag_AC3_3_0' value='9830403'/>
+<enum name='kAudioChannelLayoutTag_AC3_3_0_1' value='9961476'/>
+<enum name='kAudioChannelLayoutTag_AC3_3_1' value='9895940'/>
+<enum name='kAudioChannelLayoutTag_AC3_3_1_1' value='10092549'/>
+<enum name='kAudioChannelLayoutTag_Ambisonic_B_Format' value='7012356'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_4' value='7077892'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_5' value='7143429'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_5_0' value='7733253'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_5_1' value='7929862'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_6' value='7208966'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_6_0' value='9109510'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_6_1' value='8192007'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_7_0' value='9175047'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_7_0_Front' value='9699335'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_7_1' value='8388616'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_7_1_Front' value='8257544'/>
+<enum name='kAudioChannelLayoutTag_AudioUnit_8' value='7274504'/>
+<enum name='kAudioChannelLayoutTag_Binaural' value='6946818'/>
+<enum name='kAudioChannelLayoutTag_Cube' value='7340040'/>
+<enum name='kAudioChannelLayoutTag_DTS_3_1' value='11010052'/>
+<enum name='kAudioChannelLayoutTag_DTS_4_1' value='11075589'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_0_A' value='11141126'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_0_B' value='11206662'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_0_C' value='11272198'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_1_A' value='11337735'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_1_B' value='11403271'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_1_C' value='11468807'/>
+<enum name='kAudioChannelLayoutTag_DTS_6_1_D' value='11927559'/>
+<enum name='kAudioChannelLayoutTag_DTS_7_0' value='11534343'/>
+<enum name='kAudioChannelLayoutTag_DTS_7_1' value='11599880'/>
+<enum name='kAudioChannelLayoutTag_DTS_8_0_A' value='11665416'/>
+<enum name='kAudioChannelLayoutTag_DTS_8_0_B' value='11730952'/>
+<enum name='kAudioChannelLayoutTag_DTS_8_1_A' value='11796489'/>
+<enum name='kAudioChannelLayoutTag_DTS_8_1_B' value='11862025'/>
+<enum name='kAudioChannelLayoutTag_DVD_0' value='6553601'/>
+<enum name='kAudioChannelLayoutTag_DVD_1' value='6619138'/>
+<enum name='kAudioChannelLayoutTag_DVD_10' value='8912900'/>
+<enum name='kAudioChannelLayoutTag_DVD_11' value='8978437'/>
+<enum name='kAudioChannelLayoutTag_DVD_12' value='7929862'/>
+<enum name='kAudioChannelLayoutTag_DVD_13' value='7536644'/>
+<enum name='kAudioChannelLayoutTag_DVD_14' value='7667717'/>
+<enum name='kAudioChannelLayoutTag_DVD_15' value='8912900'/>
+<enum name='kAudioChannelLayoutTag_DVD_16' value='8978437'/>
+<enum name='kAudioChannelLayoutTag_DVD_17' value='7929862'/>
+<enum name='kAudioChannelLayoutTag_DVD_18' value='9043973'/>
+<enum name='kAudioChannelLayoutTag_DVD_19' value='7733253'/>
+<enum name='kAudioChannelLayoutTag_DVD_2' value='8585219'/>
+<enum name='kAudioChannelLayoutTag_DVD_20' value='7995398'/>
+<enum name='kAudioChannelLayoutTag_DVD_3' value='8650756'/>
+<enum name='kAudioChannelLayoutTag_DVD_4' value='8716291'/>
+<enum name='kAudioChannelLayoutTag_DVD_5' value='8781828'/>
+<enum name='kAudioChannelLayoutTag_DVD_6' value='8847365'/>
+<enum name='kAudioChannelLayoutTag_DVD_7' value='7405571'/>
+<enum name='kAudioChannelLayoutTag_DVD_8' value='7536644'/>
+<enum name='kAudioChannelLayoutTag_DVD_9' value='7667717'/>
+<enum name='kAudioChannelLayoutTag_DiscreteInOrder' value='9633792'/>
+<enum name='kAudioChannelLayoutTag_EAC3_6_1_A' value='10289159'/>
+<enum name='kAudioChannelLayoutTag_EAC3_6_1_B' value='10354695'/>
+<enum name='kAudioChannelLayoutTag_EAC3_6_1_C' value='10420231'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_A' value='10485768'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_B' value='10551304'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_C' value='10616840'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_D' value='10682376'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_E' value='10747912'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_F' value='10813448'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_G' value='10878984'/>
+<enum name='kAudioChannelLayoutTag_EAC3_7_1_H' value='10944520'/>
+<enum name='kAudioChannelLayoutTag_EAC_6_0_A' value='10158086'/>
+<enum name='kAudioChannelLayoutTag_EAC_7_0_A' value='10223623'/>
+<enum name='kAudioChannelLayoutTag_Emagic_Default_7_1' value='8454152'/>
+<enum name='kAudioChannelLayoutTag_Hexagonal' value='7208966'/>
+<enum name='kAudioChannelLayoutTag_ITU_1_0' value='6553601'/>
+<enum name='kAudioChannelLayoutTag_ITU_2_0' value='6619138'/>
+<enum name='kAudioChannelLayoutTag_ITU_2_1' value='8585219'/>
+<enum name='kAudioChannelLayoutTag_ITU_2_2' value='8650756'/>
+<enum name='kAudioChannelLayoutTag_ITU_3_0' value='7405571'/>
+<enum name='kAudioChannelLayoutTag_ITU_3_1' value='7536644'/>
+<enum name='kAudioChannelLayoutTag_ITU_3_2' value='7667717'/>
+<enum name='kAudioChannelLayoutTag_ITU_3_2_1' value='7929862'/>
+<enum name='kAudioChannelLayoutTag_ITU_3_4_1' value='8388616'/>
+<enum name='kAudioChannelLayoutTag_MPEG_1_0' value='6553601'/>
+<enum name='kAudioChannelLayoutTag_MPEG_2_0' value='6619138'/>
+<enum name='kAudioChannelLayoutTag_MPEG_3_0_A' value='7405571'/>
+<enum name='kAudioChannelLayoutTag_MPEG_3_0_B' value='7471107'/>
+<enum name='kAudioChannelLayoutTag_MPEG_4_0_A' value='7536644'/>
+<enum name='kAudioChannelLayoutTag_MPEG_4_0_B' value='7602180'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_0_A' value='7667717'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_0_B' value='7733253'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_0_C' value='7798789'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_0_D' value='7864325'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_1_A' value='7929862'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_1_B' value='7995398'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_1_C' value='8060934'/>
+<enum name='kAudioChannelLayoutTag_MPEG_5_1_D' value='8126470'/>
+<enum name='kAudioChannelLayoutTag_MPEG_6_1_A' value='8192007'/>
+<enum name='kAudioChannelLayoutTag_MPEG_7_1_A' value='8257544'/>
+<enum name='kAudioChannelLayoutTag_MPEG_7_1_B' value='8323080'/>
+<enum name='kAudioChannelLayoutTag_MPEG_7_1_C' value='8388616'/>
+<enum name='kAudioChannelLayoutTag_MatrixStereo' value='6750210'/>
+<enum name='kAudioChannelLayoutTag_MidSide' value='6815746'/>
+<enum name='kAudioChannelLayoutTag_Mono' value='6553601'/>
+<enum name='kAudioChannelLayoutTag_Octagonal' value='7274504'/>
+<enum name='kAudioChannelLayoutTag_Pentagonal' value='7143429'/>
+<enum name='kAudioChannelLayoutTag_Quadraphonic' value='7077892'/>
+<enum name='kAudioChannelLayoutTag_SMPTE_DTV' value='8519688'/>
+<enum name='kAudioChannelLayoutTag_Stereo' value='6619138'/>
+<enum name='kAudioChannelLayoutTag_StereoHeadphones' value='6684674'/>
+<enum name='kAudioChannelLayoutTag_TMH_10_2_full' value='9568277'/>
+<enum name='kAudioChannelLayoutTag_TMH_10_2_std' value='9502736'/>
+<enum name='kAudioChannelLayoutTag_Unknown' value='4294901760'/>
+<enum name='kAudioChannelLayoutTag_UseChannelBitmap' value='65536'/>
+<enum name='kAudioChannelLayoutTag_UseChannelDescriptions' value='0'/>
+<enum name='kAudioChannelLayoutTag_XY' value='6881282'/>
+<enum name='kAudioFormat60958AC3' value='1667326771'/>
+<enum name='kAudioFormatAC3' value='1633889587'/>
+<enum name='kAudioFormatAES3' value='1634038579'/>
+<enum name='kAudioFormatALaw' value='1634492791'/>
+<enum name='kAudioFormatAMR' value='1935764850'/>
+<enum name='kAudioFormatAppleIMA4' value='1768775988'/>
+<enum name='kAudioFormatAppleLossless' value='1634492771'/>
+<enum name='kAudioFormatAudible' value='1096107074'/>
+<enum name='kAudioFormatDVIIntelIMA' value='1836253201'/>
+<enum name='kAudioFormatFlagIsAlignedHigh' value='16'/>
+<enum name='kAudioFormatFlagIsBigEndian' value='2'/>
+<enum name='kAudioFormatFlagIsFloat' value='1'/>
+<enum name='kAudioFormatFlagIsNonInterleaved' value='32'/>
+<enum name='kAudioFormatFlagIsNonMixable' value='64'/>
+<enum name='kAudioFormatFlagIsPacked' value='8'/>
+<enum name='kAudioFormatFlagIsSignedInteger' value='4'/>
+<enum name='kAudioFormatFlagsAreAllClear' value='-2147483648'/>
+<enum name='kAudioFormatFlagsAudioUnitCanonical' value='3116'/>
+<enum name='kAudioFormatFlagsCanonical' value='12'/>
+<enum name='kAudioFormatFlagsNativeEndian' value='0'/>
+<enum name='kAudioFormatFlagsNativeFloatPacked' value='9'/>
+<enum name='kAudioFormatLinearPCM' value='1819304813'/>
+<enum name='kAudioFormatMACE3' value='1296122675'/>
+<enum name='kAudioFormatMACE6' value='1296122678'/>
+<enum name='kAudioFormatMIDIStream' value='1835623529'/>
+<enum name='kAudioFormatMPEG4AAC' value='1633772320'/>
+<enum name='kAudioFormatMPEG4AAC_ELD' value='1633772389'/>
+<enum name='kAudioFormatMPEG4AAC_ELD_SBR' value='1633772390'/>
+<enum name='kAudioFormatMPEG4AAC_ELD_V2' value='1633772391'/>
+<enum name='kAudioFormatMPEG4AAC_HE' value='1633772392'/>
+<enum name='kAudioFormatMPEG4AAC_HE_V2' value='1633772400'/>
+<enum name='kAudioFormatMPEG4AAC_LD' value='1633772396'/>
+<enum name='kAudioFormatMPEG4AAC_Spatial' value='1633772403'/>
+<enum name='kAudioFormatMPEG4CELP' value='1667591280'/>
+<enum name='kAudioFormatMPEG4HVXC' value='1752594531'/>
+<enum name='kAudioFormatMPEG4TwinVQ' value='1953986161'/>
+<enum name='kAudioFormatMPEGLayer1' value='778924081'/>
+<enum name='kAudioFormatMPEGLayer2' value='778924082'/>
+<enum name='kAudioFormatMPEGLayer3' value='778924083'/>
+<enum name='kAudioFormatMicrosoftGSM' value='1836253233'/>
+<enum name='kAudioFormatParameterValueStream' value='1634760307'/>
+<enum name='kAudioFormatQDesign' value='1363430723'/>
+<enum name='kAudioFormatQDesign2' value='1363430706'/>
+<enum name='kAudioFormatQUALCOMM' value='1365470320'/>
+<enum name='kAudioFormatTimeCode' value='1953066341'/>
+<enum name='kAudioFormatULaw' value='1970037111'/>
+<enum name='kAudioFormatiLBC' value='1768710755'/>
+<enum name='kAudioStreamAnyRate' value='0'/>
+<enum name='kAudioTimeStampHostTimeValid' value='2'/>
+<enum name='kAudioTimeStampRateScalarValid' value='4'/>
+<enum name='kAudioTimeStampSMPTETimeValid' value='16'/>
+<enum name='kAudioTimeStampSampleHostTimeValid' value='3'/>
+<enum name='kAudioTimeStampSampleTimeValid' value='1'/>
+<enum name='kAudioTimeStampWordClockTimeValid' value='8'/>
+<enum name='kAudioUnitSampleFractionBits' value='24'/>
+<enum name='kAudio_FileNotFoundError' value='-43'/>
+<enum name='kAudio_MemFullError' value='-108'/>
+<enum name='kAudio_ParamError' value='-50'/>
+<enum name='kAudio_UnimplementedError' value='-4'/>
+<enum name='kLinearPCMFormatFlagIsAlignedHigh' value='16'/>
+<enum name='kLinearPCMFormatFlagIsBigEndian' value='2'/>
+<enum name='kLinearPCMFormatFlagIsFloat' value='1'/>
+<enum name='kLinearPCMFormatFlagIsNonInterleaved' value='32'/>
+<enum name='kLinearPCMFormatFlagIsNonMixable' value='64'/>
+<enum name='kLinearPCMFormatFlagIsPacked' value='8'/>
+<enum name='kLinearPCMFormatFlagIsSignedInteger' value='4'/>
+<enum name='kLinearPCMFormatFlagsAreAllClear' value='-2147483648'/>
+<enum name='kLinearPCMFormatFlagsSampleFractionMask' value='8064'/>
+<enum name='kLinearPCMFormatFlagsSampleFractionShift' value='7'/>
+<enum name='kMPEG4Object_AAC_LC' value='2'/>
+<enum name='kMPEG4Object_AAC_LTP' value='4'/>
+<enum name='kMPEG4Object_AAC_Main' value='1'/>
+<enum name='kMPEG4Object_AAC_SBR' value='5'/>
+<enum name='kMPEG4Object_AAC_SSR' value='3'/>
+<enum name='kMPEG4Object_AAC_Scalable' value='6'/>
+<enum name='kMPEG4Object_CELP' value='8'/>
+<enum name='kMPEG4Object_HVXC' value='9'/>
+<enum name='kMPEG4Object_TwinVQ' value='7'/>
+<enum name='kSMPTETimeRunning' value='2'/>
+<enum name='kSMPTETimeType2398' value='11'/>
+<enum name='kSMPTETimeType24' value='0'/>
+<enum name='kSMPTETimeType25' value='1'/>
+<enum name='kSMPTETimeType2997' value='4'/>
+<enum name='kSMPTETimeType2997Drop' value='5'/>
+<enum name='kSMPTETimeType30' value='3'/>
+<enum name='kSMPTETimeType30Drop' value='2'/>
+<enum name='kSMPTETimeType50' value='10'/>
+<enum name='kSMPTETimeType5994' value='7'/>
+<enum name='kSMPTETimeType5994Drop' value='9'/>
+<enum name='kSMPTETimeType60' value='6'/>
+<enum name='kSMPTETimeType60Drop' value='8'/>
+<enum name='kSMPTETimeValid' value='1'/>
+</signatures>

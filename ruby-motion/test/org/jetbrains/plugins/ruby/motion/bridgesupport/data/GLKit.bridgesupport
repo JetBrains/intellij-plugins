@@ -1,0 +1,1912 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<cftype type='^{GLKEffectPropertyPrv=}' name='GLKEffectPropertyPrvPtr'/>
+<cftype type='^{_GLKMatrixStack=}' name='GLKMatrixStackRef'/>
+<constant declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='GLKMatrix3Identity' const='true'/>
+<constant declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='GLKMatrix4Identity' const='true'/>
+<constant declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='GLKQuaternionIdentity' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderApplyPremultiplication' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderErrorDomain' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderErrorKey' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderGLErrorKey' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderGenerateMipmaps' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderGrayscaleAsAlpha' const='true'/>
+<constant declared_type='NSString*' type='@' name='GLKTextureLoaderOriginBottomLeft' const='true'/>
+<enum value='0' name='GLKFogModeExp'/>
+<enum value='1' name='GLKFogModeExp2'/>
+<enum value='2' name='GLKFogModeLinear'/>
+<enum value='1' name='GLKLightingTypePerPixel'/>
+<enum value='0' name='GLKLightingTypePerVertex'/>
+<enum value='2' name='GLKTextureEnvModeDecal'/>
+<enum value='1' name='GLKTextureEnvModeModulate'/>
+<enum value='0' name='GLKTextureEnvModeReplace'/>
+<enum value='1' name='GLKTextureInfoAlphaStateNonPremultiplied'/>
+<enum value='0' name='GLKTextureInfoAlphaStateNone'/>
+<enum value='2' name='GLKTextureInfoAlphaStatePremultiplied'/>
+<enum value='2' name='GLKTextureInfoOriginBottomLeft'/>
+<enum value='1' name='GLKTextureInfoOriginTopLeft'/>
+<enum value='0' name='GLKTextureInfoOriginUnknown'/>
+<enum value='16' name='GLKTextureLoaderErrorAlphaPremultiplicationFailure'/>
+<enum value='7' name='GLKTextureLoaderErrorCompressedTextureUpload'/>
+<enum value='6' name='GLKTextureLoaderErrorCubeMapInvalidNumFiles'/>
+<enum value='12' name='GLKTextureLoaderErrorDataPreprocessingFailure'/>
+<enum value='0' name='GLKTextureLoaderErrorFileOrURLNotFound'/>
+<enum value='2' name='GLKTextureLoaderErrorInvalidCGImage'/>
+<enum value='17' name='GLKTextureLoaderErrorInvalidEAGLContext'/>
+<enum value='1' name='GLKTextureLoaderErrorInvalidNSData'/>
+<enum value='13' name='GLKTextureLoaderErrorMipmapUnsupported'/>
+<enum value='5' name='GLKTextureLoaderErrorPVRAtlasUnsupported'/>
+<enum value='15' name='GLKTextureLoaderErrorReorientationFailure'/>
+<enum value='8' name='GLKTextureLoaderErrorUncompressedTextureUpload'/>
+<enum value='4' name='GLKTextureLoaderErrorUnknownFileType'/>
+<enum value='3' name='GLKTextureLoaderErrorUnknownPathType'/>
+<enum value='10' name='GLKTextureLoaderErrorUnsupportedBitDepth'/>
+<enum value='9' name='GLKTextureLoaderErrorUnsupportedCubeMapDimensions'/>
+<enum value='14' name='GLKTextureLoaderErrorUnsupportedOrientation'/>
+<enum value='11' name='GLKTextureLoaderErrorUnsupportedPVRFormat'/>
+<enum value='3553' name='GLKTextureTarget2D'/>
+<enum value='2' name='GLKTextureTargetCt'/>
+<enum value='34067' name='GLKTextureTargetCubeMap'/>
+<enum value='2' name='GLKVertexAttribColor'/>
+<enum value='1' name='GLKVertexAttribNormal'/>
+<enum value='0' name='GLKVertexAttribPosition'/>
+<enum value='3' name='GLKVertexAttribTexCoord0'/>
+<enum value='4' name='GLKVertexAttribTexCoord1'/>
+<enum value='1' name='GLKViewDrawableColorFormatRGB565'/>
+<enum value='0' name='GLKViewDrawableColorFormatRGBA8888'/>
+<enum value='1' name='GLKViewDrawableDepthFormat16'/>
+<enum value='2' name='GLKViewDrawableDepthFormat24'/>
+<enum value='0' name='GLKViewDrawableDepthFormatNone'/>
+<enum value='1' name='GLKViewDrawableMultisample4X'/>
+<enum value='0' name='GLKViewDrawableMultisampleNone'/>
+<enum value='1' name='GLKViewDrawableStencilFormat8'/>
+<enum value='0' name='GLKViewDrawableStencilFormatNone'/>
+<function inline='true' name='GLKMathDegreesToRadians'>
+<arg declared_type='float' type='f' name='degrees'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function name='GLKMathProject'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='object'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='model'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='projection'/>
+<arg declared_type='int*' type='^i' name='viewport'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMathRadiansToDegrees'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function name='GLKMathUnproject'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='window'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='model'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='projection'/>
+<arg declared_type='int*' type='^i' name='viewport'/>
+<arg declared_type='_Bool*' type='^B' name='success'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMatrix3Add'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixLeft'/>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixRight'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3GetColumn'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='int' type='i' name='column'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMatrix3GetMatrix2'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<retval declared_type='GLKMatrix2' type='(_GLKMatrix2={?=ffff}[2[2f]][4f])'/>
+</function>
+<function inline='true' name='GLKMatrix3GetRow'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='int' type='i' name='row'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function name='GLKMatrix3Invert'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='_Bool*' type='^B' name='isInvertible'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function name='GLKMatrix3InvertAndTranspose'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='_Bool*' type='^B' name='isInvertible'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3Make'>
+<arg declared_type='float' type='f' name='m00'/>
+<arg declared_type='float' type='f' name='m01'/>
+<arg declared_type='float' type='f' name='m02'/>
+<arg declared_type='float' type='f' name='m10'/>
+<arg declared_type='float' type='f' name='m11'/>
+<arg declared_type='float' type='f' name='m12'/>
+<arg declared_type='float' type='f' name='m20'/>
+<arg declared_type='float' type='f' name='m21'/>
+<arg declared_type='float' type='f' name='m22'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeAndTranspose'>
+<arg declared_type='float' type='f' name='m00'/>
+<arg declared_type='float' type='f' name='m01'/>
+<arg declared_type='float' type='f' name='m02'/>
+<arg declared_type='float' type='f' name='m10'/>
+<arg declared_type='float' type='f' name='m11'/>
+<arg declared_type='float' type='f' name='m12'/>
+<arg declared_type='float' type='f' name='m20'/>
+<arg declared_type='float' type='f' name='m21'/>
+<arg declared_type='float' type='f' name='m22'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeScale'>
+<arg declared_type='float' type='f' name='sx'/>
+<arg declared_type='float' type='f' name='sy'/>
+<arg declared_type='float' type='f' name='sz'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeWithArray'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeWithArrayAndTranspose'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeWithColumns'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='column0'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='column1'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='column2'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeWithQuaternion'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeWithRows'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='row0'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='row1'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='row2'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeXRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeYRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MakeZRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3Multiply'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixLeft'/>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixRight'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MultiplyVector3'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMatrix3MultiplyVector3Array'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='GLKVector3*' type='^(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKMatrix3Rotate'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3RotateWithVector3'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='axisVector'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3RotateWithVector4'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='axisVector'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3RotateX'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3RotateY'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3RotateZ'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3Scale'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='float' type='f' name='sx'/>
+<arg declared_type='float' type='f' name='sy'/>
+<arg declared_type='float' type='f' name='sz'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3ScaleWithVector3'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='scaleVector'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3ScaleWithVector4'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='scaleVector'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3SetColumn'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='int' type='i' name='column'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3SetRow'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<arg declared_type='int' type='i' name='row'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3Subtract'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixLeft'/>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrixRight'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix3Transpose'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Add'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixRight'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4GetColumn'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='int' type='i' name='column'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKMatrix4GetMatrix2'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='GLKMatrix2' type='(_GLKMatrix2={?=ffff}[2[2f]][4f])'/>
+</function>
+<function inline='true' name='GLKMatrix4GetMatrix3'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function inline='true' name='GLKMatrix4GetRow'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='int' type='i' name='row'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function name='GLKMatrix4Invert'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='_Bool*' type='^B' name='isInvertible'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function name='GLKMatrix4InvertAndTranspose'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='_Bool*' type='^B' name='isInvertible'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Make'>
+<arg declared_type='float' type='f' name='m00'/>
+<arg declared_type='float' type='f' name='m01'/>
+<arg declared_type='float' type='f' name='m02'/>
+<arg declared_type='float' type='f' name='m03'/>
+<arg declared_type='float' type='f' name='m10'/>
+<arg declared_type='float' type='f' name='m11'/>
+<arg declared_type='float' type='f' name='m12'/>
+<arg declared_type='float' type='f' name='m13'/>
+<arg declared_type='float' type='f' name='m20'/>
+<arg declared_type='float' type='f' name='m21'/>
+<arg declared_type='float' type='f' name='m22'/>
+<arg declared_type='float' type='f' name='m23'/>
+<arg declared_type='float' type='f' name='m30'/>
+<arg declared_type='float' type='f' name='m31'/>
+<arg declared_type='float' type='f' name='m32'/>
+<arg declared_type='float' type='f' name='m33'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeAndTranspose'>
+<arg declared_type='float' type='f' name='m00'/>
+<arg declared_type='float' type='f' name='m01'/>
+<arg declared_type='float' type='f' name='m02'/>
+<arg declared_type='float' type='f' name='m03'/>
+<arg declared_type='float' type='f' name='m10'/>
+<arg declared_type='float' type='f' name='m11'/>
+<arg declared_type='float' type='f' name='m12'/>
+<arg declared_type='float' type='f' name='m13'/>
+<arg declared_type='float' type='f' name='m20'/>
+<arg declared_type='float' type='f' name='m21'/>
+<arg declared_type='float' type='f' name='m22'/>
+<arg declared_type='float' type='f' name='m23'/>
+<arg declared_type='float' type='f' name='m30'/>
+<arg declared_type='float' type='f' name='m31'/>
+<arg declared_type='float' type='f' name='m32'/>
+<arg declared_type='float' type='f' name='m33'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeFrustum'>
+<arg declared_type='float' type='f' name='left'/>
+<arg declared_type='float' type='f' name='right'/>
+<arg declared_type='float' type='f' name='bottom'/>
+<arg declared_type='float' type='f' name='top'/>
+<arg declared_type='float' type='f' name='nearZ'/>
+<arg declared_type='float' type='f' name='farZ'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeLookAt'>
+<arg declared_type='float' type='f' name='eyeX'/>
+<arg declared_type='float' type='f' name='eyeY'/>
+<arg declared_type='float' type='f' name='eyeZ'/>
+<arg declared_type='float' type='f' name='centerX'/>
+<arg declared_type='float' type='f' name='centerY'/>
+<arg declared_type='float' type='f' name='centerZ'/>
+<arg declared_type='float' type='f' name='upX'/>
+<arg declared_type='float' type='f' name='upY'/>
+<arg declared_type='float' type='f' name='upZ'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeOrtho'>
+<arg declared_type='float' type='f' name='left'/>
+<arg declared_type='float' type='f' name='right'/>
+<arg declared_type='float' type='f' name='bottom'/>
+<arg declared_type='float' type='f' name='top'/>
+<arg declared_type='float' type='f' name='nearZ'/>
+<arg declared_type='float' type='f' name='farZ'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakePerspective'>
+<arg declared_type='float' type='f' name='fovyRadians'/>
+<arg declared_type='float' type='f' name='aspect'/>
+<arg declared_type='float' type='f' name='nearZ'/>
+<arg declared_type='float' type='f' name='farZ'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeScale'>
+<arg declared_type='float' type='f' name='sx'/>
+<arg declared_type='float' type='f' name='sy'/>
+<arg declared_type='float' type='f' name='sz'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeTranslation'>
+<arg declared_type='float' type='f' name='tx'/>
+<arg declared_type='float' type='f' name='ty'/>
+<arg declared_type='float' type='f' name='tz'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeWithArray'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeWithArrayAndTranspose'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeWithColumns'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='column0'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='column1'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='column2'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='column3'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeWithQuaternion'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeWithRows'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='row0'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='row1'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='row2'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='row3'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeXRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeYRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MakeZRotation'>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Multiply'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixRight'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyAndProjectVector3'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyAndProjectVector3Array'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector3*' type='^(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyVector3'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyVector3Array'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector3*' type='^(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyVector3ArrayWithTranslation'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector3*' type='^(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyVector3WithTranslation'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyVector4'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKMatrix4MultiplyVector4Array'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector4*' type='^(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKMatrix4Rotate'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4RotateWithVector3'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='axisVector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4RotateWithVector4'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='axisVector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4RotateX'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4RotateY'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4RotateZ'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Scale'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='sx'/>
+<arg declared_type='float' type='f' name='sy'/>
+<arg declared_type='float' type='f' name='sz'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4ScaleWithVector3'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='scaleVector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4ScaleWithVector4'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='scaleVector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4SetColumn'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='int' type='i' name='column'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4SetRow'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='int' type='i' name='row'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Subtract'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixLeft'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrixRight'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Translate'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='float' type='f' name='tx'/>
+<arg declared_type='float' type='f' name='ty'/>
+<arg declared_type='float' type='f' name='tz'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4TranslateWithVector3'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='translationVector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4TranslateWithVector4'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='translationVector'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function inline='true' name='GLKMatrix4Transpose'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function name='GLKMatrixStackCreate'>
+<arg declared_type='CFAllocatorRef' type='^{__CFAllocator=}' name='alloc'/>
+<retval declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}'/>
+</function>
+<function name='GLKMatrixStackGetMatrix2'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix2' type='(_GLKMatrix2={?=ffff}[2[2f]][4f])'/>
+</function>
+<function name='GLKMatrixStackGetMatrix3'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function name='GLKMatrixStackGetMatrix3Inverse'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function name='GLKMatrixStackGetMatrix3InverseTranspose'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</function>
+<function name='GLKMatrixStackGetMatrix4'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function name='GLKMatrixStackGetMatrix4Inverse'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function name='GLKMatrixStackGetMatrix4InverseTranspose'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</function>
+<function name='GLKMatrixStackGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='GLKMatrixStackLoadMatrix4'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackMultiplyMatrix4'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackMultiplyMatrixStack'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stackLeft'/>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stackRight'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackPop'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackPush'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackRotate'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackRotateWithVector3'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='axisVector'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackRotateWithVector4'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='axisVector'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackRotateX'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackRotateY'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackRotateZ'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='radians'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackScale'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='sx'/>
+<arg declared_type='float' type='f' name='sy'/>
+<arg declared_type='float' type='f' name='sz'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackScaleWithVector3'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='scaleVector'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackScaleWithVector4'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='scaleVector'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackSize'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='GLKMatrixStackTranslate'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='float' type='f' name='tx'/>
+<arg declared_type='float' type='f' name='ty'/>
+<arg declared_type='float' type='f' name='tz'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackTranslateWithVector3'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='translationVector'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKMatrixStackTranslateWithVector4'>
+<arg declared_type='GLKMatrixStackRef' type='^{_GLKMatrixStack=}' name='stack'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='translationVector'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKQuaternionAdd'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionLeft'/>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionRight'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function name='GLKQuaternionAngle'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function name='GLKQuaternionAxis'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKQuaternionConjugate'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionInvert'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionLength'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKQuaternionMake'>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<arg declared_type='float' type='f' name='w'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionMakeWithAngleAndAxis'>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionMakeWithAngleAndVector3Axis'>
+<arg declared_type='float' type='f' name='radians'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='axisVector'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionMakeWithArray'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function name='GLKQuaternionMakeWithMatrix3'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function name='GLKQuaternionMakeWithMatrix4'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionMakeWithVector3'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='scalar'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionMultiply'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionLeft'/>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionRight'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionNormalize'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionRotateVector3'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function name='GLKQuaternionRotateVector3Array'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<arg declared_type='GLKVector3*' type='^(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function inline='true' name='GLKQuaternionRotateVector4'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function name='GLKQuaternionRotateVector4Array'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<arg declared_type='GLKVector4*' type='^(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectors'/>
+<arg declared_type='size_t' type='L' name='vectorCount'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='GLKQuaternionSlerp'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionStart'/>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionEnd'/>
+<arg declared_type='float' type='f' name='t'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKQuaternionSubtract'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionLeft'/>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternionRight'/>
+<retval declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector2Add'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2AddScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2AllEqualToScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector2AllEqualToVector2'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector2AllGreaterThanOrEqualToScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector2AllGreaterThanOrEqualToVector2'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector2AllGreaterThanScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector2AllGreaterThanVector2'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector2Distance'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorStart'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorEnd'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector2Divide'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2DivideScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2DotProduct'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector2Length'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector2Lerp'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorStart'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorEnd'/>
+<arg declared_type='float' type='f' name='t'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Make'>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2MakeWithArray'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Maximum'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Minimum'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Multiply'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2MultiplyScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Negate'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Normalize'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Project'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorToProject'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='projectionVector'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2Subtract'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorLeft'/>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vectorRight'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector2SubtractScalar'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])'/>
+</function>
+<function inline='true' name='GLKVector3Add'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3AddScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3AllEqualToScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector3AllEqualToVector3'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector3AllGreaterThanOrEqualToScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector3AllGreaterThanOrEqualToVector3'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector3AllGreaterThanScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector3AllGreaterThanVector3'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector3CrossProduct'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Distance'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorStart'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorEnd'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector3Divide'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3DivideScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3DotProduct'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector3Length'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector3Lerp'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorStart'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorEnd'/>
+<arg declared_type='float' type='f' name='t'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Make'>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3MakeWithArray'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Maximum'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Minimum'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Multiply'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3MultiplyScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Negate'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Normalize'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Project'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorToProject'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='projectionVector'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3Subtract'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorLeft'/>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vectorRight'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector3SubtractScalar'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</function>
+<function inline='true' name='GLKVector4Add'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4AddScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4AllEqualToScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector4AllEqualToVector4'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector4AllGreaterThanOrEqualToScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector4AllGreaterThanOrEqualToVector4'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector4AllGreaterThanScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector4AllGreaterThanVector4'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='GLKVector4CrossProduct'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Distance'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorStart'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorEnd'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector4Divide'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4DivideScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4DotProduct'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector4Length'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='float' type='f'/>
+</function>
+<function inline='true' name='GLKVector4Lerp'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorStart'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorEnd'/>
+<arg declared_type='float' type='f' name='t'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Make'>
+<arg declared_type='float' type='f' name='x'/>
+<arg declared_type='float' type='f' name='y'/>
+<arg declared_type='float' type='f' name='z'/>
+<arg declared_type='float' type='f' name='w'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4MakeWithArray'>
+<arg declared_type='float*' type='^f' name='values'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4MakeWithVector3'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<arg declared_type='float' type='f' name='w'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Maximum'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Minimum'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Multiply'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4MultiplyScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Negate'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Normalize'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Project'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorToProject'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='projectionVector'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4Subtract'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorLeft'/>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vectorRight'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function inline='true' name='GLKVector4SubtractScalar'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<arg declared_type='float' type='f' name='value'/>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</function>
+<function name='NSStringFromGLKMatrix2'>
+<arg declared_type='GLKMatrix2' type='(_GLKMatrix2={?=ffff}[2[2f]][4f])' name='matrix'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='NSStringFromGLKMatrix3'>
+<arg declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='NSStringFromGLKMatrix4'>
+<arg declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='matrix'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='NSStringFromGLKQuaternion'>
+<arg declared_type='GLKQuaternion' type='(_GLKQuaternion={?=(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])f}{?=ffff}[4f])' name='quaternion'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='NSStringFromGLKVector2'>
+<arg declared_type='GLKVector2' type='(_GLKVector2={?=ff}{?=ff}[2f])' name='vector'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='NSStringFromGLKVector3'>
+<arg declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='vector'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='NSStringFromGLKVector4'>
+<arg declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='vector'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<class name='GLKBaseEffect'>
+<method selector='colorMaterialEnabled'>
+<retval declared_type='GLboolean' type='C'/>
+</method>
+<method selector='constantColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='fog'>
+<retval declared_type='GLKEffectPropertyFog*' type='@'/>
+</method>
+<method selector='label'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='light0'>
+<retval declared_type='GLKEffectPropertyLight*' type='@'/>
+</method>
+<method selector='light1'>
+<retval declared_type='GLKEffectPropertyLight*' type='@'/>
+</method>
+<method selector='light2'>
+<retval declared_type='GLKEffectPropertyLight*' type='@'/>
+</method>
+<method selector='lightModelAmbientColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='lightModelTwoSided'>
+<retval declared_type='GLboolean' type='C'/>
+</method>
+<method selector='lightingType'>
+<retval declared_type='GLKLightingType' type='i'/>
+</method>
+<method selector='material'>
+<retval declared_type='GLKEffectPropertyMaterial*' type='@'/>
+</method>
+<method selector='prepareToDraw'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setColorMaterialEnabled:'>
+<arg index='0' declared_type='GLboolean' type='C' name='colorMaterialEnabled'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setConstantColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='constantColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLabel:'>
+<arg index='0' declared_type='NSString*' type='@' name='label'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLightModelAmbientColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='lightModelAmbientColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLightModelTwoSided:'>
+<arg index='0' declared_type='GLboolean' type='C' name='lightModelTwoSided'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLightingType:'>
+<arg index='0' declared_type='GLKLightingType' type='i' name='lightingType'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTextureOrder:'>
+<arg index='0' declared_type='NSArray*' type='@' name='textureOrder'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setUseConstantColor:'>
+<arg index='0' declared_type='GLboolean' type='C' name='useConstantColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='texture2d0'>
+<retval declared_type='GLKEffectPropertyTexture*' type='@'/>
+</method>
+<method selector='texture2d1'>
+<retval declared_type='GLKEffectPropertyTexture*' type='@'/>
+</method>
+<method selector='textureOrder'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='transform'>
+<retval declared_type='GLKEffectPropertyTransform*' type='@'/>
+</method>
+<method selector='useConstantColor'>
+<retval declared_type='GLboolean' type='C'/>
+</method>
+</class>
+<class name='GLKEffectPropertyFog'>
+<method selector='color'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='density'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='enabled'>
+<retval declared_type='GLboolean' type='C'/>
+</method>
+<method selector='end'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='mode'>
+<retval declared_type='GLint' type='i'/>
+</method>
+<method selector='setColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='color'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDensity:'>
+<arg index='0' declared_type='GLfloat' type='f' name='density'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnabled:'>
+<arg index='0' declared_type='GLboolean' type='C' name='enabled'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnd:'>
+<arg index='0' declared_type='GLfloat' type='f' name='end'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMode:'>
+<arg index='0' declared_type='GLint' type='i' name='mode'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setStart:'>
+<arg index='0' declared_type='GLfloat' type='f' name='start'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='start'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+</class>
+<class name='GLKEffectPropertyLight'>
+<method selector='ambientColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='constantAttenuation'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='diffuseColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='enabled'>
+<retval declared_type='GLboolean' type='C'/>
+</method>
+<method selector='linearAttenuation'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='position'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='quadraticAttenuation'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='setAmbientColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='ambientColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setConstantAttenuation:'>
+<arg index='0' declared_type='GLfloat' type='f' name='constantAttenuation'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDiffuseColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='diffuseColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnabled:'>
+<arg index='0' declared_type='GLboolean' type='C' name='enabled'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLinearAttenuation:'>
+<arg index='0' declared_type='GLfloat' type='f' name='linearAttenuation'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPosition:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='position'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setQuadraticAttenuation:'>
+<arg index='0' declared_type='GLfloat' type='f' name='quadraticAttenuation'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSpecularColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='specularColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSpotCutoff:'>
+<arg index='0' declared_type='GLfloat' type='f' name='spotCutoff'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSpotDirection:'>
+<arg index='0' declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='spotDirection'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSpotExponent:'>
+<arg index='0' declared_type='GLfloat' type='f' name='spotExponent'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTransform:'>
+<arg index='0' declared_type='GLKEffectPropertyTransform*' type='@' name='transform'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='specularColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='spotCutoff'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='spotDirection'>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</method>
+<method selector='spotExponent'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='transform'>
+<retval declared_type='GLKEffectPropertyTransform*' type='@'/>
+</method>
+</class>
+<class name='GLKEffectPropertyMaterial'>
+<method selector='ambientColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='diffuseColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='emissiveColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+<method selector='setAmbientColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='ambientColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDiffuseColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='diffuseColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEmissiveColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='emissiveColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setShininess:'>
+<arg index='0' declared_type='GLfloat' type='f' name='shininess'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSpecularColor:'>
+<arg index='0' declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])' name='specularColor'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='shininess'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='specularColor'>
+<retval declared_type='GLKVector4' type='(_GLKVector4={?=ffff}{?=ffff}{?=ffff}[4f])'/>
+</method>
+</class>
+<class name='GLKEffectPropertyTexture'>
+<method selector='enabled'>
+<retval declared_type='GLboolean' type='C'/>
+</method>
+<method selector='envMode'>
+<retval declared_type='GLint' type='i'/>
+</method>
+<method selector='name'>
+<retval declared_type='GLuint' type='I'/>
+</method>
+<method selector='setEnabled:'>
+<arg index='0' declared_type='GLboolean' type='C' name='enabled'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnvMode:'>
+<arg index='0' declared_type='GLint' type='i' name='envMode'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setName:'>
+<arg index='0' declared_type='GLuint' type='I' name='name'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTarget:'>
+<arg index='0' declared_type='GLKTextureTarget' type='i' name='target'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='target'>
+<retval declared_type='GLKTextureTarget' type='i'/>
+</method>
+</class>
+<class name='GLKEffectPropertyTransform'>
+<method selector='modelviewMatrix'>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</method>
+<method selector='normalMatrix'>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</method>
+<method selector='projectionMatrix'>
+<retval declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])'/>
+</method>
+<method selector='setModelviewMatrix:'>
+<arg index='0' declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='modelviewMatrix'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setProjectionMatrix:'>
+<arg index='0' declared_type='GLKMatrix4' type='(_GLKMatrix4={?=ffffffffffffffff}[16f])' name='projectionMatrix'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='GLKReflectionMapEffect'>
+<method selector='matrix'>
+<retval declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])'/>
+</method>
+<method selector='prepareToDraw'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMatrix:'>
+<arg index='0' declared_type='GLKMatrix3' type='(_GLKMatrix3={?=fffffffff}[9f])' name='matrix'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='textureCubeMap'>
+<retval declared_type='GLKEffectPropertyTexture*' type='@'/>
+</method>
+</class>
+<class name='GLKSkyboxEffect'>
+<method selector='center'>
+<retval declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])'/>
+</method>
+<method selector='draw'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='label'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='prepareToDraw'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCenter:'>
+<arg index='0' declared_type='GLKVector3' type='(_GLKVector3={?=fff}{?=fff}{?=fff}[3f])' name='center'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLabel:'>
+<arg index='0' declared_type='NSString*' type='@' name='label'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setXSize:'>
+<arg index='0' declared_type='GLfloat' type='f' name='xSize'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setYSize:'>
+<arg index='0' declared_type='GLfloat' type='f' name='ySize'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setZSize:'>
+<arg index='0' declared_type='GLfloat' type='f' name='zSize'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='textureCubeMap'>
+<retval declared_type='GLKEffectPropertyTexture*' type='@'/>
+</method>
+<method selector='transform'>
+<retval declared_type='GLKEffectPropertyTransform*' type='@'/>
+</method>
+<method selector='xSize'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='ySize'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+<method selector='zSize'>
+<retval declared_type='GLfloat' type='f'/>
+</method>
+</class>
+<class name='GLKTextureInfo'>
+<method selector='alphaState'>
+<retval declared_type='GLKTextureInfoAlphaState' type='I'/>
+</method>
+<method selector='containsMipmaps'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='height'>
+<retval declared_type='GLuint' type='I'/>
+</method>
+<method selector='name'>
+<retval declared_type='GLuint' type='I'/>
+</method>
+<method selector='target'>
+<retval declared_type='GLenum' type='I'/>
+</method>
+<method selector='textureOrigin'>
+<retval declared_type='GLKTextureInfoOrigin' type='I'/>
+</method>
+<method selector='width'>
+<retval declared_type='GLuint' type='I'/>
+</method>
+</class>
+<class name='GLKTextureLoader'>
+<method selector='cubeMapWithContentsOfFile:options:error:' class_method='true'>
+<arg index='0' declared_type='NSString*' type='@' name='path'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='cubeMapWithContentsOfFile:options:queue:completionHandler:'>
+<arg index='0' declared_type='NSString*' type='@' name='path'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='cubeMapWithContentsOfFiles:options:error:' class_method='true'>
+<arg index='0' declared_type='NSArray*' type='@' name='paths'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='cubeMapWithContentsOfFiles:options:queue:completionHandler:'>
+<arg index='0' declared_type='NSArray*' type='@' name='paths'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='cubeMapWithContentsOfURL:options:error:' class_method='true'>
+<arg index='0' declared_type='NSURL*' type='@' name='url'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='cubeMapWithContentsOfURL:options:queue:completionHandler:'>
+<arg index='0' declared_type='NSURL*' type='@' name='url'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='initWithSharegroup:'>
+<arg index='0' declared_type='EAGLSharegroup*' type='@' name='sharegroup'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='textureWithCGImage:options:error:' class_method='true'>
+<arg index='0' declared_type='CGImageRef' type='^{CGImage=}' name='cgImage'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='textureWithCGImage:options:queue:completionHandler:'>
+<arg index='0' declared_type='CGImageRef' type='^{CGImage=}' name='cgImage'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='textureWithContentsOfData:options:error:' class_method='true'>
+<arg index='0' declared_type='NSData*' type='@' name='data'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='textureWithContentsOfData:options:queue:completionHandler:'>
+<arg index='0' declared_type='NSData*' type='@' name='data'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='textureWithContentsOfFile:options:error:' class_method='true'>
+<arg index='0' declared_type='NSString*' type='@' name='path'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='textureWithContentsOfFile:options:queue:completionHandler:'>
+<arg index='0' declared_type='NSString*' type='@' name='path'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='textureWithContentsOfURL:options:error:' class_method='true'>
+<arg index='0' declared_type='NSURL*' type='@' name='url'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='NSError**' type='^@' name='outError'/>
+<retval declared_type='GLKTextureInfo*' type='@'/>
+</method>
+<method selector='textureWithContentsOfURL:options:queue:completionHandler:'>
+<arg index='0' declared_type='NSURL*' type='@' name='url'/>
+<arg index='1' declared_type='NSDictionary*' type='@' name='options'/>
+<arg index='2' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' name='queue'/>
+<arg index='3' declared_type='GLKTextureLoaderCallback' type='@?' function_pointer='true' name='block'>
+<arg declared_type='GLKTextureInfo*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='GLKView'>
+<method selector='bindDrawable'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='context'>
+<retval declared_type='EAGLContext*' type='@'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='deleteDrawable'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='display'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='drawableColorFormat'>
+<retval declared_type='GLKViewDrawableColorFormat' type='i'/>
+</method>
+<method selector='drawableDepthFormat'>
+<retval declared_type='GLKViewDrawableDepthFormat' type='i'/>
+</method>
+<method selector='drawableHeight'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='drawableMultisample'>
+<retval declared_type='GLKViewDrawableMultisample' type='i'/>
+</method>
+<method selector='drawableStencilFormat'>
+<retval declared_type='GLKViewDrawableStencilFormat' type='i'/>
+</method>
+<method selector='drawableWidth'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='enableSetNeedsDisplay'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='initWithFrame:context:'>
+<arg index='0' declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='frame'/>
+<arg index='1' declared_type='EAGLContext*' type='@' name='context'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='setContext:'>
+<arg index='0' declared_type='EAGLContext*' type='@' name='context'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDelegate:'>
+<arg index='0' declared_type='id' type='@' name='delegate'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDrawableColorFormat:'>
+<arg index='0' declared_type='GLKViewDrawableColorFormat' type='i' name='drawableColorFormat'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDrawableDepthFormat:'>
+<arg index='0' declared_type='GLKViewDrawableDepthFormat' type='i' name='drawableDepthFormat'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDrawableMultisample:'>
+<arg index='0' declared_type='GLKViewDrawableMultisample' type='i' name='drawableMultisample'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDrawableStencilFormat:'>
+<arg index='0' declared_type='GLKViewDrawableStencilFormat' type='i' name='drawableStencilFormat'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnableSetNeedsDisplay:'>
+<arg index='0' declared_type='BOOL' type='B' name='enableSetNeedsDisplay'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='snapshot'>
+<retval declared_type='UIImage*' type='@'/>
+</method>
+</class>
+<class name='GLKViewController'>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='framesDisplayed'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='framesPerSecond'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='isPaused'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='pauseOnWillResignActive'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='preferredFramesPerSecond'>
+<retval declared_type='NSInteger' type='i'/>
+</method>
+<method selector='resumeOnDidBecomeActive'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setDelegate:'>
+<arg index='0' declared_type='id' type='@' name='delegate'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPauseOnWillResignActive:'>
+<arg index='0' declared_type='BOOL' type='B' name='pauseOnWillResignActive'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPaused:'>
+<arg index='0' declared_type='BOOL' type='B' name='paused'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPreferredFramesPerSecond:'>
+<arg index='0' declared_type='NSInteger' type='i' name='preferredFramesPerSecond'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setResumeOnDidBecomeActive:'>
+<arg index='0' declared_type='BOOL' type='B' name='resumeOnDidBecomeActive'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='timeSinceFirstResume'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='timeSinceLastDraw'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='timeSinceLastResume'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+<method selector='timeSinceLastUpdate'>
+<retval declared_type='NSTimeInterval' type='d'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='glkView:drawInRect:'>
+<arg index='0' declared_type='GLKView*' type='@' name='view'/>
+<arg index='1' declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='glkViewController:willPause:'>
+<arg index='0' declared_type='GLKViewController*' type='@' name='controller'/>
+<arg index='1' declared_type='BOOL' type='B' name='pause'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='glkViewControllerUpdate:'>
+<arg index='0' declared_type='GLKViewController*' type='@' name='controller'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='prepareToDraw'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<informal_protocol name='GLKNamedEffect'>
+<method type='v8@0:4' selector='prepareToDraw'>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='GLKViewControllerDelegate'>
+<method type='v16@0:4@8B12' selector='glkViewController:willPause:'>
+<arg index='0' declared_type='GLKViewController*' type='@' name='controller'/>
+<arg index='1' declared_type='BOOL' type='B' name='pause'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method type='v12@0:4@8' selector='glkViewControllerUpdate:'>
+<arg index='0' declared_type='GLKViewController*' type='@' name='controller'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='GLKViewDelegate'>
+<method type='v28@0:4@8{CGRect={CGPoint=ff}{CGSize=ff}}12' selector='glkView:drawInRect:'>
+<arg index='0' declared_type='GLKView*' type='@' name='view'/>
+<arg index='1' declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+</signatures>

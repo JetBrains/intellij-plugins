@@ -1,0 +1,86 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<enum name='TWRequestMethodDELETE' value='2'/>
+<enum name='TWRequestMethodGET' value='0'/>
+<enum name='TWRequestMethodPOST' value='1'/>
+<enum name='TWTweetComposeViewControllerResultCancelled' value='0'/>
+<enum name='TWTweetComposeViewControllerResultDone' value='1'/>
+<class name='TWRequest'>
+<method selector='URL'>
+<retval declared_type='NSURL*' type='@'/>
+</method>
+<method selector='account'>
+<retval declared_type='ACAccount*' type='@'/>
+</method>
+<method selector='addMultiPartData:withName:type:'>
+<arg name='data' declared_type='NSData*' index='0' type='@'/>
+<arg name='name' declared_type='NSString*' index='1' type='@'/>
+<arg name='type' declared_type='NSString*' index='2' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='initWithURL:parameters:requestMethod:'>
+<arg name='url' declared_type='NSURL*' index='0' type='@'/>
+<arg name='parameters' declared_type='NSDictionary*' index='1' type='@'/>
+<arg name='requestMethod' declared_type='TWRequestMethod' index='2' type='i'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='parameters'>
+<retval declared_type='NSDictionary*' type='@'/>
+</method>
+<method selector='performRequestWithHandler:'>
+<arg name='handler' declared_type='TWRequestHandler' function_pointer='true' index='0' type='@?'>
+<arg declared_type='NSData*' type='@'/>
+<arg declared_type='NSHTTPURLResponse*' type='@'/>
+<arg declared_type='NSError*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='requestMethod'>
+<retval declared_type='TWRequestMethod' type='i'/>
+</method>
+<method selector='setAccount:'>
+<arg name='account' declared_type='ACAccount*' index='0' type='@'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='signedURLRequest'>
+<retval declared_type='NSURLRequest*' type='@'/>
+</method>
+</class>
+<class name='TWTweetComposeViewController'>
+<method selector='addImage:'>
+<arg name='image' declared_type='UIImage*' index='0' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='addURL:'>
+<arg name='url' declared_type='NSURL*' index='0' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method class_method='true' selector='canSendTweet'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='completionHandler'>
+<retval declared_type='TWTweetComposeViewControllerCompletionHandler' function_pointer='true' type='@?'>
+<arg declared_type='TWTweetComposeViewControllerResult' type='i'/>
+<retval declared_type='void' type='v'/>
+</retval>
+</method>
+<method selector='removeAllImages'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='removeAllURLs'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setCompletionHandler:'>
+<arg name='completionHandler' declared_type='TWTweetComposeViewControllerCompletionHandler' function_pointer='true' index='0' type='@?'>
+<arg declared_type='TWTweetComposeViewControllerResult' type='i'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setInitialText:'>
+<arg name='text' declared_type='NSString*' index='0' type='@'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</class>
+</signatures>

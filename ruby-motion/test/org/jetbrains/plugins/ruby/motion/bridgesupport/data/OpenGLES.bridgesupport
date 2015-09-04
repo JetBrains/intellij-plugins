@@ -1,0 +1,2536 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant name='kEAGLColorFormatRGB565' type='@' const='true' declared_type='NSString*'/>
+<constant name='kEAGLColorFormatRGBA8' type='@' const='true' declared_type='NSString*'/>
+<constant name='kEAGLDrawablePropertyColorFormat' type='@' const='true' declared_type='NSString*'/>
+<constant name='kEAGLDrawablePropertyRetainedBacking' type='@' const='true' declared_type='NSString*'/>
+<enum name='EAGL_MAJOR_VERSION' value='1'/>
+<enum name='EAGL_MINOR_VERSION' value='0'/>
+<enum name='GL_ACTIVE_ATTRIBUTES' value='35721'/>
+<enum name='GL_ACTIVE_ATTRIBUTE_MAX_LENGTH' value='35722'/>
+<enum name='GL_ACTIVE_PROGRAM_EXT' value='33369'/>
+<enum name='GL_ACTIVE_TEXTURE' value='34016'/>
+<enum name='GL_ACTIVE_UNIFORMS' value='35718'/>
+<enum name='GL_ACTIVE_UNIFORM_MAX_LENGTH' value='35719'/>
+<enum name='GL_ADD' value='260'/>
+<enum name='GL_ADD_SIGNED' value='34164'/>
+<enum name='GL_ALIASED_LINE_WIDTH_RANGE' value='33902'/>
+<enum name='GL_ALIASED_POINT_SIZE_RANGE' value='33901'/>
+<enum name='GL_ALL_SHADER_BITS_EXT' value='4294967295'/>
+<enum name='GL_ALPHA' value='6406'/>
+<enum name='GL_ALPHA_BITS' value='3413'/>
+<enum name='GL_ALPHA_SCALE' value='3356'/>
+<enum name='GL_ALPHA_TEST' value='3008'/>
+<enum name='GL_ALPHA_TEST_FUNC' value='3009'/>
+<enum name='GL_ALPHA_TEST_REF' value='3010'/>
+<enum name='GL_ALWAYS' value='519'/>
+<enum name='GL_AMBIENT' value='4608'/>
+<enum name='GL_AMBIENT_AND_DIFFUSE' value='5634'/>
+<enum name='GL_AND' value='5377'/>
+<enum name='GL_AND_INVERTED' value='5380'/>
+<enum name='GL_AND_REVERSE' value='5378'/>
+<enum name='GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT' value='36202'/>
+<enum name='GL_ANY_SAMPLES_PASSED_EXT' value='35887'/>
+<enum name='GL_APPLE_framebuffer_multisample' value='1'/>
+<enum name='GL_APPLE_rgb_422' value='1'/>
+<enum name='GL_APPLE_texture_2D_limited_npot' value='1'/>
+<enum name='GL_APPLE_texture_format_BGRA8888' value='1'/>
+<enum name='GL_APPLE_texture_max_level' value='1'/>
+<enum name='GL_ARRAY_BUFFER' value='34962'/>
+<enum name='GL_ARRAY_BUFFER_BINDING' value='34964'/>
+<enum name='GL_ATTACHED_SHADERS' value='35717'/>
+<enum name='GL_BACK' value='1029'/>
+<enum name='GL_BGRA' value='32993'/>
+<enum name='GL_BGRA_EXT' value='32993'/>
+<enum name='GL_BGRA_IMG' value='32993'/>
+<enum name='GL_BLEND' value='3042'/>
+<enum name='GL_BLEND_COLOR' value='32773'/>
+<enum name='GL_BLEND_DST' value='3040'/>
+<enum name='GL_BLEND_DST_ALPHA' value='32970'/>
+<enum name='GL_BLEND_DST_ALPHA_OES' value='32970'/>
+<enum name='GL_BLEND_DST_RGB' value='32968'/>
+<enum name='GL_BLEND_DST_RGB_OES' value='32968'/>
+<enum name='GL_BLEND_EQUATION' value='32777'/>
+<enum name='GL_BLEND_EQUATION_ALPHA' value='34877'/>
+<enum name='GL_BLEND_EQUATION_ALPHA_OES' value='34877'/>
+<enum name='GL_BLEND_EQUATION_OES' value='32777'/>
+<enum name='GL_BLEND_EQUATION_RGB' value='32777'/>
+<enum name='GL_BLEND_EQUATION_RGB_OES' value='32777'/>
+<enum name='GL_BLEND_SRC' value='3041'/>
+<enum name='GL_BLEND_SRC_ALPHA' value='32971'/>
+<enum name='GL_BLEND_SRC_ALPHA_OES' value='32971'/>
+<enum name='GL_BLEND_SRC_RGB' value='32969'/>
+<enum name='GL_BLEND_SRC_RGB_OES' value='32969'/>
+<enum name='GL_BLUE_BITS' value='3412'/>
+<enum name='GL_BOOL' value='35670'/>
+<enum name='GL_BOOL_VEC2' value='35671'/>
+<enum name='GL_BOOL_VEC3' value='35672'/>
+<enum name='GL_BOOL_VEC4' value='35673'/>
+<enum name='GL_BUFFER_ACCESS_OES' value='35003'/>
+<enum name='GL_BUFFER_MAPPED_OES' value='35004'/>
+<enum name='GL_BUFFER_MAP_POINTER_OES' value='35005'/>
+<enum name='GL_BUFFER_OBJECT_EXT' value='37201'/>
+<enum name='GL_BUFFER_SIZE' value='34660'/>
+<enum name='GL_BUFFER_USAGE' value='34661'/>
+<enum name='GL_BYTE' value='5120'/>
+<enum name='GL_CCW' value='2305'/>
+<enum name='GL_CLAMP_TO_EDGE' value='33071'/>
+<enum name='GL_CLEAR' value='5376'/>
+<enum name='GL_CLIENT_ACTIVE_TEXTURE' value='34017'/>
+<enum name='GL_CLIP_PLANE0' value='12288'/>
+<enum name='GL_CLIP_PLANE1' value='12289'/>
+<enum name='GL_CLIP_PLANE2' value='12290'/>
+<enum name='GL_CLIP_PLANE3' value='12291'/>
+<enum name='GL_CLIP_PLANE4' value='12292'/>
+<enum name='GL_CLIP_PLANE5' value='12293'/>
+<enum name='GL_COLOR_ARRAY' value='32886'/>
+<enum name='GL_COLOR_ARRAY_BUFFER_BINDING' value='34968'/>
+<enum name='GL_COLOR_ARRAY_POINTER' value='32912'/>
+<enum name='GL_COLOR_ARRAY_SIZE' value='32897'/>
+<enum name='GL_COLOR_ARRAY_STRIDE' value='32899'/>
+<enum name='GL_COLOR_ARRAY_TYPE' value='32898'/>
+<enum name='GL_COLOR_ATTACHMENT0' value='36064'/>
+<enum name='GL_COLOR_ATTACHMENT0_OES' value='36064'/>
+<enum name='GL_COLOR_BUFFER_BIT' value='16384'/>
+<enum name='GL_COLOR_CLEAR_VALUE' value='3106'/>
+<enum name='GL_COLOR_EXT' value='6144'/>
+<enum name='GL_COLOR_LOGIC_OP' value='3058'/>
+<enum name='GL_COLOR_MATERIAL' value='2903'/>
+<enum name='GL_COLOR_WRITEMASK' value='3107'/>
+<enum name='GL_COMBINE' value='34160'/>
+<enum name='GL_COMBINE_ALPHA' value='34162'/>
+<enum name='GL_COMBINE_RGB' value='34161'/>
+<enum name='GL_COMPARE_REF_TO_TEXTURE_EXT' value='34894'/>
+<enum name='GL_COMPILE_STATUS' value='35713'/>
+<enum name='GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG' value='35843'/>
+<enum name='GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG' value='35842'/>
+<enum name='GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG' value='35841'/>
+<enum name='GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG' value='35840'/>
+<enum name='GL_COMPRESSED_TEXTURE_FORMATS' value='34467'/>
+<enum name='GL_CONSTANT' value='34166'/>
+<enum name='GL_CONSTANT_ALPHA' value='32771'/>
+<enum name='GL_CONSTANT_ATTENUATION' value='4615'/>
+<enum name='GL_CONSTANT_COLOR' value='32769'/>
+<enum name='GL_COORD_REPLACE_OES' value='34914'/>
+<enum name='GL_COPY' value='5379'/>
+<enum name='GL_COPY_INVERTED' value='5388'/>
+<enum name='GL_CULL_FACE' value='2884'/>
+<enum name='GL_CULL_FACE_MODE' value='2885'/>
+<enum name='GL_CURRENT_COLOR' value='2816'/>
+<enum name='GL_CURRENT_NORMAL' value='2818'/>
+<enum name='GL_CURRENT_PALETTE_MATRIX_OES' value='34883'/>
+<enum name='GL_CURRENT_PROGRAM' value='35725'/>
+<enum name='GL_CURRENT_QUERY_EXT' value='34917'/>
+<enum name='GL_CURRENT_TEXTURE_COORDS' value='2819'/>
+<enum name='GL_CURRENT_VERTEX_ATTRIB' value='34342'/>
+<enum name='GL_CW' value='2304'/>
+<enum name='GL_DECAL' value='8449'/>
+<enum name='GL_DECR' value='7683'/>
+<enum name='GL_DECR_WRAP' value='34056'/>
+<enum name='GL_DECR_WRAP_OES' value='34056'/>
+<enum name='GL_DELETE_STATUS' value='35712'/>
+<enum name='GL_DEPTH24_STENCIL8_OES' value='35056'/>
+<enum name='GL_DEPTH_ATTACHMENT' value='36096'/>
+<enum name='GL_DEPTH_ATTACHMENT_OES' value='36096'/>
+<enum name='GL_DEPTH_BITS' value='3414'/>
+<enum name='GL_DEPTH_BUFFER_BIT' value='256'/>
+<enum name='GL_DEPTH_CLEAR_VALUE' value='2931'/>
+<enum name='GL_DEPTH_COMPONENT' value='6402'/>
+<enum name='GL_DEPTH_COMPONENT16' value='33189'/>
+<enum name='GL_DEPTH_COMPONENT16_OES' value='33189'/>
+<enum name='GL_DEPTH_COMPONENT24_OES' value='33190'/>
+<enum name='GL_DEPTH_EXT' value='6145'/>
+<enum name='GL_DEPTH_FUNC' value='2932'/>
+<enum name='GL_DEPTH_RANGE' value='2928'/>
+<enum name='GL_DEPTH_STENCIL_OES' value='34041'/>
+<enum name='GL_DEPTH_TEST' value='2929'/>
+<enum name='GL_DEPTH_WRITEMASK' value='2930'/>
+<enum name='GL_DIFFUSE' value='4609'/>
+<enum name='GL_DITHER' value='3024'/>
+<enum name='GL_DONT_CARE' value='4352'/>
+<enum name='GL_DOT3_RGB' value='34478'/>
+<enum name='GL_DOT3_RGBA' value='34479'/>
+<enum name='GL_DRAW_FRAMEBUFFER_APPLE' value='36009'/>
+<enum name='GL_DRAW_FRAMEBUFFER_BINDING_APPLE' value='36006'/>
+<enum name='GL_DST_ALPHA' value='772'/>
+<enum name='GL_DST_COLOR' value='774'/>
+<enum name='GL_DYNAMIC_DRAW' value='35048'/>
+<enum name='GL_ELEMENT_ARRAY_BUFFER' value='34963'/>
+<enum name='GL_ELEMENT_ARRAY_BUFFER_BINDING' value='34965'/>
+<enum name='GL_EMISSION' value='5632'/>
+<enum name='GL_EQUAL' value='514'/>
+<enum name='GL_EQUIV' value='5385'/>
+<enum name='GL_ES_VERSION_2_0' value='1'/>
+<enum name='GL_EXP' value='2048'/>
+<enum name='GL_EXP2' value='2049'/>
+<enum name='GL_EXTENSIONS' value='7939'/>
+<enum name='GL_EXT_blend_minmax' value='1'/>
+<enum name='GL_EXT_color_buffer_half_float' value='1'/>
+<enum name='GL_EXT_debug_label' value='1'/>
+<enum name='GL_EXT_debug_marker' value='1'/>
+<enum name='GL_EXT_discard_framebuffer' value='1'/>
+<enum name='GL_EXT_occlusion_query_boolean' value='1'/>
+<enum name='GL_EXT_read_format_bgra' value='1'/>
+<enum name='GL_EXT_separate_shader_objects' value='1'/>
+<enum name='GL_EXT_shader_texture_lod' value='1'/>
+<enum name='GL_EXT_shadow_samplers' value='1'/>
+<enum name='GL_EXT_texture_filter_anisotropic' value='1'/>
+<enum name='GL_EXT_texture_lod_bias' value='1'/>
+<enum name='GL_EXT_texture_rg' value='1'/>
+<enum name='GL_FALSE' value='0'/>
+<enum name='GL_FASTEST' value='4353'/>
+<enum name='GL_FIXED' value='5132'/>
+<enum name='GL_FLAT' value='7424'/>
+<enum name='GL_FLOAT' value='5126'/>
+<enum name='GL_FLOAT_MAT2' value='35674'/>
+<enum name='GL_FLOAT_MAT3' value='35675'/>
+<enum name='GL_FLOAT_MAT4' value='35676'/>
+<enum name='GL_FLOAT_VEC2' value='35664'/>
+<enum name='GL_FLOAT_VEC3' value='35665'/>
+<enum name='GL_FLOAT_VEC4' value='35666'/>
+<enum name='GL_FOG' value='2912'/>
+<enum name='GL_FOG_COLOR' value='2918'/>
+<enum name='GL_FOG_DENSITY' value='2914'/>
+<enum name='GL_FOG_END' value='2916'/>
+<enum name='GL_FOG_HINT' value='3156'/>
+<enum name='GL_FOG_MODE' value='2917'/>
+<enum name='GL_FOG_START' value='2915'/>
+<enum name='GL_FRAGMENT_SHADER' value='35632'/>
+<enum name='GL_FRAGMENT_SHADER_BIT_EXT' value='2'/>
+<enum name='GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES' value='35723'/>
+<enum name='GL_FRAMEBUFFER' value='36160'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT' value='33297'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME' value='36049'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_OES' value='36049'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE' value='36048'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_OES' value='36048'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE' value='36051'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE_OES' value='36051'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL' value='36050'/>
+<enum name='GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL_OES' value='36050'/>
+<enum name='GL_FRAMEBUFFER_BINDING' value='36006'/>
+<enum name='GL_FRAMEBUFFER_BINDING_OES' value='36006'/>
+<enum name='GL_FRAMEBUFFER_COMPLETE' value='36053'/>
+<enum name='GL_FRAMEBUFFER_COMPLETE_OES' value='36053'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT' value='36054'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES' value='36054'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS' value='36057'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES' value='36057'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES' value='36058'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT' value='36055'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES' value='36055'/>
+<enum name='GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE' value='36182'/>
+<enum name='GL_FRAMEBUFFER_OES' value='36160'/>
+<enum name='GL_FRAMEBUFFER_UNSUPPORTED' value='36061'/>
+<enum name='GL_FRAMEBUFFER_UNSUPPORTED_OES' value='36061'/>
+<enum name='GL_FRONT' value='1028'/>
+<enum name='GL_FRONT_AND_BACK' value='1032'/>
+<enum name='GL_FRONT_FACE' value='2886'/>
+<enum name='GL_FUNC_ADD' value='32774'/>
+<enum name='GL_FUNC_ADD_OES' value='32774'/>
+<enum name='GL_FUNC_REVERSE_SUBTRACT' value='32779'/>
+<enum name='GL_FUNC_REVERSE_SUBTRACT_OES' value='32779'/>
+<enum name='GL_FUNC_SUBTRACT' value='32778'/>
+<enum name='GL_FUNC_SUBTRACT_OES' value='32778'/>
+<enum name='GL_GENERATE_MIPMAP' value='33169'/>
+<enum name='GL_GENERATE_MIPMAP_HINT' value='33170'/>
+<enum name='GL_GEQUAL' value='518'/>
+<enum name='GL_GREATER' value='516'/>
+<enum name='GL_GREEN_BITS' value='3411'/>
+<enum name='GL_HALF_FLOAT_OES' value='36193'/>
+<enum name='GL_HIGH_FLOAT' value='36338'/>
+<enum name='GL_HIGH_INT' value='36341'/>
+<enum name='GL_IMG_read_format' value='1'/>
+<enum name='GL_IMG_texture_compression_pvrtc' value='1'/>
+<enum name='GL_IMPLEMENTATION_COLOR_READ_FORMAT' value='35739'/>
+<enum name='GL_IMPLEMENTATION_COLOR_READ_FORMAT_OES' value='35739'/>
+<enum name='GL_IMPLEMENTATION_COLOR_READ_TYPE' value='35738'/>
+<enum name='GL_IMPLEMENTATION_COLOR_READ_TYPE_OES' value='35738'/>
+<enum name='GL_INCR' value='7682'/>
+<enum name='GL_INCR_WRAP' value='34055'/>
+<enum name='GL_INCR_WRAP_OES' value='34055'/>
+<enum name='GL_INFO_LOG_LENGTH' value='35716'/>
+<enum name='GL_INT' value='5124'/>
+<enum name='GL_INTERPOLATE' value='34165'/>
+<enum name='GL_INT_VEC2' value='35667'/>
+<enum name='GL_INT_VEC3' value='35668'/>
+<enum name='GL_INT_VEC4' value='35669'/>
+<enum name='GL_INVALID_ENUM' value='1280'/>
+<enum name='GL_INVALID_FRAMEBUFFER_OPERATION' value='1286'/>
+<enum name='GL_INVALID_FRAMEBUFFER_OPERATION_OES' value='1286'/>
+<enum name='GL_INVALID_OPERATION' value='1282'/>
+<enum name='GL_INVALID_VALUE' value='1281'/>
+<enum name='GL_INVERT' value='5386'/>
+<enum name='GL_KEEP' value='7680'/>
+<enum name='GL_LEQUAL' value='515'/>
+<enum name='GL_LESS' value='513'/>
+<enum name='GL_LIGHT0' value='16384'/>
+<enum name='GL_LIGHT1' value='16385'/>
+<enum name='GL_LIGHT2' value='16386'/>
+<enum name='GL_LIGHT3' value='16387'/>
+<enum name='GL_LIGHT4' value='16388'/>
+<enum name='GL_LIGHT5' value='16389'/>
+<enum name='GL_LIGHT6' value='16390'/>
+<enum name='GL_LIGHT7' value='16391'/>
+<enum name='GL_LIGHTING' value='2896'/>
+<enum name='GL_LIGHT_MODEL_AMBIENT' value='2899'/>
+<enum name='GL_LIGHT_MODEL_TWO_SIDE' value='2898'/>
+<enum name='GL_LINEAR' value='9729'/>
+<enum name='GL_LINEAR_ATTENUATION' value='4616'/>
+<enum name='GL_LINEAR_MIPMAP_LINEAR' value='9987'/>
+<enum name='GL_LINEAR_MIPMAP_NEAREST' value='9985'/>
+<enum name='GL_LINES' value='1'/>
+<enum name='GL_LINE_LOOP' value='2'/>
+<enum name='GL_LINE_SMOOTH' value='2848'/>
+<enum name='GL_LINE_SMOOTH_HINT' value='3154'/>
+<enum name='GL_LINE_STRIP' value='3'/>
+<enum name='GL_LINE_WIDTH' value='2849'/>
+<enum name='GL_LINK_STATUS' value='35714'/>
+<enum name='GL_LOGIC_OP_MODE' value='3056'/>
+<enum name='GL_LOW_FLOAT' value='36336'/>
+<enum name='GL_LOW_INT' value='36339'/>
+<enum name='GL_LUMINANCE' value='6409'/>
+<enum name='GL_LUMINANCE_ALPHA' value='6410'/>
+<enum name='GL_MATRIX_INDEX_ARRAY_BUFFER_BINDING_OES' value='35742'/>
+<enum name='GL_MATRIX_INDEX_ARRAY_OES' value='34884'/>
+<enum name='GL_MATRIX_INDEX_ARRAY_POINTER_OES' value='34889'/>
+<enum name='GL_MATRIX_INDEX_ARRAY_SIZE_OES' value='34886'/>
+<enum name='GL_MATRIX_INDEX_ARRAY_STRIDE_OES' value='34888'/>
+<enum name='GL_MATRIX_INDEX_ARRAY_TYPE_OES' value='34887'/>
+<enum name='GL_MATRIX_MODE' value='2976'/>
+<enum name='GL_MATRIX_PALETTE_OES' value='34880'/>
+<enum name='GL_MAX_CLIP_PLANES' value='3378'/>
+<enum name='GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS' value='35661'/>
+<enum name='GL_MAX_CUBE_MAP_TEXTURE_SIZE' value='34076'/>
+<enum name='GL_MAX_EXT' value='32776'/>
+<enum name='GL_MAX_FRAGMENT_UNIFORM_VECTORS' value='36349'/>
+<enum name='GL_MAX_LIGHTS' value='3377'/>
+<enum name='GL_MAX_MODELVIEW_STACK_DEPTH' value='3382'/>
+<enum name='GL_MAX_PALETTE_MATRICES_OES' value='34882'/>
+<enum name='GL_MAX_PROJECTION_STACK_DEPTH' value='3384'/>
+<enum name='GL_MAX_RENDERBUFFER_SIZE' value='34024'/>
+<enum name='GL_MAX_RENDERBUFFER_SIZE_OES' value='34024'/>
+<enum name='GL_MAX_SAMPLES_APPLE' value='36183'/>
+<enum name='GL_MAX_TEXTURE_IMAGE_UNITS' value='34930'/>
+<enum name='GL_MAX_TEXTURE_LOD_BIAS_EXT' value='34045'/>
+<enum name='GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT' value='34047'/>
+<enum name='GL_MAX_TEXTURE_SIZE' value='3379'/>
+<enum name='GL_MAX_TEXTURE_STACK_DEPTH' value='3385'/>
+<enum name='GL_MAX_TEXTURE_UNITS' value='34018'/>
+<enum name='GL_MAX_VARYING_VECTORS' value='36348'/>
+<enum name='GL_MAX_VERTEX_ATTRIBS' value='34921'/>
+<enum name='GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS' value='35660'/>
+<enum name='GL_MAX_VERTEX_UNIFORM_VECTORS' value='36347'/>
+<enum name='GL_MAX_VERTEX_UNITS_OES' value='34468'/>
+<enum name='GL_MAX_VIEWPORT_DIMS' value='3386'/>
+<enum name='GL_MEDIUM_FLOAT' value='36337'/>
+<enum name='GL_MEDIUM_INT' value='36340'/>
+<enum name='GL_MIN_EXT' value='32775'/>
+<enum name='GL_MIRRORED_REPEAT' value='33648'/>
+<enum name='GL_MIRRORED_REPEAT_OES' value='33648'/>
+<enum name='GL_MODELVIEW' value='5888'/>
+<enum name='GL_MODELVIEW_MATRIX' value='2982'/>
+<enum name='GL_MODELVIEW_MATRIX_FLOAT_AS_INT_BITS_OES' value='35213'/>
+<enum name='GL_MODELVIEW_STACK_DEPTH' value='2979'/>
+<enum name='GL_MODULATE' value='8448'/>
+<enum name='GL_MULTISAMPLE' value='32925'/>
+<enum name='GL_NAND' value='5390'/>
+<enum name='GL_NEAREST' value='9728'/>
+<enum name='GL_NEAREST_MIPMAP_LINEAR' value='9986'/>
+<enum name='GL_NEAREST_MIPMAP_NEAREST' value='9984'/>
+<enum name='GL_NEVER' value='512'/>
+<enum name='GL_NICEST' value='4354'/>
+<enum name='GL_NONE' value='0'/>
+<enum name='GL_NOOP' value='5381'/>
+<enum name='GL_NOR' value='5384'/>
+<enum name='GL_NORMALIZE' value='2977'/>
+<enum name='GL_NORMAL_ARRAY' value='32885'/>
+<enum name='GL_NORMAL_ARRAY_BUFFER_BINDING' value='34967'/>
+<enum name='GL_NORMAL_ARRAY_POINTER' value='32911'/>
+<enum name='GL_NORMAL_ARRAY_STRIDE' value='32895'/>
+<enum name='GL_NORMAL_ARRAY_TYPE' value='32894'/>
+<enum name='GL_NOTEQUAL' value='517'/>
+<enum name='GL_NO_ERROR' value='0'/>
+<enum name='GL_NUM_COMPRESSED_TEXTURE_FORMATS' value='34466'/>
+<enum name='GL_NUM_SHADER_BINARY_FORMATS' value='36345'/>
+<enum name='GL_OES_VERSION_1_0' value='1'/>
+<enum name='GL_OES_VERSION_1_1' value='1'/>
+<enum name='GL_OES_blend_equation_separate' value='1'/>
+<enum name='GL_OES_blend_func_separate' value='1'/>
+<enum name='GL_OES_blend_subtract' value='1'/>
+<enum name='GL_OES_byte_coordinates' value='1'/>
+<enum name='GL_OES_compressed_paletted_texture' value='1'/>
+<enum name='GL_OES_depth24' value='1'/>
+<enum name='GL_OES_depth_texture' value='1'/>
+<enum name='GL_OES_draw_texture' value='1'/>
+<enum name='GL_OES_element_index_uint' value='1'/>
+<enum name='GL_OES_fbo_render_mipmap' value='1'/>
+<enum name='GL_OES_fixed_point' value='1'/>
+<enum name='GL_OES_framebuffer_object' value='1'/>
+<enum name='GL_OES_mapbuffer' value='1'/>
+<enum name='GL_OES_matrix_get' value='1'/>
+<enum name='GL_OES_matrix_palette' value='1'/>
+<enum name='GL_OES_packed_depth_stencil' value='1'/>
+<enum name='GL_OES_point_size_array' value='1'/>
+<enum name='GL_OES_point_sprite' value='1'/>
+<enum name='GL_OES_read_format' value='1'/>
+<enum name='GL_OES_rgb8_rgba8' value='1'/>
+<enum name='GL_OES_single_precision' value='1'/>
+<enum name='GL_OES_standard_derivatives' value='1'/>
+<enum name='GL_OES_stencil8' value='1'/>
+<enum name='GL_OES_stencil_wrap' value='1'/>
+<enum name='GL_OES_texture_float' value='1'/>
+<enum name='GL_OES_texture_half_float' value='1'/>
+<enum name='GL_OES_texture_mirrored_repeat' value='1'/>
+<enum name='GL_OES_vertex_array_object' value='1'/>
+<enum name='GL_ONE' value='1'/>
+<enum name='GL_ONE_MINUS_CONSTANT_ALPHA' value='32772'/>
+<enum name='GL_ONE_MINUS_CONSTANT_COLOR' value='32770'/>
+<enum name='GL_ONE_MINUS_DST_ALPHA' value='773'/>
+<enum name='GL_ONE_MINUS_DST_COLOR' value='775'/>
+<enum name='GL_ONE_MINUS_SRC_ALPHA' value='771'/>
+<enum name='GL_ONE_MINUS_SRC_COLOR' value='769'/>
+<enum name='GL_OPERAND0_ALPHA' value='34200'/>
+<enum name='GL_OPERAND0_RGB' value='34192'/>
+<enum name='GL_OPERAND1_ALPHA' value='34201'/>
+<enum name='GL_OPERAND1_RGB' value='34193'/>
+<enum name='GL_OPERAND2_ALPHA' value='34202'/>
+<enum name='GL_OPERAND2_RGB' value='34194'/>
+<enum name='GL_OR' value='5383'/>
+<enum name='GL_OR_INVERTED' value='5389'/>
+<enum name='GL_OR_REVERSE' value='5387'/>
+<enum name='GL_OUT_OF_MEMORY' value='1285'/>
+<enum name='GL_PACK_ALIGNMENT' value='3333'/>
+<enum name='GL_PALETTE4_R5_G6_B5_OES' value='35730'/>
+<enum name='GL_PALETTE4_RGB5_A1_OES' value='35732'/>
+<enum name='GL_PALETTE4_RGB8_OES' value='35728'/>
+<enum name='GL_PALETTE4_RGBA4_OES' value='35731'/>
+<enum name='GL_PALETTE4_RGBA8_OES' value='35729'/>
+<enum name='GL_PALETTE8_R5_G6_B5_OES' value='35735'/>
+<enum name='GL_PALETTE8_RGB5_A1_OES' value='35737'/>
+<enum name='GL_PALETTE8_RGB8_OES' value='35733'/>
+<enum name='GL_PALETTE8_RGBA4_OES' value='35736'/>
+<enum name='GL_PALETTE8_RGBA8_OES' value='35734'/>
+<enum name='GL_PERSPECTIVE_CORRECTION_HINT' value='3152'/>
+<enum name='GL_POINTS' value='0'/>
+<enum name='GL_POINT_DISTANCE_ATTENUATION' value='33065'/>
+<enum name='GL_POINT_FADE_THRESHOLD_SIZE' value='33064'/>
+<enum name='GL_POINT_SIZE' value='2833'/>
+<enum name='GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES' value='35743'/>
+<enum name='GL_POINT_SIZE_ARRAY_OES' value='35740'/>
+<enum name='GL_POINT_SIZE_ARRAY_POINTER_OES' value='35212'/>
+<enum name='GL_POINT_SIZE_ARRAY_STRIDE_OES' value='35211'/>
+<enum name='GL_POINT_SIZE_ARRAY_TYPE_OES' value='35210'/>
+<enum name='GL_POINT_SIZE_MAX' value='33063'/>
+<enum name='GL_POINT_SIZE_MIN' value='33062'/>
+<enum name='GL_POINT_SMOOTH' value='2832'/>
+<enum name='GL_POINT_SMOOTH_HINT' value='3153'/>
+<enum name='GL_POINT_SPRITE_OES' value='34913'/>
+<enum name='GL_POLYGON_OFFSET_FACTOR' value='32824'/>
+<enum name='GL_POLYGON_OFFSET_FILL' value='32823'/>
+<enum name='GL_POLYGON_OFFSET_UNITS' value='10752'/>
+<enum name='GL_POSITION' value='4611'/>
+<enum name='GL_PREVIOUS' value='34168'/>
+<enum name='GL_PRIMARY_COLOR' value='34167'/>
+<enum name='GL_PROGRAM_OBJECT_EXT' value='35648'/>
+<enum name='GL_PROGRAM_PIPELINE_BINDING_EXT' value='33370'/>
+<enum name='GL_PROGRAM_PIPELINE_OBJECT_EXT' value='35407'/>
+<enum name='GL_PROGRAM_SEPARABLE_EXT' value='33368'/>
+<enum name='GL_PROJECTION' value='5889'/>
+<enum name='GL_PROJECTION_MATRIX' value='2983'/>
+<enum name='GL_PROJECTION_MATRIX_FLOAT_AS_INT_BITS_OES' value='35214'/>
+<enum name='GL_PROJECTION_STACK_DEPTH' value='2980'/>
+<enum name='GL_QUADRATIC_ATTENUATION' value='4617'/>
+<enum name='GL_QUERY_OBJECT_EXT' value='37203'/>
+<enum name='GL_QUERY_RESULT_AVAILABLE_EXT' value='34919'/>
+<enum name='GL_QUERY_RESULT_EXT' value='34918'/>
+<enum name='GL_R16F_EXT' value='33325'/>
+<enum name='GL_R8_EXT' value='33321'/>
+<enum name='GL_READ_FRAMEBUFFER_APPLE' value='36008'/>
+<enum name='GL_READ_FRAMEBUFFER_BINDING_APPLE' value='36010'/>
+<enum name='GL_RED_BITS' value='3410'/>
+<enum name='GL_RED_EXT' value='6403'/>
+<enum name='GL_RENDERBUFFER' value='36161'/>
+<enum name='GL_RENDERBUFFER_ALPHA_SIZE' value='36179'/>
+<enum name='GL_RENDERBUFFER_ALPHA_SIZE_OES' value='36179'/>
+<enum name='GL_RENDERBUFFER_BINDING' value='36007'/>
+<enum name='GL_RENDERBUFFER_BINDING_OES' value='36007'/>
+<enum name='GL_RENDERBUFFER_BLUE_SIZE' value='36178'/>
+<enum name='GL_RENDERBUFFER_BLUE_SIZE_OES' value='36178'/>
+<enum name='GL_RENDERBUFFER_DEPTH_SIZE' value='36180'/>
+<enum name='GL_RENDERBUFFER_DEPTH_SIZE_OES' value='36180'/>
+<enum name='GL_RENDERBUFFER_GREEN_SIZE' value='36177'/>
+<enum name='GL_RENDERBUFFER_GREEN_SIZE_OES' value='36177'/>
+<enum name='GL_RENDERBUFFER_HEIGHT' value='36163'/>
+<enum name='GL_RENDERBUFFER_HEIGHT_OES' value='36163'/>
+<enum name='GL_RENDERBUFFER_INTERNAL_FORMAT' value='36164'/>
+<enum name='GL_RENDERBUFFER_INTERNAL_FORMAT_OES' value='36164'/>
+<enum name='GL_RENDERBUFFER_OES' value='36161'/>
+<enum name='GL_RENDERBUFFER_RED_SIZE' value='36176'/>
+<enum name='GL_RENDERBUFFER_RED_SIZE_OES' value='36176'/>
+<enum name='GL_RENDERBUFFER_SAMPLES_APPLE' value='36011'/>
+<enum name='GL_RENDERBUFFER_STENCIL_SIZE' value='36181'/>
+<enum name='GL_RENDERBUFFER_STENCIL_SIZE_OES' value='36181'/>
+<enum name='GL_RENDERBUFFER_WIDTH' value='36162'/>
+<enum name='GL_RENDERBUFFER_WIDTH_OES' value='36162'/>
+<enum name='GL_RENDERER' value='7937'/>
+<enum name='GL_REPEAT' value='10497'/>
+<enum name='GL_REPLACE' value='7681'/>
+<enum name='GL_RESCALE_NORMAL' value='32826'/>
+<enum name='GL_RG16F_EXT' value='33327'/>
+<enum name='GL_RG8_EXT' value='33323'/>
+<enum name='GL_RGB' value='6407'/>
+<enum name='GL_RGB16F_EXT' value='34843'/>
+<enum name='GL_RGB565' value='36194'/>
+<enum name='GL_RGB565_OES' value='36194'/>
+<enum name='GL_RGB5_A1' value='32855'/>
+<enum name='GL_RGB5_A1_OES' value='32855'/>
+<enum name='GL_RGB8_OES' value='32849'/>
+<enum name='GL_RGBA' value='6408'/>
+<enum name='GL_RGBA16F_EXT' value='34842'/>
+<enum name='GL_RGBA4' value='32854'/>
+<enum name='GL_RGBA4_OES' value='32854'/>
+<enum name='GL_RGBA8_OES' value='32856'/>
+<enum name='GL_RGB_422_APPLE' value='35359'/>
+<enum name='GL_RGB_SCALE' value='34163'/>
+<enum name='GL_RG_EXT' value='33319'/>
+<enum name='GL_SAMPLER_2D' value='35678'/>
+<enum name='GL_SAMPLER_CUBE' value='35680'/>
+<enum name='GL_SAMPLES' value='32937'/>
+<enum name='GL_SAMPLE_ALPHA_TO_COVERAGE' value='32926'/>
+<enum name='GL_SAMPLE_ALPHA_TO_ONE' value='32927'/>
+<enum name='GL_SAMPLE_BUFFERS' value='32936'/>
+<enum name='GL_SAMPLE_COVERAGE' value='32928'/>
+<enum name='GL_SAMPLE_COVERAGE_INVERT' value='32939'/>
+<enum name='GL_SAMPLE_COVERAGE_VALUE' value='32938'/>
+<enum name='GL_SCISSOR_BOX' value='3088'/>
+<enum name='GL_SCISSOR_TEST' value='3089'/>
+<enum name='GL_SET' value='5391'/>
+<enum name='GL_SHADER_BINARY_FORMATS' value='36344'/>
+<enum name='GL_SHADER_COMPILER' value='36346'/>
+<enum name='GL_SHADER_OBJECT_EXT' value='35656'/>
+<enum name='GL_SHADER_SOURCE_LENGTH' value='35720'/>
+<enum name='GL_SHADER_TYPE' value='35663'/>
+<enum name='GL_SHADE_MODEL' value='2900'/>
+<enum name='GL_SHADING_LANGUAGE_VERSION' value='35724'/>
+<enum name='GL_SHININESS' value='5633'/>
+<enum name='GL_SHORT' value='5122'/>
+<enum name='GL_SMOOTH' value='7425'/>
+<enum name='GL_SMOOTH_LINE_WIDTH_RANGE' value='2850'/>
+<enum name='GL_SMOOTH_POINT_SIZE_RANGE' value='2834'/>
+<enum name='GL_SPECULAR' value='4610'/>
+<enum name='GL_SPOT_CUTOFF' value='4614'/>
+<enum name='GL_SPOT_DIRECTION' value='4612'/>
+<enum name='GL_SPOT_EXPONENT' value='4613'/>
+<enum name='GL_SRC0_ALPHA' value='34184'/>
+<enum name='GL_SRC0_RGB' value='34176'/>
+<enum name='GL_SRC1_ALPHA' value='34185'/>
+<enum name='GL_SRC1_RGB' value='34177'/>
+<enum name='GL_SRC2_ALPHA' value='34186'/>
+<enum name='GL_SRC2_RGB' value='34178'/>
+<enum name='GL_SRC_ALPHA' value='770'/>
+<enum name='GL_SRC_ALPHA_SATURATE' value='776'/>
+<enum name='GL_SRC_COLOR' value='768'/>
+<enum name='GL_STACK_OVERFLOW' value='1283'/>
+<enum name='GL_STACK_UNDERFLOW' value='1284'/>
+<enum name='GL_STATIC_DRAW' value='35044'/>
+<enum name='GL_STENCIL_ATTACHMENT' value='36128'/>
+<enum name='GL_STENCIL_ATTACHMENT_OES' value='36128'/>
+<enum name='GL_STENCIL_BACK_FAIL' value='34817'/>
+<enum name='GL_STENCIL_BACK_FUNC' value='34816'/>
+<enum name='GL_STENCIL_BACK_PASS_DEPTH_FAIL' value='34818'/>
+<enum name='GL_STENCIL_BACK_PASS_DEPTH_PASS' value='34819'/>
+<enum name='GL_STENCIL_BACK_REF' value='36003'/>
+<enum name='GL_STENCIL_BACK_VALUE_MASK' value='36004'/>
+<enum name='GL_STENCIL_BACK_WRITEMASK' value='36005'/>
+<enum name='GL_STENCIL_BITS' value='3415'/>
+<enum name='GL_STENCIL_BUFFER_BIT' value='1024'/>
+<enum name='GL_STENCIL_CLEAR_VALUE' value='2961'/>
+<enum name='GL_STENCIL_EXT' value='6146'/>
+<enum name='GL_STENCIL_FAIL' value='2964'/>
+<enum name='GL_STENCIL_FUNC' value='2962'/>
+<enum name='GL_STENCIL_INDEX' value='6401'/>
+<enum name='GL_STENCIL_INDEX8' value='36168'/>
+<enum name='GL_STENCIL_INDEX8_OES' value='36168'/>
+<enum name='GL_STENCIL_PASS_DEPTH_FAIL' value='2965'/>
+<enum name='GL_STENCIL_PASS_DEPTH_PASS' value='2966'/>
+<enum name='GL_STENCIL_REF' value='2967'/>
+<enum name='GL_STENCIL_TEST' value='2960'/>
+<enum name='GL_STENCIL_VALUE_MASK' value='2963'/>
+<enum name='GL_STENCIL_WRITEMASK' value='2968'/>
+<enum name='GL_STREAM_DRAW' value='35040'/>
+<enum name='GL_SUBPIXEL_BITS' value='3408'/>
+<enum name='GL_SUBTRACT' value='34023'/>
+<enum name='GL_TEXTURE' value='5890'/>
+<enum name='GL_TEXTURE0' value='33984'/>
+<enum name='GL_TEXTURE1' value='33985'/>
+<enum name='GL_TEXTURE10' value='33994'/>
+<enum name='GL_TEXTURE11' value='33995'/>
+<enum name='GL_TEXTURE12' value='33996'/>
+<enum name='GL_TEXTURE13' value='33997'/>
+<enum name='GL_TEXTURE14' value='33998'/>
+<enum name='GL_TEXTURE15' value='33999'/>
+<enum name='GL_TEXTURE16' value='34000'/>
+<enum name='GL_TEXTURE17' value='34001'/>
+<enum name='GL_TEXTURE18' value='34002'/>
+<enum name='GL_TEXTURE19' value='34003'/>
+<enum name='GL_TEXTURE2' value='33986'/>
+<enum name='GL_TEXTURE20' value='34004'/>
+<enum name='GL_TEXTURE21' value='34005'/>
+<enum name='GL_TEXTURE22' value='34006'/>
+<enum name='GL_TEXTURE23' value='34007'/>
+<enum name='GL_TEXTURE24' value='34008'/>
+<enum name='GL_TEXTURE25' value='34009'/>
+<enum name='GL_TEXTURE26' value='34010'/>
+<enum name='GL_TEXTURE27' value='34011'/>
+<enum name='GL_TEXTURE28' value='34012'/>
+<enum name='GL_TEXTURE29' value='34013'/>
+<enum name='GL_TEXTURE3' value='33987'/>
+<enum name='GL_TEXTURE30' value='34014'/>
+<enum name='GL_TEXTURE31' value='34015'/>
+<enum name='GL_TEXTURE4' value='33988'/>
+<enum name='GL_TEXTURE5' value='33989'/>
+<enum name='GL_TEXTURE6' value='33990'/>
+<enum name='GL_TEXTURE7' value='33991'/>
+<enum name='GL_TEXTURE8' value='33992'/>
+<enum name='GL_TEXTURE9' value='33993'/>
+<enum name='GL_TEXTURE_2D' value='3553'/>
+<enum name='GL_TEXTURE_BINDING_2D' value='32873'/>
+<enum name='GL_TEXTURE_BINDING_CUBE_MAP' value='34068'/>
+<enum name='GL_TEXTURE_COMPARE_FUNC_EXT' value='34893'/>
+<enum name='GL_TEXTURE_COMPARE_MODE_EXT' value='34892'/>
+<enum name='GL_TEXTURE_COORD_ARRAY' value='32888'/>
+<enum name='GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING' value='34970'/>
+<enum name='GL_TEXTURE_COORD_ARRAY_POINTER' value='32914'/>
+<enum name='GL_TEXTURE_COORD_ARRAY_SIZE' value='32904'/>
+<enum name='GL_TEXTURE_COORD_ARRAY_STRIDE' value='32906'/>
+<enum name='GL_TEXTURE_COORD_ARRAY_TYPE' value='32905'/>
+<enum name='GL_TEXTURE_CROP_RECT_OES' value='35741'/>
+<enum name='GL_TEXTURE_CUBE_MAP' value='34067'/>
+<enum name='GL_TEXTURE_CUBE_MAP_NEGATIVE_X' value='34070'/>
+<enum name='GL_TEXTURE_CUBE_MAP_NEGATIVE_Y' value='34072'/>
+<enum name='GL_TEXTURE_CUBE_MAP_NEGATIVE_Z' value='34074'/>
+<enum name='GL_TEXTURE_CUBE_MAP_POSITIVE_X' value='34069'/>
+<enum name='GL_TEXTURE_CUBE_MAP_POSITIVE_Y' value='34071'/>
+<enum name='GL_TEXTURE_CUBE_MAP_POSITIVE_Z' value='34073'/>
+<enum name='GL_TEXTURE_ENV' value='8960'/>
+<enum name='GL_TEXTURE_ENV_COLOR' value='8705'/>
+<enum name='GL_TEXTURE_ENV_MODE' value='8704'/>
+<enum name='GL_TEXTURE_FILTER_CONTROL_EXT' value='34048'/>
+<enum name='GL_TEXTURE_LOD_BIAS_EXT' value='34049'/>
+<enum name='GL_TEXTURE_MAG_FILTER' value='10240'/>
+<enum name='GL_TEXTURE_MATRIX' value='2984'/>
+<enum name='GL_TEXTURE_MATRIX_FLOAT_AS_INT_BITS_OES' value='35215'/>
+<enum name='GL_TEXTURE_MAX_ANISOTROPY_EXT' value='34046'/>
+<enum name='GL_TEXTURE_MAX_LEVEL_APPLE' value='33085'/>
+<enum name='GL_TEXTURE_MIN_FILTER' value='10241'/>
+<enum name='GL_TEXTURE_STACK_DEPTH' value='2981'/>
+<enum name='GL_TEXTURE_WRAP_S' value='10242'/>
+<enum name='GL_TEXTURE_WRAP_T' value='10243'/>
+<enum name='GL_TRIANGLES' value='4'/>
+<enum name='GL_TRIANGLE_FAN' value='6'/>
+<enum name='GL_TRIANGLE_STRIP' value='5'/>
+<enum name='GL_TRUE' value='1'/>
+<enum name='GL_UNPACK_ALIGNMENT' value='3317'/>
+<enum name='GL_UNSIGNED_BYTE' value='5121'/>
+<enum name='GL_UNSIGNED_INT' value='5125'/>
+<enum name='GL_UNSIGNED_INT_24_8_OES' value='34042'/>
+<enum name='GL_UNSIGNED_INT_OES' value='5125'/>
+<enum name='GL_UNSIGNED_NORMALIZED_EXT' value='35863'/>
+<enum name='GL_UNSIGNED_SHORT' value='5123'/>
+<enum name='GL_UNSIGNED_SHORT_1_5_5_5_REV' value='33638'/>
+<enum name='GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT' value='33638'/>
+<enum name='GL_UNSIGNED_SHORT_4_4_4_4' value='32819'/>
+<enum name='GL_UNSIGNED_SHORT_4_4_4_4_REV' value='33637'/>
+<enum name='GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT' value='33637'/>
+<enum name='GL_UNSIGNED_SHORT_4_4_4_4_REV_IMG' value='33637'/>
+<enum name='GL_UNSIGNED_SHORT_5_5_5_1' value='32820'/>
+<enum name='GL_UNSIGNED_SHORT_5_6_5' value='33635'/>
+<enum name='GL_UNSIGNED_SHORT_8_8_APPLE' value='34234'/>
+<enum name='GL_UNSIGNED_SHORT_8_8_REV_APPLE' value='34235'/>
+<enum name='GL_VALIDATE_STATUS' value='35715'/>
+<enum name='GL_VENDOR' value='7936'/>
+<enum name='GL_VERSION' value='7938'/>
+<enum name='GL_VERSION_ES_CL_1_0' value='1'/>
+<enum name='GL_VERSION_ES_CL_1_1' value='1'/>
+<enum name='GL_VERSION_ES_CM_1_0' value='1'/>
+<enum name='GL_VERSION_ES_CM_1_1' value='1'/>
+<enum name='GL_VERTEX_ARRAY' value='32884'/>
+<enum name='GL_VERTEX_ARRAY_BINDING_OES' value='34229'/>
+<enum name='GL_VERTEX_ARRAY_BUFFER_BINDING' value='34966'/>
+<enum name='GL_VERTEX_ARRAY_OBJECT_EXT' value='37204'/>
+<enum name='GL_VERTEX_ARRAY_POINTER' value='32910'/>
+<enum name='GL_VERTEX_ARRAY_SIZE' value='32890'/>
+<enum name='GL_VERTEX_ARRAY_STRIDE' value='32892'/>
+<enum name='GL_VERTEX_ARRAY_TYPE' value='32891'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING' value='34975'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_ENABLED' value='34338'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_NORMALIZED' value='34922'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_POINTER' value='34373'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_SIZE' value='34339'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_STRIDE' value='34340'/>
+<enum name='GL_VERTEX_ATTRIB_ARRAY_TYPE' value='34341'/>
+<enum name='GL_VERTEX_SHADER' value='35633'/>
+<enum name='GL_VERTEX_SHADER_BIT_EXT' value='1'/>
+<enum name='GL_VIEWPORT' value='2978'/>
+<enum name='GL_WEIGHT_ARRAY_BUFFER_BINDING_OES' value='34974'/>
+<enum name='GL_WEIGHT_ARRAY_OES' value='34477'/>
+<enum name='GL_WEIGHT_ARRAY_POINTER_OES' value='34476'/>
+<enum name='GL_WEIGHT_ARRAY_SIZE_OES' value='34475'/>
+<enum name='GL_WEIGHT_ARRAY_STRIDE_OES' value='34474'/>
+<enum name='GL_WEIGHT_ARRAY_TYPE_OES' value='34473'/>
+<enum name='GL_WRITE_ONLY_OES' value='35001'/>
+<enum name='GL_XOR' value='5382'/>
+<enum name='GL_ZERO' value='0'/>
+<enum name='kEAGLRenderingAPIOpenGLES1' value='1'/>
+<enum name='kEAGLRenderingAPIOpenGLES2' value='2'/>
+<function name='EAGLGetVersion'>
+<arg name='major' type='^I' declared_type='unsigned int*'/>
+<arg name='minor' type='^I' declared_type='unsigned int*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glActiveShaderProgramEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glActiveTexture'>
+<arg name='texture' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glAlphaFunc'>
+<arg name='func' type='I' declared_type='GLenum'/>
+<arg name='ref' type='f' declared_type='GLclampf'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glAlphaFuncx'>
+<arg name='func' type='I' declared_type='GLenum'/>
+<arg name='ref' type='i' declared_type='GLclampx'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glAttachShader'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBeginQueryEXT'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='id' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBindAttribLocation'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='index' type='I' declared_type='GLuint'/>
+<arg name='name' type='*' const='true' declared_type='GLchar*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBindBuffer'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='buffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBindFramebuffer'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='framebuffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBindFramebufferOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='framebuffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBindProgramPipelineEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBindRenderbuffer'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='renderbuffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBindRenderbufferOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='renderbuffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBindTexture'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='texture' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBindVertexArrayOES'>
+<arg name='array' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBlendColor'>
+<arg name='red' type='f' declared_type='GLclampf'/>
+<arg name='green' type='f' declared_type='GLclampf'/>
+<arg name='blue' type='f' declared_type='GLclampf'/>
+<arg name='alpha' type='f' declared_type='GLclampf'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBlendEquation'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBlendEquationOES'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBlendEquationSeparate'>
+<arg name='modeRGB' type='I' declared_type='GLenum'/>
+<arg name='modeAlpha' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBlendEquationSeparateOES'>
+<arg name='modeRGB' type='I' declared_type='GLenum'/>
+<arg name='modeAlpha' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBlendFunc'>
+<arg name='sfactor' type='I' declared_type='GLenum'/>
+<arg name='dfactor' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBlendFuncSeparate'>
+<arg name='srcRGB' type='I' declared_type='GLenum'/>
+<arg name='dstRGB' type='I' declared_type='GLenum'/>
+<arg name='srcAlpha' type='I' declared_type='GLenum'/>
+<arg name='dstAlpha' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBlendFuncSeparateOES'>
+<arg name='srcRGB' type='I' declared_type='GLenum'/>
+<arg name='dstRGB' type='I' declared_type='GLenum'/>
+<arg name='srcAlpha' type='I' declared_type='GLenum'/>
+<arg name='dstAlpha' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glBufferData'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='size' type='l' declared_type='GLsizeiptr'/>
+<arg name='data' type='^v' const='true' declared_type='GLvoid*'/>
+<arg name='usage' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glBufferSubData'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='offset' type='l' declared_type='GLintptr'/>
+<arg name='size' type='l' declared_type='GLsizeiptr'/>
+<arg name='data' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCheckFramebufferStatus'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<retval type='I' declared_type='GLenum'/>
+</function>
+<function name='glCheckFramebufferStatusOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<retval type='I' declared_type='GLenum'/>
+</function>
+<function name='glClear'>
+<arg name='mask' type='I' declared_type='GLbitfield'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClearColor'>
+<arg name='red' type='f' declared_type='GLclampf'/>
+<arg name='green' type='f' declared_type='GLclampf'/>
+<arg name='blue' type='f' declared_type='GLclampf'/>
+<arg name='alpha' type='f' declared_type='GLclampf'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClearColorx'>
+<arg name='red' type='i' declared_type='GLclampx'/>
+<arg name='green' type='i' declared_type='GLclampx'/>
+<arg name='blue' type='i' declared_type='GLclampx'/>
+<arg name='alpha' type='i' declared_type='GLclampx'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClearDepthf'>
+<arg name='depth' type='f' declared_type='GLclampf'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClearDepthx'>
+<arg name='depth' type='i' declared_type='GLclampx'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClearStencil'>
+<arg name='s' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClientActiveTexture'>
+<arg name='texture' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClipPlanef'>
+<arg name='plane' type='I' declared_type='GLenum'/>
+<arg name='equation' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glClipPlanex'>
+<arg name='plane' type='I' declared_type='GLenum'/>
+<arg name='equation' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glColor4f'>
+<arg name='red' type='f' declared_type='GLfloat'/>
+<arg name='green' type='f' declared_type='GLfloat'/>
+<arg name='blue' type='f' declared_type='GLfloat'/>
+<arg name='alpha' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glColor4ub'>
+<arg name='red' type='C' declared_type='GLubyte'/>
+<arg name='green' type='C' declared_type='GLubyte'/>
+<arg name='blue' type='C' declared_type='GLubyte'/>
+<arg name='alpha' type='C' declared_type='GLubyte'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glColor4x'>
+<arg name='red' type='i' declared_type='GLfixed'/>
+<arg name='green' type='i' declared_type='GLfixed'/>
+<arg name='blue' type='i' declared_type='GLfixed'/>
+<arg name='alpha' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glColorMask'>
+<arg name='red' type='C' declared_type='GLboolean'/>
+<arg name='green' type='C' declared_type='GLboolean'/>
+<arg name='blue' type='C' declared_type='GLboolean'/>
+<arg name='alpha' type='C' declared_type='GLboolean'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glColorPointer'>
+<arg name='size' type='i' declared_type='GLint'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCompileShader'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCompressedTexImage2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<arg name='internalformat' type='I' declared_type='GLenum'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<arg name='border' type='i' declared_type='GLint'/>
+<arg name='imageSize' type='i' declared_type='GLsizei'/>
+<arg name='data' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCompressedTexSubImage2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<arg name='xoffset' type='i' declared_type='GLint'/>
+<arg name='yoffset' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<arg name='format' type='I' declared_type='GLenum'/>
+<arg name='imageSize' type='i' declared_type='GLsizei'/>
+<arg name='data' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCopyTexImage2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<arg name='internalformat' type='I' declared_type='GLenum'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<arg name='border' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCopyTexSubImage2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<arg name='xoffset' type='i' declared_type='GLint'/>
+<arg name='yoffset' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCreateProgram'>
+<retval type='I' declared_type='GLuint'/>
+</function>
+<function name='glCreateShader'>
+<arg name='type' type='I' declared_type='GLenum'/>
+<retval type='I' declared_type='GLuint'/>
+</function>
+<function name='glCreateShaderProgramvEXT'>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='strings' type='^*' const='true' declared_type='GLchar**'/>
+<retval type='I' declared_type='GLuint'/>
+</function>
+<function name='glCullFace'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glCurrentPaletteMatrixOES'>
+<arg name='matrixpaletteindex' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteBuffers'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='buffers' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteFramebuffers'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='framebuffers' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteFramebuffersOES'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='framebuffers' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glDeleteProgram'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteProgramPipelinesEXT'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='pipelines' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glDeleteQueriesEXT'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='ids' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glDeleteRenderbuffers'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='renderbuffers' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteRenderbuffersOES'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='renderbuffers' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glDeleteShader'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteTextures'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='textures' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDeleteVertexArraysOES'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='arrays' type='^I' const='true' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glDepthFunc'>
+<arg name='func' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDepthMask'>
+<arg name='flag' type='C' declared_type='GLboolean'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDepthRangef'>
+<arg name='zNear' type='f' declared_type='GLclampf'/>
+<arg name='zFar' type='f' declared_type='GLclampf'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDepthRangex'>
+<arg name='zNear' type='i' declared_type='GLclampx'/>
+<arg name='zFar' type='i' declared_type='GLclampx'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDetachShader'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDisable'>
+<arg name='cap' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDisableClientState'>
+<arg name='array' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDisableVertexAttribArray'>
+<arg name='index' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDiscardFramebufferEXT'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='numAttachments' type='i' declared_type='GLsizei'/>
+<arg name='attachments' type='^I' const='true' declared_type='GLenum*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glDrawArrays'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<arg name='first' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawElements'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='indices' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexfOES'>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<arg name='width' type='f' declared_type='GLfloat'/>
+<arg name='height' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexfvOES'>
+<arg name='coords' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexiOES'>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='z' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLint'/>
+<arg name='height' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexivOES'>
+<arg name='coords' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexsOES'>
+<arg name='x' type='s' declared_type='GLshort'/>
+<arg name='y' type='s' declared_type='GLshort'/>
+<arg name='z' type='s' declared_type='GLshort'/>
+<arg name='width' type='s' declared_type='GLshort'/>
+<arg name='height' type='s' declared_type='GLshort'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexsvOES'>
+<arg name='coords' type='^s' const='true' declared_type='GLshort*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexxOES'>
+<arg name='x' type='i' declared_type='GLfixed'/>
+<arg name='y' type='i' declared_type='GLfixed'/>
+<arg name='z' type='i' declared_type='GLfixed'/>
+<arg name='width' type='i' declared_type='GLfixed'/>
+<arg name='height' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glDrawTexxvOES'>
+<arg name='coords' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glEnable'>
+<arg name='cap' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glEnableClientState'>
+<arg name='array' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glEnableVertexAttribArray'>
+<arg name='index' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glEndQueryEXT'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glFinish'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFlush'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFogf'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFogfv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFogx'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFogxv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFramebufferRenderbuffer'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='attachment' type='I' declared_type='GLenum'/>
+<arg name='renderbuffertarget' type='I' declared_type='GLenum'/>
+<arg name='renderbuffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFramebufferRenderbufferOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='attachment' type='I' declared_type='GLenum'/>
+<arg name='renderbuffertarget' type='I' declared_type='GLenum'/>
+<arg name='renderbuffer' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glFramebufferTexture2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='attachment' type='I' declared_type='GLenum'/>
+<arg name='textarget' type='I' declared_type='GLenum'/>
+<arg name='texture' type='I' declared_type='GLuint'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFramebufferTexture2DOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='attachment' type='I' declared_type='GLenum'/>
+<arg name='textarget' type='I' declared_type='GLenum'/>
+<arg name='texture' type='I' declared_type='GLuint'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glFrontFace'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFrustumf'>
+<arg name='left' type='f' declared_type='GLfloat'/>
+<arg name='right' type='f' declared_type='GLfloat'/>
+<arg name='bottom' type='f' declared_type='GLfloat'/>
+<arg name='top' type='f' declared_type='GLfloat'/>
+<arg name='zNear' type='f' declared_type='GLfloat'/>
+<arg name='zFar' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glFrustumx'>
+<arg name='left' type='i' declared_type='GLfixed'/>
+<arg name='right' type='i' declared_type='GLfixed'/>
+<arg name='bottom' type='i' declared_type='GLfixed'/>
+<arg name='top' type='i' declared_type='GLfixed'/>
+<arg name='zNear' type='i' declared_type='GLfixed'/>
+<arg name='zFar' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGenBuffers'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='buffers' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGenFramebuffers'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='framebuffers' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGenFramebuffersOES'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='framebuffers' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGenProgramPipelinesEXT'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='pipelines' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGenQueriesEXT'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='ids' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGenRenderbuffers'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='renderbuffers' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGenRenderbuffersOES'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='renderbuffers' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGenTextures'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='textures' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGenVertexArraysOES'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='arrays' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGenerateMipmap'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGenerateMipmapOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetActiveAttrib'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='index' type='I' declared_type='GLuint'/>
+<arg name='bufsize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='size' type='^i' declared_type='GLint*'/>
+<arg name='type' type='^I' declared_type='GLenum*'/>
+<arg name='name' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetActiveUniform'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='index' type='I' declared_type='GLuint'/>
+<arg name='bufsize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='size' type='^i' declared_type='GLint*'/>
+<arg name='type' type='^I' declared_type='GLenum*'/>
+<arg name='name' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetAttachedShaders'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='maxcount' type='i' declared_type='GLsizei'/>
+<arg name='count' type='^i' declared_type='GLsizei*'/>
+<arg name='shaders' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetAttribLocation'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='name' type='*' const='true' declared_type='GLchar*'/>
+<retval type='i' declared_type='int'/>
+</function>
+<function name='glGetBooleanv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='*' declared_type='GLboolean*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetBufferParameteriv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetBufferPointervOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^^v' declared_type='GLvoid**'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetClipPlanef'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='equation' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetClipPlanex'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='eqn' type='^i' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetError'>
+<retval type='I' declared_type='GLenum'/>
+</function>
+<function name='glGetFixedv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetFloatv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetFramebufferAttachmentParameteriv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='attachment' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetFramebufferAttachmentParameterivOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='attachment' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetIntegerv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetLightfv'>
+<arg name='light' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetLightxv'>
+<arg name='light' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetMaterialfv'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetMaterialxv'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetObjectLabelEXT'>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='object' type='I' declared_type='GLuint'/>
+<arg name='bufSize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='label' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetPointerv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^^v' declared_type='void**'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetProgramInfoLog'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='bufsize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='infolog' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetProgramPipelineInfoLogEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<arg name='bufSize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='infoLog' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetProgramPipelineivEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetProgramiv'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetQueryObjectivEXT'>
+<arg name='id' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetQueryObjectuivEXT'>
+<arg name='id' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^I' declared_type='GLuint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetQueryivEXT'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetRenderbufferParameteriv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetRenderbufferParameterivOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glGetShaderInfoLog'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<arg name='bufsize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='infolog' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetShaderPrecisionFormat'>
+<arg name='shadertype' type='I' declared_type='GLenum'/>
+<arg name='precisiontype' type='I' declared_type='GLenum'/>
+<arg name='range' type='^i' declared_type='GLint*'/>
+<arg name='precision' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetShaderSource'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<arg name='bufsize' type='i' declared_type='GLsizei'/>
+<arg name='length' type='^i' declared_type='GLsizei*'/>
+<arg name='source' type='*' declared_type='GLchar*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetShaderiv'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetString'>
+<arg name='name' type='I' declared_type='GLenum'/>
+<retval type='*' const='true' declared_type='GLubyte*'/>
+</function>
+<function name='glGetTexEnvfv'>
+<arg name='env' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetTexEnviv'>
+<arg name='env' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetTexEnvxv'>
+<arg name='env' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetTexParameterfv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetTexParameteriv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetTexParameterxv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetUniformLocation'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='name' type='*' const='true' declared_type='GLchar*'/>
+<retval type='i' declared_type='int'/>
+</function>
+<function name='glGetUniformfv'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetUniformiv'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetVertexAttribPointerv'>
+<arg name='index' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='pointer' type='^^v' declared_type='GLvoid**'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetVertexAttribfv'>
+<arg name='index' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glGetVertexAttribiv'>
+<arg name='index' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glHint'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glInsertEventMarkerEXT'>
+<arg name='length' type='i' declared_type='GLsizei'/>
+<arg name='marker' type='*' const='true' declared_type='GLchar*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glIsBuffer'>
+<arg name='buffer' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsEnabled'>
+<arg name='cap' type='I' declared_type='GLenum'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsFramebuffer'>
+<arg name='framebuffer' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsFramebufferOES'>
+<arg name='framebuffer' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsProgram'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsProgramPipelineEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsQueryEXT'>
+<arg name='id' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsRenderbuffer'>
+<arg name='renderbuffer' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsRenderbufferOES'>
+<arg name='renderbuffer' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsShader'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsTexture'>
+<arg name='texture' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glIsVertexArrayOES'>
+<arg name='array' type='I' declared_type='GLuint'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glLabelObjectEXT'>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='object' type='I' declared_type='GLuint'/>
+<arg name='length' type='i' declared_type='GLsizei'/>
+<arg name='label' type='*' const='true' declared_type='GLchar*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glLightModelf'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightModelfv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightModelx'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightModelxv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightf'>
+<arg name='light' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightfv'>
+<arg name='light' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightx'>
+<arg name='light' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLightxv'>
+<arg name='light' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLineWidth'>
+<arg name='width' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLineWidthx'>
+<arg name='width' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLinkProgram'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLoadIdentity'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLoadMatrixf'>
+<arg name='m' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLoadMatrixx'>
+<arg name='m' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLoadPaletteFromModelViewMatrixOES'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glLogicOp'>
+<arg name='opcode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMapBufferOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='access' type='I' declared_type='GLenum'/>
+<retval type='^v' declared_type='GLvoid*'/>
+</function>
+<function name='glMaterialf'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMaterialfv'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMaterialx'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMaterialxv'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMatrixIndexPointerOES'>
+<arg name='size' type='i' declared_type='GLint'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMatrixMode'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMultMatrixf'>
+<arg name='m' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMultMatrixx'>
+<arg name='m' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMultiTexCoord4f'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='s' type='f' declared_type='GLfloat'/>
+<arg name='t' type='f' declared_type='GLfloat'/>
+<arg name='r' type='f' declared_type='GLfloat'/>
+<arg name='q' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glMultiTexCoord4x'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='s' type='i' declared_type='GLfixed'/>
+<arg name='t' type='i' declared_type='GLfixed'/>
+<arg name='r' type='i' declared_type='GLfixed'/>
+<arg name='q' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glNormal3f'>
+<arg name='nx' type='f' declared_type='GLfloat'/>
+<arg name='ny' type='f' declared_type='GLfloat'/>
+<arg name='nz' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glNormal3x'>
+<arg name='nx' type='i' declared_type='GLfixed'/>
+<arg name='ny' type='i' declared_type='GLfixed'/>
+<arg name='nz' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glNormalPointer'>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glOrthof'>
+<arg name='left' type='f' declared_type='GLfloat'/>
+<arg name='right' type='f' declared_type='GLfloat'/>
+<arg name='bottom' type='f' declared_type='GLfloat'/>
+<arg name='top' type='f' declared_type='GLfloat'/>
+<arg name='zNear' type='f' declared_type='GLfloat'/>
+<arg name='zFar' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glOrthox'>
+<arg name='left' type='i' declared_type='GLfixed'/>
+<arg name='right' type='i' declared_type='GLfixed'/>
+<arg name='bottom' type='i' declared_type='GLfixed'/>
+<arg name='top' type='i' declared_type='GLfixed'/>
+<arg name='zNear' type='i' declared_type='GLfixed'/>
+<arg name='zFar' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPixelStorei'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointParameterf'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointParameterfv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointParameterx'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointParameterxv'>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointSize'>
+<arg name='size' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointSizePointerOES'>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPointSizex'>
+<arg name='size' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPolygonOffset'>
+<arg name='factor' type='f' declared_type='GLfloat'/>
+<arg name='units' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPolygonOffsetx'>
+<arg name='factor' type='i' declared_type='GLfixed'/>
+<arg name='units' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glPopGroupMarkerEXT'>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glPopMatrix'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glProgramParameteriEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='value' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform1fEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform1fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform1iEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform1ivEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform2fEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform2fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform2iEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform2ivEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform3fEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform3fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform3iEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='z' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform3ivEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform4fEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<arg name='w' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform4fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform4iEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='z' type='i' declared_type='GLint'/>
+<arg name='w' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniform4ivEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='value' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniformMatrix2fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='transpose' type='C' declared_type='GLboolean'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniformMatrix3fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='transpose' type='C' declared_type='GLboolean'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glProgramUniformMatrix4fvEXT'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='transpose' type='C' declared_type='GLboolean'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glPushGroupMarkerEXT'>
+<arg name='length' type='i' declared_type='GLsizei'/>
+<arg name='marker' type='*' const='true' declared_type='GLchar*'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glPushMatrix'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glReadPixels'>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<arg name='format' type='I' declared_type='GLenum'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='pixels' type='^v' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glReleaseShaderCompiler'>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glRenderbufferStorage'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='internalformat' type='I' declared_type='GLenum'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glRenderbufferStorageMultisampleAPPLE'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='samples' type='i' declared_type='GLsizei'/>
+<arg name='internalformat' type='I' declared_type='GLenum'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glRenderbufferStorageOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='internalformat' type='I' declared_type='GLenum'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glResolveMultisampleFramebufferAPPLE'>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glRotatef'>
+<arg name='angle' type='f' declared_type='GLfloat'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glRotatex'>
+<arg name='angle' type='i' declared_type='GLfixed'/>
+<arg name='x' type='i' declared_type='GLfixed'/>
+<arg name='y' type='i' declared_type='GLfixed'/>
+<arg name='z' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glSampleCoverage'>
+<arg name='value' type='f' declared_type='GLclampf'/>
+<arg name='invert' type='C' declared_type='GLboolean'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glSampleCoveragex'>
+<arg name='value' type='i' declared_type='GLclampx'/>
+<arg name='invert' type='C' declared_type='GLboolean'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glScalef'>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glScalex'>
+<arg name='x' type='i' declared_type='GLfixed'/>
+<arg name='y' type='i' declared_type='GLfixed'/>
+<arg name='z' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glScissor'>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glShadeModel'>
+<arg name='mode' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glShaderBinary'>
+<arg name='n' type='i' declared_type='GLsizei'/>
+<arg name='shaders' type='^I' const='true' declared_type='GLuint*'/>
+<arg name='binaryformat' type='I' declared_type='GLenum'/>
+<arg name='binary' type='^v' const='true' declared_type='GLvoid*'/>
+<arg name='length' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glShaderSource'>
+<arg name='shader' type='I' declared_type='GLuint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='string' type='^*' const='true' declared_type='GLchar**'/>
+<arg name='length' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glStencilFunc'>
+<arg name='func' type='I' declared_type='GLenum'/>
+<arg name='ref' type='i' declared_type='GLint'/>
+<arg name='mask' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glStencilFuncSeparate'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='func' type='I' declared_type='GLenum'/>
+<arg name='ref' type='i' declared_type='GLint'/>
+<arg name='mask' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glStencilMask'>
+<arg name='mask' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glStencilMaskSeparate'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='mask' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glStencilOp'>
+<arg name='fail' type='I' declared_type='GLenum'/>
+<arg name='zfail' type='I' declared_type='GLenum'/>
+<arg name='zpass' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glStencilOpSeparate'>
+<arg name='face' type='I' declared_type='GLenum'/>
+<arg name='fail' type='I' declared_type='GLenum'/>
+<arg name='zfail' type='I' declared_type='GLenum'/>
+<arg name='zpass' type='I' declared_type='GLenum'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexCoordPointer'>
+<arg name='size' type='i' declared_type='GLint'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexEnvf'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexEnvfv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexEnvi'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexEnviv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexEnvx'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexEnvxv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexImage2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<arg name='internalformat' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<arg name='border' type='i' declared_type='GLint'/>
+<arg name='format' type='I' declared_type='GLenum'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='pixels' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexParameterf'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexParameterfv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexParameteri'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexParameteriv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexParameterx'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='param' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexParameterxv'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='pname' type='I' declared_type='GLenum'/>
+<arg name='params' type='^i' const='true' declared_type='GLfixed*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTexSubImage2D'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<arg name='level' type='i' declared_type='GLint'/>
+<arg name='xoffset' type='i' declared_type='GLint'/>
+<arg name='yoffset' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<arg name='format' type='I' declared_type='GLenum'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='pixels' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTranslatef'>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glTranslatex'>
+<arg name='x' type='i' declared_type='GLfixed'/>
+<arg name='y' type='i' declared_type='GLfixed'/>
+<arg name='z' type='i' declared_type='GLfixed'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform1f'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform1fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform1i'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform1iv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform2f'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform2fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform2i'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform2iv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform3f'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform3fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform3i'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='z' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform3iv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform4f'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<arg name='w' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform4fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform4i'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='z' type='i' declared_type='GLint'/>
+<arg name='w' type='i' declared_type='GLint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniform4iv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='v' type='^i' const='true' declared_type='GLint*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniformMatrix2fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='transpose' type='C' declared_type='GLboolean'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniformMatrix3fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='transpose' type='C' declared_type='GLboolean'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUniformMatrix4fv'>
+<arg name='location' type='i' declared_type='GLint'/>
+<arg name='count' type='i' declared_type='GLsizei'/>
+<arg name='transpose' type='C' declared_type='GLboolean'/>
+<arg name='value' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUnmapBufferOES'>
+<arg name='target' type='I' declared_type='GLenum'/>
+<retval type='C' declared_type='GLboolean'/>
+</function>
+<function name='glUseProgram'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glUseProgramStagesEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<arg name='stages' type='I' declared_type='GLbitfield'/>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glValidateProgram'>
+<arg name='program' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glValidateProgramPipelineEXT'>
+<arg name='pipeline' type='I' declared_type='GLuint'/>
+<retval type='v' declared_type='GLvoid'/>
+</function>
+<function name='glVertexAttrib1f'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib1fv'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='values' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib2f'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib2fv'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='values' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib3f'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib3fv'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='values' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib4f'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='x' type='f' declared_type='GLfloat'/>
+<arg name='y' type='f' declared_type='GLfloat'/>
+<arg name='z' type='f' declared_type='GLfloat'/>
+<arg name='w' type='f' declared_type='GLfloat'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttrib4fv'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='values' type='^f' const='true' declared_type='GLfloat*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexAttribPointer'>
+<arg name='indx' type='I' declared_type='GLuint'/>
+<arg name='size' type='i' declared_type='GLint'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='normalized' type='C' declared_type='GLboolean'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='ptr' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glVertexPointer'>
+<arg name='size' type='i' declared_type='GLint'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glViewport'>
+<arg name='x' type='i' declared_type='GLint'/>
+<arg name='y' type='i' declared_type='GLint'/>
+<arg name='width' type='i' declared_type='GLsizei'/>
+<arg name='height' type='i' declared_type='GLsizei'/>
+<retval type='v' declared_type='void'/>
+</function>
+<function name='glWeightPointerOES'>
+<arg name='size' type='i' declared_type='GLint'/>
+<arg name='type' type='I' declared_type='GLenum'/>
+<arg name='stride' type='i' declared_type='GLsizei'/>
+<arg name='pointer' type='^v' const='true' declared_type='GLvoid*'/>
+<retval type='v' declared_type='void'/>
+</function>
+<class name='EAGLContext'>
+<method selector='API'>
+<retval type='I' declared_type='EAGLRenderingAPI'/>
+</method>
+<method class_method='true' selector='currentContext'>
+<retval type='@' declared_type='EAGLContext*'/>
+</method>
+<method selector='initWithAPI:'>
+<arg index='0' name='api' type='I' declared_type='EAGLRenderingAPI'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='initWithAPI:sharegroup:'>
+<arg index='0' name='api' type='I' declared_type='EAGLRenderingAPI'/>
+<arg index='1' name='sharegroup' type='@' declared_type='EAGLSharegroup*'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='presentRenderbuffer:'>
+<arg index='0' name='target' type='I' declared_type='NSUInteger'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='renderbufferStorage:fromDrawable:'>
+<arg index='0' name='target' type='I' declared_type='NSUInteger'/>
+<arg index='1' name='drawable' type='@' declared_type='id'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method class_method='true' selector='setCurrentContext:'>
+<arg index='0' name='context' type='@' declared_type='EAGLContext*'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='sharegroup'>
+<retval type='@' declared_type='EAGLSharegroup*'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='drawableProperties'>
+<retval type='@' declared_type='NSDictionary*'/>
+</method>
+<method selector='setDrawableProperties:'>
+<arg index='0' name='drawableProperties' type='@' declared_type='NSDictionary*'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<informal_protocol name='EAGLDrawable'>
+<method selector='drawableProperties' type='@8@0:4'>
+<retval type='@' declared_type='NSDictionary*'/>
+</method>
+<method selector='setDrawableProperties:' type='v12@0:4@8'>
+<arg index='0' name='drawableProperties' type='@' declared_type='NSDictionary*'/>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+</signatures>
