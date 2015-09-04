@@ -20,6 +20,7 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -67,6 +68,9 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
       return Promise.resolve(null);
     }
     final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
+    if (consoleView == null) {
+      return Promise.resolve(KarmaUtil.createDefaultRunProfileStarter(executionResult));
+    }
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
@@ -108,8 +112,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
         @Nullable
         @Override
         public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
-          RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-          final RunContentDescriptor descriptor = contentBuilder.showRunContent(env.getContentToReuse());
+          final RunContentDescriptor descriptor = KarmaUtil.createDefaultDescriptor(executionResult, env);
           karmaServer.onBrowsersReady(new Runnable() {
             @Override
             public void run() {

@@ -23,6 +23,7 @@ import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
@@ -33,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.debugger.connection.VmConnection;
 
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
+
+  private static final Logger LOG = Logger.getInstance(KarmaConsoleView.class);
 
   private final KarmaServer myServer;
   private final KarmaExecutionSession myExecutionSession;
@@ -156,15 +159,19 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return new KarmaDebugTabLayouter(debugProcess);
   }
 
-  @NotNull
+  /**
+   * @return null in case of "Import Test Result" action
+   */
+  @Nullable
   public static KarmaConsoleView get(@NotNull ExecutionResult result, @NotNull RunProfileState state) {
     ExecutionConsole console = result.getExecutionConsole();
     if (console instanceof KarmaConsoleView) {
       return (KarmaConsoleView)console;
     }
     Class consoleClass = console != null ? console.getClass() : null;
-    throw new AssertionError("Cannot cast " + consoleClass + " to " + KarmaConsoleView.class.getSimpleName() +
-                             ", RunProfileState: " + state.getClass().getName());
+    LOG.info("Cannot cast " + consoleClass + " to " + KarmaConsoleView.class.getSimpleName() +
+             ", RunProfileState: " + state.getClass().getName());
+    return null;
   }
 
   private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {

@@ -7,7 +7,6 @@ import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
@@ -32,7 +31,7 @@ public class KarmaExecutionSession {
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
-  private final ExecutionEnvironment myEnvironment;
+  private final KarmaRunConfiguration myRunConfiguration;
   private final Executor myExecutor;
   private final KarmaServer myKarmaServer;
   private final String myNodeInterpreterPath;
@@ -42,14 +41,14 @@ public class KarmaExecutionSession {
   private final KarmaExecutionType myExecutionType;
 
   public KarmaExecutionSession(@NotNull Project project,
-                               @NotNull ExecutionEnvironment environment,
+                               @NotNull KarmaRunConfiguration runConfiguration,
                                @NotNull Executor executor,
                                @NotNull KarmaServer karmaServer,
                                @NotNull String nodeInterpreterPath,
                                @NotNull KarmaRunSettings runSettings,
                                @NotNull KarmaExecutionType executionType) throws ExecutionException {
     myProject = project;
-    myEnvironment = environment;
+    myRunConfiguration = runConfiguration;
     myExecutor = executor;
     myKarmaServer = karmaServer;
     myNodeInterpreterPath = nodeInterpreterPath;
@@ -61,9 +60,8 @@ public class KarmaExecutionSession {
 
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
-    KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration)myEnvironment.getRunProfile();
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(runConfiguration, myExecutor, filterProvider);
+    TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myKarmaServer, this);
     Disposer.register(myProject, consoleView);
     SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME);

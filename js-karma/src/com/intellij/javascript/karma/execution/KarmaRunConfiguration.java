@@ -107,11 +107,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     String karmaPackageDir = getKarmaPackageDir();
     String nodeInterpreterPath = KarmaProjectSettings.getNodeInterpreterPath(getProject());
     return new KarmaRunProfileState(getProject(),
+                                    this,
                                     env,
                                     nodeInterpreterPath,
-                                    karmaPackageDir,
-                                    myRunSettings,
-                                    executor);
+                                    karmaPackageDir);
   }
 
   @Override
