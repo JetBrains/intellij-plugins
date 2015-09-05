@@ -9,35 +9,46 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-
 public class CloudFormationDocumentationProvider extends AbstractDocumentationProvider {
   @Nullable
-  @Override
-  public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-    return element.getText();
-  }
+  private static PsiElement getDocElement(PsiElement element) {
+    if (!CloudFormationPsiUtils.isCloudFormationFile(element)) {
+      return null;
+    }
 
-  @Override
-  public String generateDoc(final PsiElement element, @Nullable final PsiElement originalElement) {
     PsiElement parent = element;
     if (parent.getParent() instanceof JsonStringLiteral) {
       parent = parent.getParent();
     }
-    if (CloudFormationPsiUtils.isResourceTypeValuePosition(parent)) {
-      return createResourceDescription(parent);
-    } else if (CloudFormationPsiUtils.isResourcePropertyNamePosition(parent)) {
-      return createPropertyDescription(parent);
+
+    if (CloudFormationPsiUtils.isResourceTypeValuePosition(parent) || CloudFormationPsiUtils.isResourcePropertyNamePosition(parent)) {
+      return parent;
     }
-    return "";
+
+    return null;
   }
 
-  public String createResourceDescription(PsiElement element) {
+  @Override
+  public String generateDoc(final PsiElement element, @Nullable final PsiElement originalElement) {
+    PsiElement docElement = getDocElement(originalElement);
+    if (docElement == null) {
+      return null;
+    }
+
+    if (CloudFormationPsiUtils.isResourceTypeValuePosition(docElement)) {
+      return createResourceDescription(docElement);
+    } else if (CloudFormationPsiUtils.isResourcePropertyNamePosition(docElement)) {
+      return createPropertyDescription(docElement);
+    }
+
+    return null;
+  }
+
+  private String createResourceDescription(PsiElement element) {
     final JsonStringLiteral propertyValue = ObjectUtils.tryCast(element, JsonStringLiteral.class);
     if (propertyValue == null) {
       return "";
@@ -58,7 +69,7 @@ public class CloudFormationDocumentationProvider extends AbstractDocumentationPr
     return "";
   }
 
-  public String createPropertyDescription(PsiElement element) {
+  private String createPropertyDescription(PsiElement element) {
     final JsonStringLiteral propertyName = ObjectUtils.tryCast(element, JsonStringLiteral.class);
     if (propertyName == null) {
       return "";
@@ -110,29 +121,9 @@ public class CloudFormationDocumentationProvider extends AbstractDocumentationPr
     return "";
   }
 
-  @Override
-  public java.util.List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    return null;
-  }
-
-  @Override
-  public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
-    return element;
-  }
-
-  @Override
-  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
-    return context;
-  }
-
   @Nullable
   public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
-    return contextElement;
-  }
-
-  @Nullable
-  public Image getLocalImageForElement(@NotNull PsiElement element, @NotNull String imageSpec) {
-    return null;
+    return getDocElement(contextElement) != null ? contextElement : null;
   }
 
   private static String prefixLinksWithUserGuideRoot(String html) {

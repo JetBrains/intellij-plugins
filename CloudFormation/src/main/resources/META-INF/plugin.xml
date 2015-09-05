@@ -3,10 +3,27 @@
   <name>AWS CloudFormation support</name>
   <version>SNAPSHOT</version>
 
-  <vendor url="https://github.com/shalupov/idea-cloudformation" email="shalupov@diverse.org.ru">Leonid Shalupov</vendor>
+  <vendor url="https://github.com/shalupov" email="leonid@shalupov.com">Leonid Shalupov</vendor>
 
   <description><![CDATA[
-    Amazon AWS CloudFormation language support
+    <p>Amazon AWS CloudFormation language support
+    <p>
+    <p>Open any *.template file with CloudFormation JSON inside. There should be number of features available:
+    <ul>
+      <li>Template validation
+        <ul>
+          <li>Overall file structure</li>
+          <li>References to resources, conditions, parameters, mappings</li>
+          <li>Resource types and properties</li>
+        </ul>
+      </li>
+      <li>File structure (aka Go to member) (Ctrl-F12 on Windows): fast jump to any entity in the file</li>
+      <li>Completion in Ref clause</li>
+      <li>Completion of resources types and properties</li>
+      <li>Live template for Ref clause: type "ref" and press Tab</li>
+      <li>Ctrl-Click on any reference to jump to its definition</li>
+      <li>Format file</li>
+    </ul>
   ]]></description>
 
   <!-- IDEA 14.0.3 to 15.x -->

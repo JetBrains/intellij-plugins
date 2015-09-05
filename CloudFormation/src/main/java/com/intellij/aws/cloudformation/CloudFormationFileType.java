@@ -8,7 +8,9 @@ import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
 import com.intellij.openapi.util.io.ByteSequence;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.openapi.vfs.newvfs.FileSystemInterface;
+import com.intellij.openapi.vfs.newvfs.impl.StubVirtualFile;
 import com.intellij.util.Processor;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +62,25 @@ public class CloudFormationFileType extends LanguageFileType implements FileType
   }
 
   private boolean detectFromContent(@NotNull VirtualFile file) {
+    if (file instanceof StubVirtualFile) {
+      // Helps New -> File get correct file type
+      return true;
+    }
+
+    VirtualFileSystem virtualFileSystem;
     try {
-      final InputStream inputStream = ((FileSystemInterface) file.getFileSystem()).getInputStream(file);
+      virtualFileSystem = file.getFileSystem();
+    } catch (UnsupportedOperationException ignored) {
+      return false;
+    }
+
+    if (!(virtualFileSystem instanceof FileSystemInterface)) {
+      return false;
+    }
+
+    try {
+      final FileSystemInterface fileSystem = (FileSystemInterface) virtualFileSystem;
+      final InputStream inputStream = fileSystem.getInputStream(file);
       try {
         return FileUtil.processFirstBytes(inputStream, 1024, new Processor<ByteSequence>() {
           @Override

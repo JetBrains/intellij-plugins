@@ -1,6 +1,8 @@
 package com.intellij.aws.cloudformation.references;
 
+import com.intellij.aws.cloudformation.CloudFormationMetadataProvider;
 import com.intellij.aws.cloudformation.CloudFormationResolve;
+import com.intellij.aws.cloudformation.CloudFormationSections;
 import com.intellij.json.psi.JsonLiteral;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -12,23 +14,19 @@ import java.util.Collection;
 import java.util.Set;
 
 public class CloudFormationEntityReference extends CloudFormationReferenceBase {
-  private final String[] myPossibleSections;
+  private final Collection<String> myPossibleSections;
 
   @Nullable
   private final Collection<String> myExcludeFromVariants;
 
   public CloudFormationEntityReference(@NotNull JsonLiteral element,
-                                       @Nullable Collection<String> variantsToExclude,
-                                       String... possibleSections) {
+                                       @NotNull Collection<String> possibleSections,
+                                       @Nullable Collection<String> variantsToExclude) {
     super(element);
     myExcludeFromVariants = variantsToExclude;
 
-    assert possibleSections.length > 0;
+    assert possibleSections.size() > 0;
     myPossibleSections = possibleSections;
-  }
-
-  public CloudFormationEntityReference(@NotNull JsonLiteral element, String... possibleSections) {
-    this(element, null, possibleSections);
   }
 
   @Nullable
@@ -44,6 +42,10 @@ public class CloudFormationEntityReference extends CloudFormationReferenceBase {
 
     if (myExcludeFromVariants != null) {
       entities.removeAll(myExcludeFromVariants);
+    }
+
+    if (myPossibleSections.contains(CloudFormationSections.Parameters)) {
+      entities.addAll(CloudFormationMetadataProvider.METADATA.predefinedParameters);
     }
 
     return ArrayUtil.toStringArray(entities);

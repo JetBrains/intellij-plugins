@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class CloudFormationReferenceProvider extends PsiReferenceProvider {
+  public static final List<String> ParametersAndResourcesSections = Arrays.asList(CloudFormationSections.Parameters, CloudFormationSections.Resources);
+
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
@@ -46,9 +48,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     if (isInCondition(stringLiteral)) {
-      result.add(new CloudFormationEntityReference(
-          stringLiteral,
-          CloudFormationSections.Conditions));
+      result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null));
       return result;
     }
 
@@ -67,17 +67,17 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
             final List<JsonProperty> properties = obj.getPropertyList();
             if (properties.size() == 1) {
               if (isGetAtt) {
-                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.Resources));
+                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.ResourcesSingletonList, null));
                 return result;
               }
 
               if (isFindInMap) {
-                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.Mappings));
+                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.MappingsSingletonList, null));
                 return result;
               }
 
               if (isIf) {
-                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.Conditions));
+                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null));
                 return result;
               }
             }
@@ -116,9 +116,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     if (isInConditionOnResource(element)) {
-      result.add(new CloudFormationEntityReference(
-          stringLiteral,
-          CloudFormationSections.Conditions));
+      result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null));
       return result;
     }
 
@@ -150,10 +148,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return false;
     }
 
-    result.add(new CloudFormationEntityReference(
-        element,
-        CloudFormationSections.Parameters,
-        CloudFormationSections.Resources));
+    result.add(new CloudFormationEntityReference(element, ParametersAndResourcesSections, null));
     return true;
   }
 
@@ -192,9 +187,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     result.add(new CloudFormationEntityReference(
-        element,
-        Arrays.asList(resource.getName()),
-        CloudFormationSections.Resources));
+        element, CloudFormationSections.ResourcesSingletonList, Collections.singletonList(resource.getName())));
     return true;
   }
 
@@ -253,10 +246,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
     excludes.add(resource.getName());
 
-    result.add(new CloudFormationEntityReference(
-        element,
-        excludes,
-        CloudFormationSections.Resources));
+    result.add(new CloudFormationEntityReference(element, CloudFormationSections.ResourcesSingletonList, excludes));
     return true;
   }
 

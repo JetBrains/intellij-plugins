@@ -67,6 +67,16 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     checkBasicCompletion("Prefix3.template", "AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion");
   }
 
+  public void testPredefinedParameters() throws Exception {
+    checkBasicCompletion("PredefinedParameters.template",
+        "AWS::AccountId",
+        "AWS::NoValue",
+        "AWS::NotificationARNs",
+        "AWS::Region",
+        "AWS::StackId",
+        "AWS::StackName");
+  }
+
   public void testMappingTopLevelKey1() throws Exception {
 
 
