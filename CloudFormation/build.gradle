@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.0.15"
+    id "org.jetbrains.intellij" version "0.0.20"
 }
 
 intellij {
