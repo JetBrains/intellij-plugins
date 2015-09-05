@@ -1,0 +1,3 @@
+var xx:Number = 2
+var yy:int = 1;
+xx += y<caret>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="*"
+        <error>includeIn</error>="state1" <error>itemCreationPolicy</error>="immediate">
+    <s:id>app</s:id>
+    <<error>s:excludeFrom</error>>state2</<error>s:excludeFrom</error>>
+    <s:states>
+        <fx:Array>
+            <s:State name="state1"/>
+            <s:State name="state2"/>
+        </fx:Array>
+    </s:states>
+    <s:Button id="but1" includeIn="state1" itemCreationPolicy="immediate"/>
+    <s:Button>
+        <s:id>but2</s:id>
+        <<error>s:includeIn</error>>state2</<error>s:includeIn</error>>
+        <<error>s:itemCreationPolicy</error>>auto</<error>s:itemCreationPolicy</error>>
+    </s:Button>
+    <fx:Declarations>
+        <fx:String id="str1"/>
+        <fx:String>
+            <<error>fx:id</error>>str2</<error>fx:id</error>>
+        </fx:String>
+        <local:IdAndPredefinedAttributes_other id="xxx" local:id=<error descr="invalid integer value">"zzz"</error>/>
+        <local:IdAndPredefinedAttributes_other id="yyy" local:id="5"/>
+    </fx:Declarations>
+</s:Application>

@@ -1,0 +1,6 @@
+
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    aa[<caret>]
+  </mx:Script>
+  </mx:Canvas>

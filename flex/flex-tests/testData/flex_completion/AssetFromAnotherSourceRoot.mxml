@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+     <mx:Image source="@Embed('/_AssetFromAnotherSourceR<caret>')"/>
+</mx:Application>

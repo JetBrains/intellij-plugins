@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.sdk.FlexmojosSdkDataConfigurable.FlexmojosSdkForm">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="10">
+    <margin top="1" left="3" bottom="1" right="3"/>
+    <constraints>
+      <xy x="20" y="20" width="509" height="314"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <vspacer id="a8eb0">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="e84d7" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="10"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="90857" class="com.intellij.openapi.ui.LabeledComponent" binding="myAdlComponent">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
+          <text value="AIR De&amp;bug Launcher"/>
+        </properties>
+      </component>
+      <component id="61709" class="com.intellij.openapi.ui.LabeledComponent" binding="myAirRuntimeComponent">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
+          <text value="AIR &amp;Runtime (directory or zip file)"/>
+        </properties>
+      </component>
+      <grid id="76501" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="b2e87" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Flex Compiler/Debugger Classpath:"/>
+            </properties>
+          </component>
+          <scrollpane class="com.intellij.ui.components.JBScrollPane" id="76fcd">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="e5f1a" class="javax.swing.JTextArea" binding="myClasspathTextArea">
+                <constraints/>
+                <properties>
+                  <editable value="false"/>
+                  <lineWrap value="false"/>
+                  <rows value="5"/>
+                  <wrapStyleWord value="false"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

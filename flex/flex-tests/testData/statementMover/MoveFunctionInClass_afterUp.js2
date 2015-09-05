@@ -1,0 +1,17 @@
+class Foo {
+    /**
+     * Func desc.
+     * @param {Object} obj object
+     */
+    function b<caret>xx(obj) {}
+
+/**
+ * xxx
+ */
+ function yyy() {}
+
+/**
+ * yyy
+ */
+ function yyy2() {}
+}

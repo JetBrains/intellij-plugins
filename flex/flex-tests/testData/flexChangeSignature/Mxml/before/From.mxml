@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                creationComplete="a<caret>bc();">
+
+    <mx:Script><![CDATA[
+        private function abc():void {
+            trace('a');
+        }
+
+        function ref() {
+            abc();
+        }
+        ]]></mx:Script>
+
+    <mx:add><![CDATA[
+            abc();
+
+            function aaa() {
+                abc();
+            }
+        ]]></mx:add>
+</mx:Application>

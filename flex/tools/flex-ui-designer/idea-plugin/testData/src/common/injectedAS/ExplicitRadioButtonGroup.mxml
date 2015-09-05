@@ -1,0 +1,24 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Script><![CDATA[
+    import mx.events.ItemClickEvent;
+
+    private function handleCard(event:ItemClickEvent):void {
+      var cardValue:Object = cardtype.selectedValue;
+      myTA.text = "You selected " + cardValue;
+    }
+    
+    ]]></fx:Script>
+
+  <fx:Declarations>
+    <RadioButtonGroup id="cardtype" itemClick="handleCard(event);"/>
+  </fx:Declarations>
+
+  <VGroup>
+    <RadioButton group="{cardtype}" id="americanExpress" label="American Express" width="150"/>
+    <RadioButton group="{cardtype}" id="masterCard" label="MasterCard" width="150"/>
+    <RadioButton id="visa" label="Visa" width="150">
+      <group>{cardtype}</group>
+    </RadioButton>
+    <TextArea id="myTA"/>
+  </VGroup>
+</Group>

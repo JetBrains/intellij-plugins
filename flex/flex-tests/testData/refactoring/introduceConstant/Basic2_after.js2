@@ -1,0 +1,9 @@
+class A {
+    function A() {}
+
+    public static const created:A = new A();
+
+    function xxx() {
+        var a = created
+    }
+}

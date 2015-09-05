@@ -1,0 +1,6 @@
+class Bar {
+  public function toString():String {}
+}
+class A extends Bar {
+  <caret>
+}

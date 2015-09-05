@@ -1,0 +1,190 @@
+JSFile:E4X2.js2
+  JSExpressionStatement
+    JSAssignmentExpression
+      PsiElement(JS:DEFAULT_KEYWORD)('default')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IDENTIFIER)('xml')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('""')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XML')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('xsi')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSWithStatement
+    PsiElement(JS:WITH_KEYWORD)('with')
+    PsiElement(JS:LPAR)('(')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('x')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:AT)('@')
+              JSE4XNamespaceReference
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('xsi')
+                PsiElement(JS:COLON_COLON)('::')
+              PsiElement(JS:IDENTIFIER)('type')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('""')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('xml')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XML')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:xxx
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('xxx')
+        XmlToken:XML_EMPTY_ELEMENT_END('/>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('_fieldMappingName')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('String')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"myMappingName"')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('_fieldMappingNS')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Namespace')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSNewExpression
+        PsiElement(JS:NEW_KEYWORD)('new')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Namespace')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"http://www.my-namespace.com"')
+          PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('_fieldXMLList')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XMLList')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSIndexedPropertyAccessExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('xml')
+          PsiElement(JS:DOT)('.')
+          JSE4XNamespaceReference
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('_fieldMappingNS')
+            PsiElement(JS:COLON_COLON)('::')
+        PsiElement(JS:LBRACKET)('[')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('_fieldMappingName')
+        PsiElement(JS:RBRACKET)(']')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSWithStatement
+    PsiElement(JS:WITH_KEYWORD)('with')
+    PsiElement(JS:LPAR)('(')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('xml')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSIndexedPropertyAccessExpression
+              JSReferenceExpression
+                JSE4XNamespaceReference
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('_fieldMappingNS')
+                  PsiElement(JS:COLON_COLON)('::')
+              PsiElement(JS:LBRACKET)('[')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('_fieldMappingName')
+              PsiElement(JS:RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('""')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')

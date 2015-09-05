@@ -1,0 +1,12 @@
+// "Create Method 'foo'" "true"
+class Super {
+    internal function foo():void {
+        <caret>
+    }
+}
+
+class Sub extends Super {
+function foo() {
+ super.foo();
+}
+}

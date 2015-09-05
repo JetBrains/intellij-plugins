@@ -1,0 +1,12 @@
+namespace xxx;
+
+class Foo {
+  xxx function foo() {}
+}
+
+class Bar extends Foo {
+  override xxx function foo() {
+    super.xxx::f<caret>oo();
+  }
+}
+

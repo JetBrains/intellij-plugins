@@ -1,0 +1,4 @@
+package foo.bar {
+  class CompleteInReferenceList_5 {}
+}
+class Clazz extends foo.b<caret>

@@ -1,0 +1,62 @@
+JSFile:XmlDef2.js2
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:xml
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('xml')
+        XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n  ')
+        XmlTag:zzz
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('zzz')
+          XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace(' ')
+          JSEmbeddedContent:XML_JS_SCRIPT
+            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+              PsiElement(JS:LBRACE)('{')
+              PsiErrorElement:expression expected
+                <empty list>
+              PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:xml element expected
+            PsiElement(BAD_CHARACTER)('&')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('t')
+          PsiWhiteSpace(' ')
+          JSEmbeddedContent:XML_JS_SCRIPT
+            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+              PsiElement(JS:LBRACE)('{')
+              PsiWhiteSpace(' ')
+              JSAssignmentExpression
+                JSDefinitionExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('a')
+                PsiElement(JS:EQ)('=')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('1')
+              PsiErrorElement:} expected
+                <empty list>
+              PsiElement(JS:SEMICOLON)(';')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:IDENTIFIER)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQ)('=')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+              PsiElement(JS:SEMICOLON)(';')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:RBRACE)('}')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('zzz')
+          XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n  ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_NAME('xml')
+        XmlToken:XML_TAG_END('>')

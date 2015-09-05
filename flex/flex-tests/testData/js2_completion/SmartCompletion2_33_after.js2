@@ -1,0 +1,11 @@
+class SmartCompletionTest {
+    function SmartCompletionTest():Test {
+        return true ? getUrl(<caret>)
+    }
+
+    private function getUrl(x:int, y:int):Test {
+        return "someurl";
+    }
+}
+
+class Test {}

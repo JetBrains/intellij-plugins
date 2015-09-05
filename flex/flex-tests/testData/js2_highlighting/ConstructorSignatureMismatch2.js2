@@ -1,0 +1,11 @@
+package <error>foo</error> {
+  import flash.events.Event;
+  import bar.Foo;
+
+  public class ConstructorSignatureMismatch2 {
+    private function foo() {
+      var v : Event;
+      new Foo<error>("a", this, v)</error>;
+    }
+  }
+}

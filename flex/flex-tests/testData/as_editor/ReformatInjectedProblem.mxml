@@ -1,0 +1,8 @@
+
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    function foo() {
+      xxx = 0;
+    }
+  </mx:Script>
+  </mx:Canvas>

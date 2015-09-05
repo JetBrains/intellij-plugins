@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<mx:Application
+        xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+            new Button();
+            new Panel();
+            new List();
+    </mx:Script>
+    <mx:Button/>
+    <mx:DataGrid>
+        <mx:itemRenderer>
+            <mx:Component>
+                <mx:VBox>
+                    <mx:Script>
+                        import mypackage.List;
+
+                        new Button();
+                      new Panel();
+                      new List();
+                    </mx:Script>
+                    <mx:Panel/>
+                    <mx:DataGrid>
+                        <mx:itemRenderer>
+                            <mx:Component>
+                                <mx:VBox>
+                                    <mx:Script>
+                                      new Button();
+                                      new Panel();
+                                      new List();
+                                    </mx:Script>
+                                    <mx:List/>
+                                </mx:VBox>
+                            </mx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGrid>
+                </mx:VBox>
+            </mx:Component>
+        </mx:itemRenderer>
+    </mx:DataGrid>
+</mx:Application>

@@ -1,0 +1,20 @@
+package com.bla.blub
+{
+class A
+{
+    public function zaa() {}
+}
+}
+package com.bla.blub
+{
+class B extends A
+{
+    public function zzz() {
+        var b = new B();
+        b.<caret>
+    }
+
+    private function zbb() {}
+}
+
+}

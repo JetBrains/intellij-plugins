@@ -1,0 +1,21 @@
+package xxx {
+  class AAA implements yyy.XXX {
+    public function test2() {
+      if (false) test2();
+      var a:yyy.XXX
+      a.test2()
+    }
+  }
+
+  class BBB extends AAA {
+      public override function test2() {
+          super.test2();
+      }
+  }
+}
+
+package yyy {
+  public interface XXX {
+    function te<caret>st2();
+  }
+}

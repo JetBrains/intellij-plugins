@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        import mypackage.getDefinitionByName;
+
+        import some.usedimport.UsedClass;
+        import some.usedimport.UsedClass3;
+        import some.usedimport.withstar.*;
+
+        var i:UsedClass;
+
+        function foo(x:Class) {
+        }
+
+        function bar() {
+            foo(UsedClass3)
+        }
+
+        getDefinitionByName("UsedClass3");
+    </mx:Script>
+    <mx:Label onclick="{UsedClass2}"/>
+</mx:Application>

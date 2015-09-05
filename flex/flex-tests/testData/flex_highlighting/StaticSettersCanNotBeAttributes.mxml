@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="*">
+    <local:StaticSettersCanNotBeAttributes_other dynamicSetter='' <error>staticSetter</error>=''/>
+    <local:StaticSettersCanNotBeAttributes_other direction='any value'/>
+    <local:StaticSettersCanNotBeAttributes_other fontAntiAliasType='advanced'/>
+    <local:StaticSettersCanNotBeAttributes_other fontAntiAliasType='<error>incorrect</error>'/>
+</s:Application>

@@ -1,0 +1,11 @@
+package AAA {
+  class A {
+    function zzz() {
+      foo(BB<caret>)
+    }
+  }
+}
+
+package AAA2 {
+  public class BBB {}
+}

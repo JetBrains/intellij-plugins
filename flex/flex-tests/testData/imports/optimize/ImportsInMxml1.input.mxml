@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+
+<caret>var g : AbstractConsumer;
+
+import mx.messaging.AbstractConsumer;
+      // dummy
+    </mx:Script>
+
+</mx:Application>

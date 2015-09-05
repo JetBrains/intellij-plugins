@@ -1,0 +1,30 @@
+function clearSky() :void {
+<error descr="Access modifier allowed for class members only">private</error> function removeCloud():void {
+}
+}
+
+<warning descr="Namespace allowed for class members only">xxx</warning> var n;
+<warning descr="Access modifier allowed for class members only">private</warning> var n2;
+
+package {
+<error descr="Only public / internal modifiers allowed for package members">private</error> class NsOrModifierNotUnderClass {}
+}
+
+namespace xxx;
+package <error>foo</error> {
+<error descr="Only public / internal modifiers allowed for package members">xxx</error> class NsOrModifierNotUnderClass {}
+}
+
+package <error>bar</error> {
+    class <error>Foo</error> {
+      <error descr="Use namespace OR access modifier">public</error> <error descr="Use namespace OR access modifier">xxx</error> var n3;
+    }
+}
+
+<error>static</error> class Foo {
+  {
+    public static var foo;
+  }
+  <error>static</error> function Foo() {}
+  static function Foo2() {}
+}

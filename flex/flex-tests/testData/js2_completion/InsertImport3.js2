@@ -1,0 +1,4 @@
+import getF<caret>
+package foo {
+  public function getFoo() {}
+}

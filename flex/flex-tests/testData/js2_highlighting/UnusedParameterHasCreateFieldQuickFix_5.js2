@@ -1,0 +1,9 @@
+package {
+  public class UnusedParameterHasCreateFieldQuickFix_5 {
+    var _foo;
+    public function UnusedParameterHasCreateFieldQuickFix_5(foo, <warning>b<caret>ar</warning>): void {
+       super();
+      _foo = foo;
+    }
+  }
+}

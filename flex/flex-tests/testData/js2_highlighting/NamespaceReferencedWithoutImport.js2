@@ -1,0 +1,22 @@
+package <error>com.test</error> {
+    class <error>Foo</error> {
+//import com.a.ns1;
+//import com.a.ns2;
+<error>ns1</error> function zzz() {}
+<error>ns2</error> function zzz2() {}
+}
+}
+
+package <error>com.test2</error> {
+import com.a.ns1;
+import com.a.ns2;
+class <error>Foo</error> {
+ns1 function zzz() {}
+ns2 function zzz2() {}
+}
+}
+
+package <error>com.a</error> {
+public namespace <error>ns1</error> = "yyy";
+public const <error>ns2</error> = "xxx";
+}

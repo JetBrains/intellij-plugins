@@ -1,0 +1,4 @@
+import xxx.yyy<caret>
+package xxx {
+    public function yyy() {}
+}

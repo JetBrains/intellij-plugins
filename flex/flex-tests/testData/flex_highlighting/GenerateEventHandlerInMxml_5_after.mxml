@@ -1,0 +1,14 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        var s:Object;
+
+        private function myButton_someEventHandler(event:Event):void {<caret>
+        }
+        ]]></mx:Script>
+    <mx:Script><![CDATA[
+        function foo():void {
+            myButton.removeEventListener("someEvent", myButton_someEventHandler);
+        }
+        ]]></mx:Script>
+  <mx:Button id='myButton'/>
+</mx:Application>

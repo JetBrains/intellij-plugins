@@ -1,0 +1,14 @@
+class Foo {
+    private static var v: int = 0;
+    protected static var u: int = 0;
+    public static function inlineMe():int {return v+u;}
+}
+
+class Bar {
+    var p = Foo.inlineMe();
+
+    function ff() {
+        var z = Foo.inline<caret>Me();
+    }
+
+}

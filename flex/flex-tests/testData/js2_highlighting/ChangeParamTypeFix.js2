@@ -1,0 +1,7 @@
+package {
+public class ChangeParamTypeFix {
+  public function foo(i: int) {
+    i = <error>this</error>;
+  }
+}
+}

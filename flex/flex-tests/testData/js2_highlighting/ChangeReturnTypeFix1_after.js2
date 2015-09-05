@@ -1,0 +1,7 @@
+package {
+public class ChangeReturnTypeFix1 {
+  public function foo():String {
+    return "abc";
+  }
+}
+}

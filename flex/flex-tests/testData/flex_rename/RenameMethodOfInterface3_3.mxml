@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<RenameMethodOfInterface3_2 xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <mx:Script><![CDATA[
+        public override function test():void {
+        }
+        ]]></mx:Script>
+    <mx:Button label="Say Hello"/>
+</RenameMethodOfInterface3_2>

@@ -1,0 +1,19 @@
+class XXX2 {
+  public function xxx() {}
+  public function toString() {}
+  public function get field():int { return 1; }
+  public native override function hasOwnProperty(propertyName:String):Boolean;
+}
+
+class YYY2 extends XXX2 {
+  public function <error>xxx</error>() {}
+}
+
+class YYY3 extends XXX2 {
+  public function set field(x) {}
+}
+
+class XXX3 {
+  public <error descr="Method does not override method from super class">over<caret>ride</error> function xxx() {}
+  public <error descr="Method inherited from Object does not need override">override</error> function toString():String {}
+}

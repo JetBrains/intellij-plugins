@@ -1,0 +1,3 @@
+package aaa {
+  namespace yyy = ""
+}

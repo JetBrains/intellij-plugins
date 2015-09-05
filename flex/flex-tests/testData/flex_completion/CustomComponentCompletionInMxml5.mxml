@@ -1,0 +1,3 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+  <local:Cus<caret>
+</mx:Application>

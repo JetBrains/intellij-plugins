@@ -1,0 +1,5 @@
+var x:myp<caret>
+
+package mypackage {
+  class Foo {}
+}

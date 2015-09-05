@@ -1,0 +1,13 @@
+interface <lineMarker descr="Has implementations"></lineMarker><info>IAAA</info> {
+  function get <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">bbb</info>():int
+  function set <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">bbb</info>(<info descr="parameter">v</info>:int):void
+}
+class <lineMarker descr="Has subclasses"></lineMarker><info>AAA</info> implements <info>IAAA</info> {
+  public function get <lineMarker descr="Is overridden"></lineMarker><lineMarker descr="Implementation of bbb in IAAA"></lineMarker><info descr="instance method">bbb</info>():int {}
+  public function set <lineMarker descr="Is overridden"></lineMarker><lineMarker descr="Implementation of bbb in IAAA"></lineMarker><info descr="instance method">bbb</info>(<info descr="parameter">v</info>:int):void {}
+}
+
+class <info>BBB</info> extends <info>AAA</info> {
+  public override function set <lineMarker descr="overrides method in AAA"><info descr="instance method">bbb</info></lineMarker>(<info descr="parameter">x</info>:int):void {}
+  public override function get <lineMarker descr="overrides method in AAA"><info descr="instance method">b<caret>bb</info></lineMarker>():int {}
+}

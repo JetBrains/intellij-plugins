@@ -1,0 +1,33 @@
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="A" id="sd"/>
+    <State name="B"/>
+  </states>
+  
+  <layout>
+    <VerticalLayout gap="10" />
+  </layout>
+
+  <Panel title="Login">
+    <layout>
+      <VerticalLayout/>
+    </layout>
+
+    <mx:Form id="loginForm">
+      <mx:FormItem id="username" label="Username:">
+        <TextInput/>
+        <Button label="he"/>
+      </mx:FormItem>
+
+      <mx:FormItem label="Password:" includeIn="A, B">
+        <Label includeIn="B" text="only in B"/>
+        <Label text="I am password form item child"/>
+      </mx:FormItem>
+    </mx:Form>
+  </Panel>
+  <VGroup includeIn="A, B">
+    <Label text="only in A" includeIn="A"/>
+    <Label text="all parent states"/>
+  </VGroup>
+</Application>

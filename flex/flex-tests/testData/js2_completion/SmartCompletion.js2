@@ -1,0 +1,6 @@
+class SmartCompletion {}
+[ExcludeClass]
+class SSS extends SmartCompletion {}
+function foo() {
+  var x:SmartCompletion = new <caret>
+}

@@ -1,0 +1,41 @@
+<DividedBox xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark">
+  <fx:Declarations>
+    <fx:Array id="valArr">
+      <StringValidator id="fNameVal" source="{fName}" property="text" required="true" maxLength="64"/>
+      <StringValidator id="usrnmVal" source="{usrnm}" property="text" required="true" maxLength="32"/>
+      <StringValidator id="psswdVal" source="{psswd}" property="text" required="true" maxLength="32"/>
+      <SocialSecurityValidator id="ssnVal" source="{ssn}" property="text" required="false"/>
+    </fx:Array>
+  </fx:Declarations>
+
+  <Form>
+    <FormItem required="true">
+      <TextInput/>
+    </FormItem>
+  </Form>
+
+  <s:Form id="frm" defaultButton="{sbmt}">
+    <s:FormHeading label="STACKED SPARK FORM" backgroundColor="haloSilver"/>
+    <s:FormItem sequenceLabel="i)" label="First name:" required="true">
+      <s:TextInput id="fName" maxChars="64"/>
+    </s:FormItem>
+    <s:FormItem sequenceLabel="ii)" label="Last name:">
+      <s:TextInput id="lName" maxChars="64"/>
+    </s:FormItem>
+    <s:FormItem sequenceLabel="iii)" label="User name:" required="true">
+      <s:TextInput id="usrnm" maxChars="32"/>
+    </s:FormItem>
+    <s:FormItem sequenceLabel="iv)" label="Password:" required="true">
+      <s:TextInput id="psswd" maxChars="32" displayAsPassword="true"/>
+    </s:FormItem>
+    <s:FormItem sequenceLabel="v)" label="SSN:">
+      <s:helpContent>
+        <s:Label text="###-##-####"/>
+      </s:helpContent>
+      <s:TextInput id="ssn" maxChars="11"/>
+    </s:FormItem>
+    <s:FormItem>
+      <s:Button id="sbmt" label="Submit"/>
+    </s:FormItem>
+  </s:Form>
+</DividedBox>

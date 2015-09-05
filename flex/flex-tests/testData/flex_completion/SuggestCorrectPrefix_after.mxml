@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<s:Application xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="http://Some" xmlns:local2="*">
+    <local2:SuggestCorrectPrefix_other<caret>
+</s:Application>

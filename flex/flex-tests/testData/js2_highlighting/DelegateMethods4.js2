@@ -1,0 +1,9 @@
+package {
+
+ class DelegateMethods2 extends Base {
+     static var foobar : MyClass;
+
+     <caret>
+
+ }
+}

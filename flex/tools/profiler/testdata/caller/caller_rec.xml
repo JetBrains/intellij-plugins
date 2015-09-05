@@ -1,0 +1,65 @@
+<root frames="foo,foo,foo">
+  <foo count="1">
+    <foo count="1">
+      <foo count="1">
+        <foo count="1">
+          <foo count="1">
+            <foo count="1">
+              <foo count="1">
+                <foo count="1">
+                  <foo count="1">
+                    <foo count="1">
+                      <foo count="1">
+                        <foo count="1">
+                          <foo count="1">
+                            <foo count="1">
+                              <foo count="1">
+                                <foo count="1">
+                                  <foo count="1">
+                                    <foo count="1">
+                                      <foo count="1">
+                                        <foo count="1">
+                                          <foo count="1">
+                                            <foo count="1">
+                                              <foo count="1">
+                                                <foo count="1">
+                                                  <foo count="1">
+                                                    <foo count="1">
+                                                      <foo count="1">
+                                                        <foo count="1">
+                                                          <foo count="1">
+                                                            <foo count="1">
+                                                              <foo count="1">
+                                                                <foo count="1"/>
+                                                              </foo>
+                                                            </foo>
+                                                          </foo>
+                                                        </foo>
+                                                      </foo>
+                                                    </foo>
+                                                  </foo>
+                                                </foo>
+                                              </foo>
+                                            </foo>
+                                          </foo>
+                                        </foo>
+                                      </foo>
+                                    </foo>
+                                  </foo>
+                                </foo>
+                              </foo>
+                            </foo>
+                          </foo>
+                        </foo>
+                      </foo>
+                    </foo>
+                  </foo>
+                </foo>
+              </foo>
+            </foo>
+          </foo>
+        </foo>
+      </foo>
+    </foo>
+  </foo>
+</root>

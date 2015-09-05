@@ -1,0 +1,5 @@
+function foo(x:String):Boolean {}
+function bar(x:Boolean):Boolean {}
+var xxx:String
+var yyy:Boolean
+bar(foo(x<caret>));

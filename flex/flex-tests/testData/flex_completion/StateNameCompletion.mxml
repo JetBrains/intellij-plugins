@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:transitions>
+    <mx:Transition fromState="<caret expected="*,state,otherState">" toState="<caret expected="*,state,otherState">"/>
+  </mx:transitions>
+  <mx:Button label.<caret expected="state,otherState">>
+      <mx:selected.<caret expected="state,otherState">/>
+  </mx:Button>
+  <mx:states>
+    <mx:State name = "state"/>
+    <mx:State name = "otherState"/>
+  </mx:states>
+</mx:Application>

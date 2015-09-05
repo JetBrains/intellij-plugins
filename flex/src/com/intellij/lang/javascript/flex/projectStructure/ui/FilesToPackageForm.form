@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.projectStructure.ui.FilesToPackageForm">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="144"/>
+    </constraints>
+    <properties/>
+    <clientProperties>
+      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
+    </clientProperties>
+    <border type="etched" title="Files and folders to package"/>
+    <children/>
+  </grid>
+</form>

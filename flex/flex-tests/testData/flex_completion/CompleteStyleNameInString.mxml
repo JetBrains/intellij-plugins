@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:x="aaa.*">
+    <mx:Script>
+      tabBar.setStyle("padding<caret>", 4);
+    </mx:Script>
+</mx:Application>

@@ -1,0 +1,14 @@
+var serializedXml:XML = <tns:Task xsi:type="tns:ZahlenraumTaskType" name="Zahlenraum" x="0" y="0" resizable="false" first="2" second="6" max="20" operation="+" xmlns:tns="http://www.dreimausklicks.de/TaskTree" xmlns:tns1="http://www.dreimausklicks.de/TaskTreeTypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>;
+var xsi:Namespace
+serializedXml.@xsi::type = "xxx"
+serializedXml.@first = "yyy"
+serializedXml.@name = "yyy"
+var xxx = serializedXml.@deliveryType;
+var xxx2 = serializedXml.source.(@id2 == xxx.@id2);
+
+with (serializedXml) {
+    @xsi::type = "yyy"
+    @name = "bar"
+}
+
+if(serializedXml.metadata.(@name == "Test").arg.(@key == "name").length() == 1) {}

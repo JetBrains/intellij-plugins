@@ -1,0 +1,15 @@
+package xxx {
+  class AAA implements yyy.XXX {
+    function tes<caret>t2() {
+      if (false) test2();
+      var a:yyy.XXX
+      a.test()
+    }
+  }
+}
+
+package yyy {
+  interface XXX {
+    function test();
+  }
+}

@@ -1,0 +1,4 @@
+class Foo {
+    <selection> function zzz() {
+    } </selection>
+}

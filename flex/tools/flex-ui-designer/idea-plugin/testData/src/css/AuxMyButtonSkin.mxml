@@ -1,0 +1,22 @@
+<Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" minWidth="21" minHeight="21">
+  <fx:Metadata>
+    [HostComponent("spark.components.Button")]
+  </fx:Metadata>
+
+  <!-- Specify one state for each SkinState metadata in the host component's class -->
+  <states>
+    <State name="up"/>
+    <State name="over"/>
+    <State name="down"/>
+    <State name="disabled"/>
+    <State name="normal"/>
+  </states>
+
+  <Label id="labelDisplay"
+         alpha.up="1"
+         alpha.down=".1"
+         alpha.over=".25"
+         horizontalCenter="0" verticalCenter="1"
+         left="10" right="10" top="2" bottom="2">
+  </Label>
+</Skin>

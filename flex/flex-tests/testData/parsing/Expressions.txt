@@ -1,0 +1,58 @@
+JSFile:Expressions.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('textField')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('UITextField')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSCallExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('childList')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('getChildAt')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('i')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:AS_KEYWORD)('as')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('UITextField')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSIfStatement
+    PsiElement(JS:IF_KEYWORD)('if')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LPAR)('(')
+    JSBinaryExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('textField')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IS_KEYWORD)('is')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('UITextField')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('y')
+      PsiElement(JS:DOT_DOT)('..')
+      PsiElement(JS:IDENTIFIER)('z')

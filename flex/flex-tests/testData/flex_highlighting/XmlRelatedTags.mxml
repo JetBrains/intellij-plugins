@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        var defined:String = "";
+
+        private function foo():void {
+            myXml1.copy();
+            myXml2.copy();
+            myXml3.copy();
+            myXml4.<error descr="Unresolved function or method copy()">copy</error>();
+            myXml5.<error descr="Unresolved function or method copy()">copy</error>();
+            myXml6.<error descr="Unresolved function or method copy()">copy</error>();
+
+            var i:int;
+            i = myXml1.hasChildNodes(); /* green because dynamic */
+            i = myXml2.hasChildNodes(); /* green because dynamic */
+            i = myXml3.hasChildNodes(); /* green because dynamic */
+            i = <error descr="Assigned expression type Boolean is not assignable to type int">myXml4.hasChildNodes()</error>;
+            i = <error descr="Assigned expression type Boolean is not assignable to type int">myXml5.hasChildNodes()</error>;
+            i = <error descr="Assigned expression type Boolean is not assignable to type int">myXml6.hasChildNodes()</error>;
+        }
+    ]]></mx:Script>
+
+    <mx:XML id="myXml1" />
+    <mx:XML id="myXml2" format="e4X" source="XmlRelatedTags.mxml"/>
+    <mx:XML id="myXml3" format="E4x" source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>"/>
+    <mx:XML id="myXml4" format="xml"/>
+    <mx:XML id="myXml5" format="<error descr="Wrong attribute value">e4x </error>"/>
+    <mx:XML id="myXml6" format="XML"/>
+
+    <mx:XML <error descr="Attribute incorrect is not allowed here">incorrect</error>="">
+        <tag attr1="{defined}" attr2="{<error descr="Unresolved variable or type not_defined">not_defined</error>}">
+            <child>Something</child>
+        </tag>
+    </mx:XML>
+
+    <mx:XMLList id='s' <error descr="Attribute incorrect is not allowed here">incorrect</error>="">
+        <a:tag attr1="1" xmlns:a="not.validated.*">
+            <<error descr="Namespace 'undefined' is not bound">undefined</error>:tag attr2="2"/>
+            <mx:NotAComponent/>
+            <anyTag anyAttr=""/>
+        </a:tag>
+        <mx:NotAComponent anyAttr="z"/>
+    </mx:XMLList>
+
+    <mx:XMLListCollection>
+        <mx:XMLList>
+            <state label="Alaska" city="AK">
+                <city label="Anchorage" />
+            </state>
+            <tag attr2="2"/>
+        </mx:XMLList>
+    </mx:XMLListCollection>
+
+</mx:Application>

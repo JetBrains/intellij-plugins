@@ -1,0 +1,111 @@
+JSFile:LiteralWithExpressionProperties.js2
+  ActionScriptFunction
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:FUNCTION_KEYWORD)('function')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    JSParameterList
+      PsiElement(JS:LPAR)('(')
+      PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('METRIC_SEATS_SUM')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"SEATS_SUM"')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('METRIC_ASM_SUM')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"ASM_SUM"')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('METRIC_FLIGHTS_SUM')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"FLIGHTS_SUM"')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n    ')
+      JSReturnStatement
+        PsiElement(JS:RETURN_KEYWORD)('return')
+        PsiWhiteSpace(' ')
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          JSProperty
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('""')
+                PsiElement(JS:PLUS)('+')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('METRIC_SEATS_SUM')
+              PsiElement(JS:RPAR)(')')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          JSProperty
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('""')
+                PsiElement(JS:PLUS)('+')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('METRIC_ASM_SUM')
+              PsiElement(JS:RPAR)(')')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          JSProperty
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('""')
+                PsiElement(JS:PLUS)('+')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('METRIC_FLIGHTS_SUM')
+              PsiElement(JS:RPAR)(')')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('0')
+          PsiWhiteSpace('\n    ')
+          PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')

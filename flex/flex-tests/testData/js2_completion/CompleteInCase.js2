@@ -1,0 +1,10 @@
+function foo():void {
+var xxx:SomeType;
+switch(xxx) {
+    case S<caret>
+}
+}
+
+class SomeType {
+  public static const FOO:SomeType = new SomeType();
+}

@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+  <mx:Script>
+    import mypackage.Text
+    var a:Text
+  </mx:Script>
+</mx:Application>

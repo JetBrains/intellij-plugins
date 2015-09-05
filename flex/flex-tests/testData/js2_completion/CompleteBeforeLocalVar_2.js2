@@ -1,0 +1,5 @@
+package {
+public class TestClass2 {
+  function get foo77() {}
+}
+}

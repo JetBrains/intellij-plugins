@@ -1,0 +1,5 @@
+target
+.idea/workspace.xml
+.idea/libraries
+out
+idea-configurator/src/java/com/intellij/flex/maven/IdeaConfiguratorFlexmojos5.java

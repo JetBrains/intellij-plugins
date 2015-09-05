@@ -1,0 +1,5 @@
+package {
+function AuxFunc() {
+    
+}
+}

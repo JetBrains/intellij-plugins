@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="<error>INonImplementedInterface2</error>">
+  <mx:Script><![CDATA[
+    import foo.Bar;
+    var x2;
+    function foo(t:Bar) {
+        x2 = <error>val</error>;
+        var f:Array = [];
+        for(var i:int = 0; i < 10; ++i) {
+          f.push(function() { trace(<warning>i</warning>); });
+        }
+    }
+    ]]>
+  </mx:Script>
+  <mx:Button click="foo((new Bar() as Bar))"/>
+</mx:Application>

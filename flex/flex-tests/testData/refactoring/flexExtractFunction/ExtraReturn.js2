@@ -1,0 +1,16 @@
+package org.intellij {
+public class BugTester {
+
+    public function foo(primary:Object):String {
+        <selection>if (!PrimaryHasData(primary)) {
+            return null;
+        }</selection>
+        var url:String = "/jsp/CheckPrimary.jsp?" + params;
+        return url;
+    }
+
+    private function PrimaryHasData(primary:Object):* {
+        return primary.hasOwnProperty('data');
+    }
+}
+}

@@ -1,0 +1,15 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Script> <![CDATA[
+    import spark.skins.spark.DefaultItemRenderer;
+
+    private static function selectRenderer(item:Object):ClassFactory {
+      return new ClassFactory(DefaultItemRenderer);
+    }
+    ]]> </fx:Script>
+
+  <DataGroup itemRendererFunction="selectRenderer">
+    <ArrayList>
+      <fx:Object firstName="Bill" lastName="Smith" companyID="11233"/>
+    </ArrayList>
+  </DataGroup>
+</Group>

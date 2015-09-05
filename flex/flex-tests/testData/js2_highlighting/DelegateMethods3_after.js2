@@ -1,0 +1,12 @@
+package {
+import com.foo.MyClass;
+
+ class DelegateMethods2 {
+     var foobar : MyClass;
+
+
+     CONFIG::debug public function foo():MyClass {
+         return foobar.myns::foo();
+     }
+ }
+}

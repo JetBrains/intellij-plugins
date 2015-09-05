@@ -1,0 +1,9 @@
+var a = {
+  "aaa":1,
+  get bbb() {
+    return 1;
+  },
+  set bbb(a) {
+  },
+  aaa:function() {}
+}

@@ -1,0 +1,10 @@
+package {
+class Foo {
+    public function bar() {
+        var x:int = 1;
+        var a:int = 2;
+        var g = new Graphics();
+        g.drawCircle(<caret>)
+    }
+}
+}

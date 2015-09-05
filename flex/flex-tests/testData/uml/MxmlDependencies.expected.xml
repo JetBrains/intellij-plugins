@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="MxmlDependencies">
+  <node id="Bar" nodeName="Class Bar" name="&lt;html&gt;&lt;b&gt;Bar&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Foo" nodeName="Class Foo" name="&lt;html&gt;&lt;b&gt;Foo&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Hello" nodeName="Class Hello" name="&lt;html&gt;&lt;b&gt;Hello&lt;/b&gt;&lt;/html&gt;" />
+  <node id="MxmlDependencies" nodeName="Class MxmlDependencies" name="&lt;html&gt;&lt;b&gt;MxmlDependencies&lt;/b&gt;&lt;/html&gt;">
+    <element name="aa()" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="v" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v2" type="Foo" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v3" type="Vector.&lt;Bar&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="MxmlDependencies_3" nodeName="Class MxmlDependencies_3" name="&lt;html&gt;&lt;b&gt;MxmlDependencies_3&lt;/b&gt;&lt;/html&gt;" />
+  <node id="MxmlDependencies_4" nodeName="Class MxmlDependencies_4" name="&lt;html&gt;&lt;b&gt;MxmlDependencies_4&lt;/b&gt;&lt;/html&gt;">
+    <element name="hostComponent" type="Panel" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="MySkin" nodeName="Class MySkin" name="&lt;html&gt;&lt;b&gt;MySkin&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.bar.A" nodeName="Class com.bar.A" name="&lt;html&gt;&lt;b&gt;com.bar.A&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.foo.MyRenderer" nodeName="Class com.foo.MyRenderer" name="&lt;html&gt;&lt;b&gt;com.foo.MyRenderer&lt;/b&gt;&lt;/html&gt;" />
+  <node id="spark.components.Button" nodeName="Class spark.components.Button" name="&lt;html&gt;&lt;b&gt;spark.components.Button&lt;/b&gt;&lt;/html&gt;">
+    <element name="Button()" category="Constructors" visibility="PUBLIC" />
+    <element name="_emphasized" type="Boolean" category="Fields" visibility="PRIVATE" />
+    <element name="emphasized" type="Boolean" category="Properties" visibility="PUBLIC" />
+    <element name="styleName" type="Object" category="Properties" visibility="PUBLIC" />
+    <element name="emphasizeStyleName()" type="void" category="Methods" visibility="PRIVATE" />
+    <element name="skinParts" type="Object" category="Properties" visibility="PROTECTED" />
+    <element name="VERSION" type="String" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="_skinParts" type="Object" category="Fields" visibility="PRIVATE" />
+    <element name="mx_internal" type="*" category="Fields" visibility="PRIVATE" />
+  </node>
+  <edge from="MxmlDependencies" to="Bar" idElement="MxmlDependencies" relship="ONE_TO_MANY" relshipLabel="v3" />
+  <edge from="MxmlDependencies" to="Foo" idElement="MxmlDependencies" relship="ONE_TO_ONE" relshipLabel="v2" />
+  <edge from="MxmlDependencies" to="Hello" idElement="MxmlDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="MxmlDependencies" to="MxmlDependencies_3" idElement="MxmlDependencies" relship="ONE_TO_ONE" relshipLabel="myComponent" />
+  <edge from="MxmlDependencies" to="MxmlDependencies_4" idElement="MxmlDependencies" relship="DEPENDENCY" relshipLabel="skinClass" />
+  <edge from="MxmlDependencies" to="MySkin" idElement="MxmlDependencies" relship="DEPENDENCY" relshipLabel="upSkin" />
+  <edge from="MxmlDependencies" to="com.foo.MyRenderer" idElement="MxmlDependencies" relship="DEPENDENCY" relshipLabel="itemRenderer" />
+  <edge from="MxmlDependencies" to="spark.components.Button" idElement="MxmlDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="MxmlDependencies" to="spark.components.Button" idElement="MxmlDependencies" relship="DEPENDENCY" />
+</umlModel>
+

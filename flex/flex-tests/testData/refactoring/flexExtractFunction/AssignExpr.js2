@@ -1,0 +1,5 @@
+class ExtractTest {
+    function add(a:int, b:int):int {
+        <selection>a = b</selection>;
+    }
+}

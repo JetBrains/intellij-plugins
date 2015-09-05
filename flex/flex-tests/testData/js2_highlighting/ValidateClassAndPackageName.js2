@@ -1,0 +1,4 @@
+package <error>aaa</error> {
+  public class <error>XXX</error> {}
+  public class <error descr="More than one externally visible symbol defined in file">ValidateClassAndPackageName</error> {}
+}

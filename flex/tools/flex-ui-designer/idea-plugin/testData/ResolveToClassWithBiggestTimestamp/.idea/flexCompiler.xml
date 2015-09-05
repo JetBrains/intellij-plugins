@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FlexCompilerConfiguration">
+    <option name="USE_BUILT_IN_COMPILER" value="false" />
+    <option name="USE_MXMLC_COMPC" value="true" />
+    <option name="HEAP_SIZE_MB" value="514" />
+  </component>
+</project>
+

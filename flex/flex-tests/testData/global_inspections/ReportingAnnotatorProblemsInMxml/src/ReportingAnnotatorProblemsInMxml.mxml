@@ -1,0 +1,13 @@
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+           currentState="info"
+           horizontalScrollPolicy="off" verticalScrollPolicy="off" implements="IFoo">
+
+  <mx:Script>
+<![CDATA[
+  ReportingAnnotatorProblemsInMxml.xxx = 1;
+  internal function eventHandler():void {}
+]]>
+  </mx:Script>
+  <mx:Canvas id="canvas" />
+  <mx:Button click="eventHandler()"/>
+</mx:Canvas>

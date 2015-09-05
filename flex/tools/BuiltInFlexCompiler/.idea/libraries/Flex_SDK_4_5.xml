@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Flex SDK 4.5">
+    <CLASSES>
+      <root url="jar://$FLEX_SDK_4.5$/lib/asc.jar!/" />
+      <root url="jar://$FLEX_SDK_4.5$/lib/flex-compiler-oem.jar!/" />
+      <root url="jar://$FLEX_SDK_4.5$/lib/mxmlc.jar!/" />
+      <root url="jar://$FLEX_SDK_4.5$/lib/swfutils.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$FLEX_SDK_4.5_SVN$/modules/asc/src/java" />
+      <root url="file://$FLEX_SDK_4.5_SVN$/modules/compiler/src/java" />
+      <root url="file://$FLEX_SDK_4.5_SVN$/modules/swfutils/src/java" />
+    </SOURCES>
+  </library>
+</component>

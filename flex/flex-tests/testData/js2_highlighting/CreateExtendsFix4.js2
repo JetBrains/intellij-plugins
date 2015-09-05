@@ -1,0 +1,17 @@
+package {
+public class CreateExtendsFix4 {
+    public function Aa():I1 {
+        var v : I2;
+        return <error>v</error>;
+    }
+}
+}
+
+
+interface I1 {
+
+}
+
+interface I2 {
+
+}

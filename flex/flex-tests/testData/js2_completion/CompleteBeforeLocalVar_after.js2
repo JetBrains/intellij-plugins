@@ -1,0 +1,6 @@
+public class TestClass extends TestClass2 {
+  private function draw():void {
+    foo77<caret>
+    var box : int;
+  }
+}

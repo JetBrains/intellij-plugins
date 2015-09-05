@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<local:SchemaProblem_4 xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <mx:Script>
+      public var myproperty:Boolean;
+    </mx:Script>
+</local:SchemaProblem_4>

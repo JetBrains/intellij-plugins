@@ -1,0 +1,16 @@
+package bar {
+public class MyClass {
+    public function MyClass() {}
+}
+}
+
+package foo {
+    public class MyClass {
+	public function MyClass() {}
+}
+}
+package foo {
+import bar.MyClass;
+
+var v = new bar.MyClass()<caret>
+}

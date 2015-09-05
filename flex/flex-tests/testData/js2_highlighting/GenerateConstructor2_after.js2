@@ -1,0 +1,12 @@
+class B {
+  function B(x:int, x2:int) {}
+}
+
+class A extends B {
+  var i3:int;
+
+ <caret>   public function A(x:int, x2:int, i3:int) {
+        super(x, x2);
+        this.i3 = i3;
+    }
+}

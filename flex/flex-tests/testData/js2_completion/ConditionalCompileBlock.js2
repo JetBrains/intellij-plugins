@@ -1,0 +1,20 @@
+package {
+public class ConditionalCompileBlock {
+  public function ConditionalCompileBlock() {
+
+    CONFIG::bar {
+      import flash.events.Event;
+
+      CONFIG::foo {
+        import mx.events.FlexEvent;
+        var a : Zz<caret>
+      }
+
+    }
+  }
+}
+}
+
+package foo {
+   public class Zzz {}
+}

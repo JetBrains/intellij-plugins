@@ -1,0 +1,11 @@
+package {
+[Deprecated]
+use namespace some_namespace;
+public class SomeClass {
+    some_namespace var varInNamespace:int;
+
+    public function foo():void {
+        varInNamespace = 5;
+    }
+}
+}

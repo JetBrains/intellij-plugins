@@ -1,0 +1,13 @@
+class C {
+  var field2;
+}
+
+class A extends C {
+  function aaa() {
+    this.fi<caret>
+  }
+}
+
+class B {
+  var field3;
+}

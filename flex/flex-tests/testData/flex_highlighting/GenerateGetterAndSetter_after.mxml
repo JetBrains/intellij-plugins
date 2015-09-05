@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+      private var _i:Number;
+      public static const I_CHANGED_EVENT:String = "iChanged";
+      public static const J_CHANGED_EVENT:String = "jChanged";
+
+      [Bindable(event="iChanged")]
+      public function get i():Number {
+          return _i;
+      }
+
+      public function set i(value:Number):void {
+          if (_i == value) return;
+          _i = value;
+          dispatchEvent(new Event(I_CHANGED_EVENT));
+      }
+
+      [Bindable(event="jChanged")]
+      public function get j():Number {
+          return _j;
+      }
+
+      public function set j(value:Number):void {
+          if (_j == value) return;
+          _j = value;
+          dispatchEvent(new Event(J_CHANGED_EVENT));
+      }
+
+      private var _j:Number;
+  </mx:Script>
+</mx:Application>

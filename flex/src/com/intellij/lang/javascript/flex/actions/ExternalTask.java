@@ -1,0 +1,255 @@
+package com.intellij.lang.javascript.flex.actions;
+
+import com.intellij.flex.FlexCommonUtils;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.actions.airpackage.AdtPackageTask;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Consumer;
+import com.intellij.util.Function;
+import com.intellij.util.TimeoutUtil;
+import com.intellij.util.text.StringTokenizer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class ExternalTask {
+
+  private static final Logger LOG = Logger.getInstance(ExternalTask.class.getName());
+
+  protected final Project myProject;
+  protected final Sdk myFlexSdk;
+
+  private Process myProcess;
+  private boolean myFinished;
+  private String myCommandLine = "";
+  protected List<String> myMessages = new ArrayList<String>();
+  private int myExitCode = -1;
+
+  public ExternalTask(final Project project, final Sdk flexSdk) {
+    myProject = project;
+    myFlexSdk = flexSdk;
+  }
+
+  public void start() {
+    final List<String> command = createCommandLine();
+
+    for (String s : command) {
+      if (s == null) {
+        LOG.error(StringUtil.join(command, new Function<String, String>() {
+          public String fun(final String s) {
+            return s == null ? "null" : s;
+          }
+        }, " "));
+      }
+    }
+
+    final ProcessBuilder processBuilder = new ProcessBuilder(command);
+    processBuilder.redirectErrorStream(true);
+
+    processBuilder.directory(getProcessDir());
+
+    myCommandLine = StringUtil.join(command, " ");
+    debug("Executing task: " + myCommandLine);
+
+    try {
+      myProcess = processBuilder.start();
+      scheduleInputStreamReading();
+    }
+    catch (IOException e) {
+      myFinished = true;
+      myMessages.add(e.getMessage());
+    }
+  }
+
+  @Nullable
+  protected File getProcessDir() {
+    return null;
+  }
+
+  private void debug(final String message) {
+    LOG.debug("[" + hashCode() + "] " + message);
+  }
+
+  protected abstract List<String> createCommandLine();
+
+  protected boolean checkMessages() {
+    return myMessages.isEmpty();
+  }
+
+  public boolean isFinished() {
+    return myFinished;
+  }
+
+  public void cancel() {
+    if (myProcess != null) {
+      myProcess.destroy();
+      try {
+        myExitCode = myProcess.exitValue();
+        debug("Process complete with exit code " + myExitCode);
+      }
+      catch (IllegalThreadStateException e) {/*ignore*/}
+    }
+
+    myFinished = true;
+  }
+
+  public String getCommandLine() {
+    return myCommandLine;
+  }
+
+  public List<String> getMessages() {
+    return myMessages;
+  }
+
+  public int getExitCode() {
+    return myExitCode;
+  }
+
+  protected Process getProcess() {
+    return myProcess;
+  }
+
+  protected void scheduleInputStreamReading() {
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      public void run() {
+        boolean usageStarted = false;
+        final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
+
+        try {
+          char[] buf = new char[4096];
+          int read;
+          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
+            final String output = new String(buf, 0, read);
+            debug("Process output: " + output);
+            if (!usageStarted) {
+              final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
+
+              while (tokenizer.hasMoreElements()) {
+                final String message = tokenizer.nextElement();
+                if (!StringUtil.isEmptyOrSpaces(message)) {
+                  if (message.trim().toLowerCase().startsWith("usage:")) {
+                    usageStarted = true;
+                    break;
+                  }
+
+                  if (message.trim().endsWith("password:")) {
+                    final OutputStream outputStream = myProcess.getOutputStream();
+                    outputStream.write("\n".getBytes());
+                    outputStream.flush();
+                  }
+                  else {
+                    myMessages.add(message);
+                  }
+                }
+              }
+            }
+          }
+        }
+        catch (IOException e) {
+          myMessages.add(e.getMessage());
+        }
+        finally {
+          cancel();
+
+          try {
+            reader.close();
+          }
+          catch (IOException e) {/*ignore*/}
+        }
+      }
+    });
+  }
+
+  public static boolean runWithProgress(final ExternalTask task, final String progressTitle, final String frameTitle) {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously(createRunnable(task), progressTitle, true, task.myProject)
+           && checkMessages(task, frameTitle);
+  }
+
+  public static void runInBackground(final ExternalTask task,
+                                     final String progressTitle,
+                                     final @Nullable Consumer<List<String>> onSuccess,
+                                     final @Nullable Consumer<List<String>> onFailure) {
+    ProgressManager.getInstance().run(new Task.Backgroundable(task.myProject, progressTitle, true) {
+      public void run(@NotNull final ProgressIndicator indicator) {
+        createRunnable(task).run();
+      }
+
+      public void onSuccess() {
+        if (task.checkMessages()) {
+          if (onSuccess != null) {
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+              public void run() {
+                onSuccess.consume(task.getMessages());
+              }
+            });
+          }
+        }
+        else if (onFailure != null) {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            public void run() {
+              onFailure.consume(task.getMessages());
+            }
+          });
+        }
+      }
+    });
+  }
+
+  private static boolean checkMessages(final ExternalTask task, final String frameTitle) {
+    final List<String> messages = task.getMessages();
+    if (task.checkMessages()) {
+      return true;
+    }
+    else {
+      String message = messages.isEmpty() ? FlexBundle.message("unexpected.empty.adt.output") : StringUtil.join(messages, "\n");
+      if (task instanceof AdtPackageTask) {
+        message += "\n\nADT command line:\n" + task.getCommandLine();
+      }
+      Messages.showErrorDialog(task.myProject, message, frameTitle);
+    }
+    return false;
+  }
+
+  private static Runnable createRunnable(final ExternalTask task) {
+    return new Runnable() {
+      public void run() {
+        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) {
+          indicator.setIndeterminate(true);
+        }
+
+        try {
+          AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(true);
+
+          task.start();
+
+          while (!task.isFinished()) {
+            if (indicator != null && indicator.isCanceled()) {
+              task.cancel();
+              break;
+            }
+            TimeoutUtil.sleep(200);
+          }
+        }
+        finally {
+          AirPackageProjectParameters.getInstance(task.myProject).setPackagingInProgress(false);
+        }
+      }
+    };
+  }
+}

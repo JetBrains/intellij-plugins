@@ -1,0 +1,23 @@
+package {
+  import com.Bar;
+  class CorrectScopeOfImports {
+      var x:<error>Foo</error>;
+      var y:Bar;
+      var z:<error>Foo2</error>;
+
+      function foo():void {
+          import com.Foo2;
+          var x_l:Foo2;
+          var y_l:Bar;
+          var z_l:<error>Foo</error>;
+          x_l = null;
+          y_l = null;
+          z_l = null;
+      }
+  }
+}
+
+import com.Foo;
+var x_g:Foo;
+var y_g:<error>Foo2</error>;
+var z_g:<error>Bar</error>;

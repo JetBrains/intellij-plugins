@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<s:Application xmlns:s="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009">
+    <fx:Script><![CDATA[
+        import flash.filters.BitmapFilterQuality;
+        var t:BitmapFilterQuality;
+
+        <warning descr="Unused import">import mx.filters.BaseFilter;</warning>
+        var t2:BaseFilter;
+
+        <warning descr="Unused import">import mx.core.IFlexModuleFactory;</warning>
+        var t3: IFlexModuleFactory;
+
+        ]]></fx:Script>
+</s:Application>

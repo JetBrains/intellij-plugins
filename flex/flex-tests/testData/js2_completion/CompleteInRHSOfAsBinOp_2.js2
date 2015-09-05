@@ -1,0 +1,4 @@
+package com {
+public interface Foo {}
+public class Bar extends Foo {}
+}

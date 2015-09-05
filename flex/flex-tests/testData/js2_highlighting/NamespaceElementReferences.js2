@@ -1,0 +1,65 @@
+package {
+use namespace myns;
+
+public class NamespaceElementReferences {
+  fruit var orange:String = "Round citrus fruit";
+  color var orange:String = "Color obtained by mixing red and yellow";
+  myns var orange:String = "Color obtained by mixing red and yellow";
+  var orange:String = "Color obtained by mixing red and yellow";
+
+  color var <error>orange2</error>:String = "Color obtained by mixing red and yellow";
+  color var <error>orange2</error>:String = "Color obtained by mixing red and yellow";
+
+  public var orange3:String = "Color obtained by mixing red and yellow";
+  color var orange3:String = "Color obtained by mixing red and yellow";
+
+  public function Items() {
+    trace(fruit::orange);
+    trace(fruit::<error>orange3</error>);
+    trace(color::orange);
+    trace(orange);
+  }
+}
+
+function <error>test</error>() {
+  var items:NamespaceElementReferences
+
+  trace(items.fruit::orange);
+  trace(items.color::orange);
+  trace(items.fruit::<error>orange3</error>);
+  trace(items.orange);
+}
+
+function <error>trace</error>(... a):void {
+  a[1] = 2;
+}
+
+}
+
+namespace myns;
+namespace color;
+namespace fruit;
+
+package
+{
+public class <error>NamespaceElementReferences2</error>
+{
+
+    private namespace mynamespace = "http://my.name.space";
+
+    private var temp:Namespace;
+
+    public function NamespaceElementReferences2()
+    {
+        temp = mynamespace;
+        temp::doSomething();
+        this.temp::doSomething()
+        var x:NamespaceElementReferences2 = this;
+        x.temp::doSomething()
+    }
+
+    mynamespace function doSomething():void
+    {
+    }
+}
+}

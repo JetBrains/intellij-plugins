@@ -1,0 +1,12 @@
+package {
+class <error>FooBase</error> {
+    function foo() {}
+}
+}
+
+package {
+class <error>Foo</error> extends FooBase {
+    override function foo():<error>int</error> {
+    }
+}
+}

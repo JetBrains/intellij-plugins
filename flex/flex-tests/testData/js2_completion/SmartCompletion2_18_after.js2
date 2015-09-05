@@ -1,0 +1,12 @@
+package foo.bar {
+class Hello {
+    function x():void {
+        y(<caret>)
+    }
+    function y(s:Bar): void {}
+}
+}
+
+public class Bar {
+    private static function xxx():Bar {}
+}

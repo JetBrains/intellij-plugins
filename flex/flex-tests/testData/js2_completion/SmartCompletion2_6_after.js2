@@ -1,0 +1,12 @@
+package {
+class Asdf {
+    private var point:Point = new Point();
+    public function Asdf() {
+        var p:Point = local(point<caret>);
+    }
+
+    function local(p:Point) {}
+}
+}
+
+class Point {}

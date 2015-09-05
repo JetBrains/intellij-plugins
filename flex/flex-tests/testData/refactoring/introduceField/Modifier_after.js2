@@ -1,0 +1,8 @@
+class A {
+    protected var created:int = 1;
+
+    function xxx() {
+        var a = created;
+        var b = created;
+    }
+}

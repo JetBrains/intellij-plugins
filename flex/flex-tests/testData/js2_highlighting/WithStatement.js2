@@ -1,0 +1,15 @@
+class Shape {
+    function lineStyle(... x):void {}
+    function lineTo(... x):void {}
+    function endFill(... x):void {}
+}
+function Test() {
+var shape:Shape = new Shape();
+with (shape) {
+    lineStyle(0, 0, 0);
+    lineTo(0, 0);
+    endFill();
+}
+with (<error>shape2</error>) {
+}
+}

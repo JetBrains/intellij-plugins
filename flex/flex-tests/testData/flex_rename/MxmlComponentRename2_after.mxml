@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+   <local:RenamedCl<caret>azz />
+   <local:RenamedClazz />
+   <local:RenamedClazz />
+</mx:Application>

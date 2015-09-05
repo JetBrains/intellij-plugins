@@ -1,0 +1,8 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="One" stateGroups="grpDefaultOne, grpOneTwo "/>
+    <State name="Two" stateGroups="grpDefaultTwo, grpOneTwo"/>
+  </states>
+
+  <Label fontSize="24" text="Three" x.grpOneTwo="0" y.grpOneTwo="110"/>
+</Group>

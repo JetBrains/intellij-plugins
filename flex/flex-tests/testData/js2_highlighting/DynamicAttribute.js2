@@ -1,0 +1,5 @@
+class Foo {
+    <error>dynamic</error> var xxx:int;
+}
+
+<error>dynamic</error> interface Bar {}

@@ -1,0 +1,10 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import <error>SdkSources</error>;
+        import mx.core.<error>SdkSources2</error>;
+
+        var a1:<error>SdkSources</error>;
+        var a2:<error>SdkSources2</error>;
+        var a3:mx.core.<error>SdkSources2</error>;
+        ]]></mx:Script>
+</mx:Application>

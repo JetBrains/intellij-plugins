@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="<error>com</error>.XXX, <error>yyy</error>">
+    <mx:Script>
+      public var uintVar1:uint;
+      public var uintVar2:uint;
+      public var uintVar3:uint;
+      public var uintVar4:uint;
+      public var intVar1:int;
+      public var intVar2:int;
+      public var intVar3:int;
+      public var intVar4:int;
+
+      function copy(evt:Sprite) {}
+      function copy2(evt:Sprite) {}
+    </mx:Script>
+    <mx:TextInput id="focalPoint" width="100%" color="blue" text="PROFILE LIST"/>
+    <mx:TextInput id="focalPoint2" width="100%" color="0xFFFFFFFF" text="PROFILE LIST"/>
+    <mx:TextInput color=<error>"0xFFFFFFFF0"</error>/>
+    <mx:Button id="showGraphs" label="Show Graphs" click="<error>showGraphs</error>();" />
+    <mx:XML />
+    <local:FlexWithMockFlex4 xmlns:local="*"
+                             uintVar1="4294967295"
+                             uintVar2=<error>"4294967296"</error>
+                             uintVar3=<error>"-1"</error>
+                             uintVar4="0xffffffff"
+                             intVar1=<error>"4294967295"</error>
+                             intVar2="2147483647"
+                             intVar3=<error>"0xffffffff"</error>
+                             intVar4="0x7fffffff"
+        />
+</mx:Application>

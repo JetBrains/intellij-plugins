@@ -1,0 +1,392 @@
+JSFile:MiscGotchas.js2
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('com')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:DEFAULT_KEYWORD)('default')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:INTERNAL_KEYWORD)('internal')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A3')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:DYNAMIC_KEYWORD)('dynamic')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A4')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:EACH_KEYWORD)('each')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A5')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:SET_KEYWORD)('set')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A10')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:GET_KEYWORD)('get')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A9')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A7')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:NATIVE_KEYWORD)('native')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A0')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:OVERRIDE_KEYWORD)('override')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A6')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:STATIC_KEYWORD)('static')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A11')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('allowed_reserved_words')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:FINAL_KEYWORD)('final')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('A8')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n  ')
+    JSClass
+      JSAttributeList
+        <empty list>
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XXX')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      JSNamespaceDeclaration
+        JSAttributeList
+          PsiElement(JS:PRIVATE_KEYWORD)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('ns')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      JSNamespaceDeclaration
+        JSAttributeList
+          PsiElement(JS:PRIVATE_KEYWORD)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('ns2')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('ns')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('XXX')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n      ')
+          JSTryStatement
+            PsiElement(JS:TRY_KEYWORD)('try')
+            PsiWhiteSpace(' ')
+            JSBlockStatement
+              PsiElement(JS:LBRACE)('{')
+              PsiWhiteSpace(' \n        ')
+              JSImportStatement
+                PsiElement(JS:IMPORT_KEYWORD)('import')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('foo')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('bar')
+                  PsiElement(JS:DOT)('.')
+                  PsiElement(JS:IDENTIFIER)('Baz')
+                PsiElement(JS:SEMICOLON)(';')
+              PsiWhiteSpace('\n        ')
+              JSUseNamespaceDirective
+                PsiElement(JS:USE_KEYWORD)('use')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('yyy')
+                PsiElement(JS:SEMICOLON)(';')
+              PsiWhiteSpace('\n        ')
+              JSIncludeDirective
+                PsiElement(JS:INCLUDE_KEYWORD)('include')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:STRING_LITERAL)('"Foo.bar"')
+              PsiWhiteSpace('\n        ')
+              JSExpressionStatement
+                JSCallExpression
+                  JSReferenceExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('Baz')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('init')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+                PsiElement(JS:SEMICOLON)(';')
+              PsiWhiteSpace('\n      ')
+              PsiElement(JS:RBRACE)('}')
+            PsiWhiteSpace('\n      ')
+            JSCatchBlock
+              PsiElement(JS:CATCH_KEYWORD)('catch')
+              PsiElement(JS:LPAR)('(')
+              PsiWhiteSpace(' ')
+              JSParameter
+                PsiElement(JS:IDENTIFIER)('error')
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('Error')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:RPAR)(')')
+              PsiWhiteSpace(' ')
+              JSBlockStatement
+                PsiElement(JS:LBRACE)('{')
+                PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n  ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('Bindable')
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+      PsiWhiteSpace('\n')
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('Bindable')
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')
+        PsiErrorElement:( expected
+          <empty list>
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:NATIVE_KEYWORD)('native')
+        PsiElement(JS:LPAR)('(')
+        JSAttributeNameValuePair
+          PsiElement(JS:UNDEFINED_KEYWORD)('undefined')
+          PsiElement(JS:EQ)('=')
+          PsiElement(JS:STRING_LITERAL)('"ArrayClass"')
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('XXX')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  ActionScriptFunction
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:FUNCTION_KEYWORD)('function')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    JSParameterList
+      PsiElement(JS:LPAR)('(')
+      JSParameter
+        PsiElement(JS:IDENTIFIER)('f')
+        PsiElement(JS:COLON)(':')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Object')
+        PsiElement(JS:EXCL)('!')
+      PsiElement(JS:RPAR)(')')
+    PsiElement(JS:COLON)(':')
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('some')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:IDENTIFIER)('Object')
+    PsiElement(JS:EXCL)('!')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('x2')
+          PsiElement(JS:COLON)(':')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('Object')
+          PsiElement(JS:QUEST)('?')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('f')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('x3')
+          PsiElement(JS:COLON)(':')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('foo')
+          PsiElement(JS:QUEST)('?')
+        PsiErrorElement:Expecting newline or semicolon
+          <empty list>
+      PsiElement(JS:DOT)('.')
+      JSExpressionStatement
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Object')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSImportStatement
+    PsiElement(JS:IMPORT_KEYWORD)('import')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('SomeObject')
+  JSExpressionStatement
+    JSConditionalExpression
+      PsiErrorElement:expression expected
+        <empty list>
+      PsiElement(JS:QUEST)('?')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiElement(JS:SEMICOLON)(';')

@@ -1,0 +1,56 @@
+class Foo implements IFoo {
+    function set prop<error descr="A setter definition must have exactly one parameter">()</error>: <error descr="Return type of a setter definition must be unspecified or void">String</error>  { 
+    }
+
+    function get prop<error descr="A getter definition must have no parameters">(x)</error>  { 
+    }
+
+    function get prop2():<error descr="Return type of a getter definition should not be void">void</error>  {
+      function get <error>zzz</error>():int { return 1; }
+      function set <error>zzz2</error>(val:String):void { }
+    }
+
+    function set whh(x:<error descr="Set accessor method has type that is not compatible with get accessor type, expecting 'Object'">int</error>) { x=x; }
+    function get whh():<error descr="Get accessor method has type that is not compatible with set accessor type, expecting 'int'">Object</error> { return 1; }
+
+    function set whh2(x:<error descr="Set accessor method has type that is not compatible with get accessor type, expecting 'empty'">int</error>) { x=x; }
+    function get <error descr="Get accessor method has type that is not compatible with set accessor type, expecting 'int'">whh2</error>() { return 1; }
+
+    <error descr="Flash compiler bug 174646: Set accessor method access type is different from get accessor access type, expecting 'public'">protected</error> function set whh3(x:int) { x=x; }
+    <error descr="Flash compiler bug 174646: Get accessor method access type is different from set accessor access type, expecting 'protected'">public</error> function get whh3():int { return 1; }
+
+    [Inspectable(arrayType="Foo")]
+    [ArrayElementType("Foo")]
+    public function get transitions():Array { return null; }
+    public function set transitions(value:Array):void {}
+
+    [Inspectable(arrayType="Foo")]
+    [ArrayElementType("Foo")]
+    public function set transitions2(value:Array):void {}
+    public function get transitions2():Array { return null; }
+
+    [Inspectable(arrayType="Foo")]
+    [ArrayElementType("Foo")]
+    public function get transitions3():Array { return null; }
+    public function set transitions3(value:Array):void {}
+
+    public function set myProp(value:*):void {}
+    public function get myProp():int { return 0; }
+
+    public function set myProp2(value:Object):void {}
+    public function get myProp2():* { return null; }
+}
+
+interface IFoo {
+   function set transitions3(value:Array):void;
+   function get transitions3():Array;
+}
+
+namespace myCustomNS;
+
+class ZXX {
+    private var _test:int;
+
+    public function get test(): int { return _test }
+    myCustomNS function set test(value: int): void { _test = value }
+}

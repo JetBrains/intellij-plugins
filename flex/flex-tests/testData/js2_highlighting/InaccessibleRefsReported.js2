@@ -1,0 +1,18 @@
+package <error>foo</error> {
+class InaccessibleRefsReported {}
+}
+
+package <error>bar</error> {
+import foo.<error descr="Element is not accessible">InaccessibleRefsReported</error>
+var <error>b</error>:<error descr="Element is not accessible">InaccessibleRefsReported</error>
+}
+
+class Bar {
+    protected function foo():* {}
+    private var bar;
+}
+
+new Bar().<error descr="Protected member is not accessible">foo</error>();
+new Bar().<error descr="Private member is not accessible">bar</error> = 1;
+
+

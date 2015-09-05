@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+   <mx:Script>
+     var a:C18_2
+   </mx:Script>
+   <local:C18_<caret>2 />
+</mx:Application>

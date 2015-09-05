@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        function f() {
+            myComponent.styleName = "someC<caret>lass";;
+        }
+
+        ]]></mx:Script>
+    <mx:Canvas id="myComponent"/>
+    <mx:Style>
+        .someClass {
+        }
+    </mx:Style>
+</mx:Application>

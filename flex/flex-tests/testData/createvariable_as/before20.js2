@@ -1,0 +1,6 @@
+// "Create field 'ccccc22'" "true"
+public class A2_____ {
+    function A2_____() {
+        c<caret>cccc22 = [];
+    }
+}

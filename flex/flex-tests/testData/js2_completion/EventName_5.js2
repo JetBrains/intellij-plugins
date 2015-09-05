@@ -1,0 +1,9 @@
+package {
+import mypackage.Application
+public class EventName_5 {
+    function foo() {
+        var xxx:Application
+        xxx.hasEventListener(Ke<caret>)
+    }
+}
+}

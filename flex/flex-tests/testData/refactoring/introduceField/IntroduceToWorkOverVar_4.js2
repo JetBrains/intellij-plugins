@@ -1,0 +1,6 @@
+class A {
+    static function xxx() {
+        var a, <caret>b = 1, c = b;
+        b = 2;
+    }
+}

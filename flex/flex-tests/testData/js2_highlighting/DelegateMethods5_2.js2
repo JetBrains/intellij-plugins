@@ -1,0 +1,12 @@
+package {
+
+ class TestEx extends Test {
+     override function abc() {}
+ 
+
+     function def() {}
+
+ }
+
+class TestBase {}
+}

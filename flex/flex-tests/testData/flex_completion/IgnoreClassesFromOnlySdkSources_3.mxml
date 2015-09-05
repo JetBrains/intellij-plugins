@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import pack.SdkSources;
+
+        var a2:SdkSource<caret>;
+        ]]></mx:Script>
+</mx:Application>

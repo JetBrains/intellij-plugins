@@ -1,0 +1,35 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="A"/>
+    <State name="B"/>
+  </states>
+
+  <mx:Form id="loginForm">
+    <mx:FormItem id="username" label="Username:">
+      <TextInput/>
+    </mx:FormItem>
+    <mx:FormItem label="Password:" includeIn="A, B">
+      <Group id="backSibling" toolTip="d" toolTip.A="a">
+        <layout>
+          <VerticalLayout gap="1" gap.A="2"/>
+        </layout>
+      </Group>
+      <TextInput text="i" includeIn="B"/>
+    </mx:FormItem>
+    <mx:FormItem label="AB" includeIn="A, B">
+      <VGroup>
+        <Label text="0"/>
+        <Label text="1" includeIn="B"/>
+        <Label text="2" includeIn="B"/>
+        <Label text="3" includeIn="B"/>
+      </VGroup>
+    </mx:FormItem>
+  </mx:Form>
+
+  <fx:Private>
+    <!-- Design-time metadata -->
+    <Author>John Smith</Author>
+    <Revision>1.3.1</Revision>
+  </fx:Private>
+</Group>

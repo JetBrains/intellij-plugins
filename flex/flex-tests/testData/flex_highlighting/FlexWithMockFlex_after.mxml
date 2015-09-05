@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="copy()" mouseUp="copy()"
+                mouseMove="copy2()" initialize="copy2()" implements="MyInterface"
+                xmlns:some="SomeInterface">
+    <mx:Style some:incorrect="a">
+      .designArea { skinClass: ClassReference("mx.core.UIComponent2"); }
+      .designArea2 { skinClass: ClassReference("mx.core.UIComponent"); }
+    </mx:Style>
+    <mx:HBox some:incorrect="a" mx:incorrect2=''>
+      <mx:Tree/>
+        <mx:VBox>
+            <mx:DataGrid/>
+            <mx:TextArea/>
+        </mx:VBox>
+    </mx:HBox>
+    <mx:Script>
+
+        override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+        }
+
+        public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+        }
+
+        function copy() {
+            destination.text = source.text = ' '
+            var aaa:Function = copy_
+            addEventListener("xxx", null);
+            super.addEventListener("close", aaa);
+            destination2.text = source2.text
+        }
+
+        function copy_() {
+            this.addEventListener("xxx", null)
+        }
+
+        function doIt() {
+        }
+    </mx:Script>
+    <mx:Script><![CDATA[
+    var a = <xxx>{zzz}</xxx>;
+    var b = <xxx>{a}</xxx>;
+ ]]></mx:Script>
+
+    <mx:TextInput id="source" width="100" horizontalCenter="0" verticalCenter="1"/>
+    <mx:Button label="Copy" click="copy()" itemClick="copy3()"/>
+    <mx:Button label="Copy2" click="copy2()" change="copy2()"
+               creationComplete="copy2()"/>
+    <mx:TextInput id="destination" width="100"/>
+
+    <mx:List id="list" width="100%" height="100%">
+      <mx:itemRenderer>
+        <mx:Component>
+          <mx:Text text="{listx.name}" relativeTo="{aa}:{listx.name}" target="aa" relativeTo2="aa" resizeEffect="aa"/>
+          <mx:Text id="listx">
+            <mx:text> { list2 } </mx:text>
+          </mx:Text>
+          <mx:Text>
+            <mx:text> { listx } </mx:text>
+          </mx:Text>
+        </mx:Component>
+      </mx:itemRenderer>
+    </mx:List>
+
+    <mx:EmailValidator source="{list}"/>
+
+    <mx:Image id="ebtLogo" source="@Embed('jpmlogo.gif')" />
+    <mx:Image id="ebtLogo2" source="@Embed('FlexWithMockFlex.mxml')" />
+
+    <mx:WebService id="authWS">
+      <mx:operation name="login">
+        <mx:request>
+          <loginParameters>
+            <email>true</email>
+            <password>true</password>
+            <rememberMe>true</rememberMe>
+          </loginParameters>
+        </mx:request>
+      </mx:operation>
+    </mx:WebService>
+
+    <mx:RemoteObject id="authServ" destination="authenticationService">
+        <mx:method name="resetUser" />
+    </mx:RemoteObject>
+
+    <mx:HTTPService resultFormat="e4x"/>
+    <mx:HTTPService resultFormat="e4x2"/>
+
+    <mx:DataGrid id="dataGrid" width="100%" height="100%" resizeEffect="aa" name="xxx">
+        <mx:dataProvider>
+          <mx:Object label="abcdef" />          
+        </mx:dataProvider>
+        <mx:columns>
+          <mx:DataGridColumn dataField="id" id = "zz"/>
+          <mx:DataGrid/>
+        </mx:columns>
+      </mx:DataGrid>
+
+  <Incorrect/>
+  <mx:Incorrect/>
+</mx:Application>

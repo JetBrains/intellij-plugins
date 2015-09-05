@@ -1,0 +1,1 @@
+function foo():int {<error descr="Missing return statement">}</error>

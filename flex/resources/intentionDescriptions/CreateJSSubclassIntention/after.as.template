@@ -1,0 +1,9 @@
+package pack {
+public class SomeInterfaceImpl implements SomeInterface {
+    public function SomeInterfaceImpl() {
+    }
+
+    public function foo():void {
+    }
+}
+}

@@ -1,0 +1,13 @@
+class Foo {
+    function foo():void {}
+    /**
+     * Documentation of 'complex'.
+     */
+    function complex() {
+        created();
+    }
+
+    public function created():void {
+        foo();
+    } 
+}

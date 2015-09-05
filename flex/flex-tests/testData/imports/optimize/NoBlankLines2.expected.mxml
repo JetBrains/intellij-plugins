@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                creationComplete="var t : Foo; var e : Bar; var r: Zzz">
+    <mx:Script>
+        <![CDATA[
+        import com.Bar;
+        import com.Foo;
+        import com.Zzz;
+        ]]>
+    </mx:Script>
+</mx:Application>

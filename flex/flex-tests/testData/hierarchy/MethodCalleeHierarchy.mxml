@@ -1,0 +1,12 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="pack2.Interface1">
+  <mx:Script><![CDATA[
+    public function foo():void {
+    }
+    ]]></mx:Script>
+
+  <mx:Script><![CDATA[
+    public static function bar(param:* = ""):String {
+      return "";
+    }
+    ]]></mx:Script>
+</mx:Application>

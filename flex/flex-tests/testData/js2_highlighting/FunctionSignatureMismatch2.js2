@@ -1,0 +1,9 @@
+package {
+    public class FunctionSignatureMismatch2 {
+        function foo() {}
+
+        function bar() {
+            foo<error>(1, 2, "abc", this)</error>;
+        }
+    }
+}

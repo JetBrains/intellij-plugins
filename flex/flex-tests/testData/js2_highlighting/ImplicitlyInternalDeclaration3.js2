@@ -1,0 +1,10 @@
+package {
+  internal interface ImplicitlyInternalDeclaration3 {
+      function foo():void;
+  }
+}
+
+namespace bar;
+class Foo {
+    bar function foo() {}
+}

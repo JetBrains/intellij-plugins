@@ -1,0 +1,9 @@
+package {
+    public class UsingPropertyAsFunctionCall {
+        function get bar():Number { return 1; }
+        public function UsingPropertyAsFunctionCall() {
+            var foo:Object = <error descr="Property can not be invoked as function">b<caret>ar</error>();
+            var that:UsingPropertyAsFunctionCall = this;
+            foo = that.<error descr="Property can not be invoked as function">bar</error>();
+        }
+    }}

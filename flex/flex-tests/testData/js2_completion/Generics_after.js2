@@ -1,0 +1,2 @@
+class Vector {}
+var a:Vector.<Vector<caret>>

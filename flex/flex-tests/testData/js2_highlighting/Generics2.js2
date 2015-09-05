@@ -1,0 +1,26 @@
+package {
+  public class <error>Vector</error> {}
+  class <error>Vector$object</error> {
+    native function pop():*;
+    native function push(... rest):uint;
+  }
+}
+
+package <error>foo</error> {
+  public class <error>Foo</error> {
+    public static function createIt():Vector.<foo.Foo> {
+      return null;
+    }
+  }
+}
+
+function trace(... r) {}
+var v:Vector.<String> = new Vector.<String>();
+v.push("a");
+trace(v.pop());
+
+import foo.Foo;
+var v2:Vector.<Foo> = Foo.createIt();
+
+import foo.Foo;
+var v3:Vector.<Foo> = new Vector.<Foo>

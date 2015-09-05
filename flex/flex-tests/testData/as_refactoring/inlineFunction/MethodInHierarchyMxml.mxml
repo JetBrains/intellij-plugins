@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<local:ApplicationEx xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <mx:Script><![CDATA[
+
+      override function f<caret>oo() {}
+
+]]></mx:Script>
+</local:ApplicationEx>

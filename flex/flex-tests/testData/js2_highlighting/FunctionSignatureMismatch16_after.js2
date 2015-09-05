@@ -1,0 +1,7 @@
+package {
+public class FunctionSignatureMismatch16 {
+    public function foo(i:*):void {
+        foo(null);
+    }
+}
+}

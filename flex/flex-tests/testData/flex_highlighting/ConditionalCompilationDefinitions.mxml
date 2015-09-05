@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+
+var a1:Boolean = CONFIG  ::  defined;
+var a2:Boolean = <error>CONFIG</error>  ::  <error>not_defined</error>;
+
+      <error>CONFIG</error>::  <error>not_defined</error>
+      {
+         private static const x1:int = 1;
+         var n1:Number = CONFIG::Object;
+         var n2:Number = <error>CONFIG</error>::Number;
+      }
+
+      private static const x4:int = CONFIG :: defined3;
+
+      CONFIG::  defined2
+      {
+         private static const x3:int = 1;
+      }
+
+      CONFIG  ::defined
+      private function doSomething1():void {
+        if (CONFIG::defined) {}
+
+        addEventListener("foo",
+              function (e:MouseEvent):void {
+                var flag = CONFIG::defined;
+              }
+        );
+      }
+
+      <error>CONFIG</error>  ::<error>not_defined</error>
+      private static function doSomething3():void {
+        if (<error>CONFIG</error>::<error>not_defined</error>) {}
+      <error>CONFIG</error>::<error>not_defined2</error>{}
+      <error>CONFIG</error>::<error>not_defined3</error>{}
+      CONFIG::defined{}
+      CONFIG::defined2{}
+      CONFIG::defined3{}
+      CONFIG::defined4{}
+      CONFIG::defined5{}
+      CONFIG::defined6{}
+      CONFIG::defined7{}
+      <error>CONFIG</error>::<error>defined8</error>{}
+      }
+
+    </mx:Script>
+</mx:Application>

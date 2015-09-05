@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+  <fx:Script><![CDATA[
+
+    import <error descr="Unresolved variable or type com">com</error>.foo.*;
+
+    public function foo():void {
+      var v : <error descr="Unresolved type MyTestCase">MyTestCase</error>;
+      var v2 : <error descr="Unresolved type MyTestCase2">MyTestCase2</error>;
+    }
+    ]]></fx:Script>
+</s:Application>

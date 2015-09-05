@@ -1,0 +1,12 @@
+package {
+  public class Vector$object {
+      public function push(... rest):void {}
+  }
+}
+}
+
+function noCompletion():void {
+    var vb:Vector.<Boolean>;
+    var xxx:Boolean;
+    vb.push(xxx<caret>)
+}

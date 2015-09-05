@@ -1,0 +1,24 @@
+<idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <name>Flash/Flex Support</name>
+  <description>
+    <![CDATA[
+      Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:<br>
+      - Write, analyze and refactor your ActionScript and MXML code.<br>
+      - Build applications for the various platforms such as Adobe Flash Player, Adobe AIR and Adobe AIR mobile.<br>
+      - Run, debug, test, package and deploy your applications.
+    ]]></description>
+  <id>com.intellij.flex</id>
+  <version>1.0</version>
+  <category>HTML/JavaScript Development</category>
+  <vendor>JetBrains</vendor>
+  <depends optional="false">JavaScript</depends>
+  <depends optional="false">com.intellij.css</depends>
+  <depends>com.intellij.properties</depends>
+  <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
+  <depends optional="true" config-file="ant-support.xml">AntSupport</depends>
+  <depends optional="true" config-file="idea-specific.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
+
+  <xi:include href="/META-INF/flex-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>

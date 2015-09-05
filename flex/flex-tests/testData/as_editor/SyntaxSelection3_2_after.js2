@@ -1,0 +1,17 @@
+public class TestClass {
+    public function someMethod():void {
+        
+    }
+    
+<selection>    /**
+     * some
+     * lines
+     * of
+     * as
+     * doc
+     */
+    
+<caret>    public function otherMethod():void {
+        
+    }
+</selection>}

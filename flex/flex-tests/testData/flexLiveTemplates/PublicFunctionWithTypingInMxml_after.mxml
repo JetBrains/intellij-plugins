@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        public function functionName(param:Object):String {
+            <caret>
+        }
+]]></mx:Script>
+</mx:Application>

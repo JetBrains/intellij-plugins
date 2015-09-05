@@ -1,0 +1,7 @@
+package {
+  public class Vector$object {}
+}
+
+function noCompletion():void {
+    var vb:Vector.<Boolean> = new <caret>
+}

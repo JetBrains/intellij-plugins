@@ -1,0 +1,12 @@
+package {
+interface FooBase {
+    function foo();
+}
+}
+
+package {
+class Foo implements FooBase {
+    public function foo() {
+    }
+}
+}

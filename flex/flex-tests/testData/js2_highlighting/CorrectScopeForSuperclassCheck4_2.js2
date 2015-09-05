@@ -1,0 +1,8 @@
+package {
+    import flash.events.EventDispatcher;
+
+    public class Foo {
+        public static function test(p: EventDispatcher) {
+        }
+    }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+     <mx:DataGrid>
+        <mx:itemRenderer>
+            <mx:Component>
+                <mx:VBox creationComplete="var t : AbstractEvent<caret>"/>
+            </mx:Component>
+        </mx:itemRenderer>
+    </mx:DataGrid>
+  <mx:Script>
+
+  </mx:Script>
+</mx:Application>

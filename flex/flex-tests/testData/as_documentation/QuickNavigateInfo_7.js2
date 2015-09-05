@@ -1,0 +1,6 @@
+use namespace xxx
+class Foo {
+    xxx static const XXX = "111"
+}
+
+Foo.X<caret>XX

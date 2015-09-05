@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:DataGrid id="dataGrid" width="100%" height="100%" resizeEffect="aa">
+    <mx:columns>
+          <mx:DataGridColumn dataField="#ff<caret>ffff" />
+    </mx:columns>
+  </mx:DataGrid>
+</mx:Application>

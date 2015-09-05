@@ -1,0 +1,432 @@
+JSFile:ASDoc.js2
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('U')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n')
+    JSClass
+      JSAttributeList
+        <empty list>
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('V')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    JSClass
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('A')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n')
+      JSAttributeList
+        <empty list>
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('A')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    JSClass
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('B')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n\n')
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('B')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    JSDocComment
+      PsiElement(JS:DOC_COMMENT_START)('/**')
+      PsiWhiteSpace('\n ')
+      PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:DOC_COMMENT_DATA)('none')
+      PsiWhiteSpace('\n ')
+      PsiElement(JS:DOC_COMMENT_END)('*/')
+    PsiWhiteSpace('\n')
+    JSClass
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('C')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n')
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('C')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+    PsiWhiteSpace('\n')
+    JSClass
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('D')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n')
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('D')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+    PsiWhiteSpace('\n\n')
+    JSClass
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('E')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n\n')
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('E')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n\n')
+      ActionScriptFunction
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('a()')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n')
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      ActionScriptFunction
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('b()')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n\n')
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('b')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_DATA)('none')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n')
+      ActionScriptFunction
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('c()')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n')
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('c')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n')
+      ActionScriptFunction
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('d')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n')
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('d')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n\n')
+      ActionScriptFunction
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('e')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n\n')
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('e')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n')
+      ActionScriptFunction
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('i')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      JSVarStatement
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('for')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('v')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n')
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('v')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n')
+      JSVarStatement
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('asdoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('for')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_DATA)('v2')
+          PsiWhiteSpace('\n ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n\n')
+        PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+        PsiWhiteSpace('\n\n')
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('v2')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+      PsiWhiteSpace('\n')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('v3')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(JS:END_OF_LINE_COMMENT)('// comment')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('H')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')

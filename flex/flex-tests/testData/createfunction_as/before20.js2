@@ -1,0 +1,5 @@
+// "Create Method 'create'" "true"
+class Foo {
+}
+var foo;
+(foo as Foo).cr<caret>eate();

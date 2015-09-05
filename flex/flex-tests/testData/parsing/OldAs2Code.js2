@@ -1,0 +1,2 @@
+class mypackage.myclass {}
+function mypackage.myfunction() {}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        private static const test2:String = "123";
+        private function f(param:String):void {}
+        ]]></mx:Script>
+    <mx:Button label="test" click="f(te<caret>)"/>
+</mx:Application>

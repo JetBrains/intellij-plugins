@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/generator-server/generator-server.iml" filepath="$PROJECT_DIR$/generator-server/generator-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idea-configurator/idea-configurator.iml" filepath="$PROJECT_DIR$/idea-configurator/idea-configurator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
+    </modules>
+  </component>
+</project>

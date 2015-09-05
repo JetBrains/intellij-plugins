@@ -1,0 +1,7 @@
+interface XXX {
+  <error>public</error> function xxx():void
+}
+
+class YYY implements XXX {
+  public function xxx():void {}
+}

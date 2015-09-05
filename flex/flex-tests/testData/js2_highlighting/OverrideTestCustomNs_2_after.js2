@@ -1,0 +1,77 @@
+package foo {
+public namespace Foo = "Foo";
+}
+
+package bar {
+import foo.Foo;
+public class Bar {
+    Foo function bar() {}
+}
+}
+
+package bar2 {
+import bar.Bar;
+
+import foo.Foo;
+
+use namespace Foo;
+public class Bar2 extends Bar {
+
+<caret>
+    override Foo function bar() {
+        return super.Foo::bar();
+    }
+
+    public function get constructor():* {
+        return super.constructor;
+    }
+
+    public function get length():Number {
+        return super.length;
+    }
+
+    public function get prototype():Object {
+        return super.prototype;
+    }
+
+    public function set prototype(o:Object):void {
+        super.prototype = o;
+    }
+
+    public function toLocaleString():Object {
+        return super.toLocaleString();
+    }
+
+    public function toSource():Object {
+        return super.toSource();
+    }
+
+    public function unwatch(prop:String):void {
+        super.unwatch(prop);
+    }
+
+    public function watch(prop:String, handler:Object):void {
+        super.watch(prop, handler);
+    }
+
+    public function valueOf(o:Object):String {
+        return super.valueOf(o);
+    }
+
+    public function hasOwnProperty(propertyName:String):Boolean {
+        return super.hasOwnProperty(propertyName);
+    }
+
+    public function isPrototypeOf(o:Object):Boolean {
+        return super.isPrototypeOf(o);
+    }
+
+    public function propertyIsEnumerable(propertyName:String):Boolean {
+        return super.propertyIsEnumerable(propertyName);
+    }
+
+    public function toString():String {
+        return super.toString();
+    }
+}
+}

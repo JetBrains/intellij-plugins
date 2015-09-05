@@ -1,0 +1,50 @@
+var i:UsedClass = UsedFunction();
+
+package yyy {
+import some.usedimport.withstar.*;
+
+class XXX extends UsedClass2 {}
+}
+
+import some.usedimport.UsedClass;
+import some.usedimport.UsedFunction;
+
+package {
+import detect.me.ClassNotDetected;
+
+import flash.display.DisplayObject;
+
+import mx.core.UIComponent;
+
+import mypackage.Label;
+
+public class Test extends Label {
+    public function print(s):void{ print(s+ClassNotDetected.PROPERTY); }
+
+    public function testMe():void {
+        var x:*;
+        for each (var chld:UIComponent in x) var a:* = chld as DisplayObject;
+        print(a);
+    }
+  }
+}
+
+package {
+import nspackage.aaa.ns;
+
+use namespace ns
+}
+
+package {
+import my.utils.proxy;
+
+import mypackage.getDefinitionByName;
+
+class Foo {
+    proxy var i:int;
+    static function xxx() {
+      var x:Class = Class(getDefinitionByName("foo"));
+      x.prototype = null;
+    }
+  }
+}

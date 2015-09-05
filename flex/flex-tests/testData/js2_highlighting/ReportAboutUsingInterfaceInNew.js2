@@ -1,0 +1,31 @@
+package {
+interface ReportAboutUsingInterfaceInNew {}
+}
+
+class Foo {
+    var x = new <error descr="Interface can not be instantiated">ReportAboutUsingInterfaceInNew</error>();
+    var y = new <error descr="Interface can not be instantiated">CCC</error>();
+    function foo() {
+        arguments.join(",");
+    }
+}
+
+
+interface CCC {
+    function CCC():*
+}
+
+function D() {
+    var b:B = new BImpl();
+    var ba:BImpl = new b.bClass();
+}
+
+interface B {
+  function get bClass():Class;
+}
+
+class BImpl implements B {
+  public function get bClass():Class {
+    return BImpl;
+  }
+}

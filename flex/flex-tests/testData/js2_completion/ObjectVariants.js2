@@ -1,0 +1,8 @@
+package {
+class Foo {
+    function zzz() {
+        var example : Object = {};
+        example.<caret>
+    }
+}
+}

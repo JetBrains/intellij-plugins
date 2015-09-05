@@ -1,0 +1,6 @@
+<!-- "Create field 'aaa'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+a<caret>aa = 1
+</mx:Script>
+</mx:Application>

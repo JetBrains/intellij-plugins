@@ -1,0 +1,5 @@
+class Foo {
+    private static var INST:Foo = new Foo();
+}
+
+var xxx:Foo = IN<caret>

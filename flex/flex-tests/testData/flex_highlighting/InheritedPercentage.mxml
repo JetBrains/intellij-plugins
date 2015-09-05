@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<Application xmlns="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009" width="1000" height="1000">
+	<HGroup id="group" width="100%" />
+    <List id="myList" verticalScrollPolicy="auto" />
+</Application>

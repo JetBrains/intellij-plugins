@@ -1,0 +1,6 @@
+function noCompletion():int {
+var aString:String = "123";
+var aNuber:int = 123;
+var aBoolean:Boolean = false;
+return 456 + aNuber<caret>
+}

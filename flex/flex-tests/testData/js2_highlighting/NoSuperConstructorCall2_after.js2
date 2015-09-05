@@ -1,0 +1,15 @@
+class A extends B
+{
+    public function A()
+    {
+        super();
+    }
+}
+
+class B
+{
+	public function B(needParam:String)
+	{
+	}
+}
+

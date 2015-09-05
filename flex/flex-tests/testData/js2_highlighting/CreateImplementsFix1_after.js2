@@ -1,0 +1,26 @@
+package {
+import com.foo.MyInt;
+
+public class CreateImplementsFix1 implements MyInt {
+  public function foo() {
+    C.ccc(this);
+  }
+}
+}
+
+
+package com.foo {
+
+public interface MyInt {
+}
+
+}
+
+package {
+import com.foo.MyInt;
+
+public class C {
+    internal static function ccc(i: MyInt) {}
+  }
+
+}

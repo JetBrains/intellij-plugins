@@ -1,0 +1,14 @@
+package <error>bar</error> {
+public class <lineMarker descr="Has subclasses"></lineMarker><error>ClassB</error> {
+    function <info descr="instance method">foo</info>() {}
+}
+}
+
+package <error>foo</error> {
+import <info>bar.ClassB</info>;
+
+public class <error>ClassA</error> extends <info>ClassB</info> {
+    function <info descr="instance method">foo</info>() {}
+    <lineMarker></lineMarker>function <info descr="instance method">foo2</info>() {}
+}
+}

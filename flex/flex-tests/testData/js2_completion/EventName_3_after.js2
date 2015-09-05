@@ -1,0 +1,11 @@
+package {
+import flash.events.KeyboardEvent;
+
+import mypackage.Application
+public class EventName_3 {
+    var xxx:Application
+    function foo() {
+      xxx.willTrigger(KeyboardEvent.TYPED)
+    }
+}
+}

@@ -1,0 +1,12 @@
+package foo {
+  class ClassA {
+    function bar() {}
+  }
+}
+
+package bar {
+  import foo.ClassA;
+  class ClassB extends ClassA {
+    <caret>
+  }
+}

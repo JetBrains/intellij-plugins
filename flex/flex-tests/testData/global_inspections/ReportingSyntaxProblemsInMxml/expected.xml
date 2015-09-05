@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>ReportingSyntaxProblemsInMxml.mxml</file>
+    <line>7</line>
+    <description>* or type name expected #loc</description>
+  </problem>
+</problems>
+

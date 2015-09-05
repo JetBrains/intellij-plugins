@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+  <mx:Style source="application.css"/>
+
+  <mx:Style>
+    .customButtonStyle {
+    }
+
+    .customButtonStyleDefault {
+    }
+  </mx:Style>
+
+  <mx:Panel>
+    <mx:HBox>
+      <mx:Button styleName="customButto<caret>nStyle"/>
+    </mx:HBox>
+  </mx:Panel>
+
+</mx:Application>

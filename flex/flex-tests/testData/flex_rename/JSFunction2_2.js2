@@ -1,0 +1,5 @@
+
+package foo {
+  import foo.JSFunction2;
+  JSFunction2();
+}

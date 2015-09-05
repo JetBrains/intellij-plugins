@@ -1,0 +1,17 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+
+      <locale>
+         <locale-element>en_US</locale-element>
+     </locale>
+
+      <debug>true</debug>
+
+      <library-path append="true">
+           <path-element>locale/{locale}</path-element>
+       </library-path>
+       <source-path><path-element><error>src</error></path-element></source-path>
+  </compiler>
+  <include-resource-bundles />
+  <output>HelloWorld.swf</output>
+</flex-config>

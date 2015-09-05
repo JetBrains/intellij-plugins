@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Metadata>
+    [Style(name="myCustomStyle", inherit="yes")]
+  </mx:Metadata>
+</mx:Canvas>

@@ -1,0 +1,7 @@
+package flashx.textLayout.compose
+{
+
+public class Foo {
+  CONFIG::debug static tlf_internal var numCreateTextLine:int = 0;
+}
+}

@@ -1,0 +1,33 @@
+package  {
+    import mypackage.Button;
+
+    CONFIG::debugging
+    public class ConditionalBlocks extends Button {
+        private static const companyName:String = <error>NAMES</error>::Company;
+
+        public function ConditionalBlocks() {
+            super();
+
+            CONFIG::debugging {
+              setStyle("color", 0x0000FF);
+            }
+
+            setStyle("color", 0x0000FF);
+        }
+    }
+
+    <error>CONFIG</error>::release
+    public class ConditionalBlocks extends Button {
+        public function ConditionalBlocks() {
+            super();
+
+            setStyle("color", 0xFF0000);
+        }
+    }
+}
+
+class MyClass {
+    CONFIG::debugging {
+      function MyClass() {}
+    }
+}

@@ -1,0 +1,10 @@
+package {
+public class Example {
+
+    internal function f():void {
+        var v<caret>:Vector.<String>;
+        trace(v);
+    }
+
+}
+}

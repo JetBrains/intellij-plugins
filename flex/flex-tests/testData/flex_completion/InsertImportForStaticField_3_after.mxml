@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="InsertImportForStaticField_2.MY_CONST<caret>">
+  <mx:Script><![CDATA[
+      import xxx.InsertImportForStaticField_2;
+      ]]></mx:Script>
+</mx:Application>

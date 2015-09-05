@@ -1,0 +1,4 @@
+import context.Context;
+var sqlConnection:SQLConnection;
+<caret>
+var sqlConnection2:SQLConnection;

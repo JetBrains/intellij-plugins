@@ -1,0 +1,10 @@
+
+public class lib.util.SElement extends flash.events.EventDispatcher
+{
+  native public function SElement(test:Object,values:Object):*;
+  static native util_lib_internal final function findClass(t:Class):Object;
+  static native private const util_lib_internal:* = "lib.util:lib_internal";
+}
+
+native public const lib.util.lib_internal:* = "lib.util:lib_internal";
+

@@ -1,0 +1,11 @@
+// "Create Get Property 'selectionManager'" "true"
+interface IA {
+    function get selectionManager():IA;<caret>
+}
+class A {
+  public function getSelectionManager():ISelectionManager {
+    var foo:IA;
+    foo = foo.selectionManager;
+  }
+}
+

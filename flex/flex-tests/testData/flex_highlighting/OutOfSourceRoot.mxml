@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<<warning descr="Object is located in file out of source root, certain functionality will not be available">s:Application</warning> xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+<fx:Script><![CDATA[
+import <error descr="Element is not accessible">mx</error>.<error descr="Element is not accessible">controls</error>.<error descr="Element is not accessible">Alert</error>;
+]]></fx:Script>
+<s:Button click="<error descr="Element is not accessible">Alert</error>.<error descr="Element is not accessible">show</error>('Hello, world')" label="Say Hello"/>
+    </<warning descr="Object is located in file out of source root, certain functionality will not be available">s:Application</warning>>

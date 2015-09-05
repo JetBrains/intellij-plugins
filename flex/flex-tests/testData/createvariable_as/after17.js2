@@ -1,0 +1,10 @@
+// "Create field 'ccccc'" "true"
+public class A3____ {
+    public static var ccccc:;
+  
+}
+
+class B {
+  var v = A3____.ccccc;
+}
+

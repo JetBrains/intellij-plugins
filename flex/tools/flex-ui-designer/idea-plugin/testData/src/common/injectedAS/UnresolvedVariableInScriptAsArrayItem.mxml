@@ -1,0 +1,22 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="One"/>
+    <State name="Two"/>
+  </states>
+
+  <fx:Script><![CDATA[
+    private var p2:Label;
+    ]]></fx:Script>
+
+  <transitions>
+    <Transition id="myTransition" fromState="*" toState="*">
+      <Parallel targets="{[p1,p2,p3]}">
+        <Move duration="400"/>
+      </Parallel>
+    </Transition>
+  </transitions>
+
+  <Label id="p1"/>
+  <Label id="p3"/>
+</Group>

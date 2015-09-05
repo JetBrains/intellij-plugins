@@ -1,0 +1,31 @@
+package {
+
+    class MyClass extends MyClassBase {
+
+        override public function bar():void {
+        }
+    }
+
+    class MyClassBase {
+        var prop;
+
+        public function foo():MyClass {
+            return null;
+        }
+
+        public function bar():void {
+        }
+
+        public function zzzz():void {
+        }
+
+        function bar2():void {
+        }
+
+        protected function bar3():void {
+        }
+
+        private function bar4():void {
+        }
+}
+}

@@ -1,0 +1,15 @@
+package AAA {
+public class A {
+  public var field;
+}
+}
+
+package BBB {
+import AAA.A;
+
+class C extends A {
+  function aaa() {
+    aaa(field<caret>)
+  }
+}
+}

@@ -1,0 +1,3 @@
+function foo(xxx:String, yyy:String) {
+    xxx = yyy;
+}

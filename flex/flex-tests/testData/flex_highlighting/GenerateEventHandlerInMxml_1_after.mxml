@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        var x2:Object;
+
+        private function myButton_clickHandler(event:MouseEvent):void {<caret>
+        }
+        ]]></mx:Script>
+    <mx:Button id="myButton" click="myButton_clickHandler(event)"/>
+</mx:Application>

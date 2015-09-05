@@ -1,0 +1,4 @@
+/**
+ * <caret>
+ */
+function foo():void {}

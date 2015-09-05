@@ -1,0 +1,5 @@
+package foo {
+  public class CopyReference3_src {
+      function CopyReference3_src(x:Copy<caret>Reference3_src) {}
+  }
+}

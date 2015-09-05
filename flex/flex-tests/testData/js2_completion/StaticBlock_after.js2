@@ -1,0 +1,10 @@
+package {
+
+class Foo {
+  var abcde;
+  ab<caret>
+
+  function foo() {} // "ab" is parsed as part of foo's attribute list
+}
+
+}

@@ -1,0 +1,13 @@
+package {
+  public class Vector$object {}
+}
+
+function noCompletion():void {
+    var vb:Vector.<Boolean> = new<Boolean>[true,false];
+    var vs:Vector.<String> = new<String>["a","b"];
+    var vi:Vector.<int> = new <int>[1,2];
+    consume(<caret>)
+}
+
+function consume(s:Vector.<String>):void {}
+function some():UnknownType {}

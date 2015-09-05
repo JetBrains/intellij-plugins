@@ -1,0 +1,10 @@
+com.foo function xxx() {}
+class C {
+  static com.foo function yyy() {}
+}
+
+class Bar {
+  x.y.z. function foo() {}
+}
+pac
+x.y.z

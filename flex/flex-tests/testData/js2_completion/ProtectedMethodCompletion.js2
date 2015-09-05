@@ -1,0 +1,6 @@
+class MyClass {
+  protected function myFunction() {}
+}
+var a:MyClass
+
+a.my<caret>

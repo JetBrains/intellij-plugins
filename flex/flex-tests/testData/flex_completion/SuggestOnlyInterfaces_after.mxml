@@ -1,0 +1,2 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="foo.MyInterface<caret>">
+</mx:Application>

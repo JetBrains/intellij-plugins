@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    this.removeEventListener(KeyboardEvent.TYPED, <caret>)
+  </mx:Script>
+</mx:Application>

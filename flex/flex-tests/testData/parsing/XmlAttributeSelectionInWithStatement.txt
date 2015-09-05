@@ -1,0 +1,79 @@
+JSFile:XmlAttributeSelectionInWithStatement.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('a')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XmlList')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSWithStatement
+    PsiElement(JS:WITH_KEYWORD)('with')
+    PsiElement(JS:LPAR)('(')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('a')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('alert')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              PsiElement(JS:AT)('@')
+              PsiElement(JS:IDENTIFIER)('id')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('alert')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              PsiElement(JS:AT)('@')
+              PsiElement(JS:ANY_IDENTIFIER)('*')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('alert')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              PsiElement(JS:AT)('@')
+              PsiElement(JS:LBRACKET)('[')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"id"')
+              PsiElement(JS:RBRACKET)(']')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('alert')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              PsiElement(JS:AT)('@')
+              PsiElement(JS:LBRACKET)('[')
+              PsiErrorElement:expression expected
+                <empty list>
+              PsiElement(JS:RBRACKET)(']')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')

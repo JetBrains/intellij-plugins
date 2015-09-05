@@ -1,0 +1,19 @@
+class Foo {
+    namespace Bar;
+}
+
+namespace Bar2;
+
+package {
+  namespace Bar3;
+}
+
+<structure activeFilters="HIDE_INHERITED">
+    <node text="NsDeclShouldBeOneTime.js2">
+        <node text="Foo" icon="AS_CLASS_ICON">
+          <node text="Bar" ICON="NAMESPACE_ICON"/>
+        </node>
+         <node text="Bar2" ICON="NAMESPACE_ICON"/>
+         <node text="Bar3" ICON="NAMESPACE_ICON"/>
+    </node>
+</structure>

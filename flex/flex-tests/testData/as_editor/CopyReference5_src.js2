@@ -1,0 +1,8 @@
+package {
+public class Qwe {
+    function aa() {
+        var v: Vec<caret>tor.<Qwe>;
+    }
+
+}
+}

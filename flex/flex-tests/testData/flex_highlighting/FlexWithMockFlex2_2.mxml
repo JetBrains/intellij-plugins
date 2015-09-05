@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FlexWithMockFlex2_3 xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" xmlns="*">
+  <mx:Script><![CDATA[
+   [Bindable] public var model:XML;  
+  ]]></mx:Script>
+  <mx:Metadata>
+    [Event(name="select", type="flash.events.Event")]
+  </mx:Metadata>
+</FlexWithMockFlex2_3>

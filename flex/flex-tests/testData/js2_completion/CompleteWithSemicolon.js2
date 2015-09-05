@@ -1,0 +1,2 @@
+class Foo {}
+var x:Foo = new Fo<caret>

@@ -1,0 +1,16 @@
+package {
+
+ class Test extends TestBase {
+     static var foobar : Test;
+     var zzz : TestEx;
+
+     var uuu : TestBase;
+
+     function abc() {}
+
+
+     public function def() {
+         return zzz.def();
+     }
+ }
+}

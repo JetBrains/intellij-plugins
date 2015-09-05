@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="<error>http://www.adobe.com/2006/mxml</error>">
+
+    <mx:HBox>
+      <mx:Tree/>
+        <mx:VBox>
+            <mx:DataGrid/>
+            <mx:TextArea/>
+        </mx:VBox>
+    </mx:HBox>
+  <mx:Style></mx:Style>
+  <!--<mx:Style source="main2.css"/> TODO: fixme-->
+      <mx:Label styleName="error" text="This is an error"/>
+      <mx:Label styleName="title" text="This is a title"/>
+      <mx:TextArea width="200" height="100" wordWrap="true" text="This is a TextArea"/>
+
+</mx:Application>

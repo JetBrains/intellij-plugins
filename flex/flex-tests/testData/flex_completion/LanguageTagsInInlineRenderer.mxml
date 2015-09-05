@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Application xmlns="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009">
+  <fx:Script><![CDATA[
+        private function foo():void {
+            declaredComponent.n<caret expected="newInstance">e
+        }
+        ]]>
+  </fx:Script>
+  <fx:Declarations>
+        <fx:Component id="declaredComponent">
+            <Pane/>
+        </fx:Component>
+    </fx:Declarations>
+    <DataGroup>
+        <itemRenderer>
+            <<caret expected="fx:Component">fx:Component <caret expected="id,className">>
+                <fx:<caret expected="">/>
+                <Group>
+                    <fx:<caret expected="Declarations,Script,Binding,Metadata,Style,Reparent">/>
+                </Group>
+            </fx:Component>
+        </itemRenderer>
+    </DataGroup>
+</Application>

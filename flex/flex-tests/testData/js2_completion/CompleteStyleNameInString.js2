@@ -1,0 +1,5 @@
+class A {
+   function xxx() {
+     tab.setStyle("pad<caret>"); 
+   }
+}

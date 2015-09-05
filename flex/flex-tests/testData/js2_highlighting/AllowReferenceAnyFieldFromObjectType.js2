@@ -1,0 +1,18 @@
+package <error>xxx</error> {
+  class <error>AAA</error> {
+    var mytext;
+    function get field():* {}
+    function set field(v:*):void {}
+    function get field2():Object {}
+    function set field2(v:Object):void {}
+  }
+
+  class <error>BBB</error> extends AAA {
+    function BBB() {
+      BBB(field.mytext)
+      BBB(field2.mytext)
+      BBB(field2.mytext2)
+      Object(this).mytext2 = 1;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+<s:VGroup name="root" xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+  <s:states>
+    <s:State name="default"/>
+    <s:State name="A"/>
+  </s:states>
+
+  <s:Label text="0" includeIn="A" itemDestructionPolicy="auto"/>
+  <!-- test: itemDestructionPolicy before includeIn -->
+  <s:Label text="1" itemDestructionPolicy="auto" includeIn="A"/>
+  <s:Label text="2" includeIn="A"/>
+  <s:Label text="3" includeIn="A"/>
+</s:VGroup>

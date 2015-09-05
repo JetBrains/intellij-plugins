@@ -1,0 +1,5 @@
+package {
+ [HostComponent("mx.contr<caret>")]
+ public class Test {
+ }
+}

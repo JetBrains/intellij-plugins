@@ -1,0 +1,12 @@
+class C {
+  /**
+   * Executes a test function on each item in the array until an item is reached that returns false for the specified function. You use
+   * this method to determine whether all items in an array meet a criterion, such as having values less than a particular number.
+   * @param callback : Function The function to run on each item in the array. This function can contain a simple comparison (for example,
+   * item < 20) or a more complex operation, and is invoked with three arguments; the value of an item, the index of an item, and the Array
+   * object
+   * @param thisObject : * (default = null) An object to use as this for the function.
+   * @return Boolean Boolean value of true if all items in the array return true for the specified function; otherwise, false.
+   */
+  native function eve<caret>ry(callback:Function, thisObject:* = null):Boolean
+}

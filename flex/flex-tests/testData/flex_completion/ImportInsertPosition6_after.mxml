@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="var t : Base64Encoder">
+<mx:Script> <![CDATA[
+    import mx.utils.Base64Encoder;
+    ]]></mx:Script>
+</mx:Application>

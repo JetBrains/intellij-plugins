@@ -1,0 +1,7 @@
+package xxx {
+  public class AAA {
+    public static function set yyy(p:Object):void {}
+  }
+}
+
+xxx.AAA.y<caret>yy = 1

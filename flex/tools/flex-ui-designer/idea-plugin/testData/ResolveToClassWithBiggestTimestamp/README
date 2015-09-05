@@ -1,0 +1,1 @@
+IDEA has a serious issue now — library compiled with scope "merged" for sdk libs (must be external). But for our SwcDependenciesSorter it is very good test case (lib_2 contains resource properties (i.e. as resource library) and merged framework.swc classes). 

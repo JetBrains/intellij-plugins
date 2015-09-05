@@ -1,0 +1,16 @@
+package {
+    public interface <error>Int1</error> {
+        function foo(a:int);
+    }
+}
+
+package {
+    public class IncompatibleImplementationFix5 implements Int1 {
+        public function foo<error>(a:String, b:Boolean, c:*)</error> {}
+
+        private function zz() {
+            var v : Int1;
+            v.foo(0);
+        }
+    }
+}

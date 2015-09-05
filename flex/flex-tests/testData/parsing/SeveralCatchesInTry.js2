@@ -1,0 +1,22 @@
+class A {
+  protected function wrapUpdate(wrappedFunction:Function):void
+  {
+      try
+      {
+          wrappedFunction.apply(this);
+      }
+      catch (itemPendingError:ItemPendingError)
+      {
+          value = null;
+      }
+      catch (rangeError:RangeError)
+      {
+          value = null;
+      }
+      catch (error:Error)
+      {
+          throw error;
+      }
+  }
+  
+}

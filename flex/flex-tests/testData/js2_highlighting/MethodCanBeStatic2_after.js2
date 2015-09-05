@@ -1,0 +1,43 @@
+package aaa {
+public class A {
+  public static function foo():void { var i : int; }
+}
+}
+
+package bbb {
+import aaa.A;
+
+public class B {
+  public static function ref1():void {
+    var v : A;
+    A.foo();
+  }
+  public static function getA():A {}
+}
+}
+
+package ccc {
+import aaa.A;
+
+public class C {
+  public static function ref1():void {
+    A.foo();
+  }
+}
+}
+
+package ddd {
+import aaa.A;
+
+public class D {
+  public static function ref1():void {
+    aaa.A.foo();
+  }
+}
+}
+
+package ddd {
+
+public class A {
+}
+}

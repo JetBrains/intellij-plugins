@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns="http://ns.adobe.com/mxml/2009" xmlns:mx="library:adobe/flex/halo" >
+        <!--- 
+         Comment for button
+        --> 
+	<mx:Button id="myButton" label="This button has comment"/>
+  <mx:Script>
+    function foo() {
+      myBut<caret>ton
+    }
+  </mx:Script>
+</mx:VBox>
+

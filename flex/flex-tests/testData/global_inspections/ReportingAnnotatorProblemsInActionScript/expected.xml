@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>ReportingAnnotatorProblemsInActionScript.as</file>
+    <line>3</line>
+    <description>Unresolved variable or type xxx #loc</description>
+  </problem>
+</problems>
+

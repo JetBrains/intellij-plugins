@@ -1,0 +1,9 @@
+class MyClass {
+  protected function myFunction() {}
+}
+
+class MySubClass extends MyClass {
+  function foo() {
+     myFunction()<caret> 
+  }
+}

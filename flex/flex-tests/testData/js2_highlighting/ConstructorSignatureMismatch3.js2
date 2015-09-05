@@ -1,0 +1,10 @@
+package {
+import flash.events.Event;
+
+  public class ConstructorSignatureMismatch3 extends Foo {
+    public function ConstructorSignatureMismatch3() {
+      var v : Event;
+      super<error>("a", true, v)</error>;
+    }
+  }
+}

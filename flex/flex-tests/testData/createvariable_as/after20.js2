@@ -1,0 +1,7 @@
+// "Create field 'ccccc22'" "true"
+public class A2_____ {
+    private var ccccc22<caret>:Array;
+    function A2_____() {
+        ccccc22 = [];
+    }
+}

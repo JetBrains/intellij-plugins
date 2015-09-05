@@ -1,0 +1,7 @@
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx"
+             minWidth="955" minHeight="600">
+  <mx:TabNavigator width="500" height="300">
+    <ModuleLoader label="Tab One" url="examples/ModuleVerticalLayout.swf"/>
+    <ModuleLoader label="Tab Two" url="examples/ModuleHorizontalLayout.swf"/>
+  </mx:TabNavigator>
+</Application>

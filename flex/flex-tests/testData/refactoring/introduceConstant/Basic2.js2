@@ -1,0 +1,6 @@
+class A {
+    function A() {}
+    function xxx() {
+        var a = <selection>new A()</selection>
+    }
+}

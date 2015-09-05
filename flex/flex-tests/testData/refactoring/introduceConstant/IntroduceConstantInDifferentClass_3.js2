@@ -1,0 +1,9 @@
+class A {
+    function xxx() {
+        var a = <selection>"XXX<caret>"</selection>
+    }
+}
+
+package foo {
+  public class B {}
+}

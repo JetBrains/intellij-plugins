@@ -1,0 +1,17 @@
+package de.ansorg.cloud {
+    import flash.events.Event;
+
+    public class RemoveCloudEvent extends Event {
+        private var _cloud :Cloud;
+        public static const EVENT:String = "removeCloud";
+
+        public function RemoveCloudEvent(cloud:Cloud) {
+            super(EVENT);
+            this._cloud = cloud;<caret>
+        }
+
+        public function get cloud():Cloud {
+            return _cloud;
+        }
+    }
+}

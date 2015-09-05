@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+  function foo() {
+    EnrollmentServ.closeAccount();
+  }
+  </mx:Script>
+  <mx:RemoteObject id="EnrollmentServ" destination="PrimaryCardEnrollService">
+    <mx:method name="closeAccount"/>
+  </mx:RemoteObject>
+
+  <mx:RemoteObject id="RO" destination="MyRemoteObjectDest"
+        fault="Alert.show(event.fault.faultstring), 'Error'" source="NotAFileReference">
+
+        <mx:method name="GetQuote">
+            <mx:arguments>
+                <symbol>{stockSymbol.text}</symbol>
+            </mx:arguments>
+        </mx:method>
+    </mx:RemoteObject>
+
+    <mx:Panel title="RemoteObject Example">
+
+        <mx:Label width="100%"  color="blue"
+            text="Enter a stock symbol to obtain a quote."/>
+
+        <mx:TextInput id="stockSymbol" text="ADBE"/>
+        <mx:Button label="Get Quote" click="RO.GetQuote.send()"/>
+
+        <mx:Text htmlText="Company: {RO.GetQuote.lastResult.GetQuoteResult.StockQuote.Company}"/>
+        <mx:Text htmlText="Current price: ${RO.GetQuote.lastResult.GetQuoteResult.StockQuote.Price}"/>
+
+    </mx:Panel>
+</mx:Application>

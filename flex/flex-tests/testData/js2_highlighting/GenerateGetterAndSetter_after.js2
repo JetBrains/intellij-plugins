@@ -1,0 +1,65 @@
+package foo {
+import flash.events.Event;
+import flash.events.EventDispatcher;
+
+public class GenerateGetterAndSetter extends EventDispatcher {
+    private var _i:EventDispatcher;
+    [ArrayElementType("String")]
+    private var _j:Array;
+    private var _t:int;
+    private var _k;
+    public static const I_CHANGED_EVENT:String = "iChanged";
+    public static const J_CHANGED_EVENT:String = "jChanged";
+    public static const T_CHANGED_EVENT:String = "tChanged";
+    public static const K_CHANGED_EVENT:String = "kChanged";
+
+    [Bindable(event="iChanged")]
+    public function get i():EventDispatcher {
+        return _i;
+    }
+
+    public function set i(value:EventDispatcher):void {
+        if (_i == value) return;
+        _i = value;
+        dispatchEvent(new Event(I_CHANGED_EVENT));
+    }
+
+    [Bindable(event="jChanged")]
+    public function get j():Array {
+        return _j;
+    }
+
+    public function set j(value:Array):void {
+        if (_j == value) return;
+        _j = value;
+        dispatchEvent(new Event(J_CHANGED_EVENT));
+    }
+
+    [Bindable(event="tChanged")]
+    public function get t():int {
+        return _t;
+    }
+
+    public function set t(value:int):void {
+        if (_t == value) return;
+        _t = value;
+        dispatchEvent(new Event(T_CHANGED_EVENT));
+    }
+
+    [Bindable(event="kChanged")]
+    public function get k():* {
+        return _k;
+    }
+
+    public function set k(value):void {
+        if (_k == value) return;
+        _k = value;
+        dispatchEvent(new Event(K_CHANGED_EVENT));
+    }
+}
+}
+package bar {
+  import foo.GenerateGetterAndSetter;
+  var a:GenerateGetterAndSetter;
+  a.t = a.t + 1;
+}

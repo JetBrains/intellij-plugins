@@ -1,0 +1,10 @@
+// "Create Function '_selectionManager'" "true"
+class A {
+  public function getSelectionManager():ISelectionManager {
+    return foo(_selectionManager);
+  }
+
+    private function _selectionManager():void {
+        <caret>
+    }
+}

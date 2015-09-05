@@ -1,0 +1,9 @@
+package externalization {
+  public interface IDataInput {}
+  public interface ODataOutput {}
+
+  public interface Externalizable {
+    native function doRead(iStream:IDataInput):Boolean
+    native function doWrite(oStream:ODataOutput):void
+  }
+}

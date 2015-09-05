@@ -1,0 +1,176 @@
+JSFile:E4X3.js2
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('data')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('appendChild')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        XmlTag:object
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('object')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('id')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{i}')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          XmlToken:XML_EMPTY_ELEMENT_END('/>')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('trace')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSBinaryExpression
+          XmlTag:object
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('object')
+            PsiWhiteSpace(' ')
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('id')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{i}')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DIV)('/')
+          PsiWhiteSpace(' ')
+          XmlTag:object
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('object')
+            PsiWhiteSpace(' ')
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('id')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{i}')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('trace')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSBinaryExpression
+          XmlTag:object
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('object')
+            PsiWhiteSpace(' ')
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('id')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{i}')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:LT)('<')
+          PsiWhiteSpace(' ')
+          XmlTag:object
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('object')
+            PsiWhiteSpace(' ')
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('id')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{i}')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('data2')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XML')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:data
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('data')
+        XmlToken:XML_TAG_END('>')
+        XmlTag:name
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('name')
+          XmlToken:XML_TAG_END('>')
+          PsiComment(JS:CDATA_START)('<![CDATA[')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('dd')
+          PsiComment(JS:CDATA_END)(']]>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('name')
+          XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_NAME('data')
+        XmlToken:XML_TAG_END('>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('trace')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSCallExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('data2')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('name')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('toString')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('xml')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XML')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:xml
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('xml')
+        XmlToken:XML_TAG_END('>')
+        PsiComment(JS:XML_STYLE_COMMENT)('<!--<data>2</data>-->')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_NAME('xml')
+        XmlToken:XML_TAG_END('>')

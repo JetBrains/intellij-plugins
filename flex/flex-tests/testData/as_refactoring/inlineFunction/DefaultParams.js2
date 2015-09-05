@@ -1,0 +1,5 @@
+function bar(x:String="it"):int {
+    trace(x);
+}
+
+ba<caret>r();

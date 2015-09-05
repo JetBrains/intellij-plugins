@@ -1,0 +1,1 @@
+package foo{public class NamespacesAndManifestsFromCustomConfigFile_other {}}

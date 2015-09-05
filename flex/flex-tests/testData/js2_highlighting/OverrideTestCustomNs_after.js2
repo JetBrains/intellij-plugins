@@ -1,0 +1,25 @@
+package foo {
+public namespace Foo = "Foo";
+}
+
+package bar {
+import foo.Foo;
+public class Bar {
+    Foo function bar() {}
+}
+}
+
+package bar2 {
+import bar.Bar;
+
+import foo.Foo;
+
+use namespace Foo;
+
+public class Bar2 extends Bar {
+
+   <caret> override Foo function bar() {
+        return super.Foo::bar();
+    }
+}
+}

@@ -1,0 +1,8 @@
+package {
+public class Foo {}
+}
+package {
+  public class Bar {}
+}
+
+var v:Foo = new Object() as <caret>

@@ -1,0 +1,234 @@
+package com.intellij.lang.javascript;
+
+import com.intellij.execution.RunManagerEx;
+import com.intellij.flex.FlexTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class FlexMoveTest extends JSMoveTestBase {
+  @NotNull
+  @Override
+  protected String getTestRoot() {
+    return "/move/";
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath("");
+  }
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
+  }
+
+  @Override
+  protected void setUpJdk() {
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+  }
+
+  public void testMovePackage() throws Exception {
+    doTest("foo", "bar");
+  }
+
+  public void testMoveFile() throws Exception {
+    doTest("bar/MoveFile.as", "foo");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMoveFile2() throws Exception {
+    doTest("MoveFile2.mxml", "xxx");
+  }
+
+  public void testMoveFileWithImport() throws Exception {
+    doTest("foo/MoveFileWithImport.as", "");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMoveMxmlFileWithImport() throws Exception {
+    doTest("foo/MoveMxmlFileWithImport.mxml", "");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMoveFileWithImportInMxml() throws Exception {
+    doTest("Two.as", "foo");
+  }
+
+  // IDEADEV-40449: short references in the moved file may become ambiguous
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void _testAmbiguous1() throws Exception {
+    doTest("foo/Test.as", "bar");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMxmlUsagesUpdated() throws Exception {
+    doTest("one/Foo.mxml", "two");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testNoImport() throws Exception {
+    doTest("two/Baz.mxml", "one");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMxmlNamespacesUpdated() throws Exception {
+    doTest("pack/Bar.as", "pack/sub");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet})
+  public void testConfigUpdatedOnClassMove() throws Exception {
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    JSTestUtils
+      .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
+                               "foo.bar.SomeClass", "testSomething", true);
+    JSTestUtils
+      .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "", true);
+    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+
+    doTest("foo/bar/SomeClass.mxml", "");
+
+    //assertEquals("SomeClass", config.MAIN_CLASS);
+    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "SomeClass", "testSomething");
+    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "SomeClass", "");
+    JSTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "SomeClass");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet})
+  public void testConfigUpdatedOnPackageMove() throws Exception {
+    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+      public void consume(final ModifiableFlexBuildConfiguration bc) {
+        bc.setMainClass("foo.SomeClass");
+      }
+    });
+
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+    JSTestUtils
+      .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
+                               "foo.SomeClass", "testSomething", true);
+    JSTestUtils
+      .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.SomeClass", "", true);
+    JSTestUtils.createFlexUnitRunConfig(runManager, "foo", myModule, FlexUnitRunnerParameters.Scope.Package, "foo", "", "", true);
+    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.SomeClass", true);
+
+    doTest("foo", "bar");
+
+    assertEquals("bar.foo.SomeClass", FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getMainClass());
+    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "bar.foo.SomeClass", "testSomething");
+    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "bar.foo.SomeClass", "");
+    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "bar.foo", "bar.foo", "", "");
+    JSTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "bar.foo.SomeClass");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet})
+  public void testReferencesToAssetsUpdated() throws Exception {
+    doTest("one/asset.css", "two");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet})
+  public void testMxmlWithReferencesToAssetsMoved() throws Exception {
+    doTest("one/Foo.mxml", "");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMxmlImplementsList() throws Exception {
+    doTest("from/MyInterface.as", "to");
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testMoveClasses1() throws Exception {
+    doTest(new String[]{"a.MyClass", "a.MyFunc", "a.MyNs", "a.MyVar", "a.MyConst"}, "b", ArrayUtil.EMPTY_STRING_ARRAY);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testImportForConstuctorUsage() throws Exception {
+    doTest(new String[]{"from.Test"}, "to", ArrayUtil.EMPTY_STRING_ARRAY);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexSdk})
+  public void testConflicts1() throws Exception {
+    String[] conflicts = new String[]{
+      "Class Subj1 with internal visibility won't be accessible from class Usage1",
+      "Class Subj1 with internal visibility won't be accessible from field Usage1.f",
+      "Class Subj1 with internal visibility won't be accessible from constructor Usage1.Usage1(Subj1)",
+      "Class Subj2 with internal visibility won't be accessible from constant Usage1.c",
+      "Class Subj2 with internal visibility won't be accessible from constructor Usage1.Usage1(Subj1)",
+      "Class Subj2 with internal visibility won't be accessible from class Usage2",
+      "Class Usage1 with internal visibility won't be accessible from class Subj1",
+      "Class Usage2 with internal visibility won't be accessible from class Subj2",
+      "Class Subj1 with internal visibility won't be accessible from field Usage3.v",
+      "Class Subj1 with internal visibility won't be accessible from function &lt;anonymous&gt;(*) in class Usage3"};
+    doTest(new String[]{"a.Subj1", "a.Subj2"}, "b", conflicts);
+  }
+
+  public void testStarImport() throws Exception {
+    doTest(new String[]{"from.Foo"}, "to", ArrayUtil.EMPTY_STRING_ARRAY);
+  }
+
+  public void testNoWhitespaceForPackage() throws Exception {
+    doTest(new String[]{"Test", "Test2"}, "com", ArrayUtil.EMPTY_STRING_ARRAY);
+  }
+
+  private void doTestDirectoryWithClasses(final String[] toMove, final String target, final boolean justRename) throws Exception {
+    doTest(new PerformAction() {
+      @Override
+      public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
+        Collection<PsiDirectory> dirsToMove = new ArrayList<PsiDirectory>();
+        for (String s : toMove) {
+          final VirtualFile child = VfsUtilCore.findRelativeFile(s, rootDir);
+          assertNotNull("Folder " + s + " not found", child);
+          assertTrue("Folder " + s + " not found", child.isDirectory());
+          dirsToMove.add(myPsiManager.findDirectory(child));
+        }
+
+        PsiDirectory targetDir;
+        if (justRename) {
+          targetDir = null;
+        }
+        else {
+          final VirtualFile f = VfsUtilCore.findRelativeFile(target, rootDir);
+          assertNotNull("Target dir " + target + " not found", f);
+          targetDir = myPsiManager.findDirectory(f);
+          assertNotNull(targetDir);
+        }
+        new MoveDirectoryWithClassesProcessor(myProject, dirsToMove.toArray(new PsiDirectory[dirsToMove.size()]), targetDir, true, true,
+                                              false, null) {
+          @Override
+          protected String getTargetName() {
+            if (justRename) {
+              assertFalse(target.contains("/"));
+              return target;
+            }
+            return super.getTargetName();
+          }
+
+          @Override
+          public TargetDirectoryWrapper getTargetDirectory(final PsiDirectory dir) {
+            if (justRename) {
+              return new TargetDirectoryWrapper(dir.getParentDirectory(), target);
+            }
+            return super.getTargetDirectory(dir);
+          }
+        }.run();
+        FileDocumentManager.getInstance().saveAllDocuments();
+      }
+    });
+  }
+
+  public void testRenameDirWithClasses() throws Exception {
+    doTestDirectoryWithClasses(new String[]{"foo"}, "bar", true);
+  }
+}

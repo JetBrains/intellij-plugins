@@ -1,0 +1,11 @@
+package test {
+var t : ClassA<caret>;
+}
+
+package com.foo {
+public class ClassA {}
+}
+
+package com.bar {
+public class ClassA {}
+}

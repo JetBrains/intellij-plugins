@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+  <mx:Script>
+    function foo() {
+      myComp.myM<caret>
+    }
+  </mx:Script>
+  <local:CompletionOfMethodOfCustomComponent_2 id="myComp"/>
+</mx:Application>

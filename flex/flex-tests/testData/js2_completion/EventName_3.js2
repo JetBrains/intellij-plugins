@@ -1,0 +1,9 @@
+package {
+import mypackage.Application
+public class EventName_3 {
+    var xxx:Application
+    function foo() {
+      xxx.willTrigger(Ke<caret>)
+    }
+}
+}

@@ -1,0 +1,445 @@
+<!--This test file was created using output of "compc -help -list -advanced -details" plus <file-specs> element definition.
+ Flex SDK 4.5.0.19786 used.
+ This file can not be used for real compilation because <file-specs> element can be used only with "mxmlc"
+ and a number of elements can be used only with "compc".
+ But namespace is the same for both compilers so we need to have "maximum" scheme.
+ -->
+
+<!--Flex compiler configuration-->
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <!--output performance benchmark-->
+  <benchmark>false</benchmark>
+  <compiler>
+    <!--generate an accessible SWF-->
+    <accessible>false</accessible>
+    <!--specifies actionscript file encoding. If there is no BOM in the AS3 source files, the compiler will use this file encoding.-->
+    <actionscript-file-encoding>string</actionscript-file-encoding>
+    <!--checks if a source-path entry is a subdirectory of another source-path entry. It helps make the package names of MXML components unambiguous. (advanced)-->
+    <allow-source-path-overlap>false</allow-source-path-overlap>
+    <!--use the ActionScript 3 class based object model for greater performance and better error reporting. In the class based object model most built-in functions are implemented as fixed methods of classes. (advanced)-->
+    <as3>false</as3>
+    <!-- -->
+    <compress>true</compress>
+    <!--path to replace {context.root} tokens for service channel endpoints-->
+    <context-root>string</context-root>
+    <!--generates a movie that is suitable for debugging-->
+    <debug>false</debug>
+    <!--(advanced)-->
+    <defaults-css-files append="true">
+      <filename>string1</filename>
+      <filename>string2</filename>
+    </defaults-css-files>
+    <!--defines the location of the default style sheet. Setting this option overrides the implicit use of the defaults.css style sheet in the framework.swc file. (advanced)-->
+    <defaults-css-url>string</defaults-css-url>
+    <!--define a global AS3 conditional compilation definition (advanced)-->
+    <define append="true">
+      <name>string</name>
+      <value>string</value>
+    </define>
+    <!-- -->
+    <enable-runtime-design-layers>true</enable-runtime-design-layers>
+    <!--use the ECMAScript edition 3 prototype based object model to allow dynamic overriding of prototype properties. In the prototype based object model built-in functions are implemented as dynamic properties of prototype objects. (advanced)-->
+    <es>false</es>
+    <!-- -->
+    <extensions append="true">
+      <extension>
+        <extension>string</extension>
+        <parameters>string</parameters>
+      </extension>
+      <extension>
+        <extension>string</extension>
+        <parameters>string</parameters>
+      </extension>
+    </extensions>
+    <!--list of SWC files or directories to compile against but to omit from linking-->
+    <external-library-path append="true">
+      <path-element>CompilerConfigHighlighting_4.xml</path-element>
+      <path-element>CompilerConfigHighlighting_5.xml</path-element>
+    </external-library-path>
+    <fonts>
+      <!--enables advanced anti-aliasing for embedded fonts, which provides greater clarity for small fonts.-->
+      <advanced-anti-aliasing>false</advanced-anti-aliasing>
+      <!--enables FlashType for embedded fonts, which provides greater clarity for small fonts.-->
+      <flash-type>false</flash-type>
+      <languages append="true">
+        <!--a range to restrict the number of font glyphs embedded into the SWF (advanced)-->
+        <language-range>
+          <lang>string</lang>
+          <range>string</range>
+        </language-range>
+        <language-range>
+          <lang>string</lang>
+          <range>string</range>
+        </language-range>
+      </languages>
+      <!--(advanced)-->
+      <local-font-paths>
+        <path-element>CompilerConfigHighlighting_4.xml</path-element>
+        <path-element>CompilerConfigHighlighting_5.xml</path-element>
+      </local-font-paths>
+      <!--File containing system font data produced by flex2.tools.FontSnapshot. (advanced)-->
+      <local-fonts-snapshot>string</local-fonts-snapshot>
+      <!--Compiler font manager classes, in policy resolution order (advanced)-->
+      <managers>
+        <manager-class>string1</manager-class>
+        <manager-class>string2</manager-class>
+      </managers>
+      <!--sets the maximum number of fonts to keep in the server cache.  The default value is 20. (advanced)-->
+      <max-cached-fonts>12345</max-cached-fonts>
+      <!--sets the maximum number of character glyph-outlines to keep in the server cache for each font face. The default value is 1000.-->
+      <max-glyphs-per-face>12345</max-glyphs-per-face>
+    </fonts>
+    <!--a flag to set when Flex is running on a server without a display (advanced)-->
+    <headless-server>false</headless-server>
+    <!--a list of libraries (SWCs) to completely include in the SWF-->
+    <include-libraries append="true">
+      <library>string1</library>
+      <library>string2</library>
+    </include-libraries>
+    <!--enables incremental compilation-->
+    <incremental>false</incremental>
+    <!--enables the compiled application or module to set styles that only affect itself and its children (advanced)-->
+    <isolate-styles>false</isolate-styles>
+    <!--disables the pruning of unused CSS type selectors (advanced)-->
+    <keep-all-type-selectors>false</keep-all-type-selectors>
+    <!--keep the specified metadata in the SWF (advanced)-->
+    <keep-as3-metadata append="false">
+      <name>string1</name>
+      <name>string2</name>
+    </keep-as3-metadata>
+    <!--save temporary source files generated during MXML compilation (advanced)-->
+    <keep-generated-actionscript>false</keep-generated-actionscript>
+    <!--list of SWC files or directories that contain SWC files-->
+    <library-path append="true">
+      <path-element>
+        locale/{locale}
+      </path-element>
+      <path-element>
+        CompilerConfigHighlighting_5.xml
+      </path-element>
+    </library-path>
+    <!--specifies the locale for internationalization-->
+    <locale>
+      <locale-element>string1</locale-element>
+      <locale-element>string2</locale-element>
+    </locale>
+    <minimum-supported-version>string</minimum-supported-version>
+    <!--specifies the target runtime is a mobile device-->
+    <mobile>true</mobile>
+    <mxml>
+      <!--specifies a compatibility version. e.g. 2.0.1-->
+      <compatibility-version>string</compatibility-version>
+      <minimum-supported-version>string</minimum-supported-version>
+      <!--(advanced)-->
+      <qualified-type-selectors>false</qualified-type-selectors>
+    </mxml>
+    <namespaces>
+      <!--Specify a URI to associate with a manifest of components for use as MXML elements-->
+      <namespace append="true">
+        <uri>string</uri>
+        <manifest>string</manifest>
+      </namespace>
+      <namespace>
+        <uri>string</uri>
+        <manifest>string</manifest>
+      </namespace>
+    </namespaces>
+
+    <!--toggle whether trace statements are omitted-->
+    <omit-trace-statements>true</omit-trace-statements>
+    <!--Enable post-link SWF optimization-->
+    <optimize>false</optimize>
+    <!--specifies the default value for the Application's preloader attribute. If not specified, the default preloader value will be mx.preloaders.SparkDownloadProgressBar with -compatibility-version >= 4.0 and it will be mx.preloader.DownloadProgressBar with -compatibility-version < 4.0.-->
+    <preloader>string</preloader>
+    <!--enables reporting of invalid styles as warnings-->
+    <report-invalid-styles-as-warnings>false</report-invalid-styles-as-warnings>
+    <!--Use this option to generate a warning instead of an error when a missing required skin part is detected. (advanced)-->
+    <report-missing-required-skin-parts-as-warnings>false</report-missing-required-skin-parts-as-warnings>
+    <!--path to Flex Data Services configuration file-->
+    <services>string</services>
+    <!--runs the AS3 compiler in a mode that detects legal but potentially incorrect code-->
+    <show-actionscript-warnings>false</show-actionscript-warnings>
+    <!--toggle whether warnings generated from data binding code are displayed-->
+    <show-binding-warnings>false</show-binding-warnings>
+    <!--toggle whether invalid css property warnings are reported-->
+    <show-invalid-css-property-warnings>false</show-invalid-css-property-warnings>
+    <!--toggles whether warnings are displayed when an embedded font name shadows a device font name-->
+    <show-shadowed-device-font-warnings>false</show-shadowed-device-font-warnings>
+    <!--toggle whether warnings generated from unused CSS type selectors are displayed-->
+    <show-unused-type-selector-warnings>false</show-unused-type-selector-warnings>
+    <!--list of path elements that form the roots of ActionScript class hierarchies -->
+    <source-path append="true">
+      <path-element>CompilerConfigHighlighting_4.xml</path-element>
+      <path-element>CompilerConfigHighlighting_5.xml</path-element>
+    </source-path>
+    <!--runs the AS3 compiler in strict error checking mode.-->
+    <strict>false</strict>
+    <!--list of CSS or SWC files to apply as a theme-->
+    <theme append="true">
+      <filename>string1</filename>
+      <filename>string2</filename>
+    </theme>
+    <!--determines whether resources bundles are included in the application.-->
+    <use-resource-bundle-metadata>false</use-resource-bundle-metadata>
+    <!--save callstack information to the SWF for debugging-->
+    <verbose-stacktraces>false</verbose-stacktraces>
+    <!--Array.toString() format has changed. (advanced)-->
+    <warn-array-tostring-changes>false</warn-array-tostring-changes>
+    <!--Assignment within conditional. (advanced)-->
+    <warn-assignment-within-conditional>false</warn-assignment-within-conditional>
+    <!--Possibly invalid Array cast operation. (advanced)-->
+    <warn-bad-array-cast>false</warn-bad-array-cast>
+    <!--Non-Boolean value used where a Boolean value was expected. (advanced)-->
+    <warn-bad-bool-assignment>false</warn-bad-bool-assignment>
+    <!--Invalid Date cast operation. (advanced)-->
+    <warn-bad-date-cast>false</warn-bad-date-cast>
+    <!--Unknown method. (advanced)-->
+    <warn-bad-es3-type-method>false</warn-bad-es3-type-method>
+    <!--Unknown property. (advanced)-->
+    <warn-bad-es3-type-prop>false</warn-bad-es3-type-prop>
+    <!--Illogical comparison with NaN. Any comparison operation involving NaN will evaluate to false because NaN != NaN. (advanced)-->
+    <warn-bad-nan-comparison>false</warn-bad-nan-comparison>
+    <!--Impossible assignment to null. (advanced)-->
+    <warn-bad-null-assignment>false</warn-bad-null-assignment>
+    <!--Illogical comparison with null. (advanced)-->
+    <warn-bad-null-comparison>false</warn-bad-null-comparison>
+    <!--Illogical comparison with undefined.  Only untyped variables (or variables of type *) can be undefined. (advanced)-->
+    <warn-bad-undefined-comparison>false</warn-bad-undefined-comparison>
+    <!--Boolean() with no arguments returns false in ActionScript 3.0. Boolean() returned undefined in ActionScript 2.0. (advanced)-->
+    <warn-boolean-constructor-with-no-args>false</warn-boolean-constructor-with-no-args>
+    <!--__resolve is no longer supported. (advanced)-->
+    <warn-changes-in-resolve>false</warn-changes-in-resolve>
+    <!--Class is sealed.  It cannot have members added to it dynamically. (advanced)-->
+    <warn-class-is-sealed>false</warn-class-is-sealed>
+    <!--Constant not initialized. (advanced)-->
+    <warn-const-not-initialized>false</warn-const-not-initialized>
+    <!--Function used in new expression returns a value.  Result will be what the function returns, rather than a new instance of that function. (advanced)-->
+    <warn-constructor-returns-value>false</warn-constructor-returns-value>
+    <!--EventHandler was not added as a listener. (advanced)-->
+    <warn-deprecated-event-handler-error>false</warn-deprecated-event-handler-error>
+    <!--Unsupported ActionScript 2.0 function. (advanced)-->
+    <warn-deprecated-function-error>false</warn-deprecated-function-error>
+    <!--Unsupported ActionScript 2.0 property. (advanced)-->
+    <warn-deprecated-property-error>false</warn-deprecated-property-error>
+    <!--More than one argument by the same name. (advanced)-->
+    <warn-duplicate-argument-names>false</warn-duplicate-argument-names>
+    <!--Duplicate variable definition  (advanced)-->
+    <warn-duplicate-variable-def>false</warn-duplicate-variable-def>
+    <!--ActionScript 3.0 iterates over an object's properties within a "for x in target" statement in random order. (advanced)-->
+    <warn-for-var-in-changes>false</warn-for-var-in-changes>
+    <!--Importing a package by the same name as the current class will hide that class identifier in this scope. (advanced)-->
+    <warn-import-hides-class>false</warn-import-hides-class>
+    <!--Use of the instanceof operator. (advanced)-->
+    <warn-instance-of-changes>false</warn-instance-of-changes>
+    <!--Internal error in compiler. (advanced)-->
+    <warn-internal-error>false</warn-internal-error>
+    <!--_level is no longer supported. For more information, see the flash.display package. (advanced)-->
+    <warn-level-not-supported>false</warn-level-not-supported>
+    <!--Missing namespace declaration (e.g. variable is not defined to be public, private, etc.). (advanced)-->
+    <warn-missing-namespace-decl>false</warn-missing-namespace-decl>
+    <!--Negative value will become a large positive value when assigned to a uint data type. (advanced)-->
+    <warn-negative-uint-literal>false</warn-negative-uint-literal>
+    <!--Missing constructor. (advanced)-->
+    <warn-no-constructor>false</warn-no-constructor>
+    <!--The super() statement was not called within the constructor. (advanced)-->
+    <warn-no-explicit-super-call-in-constructor>false</warn-no-explicit-super-call-in-constructor>
+    <!--Missing type declaration. (advanced)-->
+    <warn-no-type-decl>false</warn-no-type-decl>
+    <!--In ActionScript 3.0, white space is ignored and '' returns 0. Number() returns NaN in ActionScript 2.0 when the parameter is '' or contains white space. (advanced)-->
+    <warn-number-from-string-changes>false</warn-number-from-string-changes>
+    <!--Change in scoping for the this keyword.  Class methods extracted from an instance of a class will always resolve this back to that instance.  In ActionScript 2.0 this is looked up dynamically based on where the method is invoked from. (advanced)-->
+    <warn-scoping-change-in-this>false</warn-scoping-change-in-this>
+    <!--Inefficient use of += on a TextField. (advanced)-->
+    <warn-slow-text-field-addition>false</warn-slow-text-field-addition>
+    <!--Possible missing parentheses. (advanced)-->
+    <warn-unlikely-function-value>false</warn-unlikely-function-value>
+    <!--Possible usage of the ActionScript 2.0 XML class. (advanced)-->
+    <warn-xml-class-has-changed>false</warn-xml-class-has-changed>
+  </compiler>
+  <!--writes a digest to the catalog.xml of a library. This is required when the library will be used in the -runtime-shared-libraries-path option.-->
+  <compute-digest>false</compute-digest>
+  <!--the password to include in debuggable SWFs (advanced)-->
+  <debug-password>string</debug-password>
+  <!--default background color (may be overridden by the application code) (advanced)-->
+  <default-background-color>12345</default-background-color>
+  <!--default frame rate to be used in the SWF. (advanced)-->
+  <default-frame-rate>12345</default-frame-rate>
+  <!--default script execution limits (may be overridden by root attributes) (advanced)-->
+  <default-script-limits>
+    <max-recursion-depth>12345</max-recursion-depth>
+    <max-execution-time>12345</max-execution-time>
+  </default-script-limits>
+  <!--default application size (may be overridden by root attributes in the application) (advanced)-->
+  <default-size>
+    <width>12345</width>
+    <height>12345</height>
+  </default-size>
+  <!--output the library as an open directory instead of a SWC file-->
+  <directory>false</directory>
+  <!--write a file containing all currently set configuration values in a format suitable for use as a flex config file (advanced)-->
+  <dump-config>string</dump-config>
+  <!--a list of symbols to omit from linking when building a SWF (advanced)-->
+  <externs append="true">
+    <symbol>flash.events.MouseEvent</symbol>
+    <symbol><error>Incorrect</error></symbol>
+  </externs>
+  <!--A SWF frame label with a sequence of classnames that will be linked onto the frame. (advanced)-->
+  <frames append="true">
+    <frame>
+      <label>string</label>
+      <classname>String</classname>
+    </frame>
+    <frame>
+      <label>string</label>
+      <classname><error>Incorrect</error></classname>
+    </frame>
+  </frames>
+  <!-- -->
+  <framework>string</framework>
+  <!--a list of classes to include in the output SWC-->
+  <include-classes append="true">
+    <class>flash.events.MouseEvent</class>
+    <class>String</class>
+    <class><error>Incorrect</error></class>
+  </include-classes>
+  <!--a list of named files to include in the output SWC-->
+  <include-file append="true">
+    <name>string</name>
+    <path>string</path>
+  </include-file>
+  <!--if true, manifest entries with lookupOnly=true are included in SWC catalog. Default is false. (advanced)-->
+  <include-lookup-only>false</include-lookup-only>
+  <!--all classes in the listed namespaces are included in the output SWC-->
+  <include-namespaces append="true">
+    <uri>string1</uri>
+    <uri>string2</uri>
+  </include-namespaces>
+  <!--only include inheritance dependencies of classes specified with include-classes  (advanced)-->
+  <include-inheritance-dependencies-only>false</include-inheritance-dependencies-only>
+  <!--a list of resource bundles to include in the output SWC-->
+  <include-resource-bundles append="true">
+    <bundle>string1</bundle>
+    <bundle>string2</bundle>
+  </include-resource-bundles>
+  <!--a list of directories and source files to include in the output SWC-->
+  <include-sources append="true">
+    <path-element>CompilerConfigHighlighting_4.xml</path-element>
+    <path-element>CompilerConfigHighlighting_5.xml</path-element>
+  </include-sources>
+  <!--a list of named stylesheet resources to include in the output SWC-->
+  <include-stylesheet append="true">
+    <name>string1</name>
+    <path>string2</path>
+  </include-stylesheet>
+  <!--a list of symbols to always link in when building a SWF (advanced)-->
+  <includes append="true">
+    <symbol>String</symbol>
+    <symbol><error>Incorrect</error></symbol>
+  </includes>
+  <!--specifies a product and a serial number.-->
+  <licenses append="true">
+    <license>
+      <product>string</product>
+      <serial-number>string</serial-number>
+    </license>
+    <license>
+      <product>string</product>
+      <serial-number>string</serial-number>
+    </license>
+  </licenses>
+
+  <!--Output a XML-formatted report of all definitions linked into the application. (advanced)-->
+  <link-report>string</link-report>
+  <!--load a file containing configuration options-->
+  <load-config append="true">string</load-config>
+  <!--an XML file containing <def>, <pre>, and <ext> symbols to omit from linking when building a SWF (advanced)-->
+  <load-externs append="true">string</load-externs>
+  <metadata>
+    <!--A contributor's name to store in the SWF metadata-->
+    <contributor append="true">string</contributor>
+    <!--A creator's name to store in the SWF metadata-->
+    <creator append="true">string</creator>
+    <!--The creation date to store in the SWF metadata-->
+    <date>string</date>
+    <!--The default description to store in the SWF metadata-->
+    <description>string</description>
+    <!--The language to store in the SWF metadata (i.e. EN, FR)-->
+    <language append="true">string</language>
+    <!--A localized RDF/XMP description to store in the SWF metadata-->
+    <localized-description append="true">
+      <text>string</text>
+      <lang>string</lang>
+    </localized-description>
+    <!--A localized RDF/XMP title to store in the SWF metadata-->
+    <localized-title append="true">
+      <title>string</title>
+      <lang>string</lang>
+    </localized-title>
+    <!--A publisher's name to store in the SWF metadata-->
+    <publisher append="true">string</publisher>
+    <!--The default title to store in the SWF metadata-->
+    <title>string</title>
+  </metadata>
+  <!--the filename of the SWF movie to create-->
+  <output>string</output>
+  <!--XML text to store in the SWF metadata (overrides metadata.* configuration) (advanced)-->
+  <raw-metadata>string</raw-metadata>
+  <!--remove RSLs that are not being used by the application (advanced)-->
+  <remove-unused-rsls>true</remove-unused-rsls>
+  <!--prints a list of resource bundles to a file for input to the compccompiler to create a resource bundle SWC file. (advanced)-->
+  <resource-bundle-list>string</resource-bundle-list>
+  <!--a list of runtime shared library URLs to be loaded before the application starts-->
+  <runtime-shared-libraries append="true">
+    <url>string1</url>
+    <url>string2</url>
+  </runtime-shared-libraries>
+  <!--specifies a SWC to link against, an RSL URL to load, with an optional policy file URL and optional failover URLs-->
+  <runtime-shared-library-path append="true">
+    <path-element>CompilerConfigHighlighting_5.xml</path-element>
+    <rsl-url>string1</rsl-url>
+    <policy-file-url>string1</policy-file-url>
+    <rsl-url>string2</rsl-url>
+    <policy-file-url>string2</policy-file-url>
+  </runtime-shared-library-path>
+  <runtime-shared-library-settings>
+    <!--override the application domain an RSL is loaded into. The supported values are 'current', 'default', 'parent', or 'top-level'. (advanced)-->
+    <application-domain>
+      <path-element>CompilerConfigHighlighting_5.xml</path-element>
+      <application-domain-target>string</application-domain-target>
+      <path-element>CompilerConfigHighlighting_4.xml</path-element>
+      <application-domain-target>string2</application-domain-target>
+    </application-domain>
+    <!--force an RSL to be loaded, overriding the removal caused by using the remove-unused-rsls option (advanced)-->
+    <force-rsls append="true">
+      <path-element>CompilerConfigHighlighting_5.xml</path-element>
+      <path-element>CompilerConfigHighlighting_4.xml</path-element>
+    </force-rsls>
+  </runtime-shared-library-settings>
+  <!--Output an XML-formatted report detailing the size of all code and data linked into the application. (advanced)-->
+  <size-report>string</size-report>
+  <!--statically link the libraries specified by the -runtime-shared-libraries-path option.-->
+  <static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>
+  <!--specifies the version of the compiled SWF file.-->
+  <swf-version>13</swf-version>
+  <!--specifies the version of the player the application is targeting. Features requiring a later version will not be compiled into the application. The minimum value supported is "9.0.0".-->
+  <target-player>string</target-player>
+  <!--specifies the locale used by the compiler when reporting errors and warnings.-->
+  <tools-locale>string</tools-locale>
+  <!--Use hardware acceleration to blit graphics to the screen, where such acceleration is available.-->
+  <use-direct-blit>true</use-direct-blit>
+  <!--Use GPU compositing features when drawing graphics, where such acceleration is available.-->
+  <use-gpu>true</use-gpu>
+  <!--toggle whether the SWF is flagged for access to network resources-->
+  <use-network>false</use-network>
+  <!--verifies the libraries loaded at runtime are the correct ones. (advanced)-->
+  <verify-digests>false</verify-digests>
+  <!--display the build version of the program-->
+  <version>false</version>
+  <!--toggle the display of warnings-->
+  <warnings>false</warnings>
+
+  <file-specs>
+    <path-element>CompilerConfigHighlighting_4.xml</path-element>
+    <path-element><error>Incorrect.xml</error></path-element>
+  </file-specs>
+</flex-config>

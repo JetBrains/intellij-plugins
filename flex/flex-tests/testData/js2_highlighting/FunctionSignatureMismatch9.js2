@@ -1,0 +1,9 @@
+package {
+    public class FunctionSignatureMismatch9 {
+        public function foo(p:int=0, q:int=5) {}
+
+        function zzz() {
+            foo<error>(1, 2, "abc")</error>;
+        }
+    }
+}

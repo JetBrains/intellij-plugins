@@ -1,0 +1,6 @@
+class CCC {
+/**
+ * @see C<caret>CC
+ */
+function xxx(yyy) {}
+}

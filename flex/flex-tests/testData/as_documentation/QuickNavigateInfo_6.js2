@@ -1,0 +1,6 @@
+package testData.documentation {
+  public namespace XXX = "";
+}
+
+import testData.documentation.XXX;
+testData.documentation.X<caret>XX

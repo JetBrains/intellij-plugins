@@ -1,0 +1,65 @@
+// E4X, JavaScript 1.6
+var x =
+  <people>
+   <person gender="male">
+     <name>Ant</name>
+      <?pi?>
+      &amp;
+      &#xFFFF;
+      &#1111;
+      <!-- example -->
+      <height measure="metric&#FFFF;">176</height>
+   </person>
+</people>;
+for each (var h in x..height) { print(h) };
+print(x.person.(name=="Ant").height);
+
+function metricToImperial(cms) {
+  var totalinches = Math.round(cms/2.54);
+  var inch = totalinches%12;
+  var ft = (totalinches-inch)/12;
+
+  var response = <height/>;
+
+  response.feet = ft;
+  response.inches = inch + 2; // we sounded a bit short
+  response.@measure = "imperial";
+  return response;
+}
+
+var num = 36;
+var p = <paul><age>{num}</age></paul>
+
+var xh = new XMLHttpRequest();
+
+xh.open("GET","http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl",false);
+
+xh.send(null);
+
+var wsdl = new XML(xh.responseText);
+print(wsdl..*::addresses[0].@location);
+print( mainXML..item.(author.@email=="fk@alex.com") )
+
+// print all the employee names
+for (var n in e..name) {
+print ("Employee name: " + e..name[n]);
+}
+// print each child of the first item
+for (var child in order.item[0].*) {
+  print("item child: " + order.item[0].*[child]) + order.@[a==1];
+}
+
+order = <{x}>{item}</{x}>;
+
+var emplist = <>
+<employee id="0" ><name>Jim</name><age>25</age></employee>
+<employee id="1" ><name>Joe</name><age>20</age></employee>
+<employee id="2" ><name>Sue</name><age>30</age></employee>
+</>;
+
+var x = <{tagname} {attributename}={attributevalue}>{content}</{tagname}>;
+for (var i = 0; i < 10; i++)
+e[i] = <employee id={i}>
+<name>{names[i].toUpperCase()}</name>
+<age>{ages[i]}</age> 
+</employee>;

@@ -1,0 +1,11 @@
+class Foo {
+    [Deprecated(replacement="Bar.yyy", since="3.0", message="No longer used")]
+    static var fooField:int;
+    function foo() {
+        Bar.yyy = 1;
+    }
+}
+
+class Bar {
+    static var yyy:int;
+}

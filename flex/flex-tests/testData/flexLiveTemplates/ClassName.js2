@@ -1,0 +1,6 @@
+package {
+public class Test {
+<caret>
+function Test() {}
+}
+}

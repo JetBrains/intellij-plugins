@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*">
+   <fx:Declarations>
+        <s:State name="state1"/>
+        <s:XMLListCollection>
+            <<error>local:Fxg_other</error>/>
+        </s:XMLListCollection>
+    </fx:Declarations>
+    <local:Fxg_other id="a" itemCreationPolicy="immediate" itemDestructionPolicy="auto" includeIn="state1" buttonMode="true" depth="1" <error>incorrect</error>=""/>
+    <mx:Panel>
+        <<error>local:Fxg_other</error>/>
+    </mx:Panel>
+    <s:Group>
+        <local:Fxg_other>
+            <local:id>b</local:id>
+            <local:buttonMode>true</local:buttonMode>
+            <local:depth>1</local:depth>
+            <<error>local:incorrect</error>>1</<error>local:depth</error>>
+        </local:Fxg_other>
+    </s:Group>
+    <fx:Script><![CDATA[
+        public function foo():void {
+            var s:Fxg_other = new Fxg_other();
+            s = new Fxg_other<error>(1)</error>;
+            s.buttonMode = true;
+            s.buttonMode = 1;
+            s.depth = <error>true</error>;
+            s.depth = 1;
+            s.<error>incorrect</error> = null;
+        }
+ ]]></fx:Script>
+</s:Application>

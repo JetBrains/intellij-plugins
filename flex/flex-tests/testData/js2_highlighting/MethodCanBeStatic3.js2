@@ -1,0 +1,7 @@
+package {
+   public class MethodCanBeStatic3 {
+     public final function <warning>fo<caret>o</warning>():void {
+       var v;
+     }
+   }
+}

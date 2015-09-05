@@ -1,0 +1,14 @@
+class Foo {
+    private var _xxx:int;
+    function get xxx():int { return _xxx; }
+    function set xxx(x:int) { _xxx = x; }
+
+    function bar() {
+        _xxx = _xxx + 2;
+        xxx = 1;
+        var x = xxx;
+        var y:Foo;
+        x = y.x<caret>xx;
+        y.xxx = 1;
+    }
+}

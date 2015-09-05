@@ -1,0 +1,9 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <debug>true</debug>
+  </compiler>
+  <include-classes>
+    <class>Object</class>
+    <class>String</class>
+  </include-classes>
+</flex-config>

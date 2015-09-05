@@ -1,0 +1,9 @@
+class Foo {
+    /***
+     * @see Bar#bar<caret>
+     */
+}
+
+class Bar {
+    static function barbar() {}
+}

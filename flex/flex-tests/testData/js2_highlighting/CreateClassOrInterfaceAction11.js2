@@ -1,0 +1,8 @@
+package {
+
+public class CreateClassOrInterfaceAction11 {
+  private function foo(i: int) {
+    foo(new <error>Abc<caret></error>("zz"));
+  }
+}
+}

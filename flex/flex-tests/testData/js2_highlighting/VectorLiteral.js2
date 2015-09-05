@@ -1,0 +1,10 @@
+class Vector {}
+var x = new <int>[<error>"xxx"</error>, 2];
+var y:String = <error>x[1]</error>;
+var z:int = x[1];
+
+foo(new <Function>[foo]);
+var t:Vector.<Function> = new <Function>[foo, <error descr="Vector literal element type String is not assignable to type Function">"xxx"</error>];
+function foo(x:Vector.<Function>) {}
+dynamic class Array {}
+var x2:Vector.<Boolean> = <error>new <String>[]</error>;

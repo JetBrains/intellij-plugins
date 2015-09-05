@@ -1,0 +1,7 @@
+<idea-plugin url="https://www.jetbrains.com/idea">
+  <extensions defaultExtensionNs="org.jetbrains.idea.maven">
+    <importer implementation="com.intellij.javascript.flex.maven.FlexmojosImporter"/>
+    <importer implementation="com.intellij.javascript.flex.maven.Flexmojos5Importer"/>
+    <additional.importing.settings implementation="com.intellij.javascript.flex.maven.FlexmojosImportingSettings"/>
+  </extensions>
+</idea-plugin>

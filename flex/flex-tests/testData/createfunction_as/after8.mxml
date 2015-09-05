@@ -1,0 +1,11 @@
+<!-- "Create Method 'bar'" "true" -->
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="bar()">
+    <mx:Script>
+        <![CDATA[
+        private function bar():void {
+            <caret>
+        }
+        ]]>
+    </mx:Script>
+</mx:Application>

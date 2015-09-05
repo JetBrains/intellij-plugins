@@ -1,0 +1,15 @@
+package foo {
+    public class Bar {}
+}
+
+package foo.zzz {
+   public class Bar2{}
+}
+
+package {
+    public class foo {}
+}
+
+package foo {
+    public class zzz {}
+}

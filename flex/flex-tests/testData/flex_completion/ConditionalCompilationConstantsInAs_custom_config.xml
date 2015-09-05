@@ -1,0 +1,18 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <define>
+      <name>CONFIG1::defined1</name>
+      <value>false</value>
+    </define>
+    <define>
+      <name>CONFIG1::defined2</name>
+      <value>true</value>
+    </define>
+  </compiler>
+  <compiler>
+    <define>
+      <name>CONFIG2::defined3</name>
+      <value>true</value>
+    </define>
+  </compiler>
+</flex-config>

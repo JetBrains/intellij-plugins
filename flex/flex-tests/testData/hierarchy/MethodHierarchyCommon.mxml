@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="pack.Interface2">
+    <mx:Script><![CDATA[
+        public function foo():void{}
+        ]]></mx:Script>
+</mx:Application>

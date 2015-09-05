@@ -1,0 +1,7 @@
+package {
+    public class FunctionSignatureMismatchRemoveParam1 {
+        function foo(i: int, s: String, f : FunctionSignatureMismatchRemoveParam1) {
+            foo<error>(5)</error>;
+        }
+    }
+}

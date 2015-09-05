@@ -1,0 +1,3 @@
+function addEventListener(f:Function) {}
+function onMyEvent() {}
+addEventListener(onMyEvent<caret>);

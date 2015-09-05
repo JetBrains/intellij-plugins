@@ -1,0 +1,9 @@
+class ExtractTest {
+    function add(a:int, b:int):int {
+        created(a, b);
+    }
+
+    public function created(a:int, b:int):void {
+        a = b;
+    }
+}

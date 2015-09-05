@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>ReportingSyntaxProblemsInActionScript.as</file>
+    <line>2</line>
+    <description>* or type name expected #loc</description>
+  </problem>
+</problems>
+

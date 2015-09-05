@@ -1,0 +1,17 @@
+public final dynamic class XML {
+  public static function set ignoreComments(value:Boolean):void
+
+  /**
+   * Determines
+   */
+  public static native function get ignoreProcessingInstructions():Boolean
+
+  public native function namespace(prefix:String = null):Object
+}
+
+var each:XML;
+each.namespace();
+namespace();
+z = {
+  namespace:function(each) {}
+}

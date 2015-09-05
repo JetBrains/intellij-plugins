@@ -1,0 +1,6 @@
+function foo() {
+  var str:String = "";
+  var x:int = str.search(/@/);
+  x = str.search("@");
+  var y:Array = str.split("@");
+}

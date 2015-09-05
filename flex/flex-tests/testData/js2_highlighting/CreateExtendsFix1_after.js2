@@ -1,0 +1,13 @@
+package {
+
+public class CreateExtendsFix1 extends C {
+  public function foo() {
+    var v : C = new CreateExtendsFix1();
+  }
+}
+}
+
+package {
+  public class C {}
+
+}

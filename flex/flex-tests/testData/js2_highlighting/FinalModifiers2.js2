@@ -1,0 +1,4 @@
+package  {
+public <error descr="Final modifier can be applied only to classes and class methods">final</error> function FinalModifiers2() {
+}
+}

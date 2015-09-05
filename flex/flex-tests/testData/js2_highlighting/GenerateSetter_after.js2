@@ -1,0 +1,16 @@
+class A {
+  private var _i:int;
+
+  [Bindable]
+  [Effect]
+  [Exclude]
+  private var _p:int;
+
+    public function set i(value:int):void {
+        _i = value;
+    }
+
+    public function set p(value:int):void {
+        _p = value;
+    }
+}

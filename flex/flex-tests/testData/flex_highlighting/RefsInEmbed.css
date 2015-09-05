@@ -1,0 +1,4 @@
+.h1 {
+  property: Embed(source="<error descr="Cannot resolve file 'logo.png'">logo.png</error>");
+  property2: Embed(source="/RefsInEmbed.as");
+}

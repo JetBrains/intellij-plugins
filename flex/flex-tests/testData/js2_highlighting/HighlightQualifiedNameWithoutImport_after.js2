@@ -1,0 +1,7 @@
+package {
+import mx.messaging.messages.AbstractMessage;
+
+public class HighlightQualifiedNameWithoutImport {
+    var p : mx.messaging.messages.AbstractMessage;
+}
+}

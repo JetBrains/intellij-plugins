@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationForm">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="468" height="361"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="97f38" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="34ecd"/>
+          <text value="Build &amp;configuration:"/>
+        </properties>
+      </component>
+      <hspacer id="afe77">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <vspacer id="9e6a7">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="f1ef5" class="com.intellij.ui.components.JBLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentStyle value="MINI"/>
+          <fontColor value="BRIGHTER"/>
+          <text value="Debugger is taken from the Flex/AIR SDK configured for the selected build configuration."/>
+        </properties>
+      </component>
+      <component id="c3140" class="com.intellij.ui.components.JBLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentStyle value="MINI"/>
+          <fontColor value="BRIGHTER"/>
+          <text value="Source files are searched according to the dependencies of the selected build configuration."/>
+        </properties>
+      </component>
+      <component id="34ecd" class="com.intellij.lang.javascript.flex.run.BCCombo" binding="myBCCombo" custom-create="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <grid id="62644" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
+        </clientProperties>
+        <border type="etched" title="Debugged app runs on:"/>
+        <children>
+          <component id="b0793" class="javax.swing.JRadioButton" binding="myOnAndroidDeviceRadioButton" default-binding="true">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="true"/>
+              <text value="Android de&amp;vice"/>
+            </properties>
+          </component>
+          <component id="aedf" class="javax.swing.JRadioButton" binding="myOnComputerRadioButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="&amp;This or remote computer"/>
+            </properties>
+          </component>
+          <grid id="f92eb" binding="myDeviceOptionsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="3882a" class="javax.swing.JRadioButton" binding="myDebugOverNetworkRadioButton">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Net&amp;work"/>
+                </properties>
+              </component>
+              <component id="d8975" class="javax.swing.JRadioButton" binding="myDebugOverUSBRadioButton">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="US&amp;B, port:"/>
+                </properties>
+              </component>
+              <component id="23dfc" class="javax.swing.JTextField" binding="myUsbDebugPortTextField">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <columns value="4"/>
+                </properties>
+              </component>
+              <component id="77393" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Debug on device over: "/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="346ae" class="javax.swing.JRadioButton" binding="myOnIOSDeviceRadioButton">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="iO&amp;S device"/>
+            </properties>
+          </component>
+          <hspacer id="328be">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+        </children>
+      </grid>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="myGroup1">
+      <member id="b0793"/>
+      <member id="aedf"/>
+      <member id="346ae"/>
+    </group>
+    <group name="myGroup2">
+      <member id="3882a"/>
+      <member id="d8975"/>
+    </group>
+  </buttonGroups>
+</form>

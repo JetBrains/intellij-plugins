@@ -1,0 +1,83 @@
+
+package
+{
+    public class E4XPredefines
+    {
+        public function E4XPredefines()
+        {
+            var rssXML:XML =  <rdf:RDF
+              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+              xmlns="http://purl.org/rss/1.0/"
+              xmlns:dc="http://purl.org/dc/elements/1.1/">
+              <channel rdf:about="http://www.xml.com/cs/xml/query/q/19">
+                <title>Test RSS</title>
+                <link>http://www.adobe.com/</link>
+                <description>This is a test RSS document.</description>
+                <language>en-us</language>
+                <items>
+                  <rdf:Seq>
+                <rdf:li rdf:resource="http://www.adobe.com/devnet/flash/"/>
+                <rdf:li rdf:resource="http://www.adobe.com/devnet/flex/"/>
+                  </rdf:Seq>
+                </items>
+              </channel>
+              <item rdf:about="http://www.adobe.com/devnet/flash/">
+                <title>Flash Developer Center</title>
+                <link>http://www.adobe.com/devnet/flash/</link>
+                <description>Welcome to the Flash Developer Center</description>
+                <dc:creator>Adobe</dc:creator>
+                <dc:date>2005-08-08</dc:date>
+              </item>
+              <item rdf:about="http://www.adobe.com/devnet/flex/">
+                <title>Flex Developer Center</title>
+                <link>http://www.adobe.com/devnet/flex/</link>
+                <description>Welcome to the Flex Developer Center</description>
+                <dc:creator>Adobe</dc:creator>
+                <dc:date>2005-10-16</dc:date>
+              </item>
+            </rdf:RDF>;
+
+            var dcNamespace:Namespace = new Namespace("dc", "http://purl.org/dc/elements/1.1/");
+            var creatorQName:QName = new QName(dcNamespace, "creator");
+
+            showDescendants(rssXML, creatorQName);
+
+            var dateQName:QName = new QName("http://purl.org/dc/elements/1.1/", "date");
+            if (dateQName == null) showDescendants(null, null);
+            var x = NaN;
+            showDescendants(rssXML, dateQName);
+        }
+
+        public function showDescendants(xmlData:XML, qualifiedName:QName):void
+        {
+            var decendantList:XMLList = xmlData.descendants(qualifiedName);
+
+            for each (var element:XML in decendantList)
+            {
+            }
+        }
+    }
+}
+
+class AAA {
+  function set aaa(o):void {
+      var xml:XML =
+        <body>
+            <p>hello</p>
+        </body>;
+        xml.prependChild(<p>world</p>);
+        //trace(xml.p[0].toXMLString()); // <p>world</p>
+        //trace(xml.p[1].toXMLString()); // <p>hello</p>
+  }
+
+  static var bbb;
+}
+
+AAA.bbb++;
+AAA.<error>bbb2</error>++;
+
+function foo() {
+    var order = new XML()
+    var val = order..item[2].@id = "__test__"
+    var s = val..item.(@id=="003").author.name.text();
+}

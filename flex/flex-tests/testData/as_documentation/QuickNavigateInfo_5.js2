@@ -1,0 +1,5 @@
+package xxx {
+  public function getTimer() {}
+}
+
+xxx.get<caret>Timer()

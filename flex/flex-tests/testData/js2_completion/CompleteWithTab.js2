@@ -1,0 +1,5 @@
+class SomeType {}
+function someOtherFunction():SomeType {}
+function someFunction():SomeType {
+    return <caret>null;
+}

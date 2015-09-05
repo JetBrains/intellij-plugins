@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        var xxx3: Vector.<int> = new <int> [1]
+        function xxx5(x, y) <caret>
+        ]]></mx:Script>
+    <mx:Button click="foo2()"/>
+</mx:Application>

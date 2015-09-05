@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <local:SubClassWithoutDefaultProperty>
+        <<error>mx:Label</error>/>
+        <<error>mx:Button</error>/>
+    </local:SubClassWithoutDefaultProperty>
+</mx:Application>

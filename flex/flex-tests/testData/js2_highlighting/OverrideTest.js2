@@ -1,0 +1,7 @@
+class ClassA {
+  function bar() {}
+}
+
+class ClassB extends ClassA {
+  <caret>
+}

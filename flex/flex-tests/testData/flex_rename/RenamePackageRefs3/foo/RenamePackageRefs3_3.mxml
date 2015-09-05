@@ -1,0 +1,6 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:aaa="foo.*">
+   <mx:Script>
+     import foo.Foo;
+     var a:foo.Foo
+   </mx:Script>
+</mx:Application>

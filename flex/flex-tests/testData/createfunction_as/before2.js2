@@ -1,0 +1,9 @@
+// "Create Method '_bbb'" "true"
+class D {
+}
+class C {
+  var aaa:D
+  function C() {
+    aaa._b<caret>bb("1","2");
+  }
+}

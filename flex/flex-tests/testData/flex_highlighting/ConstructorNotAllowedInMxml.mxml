@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+      function <error descr="Constructor is not allowed for MXML class">ConstructorNotAllowedInMxml</error>() {}
+      function foo() {}
+    </mx:Script>
+    <mx:Button click="foo()"/>
+</mx:Application>

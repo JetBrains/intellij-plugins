@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<MyApplication xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="MyNamespace">
+    <mx:Button/>
+    <mx:Label/>
+</MyApplication>

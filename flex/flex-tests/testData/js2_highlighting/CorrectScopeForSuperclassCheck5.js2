@@ -1,0 +1,10 @@
+package {
+    import mx.accessibility.AdvancedDataGridAccImpl;
+    import mx.controls.Button;
+
+    public class CorrectScopeForSuperclassCheck5 extends Button {
+        public function CorrectScopeForSuperclassCheck5() {
+            new AdvancedDataGridAccImpl(this);
+        }
+    }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import mx.events.FlexEvent;
+
+        public function button2_addHandler():void {
+        }
+
+        function button1_addHandler():void {
+        }
+
+        private function button3_addHandler(event:FlexEvent):void {
+            var i:int;<caret>
+        }
+        ]]></mx:Script>
+    <mx:Button add="button3_addHandler(event)"/>
+</mx:Application>

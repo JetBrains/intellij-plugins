@@ -1,0 +1,5 @@
+package yyy {
+  interface XXX {
+    function te<caret>st2();
+  }
+}

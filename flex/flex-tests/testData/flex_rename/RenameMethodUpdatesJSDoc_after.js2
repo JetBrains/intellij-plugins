@@ -1,0 +1,7 @@
+/**@see #bar */
+class C {
+/**
+ * @see C#b<caret>ar
+ */
+function bar(yyy) {}
+}

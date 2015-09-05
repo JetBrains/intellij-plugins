@@ -1,0 +1,18 @@
+package {
+ import com.D;
+
+public class CreateExtendsFix3 extends C {
+  public function foo() {
+    var v : D = <error>super</error>;
+  }
+}
+}
+
+package {
+  public class <error>C</error> {}
+
+}
+
+package <error>com</error> {
+  public class <error>D</error> {}
+}

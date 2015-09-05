@@ -1,0 +1,10 @@
+class C {
+    function C() {
+        var a = created();
+        alert(a);
+    }
+
+    public function created():int {
+        return 1 + 1;
+    }
+}

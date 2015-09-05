@@ -1,0 +1,9 @@
+class SelectionInfo {
+  function SelectionInfo(o:Object, x:Boolean, y:Number) {
+  }
+}
+var itemFabricClosure:Function = function(item:Object):SelectionInfo {
+  return new SelectionInfo(item, true, 1);
+};
+
+itemFabricClosure(null);

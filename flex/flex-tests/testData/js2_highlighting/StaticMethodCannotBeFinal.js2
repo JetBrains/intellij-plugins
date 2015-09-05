@@ -1,0 +1,3 @@
+class Foo {
+    static <error descr="Static method can not be final">final</error> function foo() {}
+}

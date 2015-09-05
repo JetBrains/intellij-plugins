@@ -1,0 +1,15 @@
+import mx.mypackage.M<caret>
+
+package mx.mypackage {
+  public class MyClass {
+    var ccc;
+    function zzz() {}
+  }
+}
+
+package mx {
+  namespace mynamespace {}
+  class MyClazz2 {
+    var aaa;
+  }
+}

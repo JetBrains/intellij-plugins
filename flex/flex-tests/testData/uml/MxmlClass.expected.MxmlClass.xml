@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="MxmlClass">
+  <node id="MxmlClass" nodeName="Class MxmlClass" name="&lt;html&gt;&lt;b&gt;MxmlClass&lt;/b&gt;&lt;/html&gt;">
+    <element name="abc()" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="prop" type="int" category="Properties" visibility="PACKAGE_LOCAL" />
+    <element name="foo" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="bar" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="Object" nodeName="Class Object" name="&lt;html&gt;&lt;b&gt;Object&lt;/b&gt;&lt;/html&gt;">
+    <element name="constructor" type="*" category="Properties" visibility="PUBLIC" />
+    <element name="length" type="Number" category="Properties" visibility="PUBLIC" />
+    <element name="prototype" type="Object" category="Properties" visibility="PUBLIC" />
+    <element name="toLocaleString()" type="Object" category="Methods" visibility="PUBLIC" />
+    <element name="toSource()" type="Object" category="Methods" visibility="PUBLIC" />
+    <element name="unwatch(String)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="watch(String, Object)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="hasOwnProperty(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
+    <element name="isPrototypeOf(Object)" type="Boolean" category="Methods" visibility="PUBLIC" />
+    <element name="propertyIsEnumerable(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
+    <element name="toString()" type="String" category="Methods" visibility="PUBLIC" />
+  </node>
+  <node id="flash.display.DisplayObject" nodeName="Class flash.display.DisplayObject" name="&lt;html&gt;&lt;b&gt;flash.display.DisplayObject&lt;/b&gt;&lt;/html&gt;">
+    <element name="width" type="uint" category="Properties" visibility="PUBLIC" />
+  </node>
+  <node id="flash.display.InteractiveObject" nodeName="Class flash.display.InteractiveObject" name="&lt;html&gt;&lt;b&gt;flash.display.InteractiveObject&lt;/b&gt;&lt;/html&gt;" />
+  <node id="flash.display.Sprite" nodeName="Class flash.display.Sprite" name="&lt;html&gt;&lt;b&gt;flash.display.Sprite&lt;/b&gt;&lt;/html&gt;">
+    <element name="layout" type="String" category="Properties" visibility="PUBLIC" />
+    <element name="currentState" type="String" category="Properties" visibility="PUBLIC" />
+  </node>
+  <node id="flash.events.EventDispatcher" nodeName="Class flash.events.EventDispatcher" name="&lt;html&gt;&lt;b&gt;flash.events.EventDispatcher&lt;/b&gt;&lt;/html&gt;">
+    <element name="addEventListener(String, Function, Boolean, int, Boolean)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="removeEventListener(String, Function, Boolean)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="dispatchEvent(Event)" type="Boolean" category="Methods" visibility="PUBLIC" />
+  </node>
+  <node id="flash.events.IEventDispatcher" nodeName="Class flash.events.IEventDispatcher" name="&lt;html&gt;&lt;b&gt;flash.events.IEventDispatcher&lt;/b&gt;&lt;/html&gt;">
+    <element name="addEventListener(String, Function, Boolean, int, Boolean)" type="void" category="Methods" visibility="PUBLIC" />
+  </node>
+  <node id="mx.core.IUIComponent" nodeName="Class mx.core.IUIComponent" name="&lt;html&gt;&lt;b&gt;mx.core.IUIComponent&lt;/b&gt;&lt;/html&gt;" />
+  <node id="mx.core.UIComponent" nodeName="Class mx.core.UIComponent" name="&lt;html&gt;&lt;b&gt;mx.core.UIComponent&lt;/b&gt;&lt;/html&gt;">
+    <element name="resourceManager" type="IResourceManager" category="Fields" visibility="PUBLIC" />
+    <element name="UIComponent()" category="Constructors" visibility="PUBLIC" />
+    <element name="id" type="String" category="Properties" visibility="PUBLIC" />
+    <element name="height" type="uint" category="Properties" visibility="PUBLIC" />
+    <element name="fakePrivateProperty" type="uint" category="Properties" visibility="PRIVATE" />
+    <element name="fakeStaticProperty" type="uint" category="Properties" visibility="PACKAGE_LOCAL" />
+    <element name="fakeFinalProperty" type="uint" category="Properties" visibility="PACKAGE_LOCAL" />
+    <element name="width" type="uint" category="Properties" visibility="PUBLIC" />
+    <element name="name" type="String" category="Properties" visibility="PUBLIC" />
+    <element name="backgroundColor" type="String" category="Properties" visibility="PUBLIC" />
+    <element name="enabled" type="Boolean" category="Properties" visibility="PUBLIC" />
+    <element name="setStyle(String, *)" type="void" category="Methods" visibility="PUBLIC" />
+    <element name="styleName" type="Object" category="Properties" visibility="PUBLIC" />
+    <element name="updateCallbacks()" type="void" category="Methods" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="mypackage.Button" nodeName="Class mypackage.Button" name="&lt;html&gt;&lt;b&gt;mypackage.Button&lt;/b&gt;&lt;/html&gt;">
+    <element name="Button()" category="Constructors" visibility="PUBLIC" />
+    <element name="label" type="String" category="Properties" visibility="PUBLIC" />
+    <element name="selected" type="Boolean" category="Properties" visibility="PUBLIC" />
+    <element name="listData" type="BaseListData" category="Properties" visibility="PUBLIC" />
+  </node>
+  <edge from="MxmlClass" to="mypackage.Button" idElement="MxmlClass" relship="GENERALIZATION" />
+  <edge from="flash.display.DisplayObject" to="flash.events.EventDispatcher" idElement="flash.display.DisplayObject" relship="GENERALIZATION" />
+  <edge from="flash.display.InteractiveObject" to="flash.display.DisplayObject" idElement="flash.display.InteractiveObject" relship="GENERALIZATION" />
+  <edge from="flash.display.Sprite" to="flash.display.InteractiveObject" idElement="flash.display.Sprite" relship="GENERALIZATION" />
+  <edge from="flash.events.EventDispatcher" to="Object" idElement="flash.events.EventDispatcher" relship="GENERALIZATION" />
+  <edge from="flash.events.EventDispatcher" to="flash.events.IEventDispatcher" idElement="flash.events.EventDispatcher" relship="REALIZATION" />
+  <edge from="mx.core.UIComponent" to="flash.display.Sprite" idElement="mx.core.UIComponent" relship="GENERALIZATION" />
+  <edge from="mx.core.UIComponent" to="mx.core.IUIComponent" idElement="mx.core.UIComponent" relship="REALIZATION" />
+  <edge from="mypackage.Button" to="flash.events.IEventDispatcher" idElement="mypackage.Button" relship="REALIZATION" />
+  <edge from="mypackage.Button" to="mx.core.UIComponent" idElement="mypackage.Button" relship="GENERALIZATION" />
+</umlModel>
+

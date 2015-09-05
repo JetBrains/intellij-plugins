@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+  <s:states>
+    <s:State name="state1" stateGroups="group1" />
+    <s:State name="state2" stateGroups="<error>state1</error>, group2, <error>state2</error>" />
+  </s:states>
+  <s:states>
+    <s:State name="state1" stateGroups="group1"/>
+    <s:State name="state2" stateGroups="group3, group2"/>
+    <s:State name="state3" stateGroups="<error>state1</error> , group2,   <error>state2</error>" />
+    <s:State name="state4" stateGroups="<error>state3</error>"/>
+  </s:states>
+  <s:transitions>
+    <s:Transition fromState="group1" toState="group2"/>
+    <s:Transition fromState="state1" toState="state2"/>
+    <s:Transition fromState="<error>group1_</error>" toState="<error>group2_</error>"/>
+    <s:Transition fromState="<error>state1_</error>" toState="<error>state2_</error>"/>
+  </s:transitions>
+  <s:Button label.group1="" label.state1="" includeIn="group1" excludeFrom="state1"/>
+  <s:Button label.<error>group1_</error>="" label.<error>state1_</error>="" includeIn="<error>group1_</error>" excludeFrom="<error>state1_</error>"/>
+</s:Application>

@@ -1,0 +1,15 @@
+package <error>AAA</error> {
+public class <error>A</error> {
+  protected var field;
+}
+}
+
+package <error>BBB</error> {
+import AAA.A;
+
+class <error>C</error> extends A {
+  function aaa() {
+    field = 1;
+  }
+}
+}

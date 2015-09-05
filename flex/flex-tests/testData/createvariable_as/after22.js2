@@ -1,0 +1,7 @@
+// "Create constant field 'CONST'" "true"
+public class A3 {
+    private const CONST<caret>:int = ;
+    function A3() {
+        if(CONST < 2) {}
+    }
+}

@@ -1,0 +1,8 @@
+xml = <user>
+            <name>Nick</name>
+            <address>
+              <country>Russia</country>
+              <city>Moscow</city>
+            </address>
+            <xmlE<caret>
+          </user>

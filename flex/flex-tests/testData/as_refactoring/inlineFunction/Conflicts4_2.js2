@@ -1,0 +1,13 @@
+package {
+public class Foo {
+    private var abc;
+
+    protected function zz() {
+    }
+
+    public function inlineMe() {
+        abc = null;
+        zz();
+    }
+}
+}

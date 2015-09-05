@@ -1,0 +1,8 @@
+package <error>com.example</error> {
+public class <error>Foo</error> {}
+}
+package {
+internal class <error>FooClasses</error> {
+ import com.example.Foo; Foo;
+}
+}

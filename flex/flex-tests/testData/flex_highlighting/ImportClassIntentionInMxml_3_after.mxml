@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+<![CDATA[
+      import com.MyClass;
+
+      var a:MyClass;
+  ]]></mx:Script>
+</mx:Application>

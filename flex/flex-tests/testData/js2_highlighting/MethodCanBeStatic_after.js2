@@ -1,0 +1,54 @@
+class Foo {
+  protected var xxx:int;
+  function yyy():void {}
+}
+
+class Bar extends Foo {
+  private var xxx2:int;
+  private static var xxx3:int;
+
+  function Bar() {}
+  override function yyy():void {}
+  function zzz():void {
+    super.yyy();
+  }
+
+  function ttt():void {
+    this.xxx2 = 1;
+  }
+
+  function ttt2():void {
+    xxx2 = 1;
+  }
+
+  function ttt3():void {
+    xxx = 1;
+  }
+
+  function ttt4():void {
+  }
+
+  function ttt5():void {
+    xxx3 = 1;
+  }
+
+  function ttt6():void {
+    var v:Bar;
+  }
+
+  function ttt7():void {
+    zzz2();
+  }
+
+  static function ttt8():void {
+    var z:Bar = new Bar();
+    ttt8();
+    ttt8();
+  }
+}
+
+function zzz2():void {
+    var v : Bar;
+    Bar.ttt8();
+    Bar.ttt8();
+}

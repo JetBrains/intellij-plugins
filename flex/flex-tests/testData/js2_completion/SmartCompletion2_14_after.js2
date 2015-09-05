@@ -1,0 +1,7 @@
+class SomeType {
+    public static function createIt():SomeType {}
+}
+
+function test():void {
+    var st:SomeType = SomeType.createIt()<caret>
+}

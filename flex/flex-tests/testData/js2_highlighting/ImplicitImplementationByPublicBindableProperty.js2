@@ -1,0 +1,28 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: Kirill.Safonov
+ * Date: 09.03.12
+ * Time: 20:40
+ * To change this template use File | Settings | File Templates.
+ */
+package {
+}
+
+interface IFoo {
+    function get name():String;
+    function set name( value:String ):void;
+}
+
+class Foo implements IFoo {
+    public function Foo() {
+    }
+
+    [Bindable]
+    public var name:String;
+}
+
+
+class SubFoo extends Foo implements IFoo {
+    public function SubFoo() {
+    }
+}

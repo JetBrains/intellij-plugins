@@ -1,0 +1,4 @@
+function trace(... rest) {}
+
+var xxx:uint = 1
+trace(xx<caret>)

@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:DataGrid>
+    <mx:columns>
+        <mx:DataGridColumn>
+            <mx:itemRenderer>
+                <mx:Component<caret>
+            </mx:itemRenderer>
+        </mx:DataGridColumn>
+    </mx:columns>
+</mx:DataGrid>
+</mx:Panel>

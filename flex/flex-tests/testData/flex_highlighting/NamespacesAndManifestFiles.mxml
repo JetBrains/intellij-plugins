@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<x:NamespacesAndManifestFiles_other xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:x="http://MyNamespace">
+  <x:someField/>
+  <x:View type=""/>
+  <x:Object type=""/>
+  <x:View type=""/>
+</x:NamespacesAndManifestFiles_other>

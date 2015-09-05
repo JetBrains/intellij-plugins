@@ -1,0 +1,3 @@
+var x = y + y;
+var y = x + x;
+y.toStri<caret>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Button xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:titleBackgroundSkin>
+    @Embed(source='xz')
+  </mx:titleBackgroundSkin>
+  <mx:mouseDown>
+    <![CDATA[
+    var a:int;
+    ]]>
+  </mx:mouseDown>
+  <mx:Script>
+      function foo() {
+          var node:*;
+          node.id = 1;
+          var className:* = node.@()
+      }
+  </mx:Script>
+</mx:Button>

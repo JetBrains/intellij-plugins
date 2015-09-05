@@ -1,0 +1,9 @@
+package {
+
+class Subclass2 extends SuperClass {
+
+ public function Subclass2() {
+   super();
+  }
+}
+}

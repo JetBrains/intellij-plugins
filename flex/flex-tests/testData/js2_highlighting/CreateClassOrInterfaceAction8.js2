@@ -1,0 +1,7 @@
+package <error>bar</error> {
+public class CreateClassOrInterfaceAction8 {
+  private function foo() {
+    new <error>Abc<caret></error>(this);
+  }
+}
+}

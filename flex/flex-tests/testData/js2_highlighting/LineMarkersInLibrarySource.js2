@@ -1,0 +1,16 @@
+package {
+
+
+public interface <error><lineMarker descr="Has implementations"></lineMarker>IFoo</error> {
+    function <info><lineMarker descr="Is implemented"></lineMarker>foo</info>();
+}
+
+public class <error><lineMarker descr="Has subclasses"></lineMarker>Foo</error> implements <info>IFoo</info> {
+    public function <info><lineMarker descr="Is overridden"></lineMarker><lineMarker descr="Implementation of foo in IFoo"></lineMarker>foo</info>() {}
+}
+
+public class <error>FooEx</error> extends <info>Foo</info> {
+    public override function <info><lineMarker descr="overrides method in Foo">foo</lineMarker></info>() {}
+}
+
+}

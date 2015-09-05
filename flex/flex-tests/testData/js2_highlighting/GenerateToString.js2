@@ -1,0 +1,8 @@
+class A {
+  var _i:int;
+  var _i2:int;
+  var i3:int;
+  static var _i4:int;
+  <caret>
+  function xxx() {}
+}

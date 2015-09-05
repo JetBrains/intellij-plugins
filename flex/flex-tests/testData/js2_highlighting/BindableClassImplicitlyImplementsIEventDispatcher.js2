@@ -1,0 +1,53 @@
+package {
+  [Bindable]
+  class <error>Foo</error> {}
+
+  [Bindable]
+  class <error>Foo2</error> {
+    public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false) {}
+  }
+}
+
+class Foo2 {
+    import flash.events.IEventDispatcher;
+    import flash.events.Event;
+    function foo(x:IEventDispatcher) {
+        foo(new Foo());
+        var x2:Foo = new Foo();
+        x2.addEventListener("foo", foo2);
+    }
+
+    function foo2(x:Event) {}
+}
+
+interface IFoo3 {
+    function bar(e:*);
+}
+
+[Bindable]
+class Foo3 implements IFoo3 {
+    public function bar(e:*) {
+        addEventListener("xxx", bar);
+    }
+}
+
+[Bindable]
+interface IExample
+{
+function get someValue() : String;
+function set someValue(value : String) : void;
+}
+
+class Example implements IExample
+{
+private var _someValue : String;
+
+public function get someValue() : String
+{
+return _someValue;
+}
+public function set someValue(value : String) : void
+{
+_someValue = value;
+}
+}

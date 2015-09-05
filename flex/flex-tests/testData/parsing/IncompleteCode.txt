@@ -1,0 +1,8 @@
+JSFile:IncompleteCode.js2
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('update')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')

@@ -1,0 +1,8 @@
+[ServerEventHandler(type=SFSEvent.onConnection, default="true")]
+[Before(async,ui)] class C {}
+[A a] class C {}
+[] class C {}
+[A (] class C {}
+[A (,)] class C {}
+[A (a=)] class C {}
+public [Embed()] class C {}

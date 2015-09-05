@@ -1,0 +1,12 @@
+interface XX<caret>X {
+  function bbb2();
+}
+
+interface XXX2 extends XXX {
+}
+interface XXX3 extends XXX2 {
+}
+
+class AAA implements XXX3 {
+  public function bbb2() {}
+}

@@ -1,0 +1,10 @@
+class Test {
+    public static var v:int = 123;
+    public const c<caret>cc: int = v;
+}
+
+class Some {
+    function bar() {
+        trace(new Test().ccc);
+    }
+}

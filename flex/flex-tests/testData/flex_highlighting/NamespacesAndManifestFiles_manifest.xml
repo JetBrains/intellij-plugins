@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component class="NamespacesAndManifestFiles_other"/>
+    <component class="org.spicefactory.parsley.tag.core.MxmlViewTag" id="View"/>
+    <component class="org.spicefactory.parsley.tag.core.MxmlRootObjectTag" id="Object"/>
+</componentPackage>

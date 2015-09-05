@@ -1,0 +1,6 @@
+class Foo {
+    const xx = "foo";
+    function foo() {
+       var y = "foo" + xx;
+    }
+}

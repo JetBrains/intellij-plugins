@@ -1,0 +1,7 @@
+/**@see #foo */
+class C {
+/**
+ * @see C#f<caret>oo
+ */
+function foo(yyy) {}
+}

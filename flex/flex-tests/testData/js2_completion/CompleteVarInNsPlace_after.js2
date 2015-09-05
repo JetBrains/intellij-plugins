@@ -1,0 +1,7 @@
+public class Test  {
+  public function test():void {
+    var completeMe:String;
+    completeMe<caret>
+    var a:Array = [""];
+  }
+}

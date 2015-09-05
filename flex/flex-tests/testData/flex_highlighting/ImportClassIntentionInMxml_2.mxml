@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="new <weak_warning>My<caret>Class</weak_warning>(foo())">
+  <mx:Script><![CDATA[
+      function foo():void {}
+  ]]></mx:Script>
+</mx:Application>

@@ -1,0 +1,3 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:foo="*">
+<foo:ImportedMember_2 id="foobar" width="100%" test="<caret>"/>
+</mx:Application>

@@ -1,0 +1,115 @@
+class U {}
+package foo {
+class V {}
+/**
+ * asdoc A
+ */
+class A {}
+
+/**
+ * asdoc B
+ */
+
+public class B {}
+
+/**
+ * asdoc none
+ */
+/**
+ * asdoc C
+ */
+// comment
+public class C {}
+
+// comment
+/**
+ * asdoc D
+ */
+// comment
+// comment
+public class D {}
+
+// comment
+
+/**
+ * asdoc E
+ */
+
+// comment
+
+// comment
+
+public class E {
+
+/**
+ * asdoc a()
+ */
+function a() {}
+
+/**
+ * asdoc b()
+ */
+
+public function b() {}
+
+/**
+ * asdoc none
+ */
+/**
+ * asdoc c()
+ */
+// comment
+public function c() {}
+
+// comment
+/**
+ * asdoc d
+ */
+// comment
+// comment
+public function d() {}
+
+// comment
+
+/**
+ * asdoc e
+ */
+
+// comment
+
+// comment
+
+public function e() {}
+
+// comment
+public function i() {}
+
+/**
+ * asdoc for v
+ */
+// comment
+// comment
+// comment
+var v;
+
+/**
+ * asdoc for v2
+ */
+// comment
+
+// comment
+
+// comment
+
+var v2;
+
+
+// comment
+var v3;
+
+}
+
+}
+
+// comment
+class H {}

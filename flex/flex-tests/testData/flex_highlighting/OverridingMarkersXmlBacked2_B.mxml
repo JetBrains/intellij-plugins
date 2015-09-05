@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<OverridingMarkersXmlBacked_A xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+
+    override function bar() : String {
+        return "B";
+    }
+
+    </mx:Script>
+</OverridingMarkersXmlBacked_A>

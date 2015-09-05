@@ -1,0 +1,6 @@
+package p {
+import <caret>
+
+public class Test {
+}
+}

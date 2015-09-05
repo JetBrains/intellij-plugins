@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<<error descr="Root tag must contain language namespace declaration">s:Application</error> xmlns:fx="prefix_used" xmlns:s="library://ns.adobe.com/flex/spark">
+</<error descr="Root tag must contain language namespace declaration">s:Application</error>>

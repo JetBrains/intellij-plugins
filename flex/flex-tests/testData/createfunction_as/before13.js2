@@ -1,0 +1,15 @@
+// "Create Method 'anymethod'" "true"
+package yyy {
+public interface Foo3 {}
+}
+
+package xxx {
+  import yyy.Foo3;
+
+  class Bar {
+    function foo() {
+      var x:Foo3;
+      x.any<caret>method();
+    }
+  }
+}

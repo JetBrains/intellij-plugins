@@ -1,0 +1,7 @@
+interface FirstInterface <error descr="Implements list is not allowed for interface">implements Object</error> {
+  function firstInterfaceMethod(x:int):void;
+}
+
+class <error descr="Method firstInterfaceMethod from interface FirstInterface is not implemented">FirstClass</error> implements FirstInterface {}
+class SecondClass extends <error descr="Class name expected here">FirstInterface</error> implements <error descr="Interface name expected here">FirstClass</error> {}
+interface SecondInterface extends <error descr="Interface name expected here">FirstClass</error> {}

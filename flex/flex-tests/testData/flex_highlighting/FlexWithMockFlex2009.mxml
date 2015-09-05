@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Application <error descr="Attribute id is not allowed here">id</error>="not_allowed" xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" mouseDown="copy()" mouseUp="copy()"
+                mouseMove="<error descr="Unresolved function or method copy2()">copy2</error>()" initialize="<error descr="Unresolved function or method copy2()">copy2</error>()" implements="MyInterface">
+    <states>
+      <State name="foo" />
+    </states>
+    <fx:Metadata>
+        [HostComponent("spark.components.<error descr="Unresolved variable or type 'Button2'">Button2</error>")]
+        [HostComponent("spark.components.Button")]
+        [DataBindingInfo("acceptedTypes", "{ dataProvider: 'String' }")]
+        [DefaultTriggerEvent("change")]
+        [RequiresDataBinding(true)]
+    </fx:Metadata>
+    <mx:HBox>
+      <mx:Tree/>
+        <mx:VBox>
+            <mx:DataGrid/>
+            <mx:TextArea/>
+        </mx:VBox>
+    </mx:HBox>
+
+  <fx:Declarations>
+  <fx:String><![CDATA[ {whatever !@#$^*()} ]]></fx:String>
+  <fx:String>{whatever !@#$%^*()</fx:String>
+  <fx:String>{<error>whatever</error>}</fx:String>
+  <mx:RemoteObject id="authServ" destination="authenticationService">
+    <mx:method name="resetUser" />
+  </mx:RemoteObject>
+
+  <HTTPService resultFormat="e4x"/>
+  <HTTPService resultFormat="<error descr="Wrong attribute value">e4x2</error>"/>
+  </fx:Declarations>
+
+    <fx:Script>
+
+    public function <error descr="Method overrides method in superclass flash.events.EventDispatcher without override keyword">addEventListener</error>(type:String, listener:Function, useCapture:Boolean = false):void {}
+    public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {}
+
+    function copy() {
+        destination.text=source.text = ' '
+        var aaa:Function = copy_
+        addEventListener("xxx", null);
+        super.addEventListener("close", aaa);
+        <error descr="Unresolved variable or type destination2">destination2</error>.text=<error descr="Unresolved variable or type source2">source2</error>.text
+    }
+
+    function copy_() {
+      this.addEventListener("xxx", null)
+    }
+
+    function <error descr="Incompatible implementation, should have 'public' access modifier">doIt</error>() {}
+    </fx:Script>
+    <fx:Script><![CDATA[
+    var a = <xxx>{<error descr="Unresolved variable or type zzz">zzz</error>}</xxx>;
+    var b = <xxx>{a}</xxx>;
+ ]]></fx:Script>
+
+    <TextInput id="source" width="100" horizontalCenter="0" verticalCenter="1" width.foo="150" width.<error descr="Invalid state reference">bar</error>="200"/>
+    <Button <error descr="Attribute id.foo is not allowed here">id.foo</error>="wrong_attr" label="Copy" click="copy()" buttonDown="<error descr="Unresolved function or method copy3()">copy3</error>()"/>
+    <Button label="Copy2" click="<error descr="Unresolved function or method copy2()">copy2</error>()" stateChangeComplete="<error descr="Unresolved function or method copy2()">copy2</error>()"
+               creationComplete="<error descr="Unresolved function or method copy2()">copy2</error>()"/>
+    <TextInput id="destination" width="100"/>
+
+    <List id="list" width="100%" height="100%">
+      <itemRenderer>
+        <fx:Component>
+          <mx:Text text="{listx.name}" <error descr="Attribute relativeTo is not allowed here">relativeTo</error>="{<error descr="Unresolved variable or type aa">aa</error>}:{listx.name}" currentState="aa" <error descr="Attribute relativeTo2 is not allowed here">relativeTo2</error>="aa" resizeEffect="aa"/>
+          <mx:Text id="listx">
+            <mx:text> { <error descr="Unresolved variable or type list2">list2</error> } </mx:text>
+          </mx:Text>
+          <mx:Text>
+            <mx:text> { listx } </mx:text>
+          </mx:Text>
+        </fx:Component>
+      </itemRenderer>
+    </List>
+
+    <List id="list27" width="100%" height="100%">
+      <itemRenderer>
+        <<error descr="Element Button is not allowed here">Button</error> />
+      </itemRenderer>
+    </List>
+
+    <List id="list28" width="100%" height="100%">
+      <itemRenderer>
+        <<error descr="Element Component is not allowed here">Component</error> />
+      </itemRenderer>
+    </List>
+
+    <fx:Declarations>
+        <mx:EmailValidator source="{list}"/>
+        <mx:Image id="ebtLogo" source="@Embed('<error descr="Cannot resolve file 'jpmlogo.gif'">jpmlogo.gif</error>')" />
+        <mx:Image id="ebtLogo2" source="@Embed(source='FlexWithMockFlex2009.mxml', fontName='xxx', embedAsCFF='true', advancedAntiAliasing='true', unicodeRange='U+0020-U+007E', smoothing='true', compression='<error descr="Wrong attribute value">wrong_value</error>', quality='90')" />
+
+        <fx:XML source="FlexWithMockFlex2009.mxml"/>
+        <fx:String source="FlexWithMockFlex2009.mxml"/>
+        <fx:Boolean source="FlexWithMockFlex2009.mxml"/>
+        <fx:Number source="FlexWithMockFlex2009.mxml"/>
+        <fx:int source="FlexWithMockFlex2009.mxml"/>
+        <fx:uint source="FlexWithMockFlex2009.mxml"/>
+
+        <fx:XMLList <error descr="Attribute source is not allowed here">source</error>="incorrect" <error descr="Attribute s is not allowed here">s</error>="a"/>
+        <fx:XML source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>" <error descr="Attribute s is not allowed here">s</error>="a"/>
+        <fx:String source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>" <error descr="Attribute s is not allowed here">s</error>="a"/>
+        <fx:Boolean source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>" <error descr="Attribute s is not allowed here">s</error>="a"/>
+        <fx:Number source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>" <error descr="Attribute s is not allowed here">s</error>="a"/>
+        <fx:int source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>" <error descr="Attribute s is not allowed here">s</error>="a"/>
+        <fx:uint source="<error descr="Cannot resolve file 'incorrect'">incorrect</error>" <error descr="Attribute s is not allowed here">s</error>="a"/>
+    </fx:Declarations>
+
+    <mx:DataGrid id="dataGrid" width="100%" height="100%" resizeEffect="aa" name="xxx">
+        <mx:dataProvider>
+          <fx:Object label="abcdef" />
+        </mx:dataProvider>
+        <mx:columns>
+          <mx:DataGridColumn dataField="id" id = "zz"/>
+          <<error descr="Element DataGrid is not allowed here">DataGrid</error>/>
+        </mx:columns>
+      </mx:DataGrid>
+
+    <fx:Declarations/>
+</Application>

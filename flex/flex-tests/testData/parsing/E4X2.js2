@@ -1,0 +1,15 @@
+default xml namespace = "";
+var x:XML
+var xsi;
+with(x) {
+  @xsi::type = "";
+}
+
+var xml:XML = <xxx/>;
+var _fieldMappingName:String = "myMappingName";
+var _fieldMappingNS:Namespace = new Namespace("http://www.my-namespace.com");
+
+var _fieldXMLList:XMLList = xml._fieldMappingNS::[_fieldMappingName];
+with(xml) {
+  _fieldMappingNS::[_fieldMappingName] = "";
+}

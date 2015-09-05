@@ -1,0 +1,19 @@
+package {
+
+public class FunctionSignatureMismatch11 {
+  private function f():void {
+    var b:String;
+    var zzz : FunctionSignatureMismatch11;
+    foo(b, zzz, new FunctionSignatureMismatch11(), this, [1,2,3], 1 < 2 ? "a" : "b", foo, null, function():void {
+
+      },
+      function listener():void {
+
+      });
+  }
+
+  private function foo(b:String, zzz:FunctionSignatureMismatch11, functionSignatureMismatch11:FunctionSignatureMismatch11, functionSignatureMismatch:FunctionSignatureMismatch11, p:Array, s:String, foo:Function, p1:*, f:Function, listener:Function):void {
+
+  }
+}
+}

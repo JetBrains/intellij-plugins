@@ -1,0 +1,15 @@
+import xxx.Vector2;
+function doItStatic() {}
+
+package xxx {
+  public class Vector2 {
+    public function doMyWay() {}
+  }
+}
+
+class Vector {
+  function doIt() {}
+}
+var a:Vector.<Vector2.<int>>;
+
+a[1].doMyWay()<caret>

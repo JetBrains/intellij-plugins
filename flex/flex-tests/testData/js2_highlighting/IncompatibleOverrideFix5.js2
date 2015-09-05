@@ -1,0 +1,20 @@
+package {
+    public class <error>Base</error> {
+        public function foo(a:int) {}
+    }
+}
+
+package {
+    public class IncompatibleOverrideFix5 extends Base {
+        override public function foo<error>(a:String, b:Boolean, c:*)</error> {}
+
+        private function zz() {
+            var v : Base;
+            v.foo(0);
+            v.foo<error>()</error>;
+            v.foo<error>(1, 2, 3, 4, 5)</error>;
+            var v2 : IncompatibleOverrideFix5;
+            v2.foo<error>()</error>;
+        }
+    }
+}

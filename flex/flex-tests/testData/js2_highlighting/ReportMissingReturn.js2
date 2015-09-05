@@ -1,0 +1,43 @@
+function foo1():int    {<error descr="Missing return statement">}</error>
+function foo2():Object {<error descr="Missing return statement">}</error>
+function foo3():String {<error descr="Missing return statement">}</error>
+function foo4():*      {}
+function foo5():void   {}
+function foo6()        {}
+
+function foo7():int { return 1; }
+
+function foo8():int    {<error descr="Return value of type int is required">return;</error><error descr="Missing return statement">}</error>
+function foo9():Object {<error descr="Return value of type Object is required">return;</error><error descr="Missing return statement">}</error>
+function foo10():String {<error descr="Return value of type String is required">return;</error><error descr="Missing return statement">}</error>
+function foo11():*     {return;}
+function foo12():void  {return;}
+function foo13()       {return;}
+
+var dyn1:Object
+dyn1.returnParametersSum = function (aParam:int, bParam:int):int
+{ // return aParam + bParam;
+<error>}</error>;
+dyn1.returnParametersSum2 = function (aParam:int, bParam:int):void
+{ // return aParam + bParam;
+};
+
+function bla():* {
+  (function():* {})();
+}
+
+(function():* { return; })();
+
+function getStackTrace():String {
+    try {
+        return "\r\n\r\n" + new Error().getStackTrace();
+    } catch(e:Error) {
+        return "\r\n\r\n-- No stack trace in release player --";
+    }
+<error>}</error>
+
+class Foo {
+function Foo() {
+return <error>1</error>;
+}
+}

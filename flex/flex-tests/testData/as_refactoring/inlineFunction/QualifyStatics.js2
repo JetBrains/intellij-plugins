@@ -1,0 +1,13 @@
+class Test {
+    public static var v:int = 123;
+
+    public function f<caret>oo():void {
+        trace(v);
+    }
+}
+
+class Some {
+    function bar() {
+        new Test().foo();
+    }
+}

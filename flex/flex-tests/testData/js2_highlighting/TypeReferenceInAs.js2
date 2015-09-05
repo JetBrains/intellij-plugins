@@ -1,0 +1,11 @@
+function get xxx():Class { return null; }
+function get xxx2():Object { return null; }
+function compareFunction(a:Class, b:Class):int {
+  if (a is b) return 1;
+  if (b is a) return -1;
+  if (b is xxx || b is <error>xxx2</error>) throw new Error();
+  var c:Object = new xxx(1, 2);
+  c = new a(1, 2);
+
+  return (c as a).foo;
+}

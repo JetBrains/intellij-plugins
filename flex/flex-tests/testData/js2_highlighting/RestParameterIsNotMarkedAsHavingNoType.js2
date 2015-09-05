@@ -1,0 +1,15 @@
+function aaa(... rest):void {
+  if (<error descr="'arguments' object is not available when using rest parameter">arguments</error>.length == 0) aaa(rest);
+}
+
+function aaa2(... arguments):void {
+  if (arguments.length == 0) aaa(arguments);
+}
+
+function bbb(... rest:<error descr="Rest parameter should have no type">String</error>):void {
+}
+
+function ccc(... rest, <warning descr="Variable x has no type"><error descr="No parameter is allowed after rest parameter">x</error></warning>):void {
+}
+
+function ddd(x:int = 1, <warning descr="Variable y has no type"><error descr="Parameter should be initialized">y</error></warning>):void {}

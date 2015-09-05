@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    .someClass {
+    }
+  </mx:Style>
+  <mx:Button styleName="some<caret>Class"/>
+</mx:Application>

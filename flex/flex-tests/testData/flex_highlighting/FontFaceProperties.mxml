@@ -1,0 +1,10 @@
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    @font-face {
+      src:url("");
+      fontFamily: "ff";
+      embedAsCFF: "true";
+      advancedAntiAliasing: "false";
+    }
+  </mx:Style>
+</mx:Panel>

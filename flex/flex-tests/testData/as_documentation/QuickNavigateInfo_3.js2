@@ -1,0 +1,8 @@
+package xxx {
+  public class AAA {
+    public static function yyy(p:Object):AAA {}
+  }
+}
+
+import xxx.AAA
+AAA.y<caret>yy(1)

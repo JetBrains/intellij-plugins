@@ -1,0 +1,12 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        function func(a, b) {
+            if (<caret>a > b) {
+                return 1;
+            }
+            var c2 = 0;
+
+            var c = 0;
+        }
+        ]]></mx:Script>
+</mx:Application>

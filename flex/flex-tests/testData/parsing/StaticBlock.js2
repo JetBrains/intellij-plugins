@@ -1,0 +1,9 @@
+package {
+public class TTT {
+    {
+      [Embed(source="xxx")]
+      public static const a:Class;
+      Alert.show("a = "+a);
+    }
+  }
+}

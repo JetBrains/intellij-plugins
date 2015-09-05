@@ -1,0 +1,25 @@
+package {
+
+public class CreateImplementsFix1 {
+  public function foo() {
+    C.ccc(<error>this</error>);
+  }
+}
+}
+
+
+package <error>com.foo</error> {
+
+public interface <error>MyInt</error> {
+}
+
+}
+
+package {
+  import com.foo.MyInt;
+
+  public class <error>C</error> {
+    internal static function ccc(i: MyInt) {}
+  }
+
+}

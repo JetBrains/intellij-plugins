@@ -1,0 +1,10 @@
+class Foo {
+/**
+ * Doc
+ * @param x xxx
+ * @param y yyy
+ * @param z zzz
+ * @see Array
+ */
+function F<caret>oo(x,y,z) {}
+}

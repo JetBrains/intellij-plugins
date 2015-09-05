@@ -1,0 +1,28 @@
+interface <lineMarker descr="Has implementations"></lineMarker><info>FirstInterface</info> {
+  function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">firstInterfaceMethod</info>(<info descr="parameter">x</info>);
+}
+
+interface <lineMarker descr="Has implementations"></lineMarker><info>SecondInterface</info> extends <info>FirstInterface</info> {
+  function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">secondInterfaceMethod</info>();
+}
+
+interface <lineMarker descr="Has implementations"></lineMarker><info>ThirdInterface</info> extends <info>SecondInterface</info> {
+  function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">thirdInterfaceMethod</info>();
+}
+
+class <lineMarker descr="Has subclasses"></lineMarker><info>FirstClass</info> implements <info>SecondInterface</info> {
+  public function <lineMarker descr="Implementation of firstInterfaceMethod in FirstInterface"></lineMarker><info descr="instance method">firstInterfaceMethod</info>(<info descr="parameter">x</info>) {}
+  public function <lineMarker descr="Implementation of secondInterfaceMethod in SecondInterface"></lineMarker><lineMarker descr="Is overridden"></lineMarker><info descr="instance method">s<caret>econdInterfaceMethod</info>() {}
+}
+
+class <lineMarker descr="Has subclasses"></lineMarker><info>SecondClass</info> extends <info>FirstClass</info> {
+}
+
+class <lineMarker descr="Has subclasses"></lineMarker><info>ThirdClass</info> extends <info>SecondClass</info> implements <info>ThirdInterface</info> {
+  public override function <lineMarker descr="Is overridden"></lineMarker><lineMarker descr="overrides method in FirstClass"><info descr="instance method">secondInterfaceMethod</info></lineMarker>() {}
+  public function <lineMarker descr="Implementation of thirdInterfaceMethod in ThirdInterface"></lineMarker><info descr="instance method">thirdInterfaceMethod</info>() {}
+}
+
+class <info>FourthClass</info> extends <info>ThirdClass</info> {
+  public override function <lineMarker descr="overrides method in ThirdClass"><info descr="instance method">secondInterfaceMethod</info></lineMarker>() {}          
+}

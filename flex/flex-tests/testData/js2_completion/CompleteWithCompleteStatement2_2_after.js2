@@ -1,0 +1,5 @@
+class Foo {
+    function Foo() {}
+}
+class Foo2 extends Foo {}
+var foo:Foo = new <caret>

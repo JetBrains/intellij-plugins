@@ -1,0 +1,3 @@
+package {
+  class <warning descr="Declaration has implicit package internal scope"><caret>ImplicitlyInternalDeclaration2</warning> {}
+}

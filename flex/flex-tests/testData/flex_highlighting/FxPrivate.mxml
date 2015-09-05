@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="*"
+                xmlns:sdkpack="mx">
+    <s:Button>
+        <mx:CheckBox/>
+        <<error descr="The <fx:Private> tag must be the last child of the root document tag">fx:Private</error>/>
+    </s:Button>
+    <<error descr="The <fx:Private> tag must be the last child of the root document tag">fx:Private</error>>
+    </<error descr="The <fx:Private> tag must be the last child of the root document tag">fx:Private</error>>
+    <fx:Private <error descr="Attribute id is not allowed here">id</error>="not_allowed" <error descr="Attribute anyAttr is not allowed here">anyAttr</error>="not_allowed">
+        <asd:AnyTag fdgyh="dsrhg" xmlns:asd="AnyNamespace">10/22/2008</asd:AnyTag>
+        <mx:CheckBox anyAttr="{ not injected ! }">
+            <s:NotClassUsage/>
+        </mx:CheckBox>
+        <fx:Script><![CDATA[
+            private function foo():void {
+               not injected !
+            }
+            ]]></fx:Script>
+        <<error>undefined</error>:Something xmlns:a="not.validated.*"/>
+    </fx:Private>
+</mx:Application>

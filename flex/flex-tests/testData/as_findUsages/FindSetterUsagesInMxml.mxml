@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+
+        public function get whatever():String {
+            return "";
+        }
+
+        public function set wha<caret>tever(value:String):void {
+        }
+
+        private function whateverTester():void {
+
+            trace(whatever);
+
+            whatever = "";
+            whatever = "";
+        }
+        ]]></mx:Script>
+
+    <mx:Text text="{whatever}"/>
+
+</mx:Canvas>

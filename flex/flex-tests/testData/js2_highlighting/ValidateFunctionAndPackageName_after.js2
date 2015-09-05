@@ -1,0 +1,4 @@
+package {
+  public function XXX() {}
+  public function ValidateFunctionAndPackageName() {}
+}

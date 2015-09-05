@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <mx:Panel>
+        <<error>mx:Sprite</error>/>
+        <local:Flex3AllowsNonVisualComponentsOnlyUnderRootTag_other1/>
+        <<error>local:Flex3AllowsNonVisualComponentsOnlyUnderRootTag_other2</error>/>
+        <local:Flex3AllowsNonVisualComponentsOnlyUnderRootTag_other3/>
+    </mx:Panel>
+    <mx:Sprite/>
+    <local:Flex3AllowsNonVisualComponentsOnlyUnderRootTag_other1/>
+    <local:Flex3AllowsNonVisualComponentsOnlyUnderRootTag_other2/>
+    <local:Flex3AllowsNonVisualComponentsOnlyUnderRootTag_other3/>
+</mx:Application>

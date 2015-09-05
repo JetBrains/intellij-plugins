@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+  <mx:Script><![CDATA[
+    private function testing():String {
+      <error>foo</error>();
+      return <error>label2</error>;
+    }
+    ]]></mx:Script>
+</mx:Application>
+
+        

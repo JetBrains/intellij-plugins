@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="A">
+    <CLASSES>
+      <root url="jar://$MODULE_DIR$/../lib/A.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Standard MXML comment: events\myComponents\MyButton.mxml -->
+<!--- 
+	The class level comment for the component. 
+	This tag supports all ASDoc tags, 
+	and does not require a CDATA block.
+
+	@see mypackage.<warning>VBox2</warning>
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" >
+
+        <!--- 
+         Comment for button
+        --> 
+	<mx:Button id="myButton" label="This button has comment"/>
+
+        <!--- 
+         This comment doesn't belong to any component and will be ignored
+        --> 
+</mx:VBox>

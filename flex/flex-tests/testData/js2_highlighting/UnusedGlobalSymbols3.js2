@@ -1,0 +1,9 @@
+package {
+public class UnusedGlobalSymbols3 implements IX
+{
+  public function UnusedGlobalSymbols3() {}
+  public function doIt() {}
+  public function doIt2() {}
+}
+}
+

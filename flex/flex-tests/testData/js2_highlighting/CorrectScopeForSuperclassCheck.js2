@@ -1,0 +1,15 @@
+package {
+}
+
+import flash.events.EventDispatcher;
+
+class MyEventEx extends MyEvent {
+    public function MyEventEx(type:String, bubbles:Boolean = false, cancelable:Boolean = false) {
+        super(type, bubbles, cancelable);
+    }
+}
+class Zz extends EventDispatcher {
+    public function Zz() {
+        dispatchEvent(new MyEventEx("aa"));
+    }
+}

@@ -1,0 +1,14 @@
+class A extends B
+{
+    public function A(... rest = null)
+    {
+    }
+}
+
+class B
+{
+	public function B(needParam:String = "", ... rest)
+	{
+	}
+}
+

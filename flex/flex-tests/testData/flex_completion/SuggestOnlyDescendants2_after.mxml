@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <local:SuggestOnlyDescendants2_2>
+      <local:children>
+        <mx:Label<caret>
+      </local:children>
+    </local:SuggestOnlyDescendants2_2>
+</mx:Application>

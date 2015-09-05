@@ -1,0 +1,5 @@
+class Bar {
+}
+class A extends Bar {
+  <caret>
+}

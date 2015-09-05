@@ -1,0 +1,5 @@
+function foo() {
+    <selection>trace(arguments)</selection>
+}
+
+function trace(... rest) {}

@@ -1,0 +1,4 @@
+
+package foo {
+    var JSVar<caret>iable;
+}

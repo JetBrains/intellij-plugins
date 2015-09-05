@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        function foo() {
+            xxx2(new Foo(), new Foo());
+        }
+        ]]></mx:Script>
+</mx:Application>

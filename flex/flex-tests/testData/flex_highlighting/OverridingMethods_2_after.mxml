@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    <![CDATA[
+      use namespace mx_internal;
+      [Inspectable(category="General")]
+      override public function set layout(s:String) {
+          return super.layout = s;
+      }
+
+      [Inspectable(category="General")]
+      override public function set currentState(s:String):void {
+          super.currentState = s;
+      }
+
+      override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
+          super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+      }
+
+      override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+          super.removeEventListener(type, listener, useCapture);
+      }
+
+      override public function dispatchEvent(event:Event):Boolean {
+          return super.dispatchEvent(event);
+      }
+
+      override public function get id():String {
+          return super.id;
+      }
+
+      override public function set id(value:String):void {
+          super.id = value;
+      }
+
+      [Inspectable(category="General")]
+      [PercentProxy]
+      override public function get height():uint {
+          return super.height;
+      }
+
+      override public function set height(_:uint):void {
+          super.height = _;
+      }
+
+      [Inspectable(category="General")]
+      [PercentProxy]
+      override public function set width(_:uint):void {
+          super.width = _;
+      }
+
+      override public function get width():uint {
+          return super.width;
+      }
+
+      [Inspectable(category="General")]
+      override public function set name(_:String):void {
+          super.name = _;
+      }
+
+      override public function get name():String {
+          return super.name;
+      }
+
+      override public function set backgroundColor(_:String):void {
+          super.backgroundColor = _;
+      }
+
+      override public function set enabled(_:Boolean):void {
+          super.enabled = _;
+      }
+
+      override public function setStyle(styleProp:String, newValue:*):void {
+          super.setStyle(styleProp, newValue);
+      }
+
+      override public function set styleName(value:Object):void {
+          super.styleName = value;
+      }
+
+      override mx_internal function updateCallbacks():void {
+          super.mx_internal::updateCallbacks();
+      }
+
+      override public function get data():Object {
+          return super.data;
+      }
+
+      override public function set data(value:Object):void {
+          super.data = value;
+      }
+      ]]>
+  </mx:Script>
+</mx:Application>
