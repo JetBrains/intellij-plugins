@@ -155,10 +155,18 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   }
 
   protected Set<String> getHookGlue(final PsiElement element) {
-    final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
     final Set<String> packages = ContainerUtil.newLinkedHashSet();
+
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    if (module == null) {
+      return packages;
+    }
+
+    final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
+    final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
+
     for (final String fullyQualifiedAnnotationName : HOOK_ANNOTATION_NAMES) {
-      final PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, GlobalSearchScope.allScope(element.getProject()));
+      final PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, dependenciesScope);
 
       if (psiClass != null) {
         final Query<PsiMethod> psiMethods = AnnotatedElementsSearch
