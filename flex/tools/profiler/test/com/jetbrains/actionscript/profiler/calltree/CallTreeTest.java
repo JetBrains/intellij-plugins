@@ -18,7 +18,7 @@ import java.util.Map;
 abstract public class CallTreeTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return File.separator + "flex" + File.separator + "tools" + File.separator + "profiler" + File.separator + "testdata";
+    return "/contrib/flex/tools/profiler/testdata";
   }
 
   protected void doTest(String fileName, String resultsFileName) throws IOException {

@@ -39,11 +39,11 @@ public class FlexTestUtils {
 
   @NotNull
   public static String getTestDataPath(@NotNull final String relativePath) {
-    return PathManager.getHomePath() + "/flex/flex-tests/testData/" + relativePath;
+    return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/" + relativePath;
   }
 
   public static String getPathToCompleteFlexSdk(final String version) {
-    return PathManager.getHomePath() + "/flex/tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk/" + version;
+    return PathManager.getHomePath() + "/contrib/flex/tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk/" + version;
   }
 
   public static void setupFlexLib(final Project project, final Class clazz, final String testName) {

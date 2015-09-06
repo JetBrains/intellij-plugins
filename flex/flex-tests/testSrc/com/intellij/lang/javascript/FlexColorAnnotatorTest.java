@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModuleFixtureBuilder> {
   @Override
   protected String getBasePath() {
-    return "/flex/flex-tests/testData/flex_color_gutter";
+    return "/contrib/flex/flex-tests/testData/flex_color_gutter";
   }
 
   @Override

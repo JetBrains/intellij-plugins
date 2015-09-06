@@ -46,7 +46,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
 
   @Override
   protected String getBasePath() {
-    return "/flex/flex-tests/testData/imports/auto";
+    return "/contrib/flex/flex-tests/testData/imports/auto";
   }
 
   public void testVarStatement() throws Throwable {

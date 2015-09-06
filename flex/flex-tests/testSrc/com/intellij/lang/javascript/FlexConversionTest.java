@@ -44,7 +44,7 @@ public class FlexConversionTest extends ConversionTestBaseEx {
 
   @Override
   protected String getBasePath() {
-    return "/flex/flex-tests/testData/conversion/";
+    return "/contrib/flex/flex-tests/testData/conversion/";
   }
 
   public void testFacets() throws IOException, JDOMException {
