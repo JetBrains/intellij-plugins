@@ -122,7 +122,7 @@ public class EduEditor implements TextEditor {
     @NotNull
     @Override
     public String getName() {
-        return "Edu Editor";
+        return "EduEditor";
     }
 
     @NotNull
