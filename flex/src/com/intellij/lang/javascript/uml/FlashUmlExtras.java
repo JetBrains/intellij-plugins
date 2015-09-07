@@ -8,7 +8,6 @@ import com.intellij.diagram.settings.DiagramConfigGroup;
 import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

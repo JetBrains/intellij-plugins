@@ -35,5 +35,7 @@
     <orderEntry type="module" module-name="webide-api" />
     <orderEntry type="module" module-name="properties-psi-api" />
     <orderEntry type="module" module-name="script-debugger-ui" />
+    <orderEntry type="module" module-name="diagram-api" />
+    <orderEntry type="module" module-name="graph-openapi" />
   </component>
 </module>
