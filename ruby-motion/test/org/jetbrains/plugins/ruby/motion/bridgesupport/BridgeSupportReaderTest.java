@@ -166,7 +166,7 @@ public class BridgeSupportReaderTest extends UsefulTestCase {
   }
 
   private static InputStream getTestText(final String filename) throws Exception {
-    final String path = PathManager.getHomePath() + "/ruby/ruby-motion/test/org/jetbrains/plugins/ruby/motion/bridgesupport/data/" + filename + ".bridgesupport";
+    final String path = PathManager.getHomePath() + "/contrib/ruby-motion/test/org/jetbrains/plugins/ruby/motion/bridgesupport/data/" + filename + ".bridgesupport";
     final File file = new File(path);
     assertTrue(path, file.exists());
     return new FileInputStream(file);
