@@ -142,8 +142,8 @@ public class EduPanel extends JPanel {
 
         //UI colors and fonts
         background = new JBColor(Gray._250, Gray._50);
-        lessonNameFont = new Font(UIUtil.getLabelFont().getName(), Font.BOLD, fontSize);
-        messageFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+        lessonNameFont = new Font(JBUI.Fonts.label().getName(), Font.BOLD, fontSize + 1);
+        messageFont = JBUI.Fonts.label();
         defaultTextColor = new JBColor(Gray._30, Gray._208);
         passedColor = new JBColor(Gray._105, Gray._103);
         lessonPassedColor = new JBColor(new Color(49, 140, 64), new Color(7, 140, 45));
@@ -159,8 +159,8 @@ public class EduPanel extends JPanel {
         lessonActiveColor = new JBColor(Gray._167, Gray._202);
         lessonInactiveColor = new JBColor(new Color(17, 96, 166), new Color(104, 159, 220));
 //        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
-        lessonsFont = JBUI.Fonts.label();
-        allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
+        lessonsFont = JBUI.Fonts.label(fontSize);
+        allLessonsFont = JBUI.Fonts.label(fontSize - 1);
 
     }
 

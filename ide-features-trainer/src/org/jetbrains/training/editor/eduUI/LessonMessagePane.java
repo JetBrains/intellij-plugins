@@ -3,6 +3,7 @@ package org.jetbrains.training.editor.eduUI;
 import com.intellij.execution.process.OSProcessManager;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ui.UIUtil;
 
@@ -27,12 +28,16 @@ public class LessonMessagePane extends JTextPane {
 
     private ArrayList<LessonMessage> lessonMessages = new ArrayList<LessonMessage>();
     private Color passedColor = Color.GRAY;
+    private Icon passedIcon;
 
     LessonMessagePane(){
         super();
         initStyleConstants();
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
+
+        passedIcon = IconLoader.findIcon(EduIcons.CHECKMARK_GRAY_12);
+
     }
 
     private static void initStyleConstants() {
@@ -122,7 +127,8 @@ public class LessonMessagePane extends JTextPane {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
             if(SystemInfo.isMac) {
                 lessonMessage.appendMacCheck();
-                getDocument().insertString(getDocument().getLength(), " ✓", BOLD);
+                getDocument().insertString(getDocument().getLength(), " ", REGULAR);
+                insertIcon(passedIcon);
             } else {
                 lessonMessage.appendWinCheck();
                 getDocument().insertString(getDocument().getLength(), " \uF0FC", ROBOTO);
