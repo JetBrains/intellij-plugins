@@ -3,6 +3,7 @@ package org.jetbrains.training.editor.eduUI;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.training.lesson.BadCourseException;
 import org.jetbrains.training.lesson.BadLessonException;
@@ -157,7 +158,8 @@ public class EduPanel extends JPanel {
         //course UI
         lessonActiveColor = new JBColor(Gray._167, Gray._202);
         lessonInactiveColor = new JBColor(new Color(17, 96, 166), new Color(104, 159, 220));
-        lessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize);
+//        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
+        lessonsFont = JBUI.Fonts.label();
         allLessonsFont = new Font(UIUtil.getLabelFont().getName(), 0, fontSize - 1);
 
     }
