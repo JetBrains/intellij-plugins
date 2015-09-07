@@ -183,6 +183,8 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setBackground(background);
         lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, passedColor);
         lessonMessagePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
+        lessonMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         //Set label UI
         lessonNextButton = new JButton("Next");
