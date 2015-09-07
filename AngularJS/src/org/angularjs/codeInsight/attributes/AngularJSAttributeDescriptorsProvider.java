@@ -88,9 +88,12 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       }
     }
     if ("input".equalsIgnoreCase(requiredTag)) {
-      PsiElement parent = tag.getParent();
-      if (parent instanceof XmlTag && "form".equalsIgnoreCase(((XmlTag)parent).getName())) {
-        return true;
+      PsiElement parent = tag;
+      while (parent != null) {
+        parent = parent.getParent();
+        if (parent instanceof XmlTag && "form".equalsIgnoreCase(((XmlTag)parent).getName())) {
+          return true;
+        }
       }
     }
     return false;
