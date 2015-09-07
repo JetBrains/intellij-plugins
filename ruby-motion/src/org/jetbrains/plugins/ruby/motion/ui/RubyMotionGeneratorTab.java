@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.RBundle;
-import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
+import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
 import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.TabbedSettingsEditorTab;
 import org.jetbrains.plugins.ruby.remote.RubyRemoteInterpreterManager;
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType;
@@ -102,14 +102,14 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
     });
 
     myProjectTypeLabel.setDisplayedMnemonic('T');
-    myProjectType.setModel(new EnumComboBoxModel<RubyMotionUtil.ProjectType>(RubyMotionUtil.ProjectType.class));
+    myProjectType.setModel(new EnumComboBoxModel<RubyMotionUtilImpl.ProjectType>(RubyMotionUtilImpl.ProjectType.class));
     myProjectType.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
-        final RubyMotionUtil.ProjectType projectType = (RubyMotionUtil.ProjectType)myProjectType.getSelectedItem();
+        final RubyMotionUtilImpl.ProjectType projectType = (RubyMotionUtilImpl.ProjectType)myProjectType.getSelectedItem();
         mySettingsHolder.setProjectType(projectType);
-        myUseCalabash.setSelected(projectType == RubyMotionUtil.ProjectType.IOS);
-        myUseCalabash.setEnabled(projectType == RubyMotionUtil.ProjectType.IOS);
+        myUseCalabash.setSelected(projectType == RubyMotionUtilImpl.ProjectType.IOS);
+        myUseCalabash.setEnabled(projectType == RubyMotionUtilImpl.ProjectType.IOS);
       }
     });
     myProjectType.setSelectedIndex(0);

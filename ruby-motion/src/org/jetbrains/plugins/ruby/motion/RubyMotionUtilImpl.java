@@ -94,6 +94,8 @@ import static org.jetbrains.plugins.ruby.utils.MarkupConstants.SPACE;
  * @author Dennis.Ushakov
  */
 public class RubyMotionUtilImpl extends RubyMotionUtil {
+  protected static final Key<ProjectType> PROJECT_TYPE = Key.create("ruby.motion.project.type");
+
   @Nullable
   public String getMotionDoc(PsiElement targetElement, @Nullable Symbol targetSymbol) {
     String descriptionText;
@@ -518,5 +520,22 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     return targetSymbol instanceof MotionClassSymbol ?
            ((MotionClassSymbol)targetSymbol).getSuperClassSymbol(invocationPoint) :
            null;
+  }
+
+  public enum ProjectType {
+    IOS("iOS"),
+    OSX("OS X"),
+    ANDROID("Android"),
+    GEM("Gem");
+    private final String myDisplayName;
+
+    ProjectType(String displayName) {
+      myDisplayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+      return myDisplayName;
+    }
   }
 }

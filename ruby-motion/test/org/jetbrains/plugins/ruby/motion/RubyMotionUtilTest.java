@@ -30,7 +30,7 @@ public class RubyMotionUtilTest extends RubyMotionLightFixtureTestCase {
                                                                                    "  # Use `rake config' to see complete project settings.\n" +
                                                                                    "  app.name = 'TestApp'\n" +
                                                                                    "end"));
-    assertEquals(RubyMotionUtil.getInstance().getDefaultSdkVersion(RubyMotionUtil.ProjectType.IOS), result.first);
+    assertEquals(((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).getDefaultSdkVersion(RubyMotionUtilImpl.ProjectType.IOS), result.first);
     assertSameElements(result.second, "CoreGraphics", "Foundation", "UIKit");
 
     result = RubyMotionUtil.getInstance().calculateSdkAndFrameworks(createRakefile("# -*- coding: utf-8 -*-\n" +
