@@ -37,19 +37,6 @@
   <node id="Foo" nodeName="Class Foo" name="&lt;html&gt;&lt;b&gt;Foo&lt;/b&gt;&lt;/html&gt;" />
   <node id="Inner1" nodeName="Class Inner1" name="&lt;html&gt;&lt;b&gt;Inner1&lt;/b&gt;&lt;/html&gt;" />
   <node id="Inner2" nodeName="Class Inner2" name="&lt;html&gt;&lt;b&gt;Inner2&lt;/b&gt;&lt;/html&gt;" />
-  <node id="Object" nodeName="Class Object" name="&lt;html&gt;&lt;b&gt;Object&lt;/b&gt;&lt;/html&gt;">
-    <element name="constructor" type="*" category="Properties" visibility="PUBLIC" />
-    <element name="length" type="Number" category="Properties" visibility="PUBLIC" />
-    <element name="prototype" type="Object" category="Properties" visibility="PUBLIC" />
-    <element name="toLocaleString()" type="Object" category="Methods" visibility="PUBLIC" />
-    <element name="toSource()" type="Object" category="Methods" visibility="PUBLIC" />
-    <element name="unwatch(String)" type="void" category="Methods" visibility="PUBLIC" />
-    <element name="watch(String, Object)" type="void" category="Methods" visibility="PUBLIC" />
-    <element name="hasOwnProperty(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
-    <element name="isPrototypeOf(Object)" type="Boolean" category="Methods" visibility="PUBLIC" />
-    <element name="propertyIsEnumerable(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
-    <element name="toString()" type="String" category="Methods" visibility="PUBLIC" />
-  </node>
   <node id="Oo" nodeName="Class Oo" name="&lt;html&gt;&lt;b&gt;Oo&lt;/b&gt;&lt;/html&gt;" />
   <node id="Pp" nodeName="Class Pp" name="&lt;html&gt;&lt;b&gt;Pp&lt;/b&gt;&lt;/html&gt;" />
   <node id="Rt" nodeName="Class Rt" name="&lt;html&gt;&lt;b&gt;Rt&lt;/b&gt;&lt;/html&gt;" />
@@ -59,17 +46,6 @@
   <node id="Zz2" nodeName="Class Zz2" name="&lt;html&gt;&lt;b&gt;Zz2&lt;/b&gt;&lt;/html&gt;">
     <element name="Zz2()" category="Constructors" visibility="PUBLIC" />
   </node>
-  <edge from="A1" to="Object" idElement="A1" relship="GENERALIZATION" />
-  <edge from="A10" to="Object" idElement="A10" relship="GENERALIZATION" />
-  <edge from="A2" to="Object" idElement="A2" relship="GENERALIZATION" />
-  <edge from="A3" to="Object" idElement="A3" relship="GENERALIZATION" />
-  <edge from="A4" to="Object" idElement="A4" relship="GENERALIZATION" />
-  <edge from="A5" to="Object" idElement="A5" relship="GENERALIZATION" />
-  <edge from="A6" to="Object" idElement="A6" relship="GENERALIZATION" />
-  <edge from="A7" to="Object" idElement="A7" relship="GENERALIZATION" />
-  <edge from="A8" to="Object" idElement="A8" relship="GENERALIZATION" />
-  <edge from="A9" to="Object" idElement="A9" relship="GENERALIZATION" />
-  <edge from="Abc" to="Object" idElement="Abc" relship="GENERALIZATION" />
   <edge from="AsDependencies" to="A1" idElement="AsDependencies" relship="DEPENDENCY" />
   <edge from="AsDependencies" to="A10" idElement="AsDependencies" relship="DEPENDENCY" />
   <edge from="AsDependencies" to="A10" idElement="AsDependencies" relship="DEPENDENCY" relshipLabel="xx" />
@@ -97,7 +73,6 @@
   <edge from="AsDependencies" to="Foo" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="f" />
   <edge from="AsDependencies" to="Inner1" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
   <edge from="AsDependencies" to="Inner2" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
-  <edge from="AsDependencies" to="Object" idElement="AsDependencies" relship="GENERALIZATION" />
   <edge from="AsDependencies" to="Oo" idElement="AsDependencies" relship="DEPENDENCY" />
   <edge from="AsDependencies" to="Pp" idElement="AsDependencies" relship="DEPENDENCY" />
   <edge from="AsDependencies" to="Rt" idElement="AsDependencies" relship="DEPENDENCY" />
@@ -106,17 +81,4 @@
   <edge from="AsDependencies" to="Zz" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
   <edge from="AsDependencies" to="Zz" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="t" />
   <edge from="AsDependencies" to="Zz2" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
-  <edge from="Bar" to="Object" idElement="Bar" relship="GENERALIZATION" />
-  <edge from="Def" to="Object" idElement="Def" relship="GENERALIZATION" />
-  <edge from="Foo" to="Object" idElement="Foo" relship="GENERALIZATION" />
-  <edge from="Inner1" to="Object" idElement="Inner1" relship="GENERALIZATION" />
-  <edge from="Inner2" to="Object" idElement="Inner2" relship="GENERALIZATION" />
-  <edge from="Oo" to="Object" idElement="Oo" relship="GENERALIZATION" />
-  <edge from="Pp" to="Object" idElement="Pp" relship="GENERALIZATION" />
-  <edge from="Rt" to="Object" idElement="Rt" relship="GENERALIZATION" />
-  <edge from="UI" to="Object" idElement="UI" relship="GENERALIZATION" />
-  <edge from="W" to="Object" idElement="W" relship="GENERALIZATION" />
-  <edge from="Zz" to="Object" idElement="Zz" relship="GENERALIZATION" />
-  <edge from="Zz2" to="Object" idElement="Zz2" relship="GENERALIZATION" />
 </umlModel>
-

@@ -440,15 +440,17 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files);
   }
 
+  @JSTestOptions({JSTestOption.WithFlexSdk})
   public final void testCompleteType() throws Exception {
     doTest("");
     assertEquals("*", myItems[0].getLookupString());
-    assertEquals("Array", myItems[2].getLookupString());
-    assertEquals("int", myItems[9].getLookupString());
     assertEquals("MyClass", myItems[1].getLookupString());
-    assertTrue(myItems.length < 100);
+    assertEquals("Array", myItems[14].getLookupString());
+    assertEquals("int", myItems[58].getLookupString());
+    assertTrue(myItems.length < 110);
   }
 
+  @JSTestOptions({JSTestOption.WithFlexSdk})
   public final void testCompleteType2() throws Exception {
     doTest("");
   }
@@ -465,6 +467,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files);
   }
 
+  @JSTestOptions({JSTestOption.WithFlexSdk})
   public final void testCompleteTypeInNew2() throws Exception {
     doTest("");
   }
@@ -838,7 +841,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
+  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
   public final void testSmartCompletion2_3() throws Exception {
     // TODO consider parseInt() returning Number etc expect to appear. + 2_36 and 2_36_2. see JSTypeUtils.typeCanBeAssignedWithoutCoercion
     defaultTest();

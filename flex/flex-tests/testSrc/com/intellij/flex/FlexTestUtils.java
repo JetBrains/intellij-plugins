@@ -78,9 +78,6 @@ public class FlexTestUtils {
     if (withFlexSdk) {
       doSetupFlexSdk(module, pathToFlexSdk, air, getSdkVersion(testName, clazz));
     }
-    else {
-      JSTestUtils.setupPredefinedLibrary(module, testName, clazz);
-    }
   }
 
   public static Sdk getSdk(JSTestUtils.TestDescriptor testDescriptor) {

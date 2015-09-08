@@ -749,6 +749,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
+  @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testRegress() throws Exception {
     defaultTest();
   }
