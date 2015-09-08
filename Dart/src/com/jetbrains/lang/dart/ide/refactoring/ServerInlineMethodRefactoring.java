@@ -30,7 +30,7 @@ public class ServerInlineMethodRefactoring extends ServerRefactoring {
   private boolean isDeclaration;
 
   public ServerInlineMethodRefactoring(String file, int offset, int length) {
-    super(RefactoringKind.INLINE_METHOD, file, offset, length);
+    super("Inline Method", RefactoringKind.INLINE_METHOD, file, offset, length);
   }
 
   public String getFullName() {

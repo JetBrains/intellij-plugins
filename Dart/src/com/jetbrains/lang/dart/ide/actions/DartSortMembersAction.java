@@ -69,7 +69,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
 
     final Runnable runnable = new Runnable() {
       public void run() {
-        final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
+        final String path = psiFile.getVirtualFile().getPath();
 
         final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
         service.updateFilesContent();
@@ -126,7 +126,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
             indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
           }
 
-          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+          final String path = virtualFile.getPath();
           final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_sortMembers(path);
           if (fileEdit != null) {
             fileToFileEditMap.put(virtualFile, fileEdit);

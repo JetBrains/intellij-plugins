@@ -17,7 +17,6 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,7 @@ public class DartElementLocation {
       @Override
       public String compute() {
         final VirtualFile elementFile = element.getContainingFile().getVirtualFile();
-        return FileUtil.toSystemDependentName(elementFile.getPath());
+        return elementFile.getPath();
       }
     });
   }

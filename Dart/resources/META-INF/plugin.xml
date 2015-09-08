@@ -80,7 +80,7 @@
 
     <renamePsiElementProcessor implementation="com.jetbrains.lang.dart.ide.DartRenamePsiElementProcessor"/>
     <!--<renameHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartRenameHandler"/>-->
-    <!--<inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>-->
+    <inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>
 
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>

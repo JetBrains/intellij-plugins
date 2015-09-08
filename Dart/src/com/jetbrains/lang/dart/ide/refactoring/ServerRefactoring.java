@@ -39,7 +39,8 @@ import java.util.concurrent.TimeUnit;
  * The LTK wrapper around an Analysis Server refactoring.
  */
 public abstract class ServerRefactoring {
-  @NotNull protected final String kind;
+  @NotNull private final String refactoringName;
+  @NotNull private final String kind;
 
   @NotNull private final String file;
   private final int offset;
@@ -56,7 +57,8 @@ public abstract class ServerRefactoring {
   private int lastId = 0;
   @Nullable private ServerRefactoringListener listener;
 
-  public ServerRefactoring(@NotNull String kind, @NotNull String file, int offset, int length) {
+  public ServerRefactoring(@NotNull String refactoringName, @NotNull String kind, @NotNull String file, int offset, int length) {
+    this.refactoringName = refactoringName;
     this.kind = kind;
     this.file = file;
     this.offset = offset;
@@ -65,9 +67,10 @@ public abstract class ServerRefactoring {
 
   @Nullable
   public RefactoringStatus checkFinalConditions() {
-    ProgressManager.getInstance().run(new Task.Modal(null, "Checking final conditions", true) {
+    ProgressManager.getInstance().run(new Task.Modal(null, refactoringName, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
+        indicator.setText("Validating the specified parameters.");
         setOptions(false, indicator);
       }
     });
@@ -85,9 +88,10 @@ public abstract class ServerRefactoring {
 
   @Nullable
   public RefactoringStatus checkInitialConditions() {
-    ProgressManager.getInstance().run(new Task.Modal(null, "Checking initial conditions", true) {
+    ProgressManager.getInstance().run(new Task.Modal(null, refactoringName, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
+        indicator.setText("Checking availability at the selection.");
         setOptions(true, indicator);
       }
     });

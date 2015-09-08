@@ -221,6 +221,11 @@ class InlineMethodDialog extends InlineOptionsDialog {
   }
 
   @Override
+  protected boolean hasPreviewButton() {
+    return false;
+  }
+
+  @Override
   protected boolean isInlineThis() {
     return !refactoring.isDeclaration();
   }

@@ -703,8 +703,8 @@ public class DartAnalysisServerService {
 
   @NotNull
   public List<SourceChange> edit_getAssists(@NotNull final String _filePath, final int offset, final int length) {
-    final List<SourceChange> results = Lists.newArrayList();
     final String filePath = FileUtil.toSystemDependentName(_filePath);
+    final List<SourceChange> results = Lists.newArrayList();
 
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -732,9 +732,9 @@ public class DartAnalysisServerService {
 
   @Nullable
   public List<AnalysisErrorFixes> edit_getFixes(@NotNull final String _filePath, final int offset) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
     final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
     final Semaphore semaphore = new Semaphore();
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
 
     synchronized (myLock) {
       if (myServer == null) return null;
@@ -769,9 +769,11 @@ public class DartAnalysisServerService {
     return resultRef.get();
   }
 
-  public void search_findElementReferences(@NotNull final String filePath,
+  public void search_findElementReferences(@NotNull final String _filePath,
                                            final int offset,
                                            @NotNull final Consumer<SearchResult> consumer) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
     final String searchId;
     synchronized (myLock) {
       if (myServer == null) return;
@@ -868,7 +870,8 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public String completion_getSuggestions(@NotNull final String filePath, final int offset) {
+  public String completion_getSuggestions(@NotNull final String _filePath, final int offset) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
     final Ref<String> resultRef = new Ref<String>();
 
     final AnalysisServer server = myServer;
@@ -896,10 +899,12 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public FormatResult edit_format(@NotNull final String filePath,
+  public FormatResult edit_format(@NotNull final String _filePath,
                                   final int selectionOffset,
                                   final int selectionLength,
                                   final int lineLength) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
     final Ref<FormatResult> resultRef = new Ref<FormatResult>();
     final Semaphore semaphore = new Semaphore();
 
@@ -943,7 +948,7 @@ public class DartAnalysisServerService {
   }
 
   public boolean edit_getRefactoring(String kind,
-                                     String filePath,
+                                     String _filePath,
                                      int offset,
                                      int length,
                                      boolean validateOnly,
@@ -951,7 +956,8 @@ public class DartAnalysisServerService {
                                      GetRefactoringConsumer consumer) {
     synchronized (myLock) {
       if (myServer == null) return false;
-      myServer.edit_getRefactoring(kind, FileUtil.toSystemDependentName(filePath), offset, length, validateOnly, options, consumer);
+      final String filePath = FileUtil.toSystemDependentName(_filePath);
+      myServer.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
       return true;
     }
   }
@@ -1004,7 +1010,9 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public SourceFileEdit edit_sortMembers(@NotNull final String filePath) {
+  public SourceFileEdit edit_sortMembers(@NotNull final String _filePath) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
     final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
     final Semaphore semaphore = new Semaphore();
 
