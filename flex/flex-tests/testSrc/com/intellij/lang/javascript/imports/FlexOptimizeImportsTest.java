@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
@@ -33,11 +32,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     super.setUp();
     JSTestUtils.initJSIndexes(getProject());
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
-  }
-
-  @Override
-  protected String getBasePath() {
-    return "/contrib/flex/flex-tests/testData/imports/optimize";
+    myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/optimize"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -276,14 +271,6 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     }
   }
 
-  static String getExpectedResultFilePath(final String dataSubpath, final String testName, final String fileExtension) {
-    return getTestDataFilePath(dataSubpath, testName, EXPECTED_RESULT_FILE_SUFFIX);
-  }
-
-  private static String getTestDataFilePath(final String dataSubpath, final String testName, final String fileExtension) {
-    return PathManager.getHomePath() + "/" + dataSubpath + "/" + testName + "." + fileExtension;
-  }
-
   static String getInputDataFileName(final String testName, final String fileExtension) {
     return testName + "." + INPUT_DATA_FILE_SUFFIX + "." + fileExtension;
   }
@@ -306,6 +293,4 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     FileDocumentManager.getInstance().saveAllDocuments();
     myFixture.checkResultByFile(getThisTestExpectedResultFileName(fileExtension));
   }
-
-
 }

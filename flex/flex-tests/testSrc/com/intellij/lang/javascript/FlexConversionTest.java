@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.ConversionHelper;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
@@ -42,9 +43,15 @@ public class FlexConversionTest extends ConversionTestBaseEx {
   //  modificator.commitChanges();
   //}
 
+
+  @Override
+  protected String getHomePath() {
+    return FlexTestUtils.getTestDataPath("conversion/");
+  }
+
   @Override
   protected String getBasePath() {
-    return "/contrib/flex/flex-tests/testData/conversion/";
+    return "";
   }
 
   public void testFacets() throws IOException, JDOMException {

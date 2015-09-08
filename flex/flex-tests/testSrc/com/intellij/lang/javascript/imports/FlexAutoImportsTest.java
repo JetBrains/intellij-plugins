@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.Condition;
@@ -42,11 +41,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     JSTestUtils.initJSIndexes(getProject());
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
     myFixture.enableInspections(JSUnresolvedVariableInspection.class);
-  }
-
-  @Override
-  protected String getBasePath() {
-    return "/contrib/flex/flex-tests/testData/imports/auto";
+    myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/auto"));
   }
 
   public void testVarStatement() throws Throwable {
@@ -159,14 +154,6 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
   //  launchImportIntention(MXML_FILE_EXTENSION);
   //}
 
-  static String getExpectedResultFilePath(final String dataSubpath, final String testName, final String fileExtension) {
-    return getTestDataFilePath(dataSubpath, testName, EXPECTED_RESULT_FILE_SUFFIX);
-  }
-
-  private static String getTestDataFilePath(final String dataSubpath, final String testName, final String fileExtension) {
-    return PathManager.getHomePath() + "/" + dataSubpath + "/" + testName + "." + fileExtension;
-  }
-
   static String getInputDataFileName(final String testName, final String fileExtension) {
     return testName + "." + INPUT_DATA_FILE_SUFFIX + "." + fileExtension;
   }
@@ -208,11 +195,11 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
       boolean hasHint = !DaemonCodeAnalyzerEx.processHighlights(document, getProject(), HighlightSeverity.ERROR,
                                                                 document.getLineStartOffset(line),
                                                                 document.getLineEndOffset(line), new Processor<HighlightInfo>() {
-        @Override
-        public boolean process(HighlightInfo info) {
-          return !info.hasHint();
-        }
-      });
+          @Override
+          public boolean process(HighlightInfo info) {
+            return !info.hasHint();
+          }
+        });
       if (!hasHint) {
         fail(
           "Auto import fix not found: " + DaemonCodeAnalyzerImpl.getHighlights(document, HighlightSeverity.INFORMATION, getProject()));
@@ -224,6 +211,4 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
 
     return list;
   }
-
-
 }

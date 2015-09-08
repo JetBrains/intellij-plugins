@@ -5,23 +5,19 @@ import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator;
 import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilder;
 import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilderImpl;
-import com.intellij.testFramework.TestDataPath;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.xml.util.ColorIconCache;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene.Kudelevsky
  */
 public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModuleFixtureBuilder> {
-  @Override
-  protected String getBasePath() {
-    return "/contrib/flex/flex-tests/testData/flex_color_gutter";
-  }
-
   @Override
   protected Class<FlexModuleFixtureBuilder> getModuleBuilderClass() {
     return FlexModuleFixtureBuilder.class;
@@ -32,6 +28,7 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+    myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("flex_color_gutter"));
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)

@@ -29,20 +29,43 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class FlexTestUtils {
 
   @NotNull
   public static String getTestDataPath(@NotNull final String relativePath) {
+    final File dir = new File("testData");
+    if (dir.isDirectory()) {
+      // started from 'flex-plugin' project
+      final String testDataPath = dir.getAbsolutePath();
+      VfsRootAccess.allowRootAccess(testDataPath);
+      return testDataPath + "/" + relativePath;
+    }
+
     return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/" + relativePath;
   }
 
   public static String getPathToCompleteFlexSdk(final String version) {
+    final File dir = new File("../tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk");
+    if (dir.isDirectory()) {
+      // started from 'flex-plugin' project
+      try {
+        final String path = dir.getCanonicalPath();
+        VfsRootAccess.allowRootAccess(path);
+        return path + "/" + version;
+      }
+      catch (IOException e) {/**/}
+    }
+
+
     return PathManager.getHomePath() + "/contrib/flex/tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk/" + version;
   }
 
