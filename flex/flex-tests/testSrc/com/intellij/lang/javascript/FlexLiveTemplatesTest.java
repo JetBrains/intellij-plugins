@@ -34,7 +34,6 @@ public class FlexLiveTemplatesTest extends CodeInsightTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     TemplateManagerImpl.setTemplateTesting(getProject(), getTestRootDisposable());
-    GwtJsTestUtil.setUpGwtDialect();
   }
 
   @Override
