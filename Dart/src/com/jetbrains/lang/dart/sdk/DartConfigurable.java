@@ -17,8 +17,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.project.DumbModePermission;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -488,12 +486,7 @@ public class DartConfigurable implements SearchableConfigurable {
       }
     };
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, runnable);
-      }
-    });
+    ApplicationManager.getApplication().runWriteAction(runnable);
 
     reset(); // because we rely on remembering initial state
   }
