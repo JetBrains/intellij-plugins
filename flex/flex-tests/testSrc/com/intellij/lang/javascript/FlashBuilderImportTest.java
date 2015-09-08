@@ -26,7 +26,6 @@ import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.IoTestUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.testFramework.IdeaTestCase;
@@ -34,9 +33,11 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.zip.ZipOutputStream;
 
 public class FlashBuilderImportTest extends IdeaTestCase {
 
@@ -453,8 +454,9 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   private static VirtualFile createEmptySwc(VirtualFile dir, String name) throws IOException {
-    File file = IoTestUtil.createTestJar(new File(dir.getPath(), name));
-    return FlexUtils.addFileWithContent(name, FileUtil.loadFileBytes(file), dir);
+    final File jarFile = new File(dir.getPath(), name);
+    new ZipOutputStream(new FileOutputStream(jarFile)).close();
+    return FlexUtils.addFileWithContent(name, FileUtil.loadFileBytes(jarFile), dir);
   }
 
   public void testBcDependencies() throws Exception {
