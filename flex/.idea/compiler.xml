@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/ActionScriptRearrangerTest.groovy" />
+    </excludeFromCompile>
+    <resourceExtensions>
+      <entry name=".+\.(properties|gif|png|jpeg|jpg|xml|dtd|tld|xsd|ft|html|template)" />
+    </resourceExtensions>
+    <wildcardResourcePatterns>
+      <entry name="!*.form" />
+      <entry name="!*.java" />
+      <entry name="!*.class" />
+      <entry name="!*.groovy" />
+      <entry name="!*.flex" />
+      <entry name="!*.kt" />
+      <entry name="!*.iml" />
+      <entry name="!*.gant" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="1.6">
+      <module name="flex-plugin" target="1.6" />
+      <module name="flex-plugin-tests" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
+  </component>
+</project>
