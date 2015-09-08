@@ -180,7 +180,6 @@ public class FlexTestUtils {
       throw new IllegalArgumentException("Could not find a Flex SDK at " + flexSdkRootPath);
     }
     modificator.addRoot(sdk.getHomeDirectory(), OrderRootType.CLASSES);
-    modificator.addRoot(JSTestUtils.getPredefinedLibraryRoot(), OrderRootType.CLASSES);
     modificator.commitChanges();
     return sdk;
   }

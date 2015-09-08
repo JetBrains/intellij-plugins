@@ -10,7 +10,7 @@
       <library-path append="true">
            <path-element>locale/{locale}</path-element>
        </library-path>
-       <source-path><path-element><error>src</error></path-element></source-path>
+       <source-path><path-element><error>src1</error></path-element></source-path>
   </compiler>
   <include-resource-bundles />
   <output>HelloWorld.swf</output>

@@ -6,19 +6,6 @@
     <element name="foo" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
     <element name="bar" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
   </node>
-  <node id="Object" nodeName="Class Object" name="&lt;html&gt;&lt;b&gt;Object&lt;/b&gt;&lt;/html&gt;">
-    <element name="constructor" type="*" category="Properties" visibility="PUBLIC" />
-    <element name="length" type="Number" category="Properties" visibility="PUBLIC" />
-    <element name="prototype" type="Object" category="Properties" visibility="PUBLIC" />
-    <element name="toLocaleString()" type="Object" category="Methods" visibility="PUBLIC" />
-    <element name="toSource()" type="Object" category="Methods" visibility="PUBLIC" />
-    <element name="unwatch(String)" type="void" category="Methods" visibility="PUBLIC" />
-    <element name="watch(String, Object)" type="void" category="Methods" visibility="PUBLIC" />
-    <element name="hasOwnProperty(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
-    <element name="isPrototypeOf(Object)" type="Boolean" category="Methods" visibility="PUBLIC" />
-    <element name="propertyIsEnumerable(String)" type="Boolean" category="Methods" visibility="PUBLIC" />
-    <element name="toString()" type="String" category="Methods" visibility="PUBLIC" />
-  </node>
   <node id="flash.display.DisplayObject" nodeName="Class flash.display.DisplayObject" name="&lt;html&gt;&lt;b&gt;flash.display.DisplayObject&lt;/b&gt;&lt;/html&gt;">
     <element name="width" type="uint" category="Properties" visibility="PUBLIC" />
   </node>
@@ -62,11 +49,9 @@
   <edge from="flash.display.DisplayObject" to="flash.events.EventDispatcher" idElement="flash.display.DisplayObject" relship="GENERALIZATION" />
   <edge from="flash.display.InteractiveObject" to="flash.display.DisplayObject" idElement="flash.display.InteractiveObject" relship="GENERALIZATION" />
   <edge from="flash.display.Sprite" to="flash.display.InteractiveObject" idElement="flash.display.Sprite" relship="GENERALIZATION" />
-  <edge from="flash.events.EventDispatcher" to="Object" idElement="flash.events.EventDispatcher" relship="GENERALIZATION" />
   <edge from="flash.events.EventDispatcher" to="flash.events.IEventDispatcher" idElement="flash.events.EventDispatcher" relship="REALIZATION" />
   <edge from="mx.core.UIComponent" to="flash.display.Sprite" idElement="mx.core.UIComponent" relship="GENERALIZATION" />
   <edge from="mx.core.UIComponent" to="mx.core.IUIComponent" idElement="mx.core.UIComponent" relship="REALIZATION" />
   <edge from="mypackage.Button" to="flash.events.IEventDispatcher" idElement="mypackage.Button" relship="REALIZATION" />
   <edge from="mypackage.Button" to="mx.core.UIComponent" idElement="mypackage.Button" relship="GENERALIZATION" />
 </umlModel>
-
