@@ -1,4 +1,8 @@
-class <caret>A {}
-class B extends A {
-  mmm() {}
+class A {
+}
+class <caret>B extends A {
+}
+class C extends B {
+}
+class D extends C {
 }
