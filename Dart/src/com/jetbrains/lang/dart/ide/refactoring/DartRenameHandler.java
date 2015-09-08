@@ -212,6 +212,9 @@ class DartRenameDialog extends RefactoringDialog {
     // Validate final status.
     {
       final RefactoringStatus finalStatus = myRefactoring.checkFinalConditions();
+      if (finalStatus == null) {
+        return;
+      }
       if (finalStatus.hasError()) {
         Messages.showErrorDialog(myProject, finalStatus.getMessage(), "Error");
         return;

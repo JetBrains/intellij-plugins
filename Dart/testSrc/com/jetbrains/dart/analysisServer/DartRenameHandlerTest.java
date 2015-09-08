@@ -29,6 +29,8 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
 
   protected String getBasePath() {
@@ -47,10 +49,12 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
     final ServerRenameRefactoring refactoring = createRenameRefactoring(testName + ".dart", "test = 0");
     // initial status OK
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
+    assertNotNull(initialConditions);
     assertTrue(initialConditions.isOK());
     // final (actually options) status has a fatal error
     refactoring.setNewName("bad name");
     final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
+    assertNotNull(finalConditions);
     assertTrue(finalConditions.hasFatalError());
   }
 
@@ -70,6 +74,11 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
   public void testConstructorDefaultToNamed() throws Throwable {
     final String testName = getTestName(false);
     doTest(testName + ".dart", "AAA() {}", "newName");
+  }
+
+  public void testIgnorePotential() throws Throwable {
+    final String testName = getTestName(false);
+    doTest(testName + ".dart", "test() {}", "newName");
   }
 
   public void testLocalVariable() throws Throwable {
@@ -110,7 +119,8 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        AssistUtils.applySourceChange(myFixture.getProject(), change);
+        final Set<String> excludedIds = refactoring.getPotentialEdits();
+        AssistUtils.applySourceChange(myFixture.getProject(), change, excludedIds);
       }
     });
     // validate
