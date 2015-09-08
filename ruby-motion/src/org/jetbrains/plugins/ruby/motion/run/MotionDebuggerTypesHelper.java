@@ -80,7 +80,7 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
 
   @Nullable
   @Override
-  public XSourcePosition resolveProperty(String className, String property) {
+  public XSourcePosition resolveProperty(@NotNull CidrMemberValue value, @Nullable String dynamicTypeName) {
     return null;
   }
 
