@@ -60,6 +60,8 @@
     <lang.implementationTextSelectioner language="Dart"
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
+    <preFormatProcessor implementation="com.jetbrains.lang.dart.ide.formatter.DartPreFormatProcessor"/>
+    <!-- postFormatProcessor implementation="com.jetbrains.lang.dart.ide.formatter.DartPostFormatProcessor"/ -->
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
     <lang.structureViewExtension implementation="com.jetbrains.lang.dart.ide.structure.DartStructureViewExtension"/>
     <psi.referenceContributor language="HTML" implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor"
@@ -87,7 +89,7 @@
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>
     <!--<codeInsight.lineMarkerProvider language="Dart"-->
-                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>-->
+    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>-->
 
     <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>
     <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>-->
@@ -148,9 +150,9 @@
     <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartKeywordCompletionContributor"/>-->
     <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>-->
     <!--<completion.contributor language="Dart"-->
-                            <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>-->
+    <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>-->
     <!--<completion.contributor language="Dart"-->
-                            <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>-->
+    <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>-->
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
