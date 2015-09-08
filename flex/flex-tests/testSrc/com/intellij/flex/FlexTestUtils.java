@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
@@ -44,10 +45,12 @@ public class FlexTestUtils {
   public static String getTestDataPath(@NotNull final String relativePath) {
     final File dir = new File("testData");
     if (dir.isDirectory()) {
-      // started from 'flex-plugin' project
-      final String testDataPath = dir.getAbsolutePath();
-      VfsRootAccess.allowRootAccess(testDataPath);
-      return testDataPath + "/" + relativePath;
+      final String testDataPath = FileUtil.toSystemIndependentName(dir.getAbsolutePath());
+      if (testDataPath.endsWith("/flex/flex-tests/testData")) {
+        // started from 'flex-plugin' project
+        VfsRootAccess.allowRootAccess(testDataPath);
+        return testDataPath + "/" + relativePath;
+      }
     }
 
     return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/" + relativePath;
