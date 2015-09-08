@@ -1,12 +1,9 @@
-[Amazon Web Services] <http://aws.amazon.com/documentation/>
+Menu
+Amazon Web Services <https://aws.amazon.com>
+Sign In to the Console <https://console.aws.amazon.com/console/home>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
-AWS Documentation <http://aws.amazon.com/documentation/> » AWS 
-CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
-User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
-» Release History
-Did this page help you?  Yes | No |  Tell us about it...
-« PreviousNext »
+
 
 [Go]
 
@@ -54,7 +51,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Windows AMIs and Templates
                 + Bootstrapping Windows Stacks
                 + Accessing Windows Instances
-    * Working With Templates
+    * Working with Templates
           o Template Anatomy
                 + Format Version
                 + Description
@@ -155,6 +152,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + AWS::EC2::VolumeAttachment
                 + AWS::EC2::VPC
                 + AWS::EC2::VPCDHCPOptionsAssociation
+                + AWS::EC2::VPCEndpoint
                 + AWS::EC2::VPCGatewayAttachment
                 + AWS::EC2::VPCPeeringConnection
                 + AWS::EC2::VPNConnection
@@ -402,10 +400,10 @@ Did this page help you?  Yes | No |  Tell us about it...
     * Troubleshooting
     * Release History
     * AWS Glossary
-[View the PDF for this guide.][Go to the AWS Discussion Forum for this 
-product.] <http://forums.aws.amazon.com/forum.jspa?forumID=92> [Go to the 
-Kindle Store to download this guide in Kindle format.]
-<http://www.amazon.com/dp/B007S28IUW>
+AWS Documentation <http://aws.amazon.com/documentation/> » AWS 
+CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
+User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
+» Release History
 
 
 Release History
@@ -415,7 +413,58 @@ since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
 
-New resources
+New resource
+
+August 24, 2015
+
+Use the AWS::EC2::VPCEndpoint resource to establish a private connection 
+between your VPC and another AWS service.
+
+2010-05-15
+
+Resource updates
+
+August 24, 2015
+
+AWS CloudFormation updated the following resources:
+
+AWS::ElasticBeanstalk::Environment
+
+    Use the Tags property to specify tags (key-value pairs) for an AWS
+    Elastic Beanstalk environment.
+
+AWS::Lambda::Function
+
+    For the Code property, use the ZipFile property to write the source
+    code of your AWS Lambda function directly in a template. Currently, you
+    can use the ZipFile property only for nodejs runtime environments. You
+    can still point to a file in an Amazon S3 bucket for all runtime
+    environments, such as java8 and nodejs.
+
+AWS::OpsWorks::Instance
+
+    Use the EbsOptimized property to indicate whether an instance is
+    optimized for Amazon Elastic Block Store I/O.
+
+AWS::RDS::DBInstance
+
+    For the SourceDBInstanceIdentifier property, you can specify a database
+    instance in another region to create a cross-region read replica.
+
+2010-05-15
+
+Amazon S3 template URL
+
+August 24, 2015
+
+For versioning-enabled buckets, you can specify a version ID in an Amazon 
+S3 template URL when you create or update a stack, such as 
+https://s3.amazonaws.com/templates/myTemplate.template?versionId=123ab1cdeKdOW5IH4GAcYbEngcpTJTDW
+.
+
+2010-05-15
+
+New resource
 
 August 03, 2015
 
@@ -1617,6 +1666,13 @@ This is the initial public release of AWS CloudFormation.
 
 2010-05-15
 
-Document Conventions 	© 2015, Amazon Web Services, Inc. or its affiliates. 
-All rights reserved.
-Terms of Use <http://aws.amazon.com/terms> 	
+Document Conventions
+« Previous Next »
+PDF | Kindle <http://www.amazon.com/dp/B007S28IUW>
+Terms of Use <http://aws.amazon.com/terms> | © 2015, Amazon Web Services, 
+Inc. or its affiliates. All rights reserved.
+Have a question? Try the Forums.
+<http://forums.aws.amazon.com/forum.jspa?forumID=92>
+Did this page help you?
+YesNo
+Feedback
