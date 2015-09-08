@@ -193,6 +193,7 @@ public class EduPanel extends JPanel {
 //        lessonNextButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNextButton.setVisible(false);
         lessonNextButton.setBackground(background);
+        lessonNextButton.setMargin(new Insets(0, 0, 0, 0));
 
 
         lessonPanel.add(lessonNameLabel);
