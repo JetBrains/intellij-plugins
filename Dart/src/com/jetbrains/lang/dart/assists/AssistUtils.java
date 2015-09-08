@@ -16,7 +16,6 @@
 package com.jetbrains.lang.dart.assists;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -43,13 +42,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class AssistUtils {
   public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
-    final Set<String> excludedIds = Sets.newHashSet();
+    final Set<String> excludedIds = Collections.emptySet();
     applyFileEdit(fileEdit, excludedIds);
   }
 
@@ -61,7 +61,7 @@ public class AssistUtils {
   }
 
   public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
-    Set<String> excludedIds = Sets.newHashSet();
+    Set<String> excludedIds = Collections.emptySet();
     applySourceChange(project, sourceChange, excludedIds);
   }
 
@@ -92,7 +92,7 @@ public class AssistUtils {
   }
 
   public static void applySourceEdits(@NotNull final Document document, @NotNull final List<SourceEdit> edits) {
-    final Set<String> excludedIds = Sets.newHashSet();
+    final Set<String> excludedIds = Collections.emptySet();
     applySourceEdits(document, edits, excludedIds);
   }
 
