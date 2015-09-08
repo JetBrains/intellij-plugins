@@ -7,10 +7,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartGotoSuperInHtmlTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class DartGotoSuperInHtmlTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH +  FileUtil.toSystemDependentName("/gotoSuper/html");

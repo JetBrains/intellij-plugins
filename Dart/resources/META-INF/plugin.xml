@@ -84,13 +84,13 @@
 
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>
-    <codeInsight.lineMarkerProvider language="Dart"
-                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>
     <!--<codeInsight.lineMarkerProvider language="Dart"-->
-                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>-->
+                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>-->
+    <codeInsight.lineMarkerProvider language="Dart"
+                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>
 
-    <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>
-    <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>-->
+    <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>-->
+    <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>
 
     <codeInsight.overrideMethod language="Dart"
                                 implementationClass="com.jetbrains.lang.dart.ide.generation.DartOverrideMethodHandler"/>

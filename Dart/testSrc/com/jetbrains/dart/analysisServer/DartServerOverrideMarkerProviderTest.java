@@ -26,7 +26,7 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 import javax.swing.*;
 import java.util.List;
 
-abstract public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTestCase {
+public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTestCase {
 
   protected String getBasePath() {
     return "/analysisServer/overrideMarker";
