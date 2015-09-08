@@ -6,10 +6,12 @@ import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.training.util.MyClassLoader;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
@@ -35,7 +37,6 @@ public class LessonMessagePane extends JTextPane {
         initStyleConstants();
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
-
         passedIcon = IconLoader.findIcon(EduIcons.CHECKMARK_GRAY_12);
 
     }
@@ -125,14 +126,21 @@ public class LessonMessagePane extends JTextPane {
     public void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
-            if(SystemInfo.isMac) {
-                lessonMessage.appendMacCheck();
-                getDocument().insertString(getDocument().getLength(), " ", REGULAR);
-                insertIcon(passedIcon);
-            } else {
-                lessonMessage.appendWinCheck();
-                getDocument().insertString(getDocument().getLength(), " \uF0FC", ROBOTO);
+            lessonMessage.appendMacCheck();
+            getDocument().insertString(getDocument().getLength(), " ", REGULAR);
+
+            StyleContext context = new StyleContext();
+            StyledDocument document = getStyledDocument();
+            Style labelStyle = context.getStyle(StyleContext.DEFAULT_STYLE);
+            JLabel jlabel = new JLabel(passedIcon);
+            jlabel.setAlignmentY(0.9f);
+            StyleConstants.setComponent(labelStyle, jlabel);
+            try {
+                document.insertString(document.getLength(), " passed", labelStyle);
+            } catch (BadLocationException e) {
+                e.printStackTrace();
             }
+
 
             Style passedStyle = this.addStyle("PassedStyle", null);
             StyleConstants.setForeground(passedStyle, passedColor);
