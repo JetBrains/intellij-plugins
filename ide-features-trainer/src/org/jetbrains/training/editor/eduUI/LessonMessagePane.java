@@ -123,6 +123,11 @@ public class LessonMessagePane extends JTextPane {
         lessonMessages.add(new LessonMessage(messages, start, end));
     }
 
+    /**
+     * inserts a checkmark icon to the end of the LessonMessagePane document as a styled label.
+     *
+     * @throws BadLocationException
+     */
     public void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
@@ -136,17 +141,19 @@ public class LessonMessagePane extends JTextPane {
             jlabel.setAlignmentY(0.9f);
             StyleConstants.setComponent(labelStyle, jlabel);
             try {
-                document.insertString(document.getLength(), " passed", labelStyle);
+                document.insertString(document.getLength(), " passed", labelStyle); //this text is not shown but appends a jlabel containing checkmark icon.
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
 
 
+            //Repaint text with passed style
             Style passedStyle = this.addStyle("PassedStyle", null);
             StyleConstants.setForeground(passedStyle, passedColor);
             final StyledDocument doc = getStyledDocument();
 
             doc.setCharacterAttributes(0, lessonMessage.getEnd(), passedStyle, false);
+
         } else return;
     }
 
