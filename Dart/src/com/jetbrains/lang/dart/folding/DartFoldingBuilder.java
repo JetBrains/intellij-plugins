@@ -45,6 +45,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, root);                                             // 6. Function body
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
+    foldMultilineStrings(descriptors, root);                                           // 8. Multi-line strings
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
@@ -63,6 +64,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
     if (psiElement instanceof DartFunctionBody) return "{...}";                      // 6.   Function body
     if (psiElement instanceof DartTypeArguments) return SMILEY;                      // 7.   Type arguments
+    if (psiElement instanceof DartStringLiteralExpression)
+      return multilineStringPlaceholder(node);                                       // 8.   Multi-line strings
 
     return "...";
   }
@@ -257,5 +260,33 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         }
       }
     }
+  }
+
+  private static void foldMultilineStrings(@NotNull final List<FoldingDescriptor> descriptors,
+                                           @NotNull final PsiElement root) {
+    for (PsiElement dartString : PsiTreeUtil.findChildrenOfType(root, DartStringLiteralExpression.class)) {
+      PsiElement child = dartString.getFirstChild();
+      if (child == null) continue;
+      IElementType type = ((ASTNode) child).getElementType();
+      if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING || (type == DartTokenTypes.OPEN_QUOTE && child.getText().length() == 3)) {
+        descriptors.add(new FoldingDescriptor(dartString, dartString.getTextRange()));
+      }
+    }
+  }
+
+  private static String multilineStringPlaceholder(@NotNull final ASTNode  node) {
+    ASTNode child = node.getFirstChildNode();
+    if (child == null) return "...";
+    if (child.getElementType() == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
+      String text = child.getText();
+      String quotes = text.substring(1, 4);
+      return "r" + quotes + "..." + quotes;
+    }
+    if (child.getElementType() == DartTokenTypes.OPEN_QUOTE) {
+      String text = child.getText();
+      String quotes = text.substring(0, 3);
+      return quotes + "..." + quotes;
+    }
+    return "...";
   }
 }
