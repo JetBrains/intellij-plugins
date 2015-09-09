@@ -2,54 +2,28 @@ package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.psi.GherkinFile;
-import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
-import org.jetbrains.plugins.cucumber.steps.AbstractCucumberExtension;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public class CucumberJavaExtension extends AbstractCucumberExtension {
+public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
   public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
-
-  @Override
-  public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
-    if (child instanceof PsiClassOwner) {
-      return true;
-    }
-    return false;
-  }
-
-  @Override
-  public boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    if (child instanceof PsiClassOwner) {
-      final PsiFile file = child.getContainingFile();
-      if (file != null) {
-        final VirtualFile vFile = file.getVirtualFile();
-        if (vFile != null) {
-          final VirtualFile rootForFile = ProjectRootManager.getInstance(child.getProject()).getFileIndex().getSourceRootForFile(vFile);
-          return rootForFile != null;
-        }
-      }
-    }
-    return false;
-  }
 
   @NotNull
   @Override
@@ -61,27 +35,6 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
   @Override
   public StepDefinitionCreator getStepDefinitionCreator() {
     return new JavaStepDefinitionCreator();
-  }
-
-  @NotNull
-  @Override
-  public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    if (gluesFromOtherFiles == null) {
-      gluesFromOtherFiles = ContainerUtil.newHashSet();
-    }
-    final Set<String> glues = gluesFromOtherFiles;
-
-    file.accept(new GherkinRecursiveElementVisitor() {
-      @Override
-      public void visitStep(GherkinStep step) {
-        final String glue = CucumberJavaUtil.getPackageOfStep(step);
-        if (glue != null) {
-          CucumberJavaUtil.addGlue(glue, glues);
-        }
-      }
-    });
-
-    return glues;
   }
 
   @Override
@@ -109,29 +62,6 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
         final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
         for (PsiMethod stepDefMethod : javaStepDefinitions) {
           result.add(new JavaStepDefinition(stepDefMethod));
-        }
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile featureFile) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
-    if (module == null) {
-      return Collections.emptySet();
-    }
-
-    List<AbstractStepDefinition> stepDefs = loadStepsFor(featureFile, module);
-
-    Set<PsiFile> result = new HashSet<PsiFile>();
-    for (AbstractStepDefinition stepDef : stepDefs) {
-      PsiElement stepDefElement = stepDef.getElement();
-      if (stepDefElement != null) {
-        final PsiFile psiFile = stepDefElement.getContainingFile();
-
-        if (isWritableStepLikeFile(psiFile, psiFile.getParent())) {
-          result.add(psiFile);
         }
       }
     }

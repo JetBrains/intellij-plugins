@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,8 @@ public abstract class BaseCucumberJavaResolveTest extends CucumberResolveTest {
   protected String getStepDefinitionName(@NotNull final PsiElement stepDefinition) {
     if (stepDefinition instanceof PsiMethod) {
       return ((PsiMethod)stepDefinition).getName();
+    } else if (stepDefinition instanceof PsiMethodCallExpression) {
+      return ((PsiMethodCallExpression)stepDefinition).getMethodExpression().getQualifiedName();
     }
     return null;
   }

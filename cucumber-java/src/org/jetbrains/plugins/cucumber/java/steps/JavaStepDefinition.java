@@ -16,8 +16,8 @@ import java.util.regex.Matcher;
  * Date: 7/16/12
  */
 public class JavaStepDefinition extends AbstractStepDefinition {
-  public JavaStepDefinition(PsiMethod method) {
-    super(method);
+  public JavaStepDefinition(PsiElement stepDef) {
+    super(stepDef);
   }
 
   @Override
@@ -37,26 +37,34 @@ public class JavaStepDefinition extends AbstractStepDefinition {
   @Nullable
   @Override
   protected String getCucumberRegexFromElement(PsiElement element) {
-    if (!(element instanceof PsiMethod)) {
-      return null;
-    }
-
-    String result = null;
-    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
-    assert stepAnnotation != null;
-    final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
-    if (annotationValue != null) {
-      final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
-      final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
-      if (constantValue != null) {
-        String patternText = constantValue.toString();
-        if (patternText.length() > 1) {
-          result = patternText.replace("\\\\", "\\").replace("\\\"", "\"");
+    if (element instanceof PsiMethod) {
+      PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
+      assert stepAnnotation != null;
+      final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
+      if (annotationValue != null) {
+        final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
+        final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
+        if (constantValue != null) {
+          String patternText = constantValue.toString();
+          if (patternText.length() > 1) {
+            return patternText.replace("\\\\", "\\").replace("\\\"", "\"");
+          }
+        }
+      }
+    } else if (element instanceof PsiMethodCallExpression) {
+      PsiExpressionList argumentList = ((PsiMethodCallExpression)element).getArgumentList();
+      if (argumentList.getExpressions().length > 1) {
+        PsiExpression stepExpression = argumentList.getExpressions()[0];
+        if (stepExpression instanceof PsiLiteralExpression) {
+          Object value = ((PsiLiteralExpression)stepExpression).getValue();
+          if (value instanceof String) {
+            return (String)value;
+          }
         }
       }
     }
 
-    return result;
+    return null;
   }
 
   @Override

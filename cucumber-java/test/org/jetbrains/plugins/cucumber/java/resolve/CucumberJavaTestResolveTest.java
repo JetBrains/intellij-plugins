@@ -3,9 +3,11 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.LanguageLevelModuleExtension;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
@@ -46,6 +48,10 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_w", "plast<caret>ic", "payment_mode");
   }
 
+  public void testJava8StepDef() throws Exception {
+    doTest("stepResolve_java8", "I have cuk<caret>es", "Given");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return DESCRIPTOR;
@@ -55,6 +61,12 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       PsiTestUtil.addLibrary(module, model, "cucumber-java", PathManager.getHomePath() + "/community/lib", "cucumber-java-1.2.4.jar");
+      PsiTestUtil.addLibrary(module, model, "cucumber-java8", PathManager.getHomePath() + "/community/lib", "cucumber-java8-1.2.4.jar");
+
+      LanguageLevelModuleExtension extension = model.getModuleExtension(LanguageLevelModuleExtension.class);
+      if (extension != null) {
+        extension.setLanguageLevel(LanguageLevel.JDK_1_8);
+      }
 
       VirtualFile sourceRoot = VirtualFileManager.getInstance().refreshAndFindFileByUrl("temp:///src");
       if (sourceRoot != null) {

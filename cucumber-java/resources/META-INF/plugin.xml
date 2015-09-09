@@ -47,5 +47,6 @@
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
     <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaExtension"/>
+    <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.java.CucumberJava8Extension"/>
   </extensions>
 </idea-plugin>
