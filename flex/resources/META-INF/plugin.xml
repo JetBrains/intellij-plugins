@@ -11,6 +11,11 @@
   <version>1.0</version>
   <category>HTML/JavaScript Development</category>
   <vendor>JetBrains</vendor>
+  <modules>
+    <module>flex</module>
+    <module scope="IDE,build">flex-jps-plugin</module>
+    <module scope="IDE,build">flex-shared</module>
+  </modules>
   <depends optional="false">JavaScript</depends>
   <depends optional="false">com.intellij.css</depends>
   <depends>com.intellij.properties</depends>
