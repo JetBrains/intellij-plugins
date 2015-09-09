@@ -55,8 +55,8 @@ public class DartProblemsViewImpl {
   }
 
   @NotNull
-  public static String createGroupName(@NotNull final String path) {
-    return FileUtil.toSystemDependentName(path);
+  public static String createGroupName(@NotNull final String filePath) {
+    return FileUtil.toSystemDependentName(filePath);
   }
 
   public DartProblemsViewImpl(final Project project, final ToolWindowManager wm) {

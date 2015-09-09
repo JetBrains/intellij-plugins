@@ -96,8 +96,7 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
       }
     }
     // Create the refactoring.
-    final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(path, offset, 0);
+    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(virtualFile.getPath(), offset, 0);
     // Validate initial status.
     {
       final RefactoringStatus initialStatus = refactoring.checkInitialConditions();

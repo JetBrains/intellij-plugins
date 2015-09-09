@@ -119,21 +119,22 @@ public class DartAnalysisServerService {
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
-    public void computedAnalyzedFiles(List<String> files) {
-      configureImportedLibraries(files);
+    public void computedAnalyzedFiles(List<String> filePaths) {
+      configureImportedLibraries(filePaths);
     }
 
     @Override
-    public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
-      updateProblemsView(DartProblemsViewImpl.createGroupName(file), errors);
+    public void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+      updateProblemsView(DartProblemsViewImpl.createGroupName(filePath), errors);
     }
 
     @Override
-    public void computedHighlights(String file, List<HighlightRegion> regions) {
+    public void computedHighlights(final String _filePath, final List<HighlightRegion> regions) {
+      final String filePath = FileUtil.toSystemIndependentName(_filePath);
+
       if (DartResolver.isServerDrivenResolution()) {
-        file = FileUtil.toSystemIndependentName(file);
         // Ignore notifications for files that has been changed, but server does not know about them yet.
-        if (myFilePathsWithUnsentChanges.contains(file)) {
+        if (myFilePathsWithUnsentChanges.contains(filePath)) {
           return;
         }
         // Convert HighlightRegion(s) into PluginHighlightRegion(s).
@@ -143,19 +144,20 @@ public class DartAnalysisServerService {
         }
         // Put PluginHighlightRegion(s).
         synchronized (myHighlightData) {
-          myHighlightData.put(file, pluginRegions);
+          myHighlightData.put(filePath, pluginRegions);
         }
         // Force (re)highlighting.
-        forceFileAnnotation(file);
+        forceFileAnnotation(filePath);
       }
     }
 
     @Override
-    public void computedNavigation(String file, List<NavigationRegion> regions) {
+    public void computedNavigation(final String _filePath, final List<NavigationRegion> regions) {
+      final String filePath = FileUtil.toSystemIndependentName(_filePath);
+
       if (DartResolver.isServerDrivenResolution()) {
-        file = FileUtil.toSystemIndependentName(file);
         // Ignore notifications for files that has been changed, but server does not know about them yet.
-        if (myFilePathsWithUnsentChanges.contains(file)) {
+        if (myFilePathsWithUnsentChanges.contains(filePath)) {
           return;
         }
         // Convert NavigationRegion(s) into PluginNavigationRegion(s).
@@ -165,26 +167,27 @@ public class DartAnalysisServerService {
         }
         // Put PluginNavigationRegion(s).
         synchronized (myNavigationData) {
-          myNavigationData.put(file, pluginRegions);
+          myNavigationData.put(filePath, pluginRegions);
         }
         // Force (re)highlighting.
-        forceFileAnnotation(file);
+        forceFileAnnotation(filePath);
       }
     }
 
     @Override
-    public void computedOverrides(String file, List<OverrideMember> overrides) {
+    public void computedOverrides(final String _filePath, final List<OverrideMember> overrides) {
+      final String filePath = FileUtil.toSystemIndependentName(_filePath);
+
       synchronized (myOverrideData) {
-        file = FileUtil.toSystemIndependentName(file);
-        myOverrideData.put(file, overrides);
+        myOverrideData.put(filePath, overrides);
       }
-      forceFileAnnotation(file);
+      forceFileAnnotation(filePath);
     }
 
     @Override
-    public void flushedResults(List<String> files) {
-      for (String file : files) {
-        updateProblemsView(DartProblemsViewImpl.createGroupName(file), AnalysisError.EMPTY_LIST);
+    public void flushedResults(List<String> filePaths) {
+      for (String filePath : filePaths) {
+        updateProblemsView(DartProblemsViewImpl.createGroupName(filePath), AnalysisError.EMPTY_LIST);
       }
     }
 
@@ -264,8 +267,8 @@ public class DartAnalysisServerService {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
 
-  private void forceFileAnnotation(String file) {
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(file);
+  private void forceFileAnnotation(final String filePath) {
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (virtualFile != null) {
       Set<Project> projects = myRootsHandler.getTrackedProjects();
       for (final Project project : projects) {
@@ -636,6 +639,8 @@ public class DartAnalysisServerService {
 
   @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
+    final String filePath = FileUtil.toSystemDependentName(info.myFilePath);
+
     final Ref<AnalysisError[]> resultRef = new Ref<AnalysisError[]>();
     final Semaphore semaphore = new Semaphore();
 
@@ -644,8 +649,6 @@ public class DartAnalysisServerService {
         if (myServer == null) return null;
 
         semaphore.down();
-
-        final String filePath = FileUtil.toSystemDependentName(info.myFilePath);
 
         LOG.debug("analysis_getErrors(" + filePath + ")");
 
@@ -954,9 +957,10 @@ public class DartAnalysisServerService {
                                      boolean validateOnly,
                                      RefactoringOptions options,
                                      GetRefactoringConsumer consumer) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
     synchronized (myLock) {
       if (myServer == null) return false;
-      final String filePath = FileUtil.toSystemDependentName(_filePath);
       myServer.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
       return true;
     }
