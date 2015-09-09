@@ -17,10 +17,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.PairConsumer;
-import com.intellij.util.PathUtilRt;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
 import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -631,16 +628,23 @@ public class FlexCommonUtils {
 
   public static String getPathToBundledJar(String filename) {
     final URL url = FlexCommonUtils.class.getResource("");
-    String folder;
     if ("jar".equals(url.getProtocol())) {
       // running from build
-      folder = "/plugins/flex/lib/";
+      return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/" + filename);
     }
     else {
+      final File dir = new File("../lib");
+      if (dir.isDirectory()) {
+        final String path = FileUtil.toSystemIndependentName(FileUtil.toCanonicalPath(dir.getAbsolutePath()));
+        if (path.endsWith("/flex/lib")) {
+          // running from 'flex-plugin' project
+          return FileUtil.toSystemDependentName(path + "/" + filename);
+        }
+      }
+
       // running from sources
-      folder = "/flex/lib/";
+      return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/contrib/flex/lib/" + filename);
     }
-    return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
   }
 
   public static Collection<String> getFlexUnitSupportLibNames(final BuildConfigurationNature nature,

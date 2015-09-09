@@ -36,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class FlexTestUtils {
@@ -53,19 +52,16 @@ public class FlexTestUtils {
       }
     }
 
-    return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/" + relativePath;
+    return FileUtil.toSystemIndependentName(PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/" + relativePath);
   }
 
   public static String getPathToCompleteFlexSdk(final String version) {
     final File dir = new File("../tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk");
     if (dir.isDirectory()) {
       // started from 'flex-plugin' project
-      try {
-        final String path = dir.getCanonicalPath();
-        VfsRootAccess.allowRootAccess(path);
-        return path + "/" + version;
-      }
-      catch (IOException e) {/**/}
+      final String path = FileUtil.toCanonicalPath(dir.getAbsolutePath());
+      VfsRootAccess.allowRootAccess(path);
+      return path + "/" + version;
     }
 
 

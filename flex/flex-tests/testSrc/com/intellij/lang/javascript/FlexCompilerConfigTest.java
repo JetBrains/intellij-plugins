@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -32,9 +31,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -483,7 +484,9 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     tempBc.setMainClass(FlexCommonUtils.FLEX_UNIT_LAUNCHER);
     Map<String, String> map = new HashMap<String, String>();
     map.put("$FLEX_UNIT_TEMP_FOLDER$", FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(myProject));
-    map.put("$APP_DIR$", FileUtil.toSystemIndependentName(PathManager.getHomePath()));
+    map.put("$FLEX_DIR$", PathUtil.getParentPath(PathUtil.getParentPath(FlexTestUtils.getTestDataPath(""))));
+
+    VfsRootAccess.allowRootAccess(FileUtil.toSystemIndependentName(FlexCommonUtils.getPathToBundledJar("")));
     doTest("4.5.1.21328", tempBc, Factory.createCompilerOptions(), Factory.createCompilerOptions(), "_2", map);
   }
 

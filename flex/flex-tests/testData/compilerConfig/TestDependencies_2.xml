@@ -57,8 +57,8 @@
       <path-element>$FLEX_SDK$/frameworks/libs/textLayout.swc</path-element>
       <path-element>$FLEX_SDK$/frameworks/libs/mx/mx.swc</path-element>
       <path-element>output/folder/bc2.swc</path-element>
-      <path-element>$APP_DIR$/flex/lib/unittestingsupport_flexunit_4.swc</path-element>
-      <path-element>$APP_DIR$/flex/lib/unittestingsupport_mx.swc</path-element>
+      <path-element>$FLEX_DIR$/lib/unittestingsupport_flexunit_4.swc</path-element>
+      <path-element>$FLEX_DIR$/lib/unittestingsupport_mx.swc</path-element>
     </library-path>
   </compiler>
   <target-player />
