@@ -24,7 +24,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,16 +35,16 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: Andrey.Vokin
  * Date: 10/8/2014.
  */
 public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
-  private static final FileFrameworkComparator FILE_FRAMEWORK_COMPARATOR = new FileFrameworkComparator();
-
-  protected abstract void createStepOrSteps(GherkinStep step, PsiFile file);
+  protected abstract void createStepOrSteps(GherkinStep step, @NotNull final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType);
 
   @NotNull
   public String getFamilyName() {
@@ -56,10 +55,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
     // TODO + step defs pairs from other content roots
-    //Tree is used to prevent duplicates (if several frameworks take care about one file)
-    final SortedSet<Pair<PsiFile, BDDFrameworkType>> pairSortedSet = ContainerUtilRt.newTreeSet(FILE_FRAMEWORK_COMPARATOR);
-    pairSortedSet.addAll(getStepDefinitionContainers(featureFile));
-    final List<Pair<PsiFile, BDDFrameworkType>> pairs = ContainerUtil.newArrayList(pairSortedSet);
+    final List<Pair<PsiFile, BDDFrameworkType>> pairs = ContainerUtil.newArrayList(getStepDefinitionContainers(featureFile));
     if (!pairs.isEmpty()) {
       pairs.add(0, null);
 
@@ -96,7 +92,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
           public PopupStep onChosen(final Pair<PsiFile, BDDFrameworkType> selectedValue, boolean finalChoice) {
             return doFinalStep(new Runnable() {
               public void run() {
-                createStepOrSteps(step, selectedValue != null ? selectedValue.first : null);
+                createStepOrSteps(step, selectedValue);
               }
             });
           }
@@ -108,7 +104,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
         new WriteCommandAction.Simple(step.getProject()) {
           @Override
           protected void run() throws Throwable {
-            createStepOrSteps(step, pairs.get(1).getFirst());
+            createStepOrSteps(step, pairs.get(1));
           }
         }.execute();
       }
@@ -159,7 +155,8 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
               assert parentPsiDir != null;
               PsiFile newFile = CucumberStepsIndex.getInstance(step.getProject())
                 .createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
-              createStepDefinition(step, newFile);
+              Pair<PsiFile, BDDFrameworkType> pair = Pair.create(newFile, frameworkType);
+              createStepDefinition(step, pair);
             }
           }.execute();
         }
@@ -172,15 +169,15 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  protected void createFileOrStepDefinition(final GherkinStep step, @Nullable final PsiFile psiFile) {
-    if (psiFile == null) {
+  protected void createFileOrStepDefinition(final GherkinStep step, @Nullable final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType) {
+    if (fileAndFrameworkType == null) {
       createStepDefinitionFile(step);
     }
     else {
       new WriteCommandAction.Simple(step.getProject()) {
         @Override
         protected void run() throws Throwable {
-          createStepDefinition(step, psiFile);
+          createStepDefinition(step, fileAndFrameworkType);
         }
       }.execute();
     }
@@ -222,45 +219,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  protected void createStepDefinition(GherkinStep step, PsiFile file) {
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+  protected void createStepDefinition(GherkinStep step, @NotNull final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType) {
+    if (!FileModificationService.getInstance().prepareFileForWrite(fileAndFrameworkType.first)) {
       return;
     }
 
-    CucumberJvmExtensionPoint[] epList = CucumberJvmExtensionPoint.EP_NAME.getExtensions();
-    for (CucumberJvmExtensionPoint ep : epList) {
-      if (ep.getStepDefinitionCreator().createStepDefinition(step, file)) {
-        return;
-      }
-    }
-  }
-
-  /**
-   * Compares two paris of file-frameworkType using file name as key
-   */
-  private static class FileFrameworkComparator implements Comparator<Pair<PsiFile, BDDFrameworkType>> {
-    @Override
-    public int compare(Pair<PsiFile, BDDFrameworkType> pair1, Pair<PsiFile, BDDFrameworkType> pair2) {
-      if (pair1 == null && pair2 == null) {
-        return 0;
-      } else if (pair1 == null) {
-        return -1;
-      } else if (pair2 == null) {
-        return 1;
-      }
-
-      final VirtualFile virtualFile1 = pair1.getFirst().getVirtualFile();
-      final VirtualFile virtualFile2 = pair2.getFirst().getVirtualFile();
-      if (virtualFile1 == null && virtualFile2 == null) {
-        return 0;
-      }
-      else if (virtualFile1 == null) {
-        return -1;
-      }
-      else if (virtualFile2 == null) {
-        return 1;
-      }
-      return virtualFile1.getPath().compareTo(virtualFile2.getPath());
-    }
+    CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(step.getProject());
+    StepDefinitionCreator stepDefCreator = stepsIndex.getExtensionMap().get(fileAndFrameworkType.getSecond()).getStepDefinitionCreator();
+    stepDefCreator.createStepDefinition(step, fileAndFrameworkType.first);
   }
 }
