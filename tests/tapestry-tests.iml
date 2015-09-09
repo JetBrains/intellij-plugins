@@ -29,5 +29,6 @@
     <orderEntry type="module" module-name="IntelliLang-java" scope="RUNTIME" />
     <orderEntry type="module" module-name="IntelliLang-xml" scope="RUNTIME" />
     <orderEntry type="module" module-name="properties" />
+    <orderEntry type="module" module-name="testFramework-javaee" scope="TEST" />
   </component>
 </module>
