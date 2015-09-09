@@ -6,6 +6,7 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.PlatformTestUtil;
@@ -48,6 +49,11 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
+        final Library[] libraries = ApplicationLibraryTable.getApplicationTable().getLibraries();
+        for (Library library : libraries) {
+          ApplicationLibraryTable.getApplicationTable().removeLibrary(library);
+        }
+
         ApplicationLibraryTable.getApplicationTable().loadState(myOriginalGlobalLibraries);
         if (checkJdk()) {
           ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(myOriginalSkds);
@@ -112,5 +118,4 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
     }
     return true;
   }
-
 }
