@@ -2,7 +2,9 @@ package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.IndexableSetContributor;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +22,9 @@ public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
 
   static {
     URL libFileUrl = FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as");
+    if ("file".equals(libFileUrl.getProtocol())) {
+      VfsRootAccess.allowRootAccess(VfsUtilCore.urlToPath(VfsUtilCore.convertFromUrl(libFileUrl)));
+    }
     VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
     FILES = Collections.singleton(file);
   }

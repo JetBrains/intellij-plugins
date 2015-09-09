@@ -633,16 +633,22 @@ public class FlexCommonUtils {
       return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/" + filename);
     }
     else {
-      final File dir = new File("../lib");
-      if (dir.isDirectory()) {
-        final String path = FileUtil.toSystemIndependentName(FileUtil.toCanonicalPath(dir.getAbsolutePath()));
+      final File dir1 = new File("../lib");
+      if (dir1.isDirectory()) {
+        final String path = FileUtil.toSystemIndependentName(FileUtil.toCanonicalPath(dir1.getAbsolutePath()));
         if (path.endsWith("/flex/lib")) {
-          // running from 'flex-plugin' project
+          // running tests from 'flex-plugin' project
           return FileUtil.toSystemDependentName(path + "/" + filename);
         }
       }
 
-      // running from sources
+      final File dir2 = new File(PathManager.getHomePath() + "/plugins/flex/lib");
+      if (dir2.isDirectory()) {
+        // running IDE from 'flex-plugin' project
+        return FileUtil.toSystemIndependentName(dir2.getAbsolutePath() + "/" + filename);
+      }
+
+      // running from 'IDEA' project sources
       return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/contrib/flex/lib/" + filename);
     }
   }

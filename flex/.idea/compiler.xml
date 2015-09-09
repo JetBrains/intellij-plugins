@@ -24,6 +24,8 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="1.6">
       <module name="flex-plugin" target="1.6" />
+      <module name="flex-plugin-jps" target="1.6" />
+      <module name="flex-plugin-shared" target="1.6" />
       <module name="flex-plugin-tests" target="1.8" />
     </bytecodeTargetLevel>
   </component>
