@@ -19,7 +19,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
@@ -48,15 +47,13 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     return DartBundle.message("dart.style.action.name.ellipsis"); // because with dialog
   }
 
-  protected void runOverEditor(@NotNull final Project project,
-                               @NotNull final Editor editor,
-                               @NotNull final PsiFile psiFile) {
+  protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
     final Runnable runnable = new Runnable() {
       public void run() {
-        final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
+        final String path = psiFile.getVirtualFile().getPath();
         final int caretOffset = editor.getCaretModel().getOffset();
         final int lineLength = getRightMargin(project);
 
@@ -120,7 +117,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
             indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
           }
 
-          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+          final String path = virtualFile.getPath();
           final DartAnalysisServerService.FormatResult formatResult =
             DartAnalysisServerService.getInstance().edit_format(path, 0, 0, lineLength);
           if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {

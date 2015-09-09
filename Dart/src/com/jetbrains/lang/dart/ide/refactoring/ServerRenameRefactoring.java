@@ -29,7 +29,7 @@ public class ServerRenameRefactoring extends ServerRefactoring {
   private String oldName;
 
   public ServerRenameRefactoring(@NotNull String file, int offset, int length) {
-    super(RefactoringKind.RENAME, file, offset, length);
+    super("Rename", RefactoringKind.RENAME, file, offset, length);
   }
 
   @NotNull

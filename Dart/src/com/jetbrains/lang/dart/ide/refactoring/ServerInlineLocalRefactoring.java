@@ -28,7 +28,7 @@ public class ServerInlineLocalRefactoring extends ServerRefactoring {
   private int occurrences;
 
   public ServerInlineLocalRefactoring(String file, int offset, int length) {
-    super(RefactoringKind.INLINE_LOCAL_VARIABLE, file, offset, length);
+    super("Inline Local Variable", RefactoringKind.INLINE_LOCAL_VARIABLE, file, offset, length);
   }
 
   public int getOccurrences() {
