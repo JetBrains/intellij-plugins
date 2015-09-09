@@ -40,12 +40,12 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
     foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
     final Collection<PsiElement> psiElements =
-      PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class});
+      PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class, DartStringLiteralExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, root);                                             // 6. Function body
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
-    foldMultilineStrings(descriptors, root);                                           // 8. Multi-line strings
+    foldMultilineStrings(descriptors, psiElements);                                           // 8. Multi-line strings
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
@@ -64,8 +64,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
     if (psiElement instanceof DartFunctionBody) return "{...}";                      // 6.   Function body
     if (psiElement instanceof DartTypeArguments) return SMILEY;                      // 7.   Type arguments
-    if (psiElement instanceof DartStringLiteralExpression)
+    if (psiElement instanceof DartStringLiteralExpression) {
       return multilineStringPlaceholder(node);                                       // 8.   Multi-line strings
+    }
 
     return "...";
   }
@@ -168,8 +169,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       }
 
       final IElementType elementType = psiElement.getNode().getElementType();
-      if ((elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.MULTI_LINE_COMMENT)
-          && !isCustomRegionElement(psiElement)) {
+      if ((elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) &&
+          !isCustomRegionElement(psiElement)) {
         descriptors.add(new FoldingDescriptor(psiElement, psiElement.getTextRange()));
       }
       else if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) {
@@ -263,18 +264,21 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   }
 
   private static void foldMultilineStrings(@NotNull final List<FoldingDescriptor> descriptors,
-                                           @NotNull final PsiElement root) {
-    for (PsiElement dartString : PsiTreeUtil.findChildrenOfType(root, DartStringLiteralExpression.class)) {
-      PsiElement child = dartString.getFirstChild();
-      if (child == null) continue;
-      IElementType type = ((ASTNode) child).getElementType();
-      if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING || (type == DartTokenTypes.OPEN_QUOTE && child.getText().length() == 3)) {
-        descriptors.add(new FoldingDescriptor(dartString, dartString.getTextRange()));
+                                           @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement element : psiElements) {
+      if (element instanceof DartStringLiteralExpression) {
+        DartStringLiteralExpression dartString = (DartStringLiteralExpression) element;
+        PsiElement child = dartString.getFirstChild();
+        if (child == null) continue;
+        IElementType type = child.getNode().getElementType();
+        if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING || (type == DartTokenTypes.OPEN_QUOTE && child.getTextLength() == 3)) {
+          descriptors.add(new FoldingDescriptor(dartString, dartString.getTextRange()));
+        }
       }
     }
   }
 
-  private static String multilineStringPlaceholder(@NotNull final ASTNode  node) {
+  private static String multilineStringPlaceholder(@NotNull final ASTNode node) {
     ASTNode child = node.getFirstChildNode();
     if (child == null) return "...";
     if (child.getElementType() == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
