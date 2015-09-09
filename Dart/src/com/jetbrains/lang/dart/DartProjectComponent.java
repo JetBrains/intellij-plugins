@@ -72,6 +72,10 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   @NotNull
   public static ModificationTracker getProjectRootsModificationTracker(@NotNull final Project project) {
+    if (project.isDefault()) {
+      return ModificationTracker.NEVER_CHANGED;
+    }
+
     // standard ProjectRootManager (that is a ModificationTracker itself) doesn't work as its modificationCount is not incremented when library root is deleted
     final DartProjectComponent component = project.getComponent(DartProjectComponent.class);
     assert component != null;
