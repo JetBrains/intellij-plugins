@@ -8,8 +8,11 @@
       <sourceFolder url="file://$MODULE_DIR$/testSrc" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
-      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project/packages/other_project" />
-      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project_2/packages/other_project_2" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/web/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/other_project_2/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/testData/highlighting/PathPackageReferenceInspection/packages" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
