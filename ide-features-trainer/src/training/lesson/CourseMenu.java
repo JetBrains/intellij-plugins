@@ -13,8 +13,7 @@ public class CourseMenu extends ActionGroup {
     @NotNull
     @Override
     public AnAction[] getChildren(AnActionEvent anActionEvent) {
-        AnAction[] actions = new AnAction[CourseManager.getInstance().courses.size()];
-        actions = CourseManager.getInstance().courses.toArray(actions);
+        AnAction[] actions = CourseManager.getInstance().getCourses();
         return actions;
     }
 }

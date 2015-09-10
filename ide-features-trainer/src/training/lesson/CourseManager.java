@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.xmlb.annotations.CollectionBean;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
@@ -40,9 +41,10 @@ import java.util.concurrent.ExecutionException;
  * Created by karashevich on 11/03/15.
  */
 @State(
-        name="TRAINING_PLUGIN_COURSES",
+        name="TrainingPluginCourses",
         storages={
-                @Storage(id="other", file = StoragePathMacros.APP_CONFIG + "/training_plugin_courses.xml")
+                @Storage(
+                        file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml")
         }
 )
 public class CourseManager implements PersistentStateComponent<CourseManager.State>{
@@ -50,7 +52,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     public static final CourseManager INSTANCE = new CourseManager();
 
     private HashMap<Course, VirtualFile> mapCourseVirtualFile;
-    private State myState;
+    private State myState = new State();
 
 
     public static CourseManager getInstance(){
@@ -61,12 +63,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         //init courses; init default course by default
 
         mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
-        myState = new State();
 
         try {
 //            final Course defaultCourse = Course.initCourse("EditorBasics.xml");
 //            courses.add(defaultCourse);
-            initCourses();
+            if (getCourses() == null || getCourses().length == 0)
+                initCourses();
         } catch (BadCourseException e) {
             e.printStackTrace();
         } catch (BadLessonException e) {
@@ -86,7 +88,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             if(element.getName().equals(GenerateCourseXml.COURSE_TYPE_ATTR)) {
                 String courseFilename = element.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
                 final Course course = Course.initCourse(courseFilename);
-                myState.addCourse(course);
+                addCourse(course);
             }
         }
     }
@@ -95,7 +97,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Nullable
     public Course getCourseById(String id){
-        final Course[] courses = myState.getCourses();
+        final Course[] courses = getCourses();
         if(courses == null || courses.length == 0) return null;
 
         for(Course course: courses){
@@ -284,30 +286,34 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         dialog.show();
     }
 
-    class State {
-        public ArrayList<Course> courses;
 
-        public State() {
-            courses = new ArrayList<Course>();
-        }
+    static class State {
+        @CollectionBean
+        public final ArrayList<Course> courses = new ArrayList<Course>();
+        public final String STATE_DESCRIPTION = "Course manager state saver";
 
-        public void addCourse(Course course){
-            courses.add(course);
-        }
-
-        @Nullable
-        public Course[] getCourses(){
-            if (courses == null) return null;
-            return courses.toArray(new Course[courses.size()]);
-        }
     }
 
+    public void addCourse(Course course){
+        myState.courses.add(course);
+    }
+
+    @Nullable
+    public Course[] getCourses(){
+        if (myState == null) return null;
+        if (myState.courses == null) return null;
+
+        return myState.courses.toArray(new Course[myState.courses.size()]);
+    }
+
+    @Override
     public State getState(){
         return myState;
     }
 
+    @Override
     public void loadState(State state){
-
+        myState = state;
     }
 
 }
