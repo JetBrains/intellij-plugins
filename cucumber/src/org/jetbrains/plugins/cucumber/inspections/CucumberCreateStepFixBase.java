@@ -44,7 +44,7 @@ import java.util.Set;
  * Date: 10/8/2014.
  */
 public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
-  protected abstract void createStepOrSteps(GherkinStep step, @NotNull final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType);
+  protected abstract void createStepOrSteps(GherkinStep step, @Nullable final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType);
 
   @NotNull
   public String getFamilyName() {
