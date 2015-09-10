@@ -5,21 +5,10 @@ import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.*;
-import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.popup.BalloonBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
-import com.intellij.openapi.wm.impl.IdeRootPane;
-import com.intellij.refactoring.safeDelete.SafeDeleteDialog;
-import com.intellij.refactoring.safeDelete.SafeDeleteProcessor;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
@@ -30,17 +19,14 @@ import training.lesson.exceptons.BadLessonException;
 import training.lesson.exceptons.InvalidSdkException;
 import training.lesson.exceptons.OldJdkException;
 import training.util.GenerateCourseXml;
-import training.util.LearnUiUtil;
 import training.util.MyClassLoader;
 import training.editor.EduEditor;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
@@ -140,10 +126,9 @@ public class CourseManager{
     public synchronized void openLesson(final Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         try {
-            checkEnvironment(project);
+            assert lesson != null;
+            checkEnvironment(project, lesson.getCourse());
 
-
-            if (lesson == null) throw new BadLessonException("Cannot open \"null\" lesson");
             if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
 
             //If lesson from some course
@@ -236,7 +221,7 @@ public class CourseManager{
         } catch (OldJdkException oldJdkException) {
             oldJdkException.printStackTrace();
         } catch (InvalidSdkException e) {
-            showSdkProblemDialog(project);
+            showSdkProblemDialog(project, e.getMessage());
         }
     }
 
@@ -266,33 +251,31 @@ public class CourseManager{
         return eduEditor;
     }
 
-    public void checkEnvironment(Project project) throws OldJdkException, InvalidSdkException {
+    public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException {
+
+        if (course == null) return;
 
         final Sdk projectJdk = ProjectRootManager.getInstance(project).getProjectSdk();
         assert projectJdk != null;
         final SdkTypeId sdkType = projectJdk.getSdkType();
-        if (sdkType instanceof JavaSdk) {
-            final JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(projectJdk);
-            if (version != null) {
-                if (!version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw new OldJdkException(JavaSdkVersion.JDK_1_6);
+        if (course.getSdkType() == Course.CourseSdkType.JAVA) {
+            if (sdkType instanceof JavaSdk) {
+                final JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(projectJdk);
+                if (version != null) {
+                    if (!version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw new OldJdkException(JavaSdkVersion.JDK_1_6);
+                }
+            } else if (sdkType.getName().equals("IDEA JDK")) {
+                //do nothing
+            } else {
+                throw new InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK");
             }
-            //TODO: Replace "SDK" with "JDK"
-        } else if (sdkType.getName().equals("IDEA SDK")) {
-            //do nothing
-        } else {
-            throw new InvalidSdkException("Training plugin needs Java SDK or IDEA SDK as a Project SDK");
         }
     }
 
-    public void showSdkProblemDialog(Project project){
-        final SdkProblemDialog dialog = new SdkProblemDialog(project, null);
+    public void showSdkProblemDialog(Project project, String sdkMessage){
+//        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
+        final SdkProblemDialog dialog = new SdkProblemDialog(project, sdkMessage);
         dialog.show();
-//        if (needConfirmation) {
-//            if (!dialog.showAndGet() || exit.get()) {
-//                return;
-//            }
-//        }
-
     }
 
 }

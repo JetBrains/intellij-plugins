@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<course name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics">
+<course name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics" sdkType="JAVA">
   <lesson filename="01.Select.xml" />
   <lesson filename="02.Comment.xml" />
   <lesson filename="03.Delete.xml" />
