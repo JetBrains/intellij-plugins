@@ -55,7 +55,7 @@ How to debug compiler.
   - Code from the 'flex-plugin-jps' module works only in the compiler java process, so it is debuggable only using the 'Compiler debug' run configuration.
   - Code from the 'flex-plugin-shared' module works both in the IDE main and in the compiler java processes, so breakpoints there may be hit when running any (or both) of these run configurations.
 
-  To debug Flex compiler itself you need to setup a project based on the sources from the corresponding zip files located in intellij-plugins/flex/lib, configure Remote Debug configuration and add required VM options to the JpsBuiltInFlexCompilerHandler.startCompilerProcess() method.
+  To debug 'Built-in compiler shell' (shell that manages multi-threaded Flex compilation) you need to setup a project based on the sources from the intellij-plugins/flex/tools/BuiltInFlexCompiler folder, configure Remote Debug configuration and add required VM options to the JpsBuiltInFlexCompilerHandler.startCompilerProcess() method.
 
 
 Troubleshooting.
