@@ -1,8 +1,11 @@
 package training.lesson;
 
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.Nullable;
+import training.editor.eduUI.EduIcons;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
 
@@ -14,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 29/01/15.
  */
-public class Lesson extends ToggleAction {
+public class Lesson extends AnAction {
 
     private Scenario scn;
     private String name;
@@ -144,13 +147,36 @@ public class Lesson extends ToggleAction {
     }
 
 
-    @Override
-    public boolean isSelected(AnActionEvent anActionEvent) {
-        return isPassed;
-    }
+//    @Override
+//    public boolean isSelected(AnActionEvent anActionEvent) {
+//        return isPassed;
+//    }
+//
+//    @Override
+//    public void (AnActionEvent anActionEvent, boolean b) {
+//        try {
+//            CourseManager.getInstance().openLesson(anActionEvent.getProject(), this);
+//        } catch (BadCourseException e) {
+//            e.printStackTrace();
+//        } catch (BadLessonException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (FontFormatException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (LessonIsOpenedException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
 
     @Override
-    public void setSelected(AnActionEvent anActionEvent, boolean b) {
+    public void actionPerformed(AnActionEvent anActionEvent) {
         try {
             CourseManager.getInstance().openLesson(anActionEvent.getProject(), this);
         } catch (BadCourseException e) {
@@ -168,12 +194,12 @@ public class Lesson extends ToggleAction {
         } catch (LessonIsOpenedException e) {
             e.printStackTrace();
         }
-
     }
 
-//    @Override
-//    public void update(AnActionEvent e) {
-//        e.getPresentation().setIcon(new SizedIcon(PlatformIcons.CHECK_ICON, 18, 18));
-//        e.getPresentation().setEnabled(!isPassed());
-//    }
+    @Override
+    public void update(AnActionEvent e) {
+        if (isPassed())
+            e.getPresentation().setIcon(IconLoader.getIcon(EduIcons.CHECKMARK_DARK_GRAY));
+
+    }
 }
