@@ -1,12 +1,7 @@
 package training.lesson.dialogs;
 
-import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdkVersion;
-import com.intellij.openapi.projectRoots.JdkUtil;
-import com.intellij.openapi.projectRoots.impl.SdkVersionUtil;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -22,19 +17,15 @@ import java.awt.*;
  */
 public class SdkProblemDialog extends DialogWrapper {
     private final Project myProject;
-    private final Callback myCallback;
+    private final String neccessarySdkVersion;
 
     private StateRestoringCheckBox myCbOpenProjectSdkPreferences;
 
 
-    public interface Callback {
-        void run(SdkProblemDialog dialog);
-    }
-
-    public SdkProblemDialog(Project project, Callback callback) {
+    public SdkProblemDialog(Project project, @NotNull String sdkVersion) {
         super(project, true);
         myProject = project;
-        myCallback = callback;
+        neccessarySdkVersion = sdkVersion;
         setTitle(EducationBundle.message("dialog.invalidSdk.title"));
         init();
     }
@@ -46,17 +37,12 @@ public class SdkProblemDialog extends DialogWrapper {
         return new Action[]{getOKAction(), getCancelAction()};
     }
 
-//    @Override
-//    protected void doHelpAction() {
-//        HelpManager.getInstance().invokeHelp("refactoring.safeDelete");
-//    }
-
     @Override
     protected JComponent createNorthPanel() {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = EducationBundle.message("dialog.invalidSdk.message", "at least JDK 1.6 or IDEA SDK with corresponding JDK");
+        final String warningMessage = EducationBundle.message("dialog.invalidSdk.message", neccessarySdkVersion);
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;
@@ -102,30 +88,6 @@ public class SdkProblemDialog extends DialogWrapper {
             super.doOKAction();
         }
 
-//        if (myCallback != null && isSafeDelete()) {
-//            myCallback.run(this);
-//        } else {
-//            super.doOKAction();
-//        }
-//
-//        final RefactoringSettings refactoringSettings = RefactoringSettings.getInstance();
-//        if (myCbSafeDelete != null) {
-//            refactoringSettings.SAFE_DELETE_WHEN_DELETE = myCbSafeDelete.isSelected();
-//        }
-//        if (isSafeDelete()) {
-//            if (myDelegate == null) {
-//                refactoringSettings.SAFE_DELETE_SEARCH_IN_COMMENTS = isSearchInComments();
-//                if (myCbSearchTextOccurrences != null) {
-//                    refactoringSettings.SAFE_DELETE_SEARCH_IN_NON_JAVA = isSearchForTextOccurences();
-//                }
-//            } else {
-//                myDelegate.setToSearchInComments(myElements[0], isSearchInComments());
-//
-//                if (myCbSearchTextOccurrences != null) {
-//                    myDelegate.setToSearchForTextOccurrences(myElements[0], isSearchForTextOccurences());
-//                }
-//            }
-//        }
     }
 
 }
