@@ -20,10 +20,14 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
     doTest(true);
   }
 
+  public void testJava8Step() {
+    doTest(false);
+  }
+
   private void doTest(boolean createAll) {
     CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new CucumberStepInspection());
-    myFixture.copyDirectoryToProject("createStep", "");
+    myFixture.copyDirectoryToProject("createStep/" + getTestName(true) , "");
     myFixture.configureByFile("createStep/" + getTestName(true) + "/test.feature");
 
     myFixture.checkHighlighting(true, false, false);

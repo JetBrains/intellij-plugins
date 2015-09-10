@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
-import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
@@ -23,13 +23,13 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
   @NotNull
   @Override
   public BDDFrameworkType getStepFileType() {
-    return new BDDFrameworkType(JavaFileType.INSTANCE, "Java8");
+    return new BDDFrameworkType(JavaFileType.INSTANCE, "Java 8");
   }
 
   @NotNull
   @Override
   public StepDefinitionCreator getStepDefinitionCreator() {
-    return new JavaStepDefinitionCreator();
+    return new Java8StepDefinitionCreator();
   }
 
   @Override
