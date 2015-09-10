@@ -10,6 +10,8 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,8 +24,9 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
                                 @NotNull final Ref<Integer> caretAdvanceRef,
                                 @NotNull final DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
+    if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;
+
     int caretOffset = caretOffsetRef.get().intValue();
-    int caretAdvance = caretAdvanceRef.get().intValue();
     PsiElement psiAtOffset = file.findElementAt(caretOffset);
     if (psiAtOffset == null || psiAtOffset.getTextOffset() > caretOffset) {
       return Result.Continue;

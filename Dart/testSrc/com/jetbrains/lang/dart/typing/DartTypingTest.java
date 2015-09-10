@@ -27,7 +27,8 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest(DartFileType.INSTANCE, charToType, textBefore, textAfter);
   }
 
-  private void doTypingTest(@NotNull final LanguageFileType fileType, final char charToType,
+  private void doTypingTest(@NotNull final LanguageFileType fileType,
+                            final char charToType,
                             @NotNull final String textBefore,
                             @NotNull final String textAfter) {
     myFixture.configureByText(fileType, textBefore);
@@ -535,6 +536,18 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "var a = '$x and <caret> also $y';",
                  "var a = '$x and '\n" +
                  "    '<caret> also $y';");
+  }
+
+  public void testEnterBetweenInterpolationsHtml() {
+    doTypingTest(HtmlFileType.INSTANCE, '\n',
+                 "<script type=\"application/dart\">\n" +
+                 "var a = '$x and <caret> also $y';\n" +
+                 "</script>",
+                 "<script type=\"application/dart\">\n" +
+                 "var a = '$x and '\n" +
+                 // 8 spaces continuation indent is taken from HTML language instead of Dart's 4 spaces. Fix expected result when it is fixed in Platform
+                 "        '<caret> also $y';\n" +
+                 "</script>");
   }
 
   public void testEnterBeforeInterpolation() {
