@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ex.QuickFixWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
@@ -57,5 +58,10 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
   @Override
   protected boolean isWriteActionRequired() {
     return false;
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
   }
 }
