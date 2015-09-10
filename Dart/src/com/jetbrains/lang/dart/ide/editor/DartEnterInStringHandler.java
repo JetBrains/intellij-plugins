@@ -39,8 +39,13 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
       breakString("r" + quote, String.valueOf(quote), caretOffsetRef, caretAdvanceRef, document);
       return Result.Default;
     }
-    while ((token = token.getTreeParent()) != null) {
+    if ((token = token.getTreeParent()) != null) {
       type = token.getElementType();
+      if (type == DartTokenTypes.SHORT_TEMPLATE_ENTRY || type == DartTokenTypes.LONG_TEMPLATE_ENTRY) {
+        token = token.getTreeParent();
+        if (token == null) return Result.Continue;
+        type = token.getElementType();
+      }
       if (type == DartTokenTypes.STRING_LITERAL_EXPRESSION) {
         token = token.getFirstChildNode();
         if (token == null) return Result.Continue; // Can't happen with current grammar.
