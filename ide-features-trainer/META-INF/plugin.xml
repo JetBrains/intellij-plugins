@@ -28,6 +28,9 @@
 
   <application-components>
     <!-- Add your application components here -->
+      <component>
+    <implementation-class>training.lesson.CourseManager</implementation-class>
+  </component>
   </application-components>
 
   <project-components>
