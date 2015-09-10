@@ -23,7 +23,7 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
     CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new CucumberStepInspection());
     myFixture.copyDirectoryToProject("createStep", "");
-    myFixture.configureByFile("createStep/" + getTestName(true) + ".feature");
+    myFixture.configureByFile("createStep/" + getTestName(true) + "/test.feature");
 
     myFixture.checkHighlighting(true, false, false);
 
@@ -37,9 +37,9 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
 
     if (quickFix != null) {
       myFixture.launchAction(quickFix);
-      VirtualFile expectedFile = myFixture.findFileInTempDir("CreateAllStepDefs.java");
+      VirtualFile expectedFile = myFixture.findFileInTempDir("StepDefs.java");
       myFixture.openFileInEditor(expectedFile);
-      myFixture.checkResultByFile("createStep/CreateAllStepDefs_fixed.txt");
+      myFixture.checkResultByFile("createStep/" + getTestName(true) + "/StepDefs_fixed.txt");
     }
   }
 
