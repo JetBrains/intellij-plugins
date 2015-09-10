@@ -29,7 +29,7 @@ Prerequisites:
          [IDEA Installation]/plugins/uml/lib/*.jar
          [IDEA Installation]/plugins/w3validators/lib/*.jar
 
-  2.5. Open Sources tab of the Plugin SDK and add path to the cloned intellij-community repository. After some scanning IDE will find all src folders - accept them. To have IntelliJ IDEA Community sources matching IntelliJ IDEA Ultimate installation it is recommended to update Community repo (git pull) at the day when Ultimate is released and switch Community repo to the branch that corresponds to the Ultimate installation.
+  2.5. Open Sources tab of the Plugin SDK and add path to the cloned intellij-community repository. After some scanning IDE will find all src folders - accept them. To have IntelliJ IDEA Community sources matching IntelliJ IDEA Ultimate installation it is recommended to checkout tag with the name equal to the IntelliJ IDEA Ultimate build number, for example 'git checkout idea/142.4675.3'.
 
   2.6. Open Plugin SDK Annotations tab and add [IDEA Installation]/lib/jdkAnnotations.jar if its is not already there.
 
@@ -42,10 +42,26 @@ Prerequisites:
 4. If you are going to submit a GitHub pull request please add a corresponding test (if possible) and make sure that your contribution doesn't break existing tests.
 
 
+How to debug compiler.
+
+  Compiler is started as a separate Java process, so it is not possible to debug it by simply running 'Flex plugin' run configuration. Using 'Compiler debug' remote debug configuration:
+  - Open Run | Edit Configurations | 'Flex plugin' and change the value of the -Dcompiler.process.debug.port VM option to the port that is specified in the 'Compiler debug' configuration (5660 by default). To disable compiler debugging set the value back to -1.
+  - Launch 'Flex plugin' run configuration (run or debug - both are ok), when IDE starts - trigger any compilation. Compiler process will be waiting for the remote debug connection.
+  - Start 'Compiler debug' run configuration.
+
+Note:
+  - code from the 'flex-plugin' module works only in the IDE main java process, so it is debuggable only using the 'Flex plugin' run configuration.
+  - code from the 'flex-plugin-jps' module works only in the compiler java process, so it is debuggable only using the 'Compiler debug' run configuration.
+  - code from the 'flex-plugin-shared' module works both in the IDE main and in the compiler java processes, so breakpoints there may be hit when running any (or both) of these run configurations.
+
+
 Troubleshooting.
 
-1. Some code is red and compilation fails with errors.
-   Most likely classes with red code were recently updated to match current state of the original IntelliJ IDEA Ultimate repository (which is not fully open source). The code will become green again when the next EAP or official release is out. While waiting for the next release just fix compilation locally (for example by reverting affected files to their previous git revisions).
+1. Q: Some code is red and compilation fails with errors.
+   A: Most likely classes with red code were recently updated to match current state of the original IntelliJ IDEA Ultimate repository (which is not fully open source). The code will become green again when the next EAP or official release is out. While waiting for the next release just fix compilation locally (for example by reverting affected files to their previous git revisions).
 
-2. Some tests fail even without any changes in the plugin source code.
-   About 20 tests are known to fail and will be fixed soon. Just make sure not to break passing tests.
+2. Q: Some tests fail even without any changes in the plugin source code.
+   A: Delete folder plugins-sandbox/test and run tests again. Path to the plugins-sandbox folder is shown in Project Structure | SDKs | IntelliJ IDEA Ultimate
+
+3. Q: Some tests fail anyway.
+   A: About 20 tests are known to fail and will be fixed soon. Just make sure not to break passing tests and keep IntelliJ IDEA installation up-to-date.
