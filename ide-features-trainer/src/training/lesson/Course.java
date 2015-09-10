@@ -30,6 +30,10 @@ public class Course extends ActionGroup{
     private Element root;
     private String id;
     private String name;
+    @Nullable
+    private CourseSdkType mySdkType = null;
+
+    public enum CourseSdkType {JAVA}
 
     public Course(String name, Element root) throws JDOMException, BadLessonException, BadCourseException, IOException, URISyntaxException {
         super(name, true);
@@ -43,6 +47,10 @@ public class Course extends ActionGroup{
             answersPath = null;
         }
         id = root.getAttribute(GenerateCourseXml.COURSE_ID_ATTR).getValue();
+        if (root.getAttribute(GenerateCourseXml.COURSE_SDK_TYPE) != null){
+            mySdkType = GenerateCourseXml.getSdkTypeFromString(root.getAttribute(GenerateCourseXml.COURSE_SDK_TYPE).getValue());
+        }
+
     }
 
     @NotNull
@@ -146,5 +154,9 @@ public class Course extends ActionGroup{
 
     public String getName() {
         return name;
+    }
+
+    public CourseSdkType getSdkType() {
+         return mySdkType;
     }
 }

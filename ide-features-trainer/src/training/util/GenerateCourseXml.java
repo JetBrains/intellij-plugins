@@ -3,6 +3,7 @@ package training.util;
 import org.jdom.*;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import training.lesson.Course;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,6 +25,8 @@ public class GenerateCourseXml {
     public final static String COURSE_XML_VERSION = "0.3";
     public final static String COURSE_LESSON_ELEMENT = "lesson";
     public final static String COURSE_ANSWER_PATH_ATTR = "answerPath";
+    public final static String COURSE_SDK_TYPE = "sdkType";
+
 
     public final static String COURSE_LESSONS_PATH_ATTR = "lessonsPath";
     public final static String COURSE_LESSON_FILENAME_ATTR = "filename";
@@ -92,5 +95,12 @@ public class GenerateCourseXml {
     public static void main(String[] args) throws URISyntaxException, IOException {
 //        gen("Completions", "completions", "Completions/");
         genCourses();
+    }
+
+    public static Course.CourseSdkType getSdkTypeFromString(String string) {
+        for (Course.CourseSdkType courseSdkType : Course.CourseSdkType.values()) {
+            if(courseSdkType.toString().equals(string)) return courseSdkType;
+        }
+        return null;
     }
 }
