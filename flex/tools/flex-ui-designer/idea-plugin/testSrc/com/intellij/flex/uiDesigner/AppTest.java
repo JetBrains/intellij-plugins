@@ -87,7 +87,7 @@ public class AppTest extends AppTestBase {
 
   public void _testCloseAndOpenProject() throws Exception {
     File temp = createTempDirectory();
-    final Project alienProject = createProject(new File(temp, "t.ipr"), DebugUtil.currentStackTrace());
+    final Project alienProject = createProject(temp + "/t.ipr", DebugUtil.currentStackTrace());
     assertTrue(ProjectManagerEx.getInstanceEx().openProject(alienProject));
     UIUtil.dispatchAllInvocationEvents(); // startup activities
 
