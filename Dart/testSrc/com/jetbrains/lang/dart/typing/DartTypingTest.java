@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.typing;
 
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -21,8 +23,14 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after.dart");
   }
 
-  private void doTypingTest(final char charToType, final @NotNull String textBefore, final @NotNull String textAfter) {
-    myFixture.configureByText(DartFileType.INSTANCE, textBefore);
+  private void doTypingTest(final char charToType, @NotNull final String textBefore, @NotNull final String textAfter) {
+    doTypingTest(DartFileType.INSTANCE, charToType, textBefore, textAfter);
+  }
+
+  private void doTypingTest(@NotNull final LanguageFileType fileType, final char charToType,
+                            @NotNull final String textBefore,
+                            @NotNull final String textAfter) {
+    myFixture.configureByText(fileType, textBefore);
     myFixture.type(charToType);
     myFixture.checkResult(textAfter);
   }
@@ -357,6 +365,14 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', "  ///   q  <caret>    z", "  ///   q  \n  ///   <caret> z");
     doTypingTest('\n', "///q<caret>z", "///q\n///<caret>z");
     doTypingTest('\n', " ///q<caret> \t ///z", " ///q \t \n ///<caret>z");
+
+    doTypingTest(HtmlFileType.INSTANCE, '\n',
+                 "<script type=\"application/dart\">\n" +
+                 "///   q<caret>   z\n" +
+                 "</script>",
+                 "<script type=\"application/dart\">\n" +
+                 "///   q\n///   <caret>z\n" +
+                 "</script>");
   }
 
   public void testEnterAfterSingleLineComment() {
