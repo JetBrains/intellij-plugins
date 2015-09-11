@@ -147,7 +147,7 @@ public class DartAnalysisServerService {
           myHighlightData.put(filePath, pluginRegions);
         }
         // Force (re)highlighting.
-        forceFileAnnotation(filePath);
+        forceFileAnnotation(filePath, false);
       }
     }
 
@@ -170,7 +170,7 @@ public class DartAnalysisServerService {
           myNavigationData.put(filePath, pluginRegions);
         }
         // Force (re)highlighting.
-        forceFileAnnotation(filePath);
+        forceFileAnnotation(filePath, true);
       }
     }
 
@@ -181,7 +181,8 @@ public class DartAnalysisServerService {
       synchronized (myOverrideData) {
         myOverrideData.put(filePath, overrides);
       }
-      forceFileAnnotation(filePath);
+
+      forceFileAnnotation(filePath, false);
     }
 
     @Override
@@ -267,12 +268,14 @@ public class DartAnalysisServerService {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
 
-  private void forceFileAnnotation(final String filePath) {
+  private void forceFileAnnotation(@NotNull final String filePath, final boolean clearCache) {
     final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (virtualFile != null) {
       Set<Project> projects = myRootsHandler.getTrackedProjects();
       for (final Project project : projects) {
-        ResolveCache.getInstance(project).clearCache(true);
+        if (clearCache) {
+          ResolveCache.getInstance(project).clearCache(true);
+        }
         DaemonCodeAnalyzer.getInstance(project).restart();
       }
     }
