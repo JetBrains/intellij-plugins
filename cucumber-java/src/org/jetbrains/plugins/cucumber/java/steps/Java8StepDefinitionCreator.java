@@ -4,11 +4,16 @@ import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.impl.source.tree.Factory;
 import com.intellij.psi.impl.source.tree.LeafElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import cucumber.runtime.snippets.CamelCaseConcatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
@@ -20,12 +25,54 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
+  public static final String CUCUMBER_API_JAVA8_EN = "cucumber.api.java8.En";
+
+  @NotNull
+  @Override
+  public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
+    final PsiFile result =  super.createStepDefinitionContainer(dir, name);
+
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(dir.getProject()).getFileIndex();
+    final Module module = fileIndex.getModuleForFile(result.getVirtualFile());
+    assert module != null;
+    final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
+
+    Collection<PsiClass> stepDefContainerInterfaces = JavaFullClassNameIndex.getInstance().get(
+      CUCUMBER_API_JAVA8_EN.hashCode(), module.getProject(), dependenciesScope);
+
+    if (stepDefContainerInterfaces.size() > 0) {
+      final PsiClass stepDefContainerInterface = stepDefContainerInterfaces.iterator().next();
+      final PsiClass createPsiClass = PsiTreeUtil.getChildOfType(result, PsiClass.class);
+      assert createPsiClass != null;
+      final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(dir.getProject()).getElementFactory();
+      PsiJavaCodeReferenceElement ref = elementFactory.createClassReferenceElement(stepDefContainerInterface);
+      if (stepDefContainerInterface.isInterface()) {
+        PsiReferenceList implementsList = createPsiClass.getImplementsList();
+        if (implementsList != null) {
+          implementsList.add(ref);
+        }
+      }
+    }
+
+    return result;
+  }
+
   @NotNull
   @Override
   public String getStepDefinitionFilePath(@NotNull PsiFile file) {
     return super.getStepDefinitionFilePath(file) + " (Java 8 style)";
+  }
+
+  private static PsiMethod getConstructor(PsiClass clazz) {
+    if (clazz.getConstructors().length == 0) {
+      JVMElementFactory factory = JVMElementFactories.requireFactory(clazz.getLanguage(), clazz.getProject());
+      PsiMethod constructor = factory.createConstructor(clazz.getName());
+      return (PsiMethod)clazz.add(constructor);
+    }
+    return clazz.getConstructors()[0];
   }
 
   @Override
@@ -33,7 +80,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     if (!(file instanceof PsiClassOwner)) return false;
 
     final PsiClass clazz = PsiTreeUtil.getChildOfType(file, PsiClass.class);
-    if (clazz == null || clazz.getConstructors().length == 0) {
+    if (clazz == null) {
       return false;
     }
 
@@ -43,7 +90,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
 
     final PsiElement stepDef = buildStepDefinitionByStep(step, file.getLanguage());
 
-    final PsiMethod constructor = clazz.getConstructors()[0];
+    final PsiMethod constructor = getConstructor(clazz);
     final PsiCodeBlock constructorBody = constructor.getBody();
     if (constructorBody == null) {
       return false;
