@@ -385,6 +385,13 @@ public class CfmlPsiUtil {
         }
 
         @Override
+        public void visitCfmlFunction(CfmlFunction function) {
+          if (function != lastParent) {  // skip function we are inside
+            super.visitCfmlFunction(function);
+          }
+        }
+
+        @Override
         public void visitElement(PsiElement element) {
           if (element != lastParent && element instanceof CfmlAssignmentExpression) {
             visitCfmlAssignmentExpression((CfmlAssignmentExpression)element);

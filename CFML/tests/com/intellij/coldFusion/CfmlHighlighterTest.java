@@ -51,6 +51,11 @@ public class CfmlHighlighterTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testAssertion2() throws Exception {
+    myFixture.enableInspections(new CfmlReferenceInspection());
+    doTest();
+  }
+
   @Override
   protected String getBasePath() {
     return "/highlighter";
