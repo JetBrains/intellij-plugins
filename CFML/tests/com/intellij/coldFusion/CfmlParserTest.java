@@ -37,6 +37,11 @@ public class CfmlParserTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   // public void testInit() throws Throwable {}
+
+  public void testUnaryInc() throws Throwable {
+    doTest();
+  }
+
   public void testUnclosedCfset() throws Throwable {
     doTest();
   }
