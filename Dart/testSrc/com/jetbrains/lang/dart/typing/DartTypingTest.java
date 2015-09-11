@@ -584,4 +584,13 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "var a = r'''some\n" +
                  "<caret>content''';");
   }
+
+  public void testEnterBeforeEmbeddedInterpolation() {
+    // We are not going to address the whole issue of
+    // "how do I format an entire functional program written in an interpolation expression"
+    doTypingTest('\n',
+                 "var b = \"see ${'${<caret>a}'} and more\";",
+                 "var b = \"see ${'${\n" +
+                 "    a}'} and more\";");
+  }
 }

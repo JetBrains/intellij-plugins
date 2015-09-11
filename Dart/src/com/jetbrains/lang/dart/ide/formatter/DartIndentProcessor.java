@@ -239,6 +239,9 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
 
+    if (parentType == LONG_TEMPLATE_ENTRY && EXPRESSIONS.contains(elementType)) {
+      return Indent.getContinuationIndent();
+    }
     return Indent.getNoneIndent();
   }
 
