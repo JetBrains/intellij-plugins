@@ -99,6 +99,11 @@ public class DartProblemsViewImpl {
   }
 
   public void updateErrorsForFile(@NotNull final VirtualFile vFile, @NotNull final List<AnalysisError> errors) {
+    if (errors.isEmpty()) {
+      removeErrorsForFile(vFile.getPath());
+      return;
+    }
+
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
@@ -119,8 +124,6 @@ public class DartProblemsViewImpl {
 
           myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
         }
-
-        myPanel.updateTree();
       }
     });
   }
