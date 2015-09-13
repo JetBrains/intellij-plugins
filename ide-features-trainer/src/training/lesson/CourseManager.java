@@ -4,16 +4,12 @@ import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.annotations.CollectionBean;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
@@ -47,39 +42,31 @@ import java.util.concurrent.ExecutionException;
                         file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml")
         }
 )
-public class CourseManager implements PersistentStateComponent<CourseManager.State>{
+public class CourseManager implements PersistentStateComponent<CourseManager.State> {
 
-    public static final CourseManager INSTANCE = new CourseManager();
-
-    private HashMap<Course, VirtualFile> mapCourseVirtualFile;
-    private State myState = new State();
-
-
-    public static CourseManager getInstance(){
-        return INSTANCE;
-    }
-
-    public CourseManager() {
-        //init courses; init default course by default
-
-        mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
-
-        try {
-//            final Course defaultCourse = Course.initCourse("EditorBasics.xml");
-//            courses.add(defaultCourse);
-            if (getCourses() == null || getCourses().length == 0)
-                initCourses();
-        } catch (BadCourseException e) {
-            e.printStackTrace();
-        } catch (BadLessonException e) {
-            e.printStackTrace();
+    CourseManager(){
+        if(myState.courses == null || myState.courses.size() == 0) try {
+            initCourses();
         } catch (JDOMException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        } catch (BadCourseException e) {
+            e.printStackTrace();
+        } catch (BadLessonException e) {
+            e.printStackTrace();
         }
+    }
+
+
+    private HashMap<Course, VirtualFile> mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
+    private State myState = new State();
+
+
+    public static CourseManager getInstance(){
+        return ServiceManager.getService(CourseManager.class);
     }
 
     public void initCourses() throws JDOMException, IOException, URISyntaxException, BadCourseException, BadLessonException {
@@ -94,7 +81,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
 
-
     @Nullable
     public Course getCourseById(String id){
         final Course[] courses = getCourses();
@@ -106,7 +92,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return null;
     }
 
-    public void registerVirtaulFile(Course course, VirtualFile virtualFile){
+    public void registerVirtualFile(Course course, VirtualFile virtualFile){
         mapCourseVirtualFile.put(course, virtualFile);
     }
 
@@ -173,7 +159,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                         });
                     }
                 }
-                registerVirtaulFile(lesson.getCourse(), vf);
+                registerVirtualFile(lesson.getCourse(), vf);
 
 
             }
@@ -288,10 +274,11 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
 
     static class State {
-        @CollectionBean
         public final ArrayList<Course> courses = new ArrayList<Course>();
         public final String STATE_DESCRIPTION = "Course manager state saver";
 
+        public State() {
+        }
     }
 
     public void addCourse(Course course){
@@ -313,7 +300,49 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Override
     public void loadState(State state){
-        myState = state;
+        if(state.courses == null || state.courses.size() == 0) {
+            try {
+                initCourses();
+            } catch (JDOMException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (BadCourseException e) {
+                e.printStackTrace();
+            } catch (BadLessonException e) {
+                e.printStackTrace();
+            }
+        } else {
+            for (Course course : state.courses) {
+                ArrayList<Lesson> newLessonArrayList = new ArrayList<Lesson>();
+                for (Lesson lesson : course.getLessons()) {
+                    final String path = lesson.getScn().getPath();
+
+                    @Nullable
+                    Scenario scenario = null;
+                    try {
+                        scenario = new Scenario(path);
+                    } catch (JDOMException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        newLessonArrayList.add(new Lesson(scenario, lesson.getPassed(), course));
+                    } catch (BadLessonException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                course.setLessons(newLessonArrayList);
+                myState.courses.add(course);
+            }
+        }
     }
+
+
 
 }

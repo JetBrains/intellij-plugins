@@ -1,6 +1,7 @@
 package training.lesson;
 
 
+import com.intellij.util.xmlb.annotations.Transient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -19,9 +20,12 @@ import java.util.List;
  */
 public class Scenario {
 
-    final private String path;
+    private String path;
     private Element root;
     private Document doc;
+
+    public Scenario(){
+    }
 
     public Scenario(String path) throws JDOMException, IOException {
         this.path = path;
@@ -32,6 +36,7 @@ public class Scenario {
         doc = builder.build(is);
         root = doc.getRootElement();
     }
+
 
     public void saveState() throws IOException {
         XMLOutputter xmlOutput = new XMLOutputter();
@@ -67,10 +72,21 @@ public class Scenario {
 
     }
 
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+
     public String getName(){
         return root.getAttribute("name").getValue();
     }
 
+    @Transient
     public Element getRoot(){
         return root;
     }

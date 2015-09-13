@@ -356,7 +356,7 @@ public class EduPanel extends JPanel {
             if (lesson.equals(currentLesson)){
                 //selected lesson
                 final JLabel e = new JLabel(id);
-                if (currentLesson.isPassed()) e.setIcon(checkmarkIconSelected);
+                if (currentLesson.getPassed()) e.setIcon(checkmarkIconSelected);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setForeground(lessonActiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
@@ -365,7 +365,7 @@ public class EduPanel extends JPanel {
                 coursePanel.add(e);
             } else {
                 final JLabel e = new JLabel(id);
-                if (currentLesson.isPassed()) e.setIcon(checkmarkIcon);
+                if (currentLesson.getPassed()) e.setIcon(checkmarkIcon);
                 e.setHorizontalTextPosition(SwingConstants.LEFT);
                 e.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 e.setForeground(lessonInactiveColor);
