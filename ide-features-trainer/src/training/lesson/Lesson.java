@@ -2,8 +2,8 @@ package training.lesson;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.Nullable;
 import training.editor.eduUI.EduIcons;
 import training.lesson.exceptons.BadCourseException;
@@ -25,9 +25,47 @@ public class Lesson extends AnAction {
     private ArrayList<LessonListener> lessonListeners;
     private Course parentCourse;
 
-    @Nullable
-    private boolean isPassed;
+
+    private boolean passed;
     private boolean isOpen;
+
+
+
+    @Nullable
+    public boolean getPassed() {
+        return passed;
+    }
+
+    public void setPassed(@Nullable boolean passed) {
+        this.passed = passed;
+    }
+
+    public ArrayList<LessonListener> getLessonListeners() {
+        return lessonListeners;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @AbstractCollection
+    public void setScn(Scenario scn) {
+        this.scn = scn;
+    }
+
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
+    }
+
+
+    public Lesson(){
+        passed = false;
+    }
 
     public Lesson(Scenario scenario, boolean passed, @Nullable Course course) throws BadLessonException {
 
@@ -35,7 +73,7 @@ public class Lesson extends AnAction {
             scn = scenario;
             name = scn.getName();
 
-            isPassed = passed;
+            this.passed = passed;
             if (!scn.getSubtype().equals("aimless")) {
                 targetPath = scn.getTarget();
             } else {
@@ -69,19 +107,14 @@ public class Lesson extends AnAction {
      */
     @Nullable
 
+
     public String getId() {
         return name;
     }
 
-    public boolean isPassed(){
-        return isPassed;
-    }
 
     public boolean isOpen() {return isOpen;}
 
-    public void setPassed(boolean passed){
-        isPassed = passed;
-    }
 
     public Scenario getScn(){
         return scn;
@@ -127,7 +160,7 @@ public class Lesson extends AnAction {
 
     //call onPass handlers in lessonListeners
     public void onPass(){
-        if(isPassed) return;
+        if(passed) return;
         scn.getRoot().getAttribute("passed").setValue("true");
         try {
             scn.saveState();
@@ -137,7 +170,7 @@ public class Lesson extends AnAction {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        isPassed = true;
+        passed = true;
     }
 
     public void onNextLesson() throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
@@ -149,7 +182,7 @@ public class Lesson extends AnAction {
 
 //    @Override
 //    public boolean isSelected(AnActionEvent anActionEvent) {
-//        return isPassed;
+//        return passed;
 //    }
 //
 //    @Override
@@ -198,7 +231,7 @@ public class Lesson extends AnAction {
 
     @Override
     public void update(AnActionEvent e) {
-        if (isPassed())
+        if(getPassed())
             e.getPresentation().setIcon(IconLoader.getIcon(EduIcons.CHECKMARK_DARK_GRAY));
 
     }

@@ -3,6 +3,9 @@ package training.lesson;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
+import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -22,18 +25,51 @@ import java.util.ArrayList;
 /**
  * Created by karashevich on 29/01/15.
  */
+@Tag("course")
 public class Course extends ActionGroup{
 
     private ArrayList<Lesson> lessons;
     @Nullable
     private String answersPath;
-    private Element root;
+    @Nullable
+    private Element root = null;
     private String id;
-    private String name;
+    public String name;
     @Nullable
     private CourseSdkType mySdkType = null;
 
     public enum CourseSdkType {JAVA}
+
+    public void setAnswersPath(@Nullable String answersPath) {
+        this.answersPath = answersPath;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setLessons(ArrayList<Lesson> lessons) {
+        this.lessons = lessons;
+    }
+
+    @Nullable
+    public CourseSdkType getMySdkType() {
+        return mySdkType;
+    }
+
+    public void setMySdkType(@Nullable CourseSdkType mySdkType) {
+        this.mySdkType = mySdkType;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public Course(){
+        lessons = new ArrayList<Lesson>();
+    }
+
 
     public Course(String name, Element root) throws JDOMException, BadLessonException, BadCourseException, IOException, URISyntaxException {
         super(name, true);
@@ -86,6 +122,8 @@ public class Course extends ActionGroup{
         return answersPath;
     }
 
+
+    @AbstractCollection(surroundWithTag = true)
     public ArrayList<Lesson> getLessons() {
         return lessons;
     }
@@ -127,7 +165,7 @@ public class Course extends ActionGroup{
     @Nullable
     public Lesson giveNotPassedLesson() {
         for (Lesson lesson : lessons) {
-            if (!lesson.isPassed()) return lesson;
+            if (!lesson.getPassed()) return lesson;
         }
         return null;
     }
@@ -135,14 +173,14 @@ public class Course extends ActionGroup{
     @Nullable
     public Lesson giveNotPassedAndNotOpenedLesson() {
         for (Lesson lesson : lessons) {
-            if (!lesson.isPassed() && !lesson.isOpen()) return lesson;
+            if (!lesson.getPassed() && !lesson.isOpen()) return lesson;
         }
         return null;
     }
 
     public boolean hasNotPassedLesson() {
         for (Lesson lesson : lessons) {
-            if (!lesson.isPassed()) return true;
+            if (!lesson.getPassed()) return true;
         }
         return false;
     }
