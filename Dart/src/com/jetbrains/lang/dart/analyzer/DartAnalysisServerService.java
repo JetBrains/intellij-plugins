@@ -132,23 +132,20 @@ public class DartAnalysisServerService {
     public void computedHighlights(final String _filePath, final List<HighlightRegion> regions) {
       final String filePath = FileUtil.toSystemIndependentName(_filePath);
 
-      if (DartResolver.isServerDrivenResolution()) {
-        // Ignore notifications for files that has been changed, but server does not know about them yet.
-        if (myFilePathsWithUnsentChanges.contains(filePath)) {
-          return;
-        }
-        // Convert HighlightRegion(s) into PluginHighlightRegion(s).
-        List<PluginHighlightRegion> pluginRegions = Lists.newArrayList();
-        for (HighlightRegion region : regions) {
-          pluginRegions.add(new PluginHighlightRegion(region));
-        }
-        // Put PluginHighlightRegion(s).
-        synchronized (myHighlightData) {
-          myHighlightData.put(filePath, pluginRegions);
-        }
-        // Force (re)highlighting.
-        forceFileAnnotation(filePath, false);
+      if (myFilePathsWithUnsentChanges.contains(filePath)) {
+        return;
       }
+
+      final List<PluginHighlightRegion> pluginRegions = new ArrayList<PluginHighlightRegion>(regions.size());
+      for (HighlightRegion region : regions) {
+        pluginRegions.add(new PluginHighlightRegion(region));
+      }
+
+      synchronized (myHighlightData) {
+        myHighlightData.put(filePath, pluginRegions);
+      }
+
+      forceFileAnnotation(filePath, false);
     }
 
     @Override
