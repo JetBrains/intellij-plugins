@@ -18,6 +18,7 @@
     <depends>com.intellij.modules.sql</depends>
     <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.ultimate</depends>
+    <depends>com.intellij.database</depends>
     <extensions defaultExtensionNs="com.intellij">
         <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
         <psi.referenceContributor language="CFML" implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
