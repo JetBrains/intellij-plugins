@@ -135,8 +135,14 @@ public class IdeaUtils {
    */
   @Nullable
   public static PsiClass findPublicClass(PsiClass[] classes) {
+    PsiModifierList modifierList;
     for (PsiClass clazz : classes) {
-      if (clazz.isValid() && clazz.getModifierList().hasExplicitModifier(PsiModifier.PUBLIC)) {
+      if (clazz.isValid() &&
+          (modifierList = clazz.getModifierList()) != null &&
+          modifierList.hasModifierProperty(PsiModifier.PUBLIC) &&
+          !clazz.isEnum() &&
+          !clazz.isInterface()
+        ) {
         return clazz;
       }
     }
