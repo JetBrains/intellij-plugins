@@ -62,6 +62,7 @@ public class Course extends ActionGroup{
     }
 
     public void setName(String name) {
+        if(name != null) getTemplatePresentation().setText(name);
         this.name = name;
     }
 
