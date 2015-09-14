@@ -29,6 +29,7 @@ public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
     FILES = Collections.singleton(file);
   }
 
+  @NotNull
   @Override
   public Set<VirtualFile> getAdditionalRootsToIndex() {
     return FILES;
