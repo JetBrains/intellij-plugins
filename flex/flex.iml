@@ -40,4 +40,7 @@
     <orderEntry type="module" module-name="diagram-api" />
     <orderEntry type="module" module-name="graph-openapi" />
   </component>
+  <component name="RuntimeResources">
+    <runtime-resource name="bundled" url="file://$MODULE_DIR$/lib" />
+  </component>
 </module>

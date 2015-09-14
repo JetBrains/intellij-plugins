@@ -11,7 +11,6 @@ import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkProperties;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.flex.model.sdk.RslUtil;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -40,9 +39,10 @@ import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
 import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.platform.loader.PlatformLoader;
+import org.jetbrains.platform.loader.repository.RuntimeModuleId;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -630,30 +630,8 @@ public class FlexCommonUtils {
   }
 
   public static String getPathToBundledJar(String filename) {
-    final URL url = FlexCommonUtils.class.getResource("");
-    if ("jar".equals(url.getProtocol())) {
-      // running from build
-      return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/" + filename);
-    }
-    else {
-      final File dir1 = new File("../lib");
-      if (dir1.isDirectory()) {
-        final String path = FileUtil.toSystemIndependentName(FileUtil.toCanonicalPath(dir1.getAbsolutePath()));
-        if (path.endsWith("/flex/lib")) {
-          // running tests from 'flex-plugin' project
-          return FileUtil.toSystemDependentName(path + "/" + filename);
-        }
-      }
-
-      final File dir2 = new File(PathManager.getHomePath() + "/plugins/flex/lib");
-      if (dir2.isDirectory()) {
-        // running IDE from 'flex-plugin' project
-        return FileUtil.toSystemIndependentName(dir2.getAbsolutePath() + "/" + filename);
-      }
-
-      // running from 'IDEA' project sources
-      return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/contrib/flex/lib/" + filename);
-    }
+    RuntimeModuleId resourceId = RuntimeModuleId.moduleResource("flex", "bundled");
+    return new File(PlatformLoader.getInstance().getRepository().getModuleRootPath(resourceId), filename).getAbsolutePath();
   }
 
   public static Collection<String> getFlexUnitSupportLibNames(final BuildConfigurationNature nature,
