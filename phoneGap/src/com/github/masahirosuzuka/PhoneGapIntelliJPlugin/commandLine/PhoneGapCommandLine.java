@@ -2,6 +2,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
@@ -390,7 +391,7 @@ public class PhoneGapCommandLine {
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.withWorkDirectory(myWorkDir);
-    commandLine.setPassParentEnvironment(myPassParentEnv);
+    commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.SHELL : ParentEnvironmentType.NONE);
     commandLine.withEnvironment(myEnv);
 
     Process process = commandLine.createProcess();

@@ -5,6 +5,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.filters.TextConsoleBuilder;
@@ -129,7 +130,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
     commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
-    commandLine.setPassParentEnvironment(myRunnerParameters.isIncludeParentEnvs());
+    commandLine.withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.SHELL : ParentEnvironmentType.NONE);
     setupParameters(getEnvironment().getProject(), commandLine, myRunnerParameters, overriddenMainFilePath);
 
     return commandLine;

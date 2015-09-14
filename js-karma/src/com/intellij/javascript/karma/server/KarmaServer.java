@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
@@ -152,8 +153,8 @@ public class KarmaServer {
   private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     KarmaRunSettings runSettings = serverSettings.getRunSettings();
-    commandLine.setPassParentEnvironment(runSettings.getEnvData().isPassParentEnvs());
-    commandLine.getEnvironment().putAll(runSettings.getEnvData().getEnvs());
+    commandLine.withParentEnvironmentType(runSettings.getEnvData().isPassParentEnvs() ? ParentEnvironmentType.SHELL : ParentEnvironmentType.NONE);
+    commandLine.withEnvironment(runSettings.getEnvData().getEnvs());
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
