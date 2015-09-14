@@ -17,6 +17,7 @@ package org.intellij.plugins.markdown.lang;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import org.intellij.markdown.flavours.gfm.GFMElementTypes;
 
 import static org.intellij.plugins.markdown.lang.MarkdownElementType.platformType;
 
@@ -45,7 +46,7 @@ public interface MarkdownElementTypes {
 
   IElementType STRONG = platformType(org.intellij.markdown.MarkdownElementTypes.STRONG);
 
-  //IElementType STRIKETHROUGH = platformType(org.intellij.markdown.MarkdownElementTypes.STRIKETHROUGH);
+  IElementType STRIKETHROUGH = platformType(GFMElementTypes.STRIKETHROUGH);
 
   IElementType LINK_DEFINITION = platformType(org.intellij.markdown.MarkdownElementTypes.LINK_DEFINITION);
   IElementType LINK_LABEL = platformType(org.intellij.markdown.MarkdownElementTypes.LINK_LABEL);

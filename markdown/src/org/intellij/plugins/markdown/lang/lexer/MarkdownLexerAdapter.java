@@ -19,19 +19,20 @@ import com.intellij.lexer.LexerBase;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.markdown.lexer.MarkdownLexer;
 import org.intellij.plugins.markdown.lang.MarkdownElementType;
+import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MarkdownLexerAdapter extends LexerBase {
   @NotNull
-  private MarkdownLexer delegateLexer = new MarkdownLexer("", 0, 0);
+  private final MarkdownLexer delegateLexer = MarkdownParserManager.FLAVOUR.createInlinesLexer();
 
   private int endOffset;
 
   @Override
   public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
     this.endOffset = endOffset;
-    delegateLexer = new MarkdownLexer(buffer, startOffset, endOffset);
+    delegateLexer.start(buffer, startOffset, endOffset);
   }
 
   @Override
