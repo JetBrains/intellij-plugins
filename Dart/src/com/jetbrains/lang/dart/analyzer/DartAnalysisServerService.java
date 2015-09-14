@@ -261,6 +261,23 @@ public class DartAnalysisServerService {
     }
   };
 
+  private DocumentAdapter myDocumentListener = new DocumentAdapter() {
+    @Override
+    public void beforeDocumentChange(DocumentEvent e) {
+      updateInformationFromServer(e);
+    }
+  };
+
+  void addDocumentListener() {
+    // by design document listener must not be already registered, next line is for the safety only
+    EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(myDocumentListener);
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(myDocumentListener);
+  }
+
+  void removeDocumentListener() {
+    EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(myDocumentListener);
+  }
+
   public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
@@ -447,15 +464,6 @@ public class DartAnalysisServerService {
           }
         }
       });
-
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
-        @Override
-        public void beforeDocumentChange(DocumentEvent e) {
-          updateInformationFromServer(e);
-        }
-      });
-    }
 
     registerQuickAssistIntentions();
   }
