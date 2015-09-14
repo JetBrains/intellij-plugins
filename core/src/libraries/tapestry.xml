@@ -37,7 +37,7 @@
       <required-class fqn="org.codehaus.stax2.XMLInputFactory2"/>
     </item>
 
-    <item name="wstx-asl.jar" version="4.1.2" url="http://repository.codehaus.org/org/codehaus/woodstox/woodstox-core-asl/4.1.2/woodstox-core-asl-4.1.2.jar">
+    <item name="wstx-asl.jar" version="4.1.2" url="http://repo1.maven.org/maven2/org/codehaus/woodstox/woodstox-core-asl/4.1.2/woodstox-core-asl-4.1.2.jar">
       <required-class fqn="com.ctc.wstx.stax.WstxInputFactory"/>
     </item>
 
