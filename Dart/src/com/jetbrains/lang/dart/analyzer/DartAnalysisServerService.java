@@ -431,21 +431,21 @@ public class DartAnalysisServerService {
             DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
           }
 
-          if (isDartOrHtmlFile(file)) {
+          if (isLocalDartOrHtmlFile(file)) {
             updateVisibleFiles();
           }
         }
 
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-          if (isDartOrHtmlFile(event.getOldFile()) || isDartOrHtmlFile(event.getNewFile())) {
+          if (isLocalDartOrHtmlFile(event.getOldFile()) || isLocalDartOrHtmlFile(event.getNewFile())) {
             updateVisibleFiles();
           }
         }
 
         @Override
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-          if (isDartOrHtmlFile(file)) {
+          if (isLocalDartOrHtmlFile(file)) {
             updateVisibleFiles();
           }
         }
@@ -520,7 +520,7 @@ public class DartAnalysisServerService {
 
       for (Project project : myRootsHandler.getTrackedProjects()) {
         for (VirtualFile file : FileEditorManager.getInstance(project).getSelectedFiles()) {
-          if (file.isInLocalFileSystem() && isDartOrHtmlFile(file)) {
+          if (file.isInLocalFileSystem() && isLocalDartOrHtmlFile(file)) {
             newVisibleFiles.add(FileUtil.toSystemDependentName(file.getPath()));
           }
         }
@@ -545,8 +545,8 @@ public class DartAnalysisServerService {
   }
 
   @Contract("null->false")
-  private static boolean isDartOrHtmlFile(@Nullable final VirtualFile file) {
-    return file != null && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file));
+  private static boolean isLocalDartOrHtmlFile(@Nullable final VirtualFile file) {
+    return file != null && file.isInLocalFileSystem() && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file));
   }
 
   public void updateFilesContent() {
@@ -564,7 +564,7 @@ public class DartAnalysisServerService {
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       for (Document document : fileDocumentManager.getUnsavedDocuments()) {
         final VirtualFile file = fileDocumentManager.getFile(document);
-        if (isDartOrHtmlFile(file)) {
+        if (isLocalDartOrHtmlFile(file)) {
           oldTrackedFiles.remove(file.getPath());
 
           final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
@@ -1301,7 +1301,7 @@ public class DartAnalysisServerService {
   private void updateInformationFromServer(DocumentEvent e) {
     final Document document = e.getDocument();
     final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-    if (!isDartOrHtmlFile(file)) return;
+    if (!isLocalDartOrHtmlFile(file)) return;
 
     final String filePath = file.getPath();
     synchronized (myNavigationData) {
