@@ -188,7 +188,7 @@ public class DartAnalysisServerColorAnnotator extends ExternalAnnotator<Object, 
       final String type = region.getType();
       final String key = getHighlightType(type);
       if (key != null) {
-        final TextAttributesKey textAttributes = TextAttributesKey.createTextAttributesKey(key);
+        final TextAttributesKey textAttributes = TextAttributesKey.find(key);
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());
         holder.createInfoAnnotation(textRange, null).setTextAttributes(textAttributes);
       }
