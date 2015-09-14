@@ -39,7 +39,8 @@ import java.util.concurrent.ExecutionException;
         name="TrainingPluginCourses",
         storages={
                 @Storage(
-                        file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml")
+                        file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml"
+                )
         }
 )
 public class CourseManager implements PersistentStateComponent<CourseManager.State> {
@@ -315,6 +316,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 e.printStackTrace();
             }
         } else {
+            myState.courses.clear();
             for (Course course : state.courses) {
                 ArrayList<Lesson> newLessonArrayList = new ArrayList<Lesson>();
                 for (Lesson lesson : course.getLessons()) {
