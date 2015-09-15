@@ -1349,6 +1349,44 @@ public class DartAnalysisServerService {
         }
       }
     }
+
+    synchronized (myHighlightData) {
+      final List<PluginHighlightRegion> regions = myHighlightData.get(filePath);
+      if (regions != null) {
+        final int eventOffset = e.getOffset();
+        final int deltaLength = e.getNewLength() - e.getOldLength();
+
+        final Iterator<PluginHighlightRegion> iterator = regions.iterator();
+        while (iterator.hasNext()) {
+          final PluginHighlightRegion region = iterator.next();
+
+          if (deltaLength > 0) {
+            // Something was typed. Shift untouched regions, update touched.
+            if (eventOffset <= region.offset) {
+              region.offset += deltaLength;
+            }
+            else if (region.offset < eventOffset && eventOffset < region.offset + region.length) {
+              region.length += deltaLength;
+            }
+          }
+          else if (deltaLength < 0) {
+            // Some text was deleted. Shift untouched regions, delete or update touched.
+            final int eventRightOffset = eventOffset - deltaLength;
+            final int regionRightOffset = region.offset + region.length;
+
+            if (eventRightOffset <= region.offset) {
+              region.offset += deltaLength;
+            }
+            else if (region.offset <= eventOffset && eventRightOffset <= regionRightOffset && region.length != -deltaLength) {
+              region.length += deltaLength;
+            }
+            else if (eventOffset < regionRightOffset) {
+              iterator.remove();
+            }
+          }
+        }
+      }
+    }
   }
 
   private static class CompletionInfo {

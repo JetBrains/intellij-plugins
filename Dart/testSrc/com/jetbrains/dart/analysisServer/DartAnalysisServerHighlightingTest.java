@@ -62,54 +62,70 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
     doHighlightingTest();
   }
 
-  public void testNavigationDataUpdateOnTyping() {
-    // navigation region must be deleted when touched by editing and updated otherwise
+  private void initServerDataTest() {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
                                                      "import 'dart:core';\n" +
                                                      "import 'dart:core';\n");
-    // just to warm up, to make sure that highlighting and navigation data arrives
     myFixture.doHighlighting();
+  }
 
+  private static void checkServerDataInitialState(@NotNull final VirtualFile file) {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
-    final VirtualFile file = getFile().getVirtualFile();
-
     // references to 'dart:core'
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
     checkRegions(service.getHighlight(file),
                  TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
                  TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),
                  TextRange.create(40, 59), TextRange.create(40, 46), TextRange.create(47, 58));
+  }
+
+  public void testServerDataUpdateOnTyping() {
+    // navigation region must be deleted when touched by editing and updated otherwise
+    initServerDataTest();
+
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+    final VirtualFile file = getFile().getVirtualFile();
+    checkServerDataInitialState(file);
 
     // typing at the beginning of the region
     getEditor().getCaretModel().moveToOffset(27);
     myFixture.type('a');
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(28, 39), TextRange.create(48, 59));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 40), TextRange.create(20, 26), TextRange.create(28, 39),
+                 TextRange.create(41, 60), TextRange.create(41, 47), TextRange.create(48, 59));
 
     undoAndUpdateHighlighting(file);
+    checkServerDataInitialState(file);
     // typing in the middle of the region
     getEditor().getCaretModel().moveToOffset(29);
     myFixture.type('a');
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(48, 59));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 40), TextRange.create(20, 26), TextRange.create(27, 39),
+                 TextRange.create(41, 60), TextRange.create(41, 47), TextRange.create(48, 59));
 
     undoAndUpdateHighlighting(file);
+    checkServerDataInitialState(file);
     // typing at the end of the region
     getEditor().getCaretModel().moveToOffset(38);
     myFixture.type('a');
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(48, 59));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 40), TextRange.create(20, 26), TextRange.create(27, 38),
+                 TextRange.create(41, 60), TextRange.create(41, 47), TextRange.create(48, 59));
   }
 
-  public void testNavigationDataUpdateOnPaste() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n");
-    myFixture.doHighlighting();
+  public void testServerDataUpdateOnPaste() {
+    initServerDataTest();
 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = getFile().getVirtualFile();
-
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
 
     CopyPasteManager.getInstance().setContents(new StringSelection("long text 012345678901234567890123456789"));
 
@@ -117,95 +133,125 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
     getEditor().getCaretModel().moveToOffset(27);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE);
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(67, 78), TextRange.create(87, 98));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 79), TextRange.create(20, 26), TextRange.create(67, 78),
+                 TextRange.create(80, 99), TextRange.create(80, 86), TextRange.create(87, 98));
 
     undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
     // paste a lot in the middle of the region
     getEditor().getCaretModel().moveToOffset(29);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE);
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(87, 98));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 79), TextRange.create(20, 26), TextRange.create(27, 78),
+                 TextRange.create(80, 99), TextRange.create(80, 86), TextRange.create(87, 98));
 
     undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
     // paste a lot at the end of the region
     getEditor().getCaretModel().moveToOffset(38);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE);
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(87, 98));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 79), TextRange.create(20, 26), TextRange.create(27, 38),
+                 TextRange.create(80, 99), TextRange.create(80, 86), TextRange.create(87, 98));
   }
 
-  public void testNavigationDataUpdateOnBackspace() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n");
-    myFixture.doHighlighting();
+  public void testServerDataUpdateOnBackspace() {
+    initServerDataTest();
 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = getFile().getVirtualFile();
+    checkServerDataInitialState(file);
 
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
-
-    // backspace in the middle of the region
-    getEditor().getCaretModel().moveToOffset(29);
-    myFixture.type('\b');
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(46, 57));
-
-    undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
     // backspace at the beginning of the region
     getEditor().getCaretModel().moveToOffset(27);
     myFixture.type('\b');
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(26, 37), TextRange.create(46, 57));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 38), TextRange.create(20, 26), TextRange.create(26, 37),
+                 TextRange.create(39, 58), TextRange.create(39, 45), TextRange.create(46, 57));
 
     undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
-    // backspace at the end of the region
-    getEditor().getCaretModel().moveToOffset(38);
+    checkServerDataInitialState(file);
+    // backspace in the middle of the region
+    getEditor().getCaretModel().moveToOffset(29);
     myFixture.type('\b');
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(27, 38),*/ TextRange.create(46, 57));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 38), TextRange.create(20, 26), TextRange.create(27, 37),
+                 TextRange.create(39, 58), TextRange.create(39, 45), TextRange.create(46, 57));
+
+    undoAndUpdateHighlighting(file);
+    checkServerDataInitialState(file);
+    // backspace at the end of the region
+    getEditor().getCaretModel().moveToOffset(39);
+    myFixture.type('\b');
+    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(46, 57));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 38), TextRange.create(20, 26), TextRange.create(27, 38),
+                 TextRange.create(39, 58), TextRange.create(39, 45), TextRange.create(46, 57));
   }
 
-  public void testNavigationDataUpdateOnSelectionDelete() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n");
-    myFixture.doHighlighting();
+  public void testServerDataUpdateOnSelectionDelete() {
+    initServerDataTest();
 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = getFile().getVirtualFile();
-
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
 
     // delete exactly the region
     getEditor().getSelectionModel().setSelection(27, 38);
     getEditor().getCaretModel().moveToOffset(38);
     myFixture.type('\b');
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(26, 37),*/ TextRange.create(36, 47));
+    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(26, 37),*/ TextRange.create(47 - 11, 58 - 11));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 39 - 11), TextRange.create(20, 26), /*TextRange.create(27, 38),*/
+                 TextRange.create(40 - 11, 59 - 11), TextRange.create(40 - 11, 46 - 11), TextRange.create(47 - 11, 58 - 11));
 
     undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
     // delete selection in the middle of the region
     getEditor().getSelectionModel().setSelection(29, 36);
     getEditor().getCaretModel().moveToOffset(36);
     myFixture.type('\b');
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(40, 51));
+    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(47 - 7, 58 - 7));
+    checkRegions(service.getHighlight(file),
+                 TextRange.create(0, 19), TextRange.create(0, 6), TextRange.create(7, 18),
+                 TextRange.create(20, 39 - 7), TextRange.create(20, 26), TextRange.create(27, 38 - 7),
+                 TextRange.create(40 - 7, 59 - 7), TextRange.create(40 - 7, 46 - 7), TextRange.create(47 - 7, 58 - 7));
 
     undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
     // delete selection that includes region and selection start/end touch other regions
     getEditor().getSelectionModel().setSelection(18, 47);
     getEditor().getCaretModel().moveToOffset(47);
     myFixture.type('\b');
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(18, 29));
+    checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(47 - 29, 58 - 29));
+    checkRegions(service.getHighlight(file),
+                 /*TextRange.create(0, 19),*/ TextRange.create(0, 6), TextRange.create(7, 18),
+                 /*TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),*/
+                 /*TextRange.create(40, 59), TextRange.create(40, 46),*/ TextRange.create(47 - 29, 58 - 29));
 
     undoAndUpdateHighlighting(file);
-    checkRegions(service.getNavigation(file), TextRange.create(7, 18), TextRange.create(27, 38), TextRange.create(47, 58));
+    checkServerDataInitialState(file);
     // delete selection that has start in one region and end in another
     getEditor().getSelectionModel().setSelection(17, 28);
     getEditor().getCaretModel().moveToOffset(28);
     myFixture.type('\b');
     checkRegions(service.getNavigation(file), /*TextRange.create(7, 18), TextRange.create(28, 39),*/ TextRange.create(36, 47));
+    checkRegions(service.getHighlight(file),
+                 /*TextRange.create(0, 19),*/ TextRange.create(0, 6), /*TextRange.create(7, 18),*/
+                 /*TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),*/
+                 TextRange.create(40 - 11, 59 - 11), TextRange.create(40 - 11, 46 - 11), TextRange.create(47 - 11, 58 - 11));
   }
 
   public void testNavigationTargetOffsetUpdated() {
@@ -222,7 +268,7 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
 
     getEditor().getCaretModel().moveToOffset(0);
     myFixture.type("foo \b");
-    checkRegions(regions, TextRange.create(7, 8), TextRange.create(18, 19), TextRange.create(22, 23));
-    assertEquals(7, regions.get(2).getTargets().get(0).getOffset());
+    checkRegions(regions, TextRange.create(4 + 3, 5 + 3), TextRange.create(15 + 3, 16 + 3), TextRange.create(19 + 3, 20 + 3));
+    assertEquals(4 + 3, regions.get(2).getTargets().get(0).getOffset());
   }
 }
