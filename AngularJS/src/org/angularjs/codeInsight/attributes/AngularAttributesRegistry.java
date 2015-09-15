@@ -51,8 +51,7 @@ public class AngularAttributesRegistry {
     return false;
   }
 
-  public static boolean isEventAttribute(XmlAttribute parent) {
-    final String name = parent.getName();
-    return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(parent.getProject());
+  public static boolean isEventAttribute(String name, Project project) {
+    return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(project);
   }
 }

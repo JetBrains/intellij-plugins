@@ -54,7 +54,7 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
           doneInjecting();
         return;
       }
-      if (AngularAttributesRegistry.isEventAttribute((XmlAttribute)parent) && length > 1) {
+      if (AngularAttributesRegistry.isEventAttribute(((XmlAttribute)parent).getName(), ((XmlAttribute)parent).getProject()) && length > 1) {
         registrar.startInjecting(JavascriptLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(start, length - end)).
           doneInjecting();

@@ -5,11 +5,13 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ThreeState;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import com.intellij.xml.XmlElementDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -29,8 +31,18 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
-      final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
+      final Project project = xmlTag.getProject();
+      final XmlElementDescriptor descriptor = xmlTag.getDescriptor();
+      if (descriptor instanceof HtmlElementDescriptorImpl && AngularIndexUtil.hasAngularJS2(project)) {
+        final XmlAttributeDescriptor[] descriptors = ((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(xmlTag);
+        for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
+          final String name = attributeDescriptor.getName();
+          if (name.startsWith("on")) {
+            addAttributes(project, result, "(" + name.substring(2) + ")");
+          }
+        }
+      }
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
       for (String directiveName : docDirectives) {
         if (isApplicable(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY) == ThreeState.YES) {
@@ -102,9 +114,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
-    final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
+      if (AngularAttributesRegistry.isEventAttribute(attrName, xmlTag.getProject())) {
+        return createDescriptor(project, attrName);
+      }
+
+      final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       ThreeState attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (attributeAvailable == ThreeState.UNSURE) {
         attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesIndex.KEY);

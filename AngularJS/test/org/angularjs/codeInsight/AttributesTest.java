@@ -224,6 +224,29 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testEventHandlers2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("event.html", "angular2.js");
+        myFixture.enableInspections(RequiredAttributesInspectionBase.class);
+        myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+        myFixture.checkHighlighting();
+      }
+    });
+  }
+
+  public void testEventHandlersStandardCompletion2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("event.html", "angular2.js");
+        myFixture.completeBasic();
+        assertContainsElements(myFixture.getLookupElementStrings(), "(mouseover)");
+      }
+    });
+  }
+
   public void testNgSrcCompletion() {
     myFixture.configureByFiles("ng-src.completion.html", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("img ng-<caret>", myFixture.getFile());
