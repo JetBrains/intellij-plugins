@@ -8,12 +8,13 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.MavenExtraArtifactType;
 import org.jetbrains.idea.maven.importing.MavenImporter;
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -127,8 +127,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
 
     final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     final boolean needToCommit = currentEditor == null;
-    final LibraryTableBase.ModifiableModelEx projectLibrariesModel =
-      (LibraryTableBase.ModifiableModelEx)modelsProvider.getModifiableProjectLibrariesModel();
+    final LibraryTable.ModifiableModel projectLibrariesModel = modelsProvider.getModifiableProjectLibrariesModel();
     final Map<Module, ModifiableRootModel> moduleToModifiableModel = Collections.singletonMap(module, modelAdapter.getRootModel());
 
     final FlexProjectConfigurationEditor flexEditor =

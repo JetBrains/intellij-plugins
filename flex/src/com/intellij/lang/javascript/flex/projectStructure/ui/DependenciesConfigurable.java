@@ -33,7 +33,6 @@ import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.roots.ui.OrderEntryAppearanceService;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
@@ -1605,7 +1604,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       };
 
-      LibraryTableBase.ModifiableModelEx modifiableModel = myConfigEditor.getLibraryModel(myDependencies);
+      LibraryTable.ModifiableModel modifiableModel = myConfigEditor.getLibraryModel(myDependencies);
       LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
 
       Module module = myConfigEditor.getModule(myDependencies);
@@ -1806,11 +1805,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private static class LibraryTableModifiableModelWrapper implements LibraryTableBase.ModifiableModelEx {
-    private final LibraryTableBase.ModifiableModelEx myDelegate;
+  private static class LibraryTableModifiableModelWrapper implements LibraryTable.ModifiableModel {
+    private final LibraryTable.ModifiableModel myDelegate;
     private final Condition<Library> myLibraryFilter;
 
-    private LibraryTableModifiableModelWrapper(LibraryTableBase.ModifiableModelEx delegate, Condition<Library> libraryFilter) {
+    private LibraryTableModifiableModelWrapper(LibraryTable.ModifiableModel delegate, Condition<Library> libraryFilter) {
       myDelegate = delegate;
       myLibraryFilter = libraryFilter;
     }

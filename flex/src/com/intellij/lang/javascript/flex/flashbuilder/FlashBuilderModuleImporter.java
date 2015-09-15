@@ -24,8 +24,8 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -585,7 +585,7 @@ public class FlashBuilderModuleImporter {
         }
       }
 
-      final LibraryTableBase.ModifiableModelEx libraryModel = myFlexConfigEditor.getLibraryModel(bc.getDependencies());
+      final LibraryTable.ModifiableModel libraryModel = myFlexConfigEditor.getLibraryModel(bc.getDependencies());
 
       final Library library = libraryModel.createLibrary(null, FlexLibraryType.FLEX_LIBRARY);
 

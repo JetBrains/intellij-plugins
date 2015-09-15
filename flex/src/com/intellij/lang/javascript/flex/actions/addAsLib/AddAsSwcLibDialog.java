@@ -24,9 +24,9 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -131,11 +131,9 @@ public class AddAsSwcLibDialog extends DialogWrapper {
       moduleToModifiableModelMap.put(moduleAndBC.first, ModuleRootManager.getInstance(moduleAndBC.first).getModifiableModel());
     }
 
-    final LibraryTableBase.ModifiableModelEx projectLibsModel =
-      (LibraryTableBase.ModifiableModelEx)ProjectLibraryTable.getInstance(myProject).getModifiableModel();
+    final LibraryTable.ModifiableModel projectLibsModel = ProjectLibraryTable.getInstance(myProject).getModifiableModel();
 
-    final LibraryTableBase.ModifiableModelEx globalLibsModel =
-      (LibraryTableBase.ModifiableModelEx)ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+    final LibraryTable.ModifiableModel globalLibsModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
 
     final FlexProjectConfigurationEditor flexConfigEditor =
       FlexProjectConfigurationEditor.createEditor(myProject, moduleToModifiableModelMap, projectLibsModel, globalLibsModel);
@@ -188,7 +186,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
 
       final Collection<VirtualFile> filteredRoots = filterAlreadyExistingRoots(roots, flexConfigEditor, module, bc);
 
-      final LibraryTableBase.ModifiableModelEx libraryModel = flexConfigEditor.getLibraryModel(bc.getDependencies());
+      final LibraryTable.ModifiableModel libraryModel = flexConfigEditor.getLibraryModel(bc.getDependencies());
 
       for (VirtualFile file : filteredRoots) {
         final Library library = libraryModel.createLibrary(null, FlexLibraryType.FLEX_LIBRARY);

@@ -13,8 +13,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.ModuleTestCase;
@@ -199,8 +199,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
   private String createModuleLibrary() {
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-    final LibraryTableBase.ModifiableModelEx libraryTable =
-      (LibraryTableBase.ModifiableModelEx)modifiableModel.getModuleLibraryTable();
+    final LibraryTable.ModifiableModel libraryTable = modifiableModel.getModuleLibraryTable().getModifiableModel();
     LibraryEx library = (LibraryEx)libraryTable.createLibrary("test", FlexLibraryType.FLEX_LIBRARY);
     String libraryId = UUID.randomUUID().toString();
     ((FlexLibraryProperties)library.getProperties()).setId(libraryId);

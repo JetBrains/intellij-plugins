@@ -20,8 +20,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
@@ -92,7 +92,7 @@ public class FlexBCConfigurator {
           configurator.apply();
         }
 
-        public LibraryTableBase.ModifiableModelEx getLibrariesModifiableModel(final String level) {
+        public LibraryTable.ModifiableModel getLibrariesModifiableModel(final String level) {
           return ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
         }
 

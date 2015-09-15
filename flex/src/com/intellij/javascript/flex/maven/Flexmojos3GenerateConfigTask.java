@@ -13,8 +13,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -202,8 +202,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
                                : FileUtil.getNameWithoutExtension(relativePath).replace('/', '.');
 
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      final LibraryTableBase.ModifiableModelEx librariesModel =
-        (LibraryTableBase.ModifiableModelEx)ProjectLibraryTable.getInstance(module.getProject()).getModifiableModel();
+      final LibraryTable.ModifiableModel librariesModel = ProjectLibraryTable.getInstance(module.getProject()).getModifiableModel();
       final FlexProjectConfigurationEditor flexEditor = FlexProjectConfigurationEditor
         .createEditor(module.getProject(), Collections.singletonMap(module, modifiableModel), librariesModel, null);
 
