@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -30,7 +31,6 @@ import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenConstants;
@@ -57,7 +57,7 @@ public class Flexmojos3Configurator {
       Pattern.compile("rideau")};
 
   protected final Module myModule;
-  private final MavenModifiableModelsProvider myModelsProvider;
+  private final IdeModifiableModelsProvider myModelsProvider;
   private final FlexProjectConfigurationEditor myFlexEditor;
   protected final MavenProjectsTree myMavenTree;
   protected final MavenProject myMavenProject;
@@ -69,7 +69,7 @@ public class Flexmojos3Configurator {
 
 
   public Flexmojos3Configurator(final Module module,
-                                final MavenModifiableModelsProvider modelsProvider,
+                                final IdeModifiableModelsProvider modelsProvider,
                                 final FlexProjectConfigurationEditor flexEditor,
                                 final MavenProjectsTree mavenTree,
                                 final Map<MavenProject, String> mavenProjectToModuleName,
@@ -251,7 +251,7 @@ public class Flexmojos3Configurator {
     boolean airglobal = false;
     boolean mobilecomponents = false;
 
-    final ModifiableRootModel rootModel = myModelsProvider.getRootModel(myModule);
+    final ModifiableRootModel rootModel = myModelsProvider.getModifiableRootModel(myModule);
     for (OrderEntry entry : rootModel.getOrderEntries()) {
       final DependencyScope scope = entry instanceof ExportableOrderEntry ? ((ExportableOrderEntry)entry).getScope()
                                                                           : DependencyScope.COMPILE;
@@ -317,7 +317,7 @@ public class Flexmojos3Configurator {
       final String libraryName = library.getName();
       if (libraryName.contains(":rb.swc:") || libraryName.contains(":resource-bundle:")) {
         // fix rb.swc placeholders to real SWCs according to used locales
-        final Library.ModifiableModel libraryModifiableModel = myModelsProvider.getLibraryModel(library);
+        final Library.ModifiableModel libraryModifiableModel = myModelsProvider.getModifiableLibraryModel(library);
         for (final String rbSwcPlaceholdersUrl : findRbSwcPlaceholderUrls(libraryModifiableModel)) {
           final Collection<String> rootsToAdd = getRbSwcUrlsForCompiledLocales(rbSwcPlaceholdersUrl);
           libraryModifiableModel.removeRoot(rbSwcPlaceholdersUrl, OrderRootType.CLASSES);
@@ -343,7 +343,7 @@ public class Flexmojos3Configurator {
 
         if (kind != FlexLibraryType.FLEX_LIBRARY) {
           if (kind == null) {
-            final LibraryEx.ModifiableModelEx libraryModel = (LibraryEx.ModifiableModelEx)myModelsProvider.getLibraryModel(library);
+            final LibraryEx.ModifiableModelEx libraryModel = (LibraryEx.ModifiableModelEx)myModelsProvider.getModifiableLibraryModel(library);
             libraryModel.setKind(FlexLibraryType.FLEX_LIBRARY);
             libraryModel.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
           }
@@ -549,7 +549,7 @@ public class Flexmojos3Configurator {
  private void reimportRuntimeLocalesFacets(final MavenProject project,
                                            final Module module,
                                            final MavenModifiableModelsProvider modelsProvider) {
-   FacetModel model = modelsProvider.getFacetModel(module);
+   FacetModel model = modelsProvider.getModifiableFacetModel(module);
 
    String packaging = project.getPackaging();
    String extension = "swc".equals(packaging) ? "rb.swc" : packaging;

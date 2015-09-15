@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -9,7 +10,6 @@ import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsProcessorTask;
@@ -21,7 +21,7 @@ import static com.intellij.javascript.flex.maven.RuntimeModulesGenerateConfigTas
 
 public class Flexmojos4Configurator extends Flexmojos3Configurator {
   public Flexmojos4Configurator(final Module module,
-                                final MavenModifiableModelsProvider modifiableModelsProvider,
+                                final IdeModifiableModelsProvider modifiableModelsProvider,
                                 final FlexProjectConfigurationEditor flexEditor,
                                 final MavenProjectsTree mavenTree,
                                 final Map<MavenProject, String> mavenProjectToModuleName,

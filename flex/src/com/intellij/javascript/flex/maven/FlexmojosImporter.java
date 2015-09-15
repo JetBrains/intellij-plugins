@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.MavenExtraArtifactType;
 import org.jetbrains.idea.maven.importing.MavenImporter;
-import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -112,10 +112,10 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   public void preProcess(Module module, MavenProject mavenProject, MavenProjectChanges changes,
-                         MavenModifiableModelsProvider modifiableModelsProvider) {
+                         IdeModifiableModelsProvider modifiableModelsProvider) {
   }
 
-  public void process(final MavenModifiableModelsProvider modelsProvider,
+  public void process(final IdeModifiableModelsProvider modelsProvider,
                       final Module module,
                       final MavenRootModelAdapter modelAdapter,
                       final MavenProjectsTree mavenTree,
@@ -128,7 +128,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     final boolean needToCommit = currentEditor == null;
     final LibraryTableBase.ModifiableModelEx projectLibrariesModel =
-      (LibraryTableBase.ModifiableModelEx)modelsProvider.getProjectLibrariesModel();
+      (LibraryTableBase.ModifiableModelEx)modelsProvider.getModifiableProjectLibrariesModel();
     final Map<Module, ModifiableRootModel> moduleToModifiableModel = Collections.singletonMap(module, modelAdapter.getRootModel());
 
     final FlexProjectConfigurationEditor flexEditor =

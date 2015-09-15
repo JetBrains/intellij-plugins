@@ -29,7 +29,7 @@ import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
-import org.jetbrains.idea.maven.importing.MavenDefaultModifiableModelsProvider;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
@@ -334,7 +334,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             final Module module = mavenProjectsManager.findModule(mavenProject);
             if (module == null) return true;
 
-            MavenDefaultModifiableModelsProvider provider = new MavenDefaultModifiableModelsProvider(project);
+            IdeModifiableModelsProviderImpl provider = new IdeModifiableModelsProviderImpl(project);
             MavenRootModelAdapter a = new MavenRootModelAdapter(mavenProject, module, provider);
             for (String sourceRoot : sourceRoots) {
               a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);

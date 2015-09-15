@@ -31,7 +31,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.FacetImporter;
-import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -70,7 +70,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
   protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) { }
 
   @Override
-  protected void reimportFacet(MavenModifiableModelsProvider modelsProvider, Module module,
+  protected void reimportFacet(IdeModifiableModelsProvider modelsProvider, Module module,
                                MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
                                MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
                                MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
