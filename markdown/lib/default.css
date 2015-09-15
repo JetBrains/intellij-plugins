@@ -243,10 +243,6 @@ pre {
     margin-bottom: 0 !important;
 }
 
-a:not([href]) {
-    color: inherit;
-    text-decoration: none;
-}
 
 .anchor {
     position: absolute;
@@ -450,10 +446,6 @@ table td {
 table tr {
     background-color: #fff;
     border-top: 1px solid #ccc;
-}
-
-table tr:nth-child(2n) {
-    background-color: #f8f8f8;
 }
 
 img {
