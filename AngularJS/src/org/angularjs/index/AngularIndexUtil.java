@@ -87,6 +87,11 @@ public class AngularIndexUtil {
     return getAngularJSVersion(project) > 0;
   }
 
+  public static boolean hasAngularJS2(final Project project) {
+    if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
+    return getAngularJSVersion(project) >= 20;
+  }
+
   private static int getAngularJSVersion(final Project project) {
     if (DumbService.isDumb(project)) return -1;
     NotNullLazyValue<ModificationTracker> tracker = project.getUserData(TRACKER);
