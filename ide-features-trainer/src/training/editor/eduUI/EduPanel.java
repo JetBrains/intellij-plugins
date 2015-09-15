@@ -146,7 +146,7 @@ public class EduPanel extends JPanel {
         defaultTextColor = new JBColor(Gray._30, Gray._208);
         passedColor = new JBColor(Gray._105, Gray._103);
         lessonPassedColor = new JBColor(new Color(49, 140, 64), new Color(7, 140, 45));
-        lessonCodeColor = new JBColor(new Color(31, 55, 128), new Color(85, 161, 255));
+        lessonCodeColor = new JBColor(new Color(27, 78, 128), new Color(85, 161, 255));
 
         //shortcut UI
         shortcutTextColor = new JBColor(Gray._12, Gray._200);
@@ -284,10 +284,6 @@ public class EduPanel extends JPanel {
 
     public void setLessonPassed(){
 
-        Icon checkmarkIcon = IconLoader.getIcon(EduIcons.CHECKMARK_GREEN);
-
-        lessonNameLabel.setIcon(checkmarkIcon);
-        lessonNameLabel.setHorizontalTextPosition(SwingConstants.LEFT);
         lessonNameLabel.setForeground(lessonPassedColor);
         showNextButton();
         this.repaint();
