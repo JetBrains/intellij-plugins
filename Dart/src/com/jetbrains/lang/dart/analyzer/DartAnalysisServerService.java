@@ -59,7 +59,6 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
-import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -152,23 +151,21 @@ public class DartAnalysisServerService {
     public void computedNavigation(final String _filePath, final List<NavigationRegion> regions) {
       final String filePath = FileUtil.toSystemIndependentName(_filePath);
 
-      if (DartResolver.isServerDrivenResolution()) {
-        // Ignore notifications for files that has been changed, but server does not know about them yet.
-        if (myFilePathsWithUnsentChanges.contains(filePath)) {
-          return;
-        }
-        // Convert NavigationRegion(s) into PluginNavigationRegion(s).
-        List<PluginNavigationRegion> pluginRegions = new ArrayList<PluginNavigationRegion>(regions.size());
-        for (NavigationRegion region : regions) {
-          pluginRegions.add(new PluginNavigationRegion(region));
-        }
-        // Put PluginNavigationRegion(s).
-        synchronized (myNavigationData) {
-          myNavigationData.put(filePath, pluginRegions);
-        }
-        // Force (re)highlighting.
-        forceFileAnnotation(filePath, true);
+      // Ignore notifications for files that has been changed, but server does not know about them yet.
+      if (myFilePathsWithUnsentChanges.contains(filePath)) {
+        return;
       }
+      // Convert NavigationRegion(s) into PluginNavigationRegion(s).
+      final List<PluginNavigationRegion> pluginRegions = new ArrayList<PluginNavigationRegion>(regions.size());
+      for (NavigationRegion region : regions) {
+        pluginRegions.add(new PluginNavigationRegion(region));
+      }
+      // Put PluginNavigationRegion(s).
+      synchronized (myNavigationData) {
+        myNavigationData.put(filePath, pluginRegions);
+      }
+      // Force (re)highlighting.
+      forceFileAnnotation(filePath, true);
     }
 
     @Override
@@ -1309,22 +1306,47 @@ public class DartAnalysisServerService {
     if (!isLocalDartOrHtmlFile(file)) return;
 
     final String filePath = file.getPath();
+    myFilePathsWithUnsentChanges.add(filePath);
+
+    // navigation region must be deleted if touched by editing and updated otherwise
     synchronized (myNavigationData) {
-      myFilePathsWithUnsentChanges.add(filePath);
       final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
       if (regions != null) {
         final int eventOffset = e.getOffset();
         final int deltaLength = e.getNewLength() - e.getOldLength();
-        for (PluginNavigationRegion region : regions) {
-          if (eventOffset <= region.offset) {
-            region.offset += deltaLength;
-          }
-          else if (region.offset < eventOffset && eventOffset <= region.offset + region.length) {
-            region.length += deltaLength;
-          }
+
+        final Iterator<PluginNavigationRegion> iterator = regions.iterator();
+        while (iterator.hasNext()) {
+          final PluginNavigationRegion region = iterator.next();
+
+          // may be we'd better delete target touched by editing?
           for (PluginNavigationTarget target : region.getTargets()) {
             if (target.file.equals(filePath) && target.offset >= eventOffset) {
               target.offset += deltaLength;
+            }
+          }
+
+          if (deltaLength > 0) {
+            // Something was typed. Shift untouched regions, delete touched.
+            if (eventOffset <= region.offset) {
+              region.offset += deltaLength;
+            }
+            else if (region.offset < eventOffset && eventOffset < region.offset + region.length) {
+              iterator.remove();
+            }
+          }
+          else if (deltaLength < 0) {
+            // Some text was deleted. Shift untouched regions, delete touched.
+            final int eventRightOffset = eventOffset - deltaLength;
+            final int regionRightOffset = region.offset + region.length;
+
+            if (eventRightOffset <= region.offset) {
+              region.offset += deltaLength;
+            }
+            else if ((region.offset < eventRightOffset && eventRightOffset < regionRightOffset) ||
+                     (region.offset < eventOffset && eventOffset < regionRightOffset) ||
+                     (eventOffset <= region.offset && regionRightOffset <= eventRightOffset)) {
+              iterator.remove();
             }
           }
         }
@@ -1352,7 +1374,13 @@ public class DartAnalysisServerService {
     }
   }
 
-  public static class PluginHighlightRegion {
+  public interface PluginRegion {
+    int getOffset();
+
+    int getLength();
+  }
+
+  public static class PluginHighlightRegion implements PluginRegion {
     public static final List<PluginHighlightRegion> EMPTY_LIST = Lists.newArrayList();
 
     private int offset;
@@ -1378,8 +1406,7 @@ public class DartAnalysisServerService {
     }
   }
 
-
-  public static class PluginNavigationRegion {
+  public static class PluginNavigationRegion implements PluginRegion {
     public static final List<PluginNavigationRegion> EMPTY_LIST = Lists.newArrayList();
 
     private int offset;
