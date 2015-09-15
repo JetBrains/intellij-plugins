@@ -34,15 +34,4 @@ public class LessonMessage {
         return end;
     }
 
-    public void appendMacCheck() {
-        final Message message = new Message(" ✓", Message.MessageType.TEXT_BOLD);
-        myMessages.add(message);
-        this.end += 2;
-    }
-
-    public void appendWinCheck() {
-        final Message message = new Message(" \uF0FC", Message.MessageType.CHECK);
-        myMessages.add(message);
-        this.end += 2;
-    }
 }
