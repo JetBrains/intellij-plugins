@@ -1338,14 +1338,11 @@ public class DartAnalysisServerService {
           else if (deltaLength < 0) {
             // Some text was deleted. Shift untouched regions, delete touched.
             final int eventRightOffset = eventOffset - deltaLength;
-            final int regionRightOffset = region.offset + region.length;
 
             if (eventRightOffset <= region.offset) {
               region.offset += deltaLength;
             }
-            else if ((region.offset < eventRightOffset && eventRightOffset < regionRightOffset) ||
-                     (region.offset < eventOffset && eventOffset < regionRightOffset) ||
-                     (eventOffset <= region.offset && regionRightOffset <= eventRightOffset)) {
+            else if (eventOffset < region.offset + region.length) {
               iterator.remove();
             }
           }
