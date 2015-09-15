@@ -69,15 +69,13 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       elementBuilder.setUserString("adi");
       outData.addImplicitElement(elementBuilder.toImplicitElement());
 
-      if (!"E".equals(restrict)) {
-        final int start = selectorName.indexOf('[');
-        final int end = selectorName.indexOf(']');
-        if (start == 0 && end > 0) {
-          elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
-            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
-          elementBuilder.setUserString("adi");
-          outData.addImplicitElement(elementBuilder.toImplicitElement());
-        }
+      final int start = selectorName.indexOf('[');
+      final int end = selectorName.indexOf(']');
+      if (start == 0 && end > 0) {
+        elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
+          .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
+        elementBuilder.setUserString("adi");
+        outData.addImplicitElement(elementBuilder.toImplicitElement());
       }
     }
     return outData;
@@ -99,8 +97,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   private static String computeRestrictions(String name) {
-    return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ? "A" :
-           "Component".equals(name) || "ComponentAnnotation".equals(name)? "E" :
+    return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
+           "Component".equals(name) || "ComponentAnnotation".equals(name)? "AE" :
            null;
   }
 
