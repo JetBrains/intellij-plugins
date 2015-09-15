@@ -33,7 +33,10 @@ public class MarkdownHtmlRendererContext extends AbstractHtmlRendererContext {
     return myUserAgentContext;
   }
 
-
+  @Override
+  public boolean isImageLoadingEnabled() {
+    return false;
+  }
 
   @Override
   public void setCursor(Cursor cursor) {
