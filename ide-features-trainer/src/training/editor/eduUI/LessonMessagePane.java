@@ -126,7 +126,6 @@ public class LessonMessagePane extends JTextPane {
     public void passPreviousMessages() throws BadLocationException {
         if (lessonMessages.size() > 0) {
             final LessonMessage lessonMessage = lessonMessages.get(lessonMessages.size() - 1);
-            lessonMessage.appendMacCheck();
             getDocument().insertString(getDocument().getLength(), " ", REGULAR);
 
             StyleContext context = new StyleContext();
