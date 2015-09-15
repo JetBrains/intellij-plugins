@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -101,11 +100,10 @@ public class DartTestUtils {
               DartSdkGlobalLibUtil.disableDartSdk(Collections.singletonList(module));
             }
 
-            final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
-            final Library library = model.getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+            ApplicationLibraryTable libraryTable = ApplicationLibraryTable.getApplicationTable();
+            final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
             if (library != null) {
-              model.removeLibrary(library);
-              model.commit();
+              libraryTable.removeLibrary(library);
             }
           }
         });
