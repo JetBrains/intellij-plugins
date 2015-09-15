@@ -21,7 +21,8 @@
     <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module" module-name="cucumber-jvm-formatter" />
     <orderEntry type="module" module-name="java-psi-api" />
-    <orderEntry type="library" name="cucumber-core" level="project" />
+    <orderEntry type="library" name="cucumber-jvm" level="project" />
+    <orderEntry type="library" name="cucumber-java" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="OroMatcher" level="project" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
