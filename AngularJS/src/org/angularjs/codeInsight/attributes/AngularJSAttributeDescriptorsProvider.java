@@ -116,7 +116,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      if (AngularAttributesRegistry.isEventAttribute(attrName, xmlTag.getProject())) {
+      if (AngularAttributesRegistry.isEventAttribute(attrName, project) ||
+          AngularAttributesRegistry.isVariableAttribute(attrName, project)) {
         return createDescriptor(project, attrName);
       }
 
