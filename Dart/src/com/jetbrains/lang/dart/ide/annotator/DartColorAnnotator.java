@@ -4,6 +4,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,9 +19,11 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
@@ -30,9 +36,33 @@ public class DartColorAnnotator implements Annotator {
   private static final Set<String> BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS =
     new THashSet<String>(Arrays.asList("int", "num", "bool", "double"));
 
+  public static boolean canBeAnalyzedByServer(@NotNull final PsiFile file) {
+    final Project project = file.getProject();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
+
+    final VirtualFile vFile = file.getVirtualFile();
+    if (vFile == null || !vFile.isInLocalFileSystem()) return false;
+
+    // server can highlight files from Dart SDK, packages and from modules with enabled Dart support
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    if (fileIndex.isInLibraryClasses(vFile)) return true;
+
+    final Module module = fileIndex.getModuleForFile(vFile);
+    return module != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module);
+  }
+
   @Override
   public void annotate(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
+
+    if (element instanceof DartFile || element instanceof DartEmbeddedContent) {
+      final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+      if (canBeAnalyzedByServer(element.getContainingFile()) && service.serverReadyForRequest(element.getProject())) {
+        service.updateFilesContent();
+        //applyServerHighlighting(element.getContainingFile());
+      }
+    }
 
     final DartSdk sdk = DartSdk.getDartSdk(element.getProject());
 

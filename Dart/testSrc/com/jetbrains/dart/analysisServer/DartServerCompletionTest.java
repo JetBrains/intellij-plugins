@@ -13,7 +13,6 @@ import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +22,8 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    final DartSdk sdk = DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject(), sdk);
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 

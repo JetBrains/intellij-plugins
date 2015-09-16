@@ -1159,14 +1159,17 @@ public class DartAnalysisServerService {
     }
   }
 
-  public boolean serverReadyForRequest(@NotNull final Project project, @NotNull final DartSdk sdk) {
+  public boolean serverReadyForRequest(@NotNull final Project project) {
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !isDartSdkVersionSufficient(sdk)) {
+      stopServer();
+      return false;
+    }
+
     synchronized (myLock) {
       if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
         stopServer();
-
-        if (isDartSdkVersionSufficient(sdk)) {
-          startServer(sdk);
-        }
+        startServer(sdk);
       }
 
       if (myServer != null) {

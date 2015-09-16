@@ -6,13 +6,12 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -21,12 +20,9 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
-import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
-import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.AnalysisErrorType;
@@ -59,33 +55,18 @@ public class DartAnalysisServerAnnotator
   @Nullable
   @Override
   public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @Nullable final Editor editor, boolean hasErrors) {
-    final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
-    if (annotatedFile == null) return null;
-    if (!serverReadyForRequest(psiFile)) return null;
+    if (psiFile instanceof DartExpressionCodeFragment) return null;
+    if (!DartColorAnnotator.canBeAnalyzedByServer(psiFile)) return null;
+    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
+
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex();
+    if (!fileIndex.isInContent(psiFile.getVirtualFile())) return null;
+
+    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(psiFile.getProject())) return null;
 
     DartAnalysisServerService.getInstance().updateFilesContent();
-    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
-  }
 
-  public static boolean serverReadyForRequest(@NotNull PsiFile psiFile) {
-    if (psiFile instanceof DartExpressionCodeFragment) return false;
-
-    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-    if (module == null) return false;
-
-    final Project project = module.getProject();
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
-
-    if (!DartSdkGlobalLibUtil.isDartSdkEnabled(module)) return false;
-
-    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return false;
-
-    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
-
-    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(project, sdk)) return false;
-
-    return true;
+    return new AnnotatorInfo(psiFile.getProject(), psiFile.getVirtualFile().getPath());
   }
 
   @Nullable
