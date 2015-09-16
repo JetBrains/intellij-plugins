@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.ActionsRecorder;
 import training.editor.actions.BlockCaretAction;
-import training.editor.actions.LearnActions;
+import training.editor.actions.EduActions;
 import training.editor.eduUI.EduPanel;
 import training.editor.eduUI.Message;
 import training.lesson.*;
@@ -86,7 +86,7 @@ public class EduEditor implements TextEditor {
         this.mouseBlocked = mouseBlocked;
     }
 
-    ArrayList<LearnActions> myLearnActions;
+    ArrayList<EduActions> myLearnActions;
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
 
@@ -99,7 +99,7 @@ public class EduEditor implements TextEditor {
         actionsRecorders = new HashSet<ActionsRecorder>();
 
         if (myLearnActions == null) {
-            myLearnActions = new ArrayList<LearnActions>();
+            myLearnActions = new ArrayList<EduActions>();
         }
 
         mouseBlocked = false;
@@ -374,7 +374,7 @@ public class EduEditor implements TextEditor {
         removeActionsRecorders();
         if (isMouseBlocked()) restoreMouseActions();
         if (myLearnActions != null) {
-            for (LearnActions myLearnAction : myLearnActions) {
+            for (EduActions myLearnAction : myLearnActions) {
                 myLearnAction.unregisterAction();
             }
             myLearnActions.clear();
@@ -403,7 +403,7 @@ public class EduEditor implements TextEditor {
 //            e.printStackTrace();
 //        }
 
-        for (LearnActions myLearnAction : myLearnActions) {
+        for (EduActions myLearnAction : myLearnActions) {
             if(myLearnAction instanceof BlockCaretAction) return;
         }
 
@@ -424,7 +424,7 @@ public class EduEditor implements TextEditor {
     public void unblockCaret() {
         ArrayList<BlockCaretAction> myBlockActions = new ArrayList<BlockCaretAction>();
 
-        for (LearnActions myLearnAction : myLearnActions) {
+        for (EduActions myLearnAction : myLearnActions) {
             if(myLearnAction instanceof BlockCaretAction) {
                 myBlockActions.add((BlockCaretAction) myLearnAction);
                 ((BlockCaretAction) myLearnAction).unregisterAction();
