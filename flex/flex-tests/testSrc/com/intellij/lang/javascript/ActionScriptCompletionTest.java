@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -86,34 +85,28 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public final void testBoldForClassMembers() throws Exception {
     LookupElement[] elements = doTest("");
     assertNotNull(elements);
-    LookupItem lookupItem = elements[0].as(LookupItem.class);
-    assertEquals("____", lookupItem.getLookupString());
+    assertEquals("____", elements[0].getLookupString());
 
-    assertTrue(getBoldStatus(lookupItem));
-    assertTrue(!elements[1].as(LookupItem.class).isBold());
+    assertTrue(getBoldStatus(elements[0]));
+    assertFalse(getBoldStatus(elements[1]));
 
     elements = doTest("_2");
     assertNotNull(elements);
-    lookupItem = elements[0].as(LookupItem.class);
-    assertEquals("____", lookupItem.getLookupString());
-    assertTrue(getBoldStatus(lookupItem));
-    assertTrue(!elements[1].as(LookupItem.class).isBold());
+    assertEquals("____", elements[0].getLookupString());
+    assertTrue(getBoldStatus(elements[0]));
+    assertFalse(getBoldStatus(elements[1]));
 
     elements = doTest("_3");
     assertNotNull(elements);
-    lookupItem = elements[3].as(LookupItem.class);
-    assertEquals("____", lookupItem.getLookupString());
-    assertTrue(getBoldStatus(lookupItem));
-    lookupItem = elements[0].as(LookupItem.class);
-    assertEquals("lVar", lookupItem.getLookupString());
-    assertTrue(!getBoldStatus(lookupItem));
-    lookupItem = elements[1].as(LookupItem.class);
-    assertEquals("param", lookupItem.getLookupString());
-    assertTrue(!getBoldStatus(lookupItem));
+    assertEquals("____", elements[3].getLookupString());
+    assertTrue(getBoldStatus(elements[3]));
+    assertEquals("lVar", elements[0].getLookupString());
+    assertTrue(!getBoldStatus(elements[0]));
+    assertEquals("param", elements[1].getLookupString());
+    assertTrue(!getBoldStatus(elements[1]));
 
-    lookupItem = elements[4].as(LookupItem.class);
-    assertTrue(!getBoldStatus(lookupItem));
-    assertEquals("Bar", lookupItem.getLookupString());
+    assertTrue(!getBoldStatus(elements[4]));
+    assertEquals("Bar", elements[4].getLookupString());
   }
 
   public final void testKeywords() throws Exception {
@@ -132,9 +125,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
       getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2"),
     };
     final LookupElement[] lookupElements = doTestForFiles(files);
-    LookupItem lookupItem = lookupElements[0].as(LookupItem.class);
-    assertEquals("extends", lookupItem.getLookupString());
-    assertTrue(getBoldStatus(lookupItem));
+    assertEquals("extends", lookupElements[0].getLookupString());
+    assertTrue(getBoldStatus(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
@@ -144,9 +136,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
       getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2"),
     };
     final LookupElement[] lookupElements = doTestForFiles(files);
-    LookupItem lookupItem = lookupElements[0].as(LookupItem.class);
-    assertEquals("public", lookupItem.getLookupString());
-    assertTrue(getBoldStatus(lookupItem));
+    assertEquals("public", lookupElements[0].getLookupString());
+    assertTrue(getBoldStatus(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
