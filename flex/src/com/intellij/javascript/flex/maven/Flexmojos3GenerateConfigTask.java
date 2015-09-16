@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -218,6 +219,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       }
 
       flexEditor.commit();
+      Disposer.dispose(librariesModel);
       modifiableModel.dispose();
     }
     catch (IOException ignore) {/**/}

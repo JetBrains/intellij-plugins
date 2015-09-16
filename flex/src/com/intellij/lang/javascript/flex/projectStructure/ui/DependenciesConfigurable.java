@@ -1858,6 +1858,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public Library createLibrary(String name, @Nullable PersistentLibraryKind kind) {
       return myDelegate.createLibrary(name, kind);
     }
+
+    @Override
+    public void dispose() {
+      Disposer.dispose(myDelegate);
+    }
   }
 
   private class ChooseLibrariesDialog extends ChooseLibrariesFromTablesDialog {

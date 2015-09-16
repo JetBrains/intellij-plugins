@@ -788,7 +788,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   private static LibraryTable.ModifiableModel getTableModifiableModel(final ModifiableRootModel modifiableModel) {
-    return (LibraryTable.ModifiableModel)modifiableModel.getModuleLibraryTable().getModifiableModel();
+    return modifiableModel.getModuleLibraryTable().getModifiableModel();
   }
 
   public void addSdkListListener(ChangeListener changeListener, Disposable parentDisposable) {

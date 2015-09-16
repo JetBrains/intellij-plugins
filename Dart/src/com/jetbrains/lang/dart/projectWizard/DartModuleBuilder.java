@@ -131,6 +131,9 @@ public class DartModuleBuilder extends ModuleBuilder {
       if (libraryTableModifiableModel.isChanged()) {
         libraryTableModifiableModel.commit();
       }
+      else {
+        ModifiableModelsProvider.SERVICE.getInstance().disposeLibraryTableModifiableModel(libraryTableModifiableModel);
+      }
 
       modifiableRootModel.addInvalidLibrary(DartSdk.DART_SDK_GLOBAL_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
     }
