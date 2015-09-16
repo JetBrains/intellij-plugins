@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -56,17 +57,18 @@ public class DartServerErrorsAnnotator
   @Override
   public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @Nullable final Editor editor, boolean hasErrors) {
     if (psiFile instanceof DartExpressionCodeFragment) return null;
-    if (!DartColorAnnotator.canBeAnalyzedByServer(psiFile)) return null;
+    final VirtualFile vFile = psiFile.getVirtualFile();
+    if (!DartColorAnnotator.canBeAnalyzedByServer(psiFile.getProject(), vFile)) return null;
     if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex();
-    if (!fileIndex.isInContent(psiFile.getVirtualFile())) return null;
+    if (!fileIndex.isInContent(vFile)) return null;
 
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(psiFile.getProject())) return null;
 
     DartAnalysisServerService.getInstance().updateFilesContent();
 
-    return new AnnotatorInfo(psiFile.getProject(), psiFile.getVirtualFile().getPath());
+    return new AnnotatorInfo(psiFile.getProject(), vFile.getPath());
   }
 
   @Nullable

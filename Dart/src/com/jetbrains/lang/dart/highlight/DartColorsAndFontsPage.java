@@ -42,7 +42,6 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.symbol.literal"), SYMBOL_LITERAL),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.annotation"), ANNOTATION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.built.in"), BUILT_IN),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.class"), CLASS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor"), CONSTRUCTOR),
 
@@ -102,7 +101,6 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     ourTags.put("symbol", SYMBOL_LITERAL);
 
     ourTags.put("annotation", ANNOTATION);
-    ourTags.put("built.in", BUILT_IN);
     ourTags.put("class", CLASS);
     ourTags.put("constructor", CONSTRUCTOR);
     

@@ -47,6 +47,7 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
     DartAnalysisServerService.getInstance().updateFilesContent();
     UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(file));
     myFixture.doHighlighting();
+    checkServerDataInitialState(file);
   }
 
   public void testErrorsHighlighting() throws Exception {
@@ -98,7 +99,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(41, 60), TextRange.create(41, 47), TextRange.create(48, 59));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // typing in the middle of the region
     getEditor().getCaretModel().moveToOffset(29);
     myFixture.type('a');
@@ -109,7 +109,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(41, 60), TextRange.create(41, 47), TextRange.create(48, 59));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // typing at the end of the region
     getEditor().getCaretModel().moveToOffset(38);
     myFixture.type('a');
@@ -139,7 +138,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(80, 99), TextRange.create(80, 86), TextRange.create(87, 98));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // paste a lot in the middle of the region
     getEditor().getCaretModel().moveToOffset(29);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE);
@@ -150,7 +148,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(80, 99), TextRange.create(80, 86), TextRange.create(87, 98));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // paste a lot at the end of the region
     getEditor().getCaretModel().moveToOffset(38);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE);
@@ -178,7 +175,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(39, 58), TextRange.create(39, 45), TextRange.create(46, 57));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // backspace in the middle of the region
     getEditor().getCaretModel().moveToOffset(29);
     myFixture.type('\b');
@@ -189,7 +185,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(39, 58), TextRange.create(39, 45), TextRange.create(46, 57));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // backspace at the end of the region
     getEditor().getCaretModel().moveToOffset(39);
     myFixture.type('\b');
@@ -218,7 +213,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(40 - 11, 59 - 11), TextRange.create(40 - 11, 46 - 11), TextRange.create(47 - 11, 58 - 11));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // delete selection in the middle of the region
     getEditor().getSelectionModel().setSelection(29, 36);
     getEditor().getCaretModel().moveToOffset(36);
@@ -230,7 +224,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  TextRange.create(40 - 7, 59 - 7), TextRange.create(40 - 7, 46 - 7), TextRange.create(47 - 7, 58 - 7));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // delete selection that includes region and selection start/end touch other regions
     getEditor().getSelectionModel().setSelection(18, 47);
     getEditor().getCaretModel().moveToOffset(47);
@@ -242,7 +235,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
                  /*TextRange.create(40, 59), TextRange.create(40, 46),*/ TextRange.create(47 - 29, 58 - 29));
 
     undoAndUpdateHighlighting(file);
-    checkServerDataInitialState(file);
     // delete selection that has start in one region and end in another
     getEditor().getSelectionModel().setSelection(17, 28);
     getEditor().getCaretModel().moveToOffset(28);
@@ -270,5 +262,11 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
     myFixture.type("foo \b");
     checkRegions(regions, TextRange.create(4 + 3, 5 + 3), TextRange.create(15 + 3, 16 + 3), TextRange.create(19 + 3, 20 + 3));
     assertEquals(4 + 3, regions.get(2).getTargets().get(0).getOffset());
+  }
+
+  public void testSyntaxHighlighting() throws Exception {
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, true, true);
   }
 }

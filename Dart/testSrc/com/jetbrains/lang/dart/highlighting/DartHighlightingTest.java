@@ -91,16 +91,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(false, true, true);
   }
 
-  public void testColorAnnotator() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
-  }
-
-  public void testColorAnnotator_varDeclarationListPart() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
-  }
-
   public void testSimplePolymer() {
     myFixture.enableInspections(HtmlUnknownTagInspection.class);
     myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n" +
@@ -116,11 +106,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testSyncAsyncAwaitYield() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
-  }
-
-  public void testGetterSetter() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
   }

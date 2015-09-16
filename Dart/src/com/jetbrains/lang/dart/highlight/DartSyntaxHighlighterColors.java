@@ -8,7 +8,6 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 
 public class DartSyntaxHighlighterColors {
   public static final String DART_ANNOTATION = "DART_ANNOTATION";
-  public static final String DART_BUILT_IN = "DART_BUILT_IN";
   public static final String DART_CLASS = "DART_CLASS";
   public static final String DART_CONSTRUCTOR = "DART_CONSTRUCTOR";
 
@@ -107,7 +106,6 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_SYMBOL_LITERAL, DefaultLanguageHighlighterColors.KEYWORD);
 
   public static final TextAttributesKey ANNOTATION = createTextAttributesKey(DART_ANNOTATION, DefaultLanguageHighlighterColors.METADATA);
-  public static final TextAttributesKey BUILT_IN = createTextAttributesKey(DART_BUILT_IN, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey CLASS = createTextAttributesKey(DART_CLASS, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey ENUM = createTextAttributesKey(DART_ENUM, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey ENUM_CONSTANT =
