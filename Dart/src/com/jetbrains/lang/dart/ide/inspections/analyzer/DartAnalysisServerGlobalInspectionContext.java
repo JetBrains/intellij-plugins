@@ -19,7 +19,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
+import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -78,12 +78,12 @@ public class DartAnalysisServerGlobalInspectionContext
   private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project, final double progressFraction) {
     updateIndicator("Analyzing " + virtualFile.getName() + "...", progressFraction);
 
-    final DartAnalysisServerAnnotator annotator = new DartAnalysisServerAnnotator();
+    final DartServerErrorsAnnotator annotator = new DartServerErrorsAnnotator();
 
-    final DartAnalysisServerAnnotator.AnnotatorInfo annotatorInfo =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<DartAnalysisServerAnnotator.AnnotatorInfo>() {
+    final DartServerErrorsAnnotator.AnnotatorInfo annotatorInfo =
+      ApplicationManager.getApplication().runReadAction(new NullableComputable<DartServerErrorsAnnotator.AnnotatorInfo>() {
         @Nullable
-        public DartAnalysisServerAnnotator.AnnotatorInfo compute() {
+        public DartServerErrorsAnnotator.AnnotatorInfo compute() {
           final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
           if (psiFile == null) return null;
           return annotator.collectInformation(psiFile, null, false);

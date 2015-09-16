@@ -643,7 +643,7 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
+  public AnalysisError[] analysis_getErrors(@NotNull final DartServerErrorsAnnotator.AnnotatorInfo info) {
     final String filePath = FileUtil.toSystemDependentName(info.myFilePath);
 
     final Ref<AnalysisError[]> resultRef = new Ref<AnalysisError[]>();

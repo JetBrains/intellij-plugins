@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
+import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.Location;
@@ -51,7 +51,7 @@ public class DartAnalysisServerGlobalInspectionTool extends GlobalInspectionTool
                                 final @NotNull GlobalInspectionContext globalContext,
                                 final @NotNull InspectionManager manager,
                                 final @NotNull ProblemDescriptionsProcessor problemDescriptionsProcessor) {
-    if (DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) return;
+    if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) return;
 
     final PsiFile psiFile = PsiManager.getInstance(globalContext.getProject()).findFile(file);
     if (psiFile == null) return;

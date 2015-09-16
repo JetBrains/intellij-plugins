@@ -30,8 +30,8 @@ import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartAnalysisServerAnnotator
-  extends ExternalAnnotator<DartAnalysisServerAnnotator.AnnotatorInfo, AnalysisError[]> {
+public class DartServerErrorsAnnotator
+  extends ExternalAnnotator<DartServerErrorsAnnotator.AnnotatorInfo, AnalysisError[]> {
 
   public static class AnnotatorInfo {
     @NotNull public final Project myProject;
