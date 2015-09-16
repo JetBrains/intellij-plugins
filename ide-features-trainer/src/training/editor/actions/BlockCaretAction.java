@@ -11,14 +11,14 @@ import java.util.HashSet;
 /**
  * Created by karashevich on 19/08/15.
  */
-public class BlockCaretAction extends DumbAwareAction implements LearnActions{
+public class BlockCaretAction extends DumbAwareAction implements EduActions {
 
     ArrayList<Runnable> actionHandlers;
     Editor editor;
 
 
     public BlockCaretAction(@NotNull Editor editor){
-        super(LEARN_BLOCK_EDITOR_CARET_ACTION);
+        super(EDU_BLOCK_EDITOR_CARET_ACTION);
         actionHandlers = new ArrayList<Runnable>();
 
         this.editor = editor;

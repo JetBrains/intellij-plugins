@@ -1,9 +1,14 @@
 package training.editor.eduUI;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
+import training.editor.actions.EduActions;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
 import training.lesson.LessonIsOpenedException;
@@ -422,20 +427,34 @@ public class EduPanel extends JPanel {
 
     public void setNextButtonAction(final Runnable runnable) {
 
-        //remove previous action listeners
-        ActionListener[] actionListeners = lessonNextButton.getActionListeners();
-        for (int i = 0; i < actionListeners.length; i++) {
-            lessonNextButton.removeActionListener(actionListeners[i]);
-        }
-
-        final ActionListener actionListener = new ActionListener() {
+        Action buttonAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 runnable.run();
-                lessonNextButton.removeActionListener(this);
             }
         };
-        lessonNextButton.addActionListener(actionListener);
+
+        int mnemonic_int = 'N';
+        buttonAction.putValue(Action.MNEMONIC_KEY, mnemonic_int);
+        buttonAction.putValue(Action.NAME, "Next");
+        buttonAction.setEnabled(true);
+
+        //remove previous action listeners
+//        ActionListener[] actionListeners = lessonNextButton.getActionListeners();
+//        for (int i = 0; i < actionListeners.length; i++) {
+//            lessonNextButton.removeActionListener(actionListeners[i]);
+//        }
+//
+//        final ActionListener actionListener = new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                runnable.run();
+//                lessonNextButton.removeActionListener(this);
+//            }
+//        };
+//        lessonNextButton.addActionListener(actionListener);
+        lessonNextButton.setAction(buttonAction);
+        lessonNextButton.requestFocus();
     }
 
     public void hideNextButton() {
@@ -452,5 +471,6 @@ public class EduPanel extends JPanel {
 
         eduPanel.addMessage("Hey!");
     }
+
 
 }
