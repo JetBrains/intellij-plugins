@@ -438,21 +438,6 @@ public class EduPanel extends JPanel {
         buttonAction.putValue(Action.MNEMONIC_KEY, mnemonic_int);
         buttonAction.putValue(Action.NAME, "Next");
         buttonAction.setEnabled(true);
-
-        //remove previous action listeners
-//        ActionListener[] actionListeners = lessonNextButton.getActionListeners();
-//        for (int i = 0; i < actionListeners.length; i++) {
-//            lessonNextButton.removeActionListener(actionListeners[i]);
-//        }
-//
-//        final ActionListener actionListener = new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                runnable.run();
-//                lessonNextButton.removeActionListener(this);
-//            }
-//        };
-//        lessonNextButton.addActionListener(actionListener);
         lessonNextButton.setAction(buttonAction);
         lessonNextButton.requestFocus();
     }

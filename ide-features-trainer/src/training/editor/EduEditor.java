@@ -86,7 +86,7 @@ public class EduEditor implements TextEditor {
         this.mouseBlocked = mouseBlocked;
     }
 
-    ArrayList<EduActions> myLearnActions;
+    ArrayList<EduActions> myEduActions;
 
     public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
 
@@ -98,8 +98,8 @@ public class EduEditor implements TextEditor {
         myComponent.add(eduPanel, BorderLayout.WEST);
         actionsRecorders = new HashSet<ActionsRecorder>();
 
-        if (myLearnActions == null) {
-            myLearnActions = new ArrayList<EduActions>();
+        if (myEduActions == null) {
+            myEduActions = new ArrayList<EduActions>();
         }
 
         mouseBlocked = false;
@@ -373,11 +373,11 @@ public class EduEditor implements TextEditor {
         clearLessonPanel();
         removeActionsRecorders();
         if (isMouseBlocked()) restoreMouseActions();
-        if (myLearnActions != null) {
-            for (EduActions myLearnAction : myLearnActions) {
+        if (myEduActions != null) {
+            for (EduActions myLearnAction : myEduActions) {
                 myLearnAction.unregisterAction();
             }
-            myLearnActions.clear();
+            myEduActions.clear();
         }
 
     }
@@ -403,7 +403,7 @@ public class EduEditor implements TextEditor {
 //            e.printStackTrace();
 //        }
 
-        for (EduActions myLearnAction : myLearnActions) {
+        for (EduActions myLearnAction : myEduActions) {
             if(myLearnAction instanceof BlockCaretAction) return;
         }
 
@@ -418,20 +418,20 @@ public class EduEditor implements TextEditor {
                 }
             }
         });
-        myLearnActions.add(blockCaretAction);
+        myEduActions.add(blockCaretAction);
     }
 
     public void unblockCaret() {
         ArrayList<BlockCaretAction> myBlockActions = new ArrayList<BlockCaretAction>();
 
-        for (EduActions myLearnAction : myLearnActions) {
+        for (EduActions myLearnAction : myEduActions) {
             if(myLearnAction instanceof BlockCaretAction) {
                 myBlockActions.add((BlockCaretAction) myLearnAction);
                 ((BlockCaretAction) myLearnAction).unregisterAction();
             }
         }
 
-        myLearnActions.removeAll(myBlockActions);
+        myEduActions.removeAll(myBlockActions);
     }
 
     public void grabMouseActions(){
