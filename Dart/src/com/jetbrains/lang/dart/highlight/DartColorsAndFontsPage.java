@@ -7,7 +7,6 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,9 +18,111 @@ import static com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors.*;
 public class DartColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
-  @NonNls private static final Map<String, TextAttributesKey> ourTags = new HashMap<String, TextAttributesKey>();
+  private static final Map<String, TextAttributesKey> PREVIEW_TAGS = new HashMap<String, TextAttributesKey>();
+  private static final String PREVIEW_TEXT = "<DART_KEYWORD>library</DART_KEYWORD> <DART_LIBRARY_NAME>libraryName</DART_LIBRARY_NAME>;\n" +
+                                             "<DART_KEYWORD>import</DART_KEYWORD> \"dart:html\" <DART_KEYWORD>as</DART_KEYWORD> <DART_IMPORT_PREFIX>html</DART_IMPORT_PREFIX>;\n" +
+                                             "// comment\n" +
+                                             "<DART_TYPE_NAME_DYNAMIC>dynamic</DART_TYPE_NAME_DYNAMIC> <DART_TOP_LEVEL_VARIABLE_DECLARATION>topLevelVariable</DART_TOP_LEVEL_VARIABLE_DECLARATION> = \"Escape sequences: <DART_VALID_STRING_ESCAPE>\\n</DART_VALID_STRING_ESCAPE> <DART_VALID_STRING_ESCAPE>\\xFF</DART_VALID_STRING_ESCAPE> <DART_VALID_STRING_ESCAPE>\\u1234</DART_VALID_STRING_ESCAPE> <DART_VALID_STRING_ESCAPE>\\u{2F}</DART_VALID_STRING_ESCAPE>\";\n" +
+                                             "<DART_KEYWORD>get</DART_KEYWORD> <DART_TOP_LEVEL_GETTER_DECLARATION>topLevelGetter</DART_TOP_LEVEL_GETTER_DECLARATION> { <DART_KEYWORD>return</DART_KEYWORD> <DART_TOP_LEVEL_GETTER_REFERENCE>topLevelVariable</DART_TOP_LEVEL_GETTER_REFERENCE>; }\n" +
+                                             "<DART_KEYWORD>set</DART_KEYWORD> <DART_TOP_LEVEL_SETTER_DECLARATION>topLevelSetter</DART_TOP_LEVEL_SETTER_DECLARATION>(<DART_CLASS>bool</DART_CLASS> <DART_PARAMETER_DECLARATION>parameter</DART_PARAMETER_DECLARATION>) { <DART_TOP_LEVEL_FUNCTION_REFERENCE>print</DART_TOP_LEVEL_FUNCTION_REFERENCE>(<DART_PARAMETER_REFERENCE>parameter</DART_PARAMETER_REFERENCE>); }\n" +
+                                             "<DART_KEYWORD>void</DART_KEYWORD> <DART_TOP_LEVEL_FUNCTION_DECLARATION>topLevelFunction</DART_TOP_LEVEL_FUNCTION_DECLARATION>(<DART_DYNAMIC_PARAMETER_DECLARATION>dynamicParameter</DART_DYNAMIC_PARAMETER_DECLARATION>) {\n" +
+                                             "  <DART_LOCAL_FUNCTION_DECLARATION>localFunction</DART_LOCAL_FUNCTION_DECLARATION>() {}\n" +
+                                             "  <DART_CLASS>num</DART_CLASS> <DART_LOCAL_VARIABLE_DECLARATION>localVar</DART_LOCAL_VARIABLE_DECLARATION> = \"Invalid escape sequences: <DART_INVALID_STRING_ESCAPE>\\xZZ</DART_INVALID_STRING_ESCAPE> <DART_INVALID_STRING_ESCAPE>\\uXYZZ</DART_INVALID_STRING_ESCAPE> <DART_INVALID_STRING_ESCAPE>\\u{XYZ}</DART_INVALID_STRING_ESCAPE>\";\n" +
+                                             "  <DART_KEYWORD>var</DART_KEYWORD> <DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION>dynamicLocalVar</DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION> = <DART_DYNAMIC_PARAMETER_REFERENCE>dynamicParameter</DART_DYNAMIC_PARAMETER_REFERENCE> + <DART_LOCAL_VARIABLE_REFERENCE>localVar</DART_LOCAL_VARIABLE_REFERENCE> + <DART_LOCAL_FUNCTION_REFERENCE>localFunction</DART_LOCAL_FUNCTION_REFERENCE>();\n" +
+                                             "  <DART_TOP_LEVEL_SETTER_REFERENCE>topLevelSetter</DART_TOP_LEVEL_SETTER_REFERENCE> = <DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE>dynamicLocalVar</DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE> + <DART_TOP_LEVEL_GETTER_REFERENCE>topLevelGetter</DART_TOP_LEVEL_GETTER_REFERENCE> + <DART_TOP_LEVEL_FUNCTION_REFERENCE>topLevelFunction</DART_TOP_LEVEL_FUNCTION_REFERENCE>(<DART_KEYWORD>null</DART_KEYWORD>);\n" +
+                                             "  <DART_LABEL>label</DART_LABEL>: <DART_KEYWORD>while</DART_KEYWORD> (<DART_KEYWORD>true</DART_KEYWORD>) { <DART_KEYWORD>if</DART_KEYWORD> (<DART_IDENTIFIER>identifier</DART_IDENTIFIER>) <DART_KEYWORD>break</DART_KEYWORD> <DART_LABEL>label</DART_LABEL>; }\n" +
+                                             "}\n" +
+                                             "/* block comment */\n" +
+                                             "<DART_KEYWORD>class</DART_KEYWORD> <DART_CLASS>Foo</DART_CLASS><<DART_TYPE_PARAMETER>K</DART_TYPE_PARAMETER>, <DART_TYPE_PARAMETER>V</DART_TYPE_PARAMETER>> {\n" +
+                                             "  <DART_KEYWORD>static</DART_KEYWORD> <DART_KEYWORD>var</DART_KEYWORD> <DART_STATIC_FIELD_DECLARATION>staticField</DART_STATIC_FIELD_DECLARATION> = <DART_STATIC_GETTER_REFERENCE>staticGetter</DART_STATIC_GETTER_REFERENCE>;\n" +
+                                             "  <DART_CLASS>List</DART_CLASS> <DART_INSTANCE_FIELD_DECLARATION>instanceField</DART_INSTANCE_FIELD_DECLARATION> = [566];\n" +
+                                             "  <DART_ANNOTATION>@<DART_TOP_LEVEL_GETTER_REFERENCE>deprecated</DART_TOP_LEVEL_GETTER_REFERENCE></DART_ANNOTATION> <DART_CLASS>Foo</DART_CLASS>.<DART_CONSTRUCTOR>constructor</DART_CONSTRUCTOR>(<DART_KEYWORD>this</DART_KEYWORD>.<DART_INSTANCE_FIELD_REFERENCE>instanceField</DART_INSTANCE_FIELD_REFERENCE>) { <DART_INSTANCE_METHOD_REFERENCE>instanceMethod</DART_INSTANCE_METHOD_REFERENCE>(); }\n" +
+                                             "  <DART_INSTANCE_METHOD_DECLARATION>instanceMethod</DART_INSTANCE_METHOD_DECLARATION>() { <DART_TOP_LEVEL_FUNCTION_REFERENCE>print</DART_TOP_LEVEL_FUNCTION_REFERENCE>(<DART_INSTANCE_GETTER_REFERENCE>instanceField</DART_INSTANCE_GETTER_REFERENCE> + <DART_INSTANCE_GETTER_REFERENCE>instanceGetter</DART_INSTANCE_GETTER_REFERENCE>); }\n" +
+                                             "  <DART_KEYWORD>get</DART_KEYWORD> <DART_INSTANCE_GETTER_DECLARATION>instanceGetter</DART_INSTANCE_GETTER_DECLARATION> { <DART_INSTANCE_SETTER_REFERENCE>instanceSetter</DART_INSTANCE_SETTER_REFERENCE> = <DART_KEYWORD>true</DART_KEYWORD>; }\n" +
+                                             "  <DART_KEYWORD>set</DART_KEYWORD> <DART_INSTANCE_SETTER_DECLARATION>instanceSetter</DART_INSTANCE_SETTER_DECLARATION>(<DART_DYNAMIC_PARAMETER_DECLARATION>_</DART_DYNAMIC_PARAMETER_DECLARATION>) { <DART_STATIC_SETTER_REFERENCE>staticSetter</DART_STATIC_SETTER_REFERENCE> = <DART_KEYWORD>null</DART_KEYWORD>; }\n" +
+                                             "  <DART_KEYWORD>static</DART_KEYWORD> <DART_STATIC_METHOD_DECLARATION>staticMethod</DART_STATIC_METHOD_DECLARATION>() { <DART_KEYWORD>return</DART_KEYWORD> <DART_STATIC_GETTER_REFERENCE>staticField</DART_STATIC_GETTER_REFERENCE>; }\n" +
+                                             "  <DART_KEYWORD>static</DART_KEYWORD> <DART_KEYWORD>get</DART_KEYWORD> <DART_STATIC_GETTER_DECLARATION>staticGetter</DART_STATIC_GETTER_DECLARATION> { <DART_KEYWORD>return</DART_KEYWORD> <DART_STATIC_METHOD_REFERENCE>staticMethod</DART_STATIC_METHOD_REFERENCE>(); }\n" +
+                                             "  <DART_KEYWORD>static</DART_KEYWORD> <DART_KEYWORD>set</DART_KEYWORD> <DART_STATIC_SETTER_DECLARATION>staticSetter</DART_STATIC_SETTER_DECLARATION>(<DART_CLASS>Foo</DART_CLASS> <DART_PARAMETER_DECLARATION>param</DART_PARAMETER_DECLARATION>) { <DART_SYMBOL_LITERAL>#Enum.EnumConstant</DART_SYMBOL_LITERAL>; }\n" +
+                                             "}\n" +
+                                             "/// documentation for [<DART_ENUM>Enum</DART_ENUM>]\n" +
+                                             "<DART_KEYWORD>enum</DART_KEYWORD> <DART_ENUM>Enum</DART_ENUM> { <DART_ENUM_CONSTANT>EnumConstant</DART_ENUM_CONSTANT> }\n" +
+                                             "<DART_KEYWORD>typedef</DART_KEYWORD> <DART_CLASS>int</DART_CLASS> <DART_FUNCTION_TYPE_ALIAS>FunctionTypeAlias</DART_FUNCTION_TYPE_ALIAS>(<DART_DYNAMIC_PARAMETER_DECLARATION>x</DART_DYNAMIC_PARAMETER_DECLARATION>, <DART_DYNAMIC_PARAMETER_DECLARATION>y</DART_DYNAMIC_PARAMETER_DECLARATION>); ```\n";
 
   static {
+    PREVIEW_TAGS.put("DART_ANNOTATION", ANNOTATION);
+    PREVIEW_TAGS.put("DART_CLASS", CLASS);
+    PREVIEW_TAGS.put("DART_CONSTRUCTOR", CONSTRUCTOR);
+
+    PREVIEW_TAGS.put("DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION", DYNAMIC_LOCAL_VARIABLE_DECLARATION);
+    PREVIEW_TAGS.put("DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE", DYNAMIC_LOCAL_VARIABLE_REFERENCE);
+    PREVIEW_TAGS.put("DART_DYNAMIC_PARAMETER_DECLARATION", DYNAMIC_PARAMETER_DECLARATION);
+    PREVIEW_TAGS.put("DART_DYNAMIC_PARAMETER_REFERENCE", DYNAMIC_PARAMETER_REFERENCE);
+
+    PREVIEW_TAGS.put("DART_ENUM", ENUM);
+    PREVIEW_TAGS.put("DART_ENUM_CONSTANT", ENUM_CONSTANT);
+    PREVIEW_TAGS.put("DART_FUNCTION_TYPE_ALIAS", FUNCTION_TYPE_ALIAS);
+
+    PREVIEW_TAGS.put("DART_IDENTIFIER", IDENTIFIER);
+    PREVIEW_TAGS.put("DART_INSTANCE_FIELD_DECLARATION", INSTANCE_FIELD_DECLARATION);
+    PREVIEW_TAGS.put("DART_INSTANCE_FIELD_REFERENCE", INSTANCE_FIELD_REFERENCE);
+    PREVIEW_TAGS.put("DART_INSTANCE_GETTER_DECLARATION", INSTANCE_GETTER_DECLARATION);
+    PREVIEW_TAGS.put("DART_INSTANCE_GETTER_REFERENCE", INSTANCE_GETTER_REFERENCE);
+    PREVIEW_TAGS.put("DART_INSTANCE_METHOD_DECLARATION", INSTANCE_METHOD_DECLARATION);
+    PREVIEW_TAGS.put("DART_INSTANCE_METHOD_REFERENCE", INSTANCE_METHOD_REFERENCE);
+    PREVIEW_TAGS.put("DART_INSTANCE_SETTER_DECLARATION", INSTANCE_SETTER_DECLARATION);
+    PREVIEW_TAGS.put("DART_INSTANCE_SETTER_REFERENCE", INSTANCE_SETTER_REFERENCE);
+
+    PREVIEW_TAGS.put("DART_IMPORT_PREFIX", IMPORT_PREFIX);
+    PREVIEW_TAGS.put("DART_KEYWORD", KEYWORD);
+    PREVIEW_TAGS.put("DART_LABEL", LABEL);
+    PREVIEW_TAGS.put("DART_LIBRARY_NAME", LIBRARY_NAME);
+
+    PREVIEW_TAGS.put("DART_LOCAL_FUNCTION_DECLARATION", LOCAL_FUNCTION_DECLARATION);
+    PREVIEW_TAGS.put("DART_LOCAL_FUNCTION_REFERENCE", LOCAL_FUNCTION_REFERENCE);
+    PREVIEW_TAGS.put("DART_LOCAL_VARIABLE_DECLARATION", LOCAL_VARIABLE_DECLARATION);
+    PREVIEW_TAGS.put("DART_LOCAL_VARIABLE_REFERENCE", LOCAL_VARIABLE_REFERENCE);
+
+    PREVIEW_TAGS.put("DART_PARAMETER_DECLARATION", PARAMETER_DECLARATION);
+    PREVIEW_TAGS.put("DART_PARAMETER_REFERENCE", PARAMETER_REFERENCE);
+
+    PREVIEW_TAGS.put("DART_STATIC_FIELD_DECLARATION", STATIC_FIELD_DECLARATION);
+    PREVIEW_TAGS.put("DART_STATIC_GETTER_DECLARATION", STATIC_GETTER_DECLARATION);
+    PREVIEW_TAGS.put("DART_STATIC_GETTER_REFERENCE", STATIC_GETTER_REFERENCE);
+    PREVIEW_TAGS.put("DART_STATIC_METHOD_DECLARATION", STATIC_METHOD_DECLARATION);
+    PREVIEW_TAGS.put("DART_STATIC_METHOD_REFERENCE", STATIC_METHOD_REFERENCE);
+    PREVIEW_TAGS.put("DART_STATIC_SETTER_DECLARATION", STATIC_SETTER_DECLARATION);
+    PREVIEW_TAGS.put("DART_STATIC_SETTER_REFERENCE", STATIC_SETTER_REFERENCE);
+
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_FUNCTION_DECLARATION", TOP_LEVEL_FUNCTION_DECLARATION);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_FUNCTION_REFERENCE", TOP_LEVEL_FUNCTION_REFERENCE);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_GETTER_DECLARATION", TOP_LEVEL_GETTER_DECLARATION);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_GETTER_REFERENCE", TOP_LEVEL_GETTER_REFERENCE);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_SETTER_DECLARATION", TOP_LEVEL_SETTER_DECLARATION);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_SETTER_REFERENCE", TOP_LEVEL_SETTER_REFERENCE);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_VARIABLE_DECLARATION", TOP_LEVEL_VARIABLE_DECLARATION);
+
+    PREVIEW_TAGS.put("DART_TYPE_NAME_DYNAMIC", TYPE_NAME_DYNAMIC);
+    PREVIEW_TAGS.put("DART_TYPE_PARAMETER", TYPE_PARAMETER);
+    PREVIEW_TAGS.put("DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE", UNRESOLVED_INSTANCE_MEMBER_REFERENCE);
+
+    PREVIEW_TAGS.put("DART_BLOCK_COMMENT", BLOCK_COMMENT);
+    PREVIEW_TAGS.put("DART_DOC_COMMENT", DOC_COMMENT);
+    PREVIEW_TAGS.put("DART_LINE_COMMENT", LINE_COMMENT);
+
+    PREVIEW_TAGS.put("DART_NUMBER", NUMBER);
+    PREVIEW_TAGS.put("DART_STRING", STRING);
+    PREVIEW_TAGS.put("DART_VALID_STRING_ESCAPE", VALID_STRING_ESCAPE);
+    PREVIEW_TAGS.put("DART_INVALID_STRING_ESCAPE", INVALID_STRING_ESCAPE);
+    PREVIEW_TAGS.put("DART_OPERATION_SIGN", OPERATION_SIGN);
+    PREVIEW_TAGS.put("DART_PARENTH", PARENTHS);
+    PREVIEW_TAGS.put("DART_BRACKETS", BRACKETS);
+    PREVIEW_TAGS.put("DART_BRACES", BRACES);
+    PREVIEW_TAGS.put("DART_COMMA", COMMA);
+    PREVIEW_TAGS.put("DART_DOT", DOT);
+    PREVIEW_TAGS.put("DART_SEMICOLON", SEMICOLON);
+    PREVIEW_TAGS.put("DART_BAD_CHARACTER", BAD_CHARACTER);
+    PREVIEW_TAGS.put("DART_SYMBOL_LITERAL", SYMBOL_LITERAL);
+
     ATTRS = new AttributesDescriptor[]{
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.block.comment"), BLOCK_COMMENT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.doc.comment"), DOC_COMMENT),
@@ -45,23 +146,31 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.class"), CLASS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor"), CONSTRUCTOR),
 
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.local.variable.declaration"), DYNAMIC_LOCAL_VARIABLE_DECLARATION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.local.variable.reference"), DYNAMIC_LOCAL_VARIABLE_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.parameter.declaration"), DYNAMIC_PARAMETER_DECLARATION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.parameter.reference"), DYNAMIC_PARAMETER_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.local.variable.declaration"),
+                               DYNAMIC_LOCAL_VARIABLE_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.local.variable.reference"),
+                               DYNAMIC_LOCAL_VARIABLE_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.parameter.declaration"),
+                               DYNAMIC_PARAMETER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.parameter.reference"),
+                               DYNAMIC_PARAMETER_REFERENCE),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum"), ENUM),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum.constant"), ENUM_CONSTANT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.function.type.alias"), FUNCTION_TYPE_ALIAS),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.identifier"), IDENTIFIER),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.declaration"), INSTANCE_FIELD_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.declaration"),
+                               INSTANCE_FIELD_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.reference"), INSTANCE_FIELD_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.getter.declaration"), INSTANCE_GETTER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.getter.declaration"),
+                               INSTANCE_GETTER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.getter.reference"), INSTANCE_GETTER_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.method.declaration"), INSTANCE_METHOD_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.method.declaration"),
+                               INSTANCE_METHOD_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.method.reference"), INSTANCE_METHOD_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.setter.declaration"), INSTANCE_SETTER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.setter.declaration"),
+                               INSTANCE_SETTER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.setter.reference"), INSTANCE_SETTER_REFERENCE),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.import.prefix"), IMPORT_PREFIX),
@@ -69,9 +178,11 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.label"), LABEL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.library.name"), LIBRARY_NAME),
 
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.declaration"), LOCAL_FUNCTION_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.declaration"),
+                               LOCAL_FUNCTION_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.reference"), LOCAL_FUNCTION_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.declaration"), LOCAL_VARIABLE_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.declaration"),
+                               LOCAL_VARIABLE_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.reference"), LOCAL_VARIABLE_REFERENCE),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parameter.declaration"), PARAMETER_DECLARATION),
@@ -85,76 +196,26 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.setter.declaration"), STATIC_SETTER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.setter.reference"), STATIC_SETTER_REFERENCE),
 
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.declaration"), TOP_LEVEL_FUNCTION_DECLARATION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.reference"), TOP_LEVEL_FUNCTION_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.declaration"), TOP_LEVEL_GETTER_DECLARATION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.reference"), TOP_LEVEL_GETTER_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.setter.declaration"), TOP_LEVEL_SETTER_DECLARATION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.setter.reference"), TOP_LEVEL_SETTER_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.variable.declaration"), TOP_LEVEL_VARIABLE_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.declaration"),
+                               TOP_LEVEL_FUNCTION_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.reference"),
+                               TOP_LEVEL_FUNCTION_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.declaration"),
+                               TOP_LEVEL_GETTER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.reference"),
+                               TOP_LEVEL_GETTER_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.setter.declaration"),
+                               TOP_LEVEL_SETTER_DECLARATION),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.setter.reference"),
+                               TOP_LEVEL_SETTER_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.variable.declaration"),
+                               TOP_LEVEL_VARIABLE_DECLARATION),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.type.name.dynamic"), TYPE_NAME_DYNAMIC),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.type.parameter"), TYPE_PARAMETER),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.unresolved.instance.member.reference"), UNRESOLVED_INSTANCE_MEMBER_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.unresolved.instance.member.reference"),
+                               UNRESOLVED_INSTANCE_MEMBER_REFERENCE),
     };
-
-    ourTags.put("bad.escape", INVALID_STRING_ESCAPE);
-    ourTags.put("escape", VALID_STRING_ESCAPE);
-    ourTags.put("symbol", SYMBOL_LITERAL);
-
-    ourTags.put("annotation", ANNOTATION);
-    ourTags.put("class", CLASS);
-    ourTags.put("constructor", CONSTRUCTOR);
-    
-    ourTags.put("dynamic.local.variable.declaration", DYNAMIC_LOCAL_VARIABLE_DECLARATION);
-    ourTags.put("dynamic.local.variable.reference", DYNAMIC_LOCAL_VARIABLE_REFERENCE);
-    ourTags.put("dynamic.parameter.declaration", DYNAMIC_PARAMETER_DECLARATION);
-    ourTags.put("dynamic.parameter.reference", DYNAMIC_PARAMETER_REFERENCE);
-
-    ourTags.put("enum", ENUM);
-    ourTags.put("enum.constant", ENUM_CONSTANT);
-    ourTags.put("function.type.alias", FUNCTION_TYPE_ALIAS);
-
-    ourTags.put("instance.field.declaration", INSTANCE_FIELD_DECLARATION);
-    ourTags.put("instance.field.reference", INSTANCE_FIELD_REFERENCE);
-    ourTags.put("instance.getter.declaration", INSTANCE_GETTER_DECLARATION);
-    ourTags.put("instance.getter.reference", INSTANCE_GETTER_REFERENCE);
-    ourTags.put("instance.method.declaration", INSTANCE_METHOD_DECLARATION);
-    ourTags.put("instance.method.reference", INSTANCE_METHOD_REFERENCE);
-    ourTags.put("instance.getter.declaration", INSTANCE_SETTER_DECLARATION);
-    ourTags.put("instance.getter.reference", INSTANCE_SETTER_REFERENCE);
-
-    ourTags.put("import.prefix", IMPORT_PREFIX);
-    ourTags.put("keyword", KEYWORD);
-    ourTags.put("label", LABEL);
-
-    ourTags.put("instance.function.declaration", LOCAL_FUNCTION_DECLARATION);
-    ourTags.put("instance.function.reference", LOCAL_FUNCTION_REFERENCE);
-    ourTags.put("instance.local.variable.declaration", LOCAL_VARIABLE_DECLARATION);
-    ourTags.put("instance.local.variable.reference", LOCAL_VARIABLE_REFERENCE);
-
-    ourTags.put("parameter.declaration", PARAMETER_DECLARATION);
-    ourTags.put("parameter.reference", PARAMETER_REFERENCE);
-
-    ourTags.put("static.field.declaration", STATIC_FIELD_DECLARATION);
-    ourTags.put("static.getter.declaration", STATIC_GETTER_DECLARATION);
-    ourTags.put("static.getter.reference", STATIC_GETTER_REFERENCE);
-    ourTags.put("static.method.declaration", STATIC_METHOD_DECLARATION);
-    ourTags.put("static.method.reference", STATIC_METHOD_REFERENCE);
-    ourTags.put("static.getter.declaration", STATIC_SETTER_DECLARATION);
-    ourTags.put("static.getter.reference", STATIC_SETTER_REFERENCE);
-
-    ourTags.put("top.level.function.declaration", TOP_LEVEL_FUNCTION_DECLARATION);
-    ourTags.put("top.level.function.reference", TOP_LEVEL_FUNCTION_REFERENCE);
-    ourTags.put("top.level.getter.declaration", TOP_LEVEL_GETTER_DECLARATION);
-    ourTags.put("top.level.getter.reference", TOP_LEVEL_GETTER_REFERENCE);
-    ourTags.put("top.level.getter.declaration", TOP_LEVEL_SETTER_DECLARATION);
-    ourTags.put("top.level.getter.reference", TOP_LEVEL_SETTER_REFERENCE);
-    ourTags.put("top.level.variable.declaration", TOP_LEVEL_VARIABLE_DECLARATION);
-
-    ourTags.put("type.name.dynamic", TYPE_NAME_DYNAMIC);
-    ourTags.put("type.parameter", TYPE_PARAMETER);
-    ourTags.put("unresolved.instance.member.reference", UNRESOLVED_INSTANCE_MEMBER_REFERENCE);
   }
 
   @NotNull
@@ -183,45 +244,10 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
 
   @NotNull
   public String getDemoText() {
-    return "/**\n" +
-           " * documentation\n" +
-           " */\n" +
-           "<metadata>@Metadata</metadata>('text')\n" +
-           "class <class>SomeClass</class> extends BaseClass <keyword>implements</keyword> <class>OtherClass</class> {\n" +
-           "  /// documentation\n" +
-           "  var <instance.member.variable>someField</instance.member.variable> = null; // line comment\n" +
-           "  var <instance.member.variable>someString</instance.member.variable> = \"Escape sequences: <escape>\\n</escape> <escape>\\xFF</escape> <escape>\\u1234</escape> <escape>\\u{2F}</escape>\"\n" +
-           "  <class>String</class> <instance.member.variable>otherString</instance.member.variable> = \"Invalid escape sequences: <bad.escape>\\xZZ</bad.escape> <bad.escape>\\uXYZZ</bad.escape> <bad.escape>\\u{XYZ}</bad.escape>\"\n" +
-           "  <keyword>static</keyword> <builtin>num</builtin> <static.member.variable>staticField</static.member.variable> = 12345.67890;\n" +
-           "\n" +
-           "  <keyword>static</keyword> <static.member.function>staticFunction</static.member.function>() {\n" +
-           "    <label>label</label>: <static.member.variable>staticField</static.member.variable>++; /* block comment */\n" +
-           "  }\n\n" +
-           "  <constructor.decl>SomeClass</constructor.decl>(this.someString);\n" +
-           "\n" +
-           "  <instance.member.function>foo</instance.member.function>(<builtin>dynamic</builtin> <parameter>param</parameter>) {\n" +
-           "    <top.level.func.call>print</top.level.func.call>(<instance.member.variable>someString</instance.member.variable> + <parameter>param</parameter>);\n" +
-           "    var <local.variable>localVar</local.variable> = <class>SomeClass</class>.<static.member.variable>staticField</static.member.variable>; \n" +
-           "    var <local.variable>localVar2</local.variable> = new <constructor.call>SomeClass</constructor.call>('content').<instance.member.function.call>bar</instance.member.function.call>();\n" +
-           "    <local.variable>localVar</local.variable>++; \n" +
-           "    <function>localFunction</function>() {\n" +
-           "      <local.variable>localVar</local.variable> = ```; // bad character\n" +
-           "    };\n" +
-           "  }\n" +
-           "  <builtin>int</builtin> <instance.member.function>f</instance.member.function>() => 13;\n" +
-           "}\n\n" +
-           "<keyword>abstract</keyword> class BaseClass {\n" +
-           "  <builtin>int</builtin> g() => <abstract.call>f</abstract.call>();\n" +
-           "  <builtin>int</builtin> f();\n" +
-           "}\n\n" +
-           "const className = <symbol>#MyClass</symbol>;\n\n" +
-           "var <top.level.var.decl>topLevelVar</top.level.var.decl> = new SomeClass(null).<inherited.call>g</inherited.call>();\n\n" +
-           "<top.level.func.decl>main</top.level.func.decl>() {\n" +
-           "  <top.level.func.call>print</top.level.func.call>(<top.level.var.call>topLevelVar</top.level.var.call>);\n" +
-           "}\n";
+    return PREVIEW_TEXT;
   }
 
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    return ourTags;
+    return PREVIEW_TAGS;
   }
 }
