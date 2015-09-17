@@ -116,6 +116,7 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_FUNCTION_TYPE_ALIAS, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey IDENTIFIER =
     createTextAttributesKey(DART_IDENTIFIER, DefaultLanguageHighlighterColors.IDENTIFIER);
+
   public static final TextAttributesKey INSTANCE_FIELD_DECLARATION =
     createTextAttributesKey(DART_INSTANCE_FIELD_DECLARATION, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey INSTANCE_FIELD_REFERENCE =
@@ -132,6 +133,7 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_INSTANCE_SETTER_DECLARATION, INSTANCE_FIELD_DECLARATION);
   public static final TextAttributesKey INSTANCE_SETTER_REFERENCE =
     createTextAttributesKey(DART_INSTANCE_SETTER_REFERENCE, INSTANCE_FIELD_DECLARATION);
+
   public static final TextAttributesKey IMPORT_PREFIX =
     createTextAttributesKey(DART_IMPORT_PREFIX, DefaultLanguageHighlighterColors.IDENTIFIER);
   public static final TextAttributesKey KEYWORD = createTextAttributesKey(DART_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
@@ -146,6 +148,7 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_PARAMETER_DECLARATION, DefaultLanguageHighlighterColors.PARAMETER);
   public static final TextAttributesKey PARAMETER_REFERENCE =
     createTextAttributesKey(DART_PARAMETER_REFERENCE, DefaultLanguageHighlighterColors.PARAMETER);
+
   public static final TextAttributesKey STATIC_FIELD_DECLARATION =
     createTextAttributesKey(DART_STATIC_FIELD_DECLARATION, DefaultLanguageHighlighterColors.STATIC_FIELD);
   public static final TextAttributesKey STATIC_GETTER_DECLARATION =
@@ -155,25 +158,27 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey STATIC_METHOD_DECLARATION =
     createTextAttributesKey(DART_STATIC_METHOD_DECLARATION, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey STATIC_METHOD_REFERENCE =
-    createTextAttributesKey(DART_STATIC_METHOD_REFERENCE, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    createTextAttributesKey(DART_STATIC_METHOD_REFERENCE, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey STATIC_SETTER_DECLARATION =
     createTextAttributesKey(DART_STATIC_SETTER_DECLARATION, STATIC_FIELD_DECLARATION);
   public static final TextAttributesKey STATIC_SETTER_REFERENCE =
     createTextAttributesKey(DART_STATIC_SETTER_REFERENCE, STATIC_FIELD_DECLARATION);
-  public static final TextAttributesKey TOP_LEVEL_FUNCTION_DECLARATION =
-    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_DECLARATION, STATIC_METHOD_DECLARATION);
-  public static final TextAttributesKey TOP_LEVEL_FUNCTION_REFERENCE =
-    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_REFERENCE, STATIC_METHOD_REFERENCE);
-  public static final TextAttributesKey TOP_LEVEL_GETTER_DECLARATION =
-    createTextAttributesKey(DART_TOP_LEVEL_GETTER_DECLARATION, STATIC_FIELD_DECLARATION);
-  public static final TextAttributesKey TOP_LEVEL_GETTER_REFERENCE =
-    createTextAttributesKey(DART_TOP_LEVEL_GETTER_REFERENCE, STATIC_FIELD_DECLARATION);
-  public static final TextAttributesKey TOP_LEVEL_SETTER_DECLARATION =
-    createTextAttributesKey(DART_TOP_LEVEL_SETTER_DECLARATION, STATIC_FIELD_DECLARATION);
-  public static final TextAttributesKey TOP_LEVEL_SETTER_REFERENCE =
-    createTextAttributesKey(DART_TOP_LEVEL_SETTER_REFERENCE, STATIC_FIELD_DECLARATION);
+
   public static final TextAttributesKey TOP_LEVEL_VARIABLE_DECLARATION =
     createTextAttributesKey(DART_TOP_LEVEL_VARIABLE_DECLARATION, DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
+  public static final TextAttributesKey TOP_LEVEL_FUNCTION_DECLARATION =
+    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_DECLARATION, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+  public static final TextAttributesKey TOP_LEVEL_FUNCTION_REFERENCE =
+    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_REFERENCE, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+  public static final TextAttributesKey TOP_LEVEL_GETTER_DECLARATION =
+    createTextAttributesKey(DART_TOP_LEVEL_GETTER_DECLARATION, TOP_LEVEL_VARIABLE_DECLARATION);
+  public static final TextAttributesKey TOP_LEVEL_GETTER_REFERENCE =
+    createTextAttributesKey(DART_TOP_LEVEL_GETTER_REFERENCE, TOP_LEVEL_VARIABLE_DECLARATION);
+  public static final TextAttributesKey TOP_LEVEL_SETTER_DECLARATION =
+    createTextAttributesKey(DART_TOP_LEVEL_SETTER_DECLARATION, TOP_LEVEL_VARIABLE_DECLARATION);
+  public static final TextAttributesKey TOP_LEVEL_SETTER_REFERENCE =
+    createTextAttributesKey(DART_TOP_LEVEL_SETTER_REFERENCE, TOP_LEVEL_VARIABLE_DECLARATION);
+
   public static final TextAttributesKey TYPE_NAME_DYNAMIC =
     createTextAttributesKey(DART_TYPE_NAME_DYNAMIC, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey TYPE_PARAMETER =
