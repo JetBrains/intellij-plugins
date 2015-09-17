@@ -54,6 +54,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum.constant"), ENUM_CONSTANT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.function.type.alias"), FUNCTION_TYPE_ALIAS),
 
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.identifier"), IDENTIFIER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.declaration"), INSTANCE_FIELD_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.reference"), INSTANCE_FIELD_REFERENCE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.getter.declaration"), INSTANCE_GETTER_DECLARATION),
@@ -66,6 +67,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.import.prefix"), IMPORT_PREFIX),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.keyword"), KEYWORD),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.label"), LABEL),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.library.name"), LIBRARY_NAME),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.declaration"), LOCAL_FUNCTION_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.reference"), LOCAL_FUNCTION_REFERENCE),

@@ -1,4 +1,4 @@
-<info textAttributesKey="DART_KEYWORD">library</info> foo.bar;
+<info textAttributesKey="DART_KEYWORD">library</info> <info textAttributesKey="DART_IDENTIFIER">foo</info>.<info textAttributesKey="DART_IDENTIFIER">bar</info>;
 
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:core";
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:html"
@@ -7,6 +7,14 @@
     <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info>,
     <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info>,
     <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">make_dart_rectangle</info>;
+
+<info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
+  return <info textAttributesKey="DART_TOP_LEVEL_GETTER_REFERENCE">topLevelGetter</info>;
+}
+
+<info textAttributesKey="DART_KEYWORD">set</info> <info textAttributesKey="DART_TOP_LEVEL_SETTER_DECLARATION">topLevelSetter</info>(<info textAttributesKey="DART_CLASS">bool</info> <info textAttributesKey="DART_PARAMETER_DECLARATION">param</info>) {
+  <info textAttributesKey="DART_TOP_LEVEL_SETTER_REFERENCE">topLevelSetter</info> = true;
+}
 
 <info textAttributesKey="DART_CLASS">Object</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">topLevelVariable</info>;
 
@@ -30,6 +38,8 @@ void <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">topLevelFunct
   new <info textAttributesKey="DART_CLASS">Foo2</info>(1);
   const <info textAttributesKey="DART_CLASS">Foo2</info>(1);
   <info textAttributesKey="DART_ENUM">Enum</info>.<info textAttributesKey="DART_ENUM_CONSTANT">EnumConstant</info>;
+  var <info textAttributesKey="DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION">dynamicLocalVar</info>;
+  <info textAttributesKey="DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE">dynamicLocalVar</info>;
 }
 
 enum <info textAttributesKey="DART_ENUM">Enum</info> {
@@ -75,8 +85,8 @@ class <info textAttributesKey="DART_CLASS">Foo2</info><<info textAttributesKey="
     return <info textAttributesKey="DART_STATIC_GETTER_REFERENCE">staticGetter</info>;
   }
 
-  <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_KEYWORD">set</info> <info textAttributesKey="DART_STATIC_SETTER_DECLARATION">staticSetter</info>(<info textAttributesKey="DART_DYNAMIC_PARAMETER_DECLARATION">param</info>) {
-    <info textAttributesKey="DART_DYNAMIC_PARAMETER_REFERENCE">param</info>;
+  <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_KEYWORD">set</info> <info textAttributesKey="DART_STATIC_SETTER_DECLARATION">staticSetter</info>(<info textAttributesKey="DART_CLASS">num</info> <info textAttributesKey="DART_PARAMETER_DECLARATION">param</info>) {
+    <info textAttributesKey="DART_PARAMETER_REFERENCE">param</info>;
     <info textAttributesKey="DART_STATIC_SETTER_REFERENCE">staticSetter</info> = 1;
   }
 

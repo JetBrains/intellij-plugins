@@ -20,6 +20,7 @@ public class DartSyntaxHighlighterColors {
   public static final String DART_ENUM_CONSTANT = "DART_ENUM_CONSTANT";
   public static final String DART_FUNCTION_TYPE_ALIAS = "DART_FUNCTION_TYPE_ALIAS";
 
+  public static final String DART_IDENTIFIER = "DART_IDENTIFIER";
   public static final String DART_INSTANCE_FIELD_DECLARATION = "DART_INSTANCE_FIELD_DECLARATION";
   public static final String DART_INSTANCE_FIELD_REFERENCE = "DART_INSTANCE_FIELD_REFERENCE";
   public static final String DART_INSTANCE_GETTER_DECLARATION = "DART_INSTANCE_GETTER_DECLARATION";
@@ -32,6 +33,7 @@ public class DartSyntaxHighlighterColors {
   public static final String DART_IMPORT_PREFIX = "DART_IMPORT_PREFIX";
   public static final String DART_KEYWORD = "DART_KEYWORD";
   public static final String DART_LABEL = "DART_LABEL";
+  public static final String DART_LIBRARY_NAME = "DART_LIBRARY_NAME";
 
   public static final String DART_LOCAL_FUNCTION_DECLARATION = "DART_LOCAL_FUNCTION_DECLARATION";
   public static final String DART_LOCAL_FUNCTION_REFERENCE = "DART_LOCAL_FUNCTION_REFERENCE";
@@ -112,6 +114,8 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_ENUM_CONSTANT, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey FUNCTION_TYPE_ALIAS =
     createTextAttributesKey(DART_FUNCTION_TYPE_ALIAS, DefaultLanguageHighlighterColors.CLASS_NAME);
+  public static final TextAttributesKey IDENTIFIER =
+    createTextAttributesKey(DART_IDENTIFIER, DefaultLanguageHighlighterColors.IDENTIFIER);
   public static final TextAttributesKey INSTANCE_FIELD_DECLARATION =
     createTextAttributesKey(DART_INSTANCE_FIELD_DECLARATION, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey INSTANCE_FIELD_REFERENCE =
@@ -132,6 +136,8 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_IMPORT_PREFIX, DefaultLanguageHighlighterColors.IDENTIFIER);
   public static final TextAttributesKey KEYWORD = createTextAttributesKey(DART_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey LABEL = createTextAttributesKey(DART_LABEL, DefaultLanguageHighlighterColors.LABEL);
+  public static final TextAttributesKey LIBRARY_NAME =
+    createTextAttributesKey(DART_LIBRARY_NAME, DefaultLanguageHighlighterColors.IDENTIFIER);
   public static final TextAttributesKey LOCAL_VARIABLE_DECLARATION =
     createTextAttributesKey(DART_LOCAL_VARIABLE_DECLARATION, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
   public static final TextAttributesKey LOCAL_VARIABLE_REFERENCE =

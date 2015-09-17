@@ -24,6 +24,7 @@ import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -32,10 +33,110 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class DartColorAnnotator implements Annotator {
 
   private static final Key<Boolean> DART_SERVER_DATA_HANDLED = Key.create("DART_SERVER_DATA_HANDLED");
+
+  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<String, String>();
+
+  static {
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);
+    // handled by DartColorAnnotator without server
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.BUILT_IN, DartSyntaxHighlighterColors.DART_KEYWORD);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CLASS, DartSyntaxHighlighterColors.DART_CLASS);
+    // handled by DartSyntaxHighlighter
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_BLOCK, DartSyntaxHighlighterColors.DART_BLOCK_COMMENT);
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_DOC_COMMENT);
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_LINE_COMMENT);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CONSTRUCTOR, DartSyntaxHighlighterColors.DART_CONSTRUCTOR);
+    // No need in special highlighting of the whole region. Individual child regions are highlighted.
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DIRECTIVE, DartSyntaxHighlighterColors.);
+    // HighlightRegionType.DYNAMIC_TYPE - Only for version 1 of highlight.
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DYNAMIC_LOCAL_VARIABLE_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DYNAMIC_LOCAL_VARIABLE_REFERENCE,
+                              DartSyntaxHighlighterColors.DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DYNAMIC_PARAMETER_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DYNAMIC_PARAMETER_REFERENCE,
+                              DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ENUM, DartSyntaxHighlighterColors.DART_ENUM);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ENUM_CONSTANT, DartSyntaxHighlighterColors.DART_ENUM_CONSTANT);
+    // HighlightRegionType.FIELD - Only for version 1 of highlight.
+    // HighlightRegionType.FIELD_STATIC - Only for version 1 of highlight.
+    // HighlightRegionType.FUNCTION - Only for version 1 of highlight.
+    // HighlightRegionType.FUNCTION_DECLARATION - Only for version 1 of highlight.
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.FUNCTION_TYPE_ALIAS, DartSyntaxHighlighterColors.DART_FUNCTION_TYPE_ALIAS);
+    // HighlightRegionType.GETTER_DECLARATION - Only for version 1 of highlight.
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.IDENTIFIER_DEFAULT, DartSyntaxHighlighterColors.DART_IDENTIFIER);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.IMPORT_PREFIX, DartSyntaxHighlighterColors.DART_IMPORT_PREFIX);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_FIELD_DECLARATION, DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_FIELD_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_GETTER_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_INSTANCE_GETTER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_GETTER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_METHOD_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_METHOD_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE);
+    // handled by DartColorAnnotator without server
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INVALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_INVALID_STRING_ESCAPE);
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.KEYWORD, DartSyntaxHighlighterColors.DART_KEYWORD);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LABEL, DartSyntaxHighlighterColors.DART_LABEL);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LIBRARY_NAME, DartSyntaxHighlighterColors.DART_LIBRARY_NAME);
+    // handled by DartSyntaxHighlighter
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_BOOLEAN, DartSyntaxHighlighterColors.DART_KEYWORD);
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_DOUBLE, DartSyntaxHighlighterColors.DART_NUMBER);
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_INTEGER, DartSyntaxHighlighterColors.DART_NUMBER);
+    // No need in special highlighting of the whole map/list literal.
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_LIST, DartSyntaxHighlighterColors.);
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_MAP, DartSyntaxHighlighterColors.);
+    // handled by DartSyntaxHighlighter
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_STRING, DartSyntaxHighlighterColors.DART_STRING);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_DECLARATION, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_REFERENCE, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_REFERENCE);
+    // HighlightRegionType.LOCAL_VARIABLE - Only for version 1 of highlight.
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_VARIABLE_DECLARATION, DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_VARIABLE_REFERENCE, DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_REFERENCE);
+    // HighlightRegionType.METHOD - Only for version 1 of highlight.
+    // HighlightRegionType.METHOD_DECLARATION - Only for version 1 of highlight.
+    // HighlightRegionType.METHOD_DECLARATION_STATIC - Only for version 1 of highlight.
+    // HighlightRegionType.METHOD_STATIC - Only for version 1 of highlight.
+    // HighlightRegionType.PARAMETER - Only for version 1 of highlight.
+    // HighlightRegionType.SETTER_DECLARATION - Only for version 1 of highlight.
+    // HighlightRegionType.TOP_LEVEL_VARIABLE - Only for version 1 of highlight.
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.PARAMETER_DECLARATION, DartSyntaxHighlighterColors.DART_PARAMETER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.PARAMETER_REFERENCE, DartSyntaxHighlighterColors.DART_PARAMETER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_FIELD_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_FIELD_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_GETTER_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_GETTER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_GETTER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_METHOD_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_METHOD_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_SETTER_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_SETTER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_SETTER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_REFERENCE,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_GETTER_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_SETTER_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_VARIABLE_DECLARATION,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_NAME_DYNAMIC, DartSyntaxHighlighterColors.DART_TYPE_NAME_DYNAMIC);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_PARAMETER, DartSyntaxHighlighterColors.DART_TYPE_PARAMETER);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE,
+                              DartSyntaxHighlighterColors.DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE);
+    // handled by DartColorAnnotator without server
+    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.VALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_VALID_STRING_ESCAPE);
+  }
 
   @Contract("_, null -> false")
   public static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile file) {
@@ -50,156 +151,6 @@ public class DartColorAnnotator implements Annotator {
 
     final Module module = fileIndex.getModuleForFile(file);
     return module != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module);
-  }
-
-  @Nullable
-  private static String getHighlightType(@NotNull final String type) {
-    if (type.equals(HighlightRegionType.ANNOTATION)) {
-      // TODO only '@' remains highlighted as ANNOTATION because reference highlighting wins
-      return DartSyntaxHighlighterColors.DART_ANNOTATION;
-    }
-    //if (type.equals(HighlightRegionType.BUILT_IN)) {
-    //  return DartSyntaxHighlighterColors.DART_KEYWORD;
-    //}
-    if (type.equals(HighlightRegionType.CLASS)) {
-      return DartSyntaxHighlighterColors.DART_CLASS;
-    }
-    if (type.equals(HighlightRegionType.CONSTRUCTOR)) {
-      return DartSyntaxHighlighterColors.DART_CONSTRUCTOR;
-    }
-
-    if (type.equals(HighlightRegionType.DYNAMIC_LOCAL_VARIABLE_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.DYNAMIC_LOCAL_VARIABLE_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.DYNAMIC_PARAMETER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.DYNAMIC_PARAMETER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_REFERENCE;
-    }
-
-    if (type.equals(HighlightRegionType.ENUM)) {
-      return DartSyntaxHighlighterColors.DART_ENUM;
-    }
-    if (type.equals(HighlightRegionType.ENUM_CONSTANT)) {
-      return DartSyntaxHighlighterColors.DART_ENUM_CONSTANT;
-    }
-    if (type.equals(HighlightRegionType.FUNCTION_TYPE_ALIAS)) {
-      return DartSyntaxHighlighterColors.DART_FUNCTION_TYPE_ALIAS;
-    }
-
-    if (type.equals(HighlightRegionType.INSTANCE_FIELD_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_FIELD_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_FIELD_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_GETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_GETTER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_GETTER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_GETTER_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_METHOD_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_METHOD_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_SETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.INSTANCE_SETTER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE;
-    }
-
-    if (type.equals(HighlightRegionType.IMPORT_PREFIX)) {
-      return DartSyntaxHighlighterColors.DART_IMPORT_PREFIX;
-    }
-    //if (type.equals(HighlightRegionType.KEYWORD)) {
-    //  return DartSyntaxHighlighterColors.DART_KEYWORD;
-    //}
-    if (type.equals(HighlightRegionType.LABEL)) {
-      return DartSyntaxHighlighterColors.DART_LABEL;
-    }
-
-    if (type.equals(HighlightRegionType.LOCAL_FUNCTION_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.LOCAL_FUNCTION_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.LOCAL_VARIABLE_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.LOCAL_VARIABLE_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_REFERENCE;
-    }
-
-    if (type.equals(HighlightRegionType.PARAMETER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_PARAMETER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.PARAMETER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_PARAMETER_REFERENCE;
-    }
-
-    if (type.equals(HighlightRegionType.STATIC_FIELD_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_FIELD_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.STATIC_GETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_GETTER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.STATIC_GETTER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_GETTER_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.STATIC_METHOD_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_METHOD_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.STATIC_METHOD_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_METHOD_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.STATIC_SETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_SETTER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.STATIC_SETTER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_STATIC_SETTER_REFERENCE;
-    }
-
-    if (type.equals(HighlightRegionType.TOP_LEVEL_FUNCTION_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_FUNCTION_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_GETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_GETTER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_SETTER_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_DECLARATION;
-    }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_SETTER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_REFERENCE;
-    }
-    if (type.equals(HighlightRegionType.TOP_LEVEL_VARIABLE_DECLARATION)) {
-      return DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION;
-    }
-
-    if (type.equals(HighlightRegionType.TYPE_NAME_DYNAMIC)) {
-      return DartSyntaxHighlighterColors.DART_TYPE_NAME_DYNAMIC;
-    }
-    if (type.equals(HighlightRegionType.TYPE_PARAMETER)) {
-      return DartSyntaxHighlighterColors.DART_TYPE_PARAMETER;
-    }
-    if (type.equals(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE)) {
-      return DartSyntaxHighlighterColors.DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE;
-    }
-    return null;
   }
 
   @Override
@@ -219,13 +170,13 @@ public class DartColorAnnotator implements Annotator {
     }
 
     if (DartTokenTypes.COLON == element.getNode().getElementType() && element.getParent() instanceof DartTernaryExpression) {
-      createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.OPERATION_SIGN);
+      holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.OPERATION_SIGN);
       return;
     }
 
     if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
       if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
-        createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_KEYWORD);
+        holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.KEYWORD);
         return;
       }
     }
@@ -236,7 +187,7 @@ public class DartColorAnnotator implements Annotator {
       if (previous != null && (previous.getElementType() == DartTokenTypes.SYNC ||
                                previous.getElementType() == DartTokenTypes.ASYNC ||
                                previous.getElementType() == DartTokenTypes.YIELD)) {
-        createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_KEYWORD);
+        holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.KEYWORD);
       }
     }
 
@@ -246,7 +197,7 @@ public class DartColorAnnotator implements Annotator {
     }
 
     if (element instanceof DartSymbolLiteralExpression) {
-      createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.SYMBOL_LITERAL);
+      holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.SYMBOL_LITERAL);
       //noinspection UnnecessaryReturnStatement
       return;
     }
@@ -254,34 +205,12 @@ public class DartColorAnnotator implements Annotator {
 
   private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
     for (DartAnalysisServerService.PluginHighlightRegion region : DartAnalysisServerService.getInstance().getHighlight(file)) {
-      final String attributeKey = getHighlightType(region.getType());
+      final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
       if (attributeKey != null) {
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());
-        createInfoAnnotation(holder, textRange, attributeKey);
+        holder.createInfoAnnotation(textRange, null).setTextAttributes(TextAttributesKey.find(attributeKey));
       }
     }
-  }
-
-  private static void createInfoAnnotation(final @NotNull AnnotationHolder holder,
-                                           final @Nullable PsiElement element,
-                                           final @NotNull String attributeKey) {
-    if (element != null) {
-      createInfoAnnotation(holder, element, TextAttributesKey.find(attributeKey));
-    }
-  }
-
-  private static void createInfoAnnotation(final @NotNull AnnotationHolder holder,
-                                           final @Nullable PsiElement element,
-                                           final @Nullable TextAttributesKey attributeKey) {
-    if (element != null && attributeKey != null) {
-      holder.createInfoAnnotation(element, null).setTextAttributes(attributeKey);
-    }
-  }
-
-  private static void createInfoAnnotation(final @NotNull AnnotationHolder holder,
-                                           final @NotNull TextRange textRange,
-                                           final @NotNull String attributeKey) {
-    holder.createInfoAnnotation(textRange, null).setTextAttributes(TextAttributesKey.find(attributeKey));
   }
 
   private static void highlightEscapeSequences(final PsiElement node, final AnnotationHolder holder) {
