@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Delete Line" passed="false" version="0.1" subtype="aimless">
+<xml type="Scenario" name="Delete Line" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
         <CopyText>public class DeleteDemo{
 

@@ -16,6 +16,8 @@ public class BlockCaretAction extends DumbAwareAction implements EduActions {
     ArrayList<Runnable> actionHandlers;
     Editor editor;
 
+    final static public String actionId = "EduBlockCaretAction";
+
 
     public BlockCaretAction(@NotNull Editor editor){
         super(EDU_BLOCK_EDITOR_CARET_ACTION);
@@ -85,5 +87,10 @@ public class BlockCaretAction extends DumbAwareAction implements EduActions {
 
     public void removeAllActionHandlers(){
         actionHandlers = null;
+    }
+
+    @Override
+    public String getActionId() {
+        return actionId;
     }
 }

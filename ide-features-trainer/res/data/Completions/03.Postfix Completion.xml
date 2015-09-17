@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Postfix Completion" passed="false" version="0.1" subtype="aimless">
+<xml type="Scenario" name="Postfix Completion" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
         <CopyText>public class PostfixCompletionDemo{
 

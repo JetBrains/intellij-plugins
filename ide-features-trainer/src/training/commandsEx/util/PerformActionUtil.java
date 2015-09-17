@@ -76,6 +76,31 @@ public class PerformActionUtil {
      *
      * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
      */
+    public static void performAction(final String actionName, final Editor editor, final Project project) throws InterruptedException, ExecutionException {
+
+        final ActionManager am = ActionManager.getInstance();
+        final AnAction targetAction = am.getAction(actionName);
+        final InputEvent inputEvent = getInputEvent(actionName);
+
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                WriteCommandAction.runWriteCommandAction(project, new Runnable() {
+                    @Override
+                    public void run() {
+                        am.tryToExecute(targetAction, inputEvent, editor.getContentComponent(), null, true);
+                    }
+                });
+            }
+        });
+    }
+
+
+    /**
+     * performing internal platform action
+     *
+     * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
+     */
     public static void performAction(final String actionName, final Editor editor, final AnActionEvent e, final Runnable runnable) throws InterruptedException, ExecutionException {
 
         final ActionManager am = ActionManager.getInstance();

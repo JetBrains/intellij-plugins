@@ -11,5 +11,7 @@ public interface EduActions {
     String EDU_BLOCK_EDITOR_CARET_ACTION = "EduBlockEditorCaretAction";
     String EDU_BLOCK_MOUSE_ACTION = "EduBlockMouseAction";
 
+    String getActionId();
+
     void unregisterAction();
 }
