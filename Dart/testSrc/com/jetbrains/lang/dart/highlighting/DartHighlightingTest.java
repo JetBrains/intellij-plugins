@@ -91,6 +91,17 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(false, true, true);
   }
 
+  public void testSyncAsyncAwaitYield() {
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, true, true);
+  }
+
+  public void testColorAnnotatorIdePart() {
+    // includes cases not covered by testSyncAsyncAwaitYield, testBuiltInIdentifiers and testEscapeSequences
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, true, true);
+  }
+
   public void testSimplePolymer() {
     myFixture.enableInspections(HtmlUnknownTagInspection.class);
     myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n" +
@@ -103,11 +114,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     addStandardPackage("core_elements");
     myFixture.configureByFile(getTestName(false) + "/web/" + getTestName(false) + ".html");
     myFixture.checkHighlighting(true, false, true);
-  }
-
-  public void testSyncAsyncAwaitYield() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
   }
 
   public void testPathPackageReferenceInspection() {
