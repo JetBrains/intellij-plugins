@@ -1,6 +1,8 @@
 package training.commands;
 
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.util.DocumentUtil;
 import org.jdom.Element;
 
 /**
@@ -19,7 +21,7 @@ public class CopyTextCommand extends Command {
 //        updateDescription(element, infoPanel, editor);
 
         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
-        WriteCommandAction.runWriteCommandAction(executionList.getProject(), new Runnable() {
+        DocumentUtil.writeInRunUndoTransparentAction(new Runnable() {
             @Override
             public void run() {
                 executionList.getEditor().getDocument().insertString(0, finalText);
