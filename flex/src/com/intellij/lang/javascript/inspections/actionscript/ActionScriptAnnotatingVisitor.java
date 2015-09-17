@@ -1142,7 +1142,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           if (setterParameters.length == 1 &&
               !((setterType = setterParameters[0].getType()) instanceof JSAnyType) &&
               !(type instanceof JSAnyType) &&
-              !JSTypeUtils.areTypesCompatible(setterType, type,  null)) {
+              !JSTypeUtils.areTypesCompatible(setterType, type,  null, function)) {
             PsiElement typeElement = function.getReturnTypeElement();
 
             myHolder.createErrorAnnotation(
