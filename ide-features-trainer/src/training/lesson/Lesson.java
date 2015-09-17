@@ -30,13 +30,11 @@ public class Lesson extends AnAction {
     private boolean isOpen;
 
 
-
-    @Nullable
     public boolean getPassed() {
         return passed;
     }
 
-    public void setPassed(@Nullable boolean passed) {
+    public void setPassed(boolean passed) {
         this.passed = passed;
     }
 
@@ -234,5 +232,9 @@ public class Lesson extends AnAction {
         if(getPassed())
             e.getPresentation().setIcon(IconLoader.getIcon(EduIcons.CHECKMARK_DARK_GRAY));
 
+    }
+
+    class EditorParameters{
+        final public static String PROJECT_TREE = "projectTree";
     }
 }
