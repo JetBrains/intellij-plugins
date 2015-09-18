@@ -94,6 +94,7 @@ public class GenerateCourseXml {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
 //        gen("Completions", "completions", "Completions/");
+//        gen("Refactorings", "refactorings", "Refactorings/");
         genCourses();
     }
 

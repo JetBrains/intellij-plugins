@@ -198,4 +198,14 @@ public class Course extends ActionGroup{
     public CourseSdkType getSdkType() {
          return mySdkType;
     }
+
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(!(o instanceof Course)) return false;
+        if(this.getName() == null) return false;
+        if (((Course) o).getName() == null) return false;
+        if(((Course) o).getName().equals(this.getName())) return true;
+        return false;
+
+    }
 }

@@ -2,5 +2,6 @@
 <courses version="0.3">
   <course name="EditorBasics.xml" />
   <course name="Completions.xml" />
+  <course name="Refactorings.xml" />
 </courses>
 
