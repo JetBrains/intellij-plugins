@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import training.commands.BadCommandException;
 import training.editor.EduEditorProvider;
 import training.lesson.dialogs.SdkProblemDialog;
 import training.lesson.exceptons.BadCourseException;
@@ -218,6 +219,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             oldJdkException.printStackTrace();
         } catch (InvalidSdkException e) {
             showSdkProblemDialog(project, e.getMessage());
+        } catch (BadCommandException e) {
+            e.printStackTrace();
         }
     }
 
