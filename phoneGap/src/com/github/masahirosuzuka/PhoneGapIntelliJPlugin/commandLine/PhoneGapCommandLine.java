@@ -183,7 +183,7 @@ public class PhoneGapCommandLine {
   private OSProcessHandler serve(String extraArg) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(concat(newArrayList(myPath, "serve"), parseArgs(extraArg)));
     commandLine.withWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+    return new KillableColoredProcessHandler(commandLine, true);
   }
 
   @NotNull
@@ -426,7 +426,7 @@ public class PhoneGapCommandLine {
   private OSProcessHandler createProcessHandler(String... commands) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(commands);
     commandLine.withWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+    return new KillableColoredProcessHandler(commandLine, true);
   }
 
   private static List<String> parseArgs(String paramList) {

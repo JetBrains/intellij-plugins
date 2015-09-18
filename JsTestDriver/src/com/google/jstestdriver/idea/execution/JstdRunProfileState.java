@@ -154,7 +154,7 @@ public class JstdRunProfileState implements RunProfileState {
   private KillableColoredProcessHandler createOSProcessHandler(@NotNull String serverUrl) throws ExecutionException {
     Map<TestRunner.ParameterKey, String> params = createParameterMap(serverUrl);
     GeneralCommandLine commandLine = createCommandLine(params);
-    KillableColoredProcessHandler processHandler = KillableColoredProcessHandler.create(commandLine);
+    KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(commandLine, true);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }
