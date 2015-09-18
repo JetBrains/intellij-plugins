@@ -22,7 +22,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationTarget;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,11 +67,11 @@ public class DartFileReference implements PsiReference {
       final PsiFile refPsiFile = myElement.getContainingFile();
       final int refOffset = myElement.getTextOffset();
       final int refLength = myElement.getTextLength();
-      final DartAnalysisServerService.PluginNavigationRegion region = DartResolver.findRegion(refPsiFile, refOffset, refLength);
+      final PluginNavigationRegion region = DartResolver.findRegion(refPsiFile, refOffset, refLength);
       if (region != null) {
-        final List<DartAnalysisServerService.PluginNavigationTarget> targets = region.getTargets();
+        final List<PluginNavigationTarget> targets = region.getTargets();
         if (!targets.isEmpty()) {
-          final DartAnalysisServerService.PluginNavigationTarget target = targets.get(0);
+          final PluginNavigationTarget target = targets.get(0);
           final String targetPath = target.getFile();
           final VirtualFile targetVirtualFile = LocalFileSystem.getInstance().findFileByPath(targetPath);
           if (targetVirtualFile != null) {

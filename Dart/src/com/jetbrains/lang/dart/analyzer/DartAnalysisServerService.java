@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
@@ -24,7 +22,10 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -46,7 +47,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.*;
 import com.intellij.util.Consumer;
@@ -104,13 +104,11 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myVisibleFiles = new ArrayList<String>();
-  private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
-  @NotNull private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
-  @NotNull private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
-  @NotNull private final Map<String, List<OverrideMember>> myOverrideData = Maps.newHashMap();
+
+  @NotNull private final DartServerData myServerData = new DartServerData(myRootsHandler);
 
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
@@ -128,55 +126,18 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedHighlights(final String _filePath, final List<HighlightRegion> regions) {
-      final String filePath = FileUtil.toSystemIndependentName(_filePath);
-
-      if (myFilePathsWithUnsentChanges.contains(filePath)) {
-        return;
-      }
-
-      final List<PluginHighlightRegion> pluginRegions = new ArrayList<PluginHighlightRegion>(regions.size());
-      for (HighlightRegion region : regions) {
-        pluginRegions.add(new PluginHighlightRegion(region));
-      }
-
-      synchronized (myHighlightData) {
-        myHighlightData.put(filePath, pluginRegions);
-      }
-
-      forceFileAnnotation(filePath, false);
+    public void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
+      myServerData.computedHighlights(FileUtil.toSystemIndependentName(filePath), regions);
     }
 
     @Override
-    public void computedNavigation(final String _filePath, final List<NavigationRegion> regions) {
-      final String filePath = FileUtil.toSystemIndependentName(_filePath);
-
-      // Ignore notifications for files that has been changed, but server does not know about them yet.
-      if (myFilePathsWithUnsentChanges.contains(filePath)) {
-        return;
-      }
-      // Convert NavigationRegion(s) into PluginNavigationRegion(s).
-      final List<PluginNavigationRegion> pluginRegions = new ArrayList<PluginNavigationRegion>(regions.size());
-      for (NavigationRegion region : regions) {
-        pluginRegions.add(new PluginNavigationRegion(region));
-      }
-      // Put PluginNavigationRegion(s).
-      synchronized (myNavigationData) {
-        myNavigationData.put(filePath, pluginRegions);
-      }
-      // Force (re)highlighting.
-      forceFileAnnotation(filePath, true);
+    public void computedNavigation(@NotNull final String _filePath, @NotNull final List<NavigationRegion> regions) {
+      myServerData.computedNavigation(FileUtil.toSystemIndependentName(_filePath), regions);
     }
 
     @Override
-    public void computedOverrides(final String _filePath, final List<OverrideMember> overrides) {
-      final String filePath = FileUtil.toSystemIndependentName(_filePath);
-
-      synchronized (myOverrideData) {
-        myOverrideData.put(filePath, overrides);
-      }
-
-      forceFileAnnotation(filePath, false);
+    public void computedOverrides(@NotNull final String _filePath, @NotNull final List<OverrideMember> overrides) {
+      myServerData.computedOverrides(FileUtil.toSystemIndependentName(_filePath), overrides);
     }
 
     @Override
@@ -261,7 +222,7 @@ public class DartAnalysisServerService {
   private DocumentAdapter myDocumentListener = new DocumentAdapter() {
     @Override
     public void beforeDocumentChange(DocumentEvent e) {
-      updateInformationFromServer(e);
+      myServerData.onDocumentChanged(e);
     }
   };
 
@@ -277,19 +238,6 @@ public class DartAnalysisServerService {
 
   public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
-  }
-
-  private void forceFileAnnotation(@NotNull final String filePath, final boolean clearCache) {
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (virtualFile != null) {
-      Set<Project> projects = myRootsHandler.getTrackedProjects();
-      for (final Project project : projects) {
-        if (clearCache) {
-          ResolveCache.getInstance(project).clearCache(true);
-        }
-        DaemonCodeAnalyzer.getInstance(project).restart();
-      }
-    }
   }
 
   public void addCompletions(@NotNull final String completionId, @NotNull final Consumer<CompletionSuggestion> consumer) {
@@ -435,7 +383,7 @@ public class DartAnalysisServerService {
     });
 
     ApplicationManager.getApplication().getMessageBus().connect()
-      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerAdapter() {
+      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
         @Override
         public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
           if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
@@ -457,6 +405,11 @@ public class DartAnalysisServerService {
         @Override
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
           if (isLocalDartOrHtmlFile(file)) {
+            // file could be opened in more than one editor, so this check is needed
+            if (FileEditorManager.getInstance(myRootsHandler.getTrackedProjects().iterator().next()).getSelectedEditor(file) == null) {
+              myServerData.onFileClosed(file);
+            }
+
             updateVisibleFiles();
           }
         }
@@ -470,49 +423,19 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
-  /**
-   * Returns {@link PluginHighlightRegion}s for the given file.
-   * Empty if no regions.
-   */
   @NotNull
-  public List<PluginHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
-    synchronized (myHighlightData) {
-      List<PluginHighlightRegion> regions = myHighlightData.get(file.getPath());
-      if (regions == null) {
-        return PluginHighlightRegion.EMPTY_LIST;
-      }
-      return regions;
-    }
+  public List<DartServerData.PluginHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
+    return myServerData.getHighlight(file);
   }
 
-  /**
-   * Returns {@link PluginNavigationRegion}s for the given file.
-   * Empty if no regions.
-   */
   @NotNull
-  public List<PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
-    synchronized (myNavigationData) {
-      List<PluginNavigationRegion> regions = myNavigationData.get(file.getPath());
-      if (regions == null) {
-        return PluginNavigationRegion.EMPTY_LIST;
-      }
-      return regions;
-    }
+  public List<DartServerData.PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
+    return myServerData.getNavigation(file);
   }
 
-  /**
-   * Returns {@link OverrideMember}s for the given file.
-   * Empty, but not null.
-   */
   @NotNull
   public List<OverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
-    synchronized (myOverrideData) {
-      List<OverrideMember> regions = myOverrideData.get(file.getPath());
-      if (regions == null) {
-        return OverrideMember.EMPTY_LIST;
-      }
-      return regions;
-    }
+    return myServerData.getOverrideMembers(file);
   }
 
   @SuppressWarnings("NestedSynchronizedStatement")
@@ -531,15 +454,6 @@ public class DartAnalysisServerService {
       if (!Comparing.haveEqualElements(myVisibleFiles, newVisibleFiles)) {
         myVisibleFiles.clear();
         myVisibleFiles.addAll(newVisibleFiles);
-        synchronized (myHighlightData) {
-          myHighlightData.keySet().retainAll(myVisibleFiles);
-        }
-        synchronized (myNavigationData) {
-          myNavigationData.keySet().retainAll(myVisibleFiles);
-        }
-        synchronized (myOverrideData) {
-          myOverrideData.keySet().retainAll(myVisibleFiles);
-        }
         analysis_setPriorityFiles();
         analysis_setSubscriptions();
       }
@@ -547,12 +461,12 @@ public class DartAnalysisServerService {
   }
 
   @Contract("null->false")
-  private static boolean isLocalDartOrHtmlFile(@Nullable final VirtualFile file) {
+  public static boolean isLocalDartOrHtmlFile(@Nullable final VirtualFile file) {
     return file != null && file.isInLocalFileSystem() && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file));
   }
 
   public void updateFilesContent() {
-    //TODO: consider using DocumentListener to collect deltas instead of sending the whole Document.getText() each time
+    // may be use DocumentListener to collect deltas instead of sending the whole Document.getText() each time?
 
     AnalysisServer server = myServer;
     if (server == null) {
@@ -599,7 +513,7 @@ public class DartAnalysisServerService {
       server.analysis_updateContent(filesToUpdate, new UpdateContentConsumer() {
         @Override
         public void onResponse() {
-          myFilePathsWithUnsentChanges.clear();
+          myServerData.onFilesContentUpdated();
         }
       });
     }
@@ -1271,10 +1185,6 @@ public class DartAnalysisServerService {
            ", error code = " + error.getCode() + ": " + error.getMessage();
   }
 
-  private static void awaitForLatchCheckingCanceled(AnalysisServer server, CountDownLatch latch) {
-    awaitForLatchCheckingCanceled(server, latch, -1);
-  }
-
   private static boolean awaitForLatchCheckingCanceled(AnalysisServer server, CountDownLatch latch, long timeoutInMillis) {
     long startTime = System.currentTimeMillis();
     while (true) {
@@ -1303,95 +1213,6 @@ public class DartAnalysisServerService {
     }
   }
 
-  private void updateInformationFromServer(DocumentEvent e) {
-    final Document document = e.getDocument();
-    final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-    if (!isLocalDartOrHtmlFile(file)) return;
-
-    final String filePath = file.getPath();
-    myFilePathsWithUnsentChanges.add(filePath);
-
-    // navigation region must be deleted if touched by editing and updated otherwise
-    synchronized (myNavigationData) {
-      final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
-      if (regions != null) {
-        final int eventOffset = e.getOffset();
-        final int deltaLength = e.getNewLength() - e.getOldLength();
-
-        final Iterator<PluginNavigationRegion> iterator = regions.iterator();
-        while (iterator.hasNext()) {
-          final PluginNavigationRegion region = iterator.next();
-
-          // may be we'd better delete target touched by editing?
-          for (PluginNavigationTarget target : region.getTargets()) {
-            if (target.file.equals(filePath) && target.offset >= eventOffset) {
-              target.offset += deltaLength;
-            }
-          }
-
-          if (deltaLength > 0) {
-            // Something was typed. Shift untouched regions, delete touched.
-            if (eventOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (region.offset < eventOffset && eventOffset < region.offset + region.length) {
-              iterator.remove();
-            }
-          }
-          else if (deltaLength < 0) {
-            // Some text was deleted. Shift untouched regions, delete touched.
-            final int eventRightOffset = eventOffset - deltaLength;
-
-            if (eventRightOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (eventOffset < region.offset + region.length) {
-              iterator.remove();
-            }
-          }
-        }
-      }
-    }
-
-    synchronized (myHighlightData) {
-      final List<PluginHighlightRegion> regions = myHighlightData.get(filePath);
-      if (regions != null) {
-        final int eventOffset = e.getOffset();
-        final int deltaLength = e.getNewLength() - e.getOldLength();
-
-        final Iterator<PluginHighlightRegion> iterator = regions.iterator();
-        while (iterator.hasNext()) {
-          final PluginHighlightRegion region = iterator.next();
-
-          if (deltaLength > 0) {
-            // Something was typed. Shift untouched regions, update touched.
-            if (eventOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (region.offset < eventOffset && eventOffset < region.offset + region.length) {
-              region.length += deltaLength;
-            }
-          }
-          else if (deltaLength < 0) {
-            // Some text was deleted. Shift untouched regions, delete or update touched.
-            final int eventRightOffset = eventOffset - deltaLength;
-            final int regionRightOffset = region.offset + region.length;
-
-            if (eventRightOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (region.offset <= eventOffset && eventRightOffset <= regionRightOffset && region.length != -deltaLength) {
-              region.length += deltaLength;
-            }
-            else if (eventOffset < regionRightOffset) {
-              iterator.remove();
-            }
-          }
-        }
-      }
-    }
-  }
-
   private static class CompletionInfo {
     @NotNull final String myCompletionId;
     final int myReplacementOffset;
@@ -1409,95 +1230,6 @@ public class DartAnalysisServerService {
       this.myReplacementLength = replacementLength;
       this.myCompletions = completions;
       this.isLast = isLast;
-    }
-  }
-
-  public interface PluginRegion {
-    int getOffset();
-
-    int getLength();
-  }
-
-  public static class PluginHighlightRegion implements PluginRegion {
-    public static final List<PluginHighlightRegion> EMPTY_LIST = Lists.newArrayList();
-
-    private int offset;
-    private int length;
-    private final String type;
-
-    private PluginHighlightRegion(HighlightRegion region) {
-      offset = region.getOffset();
-      length = region.getLength();
-      type = region.getType();
-    }
-
-    public int getOffset() {
-      return offset;
-    }
-
-    public int getLength() {
-      return length;
-    }
-
-    public String getType() {
-      return type;
-    }
-  }
-
-  public static class PluginNavigationRegion implements PluginRegion {
-    public static final List<PluginNavigationRegion> EMPTY_LIST = Lists.newArrayList();
-
-    private int offset;
-    private int length;
-    private final List<PluginNavigationTarget> targets = Lists.newArrayList();
-
-    private PluginNavigationRegion(NavigationRegion region) {
-      offset = region.getOffset();
-      length = region.getLength();
-      for (NavigationTarget target : region.getTargetObjects()) {
-        targets.add(new PluginNavigationTarget(target));
-      }
-    }
-
-    @Override
-    public String toString() {
-      return "PluginNavigationRegion(" + offset + ", " + length + ")";
-    }
-
-    public int getOffset() {
-      return offset;
-    }
-
-    public int getLength() {
-      return length;
-    }
-
-    public List<PluginNavigationTarget> getTargets() {
-      return targets;
-    }
-  }
-
-  public static class PluginNavigationTarget {
-    private final String file;
-    private int offset;
-    private final String kind;
-
-    private PluginNavigationTarget(NavigationTarget target) {
-      file = FileUtil.toSystemIndependentName(target.getFile());
-      offset = target.getOffset();
-      kind = target.getKind();
-    }
-
-    public String getFile() {
-      return file;
-    }
-
-    public int getOffset() {
-      return offset;
-    }
-
-    public String getKind() {
-      return kind;
     }
   }
 

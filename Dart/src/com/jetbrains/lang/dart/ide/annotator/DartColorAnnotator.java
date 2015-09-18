@@ -19,6 +19,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData.PluginHighlightRegion;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
@@ -204,7 +205,7 @@ public class DartColorAnnotator implements Annotator {
   }
 
   private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
-    for (DartAnalysisServerService.PluginHighlightRegion region : DartAnalysisServerService.getInstance().getHighlight(file)) {
+    for (PluginHighlightRegion region : DartAnalysisServerService.getInstance().getHighlight(file)) {
       final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
       if (attributeKey != null) {
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());

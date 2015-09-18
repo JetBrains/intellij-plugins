@@ -3,6 +3,8 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -10,6 +12,8 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartServerData.PluginRegion;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +26,7 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
   protected String getBasePath() {
@@ -29,15 +34,14 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
   }
 
   private void doHighlightingTest() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting();
   }
 
-  private static void checkRegions(final List<? extends DartAnalysisServerService.PluginRegion> regions, final TextRange... ranges) {
+  private static void checkRegions(final List<? extends PluginRegion> regions, final TextRange... ranges) {
     assertEquals("Incorrect regions amount", ranges.length, regions.size());
     int i = 0;
-    for (DartAnalysisServerService.PluginRegion region : regions) {
+    for (PluginRegion region : regions) {
       assertEquals("Mismatched region " + i, ranges[i++], TextRange.create(region.getOffset(), region.getOffset() + region.getLength()));
     }
   }
@@ -64,7 +68,6 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
   }
 
   private void initServerDataTest() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
                                                      "import 'dart:core';\n" +
                                                      "import 'dart:core';\n");
@@ -247,14 +250,13 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
   }
 
   public void testNavigationTargetOffsetUpdated() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByText(DartFileType.INSTANCE, "var a = 1; var b = a;");
     myFixture.doHighlighting();
 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = getFile().getVirtualFile();
 
-    final List<DartAnalysisServerService.PluginNavigationRegion> regions = service.getNavigation(file);
+    final List<PluginNavigationRegion> regions = service.getNavigation(file);
     checkRegions(regions, TextRange.create(4, 5), TextRange.create(15, 16), TextRange.create(19, 20));
     assertEquals(4, regions.get(2).getTargets().get(0).getOffset());
 
@@ -265,8 +267,60 @@ public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCa
   }
 
   public void testSyntaxHighlighting() throws Exception {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
+  }
+
+  public void testServerDataLifecycle() throws Exception {
+    myFixture.configureByText("firstFile.dart", "class Foo { toString(){ return super.toString(); } }");
+    final VirtualFile firstFile = getFile().getVirtualFile();
+    final VirtualFile secondFile =
+      myFixture.addFileToProject("secondFile.dart", "class Bar { toString(){ return super.toString(); } }").getVirtualFile();
+
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
+
+    myFixture.doHighlighting();
+    assertNotEmpty(service.getHighlight(firstFile));
+    assertNotEmpty(service.getNavigation(firstFile));
+    assertNotEmpty(service.getOverrideMembers(firstFile));
+
+    myFixture.openFileInEditor(secondFile);
+    // TestFileEditorManager doesn't notify listeners itself;
+    // we need any notification to trigger DartAnalysisserverService.updateVisibleFiles()
+    final FileEditorManagerEvent event =
+      new FileEditorManagerEvent(FileEditorManager.getInstance(getProject()), firstFile, null, secondFile, null);
+    getProject().getMessageBus().syncPublisher(FileEditorManagerListener.FILE_EDITOR_MANAGER).selectionChanged(event);
+    myFixture.doHighlighting();
+
+    assertNotEmpty(service.getHighlight(firstFile));
+    assertNotEmpty(service.getNavigation(firstFile));
+    assertNotEmpty(service.getOverrideMembers(firstFile));
+
+    assertNotEmpty(service.getHighlight(secondFile));
+    assertNotEmpty(service.getNavigation(secondFile));
+    assertNotEmpty(service.getOverrideMembers(secondFile));
+
+    getProject().getMessageBus().syncPublisher(FileEditorManagerListener.FILE_EDITOR_MANAGER)
+      .fileClosed(FileEditorManager.getInstance(getProject()), firstFile);
+
+    assertNotEmpty(service.getHighlight(firstFile));
+    assertNotEmpty(service.getNavigation(firstFile));
+    assertNotEmpty(service.getOverrideMembers(firstFile));
+
+    assertNotEmpty(service.getHighlight(secondFile));
+    assertNotEmpty(service.getNavigation(secondFile));
+    assertNotEmpty(service.getOverrideMembers(secondFile));
+
+    FileEditorManager.getInstance(getProject()).closeFile(firstFile);
+    getProject().getMessageBus().syncPublisher(FileEditorManagerListener.FILE_EDITOR_MANAGER)
+      .fileClosed(FileEditorManager.getInstance(getProject()), firstFile);
+
+    assertEmpty(service.getHighlight(firstFile));
+    assertEmpty(service.getNavigation(firstFile));
+    assertEmpty(service.getOverrideMembers(firstFile));
+
+    assertNotEmpty(service.getHighlight(secondFile));
+    assertNotEmpty(service.getNavigation(secondFile));
+    assertNotEmpty(service.getOverrideMembers(secondFile));
   }
 }
