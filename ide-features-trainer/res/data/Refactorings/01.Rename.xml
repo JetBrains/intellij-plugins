@@ -1,39 +1,30 @@
 <xml type="Scenario" name="Rename" passed="false" version="0.1" subtype="aimless" projectTree="hide">
-    <MouseBlock>
         <ExpandAllBlocks/>
-        <CopyText>import java.lang.*;
-import java.util.*;
+        <CopyText>import java.lang.String;
 
-public class CompletionDemo implements Runnable{
+public class Rename{
 
-    private int i = 0;
+    private String stylus;
+    private String deviceName;
 
-    public void systemProcess(){
-        System.out.println(i++);
+    public void touchDevice(int x, int y, float strength, Stylus stylus, Device device){
+        device.touchByStylus(stylus, x, y, strength);
     }
 
-    @Override
-    public void run() {
-        Random random = new
+    public boolean checkIPad(){
+        if (deviceName.equals("iPad") return true;
+        return false;
     }
 
-    public CompletionDemo() {
-        byte b = MAX_VALUE
+    public String getStylus() {
+        return stylus;
     }
-}
-        </CopyText>
-    <MoveCaret position="14:29"/>
-    <CaretBlock>
-        <TypeText> </TypeText>
-        <Text description="By default IDEA completes your code instantly. "/>
-        <Text description="Start typing &lt;code&gt;Ran&lt;/code&gt; right where a cursor at and you will see Lookup Menu of completions."/>
-        <Try description="You can choose first item from Lookup menu by typing &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
-        <Try description="To activate Basic Completion action type &lt;action=&quot;CodeCompletion&quot;&gt; and you will see lookup menu again" trigger="CodeCompletion"/>
-        <Try description="Tap &lt;action=&quot;EditorEnter&quot;&gt; to choose top item from lookup menu" trigger="EditorChooseLookupItem"/>
-        <MoveCaret position="19:27"/>
-        <Text description="Sometimes you need to find completions for static constants or methods"/>
-        <Try description="Tap &lt;action=&quot;CodeCompletion&quot;&gt; twice to invoke Code Completion increase search level" triggers="CodeCompletion;CodeCompletion"/>
-    </CaretBlock>
-    </MouseBlock>
+}</CopyText>
+        <Text description="To rename a method or a field you should select the whole name and use Rename refactoring."/>
+        <Try description="Select field &lt;code&gt;deviceName&lt;/code&gt; in any place of code and start renaming by pushing &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
+        <Try description="Write another name for this field instead selected. For example type &lt;code&gt;tabletName&lt;/code&gt; and save the result by taping &lt;action=&quot;EditorEnter&quot;&gt;" trigger="NextTemplateVariable"/>
+        <Text description="IDEA automatically recognise getter for renaming fields and also recommends to refactor it."/>
+        <Try description="Select field &lt;code&gt;stylus&lt;/code&gt; out of &lt;code&gt;touchDevice&lt;/code&gt; method and activate renaming with &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
+        <Try description="Change the name with &lt;code&gt;pencil&lt;/code&gt; for example and complete refactoring with &lt;action=&quot;EditorEnter&quot;&gt;" trigger="NextTemplateVariable"/>
     <Win/>
 </xml>
