@@ -1,36 +1,31 @@
 <xml type="Scenario" name="Extract Variable/Field" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>import java.lang.String;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
+        <CopyText>public class ExtractVar{
 
-public class SmartCompletionDemo{
+    final static int a_const = 10000;
+    final static int b_const = 500;
 
-    private Queue&lt;String&gt; strings;
-    private ArrayBlockingQueue&lt;String&gt; arrayBlockingQueue;
 
-    public SmartCompletionDemo(LinkedList&lt;String&gt; linkedList, HashSet&lt;String&gt; hashSet) {
-        strings =
-        arrayBlockingQueue = new ArrayBlockingQueue&lt;String&gt;(hashSet.size());
-        hashSet.toArray(arrayBlockingQueue);
+    public static void calc(){
+
+        InnerCalc.process(a_const, b_const);
+
     }
 
-    private String[] toArray() {
-        return
+    class InnerCalc{
+
+        final static int some_const = 124136;
+
+        public static int process(int a, int b){
+            return  a * b + some_const;
+        }
     }
 
 }</CopyText>
 <CaretBlock>
-    <MoveCaret position="13:19"/>
-    <TypeText> </TypeText>
-    <Text description="Smart Type Code Completion filters the suggestion list and includes only those types that are applicable to the current context."/>
-    <Try description="Press &lt;action=&quot;SmartTypeCompletion&quot;&gt; to see the list of suitable ways to complete. Choose the first one by pressing &lt;action=&quot;EditorEnter&quot;&gt;" triggers="SmartTypeCompletion;EditorChooseLookupItem"/>
-    <MoveCaret position="19:16"/>
-    <TypeText> </TypeText>
-    <Text description="Smart Type Code Completion can also suggest a code for return."/>
-    <Try description="Press &lt;action=&quot;SmartTypeCompletion&quot;&gt; twice to see Lookup menu for return. Choose the first one by pressing &lt;action=&quot;EditorEnter&quot;&gt;" triggers="SmartTypeCompletion;SmartTypeCompletion;EditorChooseLookupItem"/>
+    <SetSelection start-position="9:9" end-position="9:44" />
+    <MoveCaret position="9:44" />
+    <Try description="Select an expression and tap a &lt;action=&quot;IntroduceVariable&quot;&gt; to extract variable or field" triggers="IntroduceVariable;NextTemplateVariable"/>
     <Win/>
 </CaretBlock>
 </MouseBlock>
