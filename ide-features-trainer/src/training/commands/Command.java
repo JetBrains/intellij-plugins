@@ -17,10 +17,14 @@ public abstract class Command {
 
     private CommandType commandType;
 
-        public enum CommandType {START, TEXT, TRY, TRYBLOCK, ACTION, REPLAY, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT, CARETBLOCK, CARETUNBLOCK, SHOWLINENUMBER, EXPANDALLBLOCKS, WIN}
+        public enum CommandType {START, TEXT, TRY, TRYBLOCK, ACTION, REPLAY, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT, CARETBLOCK, CARETUNBLOCK, SHOWLINENUMBER, EXPANDALLBLOCKS, WIN, SETSELECTION}
 
     public Command(CommandType commandType) {
         this.commandType = commandType;
+    }
+
+    public CommandType getCommandType() {
+        return commandType;
     }
 
     protected void updateDescription(String s, EduEditor eduEditor){
@@ -57,7 +61,7 @@ public abstract class Command {
     protected void initAgainButton(){
     }
 
-    public abstract void execute(ExecutionList executionList) throws InterruptedException, ExecutionException;
+    public abstract void execute(ExecutionList executionList) throws InterruptedException, ExecutionException, BadCommandException;
 
     protected void startNextCommand(final ExecutionList executionList){
         ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -69,6 +73,8 @@ public abstract class Command {
                     e1.printStackTrace();
                 } catch (ExecutionException e1) {
                     e1.printStackTrace();
+                } catch (BadCommandException e) {
+                    e.printStackTrace();
                 }
             }
         });

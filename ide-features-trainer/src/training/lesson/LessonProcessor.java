@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
+import training.commands.BadCommandException;
 import training.commands.Command;
 import training.commands.CommandFactory;
 import training.commands.ExecutionList;
@@ -28,7 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class LessonProcessor {
 
-    public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws InterruptedException, ExecutionException {
+    public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws InterruptedException, ExecutionException, BadCommandException {
 
         HashMap<String, String> editorParameters = new HashMap<String, String>();
 

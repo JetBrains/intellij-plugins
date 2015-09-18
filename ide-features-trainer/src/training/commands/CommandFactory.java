@@ -7,7 +7,7 @@ import org.jdom.Element;
  */
 public class CommandFactory {
 
-    public static Command buildCommand(Element element){
+    public static Command buildCommand(Element element) throws BadCommandException {
 
         Command.CommandType cmdType = null;
         if(element == null) {
@@ -83,10 +83,12 @@ public class CommandFactory {
 
             case EXPANDALLBLOCKS:
                 return new ExpandAllBlocksCommand();
+
+            case SETSELECTION:
+                return new SetSelectionCommand();
         }
 
-        return new NoCommand();
-
+        throw new BadCommandException("unable to parse command from" + tagName);
     }
 
 }
