@@ -237,4 +237,15 @@ public class Lesson extends AnAction {
     class EditorParameters{
         final public static String PROJECT_TREE = "projectTree";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(!(o instanceof Lesson)) return false;
+        if(this.getId() == null) return false;
+        if (((Lesson) o).getId() == null) return false;
+        if(((Lesson) o).getId().equals(this.getId())) return true;
+        return false;
+
+    }
 }

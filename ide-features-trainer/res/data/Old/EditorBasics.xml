@@ -1,5 +1,0 @@
-<xml type="Course" name="Editor Basics" version="0.1" answerspath="answers/" id="default">
-    <lessons>
-        <lesson name="Comment Line" isPassed="false" path="CommentLine2.xml"/>
-    </lessons>
-</xml>
