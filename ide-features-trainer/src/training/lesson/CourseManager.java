@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -316,31 +317,45 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 e.printStackTrace();
             }
         } else {
-            myState.courses.clear();
-            for (Course course : state.courses) {
-                ArrayList<Lesson> newLessonArrayList = new ArrayList<Lesson>();
-                for (Lesson lesson : course.getLessons()) {
-                    final String path = lesson.getScn().getPath();
 
-                    @Nullable
-                    Scenario scenario = null;
-                    try {
-                        scenario = new Scenario(path);
-                    } catch (JDOMException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+//            myState.courses.clear();
+//            for (Course course : state.courses) {
+//                if (myState.courses.contains(course)) {
+//                    ArrayList<Lesson> newLessonArrayList = new ArrayList<Lesson>();
+//                    for (Lesson lesson : course.getLessons()) {
+//                        final String path = lesson.getScn().getPath();
+//
+//                        @Nullable
+//                        Scenario scenario = null;
+//                        try {
+//                            scenario = new Scenario(path);
+//                        } catch (JDOMException e) {
+//                            e.printStackTrace();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        try {
+//                            newLessonArrayList.add(new Lesson(scenario, lesson.getPassed(), course));
+//                        } catch (BadLessonException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                    course.setLessons(newLessonArrayList);
+//                    myState.courses.add(course);
+//                }
+//            }
+            for (Course course : myState.courses) {
+                if (state.courses.contains(course)) {
+                    final Course courseFromPersistentState = state.courses.get(state.courses.indexOf(course));
+                    for (Lesson lesson : course.getLessons()) {
+                        if(courseFromPersistentState.getLessons().contains(lesson)) {
+                            final Lesson lessonFromPersistentState = courseFromPersistentState.getLessons().get(courseFromPersistentState.getLessons().indexOf(lesson));
+                            lesson.setPassed(lessonFromPersistentState.getPassed());
+                        }
                     }
-
-                    try {
-                        newLessonArrayList.add(new Lesson(scenario, lesson.getPassed(), course));
-                    } catch (BadLessonException e) {
-                        e.printStackTrace();
-                    }
-
                 }
-                course.setLessons(newLessonArrayList);
-                myState.courses.add(course);
             }
         }
     }
