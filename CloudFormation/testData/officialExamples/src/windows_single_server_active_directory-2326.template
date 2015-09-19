@@ -1,0 +1,221 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "This template creates a single server installation of Active Directory. Domain Administrator password will be the one retrieved from the instance. For adding members to the domain, ensure that they are launched in domain member security group created by this template and then configure them to use this instance's private IP as the DNS server. **WARNING** This template creates Amazon EC2 Windows instance and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair",
+      "Type" : "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    },
+
+    "InstanceType" : {
+      "Description" : "Amazon EC2 instance type",
+      "Type" : "String",
+      "Default" : "m1.large",
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "DomainDNSName" : {
+      "Description" : "Fully qualified domain name (FQDN) of the forest root domain e.g. corp.example.com",
+      "Type" : "String",
+      "MinLength" : "3",
+      "MaxLength" : "25",
+      "AllowedPattern" : "[a-zA-Z0-9]+\\..+"
+    },
+    "DomainNetBIOSName" : {
+      "Description" : "NetBIOS name of the domain (upto 15 characters) for users of earlier versions of Windows e.g. CORP",
+      "Type" : "String",
+      "MinLength" : "1",
+      "MaxLength" : "15",
+      "AllowedPattern" : "[a-zA-Z0-9]+"
+    },   
+    "RestoreModePassword" : {
+      "Description" : "Password for a separate Administrator account when the domain controller is in Restore Mode. Must be at least 8 characters containing letters, numbers and symbols",
+      "Type" : "String",
+      "MinLength" : "8",
+      "MaxLength" : "32",
+      "AllowedPattern" : "(?=^.{6,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*",
+      "NoEcho" : "True"
+    },
+    "SourceCidrForRDP" : {
+      "Description" : "IP Cidr from which you are likely to RDP into the instances. You can add rules later by modifying the created security groups e.g. 54.32.98.160/32",
+      "Type" : "String",
+      "MinLength" : "9",
+      "MaxLength" : "18",
+      "AllowedPattern" : "^([0-9]+\\.){3}[0-9]+\\/[0-9]+$"
+    }
+  },
+
+  "Mappings" : {
+    "AWSRegion2AMI" : {
+      "us-east-1"        : {"Windows2008r2" : "ami-31620c54", "Windows2012r2" : "ami-c9cea0ac"},
+      "us-west-2"        : {"Windows2008r2" : "ami-d53c21e5", "Windows2012r2" : "ami-dfccd1ef"},
+      "us-west-1"        : {"Windows2008r2" : "ami-2b2dd76f", "Windows2012r2" : "ami-890af0cd"},
+      "eu-west-1"        : {"Windows2008r2" : "ami-872f0ff0", "Windows2012r2" : "ami-abe9c9dc"},
+      "eu-central-1"     : {"Windows2008r2" : "ami-98656585", "Windows2012r2" : "ami-3e737323"},
+      "ap-northeast-1"   : {"Windows2008r2" : "ami-2c41ca2c", "Windows2012r2" : "ami-4623a846"},
+      "ap-southeast-1"   : {"Windows2008r2" : "ami-80c2c8d2", "Windows2012r2" : "ami-58efe50a"},
+      "ap-southeast-2"   : {"Windows2008r2" : "ami-ed2b64d7", "Windows2012r2" : "ami-f53679cf"},
+      "sa-east-1"        : {"Windows2008r2" : "ami-53db4e4e", "Windows2012r2" : "ami-3bce5b26"},
+      "cn-north-1"       : {"Windows2008r2" : "ami-e2811ddb", "Windows2012r2" : "ami-f0811dc9"}
+    }
+
+  },
+
+  "Resources" : {    
+    "DomainController": {  
+      "Type" : "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {          
+          "config" : {
+            "files" : {
+              "c:\\cfn\\cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n"
+                ]]}
+              },
+
+              "c:\\cfn\\hooks.d\\cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.DomainController.Metadata.AWS::CloudFormation::Init\n",
+                  "action=cfn-init.exe -v -s ", { "Ref" : "AWS::StackId" },
+                        " -r DomainController",
+                        " --region ", { "Ref" : "AWS::Region" }, "\n"
+                ]]}
+              },
+              
+              "C:\\cfn\\RunCommand.bat" : {
+                "content" : "%~1\nIF %ERRORLEVEL% GTR 10 ( exit /b 1 ) else ( exit /b 0 )"
+              }
+            },
+        
+            "commands" : {
+              "1-run-dcpromo" : {
+                "command" : { "Fn::Join" : [ "", [
+                  "C:\\cfn\\RunCommand.bat \"dcpromo /unattend  /ReplicaOrNewDomain:Domain  /NewDomain:Forest  /NewDomainDNSName:",
+                  { "Ref" : "DomainDNSName" },
+                  "  /ForestLevel:4 /DomainNetbiosName:",
+                  { "Ref" : "DomainNetBIOSName" },
+                  " /DomainLevel:4  /InstallDNS:Yes  /ConfirmGc:Yes  /CreateDNSDelegation:No  /DatabasePath:\"C:\\Windows\\NTDS\"  /LogPath:\"C:\\Windows\\NTDS\"  /SYSVOLPath:\"C:\\Windows\\SYSVOL\" /SafeModeAdminPassword=", 
+                  { "Ref" : "RestoreModePassword" }, 
+                  " /RebootOnCompletion:Yes\"" 
+                  ]]},
+                "waitAfterCompletion" : "forever"
+              },
+              "2-signal-success" : { 
+                "command" : { "Fn::Join" : ["", [ 
+                  "cfn-signal.exe -e 0 \"", { "Fn::Base64" : { "Ref" : "DomainControllerWaitHandle" } },"\"" ]]
+                }
+              }
+            },
+            
+            "services" : {
+              "windows" : {
+                "cfn-hup" : {
+                  "enabled" : "true",
+                  "ensureRunning" : "true",
+                  "files" : ["c:\\cfn\\cfn-hup.conf", "c:\\cfn\\hooks.d\\cfn-auto-reloader.conf"]
+                }
+              }
+            }
+          }
+        }
+      },
+      
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegion2AMI", { "Ref" : "AWS::Region" }, "Windows2008r2" ]},
+        "InstanceType" : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ {"Ref" : "DomainControllerSecurityGroup"} ],
+        "KeyName" : { "Ref" : "KeyName" },
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+            "<script>\n",
+          
+            "cfn-init.exe -v -s ", { "Ref" : "AWS::StackId" }, 
+            " -r DomainController ",
+            " --region ", { "Ref" : "AWS::Region" }, "\n",
+
+            "</script>"          
+        ]]}}        
+      }
+    },
+    
+    "DomainControllerWaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "DomainController",
+      "Properties" : {
+        "Handle" : {"Ref" : "DomainControllerWaitHandle"},
+        "Timeout" : "1500"
+      }
+    },
+    
+    "DomainControllerWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
+    },
+    
+    "DomainControllerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Domain Controller",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "udp", "FromPort" : "123", "ToPort" : "123", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "135", "ToPort" : "135", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "udp", "FromPort" : "138", "ToPort" : "138", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "1024", "ToPort" : "65535", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "389", "ToPort" : "389", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "udp", "FromPort" : "389", "ToPort" : "389", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "636", "ToPort" : "636", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "3268", "ToPort" : "3268", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "3269", "ToPort" : "3269", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "53", "ToPort" : "53", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "udp", "FromPort" : "53", "ToPort" : "53", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "88", "ToPort" : "88", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "udp", "FromPort" : "88", "ToPort" : "88", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "445", "ToPort" : "445", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "udp", "FromPort" : "445", "ToPort" : "445", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "udp", "FromPort" : "135", "ToPort" : "135", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" } },
+          {"IpProtocol" : "tcp", "FromPort" : "3389", "ToPort" : "3389", "CidrIp" : { "Ref" : "SourceCidrForRDP" }},
+          {"IpProtocol" : "icmp", "FromPort" : "-1", "ToPort" : "-1", "SourceSecurityGroupName" : { "Ref" : "DomainMemberSecurityGroup" }}
+        ]
+      }      
+    }, 
+    
+    "DomainMemberSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Domain Members",
+        "SecurityGroupIngress" : [
+        ]
+      }      
+    },   
+    
+    "DomainMemberSecurityGroupIngress1" : {
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : { "GroupName" : { "Ref" : "DomainMemberSecurityGroup" }, "IpProtocol" : "tcp", "FromPort" : "3389", "ToPort" : "3389", "CidrIp" : { "Ref" : "SourceCidrForRDP" } }
+    }    
+  },
+
+  "Outputs" : {
+    "DomainControllerDNSName" : {
+      "Value" : { "Fn::GetAtt" : [ "DomainController", "PublicDnsName" ] },
+      "Description" : "Public DNS name of Active Directory server for RDP connection"
+    },
+    "DomainControllerIP" : {
+      "Value" : { "Fn::GetAtt" : [ "DomainController", "PrivateIp" ] },
+      "Description" : "Private IP address of Active Directory server which is also a DNS server"
+    },
+    "DomainAdmin" : {
+      "Value" : { "Fn::Join" : ["", [{ "Ref" : "DomainNetBIOSName" }, "\\Administrator" ]] },
+      "Description" : "Default domain administrator account"
+    },
+    "DomainAdminPassword" : {
+      "Value" : "Please retrieve Administrator password of the instance"
+    }
+  }  
+}
