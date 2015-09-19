@@ -15,6 +15,7 @@ plugins {
 intellij {
     version '14.0.3'
     pluginName 'CloudFormation'
+    updateSinceUntilBuild false
 }
 
 allprojects {
@@ -68,4 +69,8 @@ project(':metadata-crawler') {
 dependencies {
     compile project(':metadata-model')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+task printVersion {
+    println 'version = ' + version
 }
