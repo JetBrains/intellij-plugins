@@ -7,21 +7,26 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.jetbrains.intellij" version "0.0.20"
+}
+
+intellij {
+    version '14.0.3'
+    pluginName 'CloudFormation'
+}
+
 ext.kotlinVersion = kotlinVersion
-ext.ideaPath = file("$buildDir/download/idea")
 
 allprojects {
     apply plugin: 'kotlin'
 
     repositories {
-        maven { url "https://www.jetbrains.com/intellij-repository/releases" }
         mavenCentral()
     }
 
     configurations {
-        idea_dep
         provided
-
         compile.extendsFrom provided
     }
 
@@ -61,73 +66,6 @@ project(':metadata-crawler') {
 }
 
 dependencies {
-    provided fileTree(dir: "${ideaPath}/lib", include: '*.jar')
-
     compile project(':metadata-model')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-
-    idea_dep group: 'com.jetbrains.intellij.idea', name: 'ideaIC', version: '14.0.3', ext: 'zip'
-
-    testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
-}
-
-task extractIdea {
-    ext.fromFile = { configurations.idea_dep.files.first() }
-    ext.toDir = ideaPath
-    inputs.file fromFile
-    outputs.dir toDir
-
-    doLast {
-       delete ideaPath
-       copy {
-           from zipTree(fromFile)
-           into ideaPath
-       }
-    }
-}
-
-task extractPlugin {
-    ext.fromFile = file("$buildDir/distributions/CloudFormation.zip")
-    ext.toDir = file("$buildDir/idea-home/config/plugins")
-    inputs.file fromFile
-    outputs.dir toDir
-    
-    doLast {
-       delete toDir
-       copy {
-           from zipTree(fromFile)
-           into toDir
-       }
-    }
-}
-compileKotlin.dependsOn(extractIdea)
-compileJava.dependsOn(extractIdea)
-
-task runIdeaWithPlugin(type: JavaExec, dependsOn: assemble) {
-    main = 'com.intellij.idea.Main'
-    workingDir = rootDir
-
-    jvmArgs "-ea", "-Xmx800m", "-XX:ReservedCodeCacheSize=64m", "-XX:MaxPermSize=250m", "-XX:+HeapDumpOnOutOfMemoryError"
-    systemProperty "idea.is.internal", "true"
-    systemProperty "idea.debug.mode", "true"
-    systemProperty "idea.system.path", file("$buildDir/idea-home/system")
-    systemProperty "idea.config.path", file("$buildDir/idea-home/config")
-
-    classpath sourceSets.main.runtimeClasspath
-    classpath fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
-}
-runIdeaWithPlugin.dependsOn(extractPlugin)
-
-task zip(type: Zip) {
-    baseName 'CloudFormation'
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    into('CloudFormation/lib') {
-        from { configurations.compile - configurations.provided }
-        from configurations.runtime.artifacts.files
-    }
-}
-
-artifacts {
-    archives zip
 }
