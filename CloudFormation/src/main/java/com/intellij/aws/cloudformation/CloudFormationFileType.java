@@ -82,12 +82,10 @@ public class CloudFormationFileType extends LanguageFileType implements FileType
       final FileSystemInterface fileSystem = (FileSystemInterface) virtualFileSystem;
       final InputStream inputStream = fileSystem.getInputStream(file);
       try {
-        return FileUtil.processFirstBytes(inputStream, 1024, new Processor<ByteSequence>() {
-          @Override
-          public boolean process(ByteSequence byteSequence) {
-            return findArray(byteSequence.getBytes(), BYTES_TO_DETECT_CFN_FILE) >= 0;
-          }
-        });
+        byte[] bytes = new byte[1024];
+
+        int n = inputStream.read(bytes, 0, bytes.length);
+        return n > 0 && findArray(bytes, BYTES_TO_DETECT_CFN_FILE) >= 0;
       } finally {
         inputStream.close();
       }
