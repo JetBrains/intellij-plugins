@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <problems>
   <problem>
-    <file>rdsdatabasewithoptionalreadreplica-d228.template</file>
-    <line>112</line>
-    <description>Required resource properties are not set: AllocatedStorage</description>
-  </problem>
-
-  <problem>
     <file>autoscalingmultiazwithnotifications-4ccf.template</file>
     <line>133</line>
     <description>Unknown resource type property: NotificationConfiguration</description>
@@ -22,12 +16,6 @@
     <file>autoscalingmultiazsample-1.0.0-db0a.template</file>
     <line>71</line>
     <description>Unknown CloudFormation resource type: AWS::AutoScaling::Trigger</description>
-  </problem>
-
-  <problem>
-    <file>rds_mysql_with_read_replica-215c.template</file>
-    <line>124</line>
-    <description>Required resource properties are not set: AllocatedStorage</description>
   </problem>
 
   <problem>
