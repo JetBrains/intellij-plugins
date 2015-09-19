@@ -17,17 +17,6 @@ public class OfficialExamplesSaver {
       String name = key.text();
       int size = Integer.parseInt(key.parent().getElementsByTag("Size").first().text());
 
-      if (name.equalsIgnoreCase("AutoScalingRollingUpdates.template") ||
-          name.equalsIgnoreCase("VPC_RDS_DB_Instance.template") ||
-          name.equalsIgnoreCase("RDS_MySQL_With_Read_Replica.template") ||
-          name.equalsIgnoreCase("RDSDatabaseWithOptionalReadReplica.template") ||
-          name.equalsIgnoreCase("auto_scaling_with_instance_profile.template") ||
-          name.equalsIgnoreCase("DynamoDB_Table.template") ||
-          name.equalsIgnoreCase("AutoScalingMultiAZSample-1.0.0.template")) {
-        // Known to be broken
-        continue;
-      }
-
       URL fileUrl = new URL(url, name.replace(" ", "%20"));
 
       String localName = StringUtils.removeEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template";
