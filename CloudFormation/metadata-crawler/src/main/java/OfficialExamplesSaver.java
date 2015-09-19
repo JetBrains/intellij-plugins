@@ -1,4 +1,6 @@
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,7 +29,9 @@ public class OfficialExamplesSaver {
       }
 
       URL fileUrl = new URL(url, name.replace(" ", "%20"));
-      File localFile = new File("testData/officialExamples/src", name);
+
+      String localName = StringUtils.removeEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template";
+      File localFile = new File("testData/officialExamples/src", localName);
 
       if (localFile.exists() && localFile.length() == size) {
         continue;

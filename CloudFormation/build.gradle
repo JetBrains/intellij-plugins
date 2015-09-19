@@ -55,6 +55,7 @@ project(':metadata-crawler') {
         compile 'org.apache.commons:commons-lang3:3.3.2'
         compile 'net.htmlparser.jericho:jericho-html:3.3'
         compile 'org.jsoup:jsoup:1.8.1'
+        compile 'org.apache.directory.studio:org.apache.commons.codec:1.8'
     }
 
     task collectMetadata(type: JavaExec, dependsOn: classes) {
