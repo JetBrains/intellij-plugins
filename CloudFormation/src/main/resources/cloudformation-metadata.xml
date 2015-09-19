@@ -7966,7 +7966,7 @@
   &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
 &quot;Type&quot; : &quot;AWS::EC2::SubnetNetworkAclAssociation&quot;,
 &quot;Properties&quot; : {
-   &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-subnet-network-acl-assoc.html#cfn-ec2-subnetnetworkaclassociation-associationid&quot;&gt;SubnetId&lt;/a&gt;&quot; : { &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt; }
+   &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-subnet-network-acl-assoc.html#cfn-ec2-subnetnetworkaclassociation-associationid&quot;&gt;SubnetId&lt;/a&gt;&quot; : { &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt; },
    &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-subnet-network-acl-assoc.html#cfn-ec2-subnetnetworkaclassociation-networkaclid&quot;&gt;NetworkAclId&lt;/a&gt;&quot; : { &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt; }
 }
 &lt;/code&gt;&lt;/pre&gt;
@@ -8065,7 +8065,7 @@
          &quot;Type&quot; : &quot;AWS::EC2::SubnetNetworkAclAssociation&quot;,
          &quot;Properties&quot; : {
             &quot;SubnetId&quot; : { &quot;Ref&quot; : &quot;mySubnet&quot; },
-            &quot;NetworkAclId&quot; : { &quot;Ref&quot; : &quot;myNetworkAcl&quot; },
+            &quot;NetworkAclId&quot; : { &quot;Ref&quot; : &quot;myNetworkAcl&quot; }
          }
       }
    }
@@ -11332,33 +11332,6 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e38982&quot;&gt;Notes&lt;/h2&gt;
-    &lt;/div&gt;
-   &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;section&quot;&gt;
-   &lt;div class=&quot;titlepage&quot;&gt;
-    &lt;div&gt;
-     &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;cfn-elasticache-cache-cluster-obtaining-node-addresses&quot;&gt;Obtaining the Cache Cluster Node Addresses&lt;/h3&gt;
-     &lt;/div&gt;
-    &lt;/div&gt;
-   &lt;/div&gt;
-   &lt;p&gt;The ElastiCache cache cluster does not have a single endpoint, but you can obtain the endpoints for individual cache nodes by defining a &lt;code class=&quot;code&quot;&gt;get-cache-nodes&lt;/code&gt; script and installing it in the &lt;a class=&quot;link&quot; href=&quot;aws-resource-init.html&quot; title=&quot;AWS::CloudFormation::Init&quot;&gt;AWS::CloudFormation::Init&lt;/a&gt; section of the template.&lt;/p&gt;
-   &lt;p&gt;You can view a full sample templates for implementation details:&lt;/p&gt;
-   &lt;div class=&quot;itemizedlist&quot;&gt;
-    &lt;ul class=&quot;itemizedlist&quot; type=&quot;disc&quot;&gt;
-     &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;For Memcached, see &lt;a class=&quot;ulink&quot; href=&quot;https://s3.amazonaws.com/cloudformation-templates-us-east-1/ElastiCache.template&quot; target=&quot;_blank&quot;&gt;https://s3.amazonaws.com/cloudformation-templates-us-east-1/ElastiCache.template&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-     &lt;li class=&quot;listitem&quot;&gt;&lt;p&gt;For Redis, see &lt;a class=&quot;ulink&quot; href=&quot;https://s3.amazonaws.com/cloudformation-templates-us-east-1/ElastiCache_Redis.template&quot; target=&quot;_blank&quot;&gt;https://s3.amazonaws.com/cloudformation-templates-us-east-1/ElastiCache_Redis.template&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-   &lt;/div&gt;
-   &lt;p&gt;The Amazon ElastiCache template uses the AWS CloudFormation bootstrap script &lt;a class=&quot;link&quot; href=&quot;cfn-hup.html&quot; title=&quot;cfn-hup&quot;&gt;cfn-hup&lt;/a&gt; to detect changes to the Amazon ElastiCache cache cluster configuration, such as the number of instances in the cache cluster. It then runs a script to update the on-host configuration for the application.&lt;/p&gt;
-  &lt;/div&gt;
- &lt;/div&gt;
- &lt;div class=&quot;section&quot;&gt;
-  &lt;div class=&quot;titlepage&quot;&gt;
-   &lt;div&gt;
-    &lt;div&gt;
      &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;aws-properties-elasticache-cache-cluster-ref&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -11367,7 +11340,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e39037&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e38985&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -11378,7 +11351,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e39061&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e39009&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -11405,13 +11378,14 @@
     &lt;/dl&gt;
    &lt;/div&gt;
    &lt;p&gt;For more information about using &lt;code class=&quot;function&quot;&gt;Fn:GetAtt&lt;/code&gt;, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-getatt.html&quot; title=&quot;Fn::GetAtt&quot;&gt;Fn::GetAtt&lt;/a&gt;.&lt;/p&gt;
+   &lt;p&gt;For Redis cache clusters, use the AWS CLI to get the cache cluster endpoint and port, as shown in the following sample template in the &lt;code class=&quot;code&quot;&gt;AWS::CloudFormation::Init&lt;/code&gt; metadata: &lt;a class=&quot;ulink&quot; href=&quot;https://s3.amazonaws.com/cloudformation-templates-us-east-1/ElastiCache_Redis.template&quot; target=&quot;_blank&quot;&gt;https://s3.amazonaws.com/cloudformation-templates-us-east-1/ElastiCache_Redis.template&lt;/a&gt;&lt;/p&gt;
   &lt;/div&gt;
  &lt;/div&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39121&quot;&gt;Template Snippets&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39077&quot;&gt;Template Snippets&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11419,7 +11393,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e39126&quot;&gt;Cluster in a Default VPC&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e39082&quot;&gt;Cluster in a Default VPC&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -11452,7 +11426,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e39162&quot;&gt;Memcached Nodes in Multiple Availability Zones&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e39118&quot;&gt;Memcached Nodes in Multiple Availability Zones&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -11473,7 +11447,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39175&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39131&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11652,7 +11626,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39225&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39181&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11719,7 +11693,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39350&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39306&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11739,7 +11713,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39382&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39338&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11759,7 +11733,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39391&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39347&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11816,7 +11790,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39457&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39413&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -11848,7 +11822,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39556&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e39512&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12047,7 +12021,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40174&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40130&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12055,7 +12029,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e40179&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e40135&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -12068,7 +12042,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e40218&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e40174&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -12108,7 +12082,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40301&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40257&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12294,7 +12268,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40362&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40318&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12310,7 +12284,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40376&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40332&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12333,7 +12307,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40413&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40369&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12341,7 +12315,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e40418&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e40374&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -12376,7 +12350,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40473&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40429&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12394,7 +12368,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40497&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40453&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12475,7 +12449,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40631&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40587&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12491,7 +12465,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40652&quot;&gt; Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40608&quot;&gt; Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12524,7 +12498,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40721&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40677&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12570,7 +12544,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40751&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40707&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12587,7 +12561,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40771&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40727&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12624,7 +12598,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40845&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40801&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12632,7 +12606,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e40850&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e40806&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -12644,7 +12618,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40875&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40831&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12660,7 +12634,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40884&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40840&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12720,7 +12694,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40924&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40880&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12737,7 +12711,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40948&quot;&gt;Members&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e40904&quot;&gt;Members&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12780,7 +12754,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41049&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41005&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12788,7 +12762,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e41054&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e41010&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -12800,7 +12774,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41079&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41035&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12821,7 +12795,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41088&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41044&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12872,7 +12846,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41125&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41081&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12892,7 +12866,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41164&quot;&gt;Members&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41120&quot;&gt;Members&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12967,7 +12941,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41408&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41364&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -12975,7 +12949,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e41413&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e41369&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -12987,7 +12961,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41438&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41394&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13015,7 +12989,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41459&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41415&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13089,7 +13063,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41512&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41468&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13240,7 +13214,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e41908&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e41864&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13251,7 +13225,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e41932&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e41888&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13275,7 +13249,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41978&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41934&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13283,7 +13257,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e41983&quot;&gt;Simple Environment&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e41939&quot;&gt;Simple Environment&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13303,7 +13277,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e41992&quot;&gt;Environment with Embedded Option Settings&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e41948&quot;&gt;Environment with Embedded Option Settings&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13329,7 +13303,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e42002&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e41958&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13440,7 +13414,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e42075&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e42031&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13670,7 +13644,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e42762&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e42718&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13681,7 +13655,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e42789&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e42745&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13736,7 +13710,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e42926&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e42882&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -13744,7 +13718,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e42931&quot;&gt;A load balancer with a health check and access logs&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e42887&quot;&gt;A load balancer with a health check and access logs&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13783,7 +13757,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e42940&quot;&gt;A load balancer with access logging enabled&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e42896&quot;&gt;A load balancer with access logging enabled&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13856,7 +13830,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e42958&quot;&gt;A load balancer with a connection draining policy&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e42914&quot;&gt;A load balancer with a connection draining policy&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13889,7 +13863,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e42970&quot;&gt;More examples&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e42926&quot;&gt;More examples&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -13909,7 +13883,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43026&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e42982&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14072,7 +14046,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43071&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43027&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14142,7 +14116,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e43212&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e43168&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14153,7 +14127,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e43239&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e43195&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14175,7 +14149,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43282&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43238&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14228,7 +14202,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43321&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43277&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14297,7 +14271,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e43462&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e43418&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14308,7 +14282,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e43486&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e43442&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14330,7 +14304,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43529&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43485&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14383,7 +14357,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43569&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43525&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14400,7 +14374,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43590&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43546&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14433,7 +14407,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43668&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43624&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14441,7 +14415,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e43673&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e43629&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14454,7 +14428,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e43709&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e43665&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14478,12 +14452,12 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43755&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43711&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e30664&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e30637&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Role with Embedded Policy and Instance Profiles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows an embedded Policy in the IAM::Role. The policy is specified inline in the IAM::Role Policies property.&lt;/p&gt;
@@ -14571,7 +14545,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43806&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43762&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14591,7 +14565,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43845&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e43801&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14632,7 +14606,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;PolicyDocument&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;Policies that define the permissions for this managed policy.&lt;/p&gt;
+     &lt;p&gt;Policies that define the permissions for this managed policy. For more information about policy syntax, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html&quot; target=&quot;_blank&quot;&gt;IAM Policy Elements Reference&lt;/a&gt; in &lt;em class=&quot;citetitle&quot;&gt;IAM User Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -14668,7 +14642,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44070&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44032&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14676,7 +14650,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e44075&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e44037&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14690,11 +14664,11 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44115&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44077&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
-  &lt;p&gt;The following snippet creates a managed policy and associates it with the TestDBGroup group. The managed policy grants users permission to create t2.micro database instances. The database must use the MySQL database engine and the instance name must include the prefix &lt;code class=&quot;code&quot;&gt;test&lt;/code&gt;.&lt;/p&gt;
+  &lt;p&gt;The following snippet creates a managed policy and associates it with the &lt;code class=&quot;code&quot;&gt;TestDBGroup&lt;/code&gt; group. The managed policy grants users permission to create t2.micro database instances. The database must use the MySQL database engine and the instance name must include the prefix &lt;code class=&quot;code&quot;&gt;test&lt;/code&gt;.&lt;/p&gt;
   &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;json &quot;&gt;&quot;CreateTestDBPolicy&quot; : {
   &quot;Type&quot; : &quot;AWS::IAM::ManagedPolicy&quot;,
   &quot;Properties&quot; : {
@@ -14748,7 +14722,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>PolicyDocument</name>
-          <description>&lt;p&gt;Policies that define the permissions for this managed policy.&lt;/p&gt;</description>
+          <description>&lt;p&gt;Policies that define the permissions for this managed policy. For more information about policy syntax, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html&quot; target=&quot;_blank&quot;&gt;IAM Policy Elements Reference&lt;/a&gt; in &lt;em class=&quot;citetitle&quot;&gt;IAM User Guide&lt;/em&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;</type>
           <required>true</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -14785,7 +14759,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44159&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44124&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14805,7 +14779,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44198&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44163&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14872,7 +14846,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44414&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44379&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14880,7 +14854,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e44419&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e44384&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14892,7 +14866,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44444&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44409&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -14900,7 +14874,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e44449&quot;&gt;IAM Policy with policy group&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e44414&quot;&gt;IAM Policy with policy group&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -14930,7 +14904,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e44463&quot;&gt;IAM Policy with specified role&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e44428&quot;&gt;IAM Policy with specified role&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15007,7 +14981,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44517&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44482&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15025,7 +14999,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44549&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44514&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15096,7 +15070,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44745&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44710&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15104,7 +15078,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e44750&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e44715&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15117,7 +15091,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e44786&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e44751&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15146,7 +15120,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e31461&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e31443&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Role with Embedded Policy and Instance Profiles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows an embedded Policy in the IAM::Role. The policy is specified inline in the IAM::Role Policies property.&lt;/p&gt;
@@ -15195,7 +15169,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e31469&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e31451&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Role with External Policy and Instance Profiles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;In this example, the Policy and InstanceProfile resources are specified externally to the IAM Role. They refer to the role by specifying its name, &quot;RootRole&quot;, in their respective Roles properties.&lt;/p&gt;
@@ -15255,7 +15229,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44866&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44831&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15319,7 +15293,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44910&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e44875&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15410,7 +15384,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e45120&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45085&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15421,7 +15395,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e45141&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45106&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15443,7 +15417,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45181&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45146&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15510,7 +15484,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45220&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45185&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15527,7 +15501,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45241&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45206&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15559,7 +15533,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45307&quot;&gt;Return Value&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45272&quot;&gt;Return Value&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15572,7 +15546,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45346&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45311&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15611,7 +15585,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45387&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45352&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15626,7 +15600,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45401&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45366&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15649,7 +15623,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45440&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45405&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15657,7 +15631,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e45445&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45410&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15692,7 +15666,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45499&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45464&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15713,7 +15687,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45543&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45508&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15801,7 +15775,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45808&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45773&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15809,7 +15783,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e45813&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45778&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15822,7 +15796,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e45852&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45817&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -15844,7 +15818,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45892&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45857&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15867,7 +15841,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45904&quot;&gt;Related Resources&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45869&quot;&gt;Related Resources&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15947,7 +15921,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45935&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45900&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15962,7 +15936,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45949&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45914&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15985,7 +15959,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45994&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45959&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -15993,7 +15967,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e45999&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45964&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16005,7 +15979,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46024&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e45989&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16013,7 +15987,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e46029&quot;&gt;&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e45994&quot;&gt;&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16054,7 +16028,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46069&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46034&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16071,7 +16045,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46093&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46058&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16122,7 +16096,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46216&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46181&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16130,7 +16104,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e46221&quot;&gt;&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e46186&quot;&gt;&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16193,7 +16167,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46268&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46233&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16217,7 +16191,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46330&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46295&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16330,7 +16304,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46653&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46618&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16338,7 +16312,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e46658&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e46623&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16352,7 +16326,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46698&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46663&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16375,7 +16349,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46710&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46675&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16477,7 +16451,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46758&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46723&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16493,7 +16467,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46777&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46742&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16526,7 +16500,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46846&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46811&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16543,7 +16517,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46858&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46823&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16587,7 +16561,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46894&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46859&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16615,7 +16589,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46973&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e46938&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16769,7 +16743,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47434&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47399&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16777,7 +16751,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e47439&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e47404&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16791,7 +16765,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47479&quot;&gt;Template Snippets&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47444&quot;&gt;Template Snippets&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16799,7 +16773,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e47484&quot;&gt;Basic AWS OpsWorks Instances&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e47449&quot;&gt;Basic AWS OpsWorks Instances&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16826,7 +16800,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e47502&quot;&gt;Time-based Auto Scaling Instance&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e47467&quot;&gt;Time-based Auto Scaling Instance&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -16851,7 +16825,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47518&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47483&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -16981,7 +16955,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47566&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47531&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17011,7 +16985,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47658&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e47623&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17193,7 +17167,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48182&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48147&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17201,7 +17175,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e48187&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e48152&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -17215,7 +17189,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48227&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48192&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17223,7 +17197,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e48232&quot;&gt;AWS OpsWorks PHP Layer&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e48197&quot;&gt;AWS OpsWorks PHP Layer&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -17247,7 +17221,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e48250&quot;&gt;Load-based Auto Scaling Layer&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e48215&quot;&gt;Load-based Auto Scaling Layer&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -17291,7 +17265,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48266&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48231&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17435,7 +17409,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48314&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48279&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17466,7 +17440,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48411&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48376&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17657,7 +17631,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48988&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48953&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17665,7 +17639,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e48993&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e48958&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -17679,7 +17653,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49033&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e48998&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17699,7 +17673,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49050&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49015&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -17856,7 +17830,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50885&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50850&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18079,9 +18053,8 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;Iops&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The number of I/O operations per second (IOPS) that the database should provision. This can be any integer value from 1000 to 10,000, in 1000 IOPS increments.&lt;/p&gt;
-     &lt;p&gt;If any value is used in the &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;Iops&lt;/code&gt;&lt;/em&gt; parameter, &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;AllocatedStorage&lt;/code&gt;&lt;/em&gt; must be at least 100 GB, which corresponds to the minimum &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;Iops&lt;/code&gt;&lt;/em&gt; value of 1000. If &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;Iops&lt;/code&gt;&lt;/em&gt; is increased (in 1000 IOPS increments), then &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;AllocatedStorage&lt;/code&gt;&lt;/em&gt; must also be increased (in 100 GB increments) correspondingly.&lt;/p&gt;
-     &lt;p&gt;For more information about this parameter, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/DeveloperGuide/CHAP_Storage.html#USER_PIOPS&quot; target=&quot;_blank&quot;&gt;Provisioned IOPS Storage&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service User Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;The number of I/O operations per second (IOPS) that the database provisions. The value must be equal to or greater than &lt;code class=&quot;code&quot;&gt;1000&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;If you specify this property, you must follow the range of allowed ratios of your requested IOPS rate to the amount of storage that you allocate (IOPS to allocated storage). For example, you can provision an Oracle database instance with &lt;code class=&quot;code&quot;&gt;1000&lt;/code&gt; IOPS and &lt;code class=&quot;code&quot;&gt;200&lt;/code&gt; GB of storage (a ratio of 5:1) or specify 2000 IOPS with 200 GB of storage (a ratio of 10:1). For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/DeveloperGuide/CHAP_Storage.html#USER_PIOPS&quot; target=&quot;_blank&quot;&gt;Amazon RDS Provisioned IOPS Storage to Improve Performance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service User Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. If you specify &lt;code class=&quot;code&quot;&gt;io1&lt;/code&gt; for the &lt;code class=&quot;code&quot;&gt;StorageType&lt;/code&gt; property, you must specify this property.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Number&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -18299,7 +18272,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52459&quot;&gt;Updating and Deleting AWS:RDS::DBInstances&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52415&quot;&gt;Updating and Deleting AWS:RDS::DBInstances&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18331,7 +18304,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e52540&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e52496&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -18342,7 +18315,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e52567&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e52523&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -18360,12 +18333,12 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52620&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52576&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e37132&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e37106&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example DBInstance with a set MySQL version, Tags and DeletionPolicy&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows how to set the MySQL version that has a &lt;code class=&quot;code&quot;&gt;&lt;a class=&quot;link&quot; href=&quot;aws-attribute-deletionpolicy.html&quot; title=&quot;DeletionPolicy Attribute&quot;&gt;DeletionPolicy Attribute&lt;/a&gt;&lt;/code&gt; set. With the &lt;code class=&quot;code&quot;&gt;DeletionPolicy&lt;/code&gt; set to &lt;code class=&quot;code&quot;&gt;Snapshot&lt;/code&gt;, AWS CloudFormation will take a snapshot of this DB instance before deleting it during stack deletion. A tag that contains a friendly name for the database is also set.&lt;/p&gt;
@@ -18388,7 +18361,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e37148&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e37122&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example DBInstance with provisioned IOPS&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example sets a provisioned IOPS value in the &lt;a class=&quot;link&quot; href=&quot;aws-properties-rds-database-instance.html#cfn-rds-dbinstance-iops&quot;&gt;Iops&lt;/a&gt; property. Note that the &lt;a class=&quot;link&quot; href=&quot;aws-properties-rds-database-instance.html#cfn-rds-dbinstance-allocatedstorage&quot;&gt;AllocatedStorage&lt;/a&gt; property is set according to the 10:1 ratio between IOPS and GiBs of storage.&lt;/p&gt;
@@ -18409,7 +18382,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e37161&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e37135&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Read replica DBInstance&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example creates a read replica named &lt;code class=&quot;code&quot;&gt;MyDBreadreplica&lt;/code&gt; for the &lt;code class=&quot;code&quot;&gt;MyDB&lt;/code&gt; DB instance.&lt;/p&gt;
@@ -18550,7 +18523,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>Iops</name>
-          <description>&lt;p&gt;For more information about this parameter, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/DeveloperGuide/CHAP_Storage.html#USER_PIOPS&quot; target=&quot;_blank&quot;&gt;Provisioned IOPS Storage&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service User Guide&lt;/em&gt;.&lt;/p&gt;</description>
+          <description>&lt;p&gt;If you specify this property, you must follow the range of allowed ratios of your requested IOPS rate to the amount of storage that you allocate (IOPS to allocated storage). For example, you can provision an Oracle database instance with &lt;code class=&quot;code&quot;&gt;1000&lt;/code&gt; IOPS and &lt;code class=&quot;code&quot;&gt;200&lt;/code&gt; GB of storage (a ratio of 5:1) or specify 2000 IOPS with 200 GB of storage (a ratio of 10:1). For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/DeveloperGuide/CHAP_Storage.html#USER_PIOPS&quot; target=&quot;_blank&quot;&gt;Amazon RDS Provisioned IOPS Storage to Improve Performance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service User Guide&lt;/em&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Number&lt;/p&gt;</type>
           <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -18692,7 +18665,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52730&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52686&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18711,7 +18684,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52762&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52718&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18770,7 +18743,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52903&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52859&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18778,7 +18751,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e52908&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e52864&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -18838,7 +18811,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53179&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53135&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18858,7 +18831,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53213&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53169&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18911,7 +18884,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53348&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53304&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -18923,7 +18896,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e53361&quot;&gt;Single VPC security group&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e53317&quot;&gt;Single VPC security group&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -18945,7 +18918,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e53373&quot;&gt;Multiple VPC security groups&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e53329&quot;&gt;Multiple VPC security groups&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -19033,7 +19006,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53420&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53376&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19116,7 +19089,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53631&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53587&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19124,7 +19097,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e53636&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e53592&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -19136,7 +19109,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53661&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53617&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19201,7 +19174,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52965&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e52921&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19285,7 +19258,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53102&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53058&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19338,7 +19311,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53709&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53665&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19357,7 +19330,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53743&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53699&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19422,7 +19395,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53927&quot;&gt;Return Value&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53883&quot;&gt;Return Value&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19435,7 +19408,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53969&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53925&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19506,7 +19479,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54019&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e53975&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19525,7 +19498,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54053&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54009&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19588,7 +19561,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54214&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54170&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19596,7 +19569,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e54219&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e54175&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -19610,7 +19583,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54259&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54215&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19709,7 +19682,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49104&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49069&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19747,7 +19720,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49233&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49198&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -19821,7 +19794,7 @@
      &lt;p&gt;The type of cluster. You can specify &lt;code class=&quot;code&quot;&gt;single-node&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;multi-node&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-redshift-cluster-clusterversion&quot;&gt;&lt;/a&gt;
@@ -20000,7 +19973,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49986&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49951&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20008,7 +19981,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e49991&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e49956&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -20022,7 +19995,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50031&quot;&gt;Fn::GetAtt&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e49996&quot;&gt;Fn::GetAtt&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20048,7 +20021,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50077&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50042&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20113,7 +20086,7 @@
           <description>&lt;p&gt;The type of cluster. You can specify &lt;code class=&quot;code&quot;&gt;single-node&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;multi-node&lt;/code&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>true</required>
-          <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+          <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-some-interrupt&quot;&gt;Some interruptions&lt;/a&gt;&lt;/p&gt;</updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>ClusterVersion</name>
@@ -20261,7 +20234,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50115&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50080&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20278,7 +20251,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50139&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50104&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20321,7 +20294,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50251&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50216&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20329,7 +20302,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e50256&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e50221&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -20343,7 +20316,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50296&quot;&gt;Template Snippets&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50261&quot;&gt;Template Snippets&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20413,7 +20386,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50344&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50309&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20428,7 +20401,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50358&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50323&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20451,7 +20424,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50397&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50362&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20459,7 +20432,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e50402&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e50367&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -20473,7 +20446,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50442&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50407&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20489,7 +20462,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50454&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50419&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20526,7 +20499,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50490&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50455&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20544,7 +20517,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50519&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50484&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20597,7 +20570,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50654&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50619&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20614,7 +20587,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50666&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50631&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20672,7 +20645,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50702&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50667&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20688,7 +20661,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50721&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50686&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20721,7 +20694,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50790&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50755&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20729,7 +20702,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e50795&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e50760&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -20743,7 +20716,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50835&quot;&gt;Template Snippet&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e50800&quot;&gt;Template Snippet&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20790,7 +20763,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54315&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54271&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20806,7 +20779,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54334&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54290&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20839,7 +20812,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54405&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54361&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20901,7 +20874,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54449&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54405&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20919,7 +20892,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54478&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54434&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20972,7 +20945,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54615&quot;&gt;Return Value&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54571&quot;&gt;Return Value&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -20985,7 +20958,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54653&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54609&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21064,7 +21037,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54710&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54666&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21092,7 +21065,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54801&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e54757&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21266,7 +21239,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55408&quot;&gt;Return Value&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55364&quot;&gt;Return Value&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21277,12 +21250,12 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55432&quot;&gt;Example&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55388&quot;&gt;Example&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39188&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39162&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Mapping an Amazon Route&amp;nbsp;53 A record to the public IP of an Amazon EC2 instance&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;json &quot;&gt;
@@ -21440,7 +21413,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55482&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55438&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21459,7 +21432,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55515&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55471&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21514,7 +21487,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55675&quot;&gt;Return Value&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55631&quot;&gt;Return Value&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21527,7 +21500,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55711&quot;&gt;Template Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55667&quot;&gt;Template Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21586,7 +21559,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55762&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e55718&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -21726,7 +21699,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e56156&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e56112&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -21738,7 +21711,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e56183&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e56139&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -21768,12 +21741,12 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56242&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56198&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39787&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39761&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Static website configuration with a routing rule&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;In this example, AWS::S3::Bucket&apos;s &lt;code class=&quot;function&quot;&gt;Fn::GetAtt&lt;/code&gt; values are used to provide outputs. The routing rule redirects requests to an Amazon EC2 instance in the event of an HTTP 404 error and inserts a object key prefix &lt;code class=&quot;code&quot;&gt;report-404/&lt;/code&gt; in the redirect. For example, if you request a page &lt;code class=&quot;code&quot;&gt;ExamplePage.html&lt;/code&gt; and it results in a HTTP 404 error, the request is routed to a page &lt;code class=&quot;code&quot;&gt;report-404/ExamplePage.html&lt;/code&gt; on the specified instance. For all other HTTP error codes, &lt;code class=&quot;code&quot;&gt;error.html&lt;/code&gt; is returned. &lt;/p&gt;
@@ -21820,7 +21793,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39809&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39783&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Enable cross-origin resource sharing&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template shows an Amazon S3 bucket with two cross-origin resource sharing rules.&lt;/p&gt;
@@ -21886,7 +21859,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39816&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39790&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Manage the lifecycle for Amazon S3 objects&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template shows an Amazon S3 bucket with a lifecycle configuration rule. The rule applies to all objects with the &lt;code class=&quot;code&quot;&gt;glacier&lt;/code&gt; key prefix. The objects are transitioned to Amazon Glacier after one day and deleted after one year.&lt;/p&gt;
@@ -21927,7 +21900,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39826&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39800&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Log access requests for a specific bucket&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template creates two Amazon S3 buckets. The &lt;code class=&quot;code&quot;&gt;LoggingBucket&lt;/code&gt; bucket store the logs from the &lt;code class=&quot;code&quot;&gt;S3Bucket&lt;/code&gt; bucket. The logging bucket requires log delivery write permissions in order receive logs from the &lt;code class=&quot;code&quot;&gt;S3Bucket&lt;/code&gt; bucket.&lt;/p&gt;
@@ -21964,7 +21937,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39842&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39816&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Receive bucket notifications to an Amazon SNS topic&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template shows an Amazon S3 bucket with a notification configuration that sends an event to the specified topic when Amazon S3 has lost all replicas of an object.&lt;/p&gt;
@@ -22004,7 +21977,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56340&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56296&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22109,7 +22082,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56399&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56355&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22126,7 +22099,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56418&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56374&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22159,12 +22132,12 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56483&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56439&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e39947&quot;&gt;&lt;/a&gt;
+   &lt;a name=&quot;d0e39921&quot;&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Bucket policy that allows GET requests from specific referers&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample is a bucket policy that is attached to the &lt;code class=&quot;code&quot;&gt;myExampleBucket&lt;/code&gt; bucket and allows GET requests that originate from &lt;code class=&quot;code&quot;&gt;www.example.com&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;example.com&lt;/code&gt;:&lt;/p&gt;
@@ -22251,7 +22224,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56568&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56524&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22268,7 +22241,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56592&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56548&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22315,7 +22288,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56695&quot;&gt;Return Values&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56651&quot;&gt;Return Values&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22323,7 +22296,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e56700&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e56656&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -22334,7 +22307,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e56727&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e56683&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -22356,7 +22329,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56764&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56720&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22377,7 +22350,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56777&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56733&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22433,7 +22406,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56820&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56776&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22450,7 +22423,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56839&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56795&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22514,7 +22487,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56946&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e56902&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22633,7 +22606,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e57274&quot;&gt;Ref&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e57230&quot;&gt;Ref&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -22644,7 +22617,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e57301&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e57257&quot;&gt;Fn::GetAtt&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -22672,7 +22645,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57350&quot;&gt;Examples&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57306&quot;&gt;Examples&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22680,7 +22653,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e57355&quot;&gt;SQS Queue with Cloudwatch Alarms&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e57311&quot;&gt;SQS Queue with Cloudwatch Alarms&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -22757,7 +22730,7 @@
    &lt;div class=&quot;titlepage&quot;&gt;
     &lt;div&gt;
      &lt;div&gt;
-      &lt;h3 class=&quot;title&quot; id=&quot;d0e57367&quot;&gt;SQS Queue with a Dead Letter Queue&lt;/h3&gt;
+      &lt;h3 class=&quot;title&quot; id=&quot;d0e57323&quot;&gt;SQS Queue with a Dead Letter Queue&lt;/h3&gt;
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
@@ -22805,7 +22778,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57380&quot;&gt;See Also&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57336&quot;&gt;See Also&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22895,7 +22868,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57434&quot;&gt;Syntax&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57390&quot;&gt;Syntax&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
@@ -22912,7 +22885,7 @@
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
     &lt;div&gt;
-     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57453&quot;&gt;Properties&lt;/h2&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot; id=&quot;d0e57409&quot;&gt;Properties&lt;/h2&gt;
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
