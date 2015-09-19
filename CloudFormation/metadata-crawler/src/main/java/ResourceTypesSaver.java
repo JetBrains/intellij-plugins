@@ -104,104 +104,108 @@ public class ResourceTypesSaver {
     Element description = doc.select(".section").first();
     resourceType.description = description.toString();
 
-    Element vlist = doc.select("div.variablelist").first();
+    Elements vlists = doc.select("div.variablelist");
 
-    if (vlist != null) {
-      for (Element term : vlist.select("span.term")) {
-        CloudFormationResourceProperty property = new CloudFormationResourceProperty();
+    if (!vlists.isEmpty()) {
+      for (Element vlist : vlists) {
+        Elements titleElements = vlist.parent().select("h2.title");
+        if (titleElements.isEmpty()) {
+          continue;
+        }
 
-        final Element descr = term.parent().nextElementSibling();
-        //descr.children().
-        final Elements descrElements = descr.select("p");
+        String sectionTitle = titleElements.first().text();
+        if (!"Properties".equals(sectionTitle) && !"Members".equals(sectionTitle)) {
+          continue;
+        }
 
-        property.name = term.text();
+        for (Element term : vlist.select("span.term")) {
+          CloudFormationResourceProperty property = new CloudFormationResourceProperty();
 
-        String requiredValue = null;
-        String typeValue = null;
-        String descriptionValue = null;
-        String updateValue = null;
+          final Element descr = term.parent().nextElementSibling();
+          //descr.children().
+          final Elements descrElements = descr.select("p");
 
-        for (Element element : descrElements) {
-          if (element.parent() != descr) {
-            continue;
-          }
+          property.name = term.text();
 
-          final String text = element.text();
+          String requiredValue = null;
+          String typeValue = null;
+          String descriptionValue = null;
+          String updateValue = null;
 
-          if (text.matches("[a-zA-Z ]+:.*")) {
-            String[] split = text.split(":", 2);
-            assert split.length == 2 : text;
+          for (Element element : descrElements) {
+            if (element.parent() != descr) {
+              continue;
+            }
 
-            final String fieldName = split[0].trim();
-            final String fieldValue = split[1].trim().replaceFirst("\\.$", "");
+            final String text = element.text();
 
-            if ("Required".equals(fieldName)) {
-              requiredValue = fieldValue;
-            } else if ("Type".equals(fieldName)) {
-              typeValue = element.toString().replace("Type:","");
-            } else if("Update requires".equals((fieldName))) {
-              updateValue = element.toString().replace("Update requires:","");
+            if (text.matches("[a-zA-Z ]+:.*")) {
+              String[] split = text.split(":", 2);
+              assert split.length == 2 : text;
+
+              final String fieldName = split[0].trim();
+              final String fieldValue = split[1].trim().replaceFirst("\\.$", "");
+
+              if ("Required".equals(fieldName)) {
+                requiredValue = fieldValue;
+              } else if ("Type".equals(fieldName)) {
+                typeValue = element.toString().replace("Type:", "");
+              } else if ("Update requires".equals((fieldName))) {
+                updateValue = element.toString().replace("Update requires:", "");
+              }
+            } else {
+              descriptionValue = element.toString();
             }
           }
-          else {
-            descriptionValue = element.toString();
-          }
-        }
 
-        property.description = descriptionValue;
-        property.updateRequires = updateValue;
-        if (typeValue != null) {
-          property.type = typeValue;
-        } else if (resourceType.name.equals("AWS::Redshift::Cluster") && property.name.equals("SnapshotClusterIdentifier")) {
-          property.type = "String";
-        } else {
-          // TODO
-          if (!resourceType.name.equals("AWS::Route53::RecordSet")) {
-            throw new RuntimeException("Type is not found in property " + property.name + " in " + url);
-          }
-        }
-
-        if (resourceType.name.equals("AWS::AutoScaling::AutoScalingGroup") && property.name.equals("NotificationConfigurations")) {
-          // Examples prefer NotificationConfiguration spelling
-          // And cn docs too, see http://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
-          // vs https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
-          property.name = "NotificationConfiguration";
-        }
-
-        // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
-        // TODO Handle "Yes, for VPC security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-        // TODO Handle "Can be used instead of GroupId for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
-        // TODO Handle "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
-        // TODO Handle "Yes, for ICMP and any protocol that uses ports" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
-        // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster isn't in a VPC, you must specify this property
-        // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster is in a VPC, you must specify this property
-
-        if (requiredValue != null) {
-          if (requiredValue.equals("Yes")) {
-            property.required = true;
-          } else if (requiredValue.startsWith("No") ||
-                     requiredValue.startsWith("Conditional") ||
-                     requiredValue.equals("Required if NetBiosNameServers is specified; optional otherwise") ||
-                     requiredValue.equals("Yes, for VPC security groups") ||
-                     requiredValue.equals("Can be used instead of GroupId for EC2 security groups") ||
-                     requiredValue.equals("Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups") ||
-                     requiredValue.equals("Yes, for ICMP and any protocol that uses ports") ||
-                     requiredValue.equals("If your cache cluster isn't in a VPC, you must specify this property") ||
-                     requiredValue.equals("If your cache cluster is in a VPC, you must specify this property")) {
-            property.required = false;
+          property.description = descriptionValue;
+          property.updateRequires = updateValue;
+          if (typeValue != null) {
+            property.type = typeValue;
+          } else if (resourceType.name.equals("AWS::Redshift::Cluster") && property.name.equals("SnapshotClusterIdentifier")) {
+            property.type = "String";
           } else {
-            throw new RuntimeException("Unknown value for required in property " + property.name + " in " + url + ": " + requiredValue);
+            // TODO
+            if (!resourceType.name.equals("AWS::Route53::RecordSet")) {
+              throw new RuntimeException("Type is not found in property " + property.name + " in " + url);
+            }
           }
-        } else {
-          // TODO
-          if (!resourceType.name.equals("AWS::RDS::DBParameterGroup") &&
-              !resourceType.name.equals("AWS::Route53::RecordSet") &&
-              !resourceType.name.equals("AWS::RDS::DBSecurityGroupIngress")) {
-            throw new RuntimeException("Required is not found in property " + property.name + " in " + url);
-          }
-        }
 
-        resourceType.properties.add(property);
+          // TODO Handle "Required if NetBiosNameServers is specified; optional otherwise" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
+          // TODO Handle "Yes, for VPC security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+          // TODO Handle "Can be used instead of GroupId for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+          // TODO Handle "Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+          // TODO Handle "Yes, for ICMP and any protocol that uses ports" in http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+          // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster isn't in a VPC, you must specify this property
+          // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster is in a VPC, you must specify this property
+
+          if (requiredValue != null) {
+            if (requiredValue.equals("Yes")) {
+              property.required = true;
+            } else if (requiredValue.startsWith("No") ||
+                    requiredValue.startsWith("Conditional") ||
+                    requiredValue.equals("Required if NetBiosNameServers is specified; optional otherwise") ||
+                    requiredValue.equals("Yes, for VPC security groups") ||
+                    requiredValue.equals("Can be used instead of GroupId for EC2 security groups") ||
+                    requiredValue.equals("Yes, for VPC security groups; can be used instead of GroupName for EC2 security groups") ||
+                    requiredValue.equals("Yes, for ICMP and any protocol that uses ports") ||
+                    requiredValue.equals("If your cache cluster isn't in a VPC, you must specify this property") ||
+                    requiredValue.equals("If your cache cluster is in a VPC, you must specify this property")) {
+              property.required = false;
+            } else {
+              throw new RuntimeException("Unknown value for required in property " + property.name + " in " + url + ": " + requiredValue);
+            }
+          } else {
+            // TODO
+            if (!resourceType.name.equals("AWS::RDS::DBParameterGroup") &&
+                    !resourceType.name.equals("AWS::Route53::RecordSet") &&
+                    !resourceType.name.equals("AWS::RDS::DBSecurityGroupIngress")) {
+              throw new RuntimeException("Required is not found in property " + property.name + " in " + url);
+            }
+          }
+
+          resourceType.properties.add(property);
+        }
       }
     } else {
       Element tableElement = doc.select("div.informaltable").first();
