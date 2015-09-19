@@ -1,9 +1,10 @@
 buildscript {
+    ext.kotlin_version = '0.13.1513'
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -15,8 +16,6 @@ intellij {
     version '14.0.3'
     pluginName 'CloudFormation'
 }
-
-ext.kotlinVersion = kotlinVersion
 
 allprojects {
     apply plugin: 'kotlin'
@@ -68,5 +67,5 @@ project(':metadata-crawler') {
 
 dependencies {
     compile project(':metadata-model')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

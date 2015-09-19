@@ -15,7 +15,7 @@ public open class CloudFormationResolve() {
     public open fun getSectionNode(file: PsiFile, name: String): JsonObject? =
         CloudFormationPsiUtils.getObjectLiteralExpressionChild(CloudFormationPsiUtils.getRootExpression(file), name)
 
-    public open fun getTargetName(element: JsonStringLiteral): String = StringUtil.stripQuotesAroundValue(element.getText() ?: "")
+    public open fun getTargetName(element: JsonStringLiteral): String = StringUtil.unquoteString(element.getText() ?: "")
 
     public open fun resolveEntity(file: PsiFile, entityName: String, sections: Collection<String>): JsonProperty? {
       return sections
@@ -62,7 +62,7 @@ public open class CloudFormationResolve() {
         return null
       }
 
-      val objectLiteralExpression = ObjectUtils.tryCast(mappingElement.getValue(), javaClass<JsonObject>())
+      val objectLiteralExpression = mappingElement.getValue() as? JsonObject
       if (objectLiteralExpression == null)
       {
         return null
@@ -78,7 +78,8 @@ public open class CloudFormationResolve() {
         return null
       }
 
-      val objectLiteralExpression = ObjectUtils.tryCast(topLevelKeyElement.getValue(), javaClass<JsonObject>())
+
+      val objectLiteralExpression = topLevelKeyElement.value as? JsonObject
       if (objectLiteralExpression == null)
       {
         return null
