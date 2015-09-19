@@ -18428,7 +18428,7 @@
           <name>AllocatedStorage</name>
           <description>&lt;p&gt;If any value is used in the &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;Iops&lt;/code&gt;&lt;/em&gt; parameter, &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;AllocatedStorage&lt;/code&gt;&lt;/em&gt; must be at least 100 GB, which corresponds to the minimum &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;Iops&lt;/code&gt;&lt;/em&gt; value of 1000. If &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;Iops&lt;/code&gt;&lt;/em&gt; is increased (in 1000 IOPS increments), then &lt;em class=&quot;parameter&quot;&gt;&lt;code&gt;AllocatedStorage&lt;/code&gt;&lt;/em&gt; must also be increased (in 100 GB increments) correspondingly.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
-          <required>true</required>
+          <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
         </ResourceProperty>
         <ResourceProperty>
