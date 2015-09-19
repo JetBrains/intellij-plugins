@@ -1,0 +1,198 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "AWS CloudFormation Sample Template auto_scaling_with_instance_profile: Create an Auto Scaling group with an associated instance profile. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon SQS queue. You will be billed for the AWS resources used if you create a stack from this template.",
+
+    "Parameters": {
+
+        "InstanceType": {
+            "Description": "EC2 instance type",
+            "Type": "String",
+            "Default": "m1.small",
+            "AllowedValues": [
+                "t1.micro",
+                "m1.small",
+                "m1.medium",
+                "m1.large",
+                "m1.xlarge",
+                "m2.xlarge",
+                "m2.2xlarge",
+                "m2.4xlarge",
+                "m3.xlarge",
+                "m3.2xlarge",
+                "c1.medium",
+                "c1.xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
+        }
+    },
+    "Mappings": {
+        "AWSInstanceType2Arch": {
+            "t1.micro": {
+                "Arch": "64"
+            },
+            "m1.small": {
+                "Arch": "64"
+            },
+            "m1.medium": {
+                "Arch": "64"
+            },
+            "m1.large": {
+                "Arch": "64"
+            },
+            "m1.xlarge": {
+                "Arch": "64"
+            },
+            "m2.xlarge": {
+                "Arch": "64"
+            },
+            "m2.2xlarge": {
+                "Arch": "64"
+            },
+            "m2.4xlarge": {
+                "Arch": "64"
+            },
+            "m3.xlarge": {
+                "Arch": "64"
+            },
+            "m3.2xlarge": {
+                "Arch": "64"
+            },
+            "c1.medium": {
+                "Arch": "64"
+            },
+            "c1.xlarge": {
+                "Arch": "64"
+            }
+        },
+        "AWSRegionArch2AMI": {
+            "us-east-1": {
+                "32": "ami-aba768c2",
+                "64": "ami-81a768e8"
+            },
+            "us-west-1": {
+                "32": "ami-458fd300",
+                "64": "ami-b18ed2f4"
+            },
+            "us-west-2": {
+                "32": "ami-fcff72cc",
+                "64": "ami-feff72ce"
+            },
+            "eu-west-1": {
+                "32": "ami-018bb975",
+                "64": "ami-998bb9ed"
+            },
+            "sa-east-1": {
+                "32": "ami-a039e6bd",
+                "64": "ami-a239e6bf"
+            },
+            "ap-southeast-1": {
+                "32": "ami-425a2010",
+                "64": "ami-5e5a200c"
+            },
+            "ap-southeast-2": {
+                "32": "ami-b3990e89",
+                "64": "ami-bd990e87"
+            },
+            "ap-northeast-1": {
+                "32": "ami-7871c579",
+                "64": "ami-7671c577"
+            }
+        }
+    },
+    "Resources": {
+        "myLCOne": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSRegionArch2AMI",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        {
+                            "Fn::FindInMap": [
+                                "AWSInstanceType2Arch",
+                                {
+                                    "Ref": "InstanceType"
+                                },
+                                "Arch"
+                            ]
+                        }
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "IamInstanceProfile": {
+                    "Ref": "RootInstanceProfile"
+                }
+            }
+        },
+        "myASGrpOne": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Version": "2009-05-15",
+            "Properties": {
+                "AvailabilityZones": {
+                    "Fn::GetAZs": ""
+                },
+                "LaunchConfigurationName": {
+                    "Ref": "myLCOne"
+                },
+                "MinSize": "1",
+                "MaxSize": "1"
+            }
+        },
+        "RootRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/"
+            }
+        },
+        "RolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "root",
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "*",
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "RootRole"
+                    }
+                ]
+            }
+        },
+        "RootInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "RootRole"
+                    }
+                ]
+            }
+        }
+    }
+}
