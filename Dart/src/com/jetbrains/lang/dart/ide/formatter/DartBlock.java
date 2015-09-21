@@ -134,6 +134,9 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
         return new ChildAttributes(Indent.getContinuationIndent(), null);
       }
     }
+    if (myParent == null && isIncomplete()) {
+      return new ChildAttributes(Indent.getContinuationIndent(), null);
+    }
     return new ChildAttributes(previousBlock.getIndent(), previousBlock.getAlignment());
   }
 

@@ -593,4 +593,18 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "var b = \"see ${'${\n" +
                  "    a}'} and more\";");
   }
+
+  public void testEnterAfterEqualsVar() {
+    doTypingTest('\n',
+                 "o =<caret>",
+                 "o =\n" +
+                 "    <caret>");
+  }
+
+  public void testEnterAfterEqualsProperty() {
+    doTypingTest('\n',
+                 "o.x =<caret>",
+                 "o.x =\n" +
+                 "    <caret>");
+  }
 }
