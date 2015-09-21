@@ -41,10 +41,10 @@ public class EduPanel extends JPanel {
     //Lesson panel items
     private JPanel lessonPanel;
     private JLabel lessonNameLabel; //Name of the current lesson
-    @Deprecated private JPanel lessonMessageContainer; //Contains lesson's messages
     private LessonMessagePane lessonMessagePane;
     private JButton lessonNextButton;
-    private ArrayList<LessonMessage> messages;
+
+    private JButton lessonNextTestButton;
 
 
     //UI Preferences
@@ -60,12 +60,10 @@ public class EduPanel extends JPanel {
     private Font messageFont;
     private Font lessonNameFont;
     private Color shortcutTextColor;
-    private Color shortcutBckColor;
-    private Color shortcutBorderColor;
-    private Font shortcutFont;
     private Color passedColor;
     private Color lessonPassedColor;
     private Color lessonCodeColor;
+
 
     //separator UI
     private Color separatorColor;
@@ -192,17 +190,25 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
         lessonMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        //Set label UI
+        //Set Next Button UI
         lessonNextButton = new JButton("Next");
 //        lessonNextButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNextButton.setVisible(false);
         lessonNextButton.setBackground(background);
         lessonNextButton.setMargin(new Insets(0, 0, 0, 0));
 
+        //Add new NextButton TEST
+//        lessonNextTestButton = new JButton("Test Next");
+//        lessonNextTestButton.setVisible(true);
+//        lessonNextTestButton.setBackground(background);
+//        lessonNextTestButton.setMargin(new Insets(0, 0, 0, 0));
+
 
         lessonPanel.add(lessonNameLabel);
 //        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNameGap)));
         lessonPanel.add(lessonMessagePane);
+        lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
+        lessonPanel.add(lessonNextButton);
         lessonPanel.add(Box.createRigidArea(new Dimension(0, lessonNextButtonGap)));
     }
 
@@ -295,16 +301,19 @@ public class EduPanel extends JPanel {
     }
 
     private void showNextButton() {
-        lessonMessagePane.setSelectionStart(lessonMessagePane.getDocument().getLength());
-        lessonMessagePane.setSelectionEnd(lessonMessagePane.getDocument().getLength());
-        try {
-            lessonMessagePane.getDocument().insertString(lessonMessagePane.getDocument().getLength(), "\n", lessonMessagePane.getDefaultAttributeSet());
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
-        lessonMessagePane.insertComponent(lessonNextButton);
+//        lessonMessagePane.setSelectionStart(lessonMessagePane.getDocument().getLength());
+//        lessonMessagePane.setSelectionEnd(lessonMessagePane.getDocument().getLength());
+//        try {
+//            lessonMessagePane.getDocument().insertString(lessonMessagePane.getDocument().getLength(), "\n", lessonMessagePane.getDefaultAttributeSet());
+//        } catch (BadLocationException e) {
+//            e.printStackTrace();
+//        }
+//        lessonMessagePane.insertComponent(lessonNextButton);
         lessonNextButton.setVisible(true);
-        lessonMessagePane.repaint();
+//        lessonMessagePane.repaint();
+        lessonPanel.revalidate();
+        lessonPanel.repaint();
+        lessonNextButton.requestFocus(true);
     }
 
 
@@ -439,7 +448,6 @@ public class EduPanel extends JPanel {
         buttonAction.putValue(Action.NAME, "Next");
         buttonAction.setEnabled(true);
         lessonNextButton.setAction(buttonAction);
-        lessonNextButton.requestFocus();
     }
 
     public void hideNextButton() {
