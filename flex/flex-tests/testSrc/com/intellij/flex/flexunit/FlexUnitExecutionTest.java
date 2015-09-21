@@ -46,6 +46,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
 import net.n3.nanoxml.IXMLElement;
@@ -200,7 +201,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   }
 
   @Override
-  protected void runBareRunnable(Runnable runnable) throws Throwable {
+  protected void runBareRunnable(ThrowableRunnable<Throwable> runnable) throws Throwable {
     runnable.run();
   }
 
