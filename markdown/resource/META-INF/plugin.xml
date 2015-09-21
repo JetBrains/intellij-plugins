@@ -27,7 +27,7 @@
 
     <annotator language="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
 
-    <fileEditorProvider implementation="org.intellij.plugins.markdown.preview.MarkdownPreviewFileEditorProvider"/>
+    <fileEditorProvider implementation="org.intellij.plugins.markdown.preview.MarkdownSplitEditorProvider"/>
 
     <spellchecker.support language="Markdown"
                           implementationClass="org.intellij.plugins.markdown.spellchecking.MarkdownSpellcheckingStrategy"/>

@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
@@ -48,7 +49,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       }
     };
 
-  public MarkdownPreviewFileEditor(@NotNull VirtualFile file) {
+  public MarkdownPreviewFileEditor(@NotNull  Project project, @NotNull VirtualFile file) {
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
