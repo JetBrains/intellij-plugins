@@ -5,11 +5,14 @@ import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +49,7 @@ import java.util.concurrent.ExecutionException;
         }
 )
 public class CourseManager implements PersistentStateComponent<CourseManager.State> {
+
 
     CourseManager(){
         if(myState.courses == null || myState.courses.size() == 0) try {
@@ -126,7 +130,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             assert lesson != null;
             checkEnvironment(project, lesson.getCourse());
 
-            if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
+            if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
 
             //If lesson from some course
             if(lesson.getCourse() == null) return;
@@ -184,7 +188,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             final String target;
             if(lesson.getTargetPath() != null) {
                 InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + lesson.getTargetPath());
-                if (is == null) throw new IOException("Unable to get answer for \"" + lesson.getId() + "\" lesson");
+                if (is == null) throw new IOException("Unable to get answer for \"" + lesson.getName() + "\" lesson");
                 target = new Scanner(is).useDelimiter("\\Z").next();
             } else {
                 target = null;
@@ -276,6 +280,20 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         final SdkProblemDialog dialog = new SdkProblemDialog(project, sdkMessage);
         dialog.show();
     }
+
+    @Nullable
+    public Lesson findLesson(String lessonName) {
+        if (getCourses() == null) return null;
+        for (Course course : getCourses()) {
+            for (Lesson lesson : course.getLessons()) {
+                if(lesson.getName() != null)
+                    if (lesson.getName().toUpperCase().equals(lessonName.toUpperCase()))
+                        return lesson;
+            }
+        }
+        return null;
+    }
+
 
 
     static class State {

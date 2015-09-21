@@ -108,7 +108,7 @@ public class TryCommandEx extends CommandEx {
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + targetPath);
-        if(is == null) throw new IOException("Unable to get checkfile for \"" + lesson.getId() + "\" lesson");
+        if(is == null) throw new IOException("Unable to get checkfile for \"" + lesson.getName() + "\" lesson");
         return new Scanner(is).useDelimiter("\\Z").next();
     }
 
