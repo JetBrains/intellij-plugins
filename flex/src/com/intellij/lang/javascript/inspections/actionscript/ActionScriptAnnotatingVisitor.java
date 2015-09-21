@@ -1309,10 +1309,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (resolveResult instanceof JSClass && ((JSClass)resolveResult).isInterface()) {
         final PsiElement referenceNameElement = methodExpression.getReferenceNameElement();
 
-        myProblemReporter.registerProblem(referenceNameElement,
-                                          JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
-                                          getUnresolvedReferenceHighlightType(methodExpression),
-                                          getUnresolvedFunctionInspectionId());
+        reportUnresolvedFunctionError(referenceNameElement,
+                                      this.getUnresolvedReferenceHighlightType(methodExpression),
+                                      JSBundle.message("javascript.interface.can.not.be.instantiated.message"), null);
         return false;
       }
     }

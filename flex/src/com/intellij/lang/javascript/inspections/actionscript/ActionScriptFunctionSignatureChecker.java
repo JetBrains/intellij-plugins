@@ -41,11 +41,9 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
         final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
         if (expressions.length > 0) {
           final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
-          myReporter.registerProblem(
-            ValidateTypesUtil.getPlaceForSignatureProblem(node, argumentList),
-            JSBundle.message("javascript.invalid.number.of.parameters", "0"),
-            ProblemHighlightType.GENERIC_ERROR, getCheckFunctionSignaturesInspectionId(),
-            fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
+
+          registerProblem(node, JSBundle.message("javascript.invalid.number.of.parameters", "0"),
+                          fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
           return;
         }
         checkCallParameters(node, null);
