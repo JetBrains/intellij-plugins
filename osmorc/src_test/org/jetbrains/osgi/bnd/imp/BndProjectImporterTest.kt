@@ -96,7 +96,7 @@ class BndProjectImporterTest : IdeaTestCase() {
     val targetLevel = CompilerConfiguration.getInstance(myProject).getProjectBytecodeTarget()
     assertEquals("1.8", targetLevel)
 
-    val javacOptions = JavacConfiguration.getOptions(myProject, javaClass<JavacConfiguration>())
+    val javacOptions = JavacConfiguration.getOptions(myProject, JavacConfiguration::class.java)
     assertTrue(javacOptions.DEBUGGING_INFO)
     assertEquals("", javacOptions.ADDITIONAL_OPTIONS_STRING)
   }
@@ -121,7 +121,7 @@ class BndProjectImporterTest : IdeaTestCase() {
         "hello.tests" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), dependencies)
       }
 
-      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(javaClass<LanguageLevelModuleExtension>()).getLanguageLevel()
+      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(LanguageLevelModuleExtension::class.java).getLanguageLevel()
       val expectedSource = if (it.getName() == "hello.provider") LanguageLevel.JDK_1_7 else LanguageLevel.JDK_1_8
       assertEquals(expectedSource, sourceLevel)
 
