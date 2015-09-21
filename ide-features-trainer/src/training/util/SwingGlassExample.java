@@ -32,7 +32,6 @@ import javax.swing.Timer;
 public class SwingGlassExample extends JFrame {
     // We'll use a custom glass pane rather than a generic JPanel.
     FixedGlassPane glass;
-
     JProgressBar waiter = new JProgressBar(0, 100);
 
     Timer timer;

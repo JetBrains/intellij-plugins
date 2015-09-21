@@ -1,18 +1,40 @@
 <xml type="Scenario" name="Extract Method" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>public class PostfixCompletionDemo{
+        <CopyText>import javax.swing.*;
+import java.awt.*;
 
-    public void demonstrate(int show_times){
-        (show_times == 10)
+public class Test{
+    private static JButton glassButton;
+    private static JPanel glass;
 
+    public static void main(String[] args) {
+
+        final Dimension myDimension = new Dimension(100, 100);
+
+        JButton button = new JButton("Test");
+        button.setPreferredSize(myDimension);
+
+        glassButton = new JButton("Block");
+        JPanel panel = new JPanel();
+        panel.add(button);
+
+        glass = new JPanel();
+        glass.setOpaque(false);
+        glass.add(glassButton);
+
+        JFrame frame = new JFrame();
+        frame.setGlassPane(glass);
+        glass.setVisible(true);
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 }</CopyText>
 <CaretBlock>
-    <MoveCaret position="4:27" />
-    <Text description="Postfix code completion helps reduce backward caret jumps as you write code. It lets you transform an already typed expression to another one based on the postfix you added, the type of expression and its context."/>
-    <Try description="Put the &lt;code&gt;.&lt;/code&gt; after parenthesis and you will see the list of postfix completions. Choose the first element by clicking &lt;action=&quot;EditorEnter&quot;&gt;" trigger="EditorChooseLookupItem"/>
-    <Text description="Postfix completions list appears as the part of the instant completion list."/>
-    <Try description="If you want to filer it just press &lt;action=&quot;InsertLiveTemplate&quot;&gt;" trigger="InsertLiveTemplate"/>
+    <SetSelection start-position="12:9" end-position="21:32" />
+    <MoveCaret position="21:32" />
+    <Text description="Extract method action allows to encapsulate selected code into a new method with given parameters and returning type."/>
+    <Try description="Let's extract method from selected code to a new method &lt;code&gt;init(Dimension dim)&lt;/code&gt; by pressing &lt;action=&quot;ExtractMethod&quot;&gt;" trigger="ExtractMethod"/>
     <Win/>
 </CaretBlock>
 </MouseBlock>
