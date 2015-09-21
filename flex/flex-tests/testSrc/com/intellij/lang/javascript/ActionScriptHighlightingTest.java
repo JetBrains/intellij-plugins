@@ -1081,6 +1081,11 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     doSimpleHighlightingWithInvokeFixAndCheckResult("yyy.XXX?");
   }
 
+  public void testDoNotImportJSDefinition() throws Exception {
+    final Collection<HighlightInfo> infos = defaultTestForTwoFiles();
+    assertNull(findIntentionAction(infos, "foo.A.Bar?", getEditor(), getFile()));
+  }
+
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testImportClass_2() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("mypackage.Alert?");
