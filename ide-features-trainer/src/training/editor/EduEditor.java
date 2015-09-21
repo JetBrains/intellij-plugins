@@ -366,7 +366,7 @@ public class EduEditor implements TextEditor {
 
     public void initLesson(Lesson lesson) {
         myCourse = lesson.getCourse();
-        eduPanel.setLessonName(lesson.getId());
+        eduPanel.setLessonName(lesson.getName());
         hideButtons();
         initAllLessons(lesson);
         clearEditor();

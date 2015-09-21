@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<course name="Formatting" lessonsPath="Formatting/" version="0.3" id="formatting">
+  <lesson filename="01.Folding.xml" />
+  <lesson filename="02.CodeFormat.xml" />
+</course>
+
