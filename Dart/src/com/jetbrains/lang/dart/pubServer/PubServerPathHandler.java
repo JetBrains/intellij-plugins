@@ -44,7 +44,7 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     int slashIndex = -1;
     while ((slashIndex = path.indexOf('/', slashIndex + 1)) != -1) {
       final String pathPart = path.substring(0, slashIndex);
-      final VirtualFile dir = WebServerPathToFileManager.getInstance(project).get(pathPart);
+      final VirtualFile dir = WebServerPathToFileManager.getInstance(project).findVirtualFile(pathPart);
       if (dir == null || !dir.isDirectory()) {
         continue;
       }
