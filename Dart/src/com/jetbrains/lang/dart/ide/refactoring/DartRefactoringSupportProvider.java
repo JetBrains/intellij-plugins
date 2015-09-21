@@ -11,9 +11,6 @@ import com.jetbrains.lang.dart.psi.DartNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartRefactoringSupportProvider extends RefactoringSupportProvider {
   @Override
   public boolean isInplaceRenameAvailable(@NotNull PsiElement element, PsiElement context) {
@@ -36,5 +33,6 @@ public class DartRefactoringSupportProvider extends RefactoringSupportProvider {
   @Override
   public RefactoringActionHandler getExtractMethodHandler() {
     return new DartExtractMethodHandler();
+    //return new DartServerExtractMethodHandler();
   }
 }

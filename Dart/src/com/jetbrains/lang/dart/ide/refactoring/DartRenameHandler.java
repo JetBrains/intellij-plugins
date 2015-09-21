@@ -18,35 +18,27 @@ package com.jetbrains.lang.dart.ide.refactoring;
 import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.intellij.refactoring.ui.NameSuggestionsField;
-import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.xml.util.XmlStringUtil;
 import com.intellij.xml.util.XmlTagUtilBase;
-import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.ide.actions.AbstractDartFileProcessingAction;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
-import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Set;
 
 public class DartRenameHandler implements RenameHandler, TitledHandler {
   @Override
@@ -117,55 +109,28 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
   }
 }
 
-class DartRenameDialog extends RefactoringDialog {
-  @Nullable private final Editor myEditor;
-  @NotNull private final ServerRenameRefactoring myRefactoring;
+class DartRenameDialog extends ServerRefactoringDialog {
+  @NotNull ServerRenameRefactoring myRefactoring;
   @NotNull private final String myOldName;
 
   private final JLabel myNewNamePrefix = new JLabel("");
   private NameSuggestionsField myNameSuggestionsField;
 
-  private boolean myHasPendingRequests;
-  private RefactoringStatus myOptionsStatus;
-
   public DartRenameDialog(@NotNull Project project, @Nullable Editor editor, @NotNull ServerRenameRefactoring refactoring) {
-    super(project, true);
-    myEditor = editor;
+    super(project, editor, refactoring);
     myRefactoring = refactoring;
     myOldName = myRefactoring.getOldName();
     setTitle("Rename " + myRefactoring.getElementKindName());
     createNewNameComponent();
     init();
-    // Listen for responses.
-    myRefactoring.setListener(new ServerRefactoring.ServerRefactoringListener() {
-      @Override
-      public void requestStateChanged(final boolean hasPendingRequests, @NotNull final RefactoringStatus optionsStatus) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            myHasPendingRequests = hasPendingRequests;
-            myOptionsStatus = optionsStatus;
-            validateButtons();
-          }
-        });
-      }
-    });
   }
 
   @Override
   protected void canRun() throws ConfigurationException {
-    // the same name
     if (Comparing.strEqual(getNewName(), myOldName)) {
       throw new ConfigurationException(null);
     }
-    // has pending requests
-    if (myHasPendingRequests || myOptionsStatus == null) {
-      throw new ConfigurationException(null);
-    }
-    // has a fatal error
-    if (myOptionsStatus.hasFatalError()) {
-      throw new ConfigurationException(myOptionsStatus.getMessage());
-    }
+    super.canRun();
   }
 
   @Override
@@ -207,39 +172,8 @@ class DartRenameDialog extends RefactoringDialog {
   }
 
   @Override
-  protected void doAction() {
-    // Validate final status.
-    {
-      final RefactoringStatus finalStatus = myRefactoring.checkFinalConditions();
-      if (finalStatus == null) {
-        return;
-      }
-      if (finalStatus.hasError()) {
-        Messages.showErrorDialog(myProject, finalStatus.getMessage(), "Error");
-        return;
-      }
-    }
-    // Apply the change.
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final SourceChange change = myRefactoring.getChange();
-        assert change != null;
-        final Set<String> excludedIds = myRefactoring.getPotentialEdits();
-        AssistUtils.applySourceChange(myProject, change, excludedIds);
-        close(DialogWrapper.OK_EXIT_CODE);
-      }
-    });
-  }
-
-  @Override
   public JComponent getPreferredFocusedComponent() {
     return myNameSuggestionsField.getFocusableComponent();
-  }
-
-  @Override
-  protected boolean hasPreviewButton() {
-    return false;
   }
 
   private void createNewNameComponent() {
