@@ -3,5 +3,6 @@
   <course name="EditorBasics.xml" />
   <course name="Completions.xml" />
   <course name="Refactorings.xml" />
+  <course name="Formatting.xml" />
 </courses>
 

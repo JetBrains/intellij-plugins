@@ -87,7 +87,7 @@ public class Lesson extends AnAction {
 
     public void open(Dimension infoPanelDimension) throws IOException, FontFormatException, LessonIsOpenedException {
         //init infoPanel, check that Lesson has not opened yet
-        if (isOpen) throw new LessonIsOpenedException(this.getId() + "is opened");
+        if (isOpen) throw new LessonIsOpenedException(this.getName() + "is opened");
         onStart();
 
         isOpen = true;
@@ -97,17 +97,6 @@ public class Lesson extends AnAction {
         //destroy infoPanel (infoPanel = null)
         isOpen = false;
         onClose();
-    }
-
-    /**
-     *
-     * @return null if DetailPanel still not initialized
-     */
-    @Nullable
-
-
-    public String getId() {
-        return name;
     }
 
 
@@ -242,9 +231,9 @@ public class Lesson extends AnAction {
     public boolean equals(Object o) {
         if(o == null) return false;
         if(!(o instanceof Lesson)) return false;
-        if(this.getId() == null) return false;
-        if (((Lesson) o).getId() == null) return false;
-        if(((Lesson) o).getId().equals(this.getId())) return true;
+        if(this.getName() == null) return false;
+        if (((Lesson) o).getName() == null) return false;
+        if(((Lesson) o).getName().equals(this.getName())) return true;
         return false;
 
     }

@@ -22,10 +22,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -247,6 +244,38 @@ public class EduPanel extends JPanel {
     }
 
     public void addMessage(Message[] messages) {
+
+        for (final Message message : messages) {
+            if(message.getType() == Message.MessageType.LINK)  {
+                //add link handler
+                message.setRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        final Lesson lesson = CourseManager.getInstance().findLesson(message.getText());
+                        if (lesson != null) {
+                            try {
+                                CourseManager.getInstance().openLesson(eduEditor.getEditor().getProject(), lesson);
+                            } catch (BadCourseException e) {
+                                e.printStackTrace();
+                            } catch (BadLessonException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (FontFormatException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (LessonIsOpenedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         lessonMessagePane.addMessage(messages);
 
         //Pack lesson panel
@@ -361,7 +390,7 @@ public class EduPanel extends JPanel {
 
         for (int i = 0; i < myLessons.size(); i++) {
             Lesson currentLesson = myLessons.get(i);
-            String id = currentLesson.getId();
+            String id = currentLesson.getName();
 
             if (lesson.equals(currentLesson)){
                 //selected lesson
@@ -424,6 +453,11 @@ public class EduPanel extends JPanel {
 //        lessonMessageContainer.removeAll();
         lessonNameLabel.setIcon(null);
         lessonMessagePane.clear();
+        //remove links from lessonMessagePane
+        final MouseListener[] mouseListeners = lessonMessagePane.getMouseListeners();
+        for (int i = 0; i < mouseListeners.length; i++) {
+            lessonMessagePane.removeMouseListener(mouseListeners[i]);
+        }
 //        messages.clear();
         this.revalidate();
         this.repaint();

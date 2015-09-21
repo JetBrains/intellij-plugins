@@ -3,9 +3,17 @@ package training.util;
 import training.editor.eduUI.Message;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
+import training.lesson.CourseManager;
+import training.lesson.Lesson;
+import training.lesson.LessonIsOpenedException;
+import training.lesson.exceptons.BadCourseException;
+import training.lesson.exceptons.BadLessonException;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 19/03/15.
@@ -140,8 +148,40 @@ public class XmlUtil {
         return result.toArray(new Message[result.size()]);
     }
 
+    public static Message[] extractLinkFragments(Message[] messages){
+        final String TAG = "link";
+
+        ArrayList<Message> result = new ArrayList<Message>();
+        for (Message message: messages) {
+            if (message.isText()) {
+                String parsingString = message.getText();
+                while (parsingString.contains("<" + TAG + ">")) {
+                    int start = parsingString.indexOf("<" + TAG + ">");
+                    int end = parsingString.indexOf("</" + TAG + ">", start);
+
+                    String value = parsingString.substring((start + 2 + TAG.length()), end);
+
+
+                    Message msg_pre_text = new Message(parsingString.substring(0, start), Message.MessageType.TEXT_REGULAR);
+                    final Message msg_link = new Message(value, Message.MessageType.LINK);
+                    result.add(msg_pre_text);
+                    result.add(msg_link);
+                    parsingString = parsingString.substring(end + 3 + TAG.length());
+                }
+                if (parsingString.length() > 0) {
+                    Message msg_after_text = new Message(parsingString, Message.MessageType.TEXT_REGULAR);
+                    result.add(msg_after_text);
+                }
+            } else {
+                result.add(message);
+            }
+        }
+
+        return result.toArray(new Message[result.size()]);
+    }
+
     public static Message[] extractAll(Message[] messages){
-        return extractCodeFragments(extractActions(messages));
+        return extractLinkFragments(extractCodeFragments(extractActions(messages)));
     }
 
 

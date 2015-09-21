@@ -7,6 +7,8 @@ import com.intellij.util.ui.UIUtil;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -20,6 +22,7 @@ public class LessonMessagePane extends JTextPane {
     static SimpleAttributeSet BOLD = new SimpleAttributeSet();
     static SimpleAttributeSet ROBOTO = new SimpleAttributeSet();
     static SimpleAttributeSet CODE = new SimpleAttributeSet();
+    static SimpleAttributeSet LINK = new SimpleAttributeSet();
 
     static SimpleAttributeSet PARAGRAPH_STYLE = new SimpleAttributeSet();
 
@@ -49,6 +52,11 @@ public class LessonMessagePane extends JTextPane {
         StyleConstants.setForeground(CODE, Color.BLUE);
         StyleConstants.setFontFamily(CODE, EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
         StyleConstants.setFontSize(CODE, 12);
+
+        StyleConstants.setForeground(LINK, Color.BLUE);
+        StyleConstants.setFontFamily(LINK, UIUtil.getLabelFont().getFamily());
+        StyleConstants.setUnderline(LINK, true);
+        StyleConstants.setFontSize(LINK, 12);
 
         StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0);
         StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0);
@@ -109,6 +117,10 @@ public class LessonMessagePane extends JTextPane {
                         getDocument().insertString(getDocument().getLength(), message.getText(), ROBOTO);
                         break;
 
+                    case LINK:
+                        appendLink(message);
+                        break;
+
                 }
             } catch (BadLocationException e) {
                 e.printStackTrace();
@@ -154,6 +166,32 @@ public class LessonMessagePane extends JTextPane {
     public void clear() {
         setText("");
         lessonMessages.clear();
+    }
+
+    /**
+     * Appends link inside JTextPane to Run another lesson
+     *
+     * @param message - should have LINK type. message.runnable starts when the message has been clicked.
+     * @throws BadLocationException
+     */
+    private void appendLink(final Message message) throws BadLocationException {
+        final int startLink = getDocument().getEndPosition().getOffset();
+        getDocument().insertString(getDocument().getLength(), message.getText(), LINK);
+        final int endLink = getDocument().getEndPosition().getOffset();
+
+        addMouseListener(new MouseAdapter() {
+
+            public void mouseClicked(MouseEvent me) {
+                int x = me.getX();
+                int y = me.getY();
+
+                int clickOffset = viewToModel(new Point(x, y));
+                if (startLink <= clickOffset && clickOffset <= endLink && message.getRunnable() != null) {
+                    message.getRunnable().run();
+                }
+
+            }
+        });
     }
 
     public AttributeSet getDefaultAttributeSet() {
