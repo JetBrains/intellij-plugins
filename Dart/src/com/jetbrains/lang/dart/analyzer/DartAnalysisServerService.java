@@ -406,8 +406,11 @@ public class DartAnalysisServerService {
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
           if (isLocalDartOrHtmlFile(file)) {
             // file could be opened in more than one editor, so this check is needed
-            if (FileEditorManager.getInstance(myRootsHandler.getTrackedProjects().iterator().next()).getSelectedEditor(file) == null) {
-              myServerData.onFileClosed(file);
+            for (Project project : myRootsHandler.getTrackedProjects()) {
+              if (FileEditorManager.getInstance(project).getSelectedEditor(file) == null) {
+                myServerData.onFileClosed(file);
+                break;
+              }
             }
 
             updateVisibleFiles();
