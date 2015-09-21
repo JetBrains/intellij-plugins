@@ -29,9 +29,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   @Override
   protected void registerProblem(JSCallExpression callExpression, String message, LocalQuickFix... fixes) {
     PsiElement place = ValidateTypesUtil.getPlaceForSignatureProblem(callExpression, callExpression.getArgumentList());
-    myReporter.registerProblem(place, message, ProblemHighlightType.GENERIC_ERROR,
-                                               myTypeChecker.getValidateTypesInspectionId(),
-                                               fixes);
+    myTypeChecker.registerProblem(place, message, ProblemHighlightType.GENERIC_ERROR, fixes);
   }
 
   @Override
