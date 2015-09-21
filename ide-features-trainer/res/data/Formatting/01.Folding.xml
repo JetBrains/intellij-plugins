@@ -1,30 +1,34 @@
 <xml type="Scenario" name="Folding" passed="false" version="0.1" subtype="aimless" projectTree="hide">
-        <ExpandAllBlocks/>
-        <CopyText>import java.lang.String;
+    <MouseBlock>
+        <CopyText>import java.lang.Runnable;
 
-public class Rename{
+public class Test {
 
-    private String stylus;
-    private String deviceName;
+    public static void proceess(int register) {
 
-    public void touchDevice(int x, int y, float strength, Stylus stylus, Device device){
-        device.touchByStylus(stylus, x, y, strength);
+        final int counter = 0;
+
+        checkAndStart((register > 10), new Runnable() {
+            public void run() {
+                counter++;
+            }
+        });
     }
 
-    public boolean checkIPad(){
-        if (deviceName.equals("iPad") return true;
-        return false;
+    public static void checkAndStart(boolean flag, Runnable runnable){
+        if(flag) runnable.run();
     }
 
-    public String getStylus() {
-        return stylus;
-    }
 }</CopyText>
-        <Text description="To rename a method or a field you should select the whole &lt;link&gt;Collapse&lt;/link&gt; name and use Rename refactoring."/>
-        <Try description="Select field &lt;code&gt;deviceName&lt;/code&gt; in any place of code and start renaming by pushing &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
-        <Try description="Write another name for this field instead selected. For example type &lt;code&gt;tabletName&lt;/code&gt; and save the result by taping &lt;action=&quot;EditorEnter&quot;&gt;" trigger="NextTemplateVariable"/>
-        <Text description="IDEA automatically recognise getter for renaming fields and also recommends to refactor it."/>
-        <Try description="Select field &lt;code&gt;stylus&lt;/code&gt; out of &lt;code&gt;touchDevice&lt;/code&gt; method and activate renaming with &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
-        <Try description="Change the name with &lt;code&gt;pencil&lt;/code&gt; for example and complete refactoring with &lt;action=&quot;EditorEnter&quot;&gt;" trigger="NextTemplateVariable"/>
+    <CaretBlock>
+        <MoveCaret position="11:27" />
+        <Text description="The folding basics we start learning in &lt;link&gt;Collapse&lt;/link&gt; lesson. Let's look to other folding options."/>
+        <Try description="Select any part of code and run folding by pressing &lt;action=&quot;CollapseRegion&quot;&gt;" trigger="CollapseRegion"/>
+    </CaretBlock>
+</MouseBlock>
+        <Text description="Fine! IDEA collapsed &lt;code&gt;new Runnable()&lt;/code&gt; to a lambda function."/>
+        <Try description="To expand this structure use &lt;action=&quot;ExpandRegion&quot;&gt;" trigger="ExpandRegion" />
+        <Try description="IDEA allows to fold any region. Select some part of code and user &lt;action=&quot;CollapseSelection&quot;&gt;" trigger="CollapseSelection"/>
+        <Try description="And &lt;action=&quot;ExpandRegion&quot;&gt; in a back way" trigger="ExpandRegion"/>
     <Win/>
 </xml>
