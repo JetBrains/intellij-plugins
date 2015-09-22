@@ -1,0 +1,22 @@
+<xml type="Scenario" name="Declaration/Implementation" passed="false" version="0.1" subtype="aimless" projectTree="hide">
+        <CopyText>public class ExtractVar{
+
+    final static int a_const = 10000;
+    final static int b_const = 500;
+
+
+public static void calc(){InnerCalc.process(a_const, b_const); }
+
+    class InnerCalc{
+
+final static int some_const = 124136; public static int process(int a, int b){ return  a * b + some_const;
+        }
+    }
+
+}</CopyText>
+    <SetSelection start-position="7:1" end-position="7:65" />
+    <Text description="IDEA helps to correct codes format with one action."/>
+    <Try description="Try to reformat selected code with &lt;action=&quot;ReformatCode&quot;&gt;" triggers="ReformatCode"/>
+    <Try description="To reformat a whole source file use &lt;action=&quot;ReformatCode&quot;&gt; when no lines are selected" triggers="ReformatCode"/>
+    <Win/>
+</xml>
