@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<course name="Navigation" lessonsPath="Navigation/" version="0.3" id="navigation">
+  <lesson filename="01.JumpToSource.xml" />
+  <lesson filename="02.Declaration.xml" />
+  <lesson filename="03.FileStructure.xml" />
+  <lesson filename="04.Occurrences.xml" />
+</course>
+
