@@ -4,6 +4,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSCustomIndexer;
+import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
+import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
@@ -12,8 +15,10 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,6 +105,26 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
            "Component".equals(name) || "ComponentAnnotation".equals(name)? "AE" :
            null;
+  }
+
+  @Override
+  public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
+    for (XmlAttribute attribute : ((HtmlTag)customElement).getAttributes()) {
+      final String name = attribute.getName();
+      if (name.startsWith("#")) {
+        final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name.substring(1), attribute)
+          .setType(JSImplicitElement.Type.Variable);
+
+        builder.addImplicitElement(name.substring(1), new JSImplicitElementsIndex.JSElementProxy(elementBuilder, attribute.getTextOffset() + 1));
+        JSCustomIndexer.addImplicitElement(attribute, elementBuilder, builder);
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean canProcessCustomElement(@NotNull PsiElement element) {
+    return element instanceof HtmlTag;
   }
 
   @Override
