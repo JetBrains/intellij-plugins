@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -20,6 +21,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.psi.xml.XmlTokenType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.ARRAY_CLASS_NAME;
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.VECTOR_CLASS_NAME;
@@ -166,5 +168,26 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
     }
     return false;
+  }
+
+  @Override
+  public void addType(@Nullable final JSType _type, @Nullable PsiElement source) {
+    if (_type != null &&
+        myJSElementsToApply.isEmpty() &&
+        (source == null || source == EXPLICIT_TYPE_MARKER_ELEMENT)
+      ) {
+      // TODO [ksafonov] enforced scope (and context) should internal part of JSType.resolve()
+      JSClass jsClass = JSInheritanceUtil.withEnforcedScope(new Computable<JSClass>() {
+        @Nullable
+        @Override
+        public JSClass compute() {
+          return _type.resolveClass();
+        }
+      }, JSResolveUtil.getResolveScope(myContext.targetFile));
+      if (jsClass != null) {
+        source = jsClass;
+      }
+    }
+    super.addType(_type, source);
   }
 }
