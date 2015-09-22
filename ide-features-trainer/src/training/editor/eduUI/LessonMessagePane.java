@@ -68,9 +68,11 @@ public class LessonMessagePane extends JTextPane {
     public void setUI(Color regularFontColor,
                       Color shortcutColor,
                       Color codeFontColor,
+                      Color linkFontColor,
                       Color passedColor){
         StyleConstants.setForeground(REGULAR, regularFontColor);
         StyleConstants.setForeground(BOLD, shortcutColor);
+        StyleConstants.setForeground(LINK, linkFontColor);
         StyleConstants.setForeground(CODE, codeFontColor);
         this.passedColor = passedColor;
 
@@ -197,4 +199,6 @@ public class LessonMessagePane extends JTextPane {
     public AttributeSet getDefaultAttributeSet() {
         return REGULAR;
     }
+
+
 }
