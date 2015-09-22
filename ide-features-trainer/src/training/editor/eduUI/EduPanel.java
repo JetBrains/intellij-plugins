@@ -60,6 +60,7 @@ public class EduPanel extends JPanel {
     private Color passedColor;
     private Color lessonPassedColor;
     private Color lessonCodeColor;
+    private Color lessonLinkColor;
 
 
     //separator UI
@@ -147,6 +148,7 @@ public class EduPanel extends JPanel {
         passedColor = new JBColor(Gray._105, Gray._103);
         lessonPassedColor = new JBColor(new Color(49, 140, 64), new Color(7, 140, 45));
         lessonCodeColor = new JBColor(new Color(27, 78, 128), new Color(85, 161, 255));
+        lessonLinkColor = new JBColor(new Color(17, 96, 166), new Color(104, 159, 220));
 
         //shortcut UI
         shortcutTextColor = new JBColor(Gray._12, Gray._200);
@@ -156,7 +158,7 @@ public class EduPanel extends JPanel {
 
         //course UI
         lessonActiveColor = new JBColor(Gray._167, Gray._202);
-        lessonInactiveColor = new JBColor(new Color(17, 96, 166), new Color(104, 159, 220));
+        lessonInactiveColor = lessonLinkColor;
 //        lessonsFont = new Font(UIUtil.getFont(fontSize, ), 0, fontSize);
         lessonsFont = JBUI.Fonts.label(fontSize);
         allLessonsFont = JBUI.Fonts.label(fontSize - 1);
@@ -182,7 +184,7 @@ public class EduPanel extends JPanel {
         lessonMessagePane.setFocusable(false);
         //Set lessonMessagePane UI
         lessonMessagePane.setBackground(background);
-        lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, passedColor);
+        lessonMessagePane.setUI(defaultTextColor, shortcutTextColor, lessonCodeColor, lessonLinkColor, passedColor);
         lessonMessagePane.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonMessagePane.setMargin(new Insets(0, 0, 0, 0));
         lessonMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
