@@ -17,6 +17,6 @@ final static int some_const = 124136; public static int process(int a, int b){ r
     <SetSelection start-position="7:1" end-position="7:65" />
     <Text description="IDEA helps to correct codes format with one action."/>
     <Try description="Try to reformat selected code with &lt;action=&quot;ReformatCode&quot;&gt;" triggers="ReformatCode"/>
-    <Try description="To reformat a whole source file use &lt;action=&quot;ReformatCode&quot;&gt; when no lines are selected or use &lt;action=&quot;ShowReformatFileDialog&quot;&gt; to show Reformat File Dialog" triggers="ReformatCode"/>
+    <Try description="To reformat a whole source file use &lt;action=&quot;ReformatCode&quot;&gt; when no lines are selected" triggers="ReformatCode"/>
     <Win/>
 </xml>
