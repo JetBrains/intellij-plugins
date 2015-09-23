@@ -415,9 +415,10 @@ abstract public class DartServerResolverTest extends CodeInsightFixtureTestCase 
   }
 
   public void testPartOfResolution() throws Exception {
-    myFixture.addFileToProject("main1.dart", "library libName;\npart 'part1.dart';");
-    myFixture.addFileToProject("main2.dart", "library libName;\npart 'part2.dart';");
-    final PsiFile file = myFixture.addFileToProject("part1.dart", "part of <caret expected='main1.dart -> libName'>libName;");
+    myFixture.addFileToProject("main1.dart", "library lib.name;\npart 'part1.dart';");
+    myFixture.addFileToProject("main2.dart", "library lib.name;\npart 'part2.dart';");
+    final PsiFile file = myFixture.addFileToProject("part1.dart",
+                                                    "  part of <caret expected='main1.dart -> lib.name'>libName<caret expected='main1.dart -> lib.name'> ;");
     myFixture.openFileInEditor(file.getVirtualFile());
     doTest(myFixture);
   }

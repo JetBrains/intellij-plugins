@@ -4,12 +4,14 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import com.jetbrains.lang.dart.psi.DartLibraryStatement;
 import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -80,6 +82,12 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    if (DartResolver.isServerDrivenResolution()) {
+      final List<? extends PsiElement> elements =
+        ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
+      return DartResolveUtil.toCandidateInfoArray(elements);
+    }
+
     final String libraryName = getText();
 
     final List<VirtualFile> libFiles = DartResolveUtil.findLibraryByName(this, libraryName);
