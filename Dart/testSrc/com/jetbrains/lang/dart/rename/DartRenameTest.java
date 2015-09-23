@@ -22,7 +22,7 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
     doTest("FooNew");
   }
 
-  public void testConstructor3() throws Throwable {
+  public void _testConstructor3() throws Throwable {
     doTest("FooNew");
   }
 

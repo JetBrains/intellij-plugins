@@ -233,7 +233,7 @@ Dart File
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(const)('const')
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('B')
           PsiElement(.)('.')
@@ -274,7 +274,7 @@ Dart File
       CLASS_MEMBERS
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('B')
           PsiElement(.)('.')
@@ -328,7 +328,7 @@ Dart File
       CLASS_MEMBERS
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           FORMAL_PARAMETER_LIST
@@ -355,7 +355,7 @@ Dart File
           PsiElement(;)(';')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           PsiElement(.)('.')
@@ -615,7 +615,7 @@ Dart File
       PsiElement({)('{')
       CLASS_MEMBERS
         NAMED_CONSTRUCTOR_DECLARATION
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('A')
           PsiElement(.)('.')
@@ -642,7 +642,7 @@ Dart File
       CLASS_MEMBERS
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('B')
           FORMAL_PARAMETER_LIST
@@ -2060,7 +2060,7 @@ Dart File
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(external)('external')
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Int8List')
           FORMAL_PARAMETER_LIST
@@ -2079,7 +2079,7 @@ Dart File
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(external)('external')
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Int8List')
           PsiElement(.)('.')

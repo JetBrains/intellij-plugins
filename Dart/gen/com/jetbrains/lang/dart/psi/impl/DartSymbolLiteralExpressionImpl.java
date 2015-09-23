@@ -24,8 +24,8 @@ public class DartSymbolLiteralExpressionImpl extends DartExpressionImpl implemen
 
   @Override
   @Nullable
-  public DartReferenceExpression getReferenceExpression() {
-    return findChildByClass(DartReferenceExpression.class);
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
   }
 
   @Override

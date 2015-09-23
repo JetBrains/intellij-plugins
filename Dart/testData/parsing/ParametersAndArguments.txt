@@ -28,7 +28,7 @@ Dart File
                 <empty list>
               PsiElement(})('}')
         NAMED_CONSTRUCTOR_DECLARATION
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('FieldParameterSyntax')
           PsiElement(.)('.')
@@ -56,7 +56,7 @@ Dart File
                 <empty list>
               PsiElement(})('}')
         NAMED_CONSTRUCTOR_DECLARATION
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('FieldParameterSyntax')
           PsiElement(.)('.')
@@ -91,7 +91,7 @@ Dart File
                 <empty list>
               PsiElement(})('}')
         NAMED_CONSTRUCTOR_DECLARATION
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('FieldParameterSyntax')
           PsiElement(.)('.')

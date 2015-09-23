@@ -9,7 +9,6 @@ import  com.intellij.psi.PsiNameIdentifierOwner;
 public interface DartLibraryNameElement extends DartPsiCompositeElement, PsiNameIdentifierOwner {
 
   @NotNull
-  @Override
   String getName();
 
 }

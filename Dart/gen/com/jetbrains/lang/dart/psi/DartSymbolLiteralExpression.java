@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface DartSymbolLiteralExpression extends DartExpression {
 
   @Nullable
-  DartReferenceExpression getReferenceExpression();
+  DartExpression getExpression();
 
   @Nullable
   DartUserDefinableOperator getUserDefinableOperator();

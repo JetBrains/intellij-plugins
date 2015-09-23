@@ -1841,7 +1841,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
+  // metadata* ('external' | 'const')* 'factory' componentName ('.' componentName)? formalParameterList factoryTail?
   public static boolean factoryConstructorDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "factoryConstructorDeclaration")) return false;
     if (!nextTokenIs(b, "<factory constructor declaration>", AT, CONST, EXTERNAL, FACTORY)) return false;
@@ -1851,7 +1851,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && factoryConstructorDeclaration_1(b, l + 1);
     r = r && consumeToken(b, FACTORY);
     p = r; // pin = 3
-    r = r && report_error_(b, referenceExpression(b, l + 1));
+    r = r && report_error_(b, componentName(b, l + 1));
     r = p && report_error_(b, factoryConstructorDeclaration_4(b, l + 1)) && r;
     r = p && report_error_(b, formalParameterList(b, l + 1)) && r;
     r = p && factoryConstructorDeclaration_6(b, l + 1) && r;
@@ -4030,14 +4030,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* ('external' | 'const')* referenceExpression '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
+  // metadata* ('external' | 'const')* componentName '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
   public static boolean namedConstructorDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedConstructorDeclaration")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<named constructor declaration>");
     r = namedConstructorDeclaration_0(b, l + 1);
     r = r && namedConstructorDeclaration_1(b, l + 1);
-    r = r && referenceExpression(b, l + 1);
+    r = r && componentName(b, l + 1);
     r = r && consumeToken(b, DOT);
     r = r && componentName(b, l + 1);
     r = r && formalParameterList(b, l + 1);

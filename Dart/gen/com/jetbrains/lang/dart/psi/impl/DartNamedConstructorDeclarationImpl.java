@@ -24,14 +24,8 @@ public class DartNamedConstructorDeclarationImpl extends AbstractDartComponentIm
 
   @Override
   @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  public List<DartComponentName> getComponentNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartComponentName.class);
   }
 
   @Override
@@ -62,6 +56,17 @@ public class DartNamedConstructorDeclarationImpl extends AbstractDartComponentIm
   @Nullable
   public DartRedirection getRedirection() {
     return findChildByClass(DartRedirection.class);
+  }
+
+  @Override
+  @Nullable
+  public DartStringLiteralExpression getStringLiteralExpression() {
+    return findChildByClass(DartStringLiteralExpression.class);
+  }
+
+  @Nullable
+  public DartComponentName getComponentName() {
+    return DartPsiImplUtil.getComponentName(this);
   }
 
 }
