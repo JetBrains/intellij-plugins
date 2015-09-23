@@ -1,76 +1,26 @@
 package com.jetbrains.lang.dart.resolve;
 
-import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.util.CaretPositionInfo;
 import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import static com.jetbrains.dart.analysisServer.DartServerResolverTest.doTest;
 
 public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
-  private void doTest(@NotNull final String text) {
-    myFixture.configureByText("file.dart", text);
-    doTest();
-  }
-
-  private void doTest() {
-    final List<CaretPositionInfo> caretPositions = DartTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
-
-    for (CaretPositionInfo caretPositionInfo : caretPositions) {
-      final int line = myFixture.getEditor().getDocument().getLineNumber(caretPositionInfo.caretOffset);
-      final int column = caretPositionInfo.caretOffset - myFixture.getEditor().getDocument().getLineStartOffset(line);
-      final String fileNameAndPosition = myFixture.getFile().getName() + ":" + (line + 1) + ":" + (column + 1);
-
-      final PsiReference reference = TargetElementUtil.findReference(myFixture.getEditor(), caretPositionInfo.caretOffset);
-      assertNotNull("No reference in " + fileNameAndPosition, reference);
-
-      final PsiElement resolve = reference.resolve();
-      final String actualElementPosition = getPresentableElementPosition(resolve);
-      assertEquals("Incorrect resolution for reference in " + fileNameAndPosition, caretPositionInfo.expected, actualElementPosition);
-    }
-  }
-
-  @NotNull
-  private static String getPresentableElementPosition(final @Nullable PsiElement element) {
-    if (element == null) return "";
-
-    final StringBuilder buf = new StringBuilder(element.getText());
-    DartComponent component = PsiTreeUtil.getParentOfType(element, DartComponent.class);
-    while (component != null) {
-      final DartComponentName componentName = component.getComponentName();
-      if (componentName != null && componentName != element) {
-        buf.insert(0, component.getName() + " -> ");
-      }
-      component = PsiTreeUtil.getParentOfType(component, DartComponent.class);
-    }
-    String path = element instanceof PsiDirectoryImpl ? ((PsiDirectoryImpl)element).getVirtualFile().getPath()
-                                                      : element.getContainingFile().getVirtualFile().getPath();
-    if (path.startsWith("/src/")) path = path.substring("/src/".length());
-    if (path.startsWith(DartTestUtils.SDK_HOME_PATH)) path = "[Dart SDK]" + path.substring(DartTestUtils.SDK_HOME_PATH.length());
-    if (buf.length() > 0) buf.insert(0, " -> ");
-    buf.insert(0, path);
-
-    return buf.toString();
+  @Override
+  protected boolean isWriteActionRequired() {
+    return false;
   }
 
   public void testResolveAndUseScope() throws Exception {
@@ -289,7 +239,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                 "  <caret expected='file1.dart -> inFile1'>inFile1()\n" +
                                                 "  <caret expected=''>inFile2()\n" +
                                                 "}");
-    doTest();
+    doTest(myFixture);
   }
 
   public void testResolveWithExports() throws Exception {
@@ -328,7 +278,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                 "  <caret expected='file1.dart -> inFile1'>inFile1()\n" +
                                                 "  <caret expected=''>inFile1HiddenLater()\n" +
                                                 "}");
-    doTest();
+    doTest(myFixture);
   }
 
   public void testFileReferencesInImports() throws Exception {
@@ -353,7 +303,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
       "import '<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
       "import '<caret expected='lib'>.<caret expected='lib'>/<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
-      "import '<caret expected='/src'>..<caret expected='/src'>/<caret expected='lib'>lib<caret expected='lib'>/<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
+      "import '<caret expected='[content root]'>..<caret expected='[content root]'>/<caret expected='lib'>lib<caret expected='lib'>/<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
       "import '<caret expected='lib/src'>src<caret expected='lib/src'>/<caret expected='lib/src/file0.dart'>file0.dart<caret expected='lib/src/file0.dart'>';\n" +
       // todo not sure that DartStringLiteralExpression should be here as reference
       "import 'package:ProjectName<caret expected=''>/<caret expected='lib/src'>src<caret expected='lib/src'>/<caret expected='lib/src/file0.dart'>file0.dart<caret expected='lib/src/file0.dart'>';\n" +
@@ -366,7 +316,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     );
     myFixture.openFileInEditor(psiFile.getVirtualFile());
 
-    doTest();
+    doTest(myFixture);
   }
 
   public void testShowHideInImports() throws Exception {
@@ -374,7 +324,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                              "foo2(){}\n" +
                                              "foo3(){}\n" +
                                              "foo4(){}\n");
-    doTest("import 'file1.dart' show foo1;\n" +
+    doTest(myFixture,
+           "import 'file1.dart' show foo1;\n" +
            "import 'file1.dart' show foo2;\n" +
            "import 'file1.dart' hide foo1, foo2, foo3, foo4;\n" +
            "import 'file1.dart' show foo3;\n" +
@@ -411,11 +362,12 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                "  <caret expected=''>foo8;\n" +
                                                "  <caret expected=''>foo9;\n" +
                                                "}");
-    doTest();
+    doTest(myFixture);
   }
 
   public void testMixinApplication() throws Exception {
-    doTest("class Super  { inSuper(){}   }\n" +
+    doTest(myFixture,
+           "class Super  { inSuper(){}   }\n" +
            "class Mixin1 { inMixin1(){}  }\n" +
            "class Mixin2 { var inMixin2; }\n" +
            "class Inter1 { var inInter1; }\n" +
@@ -432,7 +384,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testExceptionParameters() throws Exception {
-    doTest("main(){\n" +
+    doTest(myFixture,
+           "main(){\n" +
            "  try{} on Error catch (e1){<caret expected='file.dart -> main -> e1'>e1;}\n" +
            "  try{} on Error catch (e2, s2){<caret expected='file.dart -> main -> e2'>e2 + <caret expected='file.dart -> main -> s2'>s2; <caret expected=''>e1;}\n" +
            "  try{} catch (e3){<caret expected='file.dart -> main -> e3'>e3; <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2;}\n" +
@@ -441,7 +394,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testObjectMembers() throws Exception {
-    doTest("class Bar{}\n" +
+    doTest(myFixture,
+           "class Bar{}\n" +
            "class Foo extends Bar{\n" +
            "  String<caret expected='[Dart SDK]/lib/core/string.dart -> String'> toString(){\n" +
            "    var i = hashCode<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> hashCode'>;\n" +
@@ -465,18 +419,20 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                        "<script src='packages<caret expected='packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
                                                        "<script src='<caret expected='packages'>packages/<caret expected='packages/browser'>browser/<caret expected='packages/browser/dart.js'>dart.js'/>\n");
     myFixture.openFileInEditor(psiFile.getVirtualFile());
-    doTest();
+    doTest(myFixture);
   }
 
   public void testCommentsInsideCallExpression() throws Exception {
-    doTest("main(){\n" +
+    doTest(myFixture,
+           "main(){\n" +
            "  '1 2 3 4'.<caret expected='[Dart SDK]/lib/core/string.dart -> String -> split'>split(' ')  // comment\n" +
            "  .map<caret expected='[Dart SDK]/lib/core/iterable.dart -> Iterable -> map'>((e) => int.<caret expected='[Dart SDK]/lib/core/int.dart -> int -> parse'>parse(e) * 2);\n" +
            "}");
   }
 
   public void testEnum() throws Exception {
-    doTest("enum Foo {FooA, FooB, }\n" +
+    doTest(myFixture,
+           "enum Foo {FooA, FooB, }\n" +
            "main() {\n" +
            "  print(<caret expected='file.dart -> Foo'>Foo.<caret expected='file.dart -> Foo -> FooB'>FooB.<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> toString'>toString());\n" +
            "}");
@@ -486,14 +442,16 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     myFixture.addFileToProject("lib/lib.dart", "part 'package:ProjectName/part.dart';");
     myFixture.addFileToProject("lib/part.dart", "var foo;");
-    doTest("import 'package:ProjectName/lib.dart';'\n" +
+    doTest(myFixture,
+           "import 'package:ProjectName/lib.dart';'\n" +
            "main() {\n" +
            "  var a = <caret expected='lib/part.dart -> foo'>foo;\n" +
            "}");
   }
 
   public void testNamedParameter_constructorDefaultInvocaiton() throws Exception {
-    doTest("class A {\n" +
+    doTest(myFixture,
+           "class A {\n" +
            "  A({test});\n" +
            "}\n" +
            "main() {\n" +
@@ -502,7 +460,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testNamedParameter_constructorNamedInvocaiton() throws Exception {
-    doTest("class A {\n" +
+    doTest(myFixture,
+           "class A {\n" +
            "  A.named({test});\n" +
            "}\n" +
            "main() {\n" +
@@ -511,7 +470,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testNamedParameter_functionInvocaiton() throws Exception {
-    doTest("f({test}) {}\n" +
+    doTest(myFixture,
+           "f({test}) {}\n" +
            "main() {\n" +
            "  f(te<caret expected='file.dart -> f -> test'>st: 0);\n" +
            "}");
@@ -527,25 +487,28 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     final PsiFile psiFile = myFixture.addFileToProject("lib/part2.dart", "part of libName;\n" +
                                                                          "var foo2 = <caret expected='lib/part1.dart -> foo1'>foo1;");
     myFixture.openFileInEditor(psiFile.getVirtualFile());
-    doTest();
+    doTest(myFixture);
   }
 
   public void testDartInternalLibrary() throws Exception {
-    doTest("import 'dart:_internal';\n" +
-           "class A extends <caret expected='[Dart SDK]/lib/internal/list.dart -> UnmodifiableListBase'>UnmodifiableListBase<E>{}");
+    doTest(myFixture,
+           "import 'dart:_internal';\n" +
+           "class A extends <caret expected='[Dart SDK]/lib/internal/list.dart -> UnmodifiableListBase'>UnmodifiableListBase<E>{}"
+    );
   }
 
   public void testPartOfResolution() throws Exception {
     myFixture.addFileToProject("main1.dart", "library libName;\npart 'part1.dart';");
     myFixture.addFileToProject("main2.dart", "library libName;\npart 'part2.dart';");
     myFixture.configureByText("part1.dart", "part of <caret expected='main1.dart -> libName'>libName;");
-    doTest();
+    doTest(myFixture);
   }
 
   public void testDuplicatedImportPrefix() throws Exception {
     myFixture.addFileToProject("file1.dart", "var inFile1;");
     myFixture.addFileToProject("file2.dart", "var inFile2;");
-    doTest("import 'dart:core' as prefix;\n" +
+    doTest(myFixture,
+           "import 'dart:core' as prefix;\n" +
            "import 'file1.dart' as prefix;\n" +
            "import 'file2.dart' as prefix;\n" +
            "var a = prefix.int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;\n" +
@@ -554,27 +517,31 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testCoreLibImported() throws Exception {
-    doTest("var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
-    doTest("import 'dart:core'; var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
-    doTest("import 'dart:core' as prefix; var a = String<caret expected=''>;");
-    doTest("import 'dart:core' show int;\n" +
-           "var a = String<caret expected=''>, b = int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;");
-    doTest("import 'dart:core' hide int;\n" +
-           "var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>, b = int<caret expected=''>;");
-    doTest("import 'dart:core' as prefix; var a = prefix.String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
-    doTest("import 'dart:core' as prefix show int;\n" +
-           "var a = prefix.String<caret expected=''>, b = prefix.int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;");
-    doTest("import 'dart:core' deferred as prefix hide int;\n" +
-           "var a = prefix.String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>, b = prefix.int<caret expected=''>;");
+    doTest(myFixture, "var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+    doTest(myFixture, "import 'dart:core'; var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+    doTest(myFixture, "import 'dart:core' as prefix; var a = String<caret expected=''>;");
+    doTest(myFixture, "import 'dart:core' show int;\n" +
+                      "var a = String<caret expected=''>, b = int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;");
+    doTest(myFixture, "import 'dart:core' hide int;\n" +
+                      "var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>, b = int<caret expected=''>;");
+    doTest(myFixture,
+           "import 'dart:core' as prefix; var a = prefix.String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+    doTest(myFixture, "import 'dart:core' as prefix show int;\n" +
+                      "var a = prefix.String<caret expected=''>, b = prefix.int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;");
+    doTest(myFixture, "import 'dart:core' deferred as prefix hide int;\n" +
+                      "var a = prefix.String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>, b = prefix.int<caret expected=''>;"
+    );
 
     myFixture.addFileToProject("file1.dart", "var inFile1;");
-    doTest("import 'file1.dart' as prefix;\n" +
+    doTest(myFixture,
+           "import 'file1.dart' as prefix;\n" +
            "var a = prefix.String<caret expected=''>;\n" +
            "var b = prefix.inFile1<caret expected='file1.dart -> inFile1'>;\n" +
            "var c = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
 
     myFixture.addFileToProject("file2.dart", "export 'dart:core' show Object; var inFile2;");
-    doTest("import 'file2.dart' as prefix;\n" +
+    doTest(myFixture,
+           "import 'file2.dart' as prefix;\n" +
            "var a = prefix.String<caret expected=''>;\n" +
            "var b = prefix.Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;\n" +
            "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;\n" +
@@ -605,11 +572,12 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                        "  inLib3<caret expected='project3/lib/in_lib3.dart -> inLib3'>();\n" +
                                                        "}");
     myFixture.openFileInEditor(psiFile.getVirtualFile());
-    doTest();
+    doTest(myFixture);
   }
 
   public void testElvisRes() throws Exception {
-    doTest("class Bar{}\n" +
+    doTest(myFixture,
+           "class Bar{}\n" +
            "class Foo extends Bar{\n" +
            "  voor(){\n" +
            "    var i = this?.hashCode<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> hashCode'>;\n" +
