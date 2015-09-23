@@ -5,16 +5,15 @@ import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFocusManager;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.commands.BadCommandException;
 import training.editor.EduEditorProvider;
@@ -33,7 +32,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -50,6 +48,7 @@ import java.util.concurrent.ExecutionException;
 )
 public class CourseManager implements PersistentStateComponent<CourseManager.State> {
 
+    final public static String EDU_PROJ_NAME = "EduProject";
 
     CourseManager(){
         if(myState.courses == null || myState.courses.size() == 0) try {
@@ -132,44 +131,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
             if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
 
-            //If lesson from some course
-            if(lesson.getCourse() == null) return;
+            //If lesson doesn't have parent course
+            if(lesson.getCourse() == null) throw new BadLessonException("Unable to open lesson without specified course");
+
             VirtualFile vf = null;
-            //If virtual file for this course exists;
-            if (mapCourseVirtualFile.containsKey(lesson.getCourse()))
-                vf = mapCourseVirtualFile.get(lesson.getCourse());
-            if (vf == null || !vf.isValid()) {
-                //while course info is not stored
-                final String courseName = lesson.getCourse().getName();
-
-                //find file if it is existed
-                vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), courseName, ScratchFileService.Option.existing_only);
-                if (vf != null) {
-                    FileEditorManager.getInstance(project).closeFile(vf);
-                    ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
-                }
-
-
-                if (vf == null || !vf.isValid()) {
-                    vf = ScratchRootType.getInstance().createScratchFile(project, courseName, Language.findLanguageByID("JAVA"), "");
-                    final VirtualFile finalVf = vf;
-                    if (!vf.getName().equals(courseName)) {
-                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    finalVf.rename(project, courseName);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    }
-                }
-                registerVirtualFile(lesson.getCourse(), vf);
-
-
-            }
+            if (lesson.getCourse().courseType == Course.CourseType.SCRATCH)
+                vf = getScratchFile(project, lesson);
+            else
+                vf = getVirtualFileOrStartProject(project, lesson);
 
             //open next lesson if current is passed
             lesson.addLessonListener(new LessonListenerAdapter(){
@@ -226,6 +195,60 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         } catch (BadCommandException e) {
             e.printStackTrace();
         }
+    }
+
+    private VirtualFile getVirtualFileOrStartProject(Project project, Lesson lesson) {
+        Project eduProject;
+
+        //if project is open
+        final Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        for (Project openProject : openProjects) {
+            final String name = openProject.getName();
+            if (name.equals(EDU_PROJ_NAME)) {
+                eduProject = openProject;
+            }
+        }
+
+    }
+
+    @NotNull
+    private VirtualFile getScratchFile(final Project project, @Nullable Lesson lesson) throws IOException {
+        VirtualFile vf = null;
+        assert lesson != null;
+        assert lesson.getCourse() != null;
+        if (mapCourseVirtualFile.containsKey(lesson.getCourse()))
+            vf = mapCourseVirtualFile.get(lesson.getCourse());
+        if (vf == null || !vf.isValid()) {
+            //while course info is not stored
+            final String courseName = lesson.getCourse().getName();
+
+            //find file if it is existed
+            vf = ScratchFileService.getInstance().findFile(ScratchRootType.getInstance(), courseName, ScratchFileService.Option.existing_only);
+            if (vf != null) {
+                FileEditorManager.getInstance(project).closeFile(vf);
+                ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
+            }
+
+
+            if (vf == null || !vf.isValid()) {
+                vf = ScratchRootType.getInstance().createScratchFile(project, courseName, Language.findLanguageByID("JAVA"), "");
+                final VirtualFile finalVf = vf;
+                if (!vf.getName().equals(courseName)) {
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                finalVf.rename(project, courseName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+            registerVirtualFile(lesson.getCourse(), vf);
+        }
+        return vf;
     }
 
     @Nullable

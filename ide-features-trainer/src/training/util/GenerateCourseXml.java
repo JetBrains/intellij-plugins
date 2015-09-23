@@ -26,7 +26,7 @@ public class GenerateCourseXml {
     public final static String COURSE_LESSON_ELEMENT = "lesson";
     public final static String COURSE_ANSWER_PATH_ATTR = "answerPath";
     public final static String COURSE_SDK_TYPE = "sdkType";
-
+    public final static String COURSE_FILE_TYPE = "fileType";
 
     public final static String COURSE_LESSONS_PATH_ATTR = "lessonsPath";
     public final static String COURSE_LESSON_FILENAME_ATTR = "filename";
