@@ -67,20 +67,23 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
                                                               String restrict,
                                                               String selectorName) {
     if (restrict != null && !StringUtil.isEmpty(selectorName)) {
-      if (outData == null) outData = new JSElementIndexingDataImpl();
-
-      JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(selectorName, decorator)
-        .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
-      elementBuilder.setUserString("adi");
-      outData.addImplicitElement(elementBuilder.toImplicitElement());
-
       final int start = selectorName.indexOf('[');
       final int end = selectorName.indexOf(']');
-      if (start == 0 && end > 0) {
-        elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
-          .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
-        elementBuilder.setUserString("adi");
-        outData.addImplicitElement(elementBuilder.toImplicitElement());
+      if (start == 0 && end > 0 || start < 0 && end < 0) {
+        if (outData == null) outData = new JSElementIndexingDataImpl();
+        JSImplicitElementImpl.Builder elementBuilder;
+        for (String attr : StringUtil.split(selectorName, "]", false)) {
+          elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
+            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
+          elementBuilder.setUserString("adi");
+          outData.addImplicitElement(elementBuilder.toImplicitElement());
+        }
+        if (end > 0) {
+          elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
+            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
+          elementBuilder.setUserString("adi");
+          outData.addImplicitElement(elementBuilder.toImplicitElement());
+        }
       }
     }
     return outData;
