@@ -23,15 +23,15 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
   }
 
   @Override
-  @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
+  @NotNull
+  public List<DartComponentName> getComponentNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartComponentName.class);
   }
 
   @Override
-  @NotNull
-  public List<DartExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  @Nullable
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
   }
 
   @Override
@@ -56,6 +56,11 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
+  }
+
+  @Nullable
+  public DartComponentName getComponentName() {
+    return DartPsiImplUtil.getComponentName(this);
   }
 
 }

@@ -262,7 +262,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitLibraryNameElement(@NotNull DartLibraryNameElement o) {
-    visitPsiNameIdentifierOwner(o);
+    visitPsiCompositeElement(o);
   }
 
   public void visitLibraryReferenceList(@NotNull DartLibraryReferenceList o) {
@@ -583,10 +583,6 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitUriBasedDirective(@NotNull DartUriBasedDirective o) {
     visitPsiCompositeElement(o);
-  }
-
-  public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
-    visitElement(o);
   }
 
   public void visitPsiCompositeElement(@NotNull DartPsiCompositeElement o) {

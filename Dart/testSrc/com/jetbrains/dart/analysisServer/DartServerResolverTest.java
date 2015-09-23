@@ -29,14 +29,8 @@ abstract public class DartServerResolverTest extends CodeInsightFixtureTestCase 
   public void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    //DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
-    //myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
-
-  //protected String getBasePath() {
-  //  return "/analysisServer/resolver";
-  //}
 
   public static void doTest(@NotNull final CodeInsightTestFixture fixture, @NotNull final String text) {
     PsiFile file = fixture.getFile();
@@ -415,9 +409,10 @@ abstract public class DartServerResolverTest extends CodeInsightFixtureTestCase 
   }
 
   public void testPartOfResolution() throws Exception {
-    myFixture.addFileToProject("main1.dart", "library libName;\npart 'part1.dart';");
-    myFixture.addFileToProject("main2.dart", "library libName;\npart 'part2.dart';");
-    final PsiFile file = myFixture.addFileToProject("part1.dart", "part of <caret expected='main1.dart -> libName'>libName;");
+    myFixture.addFileToProject("main1.dart", "library lib.name;\npart 'part1.dart';");
+    myFixture.addFileToProject("main2.dart", "library lib.name;\npart 'part2.dart';");
+    final PsiFile file = myFixture.addFileToProject("part1.dart",
+                                                    "  part of <caret expected='main1.dart -> lib.name'>lib.name<caret expected='main1.dart -> lib.name'> ;");
     myFixture.openFileInEditor(file.getVirtualFile());
     doTest(myFixture);
   }
@@ -506,6 +501,21 @@ abstract public class DartServerResolverTest extends CodeInsightFixtureTestCase 
            "    var b = new Bar();\n" +
            "    b?.runtimeType<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> runtimeType'>;\n" +
            "  }\n" +
+           "}");
+  }
+
+  public void testConstructors() throws Exception {
+    doTest(myFixture,
+           "var a = new <caret expected='file.dart -> Foo -> Foo'>Foo<caret expected='file.dart -> Foo -> Foo'>();\n" +
+           "var b = new <caret expected='file.dart -> Foo -> named'>Foo<caret expected='file.dart -> Foo -> named'>.<caret expected='file.dart -> Foo -> named'>named<caret expected='file.dart -> Foo -> named'>();\n" +
+           "var c = new <caret expected='file.dart -> Bar -> Bar'>Bar<caret expected='file.dart -> Bar -> Bar'>();\n" +
+           "var d = new <caret expected='file.dart -> Bar -> named'>Bar<caret expected='file.dart -> Bar -> named'>.<caret expected='file.dart -> Bar -> named'>named<caret expected='file.dart -> Bar -> named'>();\n" +
+           "class Foo {\n" +
+           "  Foo(){}\n" +
+           "  Foo.named() {}\n" +
+           "}\nclass Bar {\n" +
+           "  factory Bar() {}\n" +
+           "  factory Bar.named() {}\n" +
            "}");
   }
 }

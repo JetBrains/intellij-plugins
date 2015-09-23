@@ -243,7 +243,7 @@ Dart File
           PsiElement(;)(';')
         NAMED_CONSTRUCTOR_DECLARATION
           PsiElement(const)('const')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Redirection')
           PsiElement(.)('.')
@@ -285,7 +285,7 @@ Dart File
                 PsiElement())(')')
           PsiElement(;)(';')
         NAMED_CONSTRUCTOR_DECLARATION
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Redirection')
           PsiElement(.)('.')

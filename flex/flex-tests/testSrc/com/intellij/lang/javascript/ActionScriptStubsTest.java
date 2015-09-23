@@ -113,7 +113,7 @@ public class ActionScriptStubsTest extends JSDaemonAnalyzerTestCase {
       public void run() throws Exception {
         final IntentionAction action =
           LightQuickFixTestCase
-            .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), "Create field 'myfield'");
+            .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), "Create Field 'myfield'");
         action.invoke(myProject, myEditor, myFile);
         checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
       }

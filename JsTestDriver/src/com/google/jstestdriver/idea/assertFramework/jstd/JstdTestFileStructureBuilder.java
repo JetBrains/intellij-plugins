@@ -23,9 +23,12 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
   @Override
   public JstdTestFileStructure buildTestFileStructure(@NotNull JSFile jsFile) {
     JstdTestFileStructure jsTestFileStructure = new JstdTestFileStructure(jsFile);
-    List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(jsFile);
-    for (JSStatement statement : statements) {
-      fillJsTestFileStructure(jsTestFileStructure, statement);
+    final String text = jsFile.getText();
+    if (text.contains(TEST_CASE_NAME) || text.contains(ASYNC_TEST_CASE_NAME)) {
+      List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(jsFile);
+      for (JSStatement statement : statements) {
+        fillJsTestFileStructure(jsTestFileStructure, statement);
+      }
     }
     jsTestFileStructure.postProcess();
     return jsTestFileStructure;

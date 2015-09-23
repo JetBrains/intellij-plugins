@@ -239,7 +239,7 @@ Dart File
       PsiElement({)('{')
       CLASS_MEMBERS
         NAMED_CONSTRUCTOR_DECLARATION
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Foo')
           PsiElement(.)('.')

@@ -40,9 +40,20 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (isServerDrivenResolution()) {
       reference = replaceQualifiedReferenceWithLast(reference);
       final PsiFile refPsiFile = reference.getContainingFile();
-      final int refOffset = reference.getTextOffset();
-      final int refLength = reference.getTextLength();
-      final PluginNavigationRegion region = findRegion(refPsiFile, refOffset, refLength);
+      int refOffset = reference.getTextOffset();
+      int refLength = reference.getTextLength();
+      PluginNavigationRegion region = findRegion(refPsiFile, refOffset, refLength);
+
+      if (region == null && reference instanceof DartLibraryId) {
+        // DAS returns the whole "part of foo" as a region, but we have only "foo" as a reference
+        final PsiElement parent = reference.getParent();
+        if (parent instanceof DartPartOfStatement) {
+          refOffset = parent.getTextOffset();
+          refLength = reference.getTextOffset() + reference.getTextLength() - refOffset;
+          region = findRegion(refPsiFile, refOffset, refLength);
+        }
+      }
+
       if (region != null) {
         final Project project = reference.getProject();
         final List<PsiElement> result = new SmartList<PsiElement>();
@@ -152,17 +163,13 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     PsiFile file = findPsiFile(project, targetPath);
     if (file != null) {
       int targetOffset = target.getOffset();
-      for (int i = 0; i < 2; i++) {
-        Class<? extends PsiElement> clazz = DartComponentName.class;
-        if (i == 1) {
-          clazz = DartReferenceExpression.class;
-        }
-        PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, clazz, false);
-        if (elementAt != null) {
-          return elementAt;
-        }
-      }
+
+      PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartComponentName.class, false);
+      if (elementAt == null) elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartLibraryNameElement.class, false);
+
+      return elementAt;
     }
+
     return null;
   }
 
