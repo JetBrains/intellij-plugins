@@ -391,7 +391,7 @@ public class PhoneGapCommandLine {
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.withWorkDirectory(myWorkDir);
-    commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.SHELL : ParentEnvironmentType.NONE);
+    commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
     commandLine.withEnvironment(myEnv);
 
     Process process = commandLine.createProcess();

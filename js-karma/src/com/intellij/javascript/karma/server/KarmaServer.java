@@ -153,7 +153,8 @@ public class KarmaServer {
   private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     KarmaRunSettings runSettings = serverSettings.getRunSettings();
-    commandLine.withParentEnvironmentType(runSettings.getEnvData().isPassParentEnvs() ? ParentEnvironmentType.SHELL : ParentEnvironmentType.NONE);
+    commandLine.withParentEnvironmentType(runSettings.getEnvData().isPassParentEnvs() ? ParentEnvironmentType.CONSOLE
+                                                                                      : ParentEnvironmentType.NONE);
     commandLine.withEnvironment(runSettings.getEnvData().getEnvs());
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
