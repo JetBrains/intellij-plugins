@@ -123,7 +123,6 @@ public class DartServerData {
   }
 
   void onFileClosed(@NotNull final VirtualFile file) {
-    System.out.println("dropping data for " + file.getName());
     myHighlightData.remove(file.getPath());
     myNavigationData.remove(file.getPath());
     myOverrideData.remove(file.getPath());
