@@ -960,27 +960,27 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testUnusedParameterHasCreateFieldQuickFix() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create field 'xxx'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field 'xxx'");
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_2() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create field '_bar'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field '_bar'");
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_3() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create field 'value'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field 'value'");
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_4() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create field '_value'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field '_value'");
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_5() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create field '_bar'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field '_bar'");
   }
 
   public void testUnusedParameterHasAssignToFieldQuickFix() throws Exception {
@@ -1995,12 +1995,12 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testNoTypeGuessFromAsdoc() throws Exception {
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Create field 'aa'", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Create Field 'aa'", "as", infos);
   }
 
   public void testNoTypeGuessFromAsdoc2() throws Exception {
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Create field 'aa'", "as", infos);
+    findAndInvokeActionWithExpectedCheck("Create Field 'aa'", "as", infos);
   }
 
   public void testNoImportSuggestForTestClass() throws Exception {
@@ -2113,8 +2113,8 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testRelaxVisibilityFix() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    assertInaccessible(infos, "Create field 'v'");
-    assertInaccessible(infos, "Create constant field 'v'");
+    assertInaccessible(infos, "Create Field 'v'");
+    assertInaccessible(infos, "Create Constant Field 'v'");
     findAndInvokeActionWithExpectedCheck("Make field v internal", "as", infos);
   }
 

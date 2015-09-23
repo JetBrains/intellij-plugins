@@ -1510,7 +1510,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testIntroduceFieldAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Create field 'v'", "as", getTestName(false) + ".as", getTestName(false) + "_2.as");
+    doHighlightingWithInvokeFixAndCheckResult("Create Field 'v'", "as", getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
   public void testAddTypeToDeclarationAmbiguous() throws Exception {
@@ -2096,7 +2096,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   public void testBindingType2() throws Exception {
     final String testName = getTestName(false);
     Collection<HighlightInfo> highlightInfos = doTestFor(true, (Runnable)null, testName + ".mxml");
-    findAndInvokeIntentionAction(highlightInfos, "Create field 'label'", myEditor, myFile);
+    findAndInvokeIntentionAction(highlightInfos, "Create Field 'label'", myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
   }
 
@@ -2172,12 +2172,12 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateFieldByMxmlAttribute() throws Exception {
-    doTestQuickFixForRedMxmlAttribute("Create field 'foo'", "as");
+    doTestQuickFixForRedMxmlAttribute("Create Field 'foo'", "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateFieldByMxmlAttribute2() throws Exception {
-    doTestQuickFixForRedMxmlAttribute("Create field 'foo'", "mxml");
+    doTestQuickFixForRedMxmlAttribute("Create Field 'foo'", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})

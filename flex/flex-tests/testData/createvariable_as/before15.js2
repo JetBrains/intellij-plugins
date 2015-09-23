@@ -1,4 +1,4 @@
-// "Create constant field 'aaa'" "false"
+// "Create Constant Field 'aaa'" "false"
 class A____ {
   function A____() {
     aa<caret>a = 1;
