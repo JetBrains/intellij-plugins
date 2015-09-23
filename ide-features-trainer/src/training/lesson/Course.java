@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 @Tag("course")
 public class Course extends ActionGroup{
 
+    public enum CourseType {SCRATCH, PROJECT};
+
     private ArrayList<Lesson> lessons;
     @Nullable
     private String answersPath;
@@ -35,6 +38,7 @@ public class Course extends ActionGroup{
     private Element root = null;
     private String id;
     public String name;
+    public CourseType courseType;
     @Nullable
     private CourseSdkType mySdkType = null;
 
@@ -87,6 +91,13 @@ public class Course extends ActionGroup{
         if (root.getAttribute(GenerateCourseXml.COURSE_SDK_TYPE) != null){
             mySdkType = GenerateCourseXml.getSdkTypeFromString(root.getAttribute(GenerateCourseXml.COURSE_SDK_TYPE).getValue());
         }
+        final Attribute attributeFileType = root.getAttribute(GenerateCourseXml.COURSE_FILE_TYPE);
+        if (attributeFileType != null) {
+            if(attributeFileType.getValue().equals(CourseType.SCRATCH.toString())) courseType = CourseType.SCRATCH;
+            else if(attributeFileType.getValue().equals(CourseType.PROJECT.toString())) courseType = CourseType.PROJECT;
+            else throw new BadCourseException("Unable to recognise CourseType (should be SCRATCH or PROJECT)");
+        }
+
 
     }
 
