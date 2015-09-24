@@ -53,7 +53,7 @@ class <info textAttributesKey="DART_CLASS">Foo</info> {
   <info textAttributesKey="DART_KEYWORD">factory</info> <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">factory</info>() {}
 }
 
-/// [<info textAttributesKey="DART_CLASS">Foo1</info>] is good
+/// [<info textAttributesKey="DART_CLASS">Foo1</info>] is good []
 class <info textAttributesKey="DART_CLASS">Foo1</info> {}
 
 class <info textAttributesKey="DART_CLASS">Foo2</info><<info textAttributesKey="DART_TYPE_PARAMETER">Generic</info>> {

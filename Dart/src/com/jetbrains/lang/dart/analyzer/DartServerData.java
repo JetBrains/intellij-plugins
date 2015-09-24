@@ -38,7 +38,9 @@ public class DartServerData {
 
     final List<PluginHighlightRegion> pluginRegions = new ArrayList<PluginHighlightRegion>(regions.size());
     for (HighlightRegion region : regions) {
-      pluginRegions.add(new PluginHighlightRegion(region));
+      if (region.getLength() > 0) {
+        pluginRegions.add(new PluginHighlightRegion(region));
+      }
     }
 
     synchronized (myHighlightData) {
@@ -53,7 +55,9 @@ public class DartServerData {
 
     final List<PluginNavigationRegion> pluginRegions = new ArrayList<PluginNavigationRegion>(regions.size());
     for (NavigationRegion region : regions) {
-      pluginRegions.add(new PluginNavigationRegion(region));
+      if (region.getLength() > 0) {
+        pluginRegions.add(new PluginNavigationRegion(region));
+      }
     }
 
     synchronized (myNavigationData) {
