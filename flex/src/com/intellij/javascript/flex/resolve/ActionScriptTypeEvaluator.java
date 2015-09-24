@@ -40,7 +40,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   @Override
   protected boolean addTypeFromDialectSpecificElements(PsiElement resolveResult) {
     if (resolveResult instanceof JSPackageWrapper) {
-      JSReferenceExpression expression = myProcessedExpression;
+      JSReferenceExpression expression = myContext.getProcessedExpression();
       if (myTypeProcessor instanceof PsiScopeProcessor && expression != null) {
         if (myTypeProcessor instanceof ResolveProcessor) ((ResolveProcessor)myTypeProcessor).prefixResolved();
         resolveResult.processDeclarations((PsiScopeProcessor)myTypeProcessor, ResolveState.initial(), expression, expression);
@@ -90,7 +90,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (resolveResult instanceof JSFunction) {
       resolveResult = resolveResult.getParent();
     }
-    JSReferenceExpression expression = myProcessedExpression;
+    final JSReferenceExpression expression = myContext.getProcessedExpression();
     if (expression == null) return;
 
     PsiElement parent = expression.getParent();
