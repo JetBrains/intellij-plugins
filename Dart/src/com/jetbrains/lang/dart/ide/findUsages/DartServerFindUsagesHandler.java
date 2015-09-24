@@ -50,7 +50,10 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
           int offset = location.getOffset();
           int length = location.getLength();
           offset -= locationPsiElement.getTextOffset();
-          processor.process(new UsageInfo(locationPsiElement, offset, offset + length));
+          // todo do we want to mark usages in doc comments as nonCodeUsage?
+          final UsageInfo usageInfo = new UsageInfo(locationPsiElement, offset, offset + length);
+          usageInfo.setDynamicUsage(result.isPotential());
+          processor.process(usageInfo);
         }
       }
     };
