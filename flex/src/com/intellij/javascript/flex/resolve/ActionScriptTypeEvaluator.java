@@ -104,15 +104,15 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
-    final JSElement peek = myJSElementsToApply.peek();
-    if (peek instanceof JSCallExpression) myJSElementsToApply.pop(); // MyClass(anyVar) is cast to MyClass
+    final JSElement peek = myContext.peekJSElementToApply();
+    if (peek instanceof JSCallExpression) myContext.popJSElementToApply(); // MyClass(anyVar) is cast to MyClass
     addType(type, resolveResult);
-    if (peek instanceof JSCallExpression) myJSElementsToApply.push(peek);
+    if (peek instanceof JSCallExpression) myContext.pushJSElementToApply(peek);
   }
 
   @Override
   protected boolean useVariableType(JSType type) {
-    return myJSElementsToApply.isEmpty() && super.useVariableType(type);
+    return myContext.isJSElementsToApplyEmpty() && super.useVariableType(type);
   }
 
   @Override
@@ -172,7 +172,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   @Override
   public void addType(@Nullable final JSType _type, @Nullable PsiElement source) {
     if (_type != null &&
-        myJSElementsToApply.isEmpty() &&
+        myContext.isJSElementsToApplyEmpty() &&
         (source == null || source == EXPLICIT_TYPE_MARKER_ELEMENT)
       ) {
       // TODO [ksafonov] enforced scope (and context) should internal part of JSType.resolve()
