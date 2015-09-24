@@ -97,6 +97,7 @@ public class DartServerRootsHandler {
 
     if (sdk != null) {
       for (Project project : myTrackedProjects) {
+        @SuppressWarnings("ConstantConditions")
         final String dotIdeaPath = PathUtil.getParentPath(project.getProjectFilePath());
         if (dotIdeaPath.endsWith("/.idea")) {
           newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
