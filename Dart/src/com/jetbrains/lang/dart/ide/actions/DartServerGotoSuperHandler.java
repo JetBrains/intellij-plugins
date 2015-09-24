@@ -79,7 +79,7 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
       title = CodeInsightBundle.message("goto.super.method.chooser.title");
     }
     // open DartComponent(s)
-    final NavigatablePsiElement[] targets = DartResolveUtil.getComponentNames(supers).toArray(new NavigatablePsiElement[supers.size()]);
+    final NavigatablePsiElement[] targets = DartResolveUtil.getComponentNameArray(supers);
     PsiElementListNavigator.openTargets(editor, targets, title, null, new DefaultPsiElementCellRenderer());
   }
 

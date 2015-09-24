@@ -29,7 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -167,7 +166,7 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
         }
         superComponents.addAll(interfaceComponents);
         PsiElementListNavigator
-          .openTargets(e, DartResolveUtil.getComponentNames(superComponents).toArray(new NavigatablePsiElement[superComponents.size()]),
+          .openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
                        DaemonBundle.message("navigation.title.super.method", name),
                        DaemonBundle.message("navigation.findUsages.title.super.method", name), new DefaultPsiElementCellRenderer());
       }
