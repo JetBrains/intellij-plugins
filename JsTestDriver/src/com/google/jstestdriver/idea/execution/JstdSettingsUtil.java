@@ -25,9 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Sergey Simonchik
- */
 public class JstdSettingsUtil {
 
   private static final Key<Boolean> JSTD_CONFIG_FILES_IN_PROJECT = new Key<Boolean>("JSTD_CONFIG_FILES_IN_PROJECT");
@@ -68,14 +65,18 @@ public class JstdSettingsUtil {
     if (value != null) {
       return value;
     }
-    value = areJstdConfigFilesInProject(project);
+    value = areJstdConfigFilesInScope(GlobalSearchScope.projectScope(project));
+    if (value == null) {
+      return false;
+    }
     project.putUserData(JSTD_CONFIG_FILES_IN_PROJECT, value);
     return value;
   }
 
   public static boolean areJstdConfigFilesInProject(@NotNull Project project) {
     GlobalSearchScope projectScope = GlobalSearchScope.projectScope(project);
-    return areJstdConfigFilesInScope(projectScope);
+    Boolean found = areJstdConfigFilesInScope(projectScope);
+    return found != null ? found : false;
   }
 
   public static boolean areJstdConfigFilesInDirectory(@NotNull Project project, @NotNull VirtualFile directory) {
@@ -83,10 +84,12 @@ public class JstdSettingsUtil {
     if (directorySearchScope == null) {
       return false;
     }
-    return areJstdConfigFilesInScope(directorySearchScope);
+    Boolean found = areJstdConfigFilesInScope(directorySearchScope);
+    return found != null ? found : false;
   }
 
-  private static boolean areJstdConfigFilesInScope(GlobalSearchScope scope) {
+  @Nullable
+  private static Boolean areJstdConfigFilesInScope(GlobalSearchScope scope) {
     final Ref<Boolean> jstdConfigFound = Ref.create(false);
     try {
       FileBasedIndex.getInstance().processValues(
@@ -107,7 +110,7 @@ public class JstdSettingsUtil {
       );
     }
     catch (IndexNotReadyException e) {
-      return false;
+      return null;
     }
     return jstdConfigFound.get();
   }
