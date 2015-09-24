@@ -18,10 +18,15 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.PsiSearchScopeUtil;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -38,27 +43,42 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   }
 
   @Override
-  public boolean processElementUsages(@NotNull final PsiElement element,
+  public boolean processElementUsages(@NotNull final PsiElement elementToSearch,
                                       @NotNull final Processor<UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
       @Override
       public void consumeInReadAction(SearchResult result) {
+        final SearchScope scope = options.searchScope;
+
         final Location location = result.getLocation();
-        final PsiElement locationPsiElement = findPsiElement(element, location);
-        if (locationPsiElement != null) {
-          int offset = location.getOffset();
-          int length = location.getLength();
-          offset -= locationPsiElement.getTextOffset();
-          // todo do we want to mark usages in doc comments as nonCodeUsage?
-          final UsageInfo usageInfo = new UsageInfo(locationPsiElement, offset, offset + length);
-          usageInfo.setDynamicUsage(result.isPotential());
-          processor.process(usageInfo);
-        }
+        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(location.getFile()));
+        if (vFile == null) return;
+
+        if (scope instanceof LocalSearchScope && !((LocalSearchScope)scope).isInScope(vFile)) return;
+        if (scope instanceof GlobalSearchScope && !((GlobalSearchScope)scope).contains(vFile)) return;
+
+        final PsiFile psiFile = elementToSearch.getManager().findFile(vFile);
+        if (psiFile == null) return;
+
+        final PsiElement usageElement = getUsagePsiElement(psiFile, TextRange.create(location.getOffset(), location.getOffset() + location
+          .getLength()));
+        if (usageElement == null) return;
+
+        if (scope instanceof LocalSearchScope && !PsiSearchScopeUtil.isInScope((LocalSearchScope)scope, usageElement)) return;
+
+        int offset = location.getOffset();
+        int length = location.getLength();
+        offset -= usageElement.getTextOffset();
+        // todo do we want to mark usages in doc comments as nonCodeUsage?
+        final UsageInfo usageInfo = new UsageInfo(usageElement, offset, offset + length);
+        usageInfo.setDynamicUsage(result.isPotential());
+        processor.process(usageInfo);
       }
     };
+
     // Send the search request and wait for results.
-    final DartElementLocation elementLocation = DartElementLocation.of(element);
+    final DartElementLocation elementLocation = DartElementLocation.of(elementToSearch);
     DartAnalysisServerService.getInstance()
       .search_findElementReferences(elementLocation.file, elementLocation.offset, searchResultProcessor);
     // OK
@@ -66,57 +86,44 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   }
 
   @Nullable
-  private static PsiElement findPsiElement(@NotNull final PsiElement context, @NotNull final Location location) {
-    final String locationFilePath = location.getFile();
-    final PsiFile psiFile = findPsiFile(context, locationFilePath);
-    if (psiFile != null) {
-      final TextRange locationRange = TextRange.create(location.getOffset(), location.getOffset() + location.getLength());
-      final int offset = location.getOffset();
-      PsiElement element = psiFile.findElementAt(offset);
-      if (element == null) return null;
+  private static PsiElement getUsagePsiElement(@NotNull final PsiFile psiFile, @NotNull final TextRange textRange) {
+    // try to find Dartreference matching textRange. If not possible then return the topmost element matching textRange.
+    // If neither found then return minimal element that includes the textRange.
+    PsiElement element = psiFile.findElementAt(textRange.getStartOffset());
+    if (element == null) return null;
 
-      boolean rangeOk = element.getTextRange().contains(locationRange);
-      if (rangeOk && element instanceof DartReference) return element;
+    boolean rangeOk = element.getTextRange().contains(textRange);
+    if (rangeOk && element instanceof DartReference) return element;
 
-      TextRange previousRange = element.getTextRange();
-      PsiElement parent;
-      while ((parent = element.getParent()) != null) {
-        final TextRange parentRange = parent.getTextRange();
-        if (rangeOk) {
-          if (!parentRange.equals(previousRange)) {
-            return element; // range became bigger, return previous that matched better
-          }
+    TextRange previousRange = element.getTextRange();
+    PsiElement parent;
+    while ((parent = element.getParent()) != null) {
+      final TextRange parentRange = parent.getTextRange();
+      if (rangeOk) {
+        if (!parentRange.equals(previousRange)) {
+          return element; // range became bigger, return previous that matched better
+        }
 
-          if (parent instanceof DartReference) {
-            return parent;
-          }
-          else {
-            previousRange = parentRange;
-            element = parent;
-          }
+        if (parent instanceof DartReference) {
+          return parent;
         }
         else {
-          rangeOk = parent.getTextRange().contains(locationRange);
-          if (rangeOk && parent instanceof DartReference) {
-            return parent;
-          }
-          else {
-            previousRange = parentRange;
-            element = parent;
-          }
+          previousRange = parentRange;
+          element = parent;
+        }
+      }
+      else {
+        rangeOk = parent.getTextRange().contains(textRange);
+        if (rangeOk && parent instanceof DartReference) {
+          return parent;
+        }
+        else {
+          previousRange = parentRange;
+          element = parent;
         }
       }
     }
 
-    return null;
-  }
-
-  @Nullable
-  private static PsiFile findPsiFile(@NotNull PsiElement element, @NotNull String path) {
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
-    if (virtualFile != null) {
-      return element.getManager().findFile(virtualFile);
-    }
     return null;
   }
 }
