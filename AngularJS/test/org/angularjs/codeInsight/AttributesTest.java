@@ -339,7 +339,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     }
   }
 
-  public void testForCompletion2() throws Exception {
+  public void testForCompletion2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
       @Override
       public void run() throws Exception {
@@ -352,7 +352,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testForOfResolve2() throws Exception {
+  public void testForOfResolve2Typescript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
       @Override
       public void run() throws Exception {
@@ -364,6 +364,39 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         assertNotNull(resolve);
         assertEquals("angular2.js", resolve.getContainingFile().getName());
         assertEquals("Directive({selector: '[ng-for][ng-for-of]', properties: ['ngForOf'], lifecycle: [onCheck]})", getDirectiveDefinitionText(resolve));
+      }
+    });
+  }
+
+  public void testForCompletion2Javascript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("for2.html", "angular2_compiled.js");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>", myFixture.getFile());
+        myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+        myFixture.completeBasic();
+        assertContainsElements(myFixture.getLookupElementStrings(), "[ng-for]", "[ng-for-of]");
+      }
+    });
+  }
+
+  public void testForOfResolve2Javascript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("for2.html", "angular2_compiled.js");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("angular2_compiled.js", resolve.getContainingFile().getName());
+        assertEquals("Directive({\n" +
+                     "        selector: '[ng-for][ng-for-of]',\n" +
+                     "        properties: ['ngForOf'],\n" +
+                     "        lifecycle: [onCheck]\n" +
+                     "      })", getDirectiveDefinitionText(resolve));
       }
     });
   }

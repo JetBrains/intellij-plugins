@@ -26,29 +26,26 @@ import org.jetbrains.annotations.Nullable;
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
-    if (callExpression instanceof JSNewExpression) {
-      final JSExpression expression = callExpression.getMethodExpression();
-      if (expression instanceof JSReferenceExpression) {
-        final String name = ((JSReferenceExpression)expression).getReferenceName();
-        final String restrictions = computeRestrictions(name);
-        addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, restrictions, getSelectorName(callExpression));
-      }
+    final JSExpression expression = callExpression.getMethodExpression();
+    if (expression instanceof JSReferenceExpression) {
+      final String name = ((JSReferenceExpression)expression).getReferenceName();
+      final String restrictions = computeRestrictions(name);
+      addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, restrictions, getSelectorName(callExpression));
     }
   }
 
   @Override
   public boolean shouldCreateStubForCallExpression(ASTNode node) {
-    final ASTNode first = node.getFirstChildNode();
-    if (first.getElementType() == JSTokenTypes.NEW_KEYWORD) {
-      final ASTNode ref = TreeUtil.findSibling(first, JSElementTypes.REFERENCE_EXPRESSION);
-      if (ref != null){
-        final ASTNode name = ref.getLastChildNode();
-        if (name.getElementType() == JSTokenTypes.IDENTIFIER) {
-          final String referencedName = name.getText();
-          return computeRestrictions(referencedName) != null;
-        }
+    ASTNode ref = node.getFirstChildNode();
+    if (ref.getElementType() == JSTokenTypes.NEW_KEYWORD) {
+      ref = TreeUtil.findSibling(ref, JSElementTypes.REFERENCE_EXPRESSION);
+    }
+    if (ref != null){
+      final ASTNode name = ref.getLastChildNode();
+      if (name.getElementType() == JSTokenTypes.IDENTIFIER) {
+        final String referencedName = name.getText();
+        return computeRestrictions(referencedName) != null;
       }
-
     }
     return false;
   }
