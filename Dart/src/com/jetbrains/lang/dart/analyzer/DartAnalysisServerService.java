@@ -756,7 +756,7 @@ public class DartAnalysisServerService {
         }
         // wait for more results
         try {
-          mySearchResultSets.wait();
+          mySearchResultSets.wait(CHECK_CANCELLED_PERIOD);
         }
         catch (InterruptedException e) {
           return;
