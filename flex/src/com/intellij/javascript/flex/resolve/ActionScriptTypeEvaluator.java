@@ -32,8 +32,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.VECTOR_CLASS_NA
 public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   private static final String REPEATER_CLASS_FQN = "mx.core.Repeater";
 
-  public ActionScriptTypeEvaluator(BaseJSSymbolProcessor.EvaluateContext context,
-                                      BaseJSSymbolProcessor.TypeProcessor processor, boolean ecma) {
+  public ActionScriptTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor, boolean ecma) {
     super(context, processor, ecma);
   }
 

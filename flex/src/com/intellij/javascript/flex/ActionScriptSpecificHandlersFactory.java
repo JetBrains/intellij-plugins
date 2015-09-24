@@ -24,9 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
   @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(BaseJSSymbolProcessor.EvaluateContext context,
-                                             BaseJSSymbolProcessor.TypeProcessor processor,
-                                             boolean ecma) {
+  public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor, boolean ecma) {
     return new ActionScriptTypeEvaluator(context, processor, ecma);
   }
 
