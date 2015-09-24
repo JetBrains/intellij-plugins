@@ -160,7 +160,11 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
     String text = myDocument.getText();
     final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
-    final String html = new HtmlGenerator(text, parsedTree, MarkdownParserManager.FLAVOUR, LinkMap.Builder.buildLinkMap(parsedTree, text))
+    final String html = new HtmlGenerator(text,
+                                          parsedTree,
+                                          MarkdownParserManager.FLAVOUR,
+                                          LinkMap.Builder.buildLinkMap(parsedTree, text),
+                                          true)
       .generateHtml();
 
     myPanel.setHtml("<html><head></head>" + html + "</html>");
