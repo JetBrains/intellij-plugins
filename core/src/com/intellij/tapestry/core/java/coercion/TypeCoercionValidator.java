@@ -1,6 +1,7 @@
 package com.intellij.tapestry.core.java.coercion;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.AssignableToAll;
 import com.intellij.tapestry.core.java.IJavaType;
@@ -43,7 +44,11 @@ public class TypeCoercionValidator {
         try {
             if (!_chain.execute(context))
                 return false;
-        } catch (Exception ex) {
+        }
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
+        catch (Exception ex) {
             _logger.error(ex);
             return false;
         }
