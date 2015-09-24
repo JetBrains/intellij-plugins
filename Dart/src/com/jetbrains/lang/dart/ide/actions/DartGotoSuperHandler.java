@@ -65,7 +65,7 @@ public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
     else if (!supers.isEmpty() && component instanceof DartClass) {
       PsiElementListNavigator.openTargets(
         editor,
-        DartResolveUtil.getComponentNames(supers).toArray(new NavigatablePsiElement[supers.size()]),
+        DartResolveUtil.getComponentNameArray(supers),
         DaemonBundle.message("navigation.title.subclass", component.getName(), supers.size()),
         "Subclasses of " + component.getName(),
         new DefaultPsiElementCellRenderer()
@@ -87,8 +87,7 @@ public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
       }
     });
     if (!filteredSuperItems.isEmpty()) {
-      final NavigatablePsiElement[] targets =
-        DartResolveUtil.getComponentNames(filteredSuperItems).toArray(new NavigatablePsiElement[filteredSuperItems.size()]);
+      final NavigatablePsiElement[] targets = DartResolveUtil.getComponentNameArray(filteredSuperItems);
       PsiElementListNavigator.openTargets(editor,
                                           targets,
                                           DaemonBundle.message("navigation.title.super.method", methodName),

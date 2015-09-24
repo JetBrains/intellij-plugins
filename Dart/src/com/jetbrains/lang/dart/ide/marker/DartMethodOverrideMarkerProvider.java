@@ -10,7 +10,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -95,7 +94,7 @@ public class DartMethodOverrideMarkerProvider implements LineMarkerProvider {
         public void navigate(MouseEvent e, PsiElement elt) {
           PsiElementListNavigator.openTargets(
             e,
-            DartResolveUtil.getComponentNames(filteredSuperItems).toArray(new NavigatablePsiElement[filteredSuperItems.size()]),
+            DartResolveUtil.getComponentNameArray(filteredSuperItems),
             DaemonBundle.message("navigation.title.super.method", methodDeclaration.getName()),
             DaemonBundle.message("navigation.findUsages.title.super.method", methodDeclaration.getName()),
             new DefaultPsiElementCellRenderer());

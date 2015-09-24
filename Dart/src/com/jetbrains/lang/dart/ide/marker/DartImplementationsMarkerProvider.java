@@ -84,7 +84,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
         @Override
         public void navigate(MouseEvent e, PsiElement elt) {
           PsiElementListNavigator.openTargets(
-            e, DartResolveUtil.getComponentNames(subClasses).toArray(new NavigatablePsiElement[subClasses.size()]),
+            e, DartResolveUtil.getComponentNameArray(subClasses),
             DaemonBundle.message("navigation.title.subclass", dartClass.getName(), subClasses.size()),
             "Superclasses of " + dartClass.getName(),
             new DefaultPsiElementCellRenderer()

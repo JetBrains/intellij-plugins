@@ -659,6 +659,11 @@ public class DartResolveUtil {
     }), Condition.NOT_NULL);
   }
 
+  public static DartComponentName[] getComponentNameArray(List<? extends DartComponent> components) {
+    final List<DartComponentName> names = DartResolveUtil.getComponentNames(components);
+    return names.toArray(new DartComponentName[names.size()]);
+  }
+
   @NotNull
   public static List<DartComponent> getNamedSubComponents(DartClass dartClass) {
     if (dartClass.isEnum()) {
