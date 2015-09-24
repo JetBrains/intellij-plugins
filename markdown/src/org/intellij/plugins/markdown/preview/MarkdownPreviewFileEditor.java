@@ -3,11 +3,13 @@ package org.intellij.plugins.markdown.preview;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
@@ -49,19 +51,30 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       }
     };
 
+  @Nullable
+  private Runnable myLastScrollRequest = null;
+
+  private int myLastScrollOffset;
+
   public MarkdownPreviewFileEditor(@NotNull  Project project, @NotNull VirtualFile file) {
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
     if (myDocument != null) {
       myDocument.addDocumentListener(new DocumentAdapter() {
+
         @Override
-        public void documentChanged(DocumentEvent e) {
+        public void beforeDocumentChange(DocumentEvent e) {
           myAlarm.cancelAllRequests();
+        }
+
+        @Override
+        public void documentChanged(final DocumentEvent e) {
           myAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
-              updateHtml();
+              //myLastScrollOffset = e.getOffset();
+              updateHtml(true);
             }
           }, PARSING_CALL_TIMEOUT_MS);
         }
@@ -74,6 +87,21 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
     settingsConnection.subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, mySettingsChangedListener);
     mySettingsChangedListener.onSettingsChange(MarkdownApplicationSettings.getInstance());
+  }
+
+  public void scrollToSrcOffset(final int offset) {
+
+    if (myLastScrollRequest != null) {
+      myAlarm.cancelRequest(myLastScrollRequest);
+    }
+    myLastScrollRequest = new Runnable() {
+      @Override
+      public void run() {
+        myLastScrollOffset = offset;
+        myPanel.scrollToSrcOffset(myLastScrollOffset);
+      }
+    };
+    myAlarm.addRequest(myLastScrollRequest, PARSING_CALL_TIMEOUT_MS);
   }
 
   @NotNull
@@ -116,16 +144,16 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   @Override
   public void selectNotify() {
-    updateHtml();
     myAlarm.cancelAllRequests();
     myAlarm.addRequest(new Runnable() {
       @Override
       public void run() {
+        updateHtml(true);
       }
     }, 0);
   }
 
-  private void updateHtml() {
+  private void updateHtml(boolean preserveScrollOffset) {
     if (!myFile.isValid() || myDocument == null) {
       return;
     }
@@ -136,6 +164,10 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       .generateHtml();
 
     myPanel.setHtml("<html><head></head>" + html + "</html>");
+
+    if (preserveScrollOffset) {
+      myPanel.scrollToSrcOffset(myLastScrollOffset);
+    }
   }
 
   private void updatePanelCssSettings(@NotNull MarkdownCssSettings cssSettings) {

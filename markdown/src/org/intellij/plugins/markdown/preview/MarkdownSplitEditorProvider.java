@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.preview;
 
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorProvider;
 import org.intellij.plugins.markdown.preview.split.SplitFileEditor;
 import org.intellij.plugins.markdown.preview.split.SplitTextEditorProvider;
@@ -13,14 +14,10 @@ public class MarkdownSplitEditorProvider extends SplitTextEditorProvider {
 
   @Override
   protected FileEditor createSplitEditor(@NotNull final FileEditor firstEditor, @NotNull FileEditor secondEditor) {
-    return new SplitFileEditor(firstEditor, secondEditor) {
-      @NotNull
-      @Override
-      public String getName() {
-        return "Markdown split editor";
-      }
-
-    };
+    if (!(firstEditor instanceof TextEditor) || !(secondEditor instanceof MarkdownPreviewFileEditor)) {
+      throw new IllegalArgumentException("Main editor should be TextEditor");
+    }
+    return new MarkdownSplitEditor(((TextEditor)firstEditor), ((MarkdownPreviewFileEditor)secondEditor));
   }
 
 }
