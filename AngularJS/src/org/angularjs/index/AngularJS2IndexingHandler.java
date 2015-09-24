@@ -42,7 +42,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     }
     if (ref != null){
       final ASTNode name = ref.getLastChildNode();
-      if (name.getElementType() == JSTokenTypes.IDENTIFIER) {
+      if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
         return computeRestrictions(referencedName) != null;
       }
