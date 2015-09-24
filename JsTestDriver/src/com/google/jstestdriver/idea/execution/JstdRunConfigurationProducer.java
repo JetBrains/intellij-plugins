@@ -89,15 +89,13 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
   protected boolean setupConfigurationFromContext(JstdRunConfiguration configuration,
                                                   ConfigurationContext context,
                                                   Ref<PsiElement> sourceElement) {
+    Project project = configuration.getProject();
+    if (project == null || !JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
+      return false;
+    }
     RunConfiguration original = context.getOriginalConfiguration(null);
     if (original != null && !ConfigurationTypeUtil.equals(original.getType(), JstdConfigurationType.getInstance())) {
       return false;
-    }
-    Project project = configuration.getProject();
-    if (project != null) {
-      if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
-        return false;
-      }
     }
     long startTimeNano = System.nanoTime();
     @SuppressWarnings({"unchecked"})
@@ -125,6 +123,10 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
 
   @Override
   public boolean isConfigurationFromContext(JstdRunConfiguration configuration, ConfigurationContext context) {
+    Project project = configuration.getProject();
+    if (project == null || !JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
+      return false;
+    }
     JstdRunSettings patternRunSettings = buildRunSettingsContext(context.getLocation());
     if (patternRunSettings == null) {
       return false;
