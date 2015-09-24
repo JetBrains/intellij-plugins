@@ -46,7 +46,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   public static final Condition<Sdk> IS_PURE_RBENV_SDK = new Condition<Sdk>() {
     @Override
     public boolean value(Sdk sdk) {
-      return RbenvGemsetManager.getInstance().getRbenvGemset(sdk) == null;
+      return !RbenvGemsetManager.getInstance().isGemsetSdk(sdk);
     }
   };
 
