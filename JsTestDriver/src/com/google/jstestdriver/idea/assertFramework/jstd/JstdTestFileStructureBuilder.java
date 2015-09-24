@@ -23,8 +23,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
   @Override
   public JstdTestFileStructure buildTestFileStructure(@NotNull JSFile jsFile) {
     JstdTestFileStructure jsTestFileStructure = new JstdTestFileStructure(jsFile);
-    final String text = jsFile.getText();
-    if (text.contains(TEST_CASE_NAME) || text.contains(ASYNC_TEST_CASE_NAME)) {
+    if (JsPsiUtils.containsText(jsFile, TEST_CASE_NAME)) {
       List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(jsFile);
       for (JSStatement statement : statements) {
         fillJsTestFileStructure(jsTestFileStructure, statement);
@@ -55,7 +54,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
             if (jsDefinitionExpression != null) {
               JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
               if (jsReferenceExpression != null) {
-                String refName = jsReferenceExpression.getReferencedName();
+                String refName = jsReferenceExpression.getReferenceName();
                 if (refName != null) {
                   addPrototypeTests(testCaseStructure, refName, jsExpressionStatement);
                 }
@@ -99,10 +98,10 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
             if (wholeLeftRefExpr != null) {
               JSReferenceExpression testCaseAndPrototypeRefExpr = ObjectUtils.tryCast(wholeLeftRefExpr.getQualifier(), JSReferenceExpression.class);
               if (testCaseAndPrototypeRefExpr != null) {
-                if ("prototype".equals(testCaseAndPrototypeRefExpr.getReferencedName())) {
+                if ("prototype".equals(testCaseAndPrototypeRefExpr.getReferenceName())) {
                   JSReferenceExpression testCaseRefExpr = ObjectUtils.tryCast(testCaseAndPrototypeRefExpr.getQualifier(), JSReferenceExpression.class);
                   if (testCaseRefExpr != null && testCaseRefExpr.getQualifier() == null) {
-                    if (referenceName.equals(testCaseRefExpr.getReferencedName())) {
+                    if (referenceName.equals(testCaseRefExpr.getReferenceName())) {
                       addPrototypeTest(testCaseStructure, assignmentExpr.getROperand(), wholeLeftDefExpr);
                     }
                   }
@@ -139,7 +138,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
                                                                @NotNull JSCallExpression testCaseCallExpression) {
     JSReferenceExpression referenceExpression = ObjectUtils.tryCast(testCaseCallExpression.getMethodExpression(), JSReferenceExpression.class);
     if (referenceExpression != null) {
-      String referenceName = referenceExpression.getReferencedName();
+      String referenceName = referenceExpression.getReferenceName();
       if (TEST_CASE_NAME.equals(referenceName) || ASYNC_TEST_CASE_NAME.equals(referenceName)) {
         JSExpression[] arguments = JsPsiUtils.getArguments(testCaseCallExpression);
         if (arguments.length >= 1) {
