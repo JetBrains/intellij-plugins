@@ -8,14 +8,20 @@ import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.JavaSdkVersion;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.commands.BadCommandException;
+import training.editor.EduEditor;
 import training.editor.EduEditorProvider;
 import training.lesson.dialogs.SdkProblemDialog;
 import training.lesson.exceptons.BadCourseException;
@@ -24,7 +30,6 @@ import training.lesson.exceptons.InvalidSdkException;
 import training.lesson.exceptons.OldJdkException;
 import training.util.GenerateCourseXml;
 import training.util.MyClassLoader;
-import training.editor.EduEditor;
 
 import java.awt.*;
 import java.io.IOException;
@@ -39,8 +44,8 @@ import java.util.concurrent.ExecutionException;
  * Created by karashevich on 11/03/15.
  */
 @State(
-        name="TrainingPluginCourses",
-        storages={
+        name = "TrainingPluginCourses",
+        storages = {
                 @Storage(
                         file = StoragePathMacros.APP_CONFIG + "/trainingPlugin.xml"
                 )
@@ -48,10 +53,12 @@ import java.util.concurrent.ExecutionException;
 )
 public class CourseManager implements PersistentStateComponent<CourseManager.State> {
 
-    final public static String EDU_PROJ_NAME = "EduProject";
+    private Project eduProject;
 
-    CourseManager(){
-        if(myState.courses == null || myState.courses.size() == 0) try {
+    final public static String EDU_PROJECT_NAME = "EduProject";
+
+    CourseManager() {
+        if (myState.courses == null || myState.courses.size() == 0) try {
             initCourses();
         } catch (JDOMException e) {
             e.printStackTrace();
@@ -71,14 +78,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private State myState = new State();
 
 
-    public static CourseManager getInstance(){
+    public static CourseManager getInstance() {
         return ServiceManager.getService(CourseManager.class);
     }
 
     public void initCourses() throws JDOMException, IOException, URISyntaxException, BadCourseException, BadLessonException {
         Element coursesRoot = Course.getRootFromPath(GenerateCourseXml.COURSE_ALLCOURSE_FILENAME);
         for (Element element : coursesRoot.getChildren()) {
-            if(element.getName().equals(GenerateCourseXml.COURSE_TYPE_ATTR)) {
+            if (element.getName().equals(GenerateCourseXml.COURSE_TYPE_ATTR)) {
                 String courseFilename = element.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
                 final Course course = Course.initCourse(courseFilename);
                 addCourse(course);
@@ -88,42 +95,40 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
 
     @Nullable
-    public Course getCourseById(String id){
+    public Course getCourseById(String id) {
         final Course[] courses = getCourses();
-        if(courses == null || courses.length == 0) return null;
+        if (courses == null || courses.length == 0) return null;
 
-        for(Course course: courses){
-            if(course.getId().toUpperCase().equals(id.toUpperCase())) return course;
+        for (Course course : courses) {
+            if (course.getId().toUpperCase().equals(id.toUpperCase())) return course;
         }
         return null;
     }
 
-    public void registerVirtualFile(Course course, VirtualFile virtualFile){
+    public void registerVirtualFile(Course course, VirtualFile virtualFile) {
         mapCourseVirtualFile.put(course, virtualFile);
     }
 
-    public boolean isVirtualFileRegistered(VirtualFile virtualFile){
+    public boolean isVirtualFileRegistered(VirtualFile virtualFile) {
         return mapCourseVirtualFile.containsValue(virtualFile);
     }
 
-    public void unregisterVirtaulFile(VirtualFile virtualFile){
-        if(!mapCourseVirtualFile.containsValue(virtualFile)) return;
+    public void unregisterVirtaulFile(VirtualFile virtualFile) {
+        if (!mapCourseVirtualFile.containsValue(virtualFile)) return;
         for (Course course : mapCourseVirtualFile.keySet()) {
-            if(mapCourseVirtualFile.get(course).equals(virtualFile)) {
+            if (mapCourseVirtualFile.get(course).equals(virtualFile)) {
                 mapCourseVirtualFile.remove(course);
                 return;
             }
         }
     }
 
-    public void unregisterCourse(Course course){
+    public void unregisterCourse(Course course) {
         mapCourseVirtualFile.remove(course);
     }
 
 
-
-
-    public synchronized void openLesson(final Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
+    public synchronized void openLesson(Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         try {
             assert lesson != null;
@@ -132,30 +137,46 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
 
             //If lesson doesn't have parent course
-            if(lesson.getCourse() == null) throw new BadLessonException("Unable to open lesson without specified course");
-
-            VirtualFile vf = null;
-            if (lesson.getCourse().courseType == Course.CourseType.SCRATCH)
-                vf = getScratchFile(project, lesson);
-            else
-                vf = getVirtualFileOrStartProject(project, lesson);
+            if (lesson.getCourse() == null)
+                throw new BadLessonException("Unable to open lesson without specified course");
+            final Project myProject = project;
+            final VirtualFile vf = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+                @Override
+                public VirtualFile compute() {
+                    try {
+                        if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+                            return getScratchFile(myProject, lesson);
+                        } else {
+                            initEduProject(myProject, lesson);
+                            return getFileInEduProject(lesson);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+            });
+            if (lesson.getCourse().courseType != Course.CourseType.SCRATCH) project = eduProject;
+            assert vf != null;
 
             //open next lesson if current is passed
-            lesson.addLessonListener(new LessonListenerAdapter(){
+            final Project currentProject = project;
+            lesson.addLessonListener(new LessonListenerAdapter() {
                 @Override
                 public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
                     if (lesson.getCourse() == null) return;
 
-                    if(lesson.getCourse().hasNotPassedLesson()) {
+                    if (lesson.getCourse().hasNotPassedLesson()) {
                         Lesson nextLesson = lesson.getCourse().giveNotPassedAndNotOpenedLesson();
-                        if (nextLesson == null) throw new BadLessonException("Unable to obtain not passed and not opened lessons");
-                        openLesson(project, nextLesson);
+                        if (nextLesson == null)
+                            throw new BadLessonException("Unable to obtain not passed and not opened lessons");
+                        openLesson(currentProject, nextLesson);
                     }
                 }
             });
 
             final String target;
-            if(lesson.getTargetPath() != null) {
+            if (lesson.getTargetPath() != null) {
                 InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + lesson.getTargetPath());
                 if (is == null) throw new IOException("Unable to get answer for \"" + lesson.getName() + "\" lesson");
                 target = new Scanner(is).useDelimiter("\\Z").next();
@@ -197,18 +218,54 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
     }
 
-    private VirtualFile getVirtualFileOrStartProject(Project project, Lesson lesson) {
-        Project eduProject;
+    private VirtualFile getFileInEduProject(Lesson lesson) throws IOException {
+
+        final VirtualFile sourceRootFile = ProjectRootManager.getInstance(eduProject).getContentSourceRoots()[0];
+        //Check if this file exists
+        String courseFileName = "Test.java";
+        VirtualFile courseVirtualFile = sourceRootFile.findChild(courseFileName);
+        if (courseVirtualFile == null) {
+            courseVirtualFile = sourceRootFile.createChildData(this, courseFileName);
+        }
+
+        registerVirtualFile(lesson.getCourse(), courseVirtualFile);
+        return courseVirtualFile;
+    }
+
+    private void initEduProject(Project project, Lesson lesson) {
+        Project myEduProject = null;
 
         //if project is open
         final Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
         for (Project openProject : openProjects) {
             final String name = openProject.getName();
-            if (name.equals(EDU_PROJ_NAME)) {
-                eduProject = openProject;
+            if (name.equals(EDU_PROJECT_NAME)) {
+                myEduProject = openProject;
+            }
+        }
+        if (myEduProject == null) {
+            if(myState.eduProjectPath != null) {
+                try {
+                    myEduProject = ProjectManager.getInstance().loadAndOpenProject(myState.eduProjectPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JDOMException e) {
+                    e.printStackTrace();
+                } catch (InvalidDataException e) {
+                    e.printStackTrace();
+                }
+            } else {
+
+                try {
+                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, project);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
+        eduProject = myEduProject;
+        myState.eduProjectPath = eduProject.getProjectFilePath();
     }
 
     @NotNull
@@ -255,12 +312,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private EduEditor getEduEditor(Project project, VirtualFile vf) {
         OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
         final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
-        if(allEditors == null || allEditors.length == 0) {
+        if (allEditors == null || allEditors.length == 0) {
             FileEditorManager.getInstance(project).openEditor(descriptor, true);
         } else {
             boolean editorIsFind = false;
             for (FileEditor curEditor : allEditors) {
-                if(curEditor instanceof EduEditor) editorIsFind = true;
+                if (curEditor instanceof EduEditor) editorIsFind = true;
             }
             if (!editorIsFind) {
 //              close other editors with this file
@@ -277,6 +334,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return eduEditor;
     }
 
+    /**
+     * checking environment to start education plugin. Checking SDK.
+     *
+     * @param project where lesson should be started
+     * @param course  education course
+     * @throws OldJdkException     - if project JDK version is not enough for this course
+     * @throws InvalidSdkException - if project SDK is not suitable for course
+     */
     public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException {
 
         if (course == null) return;
@@ -298,7 +363,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
     }
 
-    public void showSdkProblemDialog(Project project, String sdkMessage){
+    public void showSdkProblemDialog(Project project, String sdkMessage) {
 //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
         final SdkProblemDialog dialog = new SdkProblemDialog(project, sdkMessage);
         dialog.show();
@@ -309,7 +374,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         if (getCourses() == null) return null;
         for (Course course : getCourses()) {
             for (Lesson lesson : course.getLessons()) {
-                if(lesson.getName() != null)
+                if (lesson.getName() != null)
                     if (lesson.getName().toUpperCase().equals(lessonName.toUpperCase()))
                         return lesson;
             }
@@ -318,21 +383,24 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
 
-
     static class State {
         public final ArrayList<Course> courses = new ArrayList<Course>();
         public final String STATE_DESCRIPTION = "Course manager state saver";
+        public String eduProjectPath;
 
         public State() {
         }
+
+
     }
 
-    public void addCourse(Course course){
+
+    public void addCourse(Course course) {
         myState.courses.add(course);
     }
 
     @Nullable
-    public Course[] getCourses(){
+    public Course[] getCourses() {
         if (myState == null) return null;
         if (myState.courses == null) return null;
 
@@ -340,13 +408,14 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     @Override
-    public State getState(){
+    public State getState() {
         return myState;
     }
 
     @Override
-    public void loadState(State state){
-        if(state.courses == null || state.courses.size() == 0) {
+    public void loadState(State state) {
+        myState.eduProjectPath = state.eduProjectPath;
+        if (state.courses == null || state.courses.size() == 0) {
             try {
                 initCourses();
             } catch (JDOMException e) {
@@ -394,7 +463,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 if (state.courses.contains(course)) {
                     final Course courseFromPersistentState = state.courses.get(state.courses.indexOf(course));
                     for (Lesson lesson : course.getLessons()) {
-                        if(courseFromPersistentState.getLessons().contains(lesson)) {
+                        if (courseFromPersistentState.getLessons().contains(lesson)) {
                             final Lesson lessonFromPersistentState = courseFromPersistentState.getLessons().get(courseFromPersistentState.getLessons().indexOf(lesson));
                             lesson.setPassed(lessonFromPersistentState.getPassed());
                         }
@@ -403,7 +472,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
         }
     }
-
 
 
 }
