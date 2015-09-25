@@ -137,6 +137,7 @@ public abstract class ServerRefactoring {
     serverErrorStatus = null;
     final CountDownLatch latch = new CountDownLatch(1);
     RefactoringOptions options = getOptions();
+    DartAnalysisServerService.getInstance().updateFilesContent();
     final boolean success = DartAnalysisServerService.getInstance()
       .edit_getRefactoring(kind, file, offset, length, validateOnly, options, new GetRefactoringConsumer() {
         @Override

@@ -78,6 +78,10 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
 
   private void doTest(@NotNull final String newName) {
     final ServerRenameRefactoring refactoring = createRenameRefactoring();
+    doTest(refactoring, newName);
+  }
+
+  private void doTest(@NotNull final ServerRenameRefactoring refactoring, @NotNull final String newName) {
     // check initial conditions
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);
@@ -168,8 +172,15 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     doTest("newName");
   }
 
-  public void testLocalVariable() throws Throwable {
-    doTest("newName");
+  public void testTypeAndImmediatelyRenameLocalVar() throws Throwable {
+    final PsiFile psiFile = myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.doHighlighting(); // warm up
+    myFixture.type('\n');
+    final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
+    final int offset = getEditor().getCaretModel().getOffset();
+    final ServerRenameRefactoring refactoring = new ServerRenameRefactoring(path, offset, 0);
+
+    doTest(refactoring, "newName");
   }
 
   public void testMethod() throws Throwable {
