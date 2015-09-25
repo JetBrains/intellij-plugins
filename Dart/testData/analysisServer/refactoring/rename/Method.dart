@@ -4,7 +4,7 @@ class A {
 }
 
 class B extends A {
-  test() {} // B
+  <caret>test() {} // B
 }
 
 /// Overrides the method [test] from [A].

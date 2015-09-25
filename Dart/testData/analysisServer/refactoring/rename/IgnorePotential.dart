@@ -1,5 +1,5 @@
 class A {
-  test() {}
+  test<caret>() {}
 }
 
 main(A a, b) {

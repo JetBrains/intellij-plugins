@@ -1,6 +1,6 @@
 
 class AAA {
-  AAA.newName() {}
+  <caret>AAA.newName() {}
 }
 
 main() {

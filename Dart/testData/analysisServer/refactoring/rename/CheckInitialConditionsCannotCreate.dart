@@ -1,3 +1,3 @@
 main() {
-  print(12345);
+  print(12<caret>345);
 }

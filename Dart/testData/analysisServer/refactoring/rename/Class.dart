@@ -3,7 +3,7 @@ class Test {
   Test.named() {}
 }
 
-class B extends Test { // in B
+class B extends <caret>Test { // in B
 }
 
 class C implements Test {

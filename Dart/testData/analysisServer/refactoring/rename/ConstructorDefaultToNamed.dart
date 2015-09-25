@@ -1,6 +1,6 @@
 
 class AAA {
-  AAA() {}
+  <caret>AAA() {}
 }
 
 main() {

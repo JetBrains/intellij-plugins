@@ -1,3 +1,3 @@
 main() {
-  var test = 0;
+  var <caret>test = 0;
 }

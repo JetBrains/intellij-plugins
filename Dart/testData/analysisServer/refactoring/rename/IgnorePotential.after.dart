@@ -1,5 +1,5 @@
 class A {
-  newName() {}
+  newName<caret>() {}
 }
 
 main(A a, b) {

@@ -130,7 +130,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 }
 
 class DartRenameDialog extends ServerRefactoringDialog {
-  @NotNull ServerRenameRefactoring myRefactoring;
+  @NotNull private final ServerRenameRefactoring myRefactoring;
   @NotNull private final String myOldName;
 
   private final JLabel myNewNamePrefix = new JLabel("");

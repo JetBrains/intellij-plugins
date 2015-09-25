@@ -18,7 +18,6 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -74,6 +73,41 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+  }
+
+  private void doTest(@NotNull final String newName) {
+    final ServerRenameRefactoring refactoring = createRenameRefactoring();
+    // check initial conditions
+    final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
+    assertNotNull(initialConditions);
+    assertTrue(initialConditions.isOK());
+    // check final conditions
+    refactoring.setNewName(newName);
+    final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
+    assertNotNull(finalConditions);
+    assertTrue(finalConditions.isOK());
+    // apply the SourceChange
+    final SourceChange change = refactoring.getChange();
+    assertNotNull(change);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final Set<String> excludedIds = refactoring.getPotentialEdits();
+        AssistUtils.applySourceChange(myFixture.getProject(), change, excludedIds);
+      }
+    });
+    // validate
+    myFixture.checkResultByFile(getTestName(false) + ".after.dart");
+  }
+
+  @NotNull
+  private ServerRenameRefactoring createRenameRefactoring() {
+    final PsiFile psiFile = myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.doHighlighting(); // make sure server is warmed up
+    final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
+    final int offset = getEditor().getCaretModel().getOffset();
+    return new ServerRenameRefactoring(path, offset, 0);
   }
 
   public void _testAvailability() {
@@ -103,8 +137,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
   }
 
   public void testCheckFinalConditionsNameFatalError() throws Throwable {
-    final String testName = getTestName(false);
-    final ServerRenameRefactoring refactoring = createRenameRefactoring(testName + ".dart", "test = 0");
+    final ServerRenameRefactoring refactoring = createRenameRefactoring();
     // initial status OK
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);
@@ -117,78 +150,29 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
   }
 
   public void testCheckInitialConditionsCannotCreate() throws Throwable {
-    final String testName = getTestName(false);
-    final ServerRenameRefactoring refactoring = createRenameRefactoring(testName + ".dart", "345");
+    final ServerRenameRefactoring refactoring = createRenameRefactoring();
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);
     assertTrue(initialConditions.hasFatalError());
   }
 
   public void testClass() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", "Test { // in B", "NewName");
+    doTest("NewName");
   }
 
   public void testConstructorDefaultToNamed() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", "AAA() {}", "newName");
+    doTest("newName");
   }
 
   public void testIgnorePotential() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", "test() {}", "newName");
+    doTest("newName");
   }
 
   public void testLocalVariable() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", "test = 0", "newName");
+    doTest("newName");
   }
 
   public void testMethod() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", "test() {} // B", "newName");
-  }
-
-  @NotNull
-  private ServerRenameRefactoring createRenameRefactoring(String filePath, String atString) {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    final PsiFile psiFile = myFixture.configureByFile(filePath);
-    myFixture.doHighlighting(); // make sure server is warmed up
-    // find the Element to rename
-    final Document document = myFixture.getDocument(psiFile);
-    final int offset = document.getText().indexOf(atString);
-    return new ServerRenameRefactoring(getSystemPath(psiFile), offset, 0);
-  }
-
-  private void doTest(final String filePath, String atString, String newName) {
-    final ServerRenameRefactoring refactoring = createRenameRefactoring(filePath, atString);
-    // check initial conditions
-    final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
-    assertNotNull(initialConditions);
-    assertTrue(initialConditions.isOK());
-    // check final conditions
-    refactoring.setNewName(newName);
-    final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
-    assertNotNull(finalConditions);
-    assertTrue(finalConditions.isOK());
-    // apply the SourceChange
-    final SourceChange change = refactoring.getChange();
-    assertNotNull(change);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final Set<String> excludedIds = refactoring.getPotentialEdits();
-        AssistUtils.applySourceChange(myFixture.getProject(), change, excludedIds);
-      }
-    });
-    // validate
-    myFixture.checkResultByFile(getTestName(false) + ".after.dart");
-  }
-
-  @NotNull
-  private static String getSystemPath(PsiFile psiFile) {
-    final VirtualFile virtualFile = psiFile.getVirtualFile();
-    final String path = virtualFile.getPath();
-    return FileUtil.toSystemDependentName(path);
+    doTest("newName");
   }
 }
