@@ -27,6 +27,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.xml.util.XmlStringUtil;
@@ -36,12 +37,12 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.actions.AbstractDartFileProcessingAction;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.resolve.DartResolver;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 
 // todo implement ContextAwareActionHandler?
 public class DartServerRenameHandler implements RenameHandler, TitledHandler {
@@ -213,9 +214,9 @@ class DartRenameDialog extends ServerRefactoringDialog {
 
   @NotNull
   private String getLabelText() {
-    @NonNls final String kindName = myRefactoring.getElementKindName();
-    final String oldName = myOldName.isEmpty() ? "<empty>" : myOldName;
-    return "Rename " + kindName.toLowerCase() + " '" + oldName + "' and its usages to:";
+    final String kindName = myRefactoring.getElementKindName().toLowerCase(Locale.US);
+    final String name = myOldName.isEmpty() ? kindName : kindName + " " + myOldName;
+    return RefactoringBundle.message("rename.0.and.its.usages.to", name);
   }
 
   private String getNewName() {
