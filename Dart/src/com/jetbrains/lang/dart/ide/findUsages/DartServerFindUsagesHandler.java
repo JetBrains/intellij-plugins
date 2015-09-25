@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -34,6 +35,7 @@ import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartElementLocation;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SearchResult;
+import org.dartlang.analysis.server.protocol.SearchResultKind;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,10 +48,12 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   public boolean processElementUsages(@NotNull final PsiElement elementToSearch,
                                       @NotNull final Processor<UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
+    final SearchScope scope = options.searchScope;
+
     final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
       @Override
       public void consumeInReadAction(SearchResult result) {
-        final SearchScope scope = options.searchScope;
+        if (result.getKind().equals(SearchResultKind.DECLARATION)) return;
 
         final Location location = result.getLocation();
         final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(location.getFile()));
@@ -70,9 +74,12 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
         int offset = location.getOffset();
         int length = location.getLength();
         offset -= usageElement.getTextOffset();
-        // todo do we want to mark usages in doc comments as nonCodeUsage?
-        final UsageInfo usageInfo = new UsageInfo(usageElement, offset, offset + length);
+
+        boolean nonCodeUsage = usageElement instanceof PsiComment || usageElement.getParent() instanceof PsiComment;
+
+        final UsageInfo usageInfo = new UsageInfo(usageElement, offset, offset + length, nonCodeUsage);
         usageInfo.setDynamicUsage(result.isPotential());
+
         processor.process(usageInfo);
       }
     };
