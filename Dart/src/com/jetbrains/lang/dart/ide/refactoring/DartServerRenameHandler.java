@@ -31,8 +31,11 @@ import com.intellij.refactoring.rename.RenameHandler;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.xml.util.XmlStringUtil;
 import com.intellij.xml.util.XmlTagUtilBase;
+import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.actions.AbstractDartFileProcessingAction;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +43,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class DartRenameHandler implements RenameHandler, TitledHandler {
+// todo implement ContextAwareActionHandler?
+public class DartServerRenameHandler implements RenameHandler, TitledHandler {
   @Override
   public String getActionTitle() {
     return "Dart Rename Refactoring";
@@ -53,12 +57,29 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
 
   @Override
   public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext context) {
-    showRenameDialog(project, null, context);
+    // Dart file rename is not handled using server yet
   }
 
   @Override
-  public boolean isAvailableOnDataContext(DataContext dataContext) {
-    return true;
+  public boolean isAvailableOnDataContext(@NotNull final DataContext dataContext) {
+    if (!DartResolver.isServerDrivenResolution()) return false;
+
+    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+    if (editor == null) return false;
+
+    final VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
+    if (!DartAnalysisServerService.isLocalDartOrHtmlFile(file)) return false;
+
+    final PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+    if (psiElement != null) {
+      return psiElement.getLanguage() == DartLanguage.INSTANCE;
+    }
+
+    // in case of comment (that also may contain reference that is valid to rename) psiElement is null
+    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
+    final PsiElement elementAtOffset = psiFile == null ? null : psiFile.findElementAt(editor.getCaretModel().getOffset());
+
+    return elementAtOffset != null && elementAtOffset.getLanguage() == DartLanguage.INSTANCE;
   }
 
   @Override
@@ -66,7 +87,7 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
     return isAvailableOnDataContext(dataContext);
   }
 
-  private static void showRenameDialog(@NotNull Project project, @Nullable Editor editor, DataContext context) {
+  private static void showRenameDialog(@NotNull Project project, @NotNull Editor editor, DataContext context) {
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(context);
     final VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(context);
     if (psiFile == null || virtualFile == null) {
@@ -96,11 +117,9 @@ public class DartRenameHandler implements RenameHandler, TitledHandler {
         return;
       }
       if (initialStatus.hasError()) {
-        if (editor != null) {
-          final String message = initialStatus.getMessage();
-          assert message != null;
-          AbstractDartFileProcessingAction.showHintLater(editor, message, true);
-        }
+        final String message = initialStatus.getMessage();
+        assert message != null;
+        AbstractDartFileProcessingAction.showHintLater(editor, message, true);
         return;
       }
     }

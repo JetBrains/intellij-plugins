@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.datatransfer.StringSelection;
 import java.util.List;
 
-public class DartAnalysisServerHighlightingTest extends CodeInsightFixtureTestCase {
+public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();

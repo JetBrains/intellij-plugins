@@ -15,23 +15,55 @@
  */
 package com.jetbrains.dart.analysisServer;
 
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.ide.refactoring.DartServerRenameHandler;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRenameRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
+public class DartServerRenameTest extends CodeInsightFixtureTestCase {
+
+  private static class DataContextForTest implements DataContext {
+    private final Editor myEditor;
+    private final VirtualFile myVirtualFile;
+    private final PsiFile myPsiFile;
+    private final PsiElement myPsiElement;
+
+    public DataContextForTest(Editor editor, VirtualFile virtualFile, PsiFile psiFile, PsiElement psiElement) {
+      myEditor = editor;
+      myVirtualFile = virtualFile;
+      myPsiFile = psiFile;
+      myPsiElement = psiElement;
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+      if (dataId.equals(CommonDataKeys.EDITOR.getName())) return myEditor;
+      if (dataId.equals(CommonDataKeys.VIRTUAL_FILE.getName())) return myVirtualFile;
+      if (dataId.equals(CommonDataKeys.PSI_FILE.getName())) return myPsiFile;
+      if (dataId.equals(CommonDataKeys.PSI_ELEMENT.getName())) return myPsiElement;
+      return null;
+    }
+  }
 
   protected String getBasePath() {
     return "/analysisServer/refactoring/rename";
@@ -42,6 +74,32 @@ public class DartRenameHandlerTest extends CodeInsightFixtureTestCase {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+  }
+
+  public void _testAvailability() {
+    final XmlFile htmlPsiFile = (XmlFile)myFixture.configureByText("foo.html", "<script type='application/dart'>\n" +
+                                                                               "  var <caret>foo;\n" +
+                                                                               "</script>");
+    final VirtualFile htmlVirtualFile = htmlPsiFile.getVirtualFile();
+    final XmlTag htmlTag = htmlPsiFile.getRootTag();
+    final PsiElement dartElementInHtmlFile = htmlPsiFile.findElementAt(getEditor().getCaretModel().getOffset());
+
+    final PsiFile dartPsiFile = myFixture.addFileToProject("bar.dart", "// comment");
+    final VirtualFile dartVirtualFile = dartPsiFile.getVirtualFile();
+    final PsiElement dartElement = dartPsiFile.findElementAt(0);
+
+    final DartServerRenameHandler handler = new DartServerRenameHandler();
+
+    assertFalse("no editor", handler.isRenaming(new DataContextForTest(null, htmlVirtualFile, htmlPsiFile, null)));
+    assertFalse("html element at caret", handler.isRenaming(new DataContextForTest(getEditor(), htmlVirtualFile, htmlPsiFile, htmlTag)));
+    assertTrue("dart element in html file at caret",
+               handler.isRenaming(new DataContextForTest(getEditor(), htmlVirtualFile, htmlPsiFile, null)));
+    assertTrue("dart element in html file",
+               handler.isRenaming(new DataContextForTest(getEditor(), htmlVirtualFile, htmlPsiFile, dartElementInHtmlFile)));
+
+    myFixture.openFileInEditor(dartVirtualFile);
+    assertTrue("dart comment at caret", handler.isRenaming(new DataContextForTest(getEditor(), dartVirtualFile, dartPsiFile, null)));
+    assertTrue("dart comment at caret", handler.isRenaming(new DataContextForTest(getEditor(), dartVirtualFile, dartPsiFile, dartElement)));
   }
 
   public void testCheckFinalConditionsNameFatalError() throws Throwable {

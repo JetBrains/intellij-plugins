@@ -15,18 +15,16 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartNamedConstructorDeclaration;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartRenamePsiElementProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
-    return element instanceof DartComponentName;
+    return !DartResolver.isServerDrivenResolution() && element instanceof DartComponentName;
   }
 
   @Override

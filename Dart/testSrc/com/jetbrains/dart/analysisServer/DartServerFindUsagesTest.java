@@ -89,7 +89,7 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
                 allProjectUsages);
     checkUsages(GlobalSearchScope.projectScope(getProject()), allProjectUsages);
     final Collection<UsageInfo> usages = findUsages(GlobalSearchScope.allScope(getProject()));
-    assertTrue(usages.size() > 620);
+    assertTrue(String.valueOf(usages.size()), usages.size() > 620);
   }
 
   public void testDynamicAndNonCodeUsage() {
