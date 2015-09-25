@@ -12,7 +12,7 @@
   <version>0.8</version>
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true">JavaScript</depends>
-  <vendor url="https://github.com/dmarcotte">dmarcotte / JetBrains</vendor>
+  <vendor url="https://github.com/dmarcotte">dmarcotte, JetBrains</vendor>
 
   <idea-version since-build="134.1342"/>
 
