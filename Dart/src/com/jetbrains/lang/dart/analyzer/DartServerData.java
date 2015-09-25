@@ -127,9 +127,39 @@ public class DartServerData {
   }
 
   void onFileClosed(@NotNull final VirtualFile file) {
-    myHighlightData.remove(file.getPath());
-    myNavigationData.remove(file.getPath());
-    myOverrideData.remove(file.getPath());
+    synchronized (myHighlightData) {
+      myHighlightData.remove(file.getPath());
+    }
+    synchronized (myNavigationData) {
+      myNavigationData.remove(file.getPath());
+    }
+    synchronized (myOverrideData) {
+      myOverrideData.remove(file.getPath());
+    }
+  }
+
+  public void onFlushedResults(@NotNull final List<String> filePaths) {
+    if (!myHighlightData.isEmpty()) {
+      synchronized (myHighlightData) {
+        for (String path : filePaths) {
+          myHighlightData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+    if (!myNavigationData.isEmpty()) {
+      synchronized (myNavigationData) {
+        for (String path : filePaths) {
+          myNavigationData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+    if (!myOverrideData.isEmpty()) {
+      synchronized (myOverrideData) {
+        for (String path : filePaths) {
+          myOverrideData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
   }
 
   void onDocumentChanged(@NotNull final DocumentEvent e) {

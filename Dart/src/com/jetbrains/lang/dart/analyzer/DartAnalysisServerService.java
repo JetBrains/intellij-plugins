@@ -142,6 +142,8 @@ public class DartAnalysisServerService {
 
     @Override
     public void flushedResults(List<String> filePaths) {
+      myServerData.onFlushedResults(filePaths);
+
       for (String filePath : filePaths) {
         updateProblemsView(DartProblemsViewImpl.createGroupName(filePath), AnalysisError.EMPTY_LIST);
       }
