@@ -1,8 +1,8 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.conversion.*;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,34 +61,36 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("singleton", "true");
     element.removeAttribute("factoryName");
-    JavaScriptDebugConfiguration settings =
-      new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
+    String uri = null;
     for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
-        settings.setUri(((Element)obj).getAttributeValue("value"));
+        uri = ((Element)obj).getAttributeValue("value");
       }
     }
     element.removeContent();
-    JavaScriptDebugConfiguration.serialize(settings, element);
+    if (!StringUtil.isEmptyOrSpaces(uri)) {
+      element.setAttribute("uri", uri.trim());
+    }
   }
 
   private static void convertRemote(Element element) {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("singleton", "true");
     element.removeAttribute("factoryName");
-    JavaScriptDebugConfiguration settings =
-      new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
+    String uri = null;
     Element mappings = null;
     for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
-        settings.setUri(((Element)obj).getAttributeValue("value"));
+        uri = ((Element)obj).getAttributeValue("value");
       }
       else if ("mappings".equals(((Element)obj).getAttributeValue("name"))) {
         mappings = (Element)obj;
       }
     }
     element.removeContent();
-    JavaScriptDebugConfiguration.serialize(settings, element);
+    if (!StringUtil.isEmptyOrSpaces(uri)) {
+      element.setAttribute("uri", uri.trim());
+    }
     if (mappings != null) {
       Element list = mappings.getChild("list");
       if (list != null) {
