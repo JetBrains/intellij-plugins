@@ -1,10 +1,10 @@
 package com.google.jstestdriver.idea.rt.execution.tree;
 
+import com.google.jstestdriver.idea.common.JsErrorMessage;
 import com.google.jstestdriver.idea.rt.execution.tc.TC;
 import com.google.jstestdriver.idea.rt.execution.tc.TCAttribute;
 import com.google.jstestdriver.idea.rt.execution.tc.TCMessage;
 import com.google.jstestdriver.idea.rt.util.EscapeUtils;
-import com.google.jstestdriver.idea.rt.util.JsErrorMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,9 +12,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Sergey Simonchik
- */
 public class BrowserErrorNode extends AbstractNodeWithParent<BrowserErrorNode> {
 
   private final JsErrorMessage myErrorMessage;

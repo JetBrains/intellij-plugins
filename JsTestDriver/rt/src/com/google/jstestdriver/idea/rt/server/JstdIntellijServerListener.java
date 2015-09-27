@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.rt.server;
 import com.google.gson.stream.JsonWriter;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.hooks.ServerListener;
+import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -17,25 +18,25 @@ public class JstdIntellijServerListener implements ServerListener {
 
   @Override
   public void serverStarted() {
-    String json = formatJson(JstdServerConstants.SERVER_STARTED, NOTHING);
+    String json = formatJson(JstdCommonConstants.SERVER_STARTED, NOTHING);
     sendEvent(json);
   }
 
   @Override
   public void serverStopped() {
-    String json = formatJson(JstdServerConstants.SERVER_STOPPED, NOTHING);
+    String json = formatJson(JstdCommonConstants.SERVER_STOPPED, NOTHING);
     sendEvent(json);
   }
 
   @Override
   public void browserCaptured(BrowserInfo info) {
-    String json = formatJson(JstdServerConstants.BROWSER_CAPTURED, toJsonBrowserInfo(info));
+    String json = formatJson(JstdCommonConstants.BROWSER_CAPTURED, toJsonBrowserInfo(info));
     sendEvent(json);
   }
 
   @Override
   public void browserPanicked(BrowserInfo info) {
-    String json = formatJson(JstdServerConstants.BROWSER_PANICKED, toJsonBrowserInfo(info));
+    String json = formatJson(JstdCommonConstants.BROWSER_PANICKED, toJsonBrowserInfo(info));
     sendEvent(json);
   }
 
@@ -43,13 +44,13 @@ public class JstdIntellijServerListener implements ServerListener {
     return new Handler() {
       @Override
       public void handle(@NotNull JsonWriter writer) throws IOException {
-        writer.name(JstdServerConstants.BROWSER_INFO);
+        writer.name(JstdCommonConstants.BROWSER_INFO);
         writer.beginObject();
-        writer.name(JstdServerConstants.BROWSER_INFO_ID);
+        writer.name(JstdCommonConstants.BROWSER_INFO_ID);
         writer.value(String.valueOf(info.getId()));
-        writer.name(JstdServerConstants.BROWSER_INFO_NAME);
+        writer.name(JstdCommonConstants.BROWSER_INFO_NAME);
         writer.value(info.getName());
-        writer.name(JstdServerConstants.BROWSER_INFO_OS);
+        writer.name(JstdCommonConstants.BROWSER_INFO_OS);
         writer.value(info.getOs());
         writer.endObject();
       }
@@ -63,7 +64,7 @@ public class JstdIntellijServerListener implements ServerListener {
     writer.setLenient(false);
     try {
       writer.beginObject();
-      writer.name(JstdServerConstants.EVENT_TYPE);
+      writer.name(JstdCommonConstants.EVENT_TYPE);
       writer.value(type);
       handler.handle(writer);
       writer.endObject();
@@ -85,7 +86,7 @@ public class JstdIntellijServerListener implements ServerListener {
 
   private static void sendEvent(@NotNull String json) {
     //noinspection UseOfSystemOutOrSystemErr
-    System.out.print(JstdServerConstants.EVENT_PREFIX + json + JstdServerConstants.EVENT_SUFFIX);
+    System.out.print(JstdCommonConstants.EVENT_PREFIX + json + JstdCommonConstants.EVENT_SUFFIX);
   }
 
   private interface Handler {

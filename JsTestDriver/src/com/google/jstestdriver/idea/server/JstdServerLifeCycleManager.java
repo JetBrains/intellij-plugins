@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.server;
 
 import com.google.gson.JsonObject;
-import com.google.jstestdriver.idea.rt.server.JstdServerConstants;
+import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
@@ -71,17 +71,17 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
-        String type = JsonUtil.getString(obj, JstdServerConstants.EVENT_TYPE);
-        if (JstdServerConstants.SERVER_STARTED.equals(type)) {
+        String type = JsonUtil.getChildAsString(obj, JstdCommonConstants.EVENT_TYPE);
+        if (JstdCommonConstants.SERVER_STARTED.equals(type)) {
           onServerStarted();
         }
-        else if (JstdServerConstants.SERVER_STOPPED.equals(type)) {
+        else if (JstdCommonConstants.SERVER_STOPPED.equals(type)) {
           onServerStopped();
         }
-        else if (JstdServerConstants.BROWSER_CAPTURED.equals(type)) {
+        else if (JstdCommonConstants.BROWSER_CAPTURED.equals(type)) {
           onBrowserCaptured(obj);
         }
-        else if (JstdServerConstants.BROWSER_PANICKED.equals(type)) {
+        else if (JstdCommonConstants.BROWSER_PANICKED.equals(type)) {
           onBrowserPanicked(obj);
         }
       }
@@ -142,10 +142,10 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
 
   @Nullable
   private static JstdBrowserInfo getBrowserInfo(@NotNull JsonObject obj) {
-    JsonObject browserInfoObj = JsonUtil.getChildAsObject(obj, JstdServerConstants.BROWSER_INFO);
+    JsonObject browserInfoObj = JsonUtil.getChildAsObject(obj, JstdCommonConstants.BROWSER_INFO);
     if (browserInfoObj != null) {
-      String id = JsonUtil.getString(browserInfoObj, JstdServerConstants.BROWSER_INFO_ID);
-      String name = JsonUtil.getString(browserInfoObj, JstdServerConstants.BROWSER_INFO_NAME);
+      String id = JsonUtil.getChildAsString(browserInfoObj, JstdCommonConstants.BROWSER_INFO_ID);
+      String name = JsonUtil.getChildAsString(browserInfoObj, JstdCommonConstants.BROWSER_INFO_NAME);
       if (id != null && name != null) {
         return new JstdBrowserInfo(id, name);
       }

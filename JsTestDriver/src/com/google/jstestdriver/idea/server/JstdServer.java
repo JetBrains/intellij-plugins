@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.server;
 import com.google.common.base.Charsets;
 import com.google.gson.stream.JsonWriter;
 import com.google.jstestdriver.JsTestDriverServer;
+import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import com.google.jstestdriver.idea.rt.server.JstdServerMain;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -150,7 +151,7 @@ public class JstdServer {
 
   @NotNull
   private static String getClasspath() {
-    Class[] classes = new Class[] {JsTestDriverServer.class, JstdServerMain.class, JsonWriter.class};
+    Class[] classes = new Class[] {JstdCommonConstants.class, JsTestDriverServer.class, JstdServerMain.class, JsonWriter.class};
     List<String> result = ContainerUtil.newArrayList();
     for (Class clazz : classes) {
       String path = PathUtil.getJarPathForClass(clazz);

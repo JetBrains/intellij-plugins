@@ -3,7 +3,7 @@ package com.google.jstestdriver.idea.server;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.jstestdriver.idea.rt.server.JstdServerConstants;
+import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -57,8 +57,8 @@ public class JstdServerOutputProcessor {
   }
 
   private boolean handleLineAsEvent(@NotNull String line) {
-    if (line.startsWith(JstdServerConstants.EVENT_PREFIX) && line.endsWith(JstdServerConstants.EVENT_SUFFIX)) {
-      String json = line.substring(JstdServerConstants.EVENT_PREFIX.length(), line.length() - JstdServerConstants.EVENT_SUFFIX.length());
+    if (line.startsWith(JstdCommonConstants.EVENT_PREFIX) && line.endsWith(JstdCommonConstants.EVENT_SUFFIX)) {
+      String json = line.substring(JstdCommonConstants.EVENT_PREFIX.length(), line.length() - JstdCommonConstants.EVENT_SUFFIX.length());
       LOG.info("Processing JsTestDriver event " + json);
       try {
         JsonParser jsonParser = new JsonParser();

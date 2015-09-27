@@ -1,6 +1,6 @@
-package com.google.jstestdriver.idea.rt.server;
+package com.google.jstestdriver.idea.common;
 
-public class JstdServerConstants {
+public class JstdCommonConstants {
 
   public static final String EVENT_PREFIX = "##intellij-event[";
   public static final String EVENT_SUFFIX = "]\n";
@@ -15,5 +15,5 @@ public class JstdServerConstants {
   public static final String BROWSER_INFO_NAME = "name";
   public static final String BROWSER_INFO_OS = "os";
 
-  private JstdServerConstants() {}
+  private JstdCommonConstants() {}
 }

@@ -8,10 +8,5 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="annotations" />
-    <orderEntry type="library" name="JsTestDriver" level="project" />
-    <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="JsTestDriver-common" />
   </component>
 </module>
-

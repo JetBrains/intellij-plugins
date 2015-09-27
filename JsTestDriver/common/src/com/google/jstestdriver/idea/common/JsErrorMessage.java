@@ -1,13 +1,10 @@
-package com.google.jstestdriver.idea.rt.util;
+package com.google.jstestdriver.idea.common;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class JsErrorMessage {
 
   private static final String UNCAUGHT_PREFIX = "Uncaught ";
