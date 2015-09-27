@@ -1,8 +1,7 @@
 package com.google.jstestdriver.idea.rt;
 
 import com.google.jstestdriver.idea.JstdTestRoot;
-import com.google.jstestdriver.idea.util.JsErrorMessage;
-import com.intellij.openapi.application.PathManager;
+import com.google.jstestdriver.idea.rt.util.JsErrorMessage;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 

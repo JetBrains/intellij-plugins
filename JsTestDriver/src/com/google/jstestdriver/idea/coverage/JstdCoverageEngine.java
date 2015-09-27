@@ -1,6 +1,8 @@
 package com.google.jstestdriver.idea.coverage;
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
+import com.google.jstestdriver.idea.rt.coverage.CoverageReport;
+import com.google.jstestdriver.idea.rt.coverage.CoverageSerializationUtils;
 import com.intellij.codeEditor.printing.ExportToHTMLSettings;
 import com.intellij.coverage.*;
 import com.intellij.coverage.view.CoverageViewExtension;

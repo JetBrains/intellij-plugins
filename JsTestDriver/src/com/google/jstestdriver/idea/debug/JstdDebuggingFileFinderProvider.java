@@ -7,7 +7,7 @@ import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.ResolvedConfiguration;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.idea.server.JstdServer;
-import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
+import com.google.jstestdriver.idea.rt.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.model.BasePaths;
 import com.intellij.execution.ExecutionException;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;

@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.server;
 import com.google.common.base.Charsets;
 import com.google.gson.stream.JsonWriter;
 import com.google.jstestdriver.JsTestDriverServer;
+import com.google.jstestdriver.idea.rt.server.JstdServerMain;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
@@ -133,7 +134,7 @@ public class JstdServer {
     commandLine.addParameter("-cp");
     commandLine.addParameter(getClasspath());
 
-    commandLine.addParameter("com.google.jstestdriver.idea.server.JstdServerMain");
+    commandLine.addParameter("com.google.jstestdriver.idea.rt.server.JstdServerMain");
 
     commandLine.addParameter("--port");
     commandLine.addParameter(String.valueOf(settings.getPort()));

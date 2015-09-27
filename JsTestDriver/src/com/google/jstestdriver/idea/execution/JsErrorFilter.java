@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.util.JsErrorMessage;
+import com.google.jstestdriver.idea.rt.util.JsErrorMessage;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;

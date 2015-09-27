@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.server;
 
 import com.google.gson.JsonObject;
+import com.google.jstestdriver.idea.rt.server.JstdServerConstants;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;

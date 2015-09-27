@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.util;
 
+import com.google.jstestdriver.idea.rt.util.EscapeUtils;
 import junit.framework.Assert;
 import org.junit.Test;
 

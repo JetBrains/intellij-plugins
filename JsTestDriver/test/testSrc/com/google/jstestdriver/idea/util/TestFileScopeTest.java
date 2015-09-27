@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.util;
 
+import com.google.jstestdriver.idea.rt.util.TestFileScope;
 import org.junit.Assert;
 import org.junit.Test;
 

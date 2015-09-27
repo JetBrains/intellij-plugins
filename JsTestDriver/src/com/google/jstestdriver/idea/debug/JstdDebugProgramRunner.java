@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.jstestdriver.idea.TestRunner;
+import com.google.jstestdriver.idea.rt.TestRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunProfileState;
 import com.google.jstestdriver.idea.execution.JstdRunProgramRunner;
