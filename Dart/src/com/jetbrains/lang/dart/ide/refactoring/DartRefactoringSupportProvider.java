@@ -4,7 +4,7 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.refactoring.RefactoringActionHandler;
-import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
+import com.jetbrains.lang.dart.ide.refactoring.extract.DartServerExtractMethodHandler;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceFinalVariableHandler;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceVariableHandler;
 import com.jetbrains.lang.dart.psi.DartNamedElement;
@@ -32,7 +32,7 @@ public class DartRefactoringSupportProvider extends RefactoringSupportProvider {
   @Nullable
   @Override
   public RefactoringActionHandler getExtractMethodHandler() {
-    return new DartExtractMethodHandler();
-    //return new DartServerExtractMethodHandler();
+    //return new DartExtractMethodHandler();
+    return new DartServerExtractMethodHandler();
   }
 }
