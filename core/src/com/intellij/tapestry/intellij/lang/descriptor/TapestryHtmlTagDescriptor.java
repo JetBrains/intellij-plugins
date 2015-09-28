@@ -62,10 +62,15 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     if (childDescriptor != null) {
       return childDescriptor;
     }
-    if (XmlUtil.XHTML_URI.equals(childTag.getNamespace()) && TapestryUtils.getIdentifyingAttribute(contextTag) != null) {
-      return DescriptorUtil.getHtmlTagDescriptorViaNsDescriptor(childTag);
+    if (XmlUtil.XHTML_URI.equals(childTag.getNamespace())) {
+      if (TapestryUtils.getIdentifyingAttribute(contextTag) != null || isContentTag(contextTag))
+        return DescriptorUtil.getHtmlTagDescriptorViaNsDescriptor(childTag);
     }
     return DescriptorUtil.getTmlTagDescriptor(childTag);
+  }
+
+  private static boolean isContentTag(XmlTag tag) {
+    return "content".equals(tag.getLocalName()) && TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace());
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {

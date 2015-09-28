@@ -112,6 +112,10 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     myFixture.testHighlighting(true, true, true, getTestName(false) + ".properties", getTestName(false) + ".tml");
   }
 
+  public void testSchema() throws Throwable {
+    doTest(false);
+  }
+
   @Override
   protected void addTapestryLibraries(JavaModuleFixtureBuilder moduleBuilder) {
     super.addTapestryLibraries(moduleBuilder);
