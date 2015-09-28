@@ -202,6 +202,9 @@
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer"/>
 
+    <configurationType implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>
+
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
     <!--inspections-->
