@@ -90,6 +90,10 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
+  private JCheckBox myVMCheckBox;
+  private JCheckBox myDartiumCheckBox;
+  private JCheckBox myChromeCheckBox;
+  private JCheckBox myFirefoxCheckBox;
 
   private final Project myProject;
   private TestModel myCachedModel;
