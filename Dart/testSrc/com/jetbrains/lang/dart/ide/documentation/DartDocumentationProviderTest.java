@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCase {
+abstract public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCase {
 
   private void doTest(@Nullable final String expectedDocUrl, @NotNull final String fileContents) throws Exception {
     final int caretOffset = fileContents.indexOf("<caret>");

@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
-public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTestBase {
+abstract public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTestBase {
 
   public void testArrayAccess() throws Throwable {
     doTest(1);

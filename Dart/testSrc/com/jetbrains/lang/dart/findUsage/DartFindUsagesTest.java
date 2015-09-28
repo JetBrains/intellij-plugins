@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.findUsage;
 
-public class DartFindUsagesTest extends DartFindUsagesTestBase {
+abstract public class DartFindUsagesTest extends DartFindUsagesTestBase {
 
   public void testEnum() throws  Throwable {
     doTest(1);

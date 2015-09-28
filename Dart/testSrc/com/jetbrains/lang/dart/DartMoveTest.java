@@ -15,10 +15,7 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
+abstract public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH + getBasePath();

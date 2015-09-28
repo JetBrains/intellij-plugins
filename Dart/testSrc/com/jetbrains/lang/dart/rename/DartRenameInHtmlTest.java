@@ -3,10 +3,7 @@ package com.jetbrains.lang.dart.rename;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartRenameInHtmlTest extends DartCodeInsightFixtureTestCase {
+abstract public class DartRenameInHtmlTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
     return FileUtil.toSystemDependentName("/rename/html");

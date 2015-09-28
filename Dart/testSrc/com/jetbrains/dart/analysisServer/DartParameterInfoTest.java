@@ -1,27 +1,35 @@
-package com.jetbrains.lang.dart.ide.info;
+package com.jetbrains.dart.analysisServer;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
 import com.intellij.testFramework.utils.parameterInfo.MockUpdateParameterInfoContext;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
+import com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler;
 import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jetbrains.annotations.NotNull;
 
-public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
-  @NotNull
+public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
   @Override
-  protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/paramInfo/");
+  public void setUp() throws Exception {
+    super.setUp();
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+  }
+
+  protected String getBasePath() {
+    return "/paramInfo";
   }
 
   private void doTest(String infoText, int highlightedParameterIndex, int highlightStart, int highlightEnd) {
-    configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
+    myFixture.configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
+    myFixture.doHighlighting(); // warm up the server
 
     final DartParameterInfoHandler parameterInfoHandler = new DartParameterInfoHandler();
-    MockCreateParameterInfoContext createContext = new MockCreateParameterInfoContext(myEditor, myFile);
+    MockCreateParameterInfoContext createContext = new MockCreateParameterInfoContext(getEditor(), getFile());
     PsiElement elt = parameterInfoHandler.findElementForParameterInfo(createContext);
     assertNotNull(elt);
     parameterInfoHandler.showParameterInfo(elt, createContext);
@@ -30,10 +38,10 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
     assertTrue(items.length > 0);
     MockParameterInfoUIContext context = new MockParameterInfoUIContext<PsiElement>(elt);
     parameterInfoHandler.updateUI((DartFunctionDescription)items[0], context);
-    assertEquals(infoText, parameterInfoHandler.myParametersListPresentableText);
+    assertEquals(infoText, parameterInfoHandler.getParametersListPresentableText());
 
     // index check
-    MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(myEditor, myFile);
+    MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(getEditor(), getFile());
     final PsiElement element = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
     assertNotNull(element);
     parameterInfoHandler.updateParameterInfo(element, updateContext);

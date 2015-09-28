@@ -23,7 +23,7 @@ public class DartFileStructureTest extends FileStructureTestBase {
     return "/fileStructure/";
   }
 
-  public void testConstructor() {
+  public void _testConstructor() {
     checkTree();
   }
 

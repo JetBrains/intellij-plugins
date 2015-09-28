@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.info;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.parameterInfo.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -11,12 +12,10 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
-  String myParametersListPresentableText = "";
+  private String myParametersListPresentableText = "";
 
   @Override
   public boolean couldShowInLookup() {
@@ -125,5 +124,11 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
       false,
       context.getDefaultParameterColor()
     );
+  }
+
+  @TestOnly
+  public String getParametersListPresentableText() {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    return myParametersListPresentableText;
   }
 }
