@@ -40,7 +40,7 @@ public class JstdDebuggingFileFinderProvider {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     addAllRemoteUrlMappings(resolvedConfiguration.getTests(), mappings);
     addAllRemoteUrlMappings(resolvedConfiguration.getFilesList(), mappings);
-    return new RemoteDebuggingFileFinder(mappings, false);
+    return new RemoteDebuggingFileFinder(mappings, null, false);
   }
 
   @NotNull

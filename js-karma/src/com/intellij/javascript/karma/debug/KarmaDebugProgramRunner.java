@@ -154,7 +154,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
         mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
       }
     }
-    return new RemoteDebuggingFileFinder(mappings, false);
+    return new RemoteDebuggingFileFinder(mappings, null, false);
   }
 
   public static Promise<RunProfileStarter> prepareDebugger(@NotNull Project project, @Nullable DebuggableWebBrowser debuggableWebBrowser, @NotNull final RunProfileStarter starter) {
