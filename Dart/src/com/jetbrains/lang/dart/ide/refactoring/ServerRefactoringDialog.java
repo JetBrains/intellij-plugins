@@ -16,11 +16,13 @@
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Condition;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
@@ -45,14 +47,25 @@ public abstract class ServerRefactoringDialog extends RefactoringDialog {
     myRefactoring.setListener(new ServerRefactoring.ServerRefactoringListener() {
       @Override
       public void requestStateChanged(final boolean hasPendingRequests, @NotNull final RefactoringStatus optionsStatus) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+        final Runnable runnable = new Runnable() {
           @Override
           public void run() {
             myHasPendingRequests = hasPendingRequests;
             myOptionsStatus = optionsStatus;
             validateButtons();
           }
-        });
+        };
+
+        final ModalityState modalityState = ModalityState.stateForComponent(getWindow());
+
+        final Condition expired = new Condition() {
+          @Override
+          public boolean value(Object o) {
+            return !isShowing();
+          }
+        };
+
+        ApplicationManager.getApplication().invokeLater(runnable, modalityState, expired);
       }
     });
   }
