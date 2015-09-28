@@ -11,7 +11,6 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -130,7 +129,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
         @Override
         public void navigate(MouseEvent e, PsiElement elt) {
           PsiElementListNavigator.openTargets(
-            e, DartResolveUtil.getComponentNames(filteredSubItems).toArray(new NavigatablePsiElement[filteredSubItems.size()]),
+            e, DartResolveUtil.getComponentNameArray(filteredSubItems),
             isInterface ?
             DaemonBundle.message("navigation.title.implementation.method", componentWithDeclarationList.getName(), filteredSubItems.size())
                         :

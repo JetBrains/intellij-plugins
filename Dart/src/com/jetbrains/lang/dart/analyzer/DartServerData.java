@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.common.base.*;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -11,10 +13,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import org.dartlang.analysis.server.protocol.HighlightRegion;
-import org.dartlang.analysis.server.protocol.NavigationRegion;
-import org.dartlang.analysis.server.protocol.NavigationTarget;
-import org.dartlang.analysis.server.protocol.OverrideMember;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -24,6 +23,8 @@ public class DartServerData {
   private DartServerRootsHandler myRootsHandler;
 
   private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
+  private final Map<String, List<ImplementedClass>> myImplementedClassData = Maps.newHashMap();
+  private final Map<String, List<ImplementedMember>> myImplementedMemberData = Maps.newHashMap();
   private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
   private final Map<String, List<OverrideMember>> myOverrideData = Maps.newHashMap();
 
@@ -48,6 +49,31 @@ public class DartServerData {
     }
 
     forceFileAnnotation(filePath, false);
+  }
+
+  public void computedImplemented(@NotNull final String filePath,
+                                  @NotNull final List<ImplementedClass> implementedClasses,
+                                  @NotNull final List<ImplementedMember> implementedMembers) {
+    // check myFilePathsWithUnsentChanges? update offset in documentListener?
+    boolean hasChanges = false;
+    synchronized (myImplementedClassData) {
+      final List<ImplementedClass> old = myImplementedClassData.get(filePath);
+      if (old == null || !old.equals(implementedClasses)) {
+        hasChanges = true;
+        myImplementedClassData.put(filePath, implementedClasses);
+      }
+    }
+    synchronized (myImplementedMemberData) {
+      final List<ImplementedMember> old = myImplementedMemberData.get(filePath);
+      if (old == null || !old.equals(implementedMembers)) {
+        hasChanges = true;
+        myImplementedMemberData.put(filePath, implementedMembers);
+      }
+    }
+
+    if (hasChanges) {
+      forceFileAnnotation(filePath, false);
+    }
   }
 
   public void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
@@ -88,6 +114,28 @@ public class DartServerData {
   }
 
   @NotNull
+  public List<ImplementedClass> getImplementedClasses(@NotNull final VirtualFile file) {
+    synchronized (myImplementedClassData) {
+      final List<ImplementedClass> classes = myImplementedClassData.get(file.getPath());
+      if (classes == null) {
+        return ImplementedClass.EMPTY_LIST;
+      }
+      return classes;
+    }
+  }
+
+  @NotNull
+  public List<ImplementedMember> getImplementedMembers(@NotNull final VirtualFile file) {
+    synchronized (myImplementedClassData) {
+      final List<ImplementedMember> classes = myImplementedMemberData.get(file.getPath());
+      if (classes == null) {
+        return ImplementedMember.EMPTY_LIST;
+      }
+      return classes;
+    }
+  }
+
+  @NotNull
   public List<PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
     synchronized (myNavigationData) {
       final List<PluginNavigationRegion> regions = myNavigationData.get(file.getPath());
@@ -106,59 +154,6 @@ public class DartServerData {
         return OverrideMember.EMPTY_LIST;
       }
       return regions;
-    }
-  }
-
-  private void forceFileAnnotation(@NotNull final String filePath, final boolean clearCache) {
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (virtualFile != null) {
-      Set<Project> projects = myRootsHandler.getTrackedProjects();
-      for (final Project project : projects) {
-        if (clearCache) {
-          ResolveCache.getInstance(project).clearCache(true);
-        }
-        DaemonCodeAnalyzer.getInstance(project).restart();
-      }
-    }
-  }
-
-  void onFilesContentUpdated() {
-    myFilePathsWithUnsentChanges.clear();
-  }
-
-  void onFileClosed(@NotNull final VirtualFile file) {
-    synchronized (myHighlightData) {
-      myHighlightData.remove(file.getPath());
-    }
-    synchronized (myNavigationData) {
-      myNavigationData.remove(file.getPath());
-    }
-    synchronized (myOverrideData) {
-      myOverrideData.remove(file.getPath());
-    }
-  }
-
-  public void onFlushedResults(@NotNull final List<String> filePaths) {
-    if (!myHighlightData.isEmpty()) {
-      synchronized (myHighlightData) {
-        for (String path : filePaths) {
-          myHighlightData.remove(FileUtil.toSystemIndependentName(path));
-        }
-      }
-    }
-    if (!myNavigationData.isEmpty()) {
-      synchronized (myNavigationData) {
-        for (String path : filePaths) {
-          myNavigationData.remove(FileUtil.toSystemIndependentName(path));
-        }
-      }
-    }
-    if (!myOverrideData.isEmpty()) {
-      synchronized (myOverrideData) {
-        for (String path : filePaths) {
-          myOverrideData.remove(FileUtil.toSystemIndependentName(path));
-        }
-      }
     }
   }
 
@@ -250,11 +245,64 @@ public class DartServerData {
     }
   }
 
+  void onFileClosed(@NotNull final VirtualFile file) {
+    synchronized (myHighlightData) {
+      myHighlightData.remove(file.getPath());
+    }
+    synchronized (myNavigationData) {
+      myNavigationData.remove(file.getPath());
+    }
+    synchronized (myOverrideData) {
+      myOverrideData.remove(file.getPath());
+    }
+  }
+
+  void onFilesContentUpdated() {
+    myFilePathsWithUnsentChanges.clear();
+  }
+
+  public void onFlushedResults(@NotNull final List<String> filePaths) {
+    if (!myHighlightData.isEmpty()) {
+      synchronized (myHighlightData) {
+        for (String path : filePaths) {
+          myHighlightData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+    if (!myNavigationData.isEmpty()) {
+      synchronized (myNavigationData) {
+        for (String path : filePaths) {
+          myNavigationData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+    if (!myOverrideData.isEmpty()) {
+      synchronized (myOverrideData) {
+        for (String path : filePaths) {
+          myOverrideData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+  }
+
+  private void forceFileAnnotation(@NotNull final String filePath, final boolean clearCache) {
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (virtualFile != null) {
+      Set<Project> projects = myRootsHandler.getTrackedProjects();
+      for (final Project project : projects) {
+        if (clearCache) {
+          ResolveCache.getInstance(project).clearCache(true);
+        }
+        DaemonCodeAnalyzer.getInstance(project).restart();
+      }
+    }
+  }
+
 
   public interface PluginRegion {
-    int getOffset();
-
     int getLength();
+
+    int getOffset();
   }
 
   public static class PluginHighlightRegion implements PluginRegion {
@@ -270,12 +318,12 @@ public class DartServerData {
       type = region.getType();
     }
 
-    public int getOffset() {
-      return offset;
-    }
-
     public int getLength() {
       return length;
+    }
+
+    public int getOffset() {
+      return offset;
     }
 
     public String getType() {
@@ -298,21 +346,21 @@ public class DartServerData {
       }
     }
 
-    @Override
-    public String toString() {
-      return "PluginNavigationRegion(" + offset + ", " + length + ")";
+    public int getLength() {
+      return length;
     }
 
     public int getOffset() {
       return offset;
     }
 
-    public int getLength() {
-      return length;
-    }
-
     public List<PluginNavigationTarget> getTargets() {
       return targets;
+    }
+
+    @Override
+    public String toString() {
+      return "PluginNavigationRegion(" + offset + ", " + length + ")";
     }
   }
 
@@ -331,12 +379,12 @@ public class DartServerData {
       return file;
     }
 
-    public int getOffset() {
-      return offset;
-    }
-
     public String getKind() {
       return kind;
+    }
+
+    public int getOffset() {
+      return offset;
     }
   }
 }
