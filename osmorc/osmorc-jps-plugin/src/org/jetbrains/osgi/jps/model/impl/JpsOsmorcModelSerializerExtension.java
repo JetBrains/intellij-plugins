@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jetbrains.osgi.jps.model.impl;
 
 import com.intellij.util.xmlb.XmlSerializer;
@@ -5,14 +20,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElement;
-import org.jetbrains.jps.model.JpsGlobal;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.model.serialization.JpsGlobalExtensionSerializer;
 import org.jetbrains.jps.model.serialization.JpsModelSerializerExtension;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer;
-import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 import org.jetbrains.osgi.jps.model.JpsOsmorcProjectExtension;
 
@@ -27,12 +39,6 @@ public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtensi
 
   @NotNull
   @Override
-  public List<? extends JpsGlobalExtensionSerializer> getGlobalExtensionSerializers() {
-    return Collections.singletonList(new OsmorcGlobalExtensionSerializer());
-  }
-
-  @NotNull
-  @Override
   public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
     return Collections.singletonList(new JpsOsmorcProjectExtensionSerializer());
   }
@@ -41,30 +47,6 @@ public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtensi
   @Override
   public List<? extends JpsFacetConfigurationSerializer<?>> getFacetConfigurationSerializers() {
     return Collections.singletonList(new JpsOsmorcModuleExtensionSerializer());
-  }
-
-  private static class OsmorcGlobalExtensionSerializer extends JpsGlobalExtensionSerializer {
-    private OsmorcGlobalExtensionSerializer() {
-      super("osmorc.xml", COMPONENT_NAME);
-    }
-
-    @Override
-    public void loadExtension(@NotNull JpsGlobal element, @NotNull Element componentTag) {
-      doLoadExtension(XmlSerializer.deserialize(componentTag, OsmorcGlobalExtensionProperties.class));
-    }
-
-    @Override
-    public void loadExtensionWithDefaultSettings(@NotNull JpsGlobal global) {
-      doLoadExtension(null);
-    }
-
-    private static void doLoadExtension(@Nullable OsmorcGlobalExtensionProperties properties) {
-      if (properties == null) properties = new OsmorcGlobalExtensionProperties();
-      JpsOsmorcExtensionService.getInstance().setGlobalProperties(properties);
-    }
-
-    @Override
-    public void saveExtension(@NotNull JpsGlobal element, @NotNull Element componentTag) { }
   }
 
   private static class JpsOsmorcProjectExtensionSerializer extends JpsProjectExtensionSerializer {

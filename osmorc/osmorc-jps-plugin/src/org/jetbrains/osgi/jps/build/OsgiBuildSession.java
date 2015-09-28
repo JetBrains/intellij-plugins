@@ -53,7 +53,6 @@ public class OsgiBuildSession implements Reporter {
   private String myMessagePrefix;
   private File myOutputJarFile;
   private File myModuleOutputDir;
-  private File myOutputDir;
   private File[] myClasses;
   private File[] mySources;
   private BndWrapper myBndWrapper;
@@ -128,7 +127,6 @@ public class OsgiBuildSession implements Reporter {
         return root.getFile();
       }
     });
-    myOutputDir = BndWrapper.getOutputDir(myModuleOutputDir);
     myBndWrapper = new BndWrapper(this);
   }
 
@@ -196,9 +194,6 @@ public class OsgiBuildSession implements Reporter {
         throw new OsgiBuildException("Unexpected build error", e, null);
       }
       mySourceToReport = null;
-
-      progress("Bundling non-OSGi libraries");
-      bundlifyLibraries();
     }
     else {
       ManifestGenerationMode mode = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties().myManifestGenerationMode;
@@ -293,29 +288,6 @@ public class OsgiBuildSession implements Reporter {
       }
     }
     return null;
-  }
-
-  /**
-   * Bundlifies all libraries that belong to the given module and that are not bundles.
-   * The bundles are cached, so if the source library does not change, it will not be bundlified again.
-   * Returns a string array containing paths of the bundlified libraries.
-   */
-  @NotNull
-  private List<String> bundlifyLibraries() {
-    List<LibraryBundlificationRule> libRules = JpsOsmorcExtensionService.getInstance().getLibraryBundlificationRules();
-
-    Collection<File> dependencies = JpsJavaExtensionService.getInstance().enumerateDependencies(Collections.singletonList(myModule))
-      .withoutSdk()
-      .withoutModuleSourceEntries()
-      .withoutDepModules()
-      .productionOnly()
-      .runtimeOnly()
-      .recursively()
-      .exportedOnly()
-      .classes()
-      .getRoots();
-
-    return myBndWrapper.bundlifyLibraries(dependencies, myOutputDir, libRules);
   }
 
   @Override
