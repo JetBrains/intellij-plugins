@@ -30,8 +30,8 @@ public class DartTestRunConfigurationType extends ConfigurationTypeBase {
       super(type);
     }
 
-    @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    @Override @NotNull
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new DartTestRunConfiguration(project, this, "Dart");
     }
 

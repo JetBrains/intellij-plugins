@@ -18,29 +18,24 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ResourceUtil;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
-import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String PUB_SNAPSHOT_PATH = "/bin/snapshots/pub.dart.snapshot";
-  private static final String RUN_TEST_COMMAND = "run test:test";
+  private static final String RUN_COMMAND = "run";
+  private static final String TEST_PACKAGE_SPEC = "test:test";
+  private static final String EXPANDED_REPORTER_OPTION = " -r expanded"; // Initial space is required.
+  private static final String NAME_REGEX_OPTION = "-n "; // Trailing space is required.
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
     super(environment);
@@ -86,24 +81,27 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
-    DartSdk sdk = DartSdk.getDartSdk(getEnvironment().getProject());
+    Project project = getEnvironment().getProject();
+    DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) {
       throw new ExecutionException("Dart SDK cannot be found"); // can't happen
     }
-    ///Users/messick/Desktop/dart/dart-sdk/bin/dart --ignore-unrecognized-flags /Users/messick/Desktop/dart/dart-sdk/bin/snapshots/pub.dart.snapshot run test:test /Users/messick/Desktop/dart/dart-sdk/bin/snapshots/pub.dart.snapshot run test:test --checked --enable-vm-service:64833 --trace_service_pause_events file:///Users/messick/src/dart_style-master/test/formatter_test.dart
-    // .../dart/dart-sdk/bin/dart .../dart/dart-sdk/bin/snapshots/pub.dart.snapshot run test:test test/all_test.dart
     String sdkPath = sdk.getHomePath();
-    String opts = myRunnerParameters.getVMOptions();
     final String filePath = myRunnerParameters.getFilePath();
     StringBuilder builder = new StringBuilder();
-    int idx = -1;
-    if (opts != null) {
-      idx = opts.indexOf(PUB_SNAPSHOT_PATH);
-      builder.append(opts).append(' ');
+    builder.append(RUN_COMMAND).append(' ').append(TEST_PACKAGE_SPEC);
+    builder.append(EXPANDED_REPORTER_OPTION);
+    if (filePath != null) {
+      builder.append(' ').append(filePath);
     }
-    if (idx == -1) builder.append(sdkPath).append(PUB_SNAPSHOT_PATH).append(' ').append(RUN_TEST_COMMAND);
-    myRunnerParameters.setVMOptions(builder.toString());
-    return doStartProcess(filePath == null ? null : pathToDartUrl(filePath));
+    String testName = ((DartTestRunnerParameters)myRunnerParameters).getTestName();
+    if (testName != null && !testName.isEmpty()) {
+      String safeName = StringUtil.escapeStringCharacters(testName);
+      builder.append(' ').append(NAME_REGEX_OPTION).append('"').append(safeName).append('"');
+    }
+    myRunnerParameters.setArguments(builder.toString());
+    myRunnerParameters.setWorkingDirectory(project.getBasePath());
+    return doStartProcess(pathToDartUrl(sdkPath + PUB_SNAPSHOT_PATH));
   }
 
   private static String pathToDartUrl(@NonNls @NotNull String path) {
