@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.lang.annotator;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
@@ -96,6 +97,8 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     try {
       resolvedValue =
         ValueResolverChain.getInstance().resolve(tapestryProject, elementClass, attribute.getValue(), parameter.getDefaultPrefix());
+    } catch (ProcessCanceledException pce) {
+      throw pce;
     }
     catch (Exception ex) {
       _logger.error(ex);
