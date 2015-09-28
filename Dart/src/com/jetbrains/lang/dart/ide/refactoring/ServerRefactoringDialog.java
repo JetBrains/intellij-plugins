@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.CommonBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
@@ -22,9 +23,11 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
@@ -91,21 +94,35 @@ public abstract class ServerRefactoringDialog extends RefactoringDialog {
         return;
       }
       if (finalStatus.hasError()) {
-        Messages.showErrorDialog(myProject, finalStatus.getMessage(), "Error");
+        Messages.showErrorDialog(myProject, finalStatus.getMessage(), CommonBundle.getErrorTitle());
         return;
       }
     }
     // Apply the change.
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+    final String error = ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
       @Override
-      public void run() {
+      public String compute() {
         final SourceChange change = myRefactoring.getChange();
         assert change != null;
+        // todo show Preview and suggest user to select which potential edits to apply
         final Set<String> excludedIds = myRefactoring.getPotentialEdits();
-        AssistUtils.applySourceChange(myProject, change, excludedIds);
-        close(DialogWrapper.OK_EXIT_CODE);
+        try {
+          AssistUtils.applySourceChange(myProject, change, excludedIds);
+        }
+        catch (DartSourceEditException e) {
+          return e.getMessage();
+        }
+
+        return null;
       }
     });
+
+    if (error == null) {
+      close(DialogWrapper.OK_EXIT_CODE);
+    }
+    else {
+      Messages.showErrorDialog(myProject, error, CommonBundle.getErrorTitle());
+    }
   }
 
   @Override

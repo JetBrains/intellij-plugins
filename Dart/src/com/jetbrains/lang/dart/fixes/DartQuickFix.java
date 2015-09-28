@@ -19,6 +19,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +87,12 @@ public final class DartQuickFix implements IntentionAction {
     final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document == null) return;
 
-    AssistUtils.applySourceChange(project, mySourceChange);
+    try {
+      AssistUtils.applySourceChange(project, mySourceChange);
+    }
+    catch (DartSourceEditException e) {
+      CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
+    }
   }
 
   @Override

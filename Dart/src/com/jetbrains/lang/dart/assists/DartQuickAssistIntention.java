@@ -15,10 +15,12 @@
  */
 package com.jetbrains.lang.dart.assists;
 
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -82,7 +84,12 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     if (sourceChange != null) {
-      AssistUtils.applySourceChange(project, sourceChange);
+      try {
+        AssistUtils.applySourceChange(project, sourceChange);
+      }
+      catch (DartSourceEditException e) {
+        CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
+      }
     }
   }
 

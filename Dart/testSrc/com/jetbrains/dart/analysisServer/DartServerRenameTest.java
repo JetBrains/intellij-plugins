@@ -28,6 +28,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.DartServerRenameHandler;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRenameRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
@@ -98,7 +99,12 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
       @Override
       public void run() {
         final Set<String> excludedIds = refactoring.getPotentialEdits();
-        AssistUtils.applySourceChange(myFixture.getProject(), change, excludedIds);
+        try {
+          AssistUtils.applySourceChange(myFixture.getProject(), change, excludedIds);
+        }
+        catch (DartSourceEditException e) {
+          fail(e.getMessage());
+        }
       }
     });
     // validate

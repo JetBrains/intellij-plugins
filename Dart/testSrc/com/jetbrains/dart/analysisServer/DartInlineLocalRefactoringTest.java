@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.ServerInlineLocalRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.util.DartTestUtils;
@@ -71,7 +72,12 @@ public class DartInlineLocalRefactoringTest extends CodeInsightFixtureTestCase {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        AssistUtils.applySourceChange(myFixture.getProject(), change);
+        try {
+          AssistUtils.applySourceChange(myFixture.getProject(), change);
+        }
+        catch (DartSourceEditException e) {
+          fail(e.getMessage());
+        }
       }
     });
     // validate

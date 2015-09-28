@@ -60,14 +60,15 @@ public class AssistUtils {
     }
   }
 
-  public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange) {
+  public static void applySourceChange(@NotNull final Project project,
+                                       @NotNull final SourceChange sourceChange) throws DartSourceEditException {
     Set<String> excludedIds = Collections.emptySet();
     applySourceChange(project, sourceChange, excludedIds);
   }
 
   public static void applySourceChange(@NotNull final Project project,
                                        @NotNull final SourceChange sourceChange,
-                                       @NotNull final Set<String> excludedIds) {
+                                       @NotNull final Set<String> excludedIds) throws DartSourceEditException {
     final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange);
     // ensure not read-only
     {
@@ -111,14 +112,20 @@ public class AssistUtils {
 
   @NotNull
   public static Map<VirtualFile, SourceFileEdit> getContentFilesChanges(@NotNull final Project project,
-                                                                        @NotNull final SourceChange sourceChange) {
+                                                                        @NotNull final SourceChange sourceChange)
+    throws DartSourceEditException {
+
     final Map<VirtualFile, SourceFileEdit> map = Maps.newHashMap();
     final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
     for (SourceFileEdit fileEdit : fileEdits) {
       final VirtualFile file = findVirtualFile(fileEdit);
-      if (file != null && isInContent(project, file)) {
-        map.put(file, fileEdit);
+      if (file == null) {
+        throw new DartSourceEditException("Failed to edit file, file not found: " + fileEdit.getFile());
       }
+      if (!isInContent(project, file)) {
+        throw new DartSourceEditException("Can't edit file outside of the project content: " + fileEdit.getFile());
+      }
+      map.put(file, fileEdit);
     }
     return map;
   }
@@ -139,7 +146,7 @@ public class AssistUtils {
         final Position position = positions.get(0);
         final String path = position.getFile();
         // find VirtualFile
-        VirtualFile virtualFile = findVirtualFileByPath(path);
+        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
         if (virtualFile == null) {
           return null;
         }
@@ -155,15 +162,9 @@ public class AssistUtils {
     return null;
   }
 
-  private static VirtualFile findVirtualFile(@NotNull SourceFileEdit fileEdit) {
-    final String path = FileUtil.toSystemIndependentName(fileEdit.getFile());
-    return findVirtualFileByPath(path);
-  }
-
   @Nullable
-  private static VirtualFile findVirtualFileByPath(String path) {
-    path = FileUtil.toSystemIndependentName(path);
-    return LocalFileSystem.getInstance().findFileByPath(path);
+  private static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
+    return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
   }
 
   private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {

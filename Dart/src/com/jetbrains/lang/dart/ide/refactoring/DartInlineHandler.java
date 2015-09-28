@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.CommonBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.InlineActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
@@ -28,12 +29,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.inline.InlineOptionsDialog;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationRegion;
 import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationTarget;
 import com.jetbrains.lang.dart.assists.AssistUtils;
-import com.jetbrains.lang.dart.ide.actions.AbstractDartFileProcessingAction;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import org.dartlang.analysis.server.protocol.ElementKind;
 import org.dartlang.analysis.server.protocol.SourceChange;
@@ -61,7 +63,7 @@ public class DartInlineHandler extends InlineActionHandler {
   }
 
   @Override
-  public void inlineElement(@NotNull final Project project, @Nullable Editor editor, PsiElement element) {
+  public void inlineElement(@NotNull final Project project, @Nullable final Editor editor, PsiElement element) {
     final InlineRefactoringContext context = findContext(editor);
     if (context == null) {
       return;
@@ -101,7 +103,12 @@ public class DartInlineHandler extends InlineActionHandler {
       public void run() {
         final SourceChange change = refactoring.getChange();
         assert change != null;
-        AssistUtils.applySourceChange(project, change);
+        try {
+          AssistUtils.applySourceChange(project, change);
+        }
+        catch (DartSourceEditException e) {
+          CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
+        }
       }
     });
   }
@@ -157,7 +164,7 @@ public class DartInlineHandler extends InlineActionHandler {
       final String message = status.getMessage();
       assert message != null;
       if (editor != null) {
-        AbstractDartFileProcessingAction.showHintLater(editor, message, true);
+        CommonRefactoringUtil.showErrorHint(editor.getProject(), editor, message, CommonBundle.getErrorTitle(), null);
       }
       return true;
     }

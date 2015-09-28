@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.CommonBundle;
 import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -30,11 +31,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.intellij.refactoring.ui.NameSuggestionsField;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.actions.AbstractDartFileProcessingAction;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +121,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
       if (initialStatus.hasError()) {
         final String message = initialStatus.getMessage();
         assert message != null;
-        AbstractDartFileProcessingAction.showHintLater(editor, message, true);
+        CommonRefactoringUtil.showErrorHint(project, editor, message, CommonBundle.getErrorTitle(), null);
         return;
       }
     }
