@@ -5,7 +5,7 @@ import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.NodePathSettings;
+import com.intellij.javascript.nodejs.NodeSettings;
 import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -94,7 +94,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       @Override
       public List<String> produce() {
         String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getText();
-        NodePathSettings nodeSettings = StringUtil.isEmpty(nodeInterpreterPath) ? null : new NodePathSettings(nodeInterpreterPath);
+        NodeSettings nodeSettings = StringUtil.isEmpty(nodeInterpreterPath) ? null : new NodeSettings(nodeInterpreterPath);
         List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
         VirtualFile requester = KarmaUtil.getRequester(
           myProject,
