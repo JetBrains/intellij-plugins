@@ -276,7 +276,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
     if (psiFile instanceof PsiClassOwner) {
       PsiClass[] psiClasses = ((PsiClassOwner)psiFile).getClasses();
       PsiClass aClass = IdeaUtils.findPublicClass(psiClasses);
-      if (aClass == null) aClass = psiClasses[0];
+      if (aClass == null && psiClasses.length > 0) aClass = psiClasses[0];
 
       if (aClass != null) {
         _psiClassType = JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(aClass);
