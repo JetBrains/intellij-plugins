@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.java.IJavaType;
@@ -141,7 +142,8 @@ public class IdeaUtils {
           (modifierList = clazz.getModifierList()) != null &&
           modifierList.hasModifierProperty(PsiModifier.PUBLIC) &&
           !clazz.isEnum() &&
-          !clazz.isInterface()
+          !clazz.isInterface() &&
+          PsiUtil.hasDefaultConstructor(clazz)
         ) {
         return clazz;
       }

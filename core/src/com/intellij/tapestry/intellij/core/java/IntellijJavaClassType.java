@@ -14,6 +14,7 @@ import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
+import com.intellij.tapestry.intellij.util.IdeaUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -274,9 +275,11 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
     PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(file);
     if (psiFile instanceof PsiClassOwner) {
       PsiClass[] psiClasses = ((PsiClassOwner)psiFile).getClasses();
+      PsiClass aClass = IdeaUtils.findPublicClass(psiClasses);
+      if (aClass == null) aClass = psiClasses[0];
 
-      if (psiClasses.length > 0) {
-        _psiClassType = JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(psiClasses[0]);
+      if (aClass != null) {
+        _psiClassType = JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(aClass);
       }
       else {
         throw new AssertionError("no classes found: " + _classFilePath);
