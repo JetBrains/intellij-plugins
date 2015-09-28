@@ -3,9 +3,6 @@
     <javaScriptDebugAware implementation="com.jetbrains.lang.dart.ide.runner.client.DartWebDebugAware"/>
     <fileUrlMapper implementation="com.jetbrains.lang.dart.ide.DartFileUrlMapper" order="first"/>
   </extensions>
-  <extensions defaultExtensionNs="com.intellij">
-    <project.converterProvider implementation="com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider"/>
-  </extensions>
   <extensions defaultExtensionNs="JavaScriptDebugger">
     <engine implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebuggerEngine" order="first"/>
   </extensions>
