@@ -70,7 +70,9 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   private static boolean isContentTag(XmlTag tag) {
-    return "content".equals(tag.getLocalName()) && TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace());
+    return tag != null &&
+           "content".equals(tag.getLocalName()) &&
+           TapestryXmlExtension.isTapestryTemplateNamespace(tag.getNamespace());
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
