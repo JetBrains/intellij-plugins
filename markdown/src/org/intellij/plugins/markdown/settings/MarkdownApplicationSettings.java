@@ -1,5 +1,6 @@
 package org.intellij.plugins.markdown.settings;
 
+import com.intellij.ide.ui.LafManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.util.messages.Topic;
@@ -16,6 +17,10 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
                                                     MarkdownCssSettings.Holder {
 
   private State myState = new State();
+
+  public MarkdownApplicationSettings() {
+    LafManager.getInstance().addLafManagerListener(new MarkdownLAFListener());
+  }
 
   @NotNull
   public static MarkdownApplicationSettings getInstance() {

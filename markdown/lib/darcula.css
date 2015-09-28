@@ -30,11 +30,11 @@ THE SOFTWARE.
 }
 
 body {
-    background-color: white;
+    background-color: #3c3f41;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    color: #333;
+    color: #bbbbbb;
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
     font-size: 16px;
     line-height: 1.6;
@@ -117,7 +117,7 @@ input {
 }
 
 a {
-    color: #4078c0;
+    color: #589df6;
     text-decoration: none;
 }
 
@@ -132,7 +132,7 @@ hr {
     overflow: hidden;
     background: transparent;
     border: 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #2c2c2c;
 }
 
 hr:before {
@@ -279,7 +279,7 @@ h4 .octicon-link,
 h5 .octicon-link,
 h6 .octicon-link {
     display: none;
-    color: #000;
+    color: #bbbbbb;
     vertical-align: middle;
 }
 
@@ -307,7 +307,7 @@ h1 {
     padding-bottom: 0.3em;
     font-size: 2.25em;
     line-height: 1.2;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #2c2c2c;
 }
 
 h1 .anchor {
@@ -318,7 +318,7 @@ h2 {
     padding-bottom: 0.3em;
     font-size: 1.75em;
     line-height: 1.225;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #2c2c2c;
 }
 
 h2 .anchor {
@@ -374,7 +374,7 @@ hr {
     height: 4px;
     padding: 0;
     margin: 16px 0;
-    background-color: #e7e7e7;
+    background-color: #2c2c2c;
     border: 0 none;
 }
 
@@ -414,8 +414,8 @@ dl dd {
 
 blockquote {
     padding: 0 15px;
-    color: #777;
-    border-left: 4px solid #ddd;
+    color: #45494A;
+    border-left: 4px solid #626667;
 }
 
 blockquote > :first-child {
@@ -441,12 +441,12 @@ table th {
 table th,
 table td {
     padding: 6px 13px;
-    border: 1px solid #ddd;
+    border: 1px solid #2c2c2c;
 }
 
 table tr {
-    background-color: #fff;
-    border-top: 1px solid #ccc;
+    background-color: #2c2c2c;
+    border-top: 1px solid #2c2c2c;
 }
 
 img {
@@ -455,12 +455,11 @@ img {
 }
 
 code {
-    padding: 0;
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
+    padding: 0.2em 0;
     margin: 0;
     font-size: 85%;
-    background-color: rgba(0, 0, 0, 0.04);
+    color: #cccccc;
+    background-color: #333333;
     border-radius: 3px;
 }
 
@@ -490,7 +489,7 @@ pre {
     overflow: auto;
     font-size: 85%;
     line-height: 1.45;
-    background-color: #f7f7f7;
+    background-color: #2c2c2c;
     border-radius: 3px;
 }
 
@@ -518,20 +517,6 @@ pre code {
 pre code:before,
 pre code:after {
     content: normal;
-}
-
-kbd {
-    display: inline-block;
-    padding: 3px 5px;
-    font-size: 11px;
-    line-height: 10px;
-    color: #555;
-    vertical-align: middle;
-    background-color: #fcfcfc;
-    border: solid 1px #ccc;
-    border-bottom-color: #bbb;
-    border-radius: 3px;
-    box-shadow: inset 0 -1px 0 #bbb;
 }
 
 .pl-c {
@@ -633,19 +618,7 @@ kbd {
     color: #1d3e81;
 }
 
-kbd {
-    display: inline-block;
-    padding: 3px 5px;
-    font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    line-height: 10px;
-    color: #555;
-    vertical-align: middle;
-    background-color: #fcfcfc;
-    border: solid 1px #ccc;
-    border-bottom-color: #bbb;
-    border-radius: 3px;
-    box-shadow: inset 0 -1px 0 #bbb;
-}
+
 
 .task-list-item {
     list-style-type: none;

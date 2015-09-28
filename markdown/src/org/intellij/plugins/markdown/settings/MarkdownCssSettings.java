@@ -9,7 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public final class MarkdownCssSettings {
-  public static final MarkdownCssSettings DEFAULT = new MarkdownCssSettings();
+  public static final MarkdownCssSettings DEFAULT = new MarkdownCssSettings(false);
+  public static final MarkdownCssSettings DARCULA = new MarkdownCssSettings(true);
 
   @Attribute("UriEnabled")
   private boolean myUriEnabled;
@@ -23,7 +24,11 @@ public final class MarkdownCssSettings {
   private String myStylesheetText;
 
   private MarkdownCssSettings() {
-    this(true, getPredefinedCssURI(), false, "");
+    this(true, getPredefinedCssURI(false), false, "");
+  }
+
+  private MarkdownCssSettings(boolean isDarcula) {
+    this(true, getPredefinedCssURI(isDarcula), false, "");
   }
 
   public MarkdownCssSettings(boolean uriEnabled, @NotNull String stylesheetUri, boolean textEnabled, @NotNull String stylesheetText) {
@@ -66,9 +71,16 @@ public final class MarkdownCssSettings {
     return true;
   }
 
-  private static String getPredefinedCssURI() {
+  @NotNull
+  public static MarkdownCssSettings getDefaultCssSettings(boolean isDarcula) {
+    return isDarcula ? DARCULA : DEFAULT;
+  }
+
+  @NotNull
+  private static String getPredefinedCssURI(boolean isDarcula) {
     try {
-      final String path = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib/default.css";
+      final String fileName = isDarcula ? "darcula.css" : "default.css";
+      final String path = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib/" + fileName;
       return new File(path).toURI().toString();
     }
     catch (FileNotFoundException e) {
