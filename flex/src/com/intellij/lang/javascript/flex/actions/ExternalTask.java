@@ -217,6 +217,9 @@ public abstract class ExternalTask {
     }
     else {
       String message = messages.isEmpty() ? FlexBundle.message("unexpected.empty.adt.output") : StringUtil.join(messages, "\n");
+      if (message.length() > 1000) {
+        message = message.substring(0, 1000) + "...";
+      }
       if (task instanceof AdtPackageTask) {
         message += "\n\nADT command line:\n" + task.getCommandLine();
       }

@@ -211,7 +211,10 @@ public class AirPackageAction extends DumbAwareAction {
   private static Consumer<List<String>> createFailureConsumer(final Project project, final String packagePath, final ExternalTask task) {
     return new Consumer<List<String>>() {
       public void consume(final List<String> messages) {
-        final String reason = StringUtil.join(messages, "<br>");
+        String reason = StringUtil.join(messages, "<br>");
+        if (reason.length() > 1000) {
+          reason = reason.substring(0, 1000) + "...";
+        }
 
         NOTIFICATION_GROUP
           .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
