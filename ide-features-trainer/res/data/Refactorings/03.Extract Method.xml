@@ -3,7 +3,7 @@
         <CopyText>import javax.swing.*;
 import java.awt.*;
 
-public class Test{
+class Test{
     private static JButton glassButton;
     private static JPanel glass;
 

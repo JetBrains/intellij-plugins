@@ -221,8 +221,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private VirtualFile getFileInEduProject(Lesson lesson) throws IOException {
 
         final VirtualFile sourceRootFile = ProjectRootManager.getInstance(eduProject).getContentSourceRoots()[0];
-        //Check if this file exists
         String courseFileName = "Test.java";
+        if (lesson.getCourse() != null) courseFileName = lesson.getCourse().getName() + ".java";
+
+
         VirtualFile courseVirtualFile = sourceRootFile.findChild(courseFileName);
         if (courseVirtualFile == null) {
             courseVirtualFile = sourceRootFile.createChildData(this, courseFileName);
@@ -266,6 +268,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
 
         eduProject = myEduProject;
+
+        assert eduProject != null;
+        assert eduProject.getProjectFile() != null;
+        assert eduProject.getProjectFile().getParent() != null;
+        assert eduProject.getProjectFile().getParent().getParent() != null;
+
         myState.eduProjectPath = eduProject.getProjectFile().getParent().getParent().getPath();
     }
 
@@ -313,7 +321,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private EduEditor getEduEditor(Project project, VirtualFile vf) {
         OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
         final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
-        if (allEditors == null || allEditors.length == 0) {
+        if (allEditors.length == 0) {
             FileEditorManager.getInstance(project).openEditor(descriptor, true);
         } else {
             boolean editorIsFind = false;
