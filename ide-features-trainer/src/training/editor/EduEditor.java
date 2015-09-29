@@ -19,7 +19,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import training.ActionsRecorder;
+import training.lesson.ActionsRecorder;
 import training.editor.actions.BlockCaretAction;
 import training.editor.actions.EduActions;
 import training.editor.eduUI.EduPanel;
