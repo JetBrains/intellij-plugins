@@ -1,6 +1,6 @@
 <xml type="Scenario" name="Selection" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>public class SelectionDemo {
+        <CopyText>class SelectionDemo {
 
     public int fib(int n) {
         int a = 1;

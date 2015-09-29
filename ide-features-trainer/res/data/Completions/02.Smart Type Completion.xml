@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class SmartCompletionDemo{
+class SmartCompletionDemo{
 
     private Queue&lt;String&gt; strings;
     private ArrayBlockingQueue&lt;String&gt; arrayBlockingQueue;

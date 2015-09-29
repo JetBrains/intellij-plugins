@@ -1,6 +1,6 @@
 <xml type="Scenario" name="Postfix Completion" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>public class PostfixCompletionDemo{
+        <CopyText>class PostfixCompletionDemo{
 
     public void demonstrate(int show_times){
         (show_times == 10)
