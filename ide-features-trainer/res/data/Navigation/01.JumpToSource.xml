@@ -2,7 +2,7 @@
     <MouseBlock><CopyText>import java.lang.String;
 import java.util.HashMap;
 
-public class JumpToSource {
+class JumpToSource {
 
     public static boolean checkParam(String checkKey, Params parameters){
         return parameters.hasParameter(checkKey);
@@ -25,7 +25,7 @@ public class JumpToSource {
         }
 
         public String getParameter(String key) {
-            myParameters.get(key);
+            return myParameters.get(key);
         }
 
         public boolean hasParameter(String key) {
@@ -40,6 +40,6 @@ public class JumpToSource {
         <Try description="Basically lets start from one very frequent in use feature - Jump to Source. Try call this action by &lt;action=&quot;EditSource&quot;&gt; to look up source of &lt;code&gt;Params&lt;/code&gt;" trigger="EditSource"/>
     </CaretBlock>
 </MouseBlock>
-        <Try description="You may also Jump to Source from a classes implemented in libraries or even in JDK. Press &lt;action=&quot;EditSource&quot;&gt; when the caret will stands on &lt;code&gt;String&lt;/code&gt;" trigger="EditSource" check="training.check.CheckJumpFromString"/>
+        <Try description="You may also Jump to Source from a classes implemented in libraries or even in JDK. Press &lt;action=&quot;EditSource&quot;&gt; when the caret will stands on &lt;code&gt;String&lt;/code&gt;" trigger="EditSource"/>
     <Win/>
 </xml>

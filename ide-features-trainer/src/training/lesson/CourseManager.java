@@ -3,18 +3,20 @@ package training.lesson;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.JavaSdkVersion;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTypeId;
+import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.SdkFinder;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -73,10 +75,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
     }
 
-
     private HashMap<Course, VirtualFile> mapCourseVirtualFile = new HashMap<Course, VirtualFile>();
     private State myState = new State();
-
 
     public static CourseManager getInstance() {
         return ServiceManager.getService(CourseManager.class);
@@ -257,7 +257,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             } else {
 
                 try {
-                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, project);
+                    JavaSdk jSdk = JavaSdk.getInstance();
+                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, project, SdkConfigurationUtil.findOrCreateSdk(null, jSdk));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -265,7 +266,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
 
         eduProject = myEduProject;
-        myState.eduProjectPath = eduProject.getProjectFilePath();
+        myState.eduProjectPath = eduProject.getProjectFile().getParent().getParent().getPath();
     }
 
     @NotNull
@@ -414,7 +415,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Override
     public void loadState(State state) {
-        myState.eduProjectPath = state.eduProjectPath;
+//        myState.eduProjectPath = state.eduProjectPath;
+        myState.eduProjectPath = null;
+
         if (state.courses == null || state.courses.size() == 0) {
             try {
                 initCourses();
@@ -431,34 +434,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
         } else {
 
-//            myState.courses.clear();
-//            for (Course course : state.courses) {
-//                if (myState.courses.contains(course)) {
-//                    ArrayList<Lesson> newLessonArrayList = new ArrayList<Lesson>();
-//                    for (Lesson lesson : course.getLessons()) {
-//                        final String path = lesson.getScn().getPath();
-//
-//                        @Nullable
-//                        Scenario scenario = null;
-//                        try {
-//                            scenario = new Scenario(path);
-//                        } catch (JDOMException e) {
-//                            e.printStackTrace();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        try {
-//                            newLessonArrayList.add(new Lesson(scenario, lesson.getPassed(), course));
-//                        } catch (BadLessonException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//                    course.setLessons(newLessonArrayList);
-//                    myState.courses.add(course);
-//                }
-//            }
             for (Course course : myState.courses) {
                 if (state.courses.contains(course)) {
                     final Course courseFromPersistentState = state.courses.get(state.courses.indexOf(course));
@@ -472,6 +447,5 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
         }
     }
-
 
 }
