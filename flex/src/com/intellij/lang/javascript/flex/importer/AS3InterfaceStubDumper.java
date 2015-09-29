@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.impl.*;
+import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.SmartList;
@@ -82,6 +83,8 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
         JSFunction.FunctionKind.SIMPLE,
         getMultinameAsPackageName(methodInfo.name,methodInfo.parentTraits != null ? methodInfo.parentTraits.getClassName():null),
         getTypeRef(methodInfo.returnType, methodInfo.getParentName()),
+        "static ".equals(attr) ? JSContext.STATIC : JSContext.INSTANCE,
+        getAccessType(methodInfo),
         parents.getLast()
       )
     );
@@ -95,11 +98,14 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     super.processVariable(info, indent, attr);
     String parentName = info.getParentName();
     String qName = getMultinameAsPackageName(info.name, parentName);
-    new ActionScriptVariableStubImpl(qName.substring(qName.lastIndexOf('.') + 1),
+    new ActionScriptVariableStubImpl(
+      qName.substring(qName.lastIndexOf('.') + 1),
       info.isConst(),
       getTypeRef(info.type, parentName),
       getValueRepr(info.value),
       qName,
+      "static ".equals(attr) ? JSContext.STATIC : JSContext.INSTANCE,
+      getAccessType(info),
       parents.getLast()
     );
     parents.removeLast();
@@ -112,11 +118,23 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
         slotInfo.name.name,
         slotInfo.isInterfaceClass(),
         getMultinameAsPackageName(slotInfo.name, null),
+        getAccessType(slotInfo),
         parents.getLast()
       )
     );
     super.processClass(slotInfo, abc, attr, indent);
     parents.removeLast();
+  }
+
+  @NotNull
+  private JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
+    final String nsName = memberInfo.name.getNsName(memberInfo);
+    JSAttributeList.AccessType accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
+    if ("public".equals(nsName)) accessType = JSAttributeList.AccessType.PUBLIC;
+    else if ("protected".equals(nsName)) accessType = JSAttributeList.AccessType.PROTECTED;
+    else if ("private".equals(nsName)) accessType = JSAttributeList.AccessType.PRIVATE;
+    else if ("internal".equals(nsName)) accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
+    return accessType;
   }
 
   @Override
