@@ -2,7 +2,7 @@ package training.commands;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
-import training.ActionsRecorder;
+import training.lesson.ActionsRecorder;
 import training.check.Check;
 import training.util.MyClassLoader;
 import training.commandsEx.ActionCommandEx;

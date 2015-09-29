@@ -1,22 +1,35 @@
 <xml type="Scenario" name="Declaration/Implementation" passed="false" version="0.1" subtype="aimless" projectTree="hide">
-        <CopyText>public class DeclarationDemo{
+        <CopyText>class DeclarationDemo {
 
-    final static int a_const = 10000;
-    final static int b_const = 500;
+    void initPigeonPack() {
+        int count = (int) Math.round(Math.abs(Math.random() * 1000));
+        Pigeon[] pigeonPack = new Pigeon[count];
+        for (int i = 0; i &lt; count; i++) {
+            pigeonPack[i] = new Pigeon() {
+                @Override
+                public void consume(String trashTypeName) {
+                    System.out.println(&quot;Pigeon is consuming &quot; + trashTypeName);
+                }
+            };
+        }
+        PigeonBoss pigeonBoss = new PigeonBoss();
+    }
 
+    class PigeonBoss implements Pigeon {
 
-public static void calc(){InnerCalc.process(a_const, b_const); }
-
-    class InnerCalc{
-
-final static int some_const = 124136; public static int process(int a, int b){ return  a * b + some_const;
+        @Override
+        public void consume(String trashTypeName) {
+            System.out.println("Pigeon boss consumes only a kebab.");
         }
     }
 
+    interface Pigeon {
+        void consume(String trashTypeName);
+    }
 }</CopyText>
-    <SetSelection start-position="7:1" end-position="7:65" />
-    <Text description="IDEA helps to correct codes format with one action."/>
-    <Try description="Try to reformat selected code with &lt;action=&quot;ReformatCode&quot;&gt;" triggers="ReformatCode"/>
-    <Try description="To reformat a whole source file use &lt;action=&quot;ReformatCode&quot;&gt; when no lines are selected" triggers="ReformatCode"/>
+    <MoveCaret position="5:35"/>
+    <Try description="Use &lt;action=&quot;GotoDeclaration&quot;&gt; to see declaration of the class/interface" triggers="GotoDeclaration"/>
+    <MoveCaret position="25:15"/>
+    <Try description="To see implementations of some class/interface use &lt;action=&quot;GotoImplementation&quot;&gt;" triggers="GotoImplementation"/>
     <Win/>
 </xml>

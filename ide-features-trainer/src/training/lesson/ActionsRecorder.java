@@ -1,4 +1,4 @@
-package training;
+package training.lesson;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
