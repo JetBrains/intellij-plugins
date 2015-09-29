@@ -41,7 +41,7 @@ public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDeb
   @Override
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
     final XBreakpointHandler<?>[] handlers = super.getBreakpointHandlers();
-    return ArrayUtil.remove(handlers, 3);
+    return handlers.length > 3 ? ArrayUtil.remove(handlers, 3) : handlers;
   }
 
   @NotNull
