@@ -3,6 +3,7 @@ package com.intellij.tapestry.tests;
 import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.MappingDataCache;
 import com.intellij.tapestry.core.model.Library;
@@ -233,14 +234,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
   public void testIdAttrValueTypeAttrPresent() throws Throwable {
     addComponentToProject("Count");
     initByComponent();
-    XmlAttribute ref = resolveReferenceAtCaretPosition(XmlAttribute.class);
-    assertEquals("t:id", ref.getName());
+    XmlAttributeValue ref = resolveReferenceAtCaretPosition(XmlAttributeValue.class);
+    assertEquals("t:id", ((XmlAttribute)ref.getParent()).getName());
   }
 
   public void testIdAttrValueInTmlTag() throws Throwable {
     initByComponent();
-    XmlAttribute ref = resolveReferenceAtCaretPosition(XmlAttribute.class);
-    assertEquals("t:id", ref.getName());
+    XmlAttributeValue ref = resolveReferenceAtCaretPosition(XmlAttributeValue.class);
+    assertEquals("t:id", ((XmlAttribute)ref.getParent()).getName());
   }
 
   public void testIdAttrValueUnresolved() throws Throwable {

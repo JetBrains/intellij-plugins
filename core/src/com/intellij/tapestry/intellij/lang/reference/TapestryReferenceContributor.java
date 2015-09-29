@@ -5,7 +5,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.XmlNamedElementPattern;
+import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
@@ -55,13 +55,13 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
   private void registerTypeAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
     registrar.registerReferenceProvider(
-      XmlPatterns.xmlAttribute("type").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
+      XmlPatterns.xmlAttributeValue("type").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
       new PsiReferenceProvider() {
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
-          if (!(element instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
-          XmlAttribute typeAttr = (XmlAttribute)element;
-          return getReferenceToComponentClass(typeAttr, getValueTextRange(typeAttr));
+          if (!(element instanceof XmlAttributeValue)) return PsiReference.EMPTY_ARRAY;
+          XmlAttributeValue typeAttrValue = (XmlAttributeValue)element;
+          return getReferenceToComponentClass(typeAttrValue, getRange(typeAttrValue));
         }
       });
 
@@ -85,21 +85,32 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       });
   }
 
+  private static TextRange getRange(XmlAttributeValue typeAttrValue) {
+    final TextRange range = typeAttrValue.getValueTextRange();
+    return range.shiftRight(-typeAttrValue.getTextRange().getStartOffset());
+  }
+
   private void registerIdAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
     registrar.registerReferenceProvider(
-        XmlPatterns.xmlAttribute("id").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
+        XmlPatterns.xmlAttributeValue("id").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
         new PsiReferenceProvider() {
           @NotNull
           public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
-            if (!(element instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
-            XmlAttribute idAttr = (XmlAttribute)element;
-            XmlElement identifier = TapestryUtils.getComponentIdentifier(idAttr.getParent());
-            final TextRange valueTextRange = getValueTextRange(idAttr);
-            return identifier == idAttr
-                   ? getReferenceToEmbeddedComponent(idAttr, valueTextRange)
-                   : getReferenceByComponentId(idAttr, valueTextRange);
+            if (!(element instanceof XmlAttributeValue)) return PsiReference.EMPTY_ARRAY;
+            XmlAttributeValue idAttrValue = (XmlAttributeValue)element;
+            XmlElement identifier = TapestryUtils.getComponentIdentifier(parentTag(idAttrValue));
+            final TextRange valueTextRange = getRange(idAttrValue);
+            return identifier == idAttrValue.getParent()
+                   ? getReferenceToEmbeddedComponent(idAttrValue, valueTextRange)
+                   : getReferenceByComponentId(idAttrValue, valueTextRange);
           }
         });
+  }
+
+  private static XmlTag parentTag(XmlAttributeValue value) {
+    final PsiElement parent = value.getParent();
+    if (parent instanceof XmlAttribute) return ((XmlAttribute) parent).getParent();
+    return null;
   }
 
   private static void registerAttrValueReferenceProvider(PsiReferenceRegistrar registrar) {
@@ -109,38 +120,39 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       }
     };
 
-    final XmlNamedElementPattern.XmlAttributePattern tapestryAttributePattern =
-        XmlPatterns.xmlAttribute().withParent(XmlPatterns.xmlTag().with(tapestryTagCondition).save(TAG_KEY));
-    registrar.registerReferenceProvider(tapestryAttributePattern, new PsiReferenceProvider() {
+    final XmlAttributeValuePattern tapestryAttributeValuePattern =
+       XmlPatterns.xmlAttributeValue().withSuperParent(2, XmlPatterns.xmlTag().with(tapestryTagCondition).save(TAG_KEY));
+    registrar.registerReferenceProvider(tapestryAttributeValuePattern, new PsiReferenceProvider() {
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
-        if (!(element instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
-        XmlAttribute attr = (XmlAttribute)element;
-        if (attr.getValueElement() == null) return PsiReference.EMPTY_ARRAY;
+        if (!(element instanceof XmlAttributeValue)) return PsiReference.EMPTY_ARRAY;
+        XmlAttributeValue attrValue = (XmlAttributeValue)element;
         XmlTag tag = context.get(TAG_KEY);
 
         Component component = TapestryUtils.getTypeOfTag(tag);
         if (component == null) return PsiReference.EMPTY_ARRAY;
+        final PsiElement parent = attrValue.getParent();
+        if (!(parent instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
 
-        final String localName = attr.getLocalName();
+        final String localName = ((XmlAttribute)parent).getLocalName();
         TapestryParameter parameter = component.getParameters().get(localName);
         if (parameter == null) return PsiReference.EMPTY_ARRAY;
 
         return localName.equals("page")
-               ? getReferenceToPage(component, attr)
-               : getAttrValueReference(attr, component.getProject(), parameter);
+               ? getReferenceToPage(component, attrValue)
+               : getAttrValueReference(attrValue, component.getProject(), parameter);
       }
     });
   }
 
-  private static PsiReference[] getAttrValueReference(XmlAttribute attr, TapestryProject project, TapestryParameter parameter) {
-    final PresentationLibraryElement element = project.findElementByTemplate(attr.getContainingFile());
+  private static PsiReference[] getAttrValueReference(XmlAttributeValue attrValue, TapestryProject project, TapestryParameter parameter) {
+    final PresentationLibraryElement element = project.findElementByTemplate(attrValue.getContainingFile());
     if (element == null) return PsiReference.EMPTY_ARRAY;
     IntellijJavaClassType elementClass = (IntellijJavaClassType)element.getElementClass();
 
     ResolvedValue resolvedValue;
     try {
-      resolvedValue = ValueResolverChain.getInstance().resolve(project, elementClass, attr.getValue(), parameter.getDefaultPrefix());
+      resolvedValue = ValueResolverChain.getInstance().resolve(project, elementClass, attrValue.getValue(), parameter.getDefaultPrefix());
     }
     catch (Exception ex) {
       return PsiReference.EMPTY_ARRAY;
@@ -150,30 +162,25 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
     if (resolvedValue.getCodeBind() instanceof IJavaMethod) {
       return new PsiReference[]{
-          new PsiAttributeValueReference(attr, ((IntellijJavaMethod)resolvedValue.getCodeBind()).getPsiMethod())};
+          new PsiAttributeValueReference(attrValue, ((IntellijJavaMethod)resolvedValue.getCodeBind()).getPsiMethod())};
     }
 
     if (resolvedValue.getCodeBind() instanceof IJavaField) {
       return new PsiReference[]{
-          new PsiAttributeValueReference(attr, ((IntellijJavaField)resolvedValue.getCodeBind()).getPsiField())};
+          new PsiAttributeValueReference(attrValue, ((IntellijJavaField)resolvedValue.getCodeBind()).getPsiField())};
     }
     return PsiReference.EMPTY_ARRAY;
   }
 
-  @Nullable
-  private static TextRange getValueTextRange(@NotNull XmlAttribute attr) {
-    XmlAttributeValue attrValue = attr.getValueElement();
-    return attrValue == null ? null : attrValue.getValueTextRange().shiftRight(-attr.getTextOffset());
-  }
-
   @NotNull
-  private static PsiReference[] getReferenceToComponentClass(@NotNull XmlAttribute attr, @Nullable TextRange range) {
+  private static PsiReference[] getReferenceToComponentClass(@NotNull XmlAttributeValue attributeValue, @Nullable TextRange range) {
     if (range == null) return PsiReference.EMPTY_ARRAY;
-    final XmlTag tag = attr.getParent();
+    final XmlTag tag = parentTag(attributeValue);
+    if (tag == null) return PsiReference.EMPTY_ARRAY;
     Component component = TapestryUtils.getTypeOfTag(tag);
     final IntellijJavaClassType elementClass = component == null ? null : (IntellijJavaClassType)component.getElementClass();
 
-    return new PsiReference[]{new PsiReferenceBase<PsiElement>(attr, range) {
+    return new PsiReference[]{new PsiReferenceBase<PsiElement>(attributeValue, range) {
       @Nullable
       public PsiElement resolve() {
         return elementClass == null ? null : elementClass.getPsiClass();
@@ -188,9 +195,9 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   }
 
   @NotNull
-  private static PsiReference[] getReferenceToEmbeddedComponent(@NotNull XmlAttribute attr, TextRange range) {
+  private static PsiReference[] getReferenceToEmbeddedComponent(@NotNull XmlAttributeValue attr, TextRange range) {
     if (range == null) return PsiReference.EMPTY_ARRAY;
-    final XmlTag tag = attr.getParent();
+    final XmlTag tag = parentTag(attr);
     final IntellijJavaField field = (IntellijJavaField)TapestryUtils.findIdentifyingField(tag);
 
     return new PsiReference[]{new PsiReferenceBase<PsiElement>(attr, range) {
@@ -208,13 +215,13 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   }
 
   @NotNull
-  private static PsiReference[] getReferenceByComponentId(@NotNull final XmlAttribute attr, TextRange range) {
+  private static PsiReference[] getReferenceByComponentId(@NotNull final XmlAttributeValue attrValue, TextRange range) {
     if (range == null) return PsiReference.EMPTY_ARRAY;
 
-    return new PsiReference[]{new PsiReferenceBase<PsiElement>(attr, range) {
+    return new PsiReference[]{new PsiReferenceBase<PsiElement>(attrValue, range) {
       @Nullable
       public PsiElement resolve() {
-        return attr;
+        return attrValue;
       }
 
       @NotNull
@@ -225,13 +232,13 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   }
 
   @NotNull
-  private static PsiReference[] getReferenceToPage(final Component component, @NotNull XmlAttribute pageAttr) {
-    final TextRange range = getValueTextRange(pageAttr);
+  private static PsiReference[] getReferenceToPage(final Component component, @NotNull XmlAttributeValue pageAttrValue) {
+    final TextRange range = getRange(pageAttrValue);
     if (range == null) return PsiReference.EMPTY_ARRAY;
 
-    final Page page = component.getProject().findPage(pageAttr.getValue());
+    final Page page = component.getProject().findPage(pageAttrValue.getValue());
 
-    return new PsiReference[]{new PsiReferenceBase<PsiElement>(pageAttr, range) {
+    return new PsiReference[]{new PsiReferenceBase<PsiElement>(pageAttrValue, range) {
       @Nullable
       public PsiElement resolve() {
         if (page == null) return null;
