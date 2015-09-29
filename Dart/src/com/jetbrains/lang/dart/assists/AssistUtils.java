@@ -69,7 +69,7 @@ public class AssistUtils {
   public static void applySourceChange(@NotNull final Project project,
                                        @NotNull final SourceChange sourceChange,
                                        @NotNull final Set<String> excludedIds) throws DartSourceEditException {
-    final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange);
+    final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange, excludedIds);
     // ensure not read-only
     {
       final Set<VirtualFile> files = changeMap.keySet();
@@ -112,12 +112,25 @@ public class AssistUtils {
 
   @NotNull
   public static Map<VirtualFile, SourceFileEdit> getContentFilesChanges(@NotNull final Project project,
-                                                                        @NotNull final SourceChange sourceChange)
+                                                                        @NotNull final SourceChange sourceChange,
+                                                                        @NotNull final Set<String> excludedIds)
     throws DartSourceEditException {
 
     final Map<VirtualFile, SourceFileEdit> map = Maps.newHashMap();
     final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
     for (SourceFileEdit fileEdit : fileEdits) {
+      boolean allEditsExcluded = true;
+      for (SourceEdit edit : fileEdit.getEdits()) {
+        if (!excludedIds.contains(edit.getId())) {
+          allEditsExcluded = false;
+          break;
+        }
+      }
+
+      if (allEditsExcluded) {
+        continue;
+      }
+
       final VirtualFile file = findVirtualFile(fileEdit);
       if (file == null) {
         throw new DartSourceEditException("Failed to edit file, file not found: " + fileEdit.getFile());

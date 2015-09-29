@@ -1,31 +1,34 @@
+// this import is here to force analyzer look there and find potential name() method reference
+import 'dart:html';
+
 class A {
-  test() {}
+  name() {}
   foo() {}
 }
 
 class B extends A {
-  <caret>test() {} // B
+  <caret>name() {} // B
 }
 
-/// Overrides the method [test] from [A].
+/// Overrides the method [name] from [A].
 class C extends A {
-  test() {}
+  name() {}
   foo() {}
 }
 
 class D extends B {
-  test() {}
+  name() {}
 }
 
-/// Defines the method [test], but not in the [A] hierarchy.
+/// Defines the method [name], but not in the [A] hierarchy.
 class X {
-  test() {}
+  name() {}
 }
 
 main() {
-  new A().test();
-  new B().test();
-  new C().test();
-  new D().test();
-  new X().test();
+  new A().name();
+  new B().name();
+  new C().name();
+  new D().name();
+  new X().name();
 }
