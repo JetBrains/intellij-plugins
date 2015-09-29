@@ -17,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Konstantin.Ulitin
@@ -80,5 +81,11 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public JSCustomIndexer createCustomIndexer(@NotNull PsiFile file, @NotNull JSIndexContentBuilder indexBuilder) {
     return new ActionScriptCustomIndexer(file, indexBuilder);
+  }
+
+  @NotNull
+  @Override
+  public AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
+    return new ActionScriptAccessibilityProcessingHandler(place, skipNsResolving);
   }
 }
