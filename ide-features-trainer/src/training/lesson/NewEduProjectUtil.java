@@ -1,25 +1,19 @@
 package training.lesson;
 
-import com.intellij.ide.highlighter.ProjectFileType;
 import com.intellij.ide.impl.NewProjectUtil;
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.ide.projectWizard.NewProjectWizard;
-import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.ex.IdeFrameEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
@@ -38,13 +32,10 @@ public class NewEduProjectUtil {
     public NewEduProjectUtil() {
     }
 
-    public static Project createEduProject(@NotNull String projectName, @Nullable Project projectToClose) throws IOException {
+    public static Project createEduProject(@NotNull String projectName, @Nullable Project projectToClose, @Nullable final Sdk projectSdk) throws IOException {
         final ProjectManagerEx projectManager = ProjectManagerEx.getInstanceEx();
 
-        NewProjectWizard wizardDefaultSettings = new NewProjectWizard(null, ModulesProvider.EMPTY_MODULES_PROVIDER, null);
-//        final String allProjectsDir = ProjectUtil.getBaseDir();
         final String allProjectsDir = "/Users/jetbrains/IdeaProjects";
-//        FileUtil.ensureExists();
 
         final ProjectBuilder projectBuilder = new JavaModuleBuilder();
 
@@ -53,15 +44,13 @@ public class NewEduProjectUtil {
                     File.separator + projectName;//Project dir
             File projectDir = new File(projectFilePath).getParentFile();        //dir where project located
             FileUtil.ensureExists(projectDir);
-            if (StorageScheme.DIRECTORY_BASED == wizardDefaultSettings.getStorageScheme()) {
-                final File ideaDir = new File(projectFilePath, Project.DIRECTORY_STORE_FOLDER);
-                FileUtil.ensureExists(ideaDir);
-            }
+            final File ideaDir = new File(projectFilePath, Project.DIRECTORY_STORE_FOLDER);
+            FileUtil.ensureExists(ideaDir);
 
             final Project newProject;
 
             if (!projectBuilder.isUpdate()) {
-                String name = wizardDefaultSettings.getProjectName();
+                String name = projectName;
                 newProject = projectBuilder.createProject(name, projectFilePath);
             }
             else {
@@ -70,38 +59,18 @@ public class NewEduProjectUtil {
 
             if (newProject == null) return projectToClose;
 
-            final Sdk jdk = wizardDefaultSettings.getNewProjectJdk();
 
-            if (jdk != null) {
+            if (projectSdk != null) {
                 CommandProcessor.getInstance().executeCommand(newProject, new Runnable() {
                     public void run() {
                         ApplicationManager.getApplication().runWriteAction(new Runnable() {
                             public void run() {
-                                NewProjectUtil.applyJdkToProject(newProject, jdk);
+                                NewProjectUtil.applyJdkToProject(newProject, projectSdk);
                             }
                         });
                     }
                 }, null, null);
             }
-
-            final String compileOutput = wizardDefaultSettings.getNewCompileOutput();
-            CommandProcessor.getInstance().executeCommand(newProject, new Runnable() {
-                public void run() {
-                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                        public void run() {
-                            String canonicalPath = compileOutput;
-                            try {
-                                canonicalPath = FileUtil.resolveShortWindowsName(compileOutput);
-                            }
-                            catch (IOException e) {
-                                //file doesn't exist
-                            }
-                            canonicalPath = FileUtil.toSystemIndependentName(canonicalPath);
-                            CompilerProjectExtension.getInstance(newProject).setCompilerOutputUrl(VfsUtilCore.pathToUrl(canonicalPath));
-                        }
-                    });
-                }
-            }, null, null);
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
                 newProject.save();

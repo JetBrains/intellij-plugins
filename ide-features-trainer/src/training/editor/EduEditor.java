@@ -245,7 +245,7 @@ public class EduEditor implements TextEditor {
     @Override
     public boolean canNavigateTo(@NotNull Navigatable navigatable) {
         if (myDefaultEditor instanceof TextEditor) {
-            ((TextEditor)myDefaultEditor).canNavigateTo(navigatable);
+            return ((TextEditor)myDefaultEditor).canNavigateTo(navigatable);
         }
         return false;
     }
