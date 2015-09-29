@@ -2,15 +2,16 @@
     <MouseBlock>
         <CopyText>import java.lang.Runnable;
 
-public class Test {
+class FoldingDemo {
 
     public static void proceess(int register) {
 
-        final int counter = 0;
+        final int[] counter = new int[1];
+        counter[0] = 0;
 
         checkAndStart((register > 10), new Runnable() {
             public void run() {
-                counter++;
+                counter[0]++;
             }
         });
     }
@@ -21,7 +22,7 @@ public class Test {
 
 }</CopyText>
     <CaretBlock>
-        <MoveCaret position="11:27" />
+        <MoveCaret position="12:27" />
         <Text description="The folding basics we start learning in &lt;link&gt;Collapse&lt;/link&gt; lesson. Let's look to other folding options."/>
         <Try description="Select any part of code and run folding by pressing &lt;action=&quot;CollapseRegion&quot;&gt;" trigger="CollapseRegion"/>
     </CaretBlock>

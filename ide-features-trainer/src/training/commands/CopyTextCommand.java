@@ -8,6 +8,7 @@ import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.command.undo.DocumentReference;
 import com.intellij.openapi.command.undo.DocumentReferenceManager;
 import com.intellij.openapi.command.undo.UndoManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.DocumentUtil;
 import org.jdom.Element;
@@ -28,9 +29,9 @@ public class CopyTextCommand extends Command {
 //        updateDescription(element, infoPanel, editor);
 
         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
-        WriteCommandAction.runWriteCommandAction(executionList.getProject(), new Runnable() {
+        if(WriteCommandAction.runWriteCommandAction(executionList.getProject(), new Computable<Boolean>() {
             @Override
-            public void run() {
+            public Boolean compute() {
                 final DocumentReference documentReference = DocumentReferenceManager.getInstance().create(executionList.getEditor().getDocument());
                 UndoManager.getInstance(executionList.getProject()).nonundoableActionPerformed(documentReference, false);
                 executionList.getEditor().getDocument().insertString(0, finalText);
@@ -45,10 +46,10 @@ public class CopyTextCommand extends Command {
                     public void redo() {
                     }
                 });
-            }
-        });
 
-        startNextCommand(executionList);
+                return true;
+            }
+        })) startNextCommand(executionList);
 
     }
 

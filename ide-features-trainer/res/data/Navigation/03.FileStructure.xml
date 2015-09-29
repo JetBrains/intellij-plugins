@@ -1,6 +1,6 @@
 <xml type="Scenario" name="File Structure" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>public class DeleteDemo{
+        <CopyText>class FileStructureDemo{
 
         private class Person{
         private String name;

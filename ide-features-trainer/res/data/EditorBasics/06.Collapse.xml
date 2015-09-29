@@ -2,7 +2,10 @@
     <ShowLineNumber/>
     <MouseBlock>
     <CaretBlock>
-        <CopyText>public class Car{
+        <CopyText>import java.lang.Exception;
+import java.lang.String;
+
+class CollapseDemo{
 
     String model;
 
@@ -11,11 +14,11 @@
     float fuelTank;
     int passengerCapacity;
 
-    public Car(String model){
+    public CollapseDemo(String model, Engine engine, Wheel wheel){
         this.model = model;
-        Engine myEngine = new Engine(model);
-        Wheel myWheel = new Wheel(model);
-        passengerCapacity = CarBase.getPassengerCapacity(model);
+        Engine myEngine = engine;
+        Wheel myWheel = wheel;
+        passengerCapacity = 4;
     }
 
     public void startEngine() throws CheckEngineException{
@@ -30,8 +33,21 @@
         }
     }
 
+    interface Engine{
+        void callStarter();
+    }
+
+    interface Wheel{
+        void rotateClockwise(float angle);
+        void rotateCounterClockwise(float angle);
+    }
+
+    class CheckEngineException extends Exception{
+
+    }
+
 }</CopyText>
-    <MoveCaret position="11:9"/>
+    <MoveCaret position="13:9"/>
     <Text description="Sometimes you need to collapse some code to read it better"/>
     <Try description="Try to collapse code with &lt;action=&quot;CollapseRegion&quot;&gt;" trigger="CollapseRegion"/>
     <Try description="To expand code region try &lt;action=&quot;ExpandRegion&quot;&gt;" trigger="ExpandRegion"/>

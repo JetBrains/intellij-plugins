@@ -1,6 +1,6 @@
 <xml type="Scenario" name="Next/Previous Occurrences" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>public class Duplicate {
+        <CopyText>class OccurrencesDemo {
 
     public static void main(String[] args){
         System.out.println(&quot;Hello world!&quot;);

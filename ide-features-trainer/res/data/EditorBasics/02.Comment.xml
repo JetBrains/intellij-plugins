@@ -2,7 +2,7 @@
     <MouseBlock>
         <CopyText>import java.awt.Color;
 
-public class Main {
+class CommentDemo {
     public static void main() {
 
         float hue = 5;

@@ -1,6 +1,6 @@
 <xml type="Scenario" name="Move" passed="false" version="0.1" subtype="aimless" projectTree="hide">
     <MouseBlock>
-        <CopyText>public class HelloThread extends Thread {
+        <CopyText>class MoveDemo extends Thread {
 
     boolean started = false;
 

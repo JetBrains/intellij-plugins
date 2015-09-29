@@ -379,9 +379,7 @@ public class EduEditor implements TextEditor {
             }
             myEduActions.clear();
         }
-
     }
-
 
     private void hideButtons() {
         eduPanel.hideButtons();
@@ -512,12 +510,9 @@ public class EduEditor implements TextEditor {
         VisualPosition position = editor.offsetToVisualPosition(offset);
         Point point = editor.visualPositionToXY(position);
 
-        String balloonText = text;
-
-
         BalloonBuilder builder =
                 JBPopupFactory.getInstance().
-                        createHtmlTextBalloonBuilder(balloonText, null, UIUtil.getLabelBackground(), null)
+                        createHtmlTextBalloonBuilder(text, null, UIUtil.getLabelBackground(), null)
                         .setHideOnClickOutside(false)
                         .setCloseButtonEnabled(true)
                         .setHideOnKeyOutside(false);

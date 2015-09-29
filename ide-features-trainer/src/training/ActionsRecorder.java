@@ -8,8 +8,10 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,6 +30,7 @@ public class ActionsRecorder implements Disposable {
 
     private Project project;
     private Document document;
+    private EduEditor eduEditor;
     private String target;
     private boolean triggerActivated;
     Queue<String> triggerQueue;
@@ -46,6 +49,7 @@ public class ActionsRecorder implements Disposable {
         this.target = target;
         this.triggerActivated = false;
         this.doWhenDone = null;
+        this.eduEditor = eduEditor;
 
         Disposer.register(eduEditor, this);
     }
@@ -144,15 +148,24 @@ public class ActionsRecorder implements Disposable {
         final ActionManager actionManager = ActionManager.getInstance();
         if(actionManager == null) return;
 
-
-
         myAnActionListener = new AnActionListener() {
+
+            private boolean editorFlag;
+
             @Override
             public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+                if (event.getProject() == null || FileEditorManager.getInstance(event.getProject()).getSelectedTextEditor() != eduEditor.getEditor() )
+                    editorFlag = false;
+                else
+                    editorFlag = true;
             }
 
             @Override
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+
+                //if action called not from project or current editor is different from EduEditor
+                if (!editorFlag) return;
+
                 PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
                 final String actionId = ActionManager.getInstance().getId(action);
 

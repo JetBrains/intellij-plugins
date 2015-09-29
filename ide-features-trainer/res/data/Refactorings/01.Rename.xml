@@ -2,22 +2,26 @@
         <ExpandAllBlocks/>
         <CopyText>import java.lang.String;
 
-public class Rename{
+class Rename{
 
     private String stylus;
     private String deviceName;
 
-    public void touchDevice(int x, int y, float strength, Stylus stylus, Device device){
-        device.touchByStylus(stylus, x, y, strength);
+    public void touchDevice(int x, int y, float strength, Device device){
+        device.touchByStylus(x, y, strength);
     }
 
     public boolean checkIPad(){
-        if (deviceName.equals("iPad") return true;
+        if(deviceName.equals(&quot;iPad&quot;)) return true;
         return false;
     }
 
     public String getStylus() {
         return stylus;
+    }
+
+    interface Device{
+        void touchByStylus(int x, int y, float strength);
     }
 }</CopyText>
         <Text description="To rename a method or a field you should select the whole name and use Rename refactoring."/>

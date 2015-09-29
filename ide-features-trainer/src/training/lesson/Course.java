@@ -37,6 +37,7 @@ public class Course extends ActionGroup{
     @Nullable
     private Element root = null;
     private String id;
+    @NotNull
     public String name;
     public CourseType courseType;
     @Nullable
@@ -72,6 +73,7 @@ public class Course extends ActionGroup{
 
 
     public Course(){
+        name = "Test";
         lessons = new ArrayList<Lesson>();
     }
 
@@ -202,6 +204,7 @@ public class Course extends ActionGroup{
     }
 
 
+    @NotNull
     public String getName() {
         return name;
     }
@@ -213,8 +216,6 @@ public class Course extends ActionGroup{
     public boolean equals(Object o) {
         if(o == null) return false;
         if(!(o instanceof Course)) return false;
-        if(this.getName() == null) return false;
-        if (((Course) o).getName() == null) return false;
         if(((Course) o).getName().equals(this.getName())) return true;
         return false;
 

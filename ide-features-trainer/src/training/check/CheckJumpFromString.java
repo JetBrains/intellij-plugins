@@ -38,11 +38,8 @@ public class CheckJumpFromString implements Check {
         assert psiFile != null;
         final PsiElement elementAt = psiFile.findElementAt(caretModel.getOffset());
         assert elementAt != null;
-        if((elementAt != null) && (elementAt.getParent() != null) && (elementAt.getParent().getText().equals("String"))) {
-            return true;
-        }
+        return (elementAt.getParent() != null) && (elementAt.getParent().getText().equals("String"));
 
-        return false;
     }
 
     private int calc(PsiElement psiElement){
