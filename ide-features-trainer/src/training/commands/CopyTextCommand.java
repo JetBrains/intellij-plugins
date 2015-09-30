@@ -50,7 +50,5 @@ public class CopyTextCommand extends Command {
                 return true;
             }
         })) startNextCommand(executionList);
-
     }
-
 }
