@@ -15,7 +15,8 @@
  */
 package org.jetbrains.osgi.bnd.run;
 
-import com.intellij.execution.ui.AlternativeJREPanel;
+import com.intellij.execution.ui.DefaultJreSelector;
+import com.intellij.execution.ui.JrePathEditor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
@@ -33,9 +34,10 @@ import javax.swing.*;
 public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfigurationBase> {
   private JPanel myPanel;
   private TextFieldWithBrowseButton myChooser;
-  private AlternativeJREPanel myAlternativeJrePanel;
+  private JrePathEditor myJrePathEditor;
 
   public BndRunConfigurationEditor(Project project) {
+    myJrePathEditor.setDefaultJreSelector(DefaultJreSelector.projectSdk(project));
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory
       .createSingleFileNoJarsDescriptor()
       .withFileFilter(new Condition<VirtualFile>() {
@@ -57,13 +59,13 @@ public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfiguratio
   @Override
   protected void resetEditorFrom(@NotNull BndRunConfigurationBase configuration) {
     myChooser.setText(configuration.bndRunFile);
-    myAlternativeJrePanel.init(configuration.alternativeJrePath, configuration.useAlternativeJre);
+    myJrePathEditor.setPathOrName(configuration.alternativeJrePath, configuration.useAlternativeJre);
   }
 
   @Override
   protected void applyEditorTo(@NotNull BndRunConfigurationBase configuration) throws ConfigurationException {
     configuration.bndRunFile = myChooser.getText();
-    configuration.useAlternativeJre = myAlternativeJrePanel.isPathEnabled();
-    configuration.alternativeJrePath = myAlternativeJrePanel.getPath();
+    configuration.useAlternativeJre = myJrePathEditor.isAlternativeJreSelected();
+    configuration.alternativeJrePath = myJrePathEditor.getJrePathOrName();
   }
 }
