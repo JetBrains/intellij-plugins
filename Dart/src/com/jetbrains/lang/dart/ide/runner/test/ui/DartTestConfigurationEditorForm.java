@@ -127,9 +127,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     myTestNameLabel.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
     myTestNameField.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
-    myTestNameLabel.setText(scope == Scope.GROUP
-                            ? DartBundle.message("dart.unit.group.name")
-                            : DartBundle.message("dart.unit.test.name"));
+    myTestNameLabel.setText(scope == Scope.GROUP ? DartBundle.message("dart.unit.group.name") : DartBundle.message("dart.unit.test.name"));
   }
 
   private void onTestNameChanged() {
@@ -156,8 +154,9 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
     if (!myCachedModel.includes(scope, testLabel)) {
       myTestNameField.setForeground(JBColor.RED);
-      final String message = scope == Scope.METHOD ? DartBundle.message("test.label.not.found", testLabel)
-                                                   : DartBundle.message("test.group.not.found", testLabel);
+      final String message = scope == Scope.METHOD
+                             ? DartBundle.message("test.label.not.found", testLabel)
+                             : DartBundle.message("test.group.not.found", testLabel);
       myTestNameField.setToolTipText(message);
     }
     else {
