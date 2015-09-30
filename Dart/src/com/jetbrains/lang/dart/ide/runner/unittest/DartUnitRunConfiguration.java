@@ -8,10 +8,9 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.PathUtil;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.unittest.ui.DartUnitConfigurationEditorForm;
+import com.jetbrains.lang.dart.ide.runner.util.TestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,19 +39,7 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   }
 
   public String suggestedName() {
-    final String path = myRunnerParameters.getFilePath();
-    if (path != null) {
-      final String fileName = PathUtil.getFileName(path);
-      switch (myRunnerParameters.getScope()) {
-        case METHOD:
-          return DartBundle.message("test.0.in.1", myRunnerParameters.getTestName(), fileName);
-        case GROUP:
-          return DartBundle.message("test.group.0.in.1", myRunnerParameters.getTestName(), fileName);
-        case ALL:
-          return DartBundle.message("all.tests.in.0", fileName);
-      }
-    }
-    return null;
+    return TestUtil.suggestedName(myRunnerParameters.getFilePath(), myRunnerParameters.getScope(), myRunnerParameters.getTestName());
   }
 
   public RunConfiguration clone() {

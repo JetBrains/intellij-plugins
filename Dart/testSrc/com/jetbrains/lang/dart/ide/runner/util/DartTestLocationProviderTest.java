@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.unittest;
+package com.jetbrains.lang.dart.ide.runner.util;
 
 import com.intellij.execution.Location;
 import com.intellij.psi.PsiElement;

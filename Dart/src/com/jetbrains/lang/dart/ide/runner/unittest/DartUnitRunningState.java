@@ -27,6 +27,8 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
+import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
+import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,7 +103,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
       file.createNewFile();
     }
 
-    final DartUnitRunnerParameters.Scope scope = ((DartUnitRunnerParameters)myRunnerParameters).getScope();
+    final Scope scope = ((DartUnitRunnerParameters)myRunnerParameters).getScope();
     final String name = ((DartUnitRunnerParameters)myRunnerParameters).getTestName();
 
     String runnerCode = getRunnerCode();
