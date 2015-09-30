@@ -8,6 +8,8 @@ import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.command.undo.DocumentReference;
 import com.intellij.openapi.command.undo.DocumentReferenceManager;
 import com.intellij.openapi.command.undo.UndoManager;
+import com.intellij.openapi.editor.EditorGutter;
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.DocumentUtil;
@@ -37,6 +39,8 @@ public class CopyTextCommand extends Command {
                 executionList.getEditor().getDocument().insertString(0, finalText);
                 PsiDocumentManager.getInstance(executionList.getProject()).commitDocument(executionList.getEditor().getDocument());
 
+                updateGutter(executionList);
+
                 UndoManager.getInstance(executionList.getProject()).undoableActionPerformed(new BasicUndoableAction() {
                     @Override
                     public void undo() {
@@ -50,5 +54,11 @@ public class CopyTextCommand extends Command {
                 return true;
             }
         })) startNextCommand(executionList);
+    }
+
+    private void updateGutter(ExecutionList executionList) {
+        final EditorGutter editorGutter = executionList.getEditor().getGutter();
+        EditorGutterComponentEx editorGutterComponentEx = (EditorGutterComponentEx) editorGutter;
+        editorGutterComponentEx.revalidateMarkup();
     }
 }
