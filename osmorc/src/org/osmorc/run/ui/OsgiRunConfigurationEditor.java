@@ -24,7 +24,8 @@
  */
 package org.osmorc.run.ui;
 
-import com.intellij.execution.ui.AlternativeJREPanel;
+import com.intellij.execution.ui.DefaultJreSelector;
+import com.intellij.execution.ui.JrePathEditor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
@@ -80,7 +81,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   private JRadioButton myOsmorcControlledDir;
   private JRadioButton myUserDefinedDir;
   private TextFieldWithBrowseButton myWorkingDirField;
-  private AlternativeJREPanel myAlternativeJrePanel;
+  private JrePathEditor myJrePathEditor;
   private JCheckBox myClassPathAllBundles;
   // additional properties tab
   private JPanel myAdditionalPropertiesPanel;
@@ -91,6 +92,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
   public OsgiRunConfigurationEditor(final Project project) {
     myProject = project;
+    myJrePathEditor.setDefaultJreSelector(DefaultJreSelector.projectSdk(project));
 
     myFrameworkStartLevel.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
     JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)myFrameworkStartLevel.getEditor();
@@ -271,7 +273,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     myWorkingDirField.setEnabled(useUserDefinedFields);
     myUserDefinedDir.setSelected(useUserDefinedFields);
     myOsmorcControlledDir.setSelected(!useUserDefinedFields);
-    myAlternativeJrePanel.init(osgiRunConfiguration.getAlternativeJrePath(), osgiRunConfiguration.isUseAlternativeJre());
+    myJrePathEditor.setPathOrName(osgiRunConfiguration.getAlternativeJrePath(), osgiRunConfiguration.isUseAlternativeJre());
   }
 
   @Override
@@ -281,8 +283,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     osgiRunConfiguration.setProgramParameters(myProgramParameters.getText());
     osgiRunConfiguration.setIncludeAllBundlesInClassPath(myClassPathAllBundles.isSelected());
     osgiRunConfiguration.setWorkingDir(myWorkingDirField.getText().replace('\\', '/'));
-    osgiRunConfiguration.setUseAlternativeJre(myAlternativeJrePanel.isPathEnabled());
-    osgiRunConfiguration.setAlternativeJrePath(myAlternativeJrePanel.getPath());
+    osgiRunConfiguration.setUseAlternativeJre(myJrePathEditor.isAlternativeJreSelected());
+    osgiRunConfiguration.setAlternativeJrePath(myJrePathEditor.getJrePathOrName());
     osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
     osgiRunConfiguration.setDefaultStartLevel((Integer)myDefaultStartLevel.getValue());
     osgiRunConfiguration.setGenerateWorkingDir(myOsmorcControlledDir.isSelected());
