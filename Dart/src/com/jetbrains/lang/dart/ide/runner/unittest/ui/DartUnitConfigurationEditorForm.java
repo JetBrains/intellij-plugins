@@ -11,72 +11,23 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
-import com.jetbrains.lang.dart.ide.runner.unittest.DartTestLocationProvider;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfiguration;
-import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters;
-import com.jetbrains.lang.dart.psi.DartCallExpression;
-import gnu.trove.THashSet;
+import com.jetbrains.lang.dart.ide.runner.util.Scope;
+import com.jetbrains.lang.dart.ide.runner.util.TestModel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
-
-import static com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters.Scope;
 
 public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunConfiguration> {
-
-  private static class TestModel {
-    private final VirtualFile myFile;
-    private final Set<String> myGroups = new THashSet<String>();
-    private final Set<String> myTests = new THashSet<String>();
-
-    TestModel(@NotNull final Project project, @NotNull final VirtualFile file) {
-      myFile = file;
-
-      final PsiFile testFile = PsiManager.getInstance(project).findFile(file);
-      if (testFile != null) {
-        PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<PsiElement>() {
-          @Override
-          public boolean execute(@NotNull final PsiElement element) {
-            if (element instanceof DartCallExpression) {
-              DartCallExpression expression = (DartCallExpression)element;
-              if (DartUnitRunConfigurationProducer.isTest(expression)) {
-                myTests.add(DartTestLocationProvider.getTestLabel(expression));
-              }
-              else if (DartUnitRunConfigurationProducer.isGroup(expression)) {
-                myGroups.add(DartTestLocationProvider.getTestLabel(expression));
-              }
-            }
-            return true;
-          }
-        };
-
-        PsiTreeUtil.processElements(testFile, collector);
-      }
-    }
-
-    boolean includes(@NotNull final Scope scope, @NotNull final String testLabel) {
-      return scope == Scope.METHOD ? myTests.contains(testLabel) : myGroups.contains(testLabel);
-    }
-
-    boolean appliesTo(final VirtualFile file) {
-      return myFile.equals(file);
-    }
-  }
 
   private JPanel myMainPanel;
   private JComboBox myScopeCombo;
