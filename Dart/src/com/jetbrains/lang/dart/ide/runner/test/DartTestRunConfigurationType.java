@@ -14,10 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartTestRunConfigurationType extends ConfigurationTypeBase {
   protected DartTestRunConfigurationType() {
-    super("DartTestRunConfigurationType",
-          DartBundle.message("runner.test.configuration.name"),
-          DartBundle.message("runner.test.configuration.description"),
-          DartIcons.Dart_test);
+    super("DartTestRunConfigurationType", DartBundle.message("runner.test.configuration.name"),
+          DartBundle.message("runner.test.configuration.description"), DartIcons.Dart_test);
     addFactory(new DartTestConfigurationFactory(this));
   }
 
@@ -30,7 +28,8 @@ public class DartTestRunConfigurationType extends ConfigurationTypeBase {
       super(type);
     }
 
-    @Override @NotNull
+    @Override
+    @NotNull
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new DartTestRunConfiguration(project, this, "Dart");
     }
