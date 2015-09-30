@@ -89,6 +89,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     }
     String sdkPath = sdk.getHomePath();
     final String filePath = myRunnerParameters.getFilePath();
+    // TODO Try adding --pause-after-load to VM args to see if that makes test debugging possible
     StringBuilder builder = new StringBuilder();
     builder.append(RUN_COMMAND).append(' ').append(TEST_PACKAGE_SPEC);
     builder.append(EXPANDED_REPORTER_OPTION);
