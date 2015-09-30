@@ -204,7 +204,6 @@
 
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>
-    <consoleInputFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.test.DartConsoleInputFilterProvider"/>
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
