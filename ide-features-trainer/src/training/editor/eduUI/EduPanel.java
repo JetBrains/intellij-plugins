@@ -82,6 +82,7 @@ public class EduPanel extends JPanel {
     public EduPanel(EduEditor eduEditor, int width){
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setFocusable(false);
         this.width = width;
         this.eduEditor = eduEditor;
 
@@ -171,10 +172,13 @@ public class EduPanel extends JPanel {
         lessonPanel = new JPanel();
         lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.Y_AXIS));
         lessonPanel.setBackground(background);
+        lessonPanel.setFocusable(false);
 
         lessonNameLabel = new JLabel();
         lessonNameLabel.setFont(lessonNameFont);
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lessonNameLabel.setFocusable(false);;
+
 
 //        lessonMessageContainer = new JPanel();
 //        messages = new ArrayList<LessonMessage>();
@@ -195,6 +199,8 @@ public class EduPanel extends JPanel {
         lessonNextButton.setVisible(false);
         lessonNextButton.setBackground(background);
         lessonNextButton.setMargin(new Insets(0, 0, 0, 0));
+        lessonNextButton.setFocusable(false);;
+
 
         //Add new NextButton TEST
 //        lessonNextTestButton = new JButton("Test Next");
@@ -215,6 +221,7 @@ public class EduPanel extends JPanel {
     public void setLessonName(String lessonName){
         lessonNameLabel.setText(lessonName);
         lessonNameLabel.setForeground(defaultTextColor);
+        lessonNameLabel.setFocusable(false);
         this.revalidate();
         this.repaint();
     }
@@ -332,19 +339,10 @@ public class EduPanel extends JPanel {
     }
 
     private void showNextButton() {
-//        lessonMessagePane.setSelectionStart(lessonMessagePane.getDocument().getLength());
-//        lessonMessagePane.setSelectionEnd(lessonMessagePane.getDocument().getLength());
-//        try {
-//            lessonMessagePane.getDocument().insertString(lessonMessagePane.getDocument().getLength(), "\n", lessonMessagePane.getDefaultAttributeSet());
-//        } catch (BadLocationException e) {
-//            e.printStackTrace();
-//        }
-//        lessonMessagePane.insertComponent(lessonNextButton);
         lessonNextButton.setVisible(true);
-//        lessonMessagePane.repaint();
         lessonPanel.revalidate();
         lessonPanel.repaint();
-        lessonNextButton.requestFocus(true);
+//        lessonNextButton.requestFocus(true); focus requesting is danger here, may interfere with windows like File Structure
     }
 
 
@@ -352,6 +350,7 @@ public class EduPanel extends JPanel {
         coursePanel = new JPanel();
         coursePanel.setLayout(new BoxLayout(coursePanel, BoxLayout.Y_AXIS));
         coursePanel.setBackground(background);
+        coursePanel.setFocusable(false);
 
         //define separator
         coursePanel.setBorder(new MatteBorder(1, 0, 0, 0, separatorColor));
@@ -384,6 +383,7 @@ public class EduPanel extends JPanel {
             JLabel allLessons = new JLabel();
             allLessons.setText("ALL LESSONS");
             allLessons.setFont(allLessonsFont);
+            allLessons.setFocusable(false);
 
             coursePanel.add(Box.createRigidArea(new Dimension(0, 5)));
             coursePanel.add(allLessons);
@@ -402,6 +402,7 @@ public class EduPanel extends JPanel {
                 e.setForeground(lessonActiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
                 e.setFont(lessonsFont);
+                e.setFocusable(false);
                 lessonsLabels.add(e);
                 coursePanel.add(e);
             } else {
@@ -412,6 +413,7 @@ public class EduPanel extends JPanel {
                 e.setForeground(lessonInactiveColor);
                 e.setBorder(new EmptyBorder(0, 0, lessonGap, 0));
                 e.setFont(lessonsFont);
+                e.setFocusable(false);
                 final int index = i;
                 e.addMouseListener(new MouseAdapter() {
                     @Override

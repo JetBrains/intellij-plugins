@@ -1,5 +1,6 @@
 package training.lesson;
 
+import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
@@ -14,10 +15,12 @@ import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.SdkFinder;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +36,7 @@ import training.lesson.exceptons.OldJdkException;
 import training.util.GenerateCourseXml;
 import training.util.MyClassLoader;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -189,7 +193,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
                 @Override
                 public void fileOpened(FileEditorManager source, VirtualFile file) {
-
                 }
 
                 @Override
@@ -205,6 +208,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             EduEditor eduEditor = getEduEditor(project, vf);
             assert eduEditor != null;
             eduEditor.selectIt(); // Select EduEditor with this lesson.
+            //Return focus to Editor Content Component
+            final ActionCallback actionCallback = IdeFocusManager.getInstance(project).requestFocus(eduEditor.getEditor().getContentComponent(), true);
+            eduEditor.getEditor().getCaretModel().moveToOffset(0);
 
             //Process lesson
             LessonProcessor.process(lesson, eduEditor, project, eduEditor.getEditor().getDocument(), target);
@@ -275,6 +281,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         assert eduProject.getProjectFile().getParent().getParent() != null;
 
         myState.eduProjectPath = eduProject.getProjectFile().getParent().getParent().getPath();
+        //Hide EduProject from Recent projects
+        RecentProjectsManager.getInstance().removePath(eduProject.getPresentableUrl());
     }
 
     @NotNull

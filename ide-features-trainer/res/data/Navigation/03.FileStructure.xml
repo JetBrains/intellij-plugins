@@ -2,28 +2,43 @@
     <MouseBlock>
         <CopyText>class FileStructureDemo{
 
-        private class Person{
-        private String name;
-        private int age;
-        private String cellphone;
 
-        Person(String name, int age, String cellphone){
+    final private String DATABASE = "MyDataBase";
+    DataEntry myPerson;
+
+    FileStructureDemo(String name, int age, String cellphone){
+        myPerson = new Person(name, age, cellphone);
+    }
+
+    interface DataEntry{
+        String getCellphone();
+        String getName();
+    }
+
+    class Person implements DataEntry {
+
+        public Person(String name, int age, String cellphone) {
             this.name = name;
             this.age = age;
             this.cellphone = cellphone;
         }
 
+        private String name;
+        private int age;
+        private String cellphone;
+
         public String getCellphone() {
             return cellphone;
         }
 
-        public void setCellphone(String cellphone) {
-            this.cellphone = cellphone;
+        public String getName() {
+            return name;
         }
+
     }
 }</CopyText>
     </MouseBlock>
-    <Try description="Delete line where your cursor at with &lt;action=&quot;EditorDeleteLine&quot;&gt;" action="EditorDeleteLine" trigger="EditorDeleteLine"/>
-    <Try description="To restore deleted line just press &lt;action=&quot;$Undo&quot;&gt;" action="$Undo" trigger="$Undo"/>
+    <Text description="Navigate through big source files is always complicated and sometimes you need to get the overview of file."/>
+    <Try description="Use &lt;action=&quot;FileStructurePopup&quot;&gt; to show file structure" action="FileStructurePopup" trigger="FileStructurePopup"/>
     <Win/>
 </xml>

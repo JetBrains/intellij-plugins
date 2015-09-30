@@ -436,6 +436,7 @@ public class EduEditor implements TextEditor {
         MouseListener[] mouseListeners = getEditor().getContentComponent().getMouseListeners();
         setMyMouseListeners(getEditor().getContentComponent().getMouseListeners());
 
+
         for (MouseListener mouseListener : mouseListeners) {
             getEditor().getContentComponent().removeMouseListener(mouseListener);
         }
