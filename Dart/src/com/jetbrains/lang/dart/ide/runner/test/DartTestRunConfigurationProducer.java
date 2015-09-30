@@ -70,8 +70,7 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
 
     return Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
            Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
-           (existingParams.getScope() == Scope.ALL ||
-            Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
+           (existingParams.getScope() == Scope.ALL || Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
   }
 
   private static boolean setupRunConfiguration(final @NotNull DartTestRunnerParameters runnerParams, final @NotNull PsiElement psiElement) {
