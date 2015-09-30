@@ -8,6 +8,8 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.editor.EditorGutter;
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -209,8 +211,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             assert eduEditor != null;
             eduEditor.selectIt(); // Select EduEditor with this lesson.
             //Return focus to Editor Content Component
-            final ActionCallback actionCallback = IdeFocusManager.getInstance(project).requestFocus(eduEditor.getEditor().getContentComponent(), true);
-            eduEditor.getEditor().getCaretModel().moveToOffset(0);
+            IdeFocusManager.getInstance(project).requestFocus(eduEditor.getEditor().getContentComponent(), true);
+
 
             //Process lesson
             LessonProcessor.process(lesson, eduEditor, project, eduEditor.getEditor().getDocument(), target);
