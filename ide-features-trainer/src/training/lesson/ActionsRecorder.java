@@ -1,26 +1,27 @@
 package training.lesson;
 
+import com.intellij.find.editorHeaderActions.CloseOnESCAction;
+import com.intellij.ide.actions.NextOccurenceAction;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.Nullable;
 import training.check.Check;
 import training.editor.EduEditor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by karashevich on 18/12/14.
@@ -166,8 +167,8 @@ public class ActionsRecorder implements Disposable {
                 //if action called not from project or current editor is different from EduEditor
                 if (!editorFlag) return;
 
-                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
-                final String actionId = ActionManager.getInstance().getId(action);
+
+                final String actionId = extendActionId(action);
 
                 if(actionId == null) return;
                 if(triggerQueue.size() == 0) return;
@@ -226,6 +227,20 @@ public class ActionsRecorder implements Disposable {
 
         document.addDocumentListener(myDocumentListener);
         actionManager.addAnActionListener(myAnActionListener);
+    }
+
+    @Nullable
+    private String extendActionId(AnAction action) {
+
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
+        String actionId = ActionManager.getInstance().getId(action);
+
+        if (actionId != null) return actionId;
+
+        if (action instanceof CloseOnESCAction)
+            return IdeActions.ACTION_EDITOR_ESCAPE;
+        else
+            return null;
     }
 
     private void removeListeners(Document document, ActionManager actionManager){

@@ -40,7 +40,8 @@
     </MouseBlock>
     <Text description="IDEA allows to navigate between occurrences."/>
     <Try description="First of all let's select &lt;code&gt;cellphone&lt;/code&gt; in code and call Find action by &lt;action=&quot;Find&quot;&gt;" trigger="Find"/>
-    <Try description="Now you can navigate to the next occurrences by &lt;action=&quot;FindNext&quot;&gt;" trigger="FindNext"/>
-    <Try description="To find occurrences in a back way press &lt;action=&quot;FindPrevious&quot;&gt;" trigger="FindPrevious"/>
+    <Try description="You can navigate between occurrences with this search panel. Try to hide it by pressing &lt;action=&quot;EditorEscape&quot;&gt;" trigger="EditorEscape"/>
+    <Try description="To navigate between occurrences with hidden search panel use &lt;action=&quot;FindNext&quot;&gt;" trigger="FindNext"/>
+    <Try description="or &lt;action=&quot;FindPrevious&quot;&gt; in a back way" trigger="FindPrevious"/>
     <Win/>
 </xml>
