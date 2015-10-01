@@ -203,7 +203,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   }
 
   private static void addStepDefinitions(CompletionResultSet result, PsiFile file) {
-    result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
+    result = result.withPrefixMatcher(new CucumberPrefixMatcher(result.getPrefixMatcher().getPrefix()));
     final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
       String text = definition.getCucumberRegex();
