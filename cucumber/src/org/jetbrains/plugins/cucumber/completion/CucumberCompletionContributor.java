@@ -44,6 +44,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     GROUP_TYPE_MAP.put("([^\"]*)", "<string>");
     GROUP_TYPE_MAP.put("([^\"]+)", "<string>");
     GROUP_TYPE_MAP.put("(\\d*)", "<number>");
+    GROUP_TYPE_MAP.put("(\\d)", "<number>");
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
     GROUP_TYPE_MAP.put("(\\.[\\d]+)", "<number>");
     INTERPOLATION_PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
