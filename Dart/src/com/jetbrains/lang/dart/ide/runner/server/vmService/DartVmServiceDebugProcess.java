@@ -33,7 +33,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @NotNull private final DartUrlResolver myDartUrlResolver;
   private final int myObservatoryPort;
 
-  @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
   private VmServiceWrapper myVmServiceWrapper;
 
   private boolean myVmConnected = false;
@@ -47,11 +46,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
     myObservatoryPort = observatoryPort;
-
-    final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
-    myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
-
     setLogger();
+  }
+
+  public VmServiceWrapper getVmServiceWrapper() {
+    return myVmServiceWrapper;
   }
 
   private void setLogger() {
@@ -136,7 +135,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Override
   @NotNull
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
-    return myBreakpointHandlers;
+    return XBreakpointHandler.EMPTY_ARRAY;
   }
 
   @Override
