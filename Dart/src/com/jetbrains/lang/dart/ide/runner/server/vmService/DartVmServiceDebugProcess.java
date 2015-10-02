@@ -49,6 +49,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     setLogger();
   }
 
+  public VmServiceWrapper getVmServiceWrapper() {
+    return myVmServiceWrapper;
+  }
+
   private void setLogger() {
     Logging.setLogger(new org.dartlang.vm.service.logging.Logger() {
       @Override
@@ -80,6 +84,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     try {
       final VmService vmService = VmService.localConnect(myObservatoryPort);
       myVmServiceWrapper = new VmServiceWrapper(vmService);
+      vmService.addVmServiceListener(new DartVmServiceListener(this));
       scheduleDebugStartup();
     }
     catch (IOException e) {

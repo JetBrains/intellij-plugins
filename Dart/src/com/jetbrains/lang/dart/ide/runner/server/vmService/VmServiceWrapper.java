@@ -21,6 +21,16 @@ public class VmServiceWrapper implements Disposable {
 
   private static final long RESPONSE_WAIT_TIMEOUT = 5000; // millis
 
+  private static final SuccessConsumer EMPTY_CONSUMER = new SuccessConsumer() {
+    @Override
+    public void received(Success response) {
+    }
+
+    @Override
+    public void onError(RPCError error) {
+    }
+  };
+
   @NotNull private final VmService myVmService;
   @NotNull private final Alarm myRequestsScheduler;
 
@@ -166,5 +176,14 @@ public class VmServiceWrapper implements Disposable {
     if (!errorRef.isNull()) {
       throw new VmServiceException("VmService.resume()", errorRef.get());
     }
+  }
+
+  public void resumeIsolate(@NotNull final IsolateRef isolateRef) {
+    myRequestsScheduler.addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.resume(isolateRef.getId(), null, EMPTY_CONSUMER);
+      }
+    }, 0);
   }
 }
