@@ -1,6 +1,9 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
-import org.dartlang.vm.service.consumer.*;
+import org.dartlang.vm.service.consumer.Consumer;
+import org.dartlang.vm.service.consumer.IsolateConsumer;
+import org.dartlang.vm.service.consumer.SuccessConsumer;
+import org.dartlang.vm.service.consumer.VMConsumer;
 import org.dartlang.vm.service.element.RPCError;
 import org.dartlang.vm.service.element.Success;
 
@@ -26,8 +29,5 @@ public class VmServiceConsumers {
   }
 
   public static abstract class IsolateConsumerWrapper extends ConsumerWrapper implements IsolateConsumer {
-  }
-
-  public static abstract class LibraryConsumerWrapper extends ConsumerWrapper implements GetLibraryConsumer {
   }
 }

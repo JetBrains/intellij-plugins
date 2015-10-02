@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerBundle;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
@@ -32,6 +31,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final int myObservatoryPort;
 
   @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
+  private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
@@ -44,7 +44,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myDartUrlResolver = dartUrlResolver;
     myObservatoryPort = observatoryPort;
 
-    final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
+    myIsolatesInfo = new IsolatesInfo();
+    final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this, myIsolatesInfo);
     myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
 
     setLogger();
@@ -86,7 +87,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       final VmService vmService = VmService.localConnect(myObservatoryPort);
       vmService.addVmServiceListener(new DartVmServiceListener(this));
 
-      myVmServiceWrapper = new VmServiceWrapper(vmService);
+      myVmServiceWrapper = new VmServiceWrapper(vmService, myIsolatesInfo);
 
       myVmServiceWrapper.streamListen(VmService.DEBUG_STREAM_ID);
       myVmServiceWrapper.streamListen(VmService.ISOLATE_STREAM_ID);

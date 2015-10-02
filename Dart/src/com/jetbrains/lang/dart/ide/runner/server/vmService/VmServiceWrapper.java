@@ -4,19 +4,23 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.Alarm;
 import org.dartlang.vm.service.VmService;
-import org.dartlang.vm.service.element.IsolateRef;
-import org.dartlang.vm.service.element.VM;
+import org.dartlang.vm.service.consumer.GetLibraryConsumer;
+import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VmServiceWrapper implements Disposable {
 
   public static final Logger LOG = Logger.getInstance(VmServiceWrapper.class.getName());
 
-  @NotNull private final VmService myVmService;
-  @NotNull private final Alarm myRequestsScheduler;
+  private final VmService myVmService;
+  private final IsolatesInfo myIsolatesInfo;
+  private final Alarm myRequestsScheduler;
 
-  public VmServiceWrapper(@NotNull final VmService vmService) {
+  public VmServiceWrapper(@NotNull final VmService vmService, @NotNull final IsolatesInfo isolatesInfo) {
     myVmService = vmService;
+    myIsolatesInfo = isolatesInfo;
     myRequestsScheduler = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
   }
 
@@ -46,7 +50,7 @@ public class VmServiceWrapper implements Disposable {
           @Override
           public void received(final VM vm) {
             for (final IsolateRef isolateRef : vm.getIsolates()) {
-              handleIsolateCreated(isolateRef);
+              handleIsolatePausedOnStart(isolateRef);
             }
           }
         });
@@ -54,16 +58,60 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void handleIsolateCreated(@NotNull final IsolateRef isolateRef) {
-    resumeIsolate(isolateRef);
-  }
-
-  public void resumeIsolate(@NotNull final IsolateRef isolateRef) {
+  public void handleIsolatePausedOnStart(@NotNull final IsolateRef isolateRef) {
     addRequest(new Runnable() {
       @Override
       public void run() {
-        myVmService.resume(isolateRef.getId(), null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+        myVmService.getIsolate(isolateRef.getId(), new VmServiceConsumers.IsolateConsumerWrapper() {
+          @Override
+          public void received(final Isolate isolate) {
+            handleIsolatePausedOnStart(isolate);
+          }
+        });
       }
     });
+  }
+
+  private void handleIsolatePausedOnStart(@NotNull final Isolate isolate) {
+    final AtomicInteger counter = new AtomicInteger(isolate.getLibraries().size());
+
+    for (final LibraryRef libraryRef : isolate.getLibraries()) {
+      addRequest(new Runnable() {
+        @Override
+        public void run() {
+          myVmService.getLibrary(isolate.getId(), libraryRef.getId(), new GetLibraryConsumer() {
+            @Override
+            public void received(final Library library) {
+              myIsolatesInfo.addLibrary(isolate, library);
+              resumeIsolateIfDone();
+            }
+
+            @Override
+            public void onError(RPCError error) {
+              resumeIsolateIfDone();
+            }
+
+            private void resumeIsolateIfDone() {
+              if (counter.decrementAndGet() == 0) {
+                resumeIsolate(isolate.getId());
+              }
+            }
+          });
+        }
+      });
+    }
+  }
+
+  public void resumeIsolate(@NotNull final String isolateId) {
+    addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.resume(isolateId, null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+      }
+    });
+  }
+
+  public void handleIsolateExit(@NotNull final IsolateRef isolateRef) {
+    myIsolatesInfo.deleteIsolate(isolateRef);
   }
 }

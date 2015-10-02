@@ -12,11 +12,14 @@ import java.util.Set;
 public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
 
   private final DartVmServiceDebugProcess myDebugProcess;
+  private final IsolatesInfo myIsolatesInfo;
   private final Set<XLineBreakpoint<?>> myXBreakpoints = new THashSet<XLineBreakpoint<?>>();
 
-  protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
+  protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess,
+                                           @NotNull final IsolatesInfo isolatesInfo) {
     super(DartLineBreakpointType.class);
     myDebugProcess = debugProcess;
+    myIsolatesInfo = isolatesInfo;
   }
 
   @Override
