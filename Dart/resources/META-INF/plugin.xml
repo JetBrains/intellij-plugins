@@ -3,7 +3,7 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="142.1" until-build="144.*"/>
+  <idea-version since-build="144.1" until-build="144.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
@@ -15,7 +15,7 @@
   <change-notes>
     <![CDATA[
         <ul>
-          <li>Various improvements and bug fixes</li>
+          <li>Improvements and bug fixes</li>
         </ul>
       ]]>
   </change-notes>
