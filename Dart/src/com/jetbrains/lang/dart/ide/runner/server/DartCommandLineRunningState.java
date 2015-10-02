@@ -130,16 +130,18 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
     commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
-    commandLine.withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(getEnvironment().getProject(), commandLine, myRunnerParameters, overriddenMainFilePath);
+    commandLine
+      .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
+    setupParameters(getEnvironment().getProject(), sdk, commandLine, myRunnerParameters, overriddenMainFilePath);
 
     return commandLine;
   }
 
-  private void setupParameters(final @NotNull Project project,
-                               final @NotNull GeneralCommandLine commandLine,
-                               final @NotNull DartCommandLineRunnerParameters runnerParameters,
-                               final @Nullable String overriddenMainFilePath) throws ExecutionException {
+  private void setupParameters(@NotNull final Project project,
+                               @NotNull final DartSdk sdk,
+                               @NotNull final GeneralCommandLine commandLine,
+                               @NotNull final DartCommandLineRunnerParameters runnerParameters,
+                               @Nullable final String overriddenMainFilePath) throws ExecutionException {
     commandLine.addParameter("--ignore-unrecognized-flags");
 
     final String vmOptions = runnerParameters.getVMOptions();
@@ -169,9 +171,14 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
-      myDebuggingPort = NetUtils.tryToFindAvailableSocketPort();
-      commandLine.addParameter("--debug:" + myDebuggingPort);
-      commandLine.addParameter("--break-at-isolate-spawn");
+      if (StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
+        myDebuggingPort = NetUtils.tryToFindAvailableSocketPort();
+        commandLine.addParameter("--debug:" + myDebuggingPort);
+        commandLine.addParameter("--break-at-isolate-spawn");
+      }
+      else {
+        commandLine.addParameter("--pause_isolates_on_start");
+      }
     }
 
     myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
