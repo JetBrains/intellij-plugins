@@ -166,7 +166,8 @@ public class DartServerErrorsAnnotator
 
     if (errorMessage.equals("Unused import") ||
         errorMessage.equals("Duplicate import") ||
-        errorMessage.endsWith(" is not used")) {
+        errorMessage.endsWith(" is not used")||
+        errorMessage.startsWith("Dead code")) {
       return ProblemHighlightType.LIKE_UNUSED_SYMBOL;
     }
 
