@@ -21,6 +21,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
+import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
@@ -84,7 +85,7 @@ public class DartServerErrorsAnnotator
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
 
     for (AnalysisError error : errors) {
-      final Annotation annotation = annotate(holder, error, psiFile.getTextLength());
+      final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
       if (annotation != null) {
         final DartQuickFixSet quickFixSet = new DartQuickFixSet(FileUtil.toSystemIndependentName(error.getLocation().getFile()),
@@ -118,7 +119,9 @@ public class DartServerErrorsAnnotator
   }
 
   @Nullable
-  private static Annotation annotate(@NotNull final AnnotationHolder holder, @NotNull final AnalysisError error, final int fileTextLength) {
+  private static Annotation createAnnotation(@NotNull final AnnotationHolder holder,
+                                             @NotNull final AnalysisError error,
+                                             final int fileTextLength) {
     final Location location = error.getLocation();
 
     int highlightingStart = location.getOffset();
@@ -131,13 +134,23 @@ public class DartServerErrorsAnnotator
     final String severity = error.getSeverity();
     final String message = StringUtil.notNullize(error.getMessage());
 
-    final Annotation annotation = AnalysisErrorSeverity.INFO.equals(severity)
-                                  ? holder.createWeakWarningAnnotation(textRange, message)
-                                  : AnalysisErrorSeverity.WARNING.equals(severity)
-                                    ? holder.createWarningAnnotation(textRange, message)
-                                    : AnalysisErrorSeverity.ERROR.equals(severity)
-                                      ? holder.createErrorAnnotation(textRange, message)
-                                      : null;
+    final Annotation annotation;
+
+    if (AnalysisErrorSeverity.INFO.equals(severity)) {
+      annotation = holder.createWeakWarningAnnotation(textRange, message);
+      annotation.setTextAttributes(DartSyntaxHighlighterColors.HINT);
+    }
+    else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
+      annotation = holder.createWarningAnnotation(textRange, message);
+      annotation.setTextAttributes(DartSyntaxHighlighterColors.WARNING);
+    }
+    else if (AnalysisErrorSeverity.ERROR.equals(severity)) {
+      annotation = holder.createErrorAnnotation(textRange, message);
+      annotation.setTextAttributes(DartSyntaxHighlighterColors.ERROR);
+    }
+    else {
+      annotation = null;
+    }
 
     final ProblemHighlightType specialHighlightType = annotation == null ? null : getSpecialHighlightType(message);
     if (specialHighlightType != null) {

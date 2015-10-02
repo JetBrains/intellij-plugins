@@ -22,7 +22,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
   private static final String PREVIEW_TEXT =
     "<DART_KEYWORD>library</DART_KEYWORD> <DART_LIBRARY_NAME>libraryName</DART_LIBRARY_NAME>;\n" +
     "<DART_KEYWORD>import</DART_KEYWORD> \"dart:html\" <DART_KEYWORD>as</DART_KEYWORD> <DART_IMPORT_PREFIX>html</DART_IMPORT_PREFIX>;\n" +
-    "// comment\n" +
+    "// Comment. <ERROR>Error.</ERROR> <WARNING>Warning.</WARNING> <HINT>Hint.</HINT>\n" +
     "<DART_TYPE_NAME_DYNAMIC>dynamic</DART_TYPE_NAME_DYNAMIC> <DART_TOP_LEVEL_VARIABLE_DECLARATION>topLevelVariable</DART_TOP_LEVEL_VARIABLE_DECLARATION> = \"Escape sequences: <DART_VALID_STRING_ESCAPE>\\n</DART_VALID_STRING_ESCAPE> <DART_VALID_STRING_ESCAPE>\\xFF</DART_VALID_STRING_ESCAPE> <DART_VALID_STRING_ESCAPE>\\u1234</DART_VALID_STRING_ESCAPE> <DART_VALID_STRING_ESCAPE>\\u{2F}</DART_VALID_STRING_ESCAPE>\";\n" +
     "<DART_KEYWORD>get</DART_KEYWORD> <DART_TOP_LEVEL_GETTER_DECLARATION>topLevelGetter</DART_TOP_LEVEL_GETTER_DECLARATION> { <DART_KEYWORD>return</DART_KEYWORD> <DART_TOP_LEVEL_GETTER_REFERENCE>topLevelVariable</DART_TOP_LEVEL_GETTER_REFERENCE>; }\n" +
     "<DART_KEYWORD>set</DART_KEYWORD> <DART_TOP_LEVEL_SETTER_DECLARATION>topLevelSetter</DART_TOP_LEVEL_SETTER_DECLARATION>(<DART_CLASS>bool</DART_CLASS> <DART_PARAMETER_DECLARATION>parameter</DART_PARAMETER_DECLARATION>) { <DART_TOP_LEVEL_FUNCTION_REFERENCE>print</DART_TOP_LEVEL_FUNCTION_REFERENCE>(<DART_PARAMETER_REFERENCE>parameter</DART_PARAMETER_REFERENCE>); }\n" +
@@ -50,6 +50,10 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     "<DART_KEYWORD>typedef</DART_KEYWORD> <DART_CLASS>int</DART_CLASS> <DART_FUNCTION_TYPE_ALIAS>FunctionTypeAlias</DART_FUNCTION_TYPE_ALIAS>(<DART_DYNAMIC_PARAMETER_DECLARATION>x</DART_DYNAMIC_PARAMETER_DECLARATION>, <DART_DYNAMIC_PARAMETER_DECLARATION>y</DART_DYNAMIC_PARAMETER_DECLARATION>); ```";
 
   static {
+    PREVIEW_TAGS.put("ERROR", ERROR);
+    PREVIEW_TAGS.put("WARNING", WARNING);
+    PREVIEW_TAGS.put("HINT", HINT);
+
     PREVIEW_TAGS.put("DART_ANNOTATION", ANNOTATION);
     PREVIEW_TAGS.put("DART_CLASS", CLASS);
     PREVIEW_TAGS.put("DART_CONSTRUCTOR", CONSTRUCTOR);
@@ -125,6 +129,10 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_SYMBOL_LITERAL", SYMBOL_LITERAL);
 
     ATTRS = new AttributesDescriptor[]{
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.error"), ERROR),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.warning"), WARNING),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.hint"), HINT),
+
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.block.comment"), BLOCK_COMMENT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.doc.comment"), DOC_COMMENT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.line.comment"), LINE_COMMENT),

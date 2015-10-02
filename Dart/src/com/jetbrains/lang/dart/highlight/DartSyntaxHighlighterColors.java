@@ -2,11 +2,16 @@ package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 public class DartSyntaxHighlighterColors {
+  public static final String DART_ERROR = "DART_ERROR";
+  public static final String DART_WARNING = "DART_WARNING";
+  public static final String DART_HINT = "DART_HINT";
+
   public static final String DART_ANNOTATION = "DART_ANNOTATION";
   public static final String DART_CLASS = "DART_CLASS";
   public static final String DART_CONSTRUCTOR = "DART_CONSTRUCTOR";
@@ -81,6 +86,12 @@ public class DartSyntaxHighlighterColors {
   private static final String DART_BAD_CHARACTER = "DART_BAD_CHARACTER";
   private static final String DART_SYMBOL_LITERAL = "DART_SYMBOL_LITERAL";
 
+  public static final TextAttributesKey ERROR =
+    createTextAttributesKey(DART_ERROR, CodeInsightColors.ERRORS_ATTRIBUTES);
+  public static final TextAttributesKey WARNING =
+    createTextAttributesKey(DART_WARNING, CodeInsightColors.ERRORS_ATTRIBUTES);
+  public static final TextAttributesKey HINT =
+    createTextAttributesKey(DART_HINT, CodeInsightColors.WARNINGS_ATTRIBUTES);
 
   public static final TextAttributesKey BLOCK_COMMENT =
     createTextAttributesKey(DART_BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
