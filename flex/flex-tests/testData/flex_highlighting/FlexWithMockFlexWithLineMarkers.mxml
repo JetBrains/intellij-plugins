@@ -5,7 +5,7 @@
     <mx:Script><inject descr="null">public override function <lineMarker descr="overrides method in flash.events.EventDispatcher"><info descr="instance method">removeEventListener</info></lineMarker>(<info descr="parameter">type</info>:<info descr="class">String</info>, <info descr="parameter">listener</info>:<info descr="class">Function</info>, <info descr="parameter">useCapture</info>:<info descr="class">Boolean</info> = false):void {}
 
     function <info descr="instance method">copy</info>() {
-        <info descr="field">destination</info>.<info descr="instance method">text</info>=<info descr="field">source</info>.<info descr="instance method">text</info> = ' '
+        <info descr="instance field">destination</info>.<info descr="instance method">text</info>=<info descr="instance field">source</info>.<info descr="instance method">text</info> = ' '
         var <info descr="local variable">aaa</info>:<info>Function</info> = <info descr="instance method">copy_</info>
     }
 
