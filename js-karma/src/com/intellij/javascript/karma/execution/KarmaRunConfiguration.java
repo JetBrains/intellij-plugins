@@ -91,6 +91,9 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   @Nullable
   private static KarmaRunConfiguration getTemplateRunConfiguration(@NotNull Project project) {
+    if (project.isDisposed()) {
+      return null;
+    }
     RunManager runManager = RunManager.getInstance(project);
     RunnerAndConfigurationSettings templateSettings = runManager.getConfigurationTemplate(KarmaConfigurationType.getFactory());
     RunConfiguration rc = templateSettings.getConfiguration();
