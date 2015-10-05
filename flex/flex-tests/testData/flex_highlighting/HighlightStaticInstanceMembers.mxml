@@ -16,6 +16,6 @@
     }
   </inject></mx:Script>
 
-  <mx:Canvas width="{<inject><info descr="field">conventionsChoiceForm</info>.<info descr="instance method">width</info></inject>}" />
+  <mx:Canvas width="{<inject><info descr="instance field">conventionsChoiceForm</info>.<info descr="instance method">width</info></inject>}" />
   <mx:Canvas id="conventionsChoiceForm" />
 </mx:Application>
