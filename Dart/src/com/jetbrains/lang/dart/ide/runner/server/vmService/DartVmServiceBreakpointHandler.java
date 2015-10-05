@@ -89,4 +89,8 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     // can this xBreakpoint be resolved for other isolate?
     myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_invalid_breakpoint, null);
   }
+
+  public XLineBreakpoint<XBreakpointProperties> getXBreakpoint(@NotNull final Breakpoint vmBreakpoint) {
+    return myVmBreakpointIdToXBreakpointMap.get(vmBreakpoint.getId());
+  }
 }

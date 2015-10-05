@@ -17,15 +17,18 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import gnu.trove.THashSet;
 import org.dartlang.vm.service.VmService;
+import org.dartlang.vm.service.element.IsolateRef;
 import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class DartVmServiceDebugProcess extends XDebugProcess {
-  public static final Logger LOG = Logger.getInstance(DartVmServiceDebugProcess.class.getName());
+  private static final Logger LOG = Logger.getInstance(DartVmServiceDebugProcess.class.getName());
 
   @Nullable private final ExecutionResult myExecutionResult;
   @NotNull private final DartUrlResolver myDartUrlResolver;
@@ -34,6 +37,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
   private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
+
+  private final @NotNull Set<String> mySuspendedIsolateIds = new THashSet<String>();
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @Nullable final String debuggingHost,
@@ -152,6 +157,9 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void resume() {
+    for (String isolateId : mySuspendedIsolateIds) {
+      myVmServiceWrapper.resumeIsolate(isolateId);
+    }
   }
 
   @Override
@@ -160,6 +168,14 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void runToPosition(@NotNull XSourcePosition position) {
+  }
+
+  public void isolateSuspended(@NotNull final IsolateRef isolateRef) {
+    mySuspendedIsolateIds.add(isolateRef.getId());
+  }
+
+  public void isolateResumed(@NotNull final IsolateRef isolateRef) {
+    mySuspendedIsolateIds.remove(isolateRef.getId());
   }
 
   @Override

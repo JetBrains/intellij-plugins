@@ -1,10 +1,16 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendedContext;
 import org.dartlang.vm.service.VmServiceListener;
-import org.dartlang.vm.service.element.Event;
+import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 
 public class DartVmServiceListener implements VmServiceListener {
+  private static final Logger LOG = Logger.getInstance(DartVmServiceListener.class.getName());
+
   private final DartVmServiceDebugProcess myDebugProcess;
   private DartVmServiceBreakpointHandler myBreakpointHandler;
 
@@ -32,13 +38,17 @@ public class DartVmServiceListener implements VmServiceListener {
       case PauseExit:
         break;
       case PauseBreakpoint:
-        myDebugProcess.getVmServiceWrapper().resumeIsolate(event.getIsolate().getId());
+        myDebugProcess.isolateSuspended(event.getIsolate());
+        onPauseBreakpoint(event.getIsolate(), event.getPauseBreakpoints(), event.getTopFrame());
         break;
       case PauseInterrupted:
+        myDebugProcess.isolateSuspended(event.getIsolate());
         break;
       case PauseException:
+        myDebugProcess.isolateSuspended(event.getIsolate());
         break;
       case Resume:
+        myDebugProcess.isolateResumed(event.getIsolate());
         break;
       case BreakpointAdded:
         break;
@@ -51,6 +61,24 @@ public class DartVmServiceListener implements VmServiceListener {
         break;
       case WriteEvent:
         break;
+    }
+  }
+
+  private void onPauseBreakpoint(@NotNull final IsolateRef isolateRef,
+                                 @NotNull final ElementList<Breakpoint> vmBreakpoints,
+                                 @NotNull final Frame topFrame) {
+    if (vmBreakpoints.isEmpty()) {
+      myDebugProcess.getSession().positionReached(new DartVmServiceSuspendedContext(myDebugProcess, isolateRef, topFrame));
+    }
+    else {
+      if (vmBreakpoints.size() > 1) {
+        // Shouldn't happen. IDE doesn't allow to set 2 breakpoints on one line.
+        LOG.error(vmBreakpoints.size() + " breakpoints hit in one shot.");
+      }
+
+      final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
+      myDebugProcess.getSession()
+        .breakpointReached(xBreakpoint, null, new DartVmServiceSuspendedContext(myDebugProcess, isolateRef, topFrame));
     }
   }
 }
