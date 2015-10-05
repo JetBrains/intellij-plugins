@@ -51,6 +51,10 @@ public class IsolatesInfo {
     myIsolateIdToInfoMap.remove(isolateRef.getId());
   }
 
+  public Collection<String> getLiveIsolateIds() {
+    return myIsolateIdToInfoMap.keySet();
+  }
+
   @Nullable
   public String getScriptId(@NotNull final String isolateId, @NotNull String uri) {
     final IsolateInfo isolateInfo = myIsolateIdToInfoMap.get(isolateId);

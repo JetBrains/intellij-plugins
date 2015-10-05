@@ -12,6 +12,7 @@ import org.dartlang.vm.service.consumer.GetLibraryConsumer;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -124,7 +125,7 @@ public class VmServiceWrapper implements Disposable {
     final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
-      setBreakpoint(isolate, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+      setBreakpoint(isolate.getId(), xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
           checkDone();
@@ -151,7 +152,7 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  public void setBreakpoint(@NotNull final Isolate isolate,
+  public void setBreakpoint(@NotNull final String isolateId,
                             @NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
                             @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
     final XSourcePosition position = xBreakpoint.getSourcePosition();
@@ -161,7 +162,7 @@ public class VmServiceWrapper implements Disposable {
     }
 
     final String uri = myDebugProcess.getUriForFile(position.getFile());
-    final String scriptId = myIsolatesInfo.getScriptId(isolate.getId(), uri);
+    final String scriptId = myIsolatesInfo.getScriptId(isolateId, uri);
     final int line = position.getLine() + 1;
 
     if (scriptId == null) {
@@ -172,9 +173,29 @@ public class VmServiceWrapper implements Disposable {
     addRequest(new Runnable() {
       @Override
       public void run() {
-        myVmService.addBreakpoint(isolate.getId(), scriptId, line, consumer);
+        myVmService.addBreakpoint(isolateId, scriptId, line, consumer);
       }
     });
+  }
+
+  public void setBreakpointForIsolates(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
+                                       @NotNull final Collection<String> isolateIds) {
+    for (String isolateId : isolateIds) {
+      setBreakpoint(isolateId, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+        @Override
+        void sourcePositionNotApplicable() {
+        }
+
+        @Override
+        public void received(Breakpoint vmBreakpoint) {
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, vmBreakpoint);
+        }
+
+        @Override
+        public void onError(RPCError error) {
+        }
+      });
+    }
   }
 
   public void resumeIsolate(@NotNull final String isolateId) {

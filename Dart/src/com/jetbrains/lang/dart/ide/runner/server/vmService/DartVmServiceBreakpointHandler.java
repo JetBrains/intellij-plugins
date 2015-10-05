@@ -34,6 +34,12 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   @Override
   public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
     myXBreakpoints.add(xBreakpoint);
+
+
+    final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
+    if (vmServiceWrapper != null) {
+      vmServiceWrapper.setBreakpointForIsolates(xBreakpoint, myIsolatesInfo.getLiveIsolateIds());
+    }
   }
 
   @Override
@@ -46,11 +52,12 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   }
 
   public void vmBreakpointAdded(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, @NotNull final Breakpoint vmBreakpoint) {
+    myVmBreakpointIdToXBreakpointMap.put(vmBreakpoint.getId(), xBreakpoint);
+    // todo remember backward mapping
+
     if (vmBreakpoint.getResolved()) {
       breakpointResolved(vmBreakpoint);
     }
-    myVmBreakpointIdToXBreakpointMap.put(vmBreakpoint.getId(), xBreakpoint);
-    // todo remember backward mapping
   }
 
   public void breakpointResolved(@NotNull final Breakpoint vmBreakpoint) {
