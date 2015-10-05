@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XSourcePosition;
@@ -59,6 +60,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     Logging.setLogger(new org.dartlang.vm.service.logging.Logger() {
       @Override
       public void logError(final String message) {
+        if (message.contains("\"code\":102,")) { // Cannot add breakpoint, already logged in logInformation()
+          return;
+        }
+
         getSession().getConsoleView().print("Error: " + message + "\n", ConsoleViewContentType.ERROR_OUTPUT);
         LOG.warn(message);
       }
@@ -66,7 +71,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       @Override
       public void logError(final String message, final Throwable exception) {
         getSession().getConsoleView().print("Error: " + message + "\n", ConsoleViewContentType.ERROR_OUTPUT);
-        LOG.warn(message, exception);
+        LOG.error(message, exception);
       }
 
       @Override
@@ -85,9 +90,9 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   public void sessionInitialized() {
     try {
       final VmService vmService = VmService.localConnect(myObservatoryPort);
-      vmService.addVmServiceListener(new DartVmServiceListener(this));
+      vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
 
-      myVmServiceWrapper = new VmServiceWrapper(vmService, myIsolatesInfo);
+      myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
 
       myVmServiceWrapper.streamListen(VmService.DEBUG_STREAM_ID);
       myVmServiceWrapper.streamListen(VmService.ISOLATE_STREAM_ID);
@@ -169,5 +174,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
       }));
     }
+  }
+
+  @NotNull
+  public String getUriForFile(@NotNull final VirtualFile file) {
+    // todo check sdk libs, sdk parts, package libs, package parts, libs, parts, slashes
+    return threeslashize(myDartUrlResolver.getDartUrlForFile(file));
+  }
+
+  @NotNull
+  private static String threeslashize(@NotNull final String uri) {
+    if (!uri.startsWith("file:")) return uri;
+    if (uri.startsWith("file:///")) return uri;
+    if (uri.startsWith("file://")) return "file:///" + uri.substring("file://".length());
+    if (uri.startsWith("file:/")) return "file:///" + uri.substring("file:/".length());
+    if (uri.startsWith("file:")) return "file:///" + uri.substring("file:".length());
+    return uri;
   }
 }

@@ -6,9 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartVmServiceListener implements VmServiceListener {
   private final DartVmServiceDebugProcess myDebugProcess;
+  private DartVmServiceBreakpointHandler myBreakpointHandler;
 
-  public DartVmServiceListener(@NotNull final DartVmServiceDebugProcess debugProcess) {
+  public DartVmServiceListener(@NotNull final DartVmServiceDebugProcess debugProcess,
+                               @NotNull final DartVmServiceBreakpointHandler breakpointHandler) {
     myDebugProcess = debugProcess;
+    myBreakpointHandler = breakpointHandler;
   }
 
   @Override
@@ -29,6 +32,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case PauseExit:
         break;
       case PauseBreakpoint:
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(event.getIsolate().getId());
         break;
       case PauseInterrupted:
         break;
@@ -39,6 +43,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case BreakpointAdded:
         break;
       case BreakpointResolved:
+        myBreakpointHandler.breakpointResolved(event.getBreakpoint());
         break;
       case BreakpointRemoved:
         break;
