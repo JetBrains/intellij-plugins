@@ -72,6 +72,14 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void handleIsolatePausedOnStart(@NotNull final IsolateRef isolateRef) {
+    if (myIsolatesInfo.isIsolateKnown(isolateRef.getId())) {
+      // Something strange happens:
+      // in most cases VmServiceListener is not notified with EventKind.PauseStart for the main isolate, but sometimes this happens.
+      return;
+    }
+
+    myIsolatesInfo.addIsolate(isolateRef);
+
     addRequest(new Runnable() {
       @Override
       public void run() {
@@ -106,7 +114,7 @@ public class VmServiceWrapper implements Disposable {
 
             private void checkDone() {
               if (counter.decrementAndGet() == 0) {
-                setInitialBreakpointsAndResume(isolate);
+                addInitialBreakpointsAndResume(isolate);
               }
             }
           });
@@ -115,7 +123,7 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  private void setInitialBreakpointsAndResume(@NotNull final Isolate isolate) {
+  private void addInitialBreakpointsAndResume(@NotNull final Isolate isolate) {
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
     if (xBreakpoints.isEmpty()) {
       resumeIsolate(isolate.getId());
@@ -125,7 +133,7 @@ public class VmServiceWrapper implements Disposable {
     final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
-      setBreakpoint(isolate.getId(), xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolate.getId(), xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
           checkDone();
@@ -133,7 +141,7 @@ public class VmServiceWrapper implements Disposable {
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, vmBreakpoint);
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolate.getId(), vmBreakpoint);
           checkDone();
         }
 
@@ -152,7 +160,7 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  public void setBreakpoint(@NotNull final String isolateId,
+  public void addBreakpoint(@NotNull final String isolateId,
                             @NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
                             @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
     final XSourcePosition position = xBreakpoint.getSourcePosition();
@@ -178,17 +186,17 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void setBreakpointForIsolates(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
+  public void addBreakpointForIsolates(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
                                        @NotNull final Collection<String> isolateIds) {
-    for (String isolateId : isolateIds) {
-      setBreakpoint(isolateId, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+    for (final String isolateId : isolateIds) {
+      addBreakpoint(isolateId, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
         }
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, vmBreakpoint);
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
         }
 
         @Override
@@ -196,6 +204,15 @@ public class VmServiceWrapper implements Disposable {
         }
       });
     }
+  }
+
+  public void removeBreakpoint(@NotNull final String isolateId, @NotNull final String vmBreakpointId) {
+    addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.removeBreakpoint(isolateId, vmBreakpointId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+      }
+    });
   }
 
   public void resumeIsolate(@NotNull final String isolateId) {

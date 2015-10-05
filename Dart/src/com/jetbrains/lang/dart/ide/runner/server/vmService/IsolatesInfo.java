@@ -21,9 +21,9 @@ public class IsolatesInfo {
     private final Map<String, String> myScriptIdToUriMap = new THashMap<String, String>();
     private final Map<String, String> myUriToScriptIdMap = new THashMap<String, String>();
 
-    public IsolateInfo(@NotNull final Isolate isolate) {
-      myIsolateId = isolate.getId();
-      myName = isolate.getName();
+    public IsolateInfo(@NotNull final String isolateId, @NotNull final String name) {
+      myIsolateId = isolateId;
+      myName = name;
     }
 
     private void addLibrary(@NotNull final Library library) {
@@ -37,18 +37,20 @@ public class IsolatesInfo {
 
   private final Map<String, IsolateInfo> myIsolateIdToInfoMap = new THashMap<String, IsolateInfo>();
 
-  public void addLibrary(@NotNull final Isolate isolate, @NotNull final Library library) {
-    IsolateInfo isolateInfo = myIsolateIdToInfoMap.get(isolate.getId());
-    if (isolateInfo == null) {
-      isolateInfo = new IsolateInfo(isolate);
-      myIsolateIdToInfoMap.put(isolate.getId(), isolateInfo);
-    }
+  public void addIsolate(@NotNull final IsolateRef isolateRef) {
+    myIsolateIdToInfoMap.put(isolateRef.getId(), new IsolateInfo(isolateRef.getId(), isolateRef.getName()));
+  }
 
-    isolateInfo.addLibrary(library);
+  public boolean isIsolateKnown(@NotNull final String isolateId) {
+    return myIsolateIdToInfoMap.containsKey(isolateId);
   }
 
   public void deleteIsolate(@NotNull final IsolateRef isolateRef) {
     myIsolateIdToInfoMap.remove(isolateRef.getId());
+  }
+
+  public void addLibrary(@NotNull final Isolate isolate, @NotNull final Library library) {
+    myIsolateIdToInfoMap.get(isolate.getId()).addLibrary(library);
   }
 
   public Collection<String> getLiveIsolateIds() {

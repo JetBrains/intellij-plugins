@@ -75,7 +75,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       }
 
       @Override
-      public void logInformation(final String message) {
+      public void logInformation(String message) {
+        if (message.length() > 1000) {
+          message = message.substring(0, 700) + "..." + message.substring(message.length() - 300);
+        }
         LOG.debug(message);
       }
 

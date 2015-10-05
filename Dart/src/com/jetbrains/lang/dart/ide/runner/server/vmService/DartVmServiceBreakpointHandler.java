@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.SmartList;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
@@ -9,6 +11,7 @@ import gnu.trove.THashSet;
 import org.dartlang.vm.service.element.Breakpoint;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +26,8 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   private final Set<XLineBreakpoint<XBreakpointProperties>> myXBreakpoints = new THashSet<XLineBreakpoint<XBreakpointProperties>>();
   private final Map<String, XLineBreakpoint<XBreakpointProperties>> myVmBreakpointIdToXBreakpointMap =
     new THashMap<String, XLineBreakpoint<XBreakpointProperties>>();
+  private final Map<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>> myXBreakpointToIsolateAndVmBreakpointIdsMap =
+    new THashMap<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>>();
 
   protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess,
                                            @NotNull final IsolatesInfo isolatesInfo) {
@@ -38,22 +43,37 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
     final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
     if (vmServiceWrapper != null) {
-      vmServiceWrapper.setBreakpointForIsolates(xBreakpoint, myIsolatesInfo.getLiveIsolateIds());
+      vmServiceWrapper.addBreakpointForIsolates(xBreakpoint, myIsolatesInfo.getLiveIsolateIds());
     }
   }
 
   @Override
   public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, boolean temporary) {
     myXBreakpoints.remove(xBreakpoint);
+
+    final Collection<Pair<String, String>> isolateAndVmBreakpointIds = myXBreakpointToIsolateAndVmBreakpointIdsMap.get(xBreakpoint);
+    if (isolateAndVmBreakpointIds != null) {
+      for (Pair<String, String> isolateAndVmBreakpointId : isolateAndVmBreakpointIds) {
+        myDebugProcess.getVmServiceWrapper().removeBreakpoint(isolateAndVmBreakpointId.first, isolateAndVmBreakpointId.second);
+      }
+    }
   }
 
   public Set<XLineBreakpoint<XBreakpointProperties>> getXBreakpoints() {
     return myXBreakpoints;
   }
 
-  public void vmBreakpointAdded(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, @NotNull final Breakpoint vmBreakpoint) {
+  public void vmBreakpointAdded(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
+                                @NotNull final String isolateId,
+                                @NotNull final Breakpoint vmBreakpoint) {
     myVmBreakpointIdToXBreakpointMap.put(vmBreakpoint.getId(), xBreakpoint);
-    // todo remember backward mapping
+
+    Collection<Pair<String, String>> isolateAndVmBreakpointIds = myXBreakpointToIsolateAndVmBreakpointIdsMap.get(xBreakpoint);
+    if (isolateAndVmBreakpointIds == null) {
+      isolateAndVmBreakpointIds = new SmartList<Pair<String, String>>();
+      myXBreakpointToIsolateAndVmBreakpointIdsMap.put(xBreakpoint, isolateAndVmBreakpointIds);
+    }
+    isolateAndVmBreakpointIds.add(Pair.create(isolateId, vmBreakpoint.getId()));
 
     if (vmBreakpoint.getResolved()) {
       breakpointResolved(vmBreakpoint);
