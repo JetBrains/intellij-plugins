@@ -11,6 +11,7 @@ import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.consumer.GetLibraryConsumer;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -187,16 +188,16 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void addBreakpointForIsolates(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
-                                       @NotNull final Collection<String> isolateIds) {
-    for (final String isolateId : isolateIds) {
-      addBreakpoint(isolateId, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+                                       @NotNull final Collection<IsolatesInfo.IsolateInfo> isolateInfos) {
+    for (final IsolatesInfo.IsolateInfo isolateInfo : isolateInfos) {
+      addBreakpoint(isolateInfo.getIsolateId(), xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
         }
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateInfo.getIsolateId(), vmBreakpoint);
         }
 
         @Override
@@ -216,15 +217,15 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void resumeIsolate(@NotNull final String isolateId) {
+    resumeIsolate(isolateId, null);
+  }
+
+  public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
     addRequest(new Runnable() {
       @Override
       public void run() {
-        myVmService.resume(isolateId, null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+        myVmService.resume(isolateId, stepOption, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
       }
     });
-  }
-
-  public void handleIsolateExit(@NotNull final IsolateRef isolateRef) {
-    myIsolatesInfo.deleteIsolate(isolateRef);
   }
 }

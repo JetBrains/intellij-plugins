@@ -16,14 +16,14 @@ public class IsolatesInfo {
 
   public static class IsolateInfo {
     private final String myIsolateId;
-    private final String myName;
+    private final String myIsolateName;
     private final Collection<Library> myLibraries = new ArrayListSet<Library>();
     private final Map<String, String> myScriptIdToUriMap = new THashMap<String, String>();
     private final Map<String, String> myUriToScriptIdMap = new THashMap<String, String>();
 
-    public IsolateInfo(@NotNull final String isolateId, @NotNull final String name) {
+    public IsolateInfo(@NotNull final String isolateId, @NotNull final String isolateName) {
       myIsolateId = isolateId;
-      myName = name;
+      myIsolateName = isolateName;
     }
 
     private void addLibrary(@NotNull final Library library) {
@@ -32,6 +32,14 @@ public class IsolatesInfo {
         myScriptIdToUriMap.put(scriptRef.getId(), scriptRef.getUri());
         myUriToScriptIdMap.put(scriptRef.getUri(), scriptRef.getId());
       }
+    }
+
+    public String getIsolateId() {
+      return myIsolateId;
+    }
+
+    public String getIsolateName() {
+      return myIsolateName;
     }
   }
 
@@ -53,8 +61,8 @@ public class IsolatesInfo {
     myIsolateIdToInfoMap.get(isolate.getId()).addLibrary(library);
   }
 
-  public Collection<String> getLiveIsolateIds() {
-    return myIsolateIdToInfoMap.keySet();
+  public Collection<IsolateInfo> getIsolateInfos() {
+    return myIsolateIdToInfoMap.values();
   }
 
   @Nullable

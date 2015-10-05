@@ -43,7 +43,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
     final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
     if (vmServiceWrapper != null) {
-      vmServiceWrapper.addBreakpointForIsolates(xBreakpoint, myIsolatesInfo.getLiveIsolateIds());
+      vmServiceWrapper.addBreakpointForIsolates(xBreakpoint, myIsolatesInfo.getIsolateInfos());
     }
   }
 

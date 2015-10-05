@@ -11,20 +11,25 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebugSessionAdapter;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashSet;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.element.IsolateRef;
+import org.dartlang.vm.service.element.StepOption;
 import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 public class DartVmServiceDebugProcess extends XDebugProcess {
@@ -38,7 +43,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
 
-  private final @NotNull Set<String> mySuspendedIsolateIds = new THashSet<String>();
+  @NotNull private final Set<String> mySuspendedIsolateIds = new THashSet<String>();
+  private String myLatestCurrentIsolateId;
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @Nullable final String debuggingHost,
@@ -55,10 +61,28 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
 
     setLogger();
+
+    session.addSessionListener(new XDebugSessionAdapter() {
+      @Override
+      public void sessionPaused() {
+        stackFrameChanged();
+      }
+
+      @Override
+      public void stackFrameChanged() {
+        final XStackFrame stackFrame = getSession().getCurrentStackFrame();
+        myLatestCurrentIsolateId =
+          stackFrame instanceof DartVmServiceStackFrame ? ((DartVmServiceStackFrame)stackFrame).getIsolateId() : null;
+      }
+    });
   }
 
   public VmServiceWrapper getVmServiceWrapper() {
     return myVmServiceWrapper;
+  }
+
+  public Collection<IsolatesInfo.IsolateInfo> getIsolateInfos() {
+    return myIsolatesInfo.getIsolateInfos();
   }
 
   private void setLogger() {
@@ -81,8 +105,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
       @Override
       public void logInformation(String message) {
-        if (message.length() > 1000) {
-          message = message.substring(0, 700) + "..." + message.substring(message.length() - 300);
+        if (message.length() > 500) {
+          message = message.substring(0, 300) + "..." + message.substring(message.length() - 200);
         }
         LOG.debug(message);
       }
@@ -138,14 +162,23 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepOver() {
+    if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
+      myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, StepOption.Over);
+    }
   }
 
   @Override
   public void startStepInto() {
+    if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
+      myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, StepOption.Into);
+    }
   }
 
   @Override
   public void startStepOut() {
+    if (myLatestCurrentIsolateId != null && mySuspendedIsolateIds.contains(myLatestCurrentIsolateId)) {
+      myVmServiceWrapper.resumeIsolate(myLatestCurrentIsolateId, StepOption.Out);
+    }
   }
 
   @Override
@@ -174,8 +207,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     mySuspendedIsolateIds.add(isolateRef.getId());
   }
 
+  public boolean isIsolateSuspended(@NotNull final String isolateId) {
+    return mySuspendedIsolateIds.contains(isolateId);
+  }
+
   public void isolateResumed(@NotNull final IsolateRef isolateRef) {
     mySuspendedIsolateIds.remove(isolateRef.getId());
+  }
+
+  public void isolateExit(@NotNull final IsolateRef isolateRef) {
+    myIsolatesInfo.deleteIsolate(isolateRef);
+    mySuspendedIsolateIds.remove(isolateRef.getId());
+
+    if (isolateRef.getId().equals(myLatestCurrentIsolateId)) {
+      resume(); // otherwise no way no resume them from UI
+    }
   }
 
   @Override
