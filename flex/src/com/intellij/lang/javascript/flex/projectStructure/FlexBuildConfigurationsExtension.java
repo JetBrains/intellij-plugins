@@ -25,13 +25,12 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.RemoveConfigurableHandler;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
@@ -99,24 +99,22 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
     myConfigurator.dispose();
   }
 
-  public boolean canBeRemoved(final Object[] editableObjects) {
-    ModifiableFlexBuildConfiguration[] configurations =
-      ContainerUtil.mapNotNull(editableObjects, new Function<Object, ModifiableFlexBuildConfiguration>() {
-        @Nullable
-        @Override
-        public ModifiableFlexBuildConfiguration fun(Object o) {
-          return o instanceof ModifiableFlexBuildConfiguration ? (ModifiableFlexBuildConfiguration)o : null;
-        }
-      }, new ModifiableFlexBuildConfiguration[0]);
-    return configurations.length == editableObjects.length && myConfigurator.canBeRemoved(configurations);
-  }
+  @Override
+  public List<RemoveConfigurableHandler<?>> getRemoveHandlers() {
+    return Collections.<RemoveConfigurableHandler<?>>singletonList(new RemoveConfigurableHandler<ModifiableFlexBuildConfiguration>(CompositeConfigurable.class) {
+      @Override
+      public boolean canBeRemoved(@NotNull Collection<ModifiableFlexBuildConfiguration> configurations) {
+        return myConfigurator.canBeRemoved(configurations.toArray(new ModifiableFlexBuildConfiguration[configurations.size()]));
+      }
 
-  public boolean removeObject(final Object editableObject) {
-    if (editableObject instanceof ModifiableFlexBuildConfiguration) {
-      myConfigurator.removeConfiguration(((ModifiableFlexBuildConfiguration)editableObject));
-      return true;
-    }
-    return false;
+      @Override
+      public boolean remove(@NotNull Collection<ModifiableFlexBuildConfiguration> configurations) {
+        for (ModifiableFlexBuildConfiguration configuration : configurations) {
+          myConfigurator.removeConfiguration(configuration);
+        }
+        return true;
+      }
+    });
   }
 
   public boolean canBeCopied(final NamedConfigurable configurable) {

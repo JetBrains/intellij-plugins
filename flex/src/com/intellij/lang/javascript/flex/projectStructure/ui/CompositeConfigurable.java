@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * @author ksafonov
  */
-public class CompositeConfigurable extends ProjectStructureElementConfigurable implements Place.Navigator {
+public class CompositeConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexBuildConfiguration> implements Place.Navigator {
 
   public static final String TAB_NAME = "tabName";
 
@@ -31,15 +32,17 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
     String getTabTitle();
   }
 
+  private final FlexBCConfigurable myMainChild;
   private final List<NamedConfigurable> myChildren = new ArrayList<NamedConfigurable>();
   private final Disposable myDisposable = Disposer.newDisposable();
   private final TabbedPaneWrapper myTabs;
 
-  public CompositeConfigurable(List<NamedConfigurable> children, Runnable updateTree) {
+  public CompositeConfigurable(FlexBCConfigurable mainChild, List<NamedConfigurable> otherChildren, Runnable updateTree) {
     super(false, updateTree);
-
+    myMainChild = mainChild;
     myTabs = new TabbedPaneWrapper(myDisposable);
-    myChildren.addAll(children);
+    myChildren.add(mainChild);
+    myChildren.addAll(otherChildren);
   }
 
   @Override
@@ -47,12 +50,12 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
     getMainChild().setDisplayName(name);
   }
 
-  public NamedConfigurable getMainChild() {
-    return myChildren.get(0);
+  public FlexBCConfigurable getMainChild() {
+    return myMainChild;
   }
 
   @Override
-  public Object getEditableObject() {
+  public ModifiableFlexBuildConfiguration getEditableObject() {
     return getMainChild().getEditableObject();
   }
 
