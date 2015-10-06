@@ -689,10 +689,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   public CompositeConfigurable wrapInTabs() {
-    List<NamedConfigurable> tabs = new ArrayList<NamedConfigurable>();
-    tabs.add(this);
-    tabs.addAll(getChildren());
-    return new CompositeConfigurable(tabs, null);
+    return new CompositeConfigurable(this, getChildren(), null);
   }
 
   public void updateTabs(final CompositeConfigurable compositeConfigurable) {
@@ -731,7 +728,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   public static FlexBCConfigurable unwrap(CompositeConfigurable c) {
-    return (FlexBCConfigurable)c.getMainChild();
+    return c.getMainChild();
   }
 
   @Override
