@@ -1,1 +1,1 @@
-function<caret>
+function <caret>
