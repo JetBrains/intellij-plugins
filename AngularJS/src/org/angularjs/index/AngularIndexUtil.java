@@ -113,7 +113,7 @@ public class AngularIndexUtil {
       public Result<Integer> compute() {
         int version = -1;
         PsiElement resolve;
-        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ng-non-bindable]")) != null) {
+        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ng-for]")) != null) {
           version = 20;
         } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
           version = 13;
