@@ -4,7 +4,9 @@ import com.google.common.net.UrlEscapers;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -12,6 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.builtInWebServer.PathInfo;
 import org.jetbrains.builtInWebServer.WebServerPathHandlerAdapter;
 import org.jetbrains.builtInWebServer.WebServerPathToFileManager;
 
@@ -44,14 +47,15 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     int slashIndex = -1;
     while ((slashIndex = path.indexOf('/', slashIndex + 1)) != -1) {
       final String pathPart = path.substring(0, slashIndex);
-      final VirtualFile dir = WebServerPathToFileManager.getInstance(project).findVirtualFile(pathPart);
-      if (dir == null || !dir.isDirectory()) {
+      PathInfo dirInfo = WebServerPathToFileManager.getInstance(project).getPathInfo(pathPart);
+      if (dirInfo == null || !dirInfo.getIsDirectory()) {
         continue;
       }
 
-      final VirtualFile parentDir = dir.getParent();
+      VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(FileUtilRt.toSystemIndependentName(dirInfo.getFilePath()));
+      final VirtualFile parentDir = dir == null ? null : dir.getParent();
       if (parentDir != null && parentDir.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
-        if ("build".equals(dir.getName())) {
+        if ("build".equals(dirInfo.getName())) {
           return null; // contents of "build" folder should be served by the IDE internal web server directly, i.e. without pub serve
         }
 
