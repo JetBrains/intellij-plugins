@@ -33,6 +33,7 @@ public class LessonMessagePane extends JTextPane {
     LessonMessagePane(){
         super();
         initStyleConstants();
+        //TODO: Don't forget to change it back
         setEditable(false);
         this.setParagraphAttributes(PARAGRAPH_STYLE, true);
         passedIcon = IconLoader.findIcon(EduIcons.CHECKMARK_GRAY_12);

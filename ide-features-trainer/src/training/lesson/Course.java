@@ -95,8 +95,8 @@ public class Course extends ActionGroup{
         }
         final Attribute attributeFileType = root.getAttribute(GenerateCourseXml.COURSE_FILE_TYPE);
         if (attributeFileType != null) {
-            if(attributeFileType.getValue().equals(CourseType.SCRATCH.toString())) courseType = CourseType.SCRATCH;
-            else if(attributeFileType.getValue().equals(CourseType.PROJECT.toString())) courseType = CourseType.PROJECT;
+            if(attributeFileType.getValue().toUpperCase().equals(CourseType.SCRATCH.toString().toUpperCase())) courseType = CourseType.SCRATCH;
+            else if(attributeFileType.getValue().toUpperCase().equals(CourseType.PROJECT.toString().toUpperCase())) courseType = CourseType.PROJECT;
             else throw new BadCourseException("Unable to recognise CourseType (should be SCRATCH or PROJECT)");
         }
 

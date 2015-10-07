@@ -13,12 +13,15 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.ex.IdeFrameEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.lesson.dialogs.EduProjectWarningDialog;
+import training.lesson.dialogs.SdkProblemDialog;
 
 import javax.swing.*;
 import java.io.File;
@@ -52,8 +55,7 @@ public class NewEduProjectUtil {
             if (!projectBuilder.isUpdate()) {
                 String name = projectName;
                 newProject = projectBuilder.createProject(name, projectFilePath);
-            }
-            else {
+            } else {
                 newProject = projectToClose;
             }
 
@@ -118,7 +120,7 @@ public class NewEduProjectUtil {
                     IdeFocusManager instance = IdeFocusManager.findInstance();
                     IdeFrame lastFocusedFrame = instance.getLastFocusedFrame();
                     if (lastFocusedFrame instanceof IdeFrameEx) {
-                        boolean fullScreen = ((IdeFrameEx)lastFocusedFrame).isInFullScreen();
+                        boolean fullScreen = ((IdeFrameEx) lastFocusedFrame).isInFullScreen();
                         if (fullScreen) {
                             newProject.putUserData(IdeFrameImpl.SHOULD_OPEN_IN_FULL_SCREEN, Boolean.TRUE);
                         }
@@ -131,10 +133,17 @@ public class NewEduProjectUtil {
                 newProject.save();
             }
             return newProject;
-        }
-        finally {
+        } finally {
             projectBuilder.cleanup();
         }
+    }
+
+    public static boolean showDialogOpenEduProject(Project project){
+        //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
+        final EduProjectWarningDialog dialog = new EduProjectWarningDialog(project);
+        dialog.show();
+        return dialog.isOK();
+
     }
 
 }
