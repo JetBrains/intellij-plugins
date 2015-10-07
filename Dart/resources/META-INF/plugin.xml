@@ -3,19 +3,16 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="142.1" until-build="143.*"/>
+  <idea-version since-build="143.1" until-build="143.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
 
-  <!-- Uncomment the following line when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
-  <!--<depends>com.intellij.plugins.webcomponents</depends>-->
-
   <change-notes>
     <![CDATA[
         <ul>
-          <li>Various improvements and bug fixes</li>
+          <li>Improvements and bug fixes</li>
         </ul>
       ]]>
   </change-notes>
