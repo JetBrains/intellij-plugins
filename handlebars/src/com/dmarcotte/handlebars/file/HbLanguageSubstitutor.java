@@ -13,7 +13,8 @@ public class HbLanguageSubstitutor extends LanguageSubstitutor {
   @Nullable
   @Override
   public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
-    if (HbConfig.shouldOpenHtmlAsHandlebars(project)) {
+    if (HbConfig.shouldOpenHtmlAsHandlebars(project) &&
+        file.getName().endsWith(".html")) {
       return HbLanguage.INSTANCE;
     }
 
