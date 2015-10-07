@@ -59,18 +59,18 @@ public class DartProjectComponent extends AbstractProjectComponent {
   protected DartProjectComponent(@NotNull final Project project) {
     super(project);
 
-    if (!Registry.is("dart.projects.without.pubspec", false)) {
-      VirtualFileManager.getInstance().addVirtualFileListener(new DartFileListener(project), project);
+    VirtualFileManager.getInstance().addVirtualFileListener(new DartFileListener(project), project);
 
-      project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
-        @Override
-        public void rootsChanged(ModuleRootEvent event) {
-          myProjectRootsModificationTracker.incModificationCount();
+    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+      @Override
+      public void rootsChanged(ModuleRootEvent event) {
+        myProjectRootsModificationTracker.incModificationCount();
 
+        if (!Registry.is("dart.projects.without.pubspec", false)) {
           DartFileListener.scheduleDartPackageRootsUpdate(myProject);
         }
-      });
-    }
+      }
+    });
   }
 
   @NotNull
