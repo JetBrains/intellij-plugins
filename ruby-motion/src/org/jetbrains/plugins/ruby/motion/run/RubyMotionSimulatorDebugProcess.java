@@ -7,16 +7,20 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.module.Module;
-import com.intellij.util.ArrayUtil;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
 import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcessBase;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrExceptionBreakpointHandler;
+import com.jetbrains.cidr.execution.debugger.breakpoints.CidrSymbolicBreakpointHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
 import org.jetbrains.plugins.ruby.ruby.run.configuration.RubyAbstractCommandLineState;
+
+import java.util.List;
 
 /**
 * @author Dennis.Ushakov
@@ -40,8 +44,13 @@ public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDeb
   @NotNull
   @Override
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
-    final XBreakpointHandler<?>[] handlers = super.getBreakpointHandlers();
-    return handlers.length > 3 ? ArrayUtil.remove(handlers, 3) : handlers;
+    final List<XBreakpointHandler<?>> handlerList = ContainerUtil.filter(super.getBreakpointHandlers(), new Condition<XBreakpointHandler<?>>() {
+      @Override
+      public boolean value(XBreakpointHandler<?> handler) {
+        return !(handler instanceof CidrSymbolicBreakpointHandler);
+      }
+    });
+    return handlerList.toArray(new XBreakpointHandler[handlerList.size()]);
   }
 
   @NotNull
