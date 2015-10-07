@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/testSrc" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/thirdPartySrc/vmServiceDrivers" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
       <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/packages" />
       <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/web/packages" />
@@ -146,17 +147,6 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="dart_vm_service">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/vm_service_lib-2.0-dev.3.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/vm_service_lib-2.0-dev.3-src.jar!/" />
-        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

@@ -84,7 +84,7 @@ public class VmServiceWrapper implements Disposable {
     addRequest(new Runnable() {
       @Override
       public void run() {
-        myVmService.getIsolate(isolateRef.getId(), new VmServiceConsumers.IsolateConsumerWrapper() {
+        myVmService.getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
           @Override
           public void received(final Isolate isolate) {
             handleIsolatePausedOnStart(isolate);

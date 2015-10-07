@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.RPCError;
+import org.dartlang.vm.service.element.Sentinel;
 import org.dartlang.vm.service.element.Success;
 
 public class VmServiceConsumers {
@@ -25,7 +26,10 @@ public class VmServiceConsumers {
   public static abstract class VmConsumerWrapper extends ConsumerWrapper implements VMConsumer {
   }
 
-  public static abstract class IsolateConsumerWrapper extends ConsumerWrapper implements IsolateConsumer {
+  public static abstract class GetIsolateConsumerWrapper extends ConsumerWrapper implements GetIsolateConsumer {
+    @Override
+    public void received(Sentinel response) {
+    }
   }
 
   public static abstract class BreakpointConsumerWrapper implements BreakpointConsumer {
