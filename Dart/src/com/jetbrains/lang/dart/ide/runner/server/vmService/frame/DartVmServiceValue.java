@@ -2,29 +2,30 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.xdebugger.frame.ImmediateFullValueEvaluator;
-import com.intellij.xdebugger.frame.XNamedValue;
-import com.intellij.xdebugger.frame.XValueNode;
-import com.intellij.xdebugger.frame.XValuePlace;
+import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XNumericValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XRegularValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XStringValuePresentation;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
-import org.dartlang.vm.service.element.BoundVariable;
-import org.dartlang.vm.service.element.InstanceKind;
-import org.dartlang.vm.service.element.InstanceRef;
+import org.dartlang.vm.service.consumer.GetObjectConsumer;
+import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartVmServiceValue extends XNamedValue {
   private final DartVmServiceDebugProcess myDebugProcess;
+  private String myIsolateId;
   private final InstanceRef myInstanceRef;
 
-  public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess, @NotNull final BoundVariable var) {
-    super(var.getName());
+  public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
+                            @NotNull final String isolateId,
+                            @NotNull final String name,
+                            @NotNull final InstanceRef instanceRef) {
+    super(name);
     myDebugProcess = debugProcess;
-    myInstanceRef = var.getValue();
+    myIsolateId = isolateId;
+    myInstanceRef = instanceRef;
   }
 
   @Override
@@ -123,5 +124,33 @@ public class DartVmServiceValue extends XNamedValue {
         return false;
     }
     return true;
+  }
+
+  @Override
+  public void computeChildren(@NotNull final XCompositeNode node) {
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
+      @Override
+      public void received(Obj obj) {
+        final ElementList<BoundField> fields = ((Instance)obj).getFields();
+        final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
+        for (BoundField field : fields) {
+          final InstanceRef value = field.getValue();
+          if (value != null) {
+            childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value));
+          }
+        }
+        node.addChildren(childrenList, true);
+      }
+
+      @Override
+      public void received(Sentinel sentinel) {
+        node.setErrorMessage(sentinel.getValueAsString());
+      }
+
+      @Override
+      public void onError(RPCError error) {
+        node.setErrorMessage(error.getMessage());
+      }
+    });
   }
 }

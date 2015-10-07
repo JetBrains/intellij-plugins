@@ -320,4 +320,13 @@ public class VmServiceWrapper implements Disposable {
     semaphore.waitFor(RESPONSE_WAIT_TIMEOUT);
     return resultRef.get();
   }
+
+  public void getObject(@NotNull final String isolateId, @NotNull final String objectId, @NotNull final GetObjectConsumer consumer) {
+    addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.getObject(isolateId, objectId, consumer);
+      }
+    });
+  }
 }
