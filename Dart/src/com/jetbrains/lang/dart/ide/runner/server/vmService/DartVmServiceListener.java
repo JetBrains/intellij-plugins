@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
@@ -39,7 +40,13 @@ public class DartVmServiceListener implements VmServiceListener {
         break;
       case PauseBreakpoint:
         myDebugProcess.isolateSuspended(event.getIsolate());
-        onPauseBreakpoint(event.getIsolate(), event.getPauseBreakpoints(), event.getTopFrame());
+
+        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+          @Override
+          public void run() {
+            onPauseBreakpoint(event.getIsolate(), event.getPauseBreakpoints(), event.getTopFrame());
+          }
+        });
         break;
       case PauseInterrupted:
         myDebugProcess.isolateSuspended(event.getIsolate());

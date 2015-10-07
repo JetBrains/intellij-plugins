@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class DartVmServiceSuspendedContext extends XSuspendContext {
   @NotNull private DartVmServiceDebugProcess myDebugProcess;
   @NotNull private final DartVmServiceExecutionStack myActiveExecutionStack;
 
-  private XExecutionStack[] myExecutionStacks;
+  private List<XExecutionStack> myExecutionStacks;
 
   public DartVmServiceSuspendedContext(@NotNull final DartVmServiceDebugProcess debugProcess,
                                        @NotNull final IsolateRef isolateRef,
@@ -31,22 +32,21 @@ public class DartVmServiceSuspendedContext extends XSuspendContext {
   }
 
   @Override
-  public XExecutionStack[] getExecutionStacks() {
+  public void computeExecutionStacks(@NotNull final XExecutionStackContainer container) {
     if (myExecutionStacks == null) {
       final Collection<IsolatesInfo.IsolateInfo> isolateInfos = myDebugProcess.getIsolateInfos();
-      final Collection<XExecutionStack> stacks = new ArrayList<XExecutionStack>(isolateInfos.size());
+      myExecutionStacks = new ArrayList<XExecutionStack>(isolateInfos.size());
       for (IsolatesInfo.IsolateInfo isolateInfo : isolateInfos) {
         if (isolateInfo.getIsolateId().equals(myActiveExecutionStack.getIsolateId())) {
-          stacks.add(myActiveExecutionStack);
+          myExecutionStacks.add(myActiveExecutionStack);
         }
         else {
-          stacks.add(new DartVmServiceExecutionStack(myDebugProcess, isolateInfo.getIsolateId(), isolateInfo.getIsolateName(), null));
+          myExecutionStacks
+            .add(new DartVmServiceExecutionStack(myDebugProcess, isolateInfo.getIsolateId(), isolateInfo.getIsolateName(), null));
         }
       }
-
-      myExecutionStacks = stacks.toArray(new XExecutionStack[stacks.size()]);
     }
 
-    return myExecutionStacks;
+    container.addExecutionStack(myExecutionStacks, true);
   }
 }

@@ -5,32 +5,36 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebugSessionAdapter;
-import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.PathUtil;
+import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import gnu.trove.TIntIntHashMap;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.element.IsolateRef;
+import org.dartlang.vm.service.element.Script;
+import org.dartlang.vm.service.element.ScriptRef;
 import org.dartlang.vm.service.element.StepOption;
 import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 public class DartVmServiceDebugProcess extends XDebugProcess {
   private static final Logger LOG = Logger.getInstance(DartVmServiceDebugProcess.class.getName());
@@ -45,6 +49,9 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @NotNull private final Set<String> mySuspendedIsolateIds = new THashSet<String>();
   private String myLatestCurrentIsolateId;
+
+  private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<String, LightVirtualFile>();
+  private final Map<String, TIntIntHashMap> myScriptIdToLinesMap = new THashMap<String, TIntIntHashMap>();
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @Nullable final String debuggingHost,
@@ -243,8 +250,62 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @NotNull
   public String getUriForFile(@NotNull final VirtualFile file) {
-    // todo check sdk libs, sdk parts, package libs, package parts, libs, parts, slashes
     return threeslashize(myDartUrlResolver.getDartUrlForFile(file));
+  }
+
+  @Nullable
+  public XSourcePosition getSourcePosition(@NotNull final String isolateId, @NotNull final ScriptRef scriptRef, int tokenPos) {
+    VirtualFile file = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
+      @Override
+      public VirtualFile compute() {
+        return myDartUrlResolver.findFileByDartUrl(scriptRef.getUri());
+      }
+    });
+
+    if (file == null) {
+      file = myScriptIdToContentMap.get(scriptRef.getId());
+    }
+
+    TIntIntHashMap tokenPosToLine = myScriptIdToLinesMap.get(scriptRef.getId());
+
+    if (file != null && tokenPosToLine != null) {
+      return XDebuggerUtil.getInstance().createPosition(file, tokenPosToLine.get(tokenPos));
+    }
+
+    final Script script = myVmServiceWrapper.getScriptSync(isolateId, scriptRef.getId());
+    if (script == null) return null;
+
+    if (file == null) {
+      file = new LightVirtualFile(PathUtil.getFileName(script.getUri()), DartFileType.INSTANCE, script.getSource());
+      ((LightVirtualFile)file).setWritable(false);
+      myScriptIdToContentMap.put(scriptRef.getId(), (LightVirtualFile)file);
+    }
+
+    if (tokenPosToLine == null) {
+      tokenPosToLine = createTokenPosToLineMap(script.getTokenPosTable());
+      myScriptIdToLinesMap.put(scriptRef.getId(), tokenPosToLine);
+    }
+
+    return XDebuggerUtil.getInstance().createPosition(file, tokenPosToLine.get(tokenPos));
+  }
+
+  @NotNull
+  private static TIntIntHashMap createTokenPosToLineMap(@NotNull final List<List<Integer>> tokenPosTable) {
+    // Each subarray consists of a line number followed by (tokenPos, columnNumber) pairs
+    // see https://github.com/dart-lang/vm_service_drivers/blob/master/dart/tool/service.md#script
+    final TIntIntHashMap result = new TIntIntHashMap();
+
+    for (List<Integer> lineAndPairs : tokenPosTable) {
+      final Iterator<Integer> iterator = lineAndPairs.iterator();
+      int line = iterator.next() - 1;
+      while (iterator.hasNext()) {
+        final int tokenPos = iterator.next();
+        iterator.next(); // column
+        result.put(tokenPos, line);
+      }
+    }
+
+    return result;
   }
 
   @NotNull

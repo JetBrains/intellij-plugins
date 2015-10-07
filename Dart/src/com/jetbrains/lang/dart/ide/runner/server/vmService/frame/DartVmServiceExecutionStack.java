@@ -13,7 +13,7 @@ import java.util.Collections;
 public class DartVmServiceExecutionStack extends XExecutionStack {
   private final DartVmServiceDebugProcess myDebugProcess;
   private final String myIsolateId;
-  private XStackFrame myTopFrame;
+  @Nullable private final XStackFrame myTopFrame;
 
   public DartVmServiceExecutionStack(@NotNull final DartVmServiceDebugProcess debugProcess,
                                      @NotNull final String isolateId,
@@ -27,19 +27,24 @@ public class DartVmServiceExecutionStack extends XExecutionStack {
                                                                         : AllIcons.Debugger.ThreadRunning);
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
-    myTopFrame = new DartVmServiceStackFrame(debugProcess, isolateId);
+    myTopFrame = topFrame == null ? null : new DartVmServiceStackFrame(debugProcess, isolateId, topFrame);
   }
 
   @Nullable
   @Override
   public XStackFrame getTopFrame() {
-    // engine calls getTopFrame for active execution stack only
+    // engine calls getTopFrame for active execution stack only, for which myTopFrame is calculated in constructor
     return myTopFrame;
   }
 
   @Override
-  public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container) {
-    container.addStackFrames(Collections.<XStackFrame>emptyList(), true); // todo
+  public void computeStackFrames(final int firstFrameIndex, @NotNull final XStackFrameContainer container) {
+    if (myDebugProcess.isIsolateSuspended(myIsolateId)) {
+      myDebugProcess.getVmServiceWrapper().computeStackFrames(myIsolateId, firstFrameIndex, container);
+    }
+    else {
+      container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+    }
   }
 
   public String getIsolateId() {
