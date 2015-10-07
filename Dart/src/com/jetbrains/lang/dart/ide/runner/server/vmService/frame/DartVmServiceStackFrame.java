@@ -1,5 +1,9 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.ColoredTextContainer;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
@@ -33,8 +37,21 @@ public class DartVmServiceStackFrame extends XStackFrame {
     return mySourcePosition;
   }
 
-  // todo add method name
-  //@Override
-  //public void customizePresentation(@NotNull ColoredTextContainer component) {
-  //}
+  @Override
+  public void customizePresentation(@NotNull final ColoredTextContainer component) {
+    final String name = StringUtil.trimEnd(myVmFrame.getCode().getName(), "="); // trim setter postfix
+    component.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+
+    final String text = " (" + mySourcePosition.getFile().getName() + ":" + (mySourcePosition.getLine() + 1) + ")";
+    component.append(text, SimpleTextAttributes.GRAY_ATTRIBUTES);
+
+    component.setIcon(AllIcons.Debugger.StackFrame);
+  }
+
+
+  @Nullable
+  @Override
+  public Object getEqualityObject() {
+    return myVmFrame.getLocation().getScript().getId() + ":" + myVmFrame.getCode().getId();
+  }
 }
