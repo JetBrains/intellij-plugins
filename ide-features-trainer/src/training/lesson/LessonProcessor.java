@@ -15,6 +15,8 @@ import training.commandsEx.util.PerformActionUtil;
 import training.editor.MouseListenerHolder;
 import training.editor.EduEditor;
 import training.editor.actions.HideProjectTreeAction;
+import training.editor.eduUI.Message;
+import training.util.XmlUtil;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -123,5 +125,71 @@ public class LessonProcessor {
         return el.getName().toUpperCase().equals(Command.CommandType.CARETBLOCK.toString());
     }
 
+    public static String takeDescriptionsOnly(Lesson lesson) {
+        StringBuilder sb = new StringBuilder();
+        Queue<Element> elements = new LinkedBlockingQueue<Element>();
+        if (lesson.getScn().equals(null)) {
+            System.err.println("Scenario is empty or cannot be read!");
+            return null;
+        }
+
+        final Element root = lesson.getScn().getRoot();
+
+        if (root.equals(null)) {
+            System.err.println("Scenario is empty or cannot be read!");
+            return null;
+        }
+
+
+        //Create queue of Actions
+        for (final Element el : root.getChildren()) {
+            //if element is MouseBlocked (blocks all mouse events) than add all children inside it.
+            if(isMouseBlock(el)) {
+                if (el.getChildren() != null) {
+                    elements.add(el); //add block element
+                    for(Element el1 : el.getChildren()){
+                        if (isCaretBlock(el1)) {
+                            if (el1.getChildren() != null) {
+                                elements.add(el1); //add block element
+                                for (Element el2 : el1.getChildren()) {
+                                    elements.add(el2); //add inner elements
+                                }
+                                elements.add(new Element(Command.CommandType.CARETUNBLOCK.toString())); //add unblock element
+                            }
+                        } else {
+                            elements.add(el1); //add inner elements
+                        }
+                    }
+                    elements.add(new Element(Command.CommandType.MOUSEUNBLOCK.toString())); //add unblock element
+                }
+            } else if (isCaretBlock(el)) {
+                if (el.getChildren() != null) {
+                    elements.add(el); //add block element
+                    for(Element el1 : el.getChildren()){
+                        elements.add(el1); //add inner elements
+                    }
+                    elements.add(new Element(Command.CommandType.CARETUNBLOCK.toString())); //add unblock element
+                }
+            } else {
+                elements.add(el);
+            }
+        }
+
+        while(elements.size() > 0) {
+            final Element polledElement = elements.poll();
+            if (polledElement.getAttribute("description") != null) {
+                String htmlText = polledElement.getAttribute("description").getValue();
+                final Message[] messages = XmlUtil.extractAll(new Message[]{new Message(htmlText, Message.MessageType.TEXT_REGULAR)});
+                StringBuilder messageString = new StringBuilder();
+                for (Message message : messages) {
+                    messageString.append(message.getText());
+                }
+                sb.append(messageString.toString() + "\n");
+
+            }
+        }
+
+        return sb.toString();
+    }
 
 }

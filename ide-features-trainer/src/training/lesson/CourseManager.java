@@ -31,10 +31,7 @@ import training.commands.BadCommandException;
 import training.editor.EduEditor;
 import training.editor.EduEditorProvider;
 import training.lesson.dialogs.SdkProblemDialog;
-import training.lesson.exceptons.BadCourseException;
-import training.lesson.exceptons.BadLessonException;
-import training.lesson.exceptons.InvalidSdkException;
-import training.lesson.exceptons.OldJdkException;
+import training.lesson.exceptons.*;
 import training.util.GenerateCourseXml;
 import training.util.MyClassLoader;
 
@@ -153,7 +150,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                         if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
                             return getScratchFile(myProject, lesson);
                         } else {
-                            initEduProject(myProject, lesson);
+                            if (!initEduProject(myProject, lesson)) return null;
                             return getFileInEduProject(lesson);
                         }
                     } catch (IOException e) {
@@ -162,8 +159,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                     }
                 }
             });
+            if (vf == null) return; //if user aborts opening lesson in EduProject or Virtual File couldn't be computed
             if (lesson.getCourse().courseType != Course.CourseType.SCRATCH) project = eduProject;
-            assert vf != null;
 
             //open next lesson if current is passed
             final Project currentProject = project;
@@ -242,7 +239,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return courseVirtualFile;
     }
 
-    private void initEduProject(Project project, Lesson lesson) {
+    private boolean initEduProject(Project project, Lesson lesson) {
         Project myEduProject = null;
 
         //if project is open
@@ -254,6 +251,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
         }
         if (myEduProject == null) {
+            if (!NewEduProjectUtil.showDialogOpenEduProject(project)) return false; //if user abort to open lesson in a new Project
             if(myState.eduProjectPath != null) {
                 try {
                     myEduProject = ProjectManager.getInstance().loadAndOpenProject(myState.eduProjectPath);
@@ -285,6 +283,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         myState.eduProjectPath = eduProject.getProjectFile().getParent().getParent().getPath();
         //Hide EduProject from Recent projects
         RecentProjectsManager.getInstance().removePath(eduProject.getPresentableUrl());
+        return true;
     }
 
     @NotNull

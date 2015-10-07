@@ -82,6 +82,7 @@ public class EduPanel extends JPanel {
     public EduPanel(EduEditor eduEditor, int width){
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        //TODO: Don't forget to change it back
         setFocusable(false);
         this.width = width;
         this.eduEditor = eduEditor;
@@ -178,7 +179,6 @@ public class EduPanel extends JPanel {
         lessonNameLabel.setFont(lessonNameFont);
         lessonNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         lessonNameLabel.setFocusable(false);;
-
 
 //        lessonMessageContainer = new JPanel();
 //        messages = new ArrayList<LessonMessage>();

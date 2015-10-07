@@ -34,7 +34,7 @@ class Test{
     <SetSelection start-position="12:9" end-position="21:32" />
     <MoveCaret position="21:32" />
     <Text description="Extract method action allows to encapsulate selected code into a new method with given parameters and returning type."/>
-    <Try description="Let's extract method from selected code to a new method &lt;code&gt;init(Dimension dim)&lt;/code&gt; by pressing &lt;action=&quot;ExtractMethod&quot;&gt;" trigger="ExtractMethod"/>
+    <Try description="Let's extract some lines of code into a new method &lt;code&gt;init(Dimension dim)&lt;/code&gt; by pressing &lt;action=&quot;ExtractMethod&quot;&gt;" trigger="ExtractMethod"/>
     <Win/>
 </CaretBlock>
 </MouseBlock>

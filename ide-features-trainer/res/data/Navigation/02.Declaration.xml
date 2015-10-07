@@ -28,8 +28,8 @@
     }
 }</CopyText>
     <MoveCaret position="5:35"/>
-    <Try description="Use &lt;action=&quot;GotoDeclaration&quot;&gt; to see declaration of the class/interface" triggers="GotoDeclaration"/>
+    <Try description="Use &lt;action=&quot;GotoDeclaration&quot;&gt; to see declaration of a class/interface" triggers="GotoDeclaration"/>
     <MoveCaret position="25:15"/>
-    <Try description="To see implementations of some class/interface use &lt;action=&quot;GotoImplementation&quot;&gt;" triggers="GotoImplementation"/>
+    <Try description="To see implementations of a class/interface use &lt;action=&quot;GotoImplementation&quot;&gt;" triggers="GotoImplementation"/>
     <Win/>
 </xml>

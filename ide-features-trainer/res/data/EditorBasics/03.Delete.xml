@@ -23,7 +23,7 @@
     }
 }</CopyText>
     </MouseBlock>
-    <Try description="Delete line where your cursor at with &lt;action=&quot;EditorDeleteLine&quot;&gt;" action="EditorDeleteLine" trigger="EditorDeleteLine"/>
+    <Try description="Delete line where at caret with &lt;action=&quot;EditorDeleteLine&quot;&gt;" action="EditorDeleteLine" trigger="EditorDeleteLine"/>
     <Try description="To restore deleted line just press &lt;action=&quot;$Undo&quot;&gt;" action="$Undo" trigger="$Undo"/>
     <Win/>
 </xml>

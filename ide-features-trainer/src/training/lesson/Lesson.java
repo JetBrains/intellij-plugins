@@ -85,6 +85,7 @@ public class Lesson extends AnAction {
 
     }
 
+    @Deprecated
     public void open(Dimension infoPanelDimension) throws IOException, FontFormatException, LessonIsOpenedException {
         //init infoPanel, check that Lesson has not opened yet
         if (isOpen) throw new LessonIsOpenedException(this.getName() + "is opened");
@@ -93,6 +94,7 @@ public class Lesson extends AnAction {
         isOpen = true;
     }
 
+    @Deprecated
     public void close(){
         //destroy infoPanel (infoPanel = null)
         isOpen = false;
@@ -165,34 +167,6 @@ public class Lesson extends AnAction {
             lessonListener.lessonNext(this);
         }
     }
-
-
-//    @Override
-//    public boolean isSelected(AnActionEvent anActionEvent) {
-//        return passed;
-//    }
-//
-//    @Override
-//    public void (AnActionEvent anActionEvent, boolean b) {
-//        try {
-//            CourseManager.getInstance().openLesson(anActionEvent.getProject(), this);
-//        } catch (BadCourseException e) {
-//            e.printStackTrace();
-//        } catch (BadLessonException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (FontFormatException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (LessonIsOpenedException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
 
 
     @Override

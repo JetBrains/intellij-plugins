@@ -206,19 +206,22 @@ public class ActionsRecorder implements Disposable {
                     ApplicationManager.getApplication().invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (triggerQueue.size() == 0) {
-                                        if (isTaskSolved(document, target)) {
-                                            removeListeners(document, actionManager);
-                                            if (doWhenDone != null)
-                                                dispose();
-                                            doWhenDone.run();
+
+                            if(!disposed) {
+                                PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (triggerQueue.size() == 0) {
+                                            if (isTaskSolved(document, target)) {
+                                                removeListeners(document, actionManager);
+                                                if (doWhenDone != null)
+                                                    dispose();
+                                                doWhenDone.run();
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     });
                 }
