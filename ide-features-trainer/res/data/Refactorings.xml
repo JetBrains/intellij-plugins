@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<course name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="refactorings">
+<course name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="refactorings" fileType="SCRATCH">
   <lesson filename="01.Rename.xml" />
   <lesson filename="02.Extract Variable.xml" />
   <lesson filename="03.Extract Method.xml" />

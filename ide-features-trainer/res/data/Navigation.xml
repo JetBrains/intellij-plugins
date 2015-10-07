@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<course name="Navigation" lessonsPath="Navigation/" version="0.3" id="navigation">
+<course name="Navigation" lessonsPath="Navigation/" version="0.3" id="navigation" fileType="PROJECT">
   <lesson filename="01.JumpToSource.xml" />
   <lesson filename="02.Declaration.xml" />
   <lesson filename="03.FileStructure.xml" />

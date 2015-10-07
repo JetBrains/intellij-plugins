@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Computable;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import training.lesson.EducationBundle;
@@ -15,18 +16,16 @@ import java.awt.*;
 /**
  * Created by karashevich on 09/09/15.
  */
-public class SdkProblemDialog extends DialogWrapper {
+public class EduProjectWarningDialog extends DialogWrapper {
     private final Project myProject;
-    private final String necessarySdkVersion;
 
-    private StateRestoringCheckBox myCbOpenProjectSdkPreferences;
+    private StateRestoringCheckBox myCbDoNotAskAgain;
 
 
-    public SdkProblemDialog(Project project, @NotNull String sdkVersion) {
+    public EduProjectWarningDialog(Project project) {
         super(project, true);
         myProject = project;
-        necessarySdkVersion = sdkVersion;
-        setTitle(EducationBundle.message("dialog.invalidSdk.title"));
+        setTitle(EducationBundle.message("dialog.eduProjectWarning.title"));
         init();
     }
 
@@ -42,7 +41,7 @@ public class SdkProblemDialog extends DialogWrapper {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
-        final String warningMessage = EducationBundle.message("dialog.invalidSdk.message", necessarySdkVersion);
+        final String warningMessage = EducationBundle.message("dialog.eduProjectWarning.message");
 
         gbc.insets = new Insets(4, 8, 4, 8);
         gbc.weighty = 1;
@@ -54,16 +53,15 @@ public class SdkProblemDialog extends DialogWrapper {
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(new JLabel(warningMessage), gbc);
 
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.weightx = 0.0;
-        gbc.gridwidth = 1;
-        myCbOpenProjectSdkPreferences = new StateRestoringCheckBox();
-        myCbOpenProjectSdkPreferences.setText(EducationBundle.message("dialog.invalidSdk.checkbox"));
-        panel.add(myCbOpenProjectSdkPreferences, gbc);
+//        gbc.gridy++;
+//        gbc.gridx = 0;
+//        gbc.weightx = 0.0;
+//        gbc.gridwidth = 1;
+//        myCbDoNotAskAgain = new StateRestoringCheckBox();
+//        myCbDoNotAskAgain.setText(EducationBundle.message("dialog.invalidSdk.checkbox"));
+//        panel.add(myCbDoNotAskAgain, gbc);
 
-
-        myCbOpenProjectSdkPreferences.setSelected(true);
+//        myCbDoNotAskAgain.setSelected(true);
 
         return panel;
     }
@@ -78,16 +76,7 @@ public class SdkProblemDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        if (DumbService.isDumb(myProject)) {
-            Messages.showMessageDialog(myProject, "Changing Project SDK is not available while indexing is in progress", "Indexing", null);
-            return;
-        }
-
-        if (myCbOpenProjectSdkPreferences != null && myCbOpenProjectSdkPreferences.isSelected()) {
-            ProjectSettingsService.getInstance(myProject).chooseAndSetSdk();
-            super.doOKAction();
-        }
-
+        super.doOKAction();
     }
 
 }
