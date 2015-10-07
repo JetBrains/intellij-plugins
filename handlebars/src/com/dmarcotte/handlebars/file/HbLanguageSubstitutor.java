@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.config.HbConfig;
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,7 +15,9 @@ public class HbLanguageSubstitutor extends LanguageSubstitutor {
   @Override
   public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
     if (HbConfig.shouldOpenHtmlAsHandlebars(project) &&
-        file.getName().endsWith(".html")) {
+        HtmlFileType.INSTANCE
+          .getDefaultExtension()
+          .equalsIgnoreCase(file.getExtension())) {
       return HbLanguage.INSTANCE;
     }
 
