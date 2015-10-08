@@ -69,5 +69,8 @@ public class DartSimpleTest extends TestCase {
     doTestDebuggerErrorText("Error: Unhandled exception:\n\nNo top-level getter 'foo' declared.\n\n" +
                             "NoSuchMethodError: method not found: 'foo'",
                             "No top-level getter 'foo' declared.");
+    doTestDebuggerErrorText("Unhandled exception:\n\nNo top-level getter 'foo' declared.\n\n" +
+                            "NoSuchMethodError: method not found: 'foo'",
+                            "No top-level getter 'foo' declared.");
   }
 }

@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
@@ -66,5 +67,11 @@ public class DartVmServiceStackFrame extends XStackFrame {
       childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), var.getValue()));
     }
     node.addChildren(childrenList, true);
+  }
+
+  @Nullable
+  @Override
+  public XDebuggerEvaluator getEvaluator() {
+    return new DartVmServiceEvaluator(myDebugProcess, myIsolateId, myVmFrame);
   }
 }

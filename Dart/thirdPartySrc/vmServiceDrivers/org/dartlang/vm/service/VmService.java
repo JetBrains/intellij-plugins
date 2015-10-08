@@ -264,15 +264,15 @@ public class VmService extends VmServiceBase {
       }
     }
     if (consumer instanceof EvaluateConsumer) {
-      if (responseType.equals("ErrorRef")) {
+      if (responseType.equals("@Error")) {
         ((EvaluateConsumer) consumer).received(new ErrorRef(json));
         return;
       }
-      if (responseType.equals("InstanceRef")) {
+      if (responseType.equals("@Instance")) {
         ((EvaluateConsumer) consumer).received(new InstanceRef(json));
         return;
       }
-      if (responseType.equals("NullRef")) {
+      if (responseType.equals("@Null")) {
         ((EvaluateConsumer) consumer).received(new NullRef(json));
         return;
       }
@@ -282,15 +282,15 @@ public class VmService extends VmServiceBase {
       }
     }
     if (consumer instanceof EvaluateInFrameConsumer) {
-      if (responseType.equals("ErrorRef")) {
+      if (responseType.equals("@Error")) {
         ((EvaluateInFrameConsumer) consumer).received(new ErrorRef(json));
         return;
       }
-      if (responseType.equals("InstanceRef")) {
+      if (responseType.equals("@Instance")) {
         ((EvaluateInFrameConsumer) consumer).received(new InstanceRef(json));
         return;
       }
-      if (responseType.equals("NullRef")) {
+      if (responseType.equals("@Null")) {
         ((EvaluateInFrameConsumer) consumer).received(new NullRef(json));
         return;
       }

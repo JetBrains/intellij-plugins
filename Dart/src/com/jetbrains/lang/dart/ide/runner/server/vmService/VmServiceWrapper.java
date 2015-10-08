@@ -9,11 +9,15 @@ import com.intellij.util.concurrency.Semaphore;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
+import org.dartlang.vm.service.consumer.EvaluateInFrameConsumer;
 import org.dartlang.vm.service.consumer.GetLibraryConsumer;
 import org.dartlang.vm.service.consumer.GetObjectConsumer;
 import org.dartlang.vm.service.consumer.StackConsumer;
@@ -326,6 +330,38 @@ public class VmServiceWrapper implements Disposable {
       @Override
       public void run() {
         myVmService.getObject(isolateId, objectId, consumer);
+      }
+    });
+  }
+
+  public void evaluate(@NotNull final String isolateId,
+                       @NotNull final Frame vmFrame,
+                       @NotNull final String expression,
+                       @NotNull final XDebuggerEvaluator.XEvaluationCallback callback,
+                       final boolean reportIfError) {
+    addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
+          @Override
+          public void received(InstanceRef instanceRef) {
+            callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef));
+          }
+
+          @Override
+          public void received(ErrorRef errorRef) {
+            if (reportIfError) {
+              callback.errorOccurred(DartDebuggerEvaluator.getPresentableError(errorRef.getMessage()));
+            }
+          }
+
+          @Override
+          public void onError(RPCError error) {
+            if (reportIfError) {
+              callback.errorOccurred(error.getMessage());
+            }
+          }
+        });
       }
     });
   }

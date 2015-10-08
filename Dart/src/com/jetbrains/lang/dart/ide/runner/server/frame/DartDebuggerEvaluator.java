@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -69,7 +68,6 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
     }
   }
 
-  @VisibleForTesting
   @NotNull
   public static String getPresentableError(@NotNull final String rawError) {
     //Error: Unhandled exception:
@@ -87,8 +85,8 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
     //        ^
     final List<String> lines = StringUtil.split(StringUtil.convertLineSeparators(rawError), "\n");
 
-    if (!lines.isEmpty() && lines.get(0).startsWith("Error:")) {
-      if (lines.get(0).equals("Error: Unhandled exception:") && lines.size() > 1) {
+    if (!lines.isEmpty()) {
+      if ((lines.get(0).equals("Error: Unhandled exception:") || lines.get(0).equals("Unhandled exception:")) && lines.size() > 1) {
         return lines.get(1);
       }
       final Matcher matcher = ERROR_PATTERN.matcher(lines.get(0));
