@@ -92,7 +92,7 @@ public class DartVmServiceValue extends XNamedValue {
     // Map kind only
     if (instanceRef.getKind() == InstanceKind.Map) {
       final String value = "size = " + instanceRef.getLength();
-      node.setPresentation(AllIcons.Debugger.Value, new XRegularValuePresentation(value, instanceRef.getClassRef().getName()), true);
+      node.setPresentation(AllIcons.Debugger.Db_array, new XRegularValuePresentation(value, instanceRef.getClassRef().getName()), true);
       return true;
     }
     return false;
@@ -118,7 +118,7 @@ public class DartVmServiceValue extends XNamedValue {
       case Float32x4List:
       case Float64x2List:
         final String value = "size = " + instanceRef.getLength();
-        node.setPresentation(AllIcons.Debugger.Value, new XRegularValuePresentation(value, instanceRef.getClassRef().getName()), true);
+        node.setPresentation(AllIcons.Debugger.Db_array, new XRegularValuePresentation(value, instanceRef.getClassRef().getName()), true);
         break;
       default:
         return false;
@@ -131,15 +131,31 @@ public class DartVmServiceValue extends XNamedValue {
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj obj) {
-        final ElementList<BoundField> fields = ((Instance)obj).getFields();
-        final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
-        for (BoundField field : fields) {
-          final InstanceRef value = field.getValue();
-          if (value != null) {
-            childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value));
-          }
+        switch (myInstanceRef.getKind()) {
+          case List:
+          case Uint8ClampedList:
+          case Uint8List:
+          case Uint16List:
+          case Uint32List:
+          case Uint64List:
+          case Int8List:
+          case Int16List:
+          case Int32List:
+          case Int64List:
+          case Float32List:
+          case Float64List:
+          case Int32x4List:
+          case Float32x4List:
+          case Float64x2List:
+            addListChildren(node, ((Instance)obj).getElements());
+            break;
+          case Map:
+            addMapChildren(node, ((Instance)obj).getAssociations());
+            break;
+          default:
+            addFields(node, ((Instance)obj).getFields());
+            break;
         }
-        node.addChildren(childrenList, true);
       }
 
       @Override
@@ -152,5 +168,73 @@ public class DartVmServiceValue extends XNamedValue {
         node.setErrorMessage(error.getMessage());
       }
     });
+  }
+
+  private void addListChildren(@NotNull final XCompositeNode node, @NotNull final ElementList<InstanceRef> listElements) {
+    final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
+    int index = 0;
+    for (InstanceRef listElement : listElements) {
+      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement));
+    }
+    node.addChildren(childrenList, true);
+  }
+
+  private void addMapChildren(@NotNull final XCompositeNode node, @NotNull final ElementList<MapAssociation> mapAssociations) {
+    final XValueChildrenList childrenList = new XValueChildrenList(mapAssociations.size());
+    int index = 0;
+    for (MapAssociation mapAssociation : mapAssociations) {
+      final InstanceRef keyInstanceRef = mapAssociation.getKey();
+      final InstanceRef valueInstanceRef = mapAssociation.getValue();
+
+      childrenList.add(String.valueOf(index++), new XValue() {
+        @Override
+        public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
+          final String value = getShortPresentableValue(keyInstanceRef) + " -> " + getShortPresentableValue(valueInstanceRef);
+          node.setPresentation(AllIcons.Debugger.Value, new XRegularValuePresentation(value, "map entry"), true);
+        }
+
+        @Override
+        public void computeChildren(@NotNull XCompositeNode node) {
+          node.addChildren(XValueChildrenList.singleton(new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef)), false);
+          node.addChildren(XValueChildrenList.singleton(new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef)),
+                           true);
+        }
+      });
+    }
+
+    node.addChildren(childrenList, true);
+  }
+
+  private void addFields(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundField> fields) {
+    final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
+    for (BoundField field : fields) {
+      final InstanceRef value = field.getValue();
+      if (value != null) {
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value));
+      }
+    }
+    node.addChildren(childrenList, true);
+  }
+
+  @NotNull
+  private static String getShortPresentableValue(@NotNull final InstanceRef instanceRef) {
+    // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
+    switch (instanceRef.getKind()) {
+      case String:
+        String string = instanceRef.getValueAsString();
+        if (string.length() > 103) string = string.substring(0, 100) + "...";
+        return "\"" + StringUtil.replace(string, "\"", "\\\"") + "\"";
+      case Null:
+      case Bool:
+      case Double:
+      case Int:
+      case Float32x4:
+      case Float64x2:
+      case Int32x4:
+        // case StackTrace:  getValueAsString() is too long for StackTrace
+        return instanceRef.getValueAsString();
+      default:
+        return "[" + instanceRef.getClassRef().getName() + "]";
+    }
   }
 }
