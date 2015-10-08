@@ -35,7 +35,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
   public void evaluate(@NotNull final String expression,
                        @NotNull final XEvaluationCallback callback,
                        @Nullable final XSourcePosition expressionPosition) {
-    myDebugProcess.getVmServiceWrapper().evaluate(myIsolateId, myFrame, expression, callback, expressionPosition == null);
+    myDebugProcess.getVmServiceWrapper().evaluateInFrame(myIsolateId, myFrame, expression, callback, expressionPosition == null);
   }
 
   @Nullable

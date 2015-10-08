@@ -17,10 +17,7 @@ import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
-import org.dartlang.vm.service.consumer.EvaluateInFrameConsumer;
-import org.dartlang.vm.service.consumer.GetLibraryConsumer;
-import org.dartlang.vm.service.consumer.GetObjectConsumer;
-import org.dartlang.vm.service.consumer.StackConsumer;
+import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -341,11 +338,11 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void evaluate(@NotNull final String isolateId,
-                       @NotNull final Frame vmFrame,
-                       @NotNull final String expression,
-                       @NotNull final XDebuggerEvaluator.XEvaluationCallback callback,
-                       final boolean reportIfError) {
+  public void evaluateInFrame(@NotNull final String isolateId,
+                              @NotNull final Frame vmFrame,
+                              @NotNull final String expression,
+                              @NotNull final XDebuggerEvaluator.XEvaluationCallback callback,
+                              final boolean reportIfError) {
     addRequest(new Runnable() {
       @Override
       public void run() {
@@ -369,6 +366,18 @@ public class VmServiceWrapper implements Disposable {
             }
           }
         });
+      }
+    });
+  }
+
+  public void evaluateInTargetContext(@NotNull final String isolateId,
+                                      @NotNull final String targetId,
+                                      @NotNull final String expression,
+                                      @NotNull final EvaluateConsumer consumer) {
+    addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.evaluate(isolateId, targetId, expression, consumer);
       }
     });
   }
