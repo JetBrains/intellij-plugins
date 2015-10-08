@@ -208,6 +208,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void runToPosition(@NotNull XSourcePosition position) {
+    // todo implement
+    resume();
   }
 
   public void isolateSuspended(@NotNull final IsolateRef isolateRef) {

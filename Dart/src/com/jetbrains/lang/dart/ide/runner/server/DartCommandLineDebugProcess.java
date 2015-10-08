@@ -223,6 +223,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   @Override
   public void runToPosition(@NotNull XSourcePosition position) {
     // todo implement
+    resume();
   }
 
   @NotNull
