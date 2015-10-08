@@ -42,6 +42,7 @@ public class VmServiceWrapper implements Disposable {
   private final DartVmServiceBreakpointHandler myBreakpointHandler;
   private final Alarm myRequestsScheduler;
   private Thread myVmServiceReceiverThread;
+  @Nullable private StepOption myLatestStep;
 
   public VmServiceWrapper(@NotNull final DartVmServiceDebugProcess debugProcess,
                           @NotNull final VmService vmService,
@@ -60,6 +61,11 @@ public class VmServiceWrapper implements Disposable {
 
   private void addRequest(@NotNull final Runnable runnable) {
     myRequestsScheduler.addRequest(runnable, 0);
+  }
+
+  @Nullable
+  public StepOption getLatestStep() {
+    return myLatestStep;
   }
 
   private void assertSyncRequestAllowed() {
@@ -254,6 +260,7 @@ public class VmServiceWrapper implements Disposable {
     addRequest(new Runnable() {
       @Override
       public void run() {
+        myLatestStep = stepOption;
         myVmService.resume(isolateId, stepOption, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
       }
     });

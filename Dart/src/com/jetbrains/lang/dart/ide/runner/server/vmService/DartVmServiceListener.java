@@ -2,18 +2,22 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendedContext;
 import org.dartlang.vm.service.VmServiceListener;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartVmServiceListener implements VmServiceListener {
   private static final Logger LOG = Logger.getInstance(DartVmServiceListener.class.getName());
 
-  private final DartVmServiceDebugProcess myDebugProcess;
-  private DartVmServiceBreakpointHandler myBreakpointHandler;
+  @NotNull private final DartVmServiceDebugProcess myDebugProcess;
+  @NotNull private final DartVmServiceBreakpointHandler myBreakpointHandler;
+  @Nullable private XSourcePosition myLatestSourcePosition;
 
   public DartVmServiceListener(@NotNull final DartVmServiceDebugProcess debugProcess,
                                @NotNull final DartVmServiceBreakpointHandler breakpointHandler) {
@@ -74,8 +78,21 @@ public class DartVmServiceListener implements VmServiceListener {
   private void onPauseBreakpoint(@NotNull final IsolateRef isolateRef,
                                  @NotNull final ElementList<Breakpoint> vmBreakpoints,
                                  @NotNull final Frame topFrame) {
+    final DartVmServiceSuspendedContext suspendContext = new DartVmServiceSuspendedContext(myDebugProcess, isolateRef, topFrame);
+    final XStackFrame xTopFrame = suspendContext.getActiveExecutionStack().getTopFrame();
+    final XSourcePosition sourcePosition = xTopFrame == null ? null : xTopFrame.getSourcePosition();
+
     if (vmBreakpoints.isEmpty()) {
-      myDebugProcess.getSession().positionReached(new DartVmServiceSuspendedContext(myDebugProcess, isolateRef, topFrame));
+      final StepOption latestStep = myDebugProcess.getVmServiceWrapper().getLatestStep();
+
+      if (latestStep != null && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {
+        // continue stepping to change current line
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), latestStep);
+      }
+      else {
+        myLatestSourcePosition = sourcePosition;
+        myDebugProcess.getSession().positionReached(suspendContext);
+      }
     }
     else {
       if (vmBreakpoints.size() > 1) {
@@ -84,8 +101,15 @@ public class DartVmServiceListener implements VmServiceListener {
       }
 
       final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
-      myDebugProcess.getSession()
-        .breakpointReached(xBreakpoint, null, new DartVmServiceSuspendedContext(myDebugProcess, isolateRef, topFrame));
+      myLatestSourcePosition = sourcePosition;
+      myDebugProcess.getSession().breakpointReached(xBreakpoint, null, suspendContext);
     }
+  }
+
+  private static boolean equalSourcePositions(@Nullable final XSourcePosition position1, @Nullable final XSourcePosition position2) {
+    return position1 != null &&
+           position2 != null &&
+           position1.getFile().equals(position2.getFile()) &&
+           position1.getLine() == position2.getLine();
   }
 }
