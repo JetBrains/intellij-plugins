@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript;
 
-import com.intellij.codeInspection.DefaultHighlightVisitorBasedInspection;
+import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspection;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.InspectionToolRegistrar;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
