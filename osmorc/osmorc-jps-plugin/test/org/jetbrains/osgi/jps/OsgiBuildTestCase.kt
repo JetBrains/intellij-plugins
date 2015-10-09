@@ -116,6 +116,7 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     }
   }
 
+  // in Java 6, JarFile does not inherit Closeable, so stdlib extension is not applicable
   private fun JarFile.use(block: (JarFile) -> Unit) {
     try { block(this) } finally { close() }
   }
