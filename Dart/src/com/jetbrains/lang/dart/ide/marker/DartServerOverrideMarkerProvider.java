@@ -71,6 +71,11 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
   }
 
   @Nullable
+  public static DartComponent findDartComponent(Project project, Location location) {
+    return findDartComponent(project, location.getFile(), location.getOffset());
+  }
+
+  @Nullable
   public static DartComponent findDartComponent(Project project, String filePath, int offset) {
     if (filePath == null) {
       return null;
@@ -165,10 +170,10 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
           superComponents.add(superclassComponent);
         }
         superComponents.addAll(interfaceComponents);
-        PsiElementListNavigator
-          .openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
-                       DaemonBundle.message("navigation.title.super.method", name),
-                       DaemonBundle.message("navigation.findUsages.title.super.method", name), new DefaultPsiElementCellRenderer());
+        PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
+                                            DaemonBundle.message("navigation.title.super.method", name),
+                                            DaemonBundle.message("navigation.findUsages.title.super.method", name),
+                                            new DefaultPsiElementCellRenderer());
       }
     }, GutterIconRenderer.Alignment.LEFT);
   }

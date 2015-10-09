@@ -22,6 +22,7 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -51,9 +52,9 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
     }
     final boolean isInClass = inComponent instanceof DartClass;
     // ask for the super type hierarchy
-    final String filePath = file.getVirtualFile().getPath();
+    final VirtualFile virtualFile = file.getVirtualFile();
     final int offset = inComponent.getComponentName().getTextOffset();
-    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance().search_getTypeHierarchy(filePath, offset, true);
+    final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance().search_getTypeHierarchy(virtualFile, offset, true);
     // build list of DartComponent(s)
     final List<DartComponent> supers = Lists.newArrayList();
     if (!items.isEmpty()) {
@@ -106,8 +107,7 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
     }
     // find the DartComponent
     final Location itemLocation = itemElement.getLocation();
-    final DartComponent itemComponent =
-      DartServerOverrideMarkerProvider.findDartComponent(project, itemLocation.getFile(), itemLocation.getOffset());
+    final DartComponent itemComponent = DartServerOverrideMarkerProvider.findDartComponent(project, itemLocation);
     if (itemComponent != null) {
       supers.add(itemComponent);
     }

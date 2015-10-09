@@ -90,7 +90,7 @@ public class DartAnalysisServerService {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
@@ -128,6 +128,11 @@ public class DartAnalysisServerService {
     @Override
     public void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
       myServerData.computedHighlights(FileUtil.toSystemIndependentName(filePath), regions);
+    }
+
+    @Override
+    public void computedImplemented(String _filePath, List<ImplementedClass> implementedClasses, List<ImplementedMember> implementedMembers) {
+      myServerData.computedImplemented(FileUtil.toSystemIndependentName(_filePath), implementedClasses, implementedMembers);
     }
 
     @Override
@@ -432,6 +437,16 @@ public class DartAnalysisServerService {
   @NotNull
   public List<DartServerData.PluginHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     return myServerData.getHighlight(file);
+  }
+
+  @NotNull
+  public List<ImplementedClass> getImplementedClasses(@NotNull final VirtualFile file) {
+    return myServerData.getImplementedClasses(file);
+  }
+
+  @NotNull
+  public List<ImplementedMember> getImplementedMembers(@NotNull final VirtualFile file) {
+    return myServerData.getImplementedMembers(file);
   }
 
   @NotNull
@@ -769,8 +784,8 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
-  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final String _filePath, final int offset, final boolean superOnly) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
+  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int offset, final boolean superOnly) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final List<TypeHierarchyItem> results = Lists.newArrayList();
 
     final AnalysisServer server = myServer;
@@ -1014,6 +1029,7 @@ public class DartAnalysisServerService {
 
       final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
+      subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFiles);
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
 
