@@ -38,7 +38,9 @@ public class VmServiceWrapper implements Disposable {
   private final IsolatesInfo myIsolatesInfo;
   private final DartVmServiceBreakpointHandler myBreakpointHandler;
   private final Alarm myRequestsScheduler;
-  private Thread myVmServiceReceiverThread;
+
+  private long myVmServiceReceiverThreadId;
+
   @Nullable private StepOption myLatestStep;
 
   public VmServiceWrapper(@NotNull final DartVmServiceDebugProcess debugProcess,
@@ -72,7 +74,7 @@ public class VmServiceWrapper implements Disposable {
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
       LOG.error("Waiting for for the answer from the Dart debugger under read action may lead to EDT freeze");
     }
-    if (myVmServiceReceiverThread == Thread.currentThread()) {
+    if (myVmServiceReceiverThreadId == Thread.currentThread().getId()) {
       LOG.error("Synchronous requests must not be made in Web Socket listening thread: answer will never be received");
     }
   }
@@ -94,7 +96,7 @@ public class VmServiceWrapper implements Disposable {
         myVmService.getVM(new VmServiceConsumers.VmConsumerWrapper() {
           @Override
           public void received(final VM vm) {
-            myVmServiceReceiverThread = Thread.currentThread();
+            myVmServiceReceiverThreadId = Thread.currentThread().getId();
 
             for (final IsolateRef isolateRef : vm.getIsolates()) {
               handleIsolatePausedOnStart(isolateRef);
