@@ -21,7 +21,6 @@ import static com.intellij.icons.AllIcons.Debugger.Db_verified_breakpoint;
 public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
 
   private final DartVmServiceDebugProcess myDebugProcess;
-  private final IsolatesInfo myIsolatesInfo;
 
   private final Set<XLineBreakpoint<XBreakpointProperties>> myXBreakpoints = new THashSet<XLineBreakpoint<XBreakpointProperties>>();
   private final Map<String, XLineBreakpoint<XBreakpointProperties>> myVmBreakpointIdToXBreakpointMap =
@@ -29,11 +28,9 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
   private final Map<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>> myXBreakpointToIsolateAndVmBreakpointIdsMap =
     new THashMap<XLineBreakpoint<XBreakpointProperties>, Collection<Pair<String, String>>>();
 
-  protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess,
-                                           @NotNull final IsolatesInfo isolatesInfo) {
+  protected DartVmServiceBreakpointHandler(@NotNull final DartVmServiceDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);
     myDebugProcess = debugProcess;
-    myIsolatesInfo = isolatesInfo;
   }
 
   @Override
@@ -43,7 +40,7 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
     final VmServiceWrapper vmServiceWrapper = myDebugProcess.getVmServiceWrapper();
     if (vmServiceWrapper != null) {
-      vmServiceWrapper.addBreakpointForIsolates(xBreakpoint, myIsolatesInfo.getIsolateInfos());
+      vmServiceWrapper.addBreakpointForIsolates(xBreakpoint, myDebugProcess.getIsolateInfos());
     }
   }
 

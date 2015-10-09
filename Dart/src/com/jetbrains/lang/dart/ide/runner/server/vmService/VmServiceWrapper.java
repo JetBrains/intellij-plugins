@@ -17,7 +17,10 @@ import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
-import org.dartlang.vm.service.consumer.*;
+import org.dartlang.vm.service.consumer.EvaluateConsumer;
+import org.dartlang.vm.service.consumer.EvaluateInFrameConsumer;
+import org.dartlang.vm.service.consumer.GetObjectConsumer;
+import org.dartlang.vm.service.consumer.StackConsumer;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,50 +111,16 @@ public class VmServiceWrapper implements Disposable {
   }
 
   public void handleIsolatePausedOnStart(@NotNull final IsolateRef isolateRef) {
-    if (myIsolatesInfo.isIsolateKnown(isolateRef.getId())) {
-      // Something strange happens:
-      // in most cases VmServiceListener is not notified with EventKind.PauseStart for the main isolate, but sometimes this happens.
-      return;
-    }
-
-    myIsolatesInfo.addIsolate(isolateRef);
-
-    addRequest(new Runnable() {
-      @Override
-      public void run() {
-        myVmService.getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
-          @Override
-          public void received(final Isolate isolate) {
-            handleIsolatePausedOnStart(isolate);
-          }
-        });
-      }
-    });
-  }
-
-  private void handleIsolatePausedOnStart(@NotNull final Isolate isolate) {
-    final AtomicInteger counter = new AtomicInteger(isolate.getLibraries().size());
-
-    for (final LibraryRef libraryRef : isolate.getLibraries()) {
+    // Probably some kind of a race condition: this method may ba called twice for the main isolate: from handleDebuggerConnected() and from PauseStart
+    // event in DartVmServiceListener.received, but may be only once from handleDebuggerConnected().
+    if (myIsolatesInfo.addIsolate(isolateRef)) {
       addRequest(new Runnable() {
         @Override
         public void run() {
-          myVmService.getLibrary(isolate.getId(), libraryRef.getId(), new GetLibraryConsumer() {
+          myVmService.getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
             @Override
-            public void received(final Library library) {
-              myIsolatesInfo.addLibrary(isolate, library);
-              checkDone();
-            }
-
-            @Override
-            public void onError(RPCError error) {
-              checkDone();
-            }
-
-            private void checkDone() {
-              if (counter.decrementAndGet() == 0) {
-                addInitialBreakpointsAndResume(isolate);
-              }
+            public void received(final Isolate isolate) {
+              handleIsolatePausedOnStart(isolate);
             }
           });
         }
@@ -159,7 +128,7 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  private void addInitialBreakpointsAndResume(@NotNull final Isolate isolate) {
+  private void handleIsolatePausedOnStart(@NotNull final Isolate isolate) {
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
     if (xBreakpoints.isEmpty()) {
       resumeIsolate(isolate.getId());
@@ -205,19 +174,12 @@ public class VmServiceWrapper implements Disposable {
       return;
     }
 
-    final String uri = myDebugProcess.getUriForFile(position.getFile());
-    final String scriptId = myIsolatesInfo.getScriptId(isolateId, uri);
-    final int line = position.getLine() + 1;
-
-    if (scriptId == null) {
-      consumer.sourcePositionNotApplicable();
-      return;
-    }
-
     addRequest(new Runnable() {
       @Override
       public void run() {
-        myVmService.addBreakpoint(isolateId, scriptId, line, consumer);
+        final String uri = myDebugProcess.getUriForFile(position.getFile());
+        final int line = position.getLine() + 1;
+        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, 1, consumer);
       }
     });
   }

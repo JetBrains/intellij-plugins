@@ -65,7 +65,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myObservatoryPort = observatoryPort;
 
     myIsolatesInfo = new IsolatesInfo();
-    final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this, myIsolatesInfo);
+    final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
     myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
 
     setLogger();
@@ -233,10 +233,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void resume() {
-    synchronized (mySuspendedIsolateIds) {
-      for (String isolateId : mySuspendedIsolateIds) {
-        myVmServiceWrapper.resumeIsolate(isolateId);
-      }
+    for (String isolateId : new ArrayList<String>(mySuspendedIsolateIds)) {
+      myVmServiceWrapper.resumeIsolate(isolateId);
     }
   }
 
