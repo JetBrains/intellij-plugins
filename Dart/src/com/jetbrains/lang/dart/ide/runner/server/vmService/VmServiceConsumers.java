@@ -24,6 +24,9 @@ public class VmServiceConsumers {
     }
   }
 
+  public static abstract class SuccessConsumerWrapper extends ConsumerWrapper implements SuccessConsumer {
+  }
+
   public static abstract class VmConsumerWrapper extends ConsumerWrapper implements VMConsumer {
   }
 
