@@ -94,7 +94,6 @@ abstract class VmServiceBase implements VmServiceConst {
       @Override
       public void onMessage(WebSocketMessage message) {
         Logging.getLogger().logInformation("VM message: " + message.getText());
-
         try {
           vmService.processResponse(message.getText());
         }

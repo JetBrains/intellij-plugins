@@ -32,7 +32,7 @@ public class ErrorRequestSink implements RequestSink, VmServiceConst {
   public ErrorRequestSink(ResponseSink responseSink, String code, String message) {
     if (responseSink == null || code == null || message == null) {
       throw new IllegalArgumentException("Unexpected null argument: " + responseSink + " "
-          + this.code + " " + this.message);
+          + code + " " + message);
     }
     this.responseSink = responseSink;
     this.code = code;

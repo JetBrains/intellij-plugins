@@ -332,7 +332,7 @@ public class VmService extends VmServiceBase {
         ((GetObjectConsumer) consumer).received(new Field(json));
         return;
       }
-      if (responseType.equals("Func")) {
+      if (responseType.equals("Function")) {
         ((GetObjectConsumer) consumer).received(new Func(json));
         return;
       }
@@ -348,7 +348,7 @@ public class VmService extends VmServiceBase {
         ((GetObjectConsumer) consumer).received(new Null(json));
         return;
       }
-      if (responseType.equals("Obj")) {
+      if (responseType.equals("Object")) {
         ((GetObjectConsumer) consumer).received(new Obj(json));
         return;
       }
