@@ -138,7 +138,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       myVmServiceWrapper.handleDebuggerConnected();
     }
     catch (IOException e) {
-      final String message = "Failed to connect to the VM observatory service: " + e.getMessage() + "\n";
+      String message = "Failed to connect to the VM observatory service: " + e.toString() + "\n";
+      Throwable cause = e.getCause();
+      while (cause != null) {
+        message += "Caused by: " + cause.toString() + "\n";
+        final Throwable cause1 = cause.getCause();
+        if (cause1 != cause) {
+          cause = cause1;
+        }
+      }
+
       getSession().getConsoleView().print(message, ConsoleViewContentType.ERROR_OUTPUT);
       getSession().stop();
     }
