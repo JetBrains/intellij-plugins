@@ -48,7 +48,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
 
-  @NotNull private final Set<String> mySuspendedIsolateIds = new THashSet<String>();
+  @NotNull private final Set<String> mySuspendedIsolateIds = Collections.synchronizedSet(new THashSet<String>());
   private String myLatestCurrentIsolateId;
 
   private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<String, LightVirtualFile>();
@@ -233,8 +233,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void resume() {
-    for (String isolateId : mySuspendedIsolateIds) {
-      myVmServiceWrapper.resumeIsolate(isolateId);
+    synchronized (mySuspendedIsolateIds) {
+      for (String isolateId : mySuspendedIsolateIds) {
+        myVmServiceWrapper.resumeIsolate(isolateId);
+      }
     }
   }
 
