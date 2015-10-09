@@ -31,7 +31,6 @@ import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
 import java.io.File
-import java.util.Enumeration
 import java.util.jar.JarFile
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -41,15 +40,15 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     val module = addModule(name)
 
     val contentRoot = JpsPathUtil.pathToUrl(getAbsolutePath(name))
-    module.getContentRootsList().addUrl(contentRoot)
+    module.contentRootsList.addUrl(contentRoot)
     module.addSourceRoot("${contentRoot}/src", JavaSourceRootType.SOURCE)
     module.addSourceRoot("${contentRoot}/res", JavaResourceRootType.RESOURCE)
-    JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(module).setOutputUrl("${contentRoot}/out")
+    JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(module).outputUrl = "${contentRoot}/out"
 
     if (osgi) {
       val extension = JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties())
-      extension.getProperties().myJarFileLocation = "${name}.jar"
-      module.getContainer().setChild(JpsOsmorcModuleExtension.ROLE, extension)
+      extension.properties.myJarFileLocation = "${name}.jar"
+      module.container.setChild(JpsOsmorcModuleExtension.ROLE, extension)
     }
 
     return module
@@ -58,13 +57,13 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun extension(module: JpsModule) = JpsOsmorcExtensionService.getExtension(module)!! as JpsOsmorcModuleExtensionImpl
 
   fun bndBuild(module: JpsModule) {
-    val properties = extension(module).getProperties()
+    val properties = extension(module).properties
     properties.myManifestGenerationMode = ManifestGenerationMode.Bnd
     properties.myBndFileLocation = "bnd.bnd"
   }
 
   fun ideaBuild(module: JpsModule) {
-    val properties = extension(module).getProperties()
+    val properties = extension(module).properties
     properties.myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled
     properties.myBundleSymbolicName = "main"
     properties.myBundleVersion = "1.0.0"
@@ -77,9 +76,9 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
         <?xml version="1.0" encoding="UTF-8"?>
         <maven-project-configuration>
           <resource-processing>
-            <maven-module name="${module.getName()}">
+            <maven-module name="${module.name}">
               <MavenModuleResourceConfiguration>
-                <directory>${JpsPathUtil.urlToOsPath(module.getContentRootsList().getUrls()[0])}</directory>
+                <directory>${JpsPathUtil.urlToOsPath(module.contentRootsList.urls[0])}</directory>
               </MavenModuleResourceConfiguration>
             </maven-module>
           </resource-processing>
@@ -88,12 +87,12 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
 
   fun BuildResult.assertBundleCompiled(module: JpsModule) {
     assertSuccessful()
-    assertCompiled(OsmorcBuilder.ID, "${module.getName()}/${extension(module).getProperties().myJarFileLocation}")
+    assertCompiled(OsmorcBuilder.ID, "${module.name}/${extension(module).properties.myJarFileLocation}")
   }
 
   fun assertJar(module: JpsModule, expected: Set<String>) {
-    JarFile(extension(module).getJarFileLocation()).use {
-      val actual = it.entries().asSequence().filter { !it.isDirectory() }.map { it.getName() }.toSet()
+    JarFile(extension(module).jarFileLocation).use {
+      val actual = it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet()
       assertEquals(expected, actual)
     }
   }
@@ -103,25 +102,17 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     val required = setOf("Manifest-Version", "Bundle-ManifestVersion", "Require-Capability")
     val sorting = setOf("Export-Package", "Import-Package")
 
-    JarFile(extension(module).getJarFileLocation()).use {
-      val actual = it.getManifest()!!.getMainAttributes()!!
+    JarFile(extension(module).jarFileLocation).use {
+      val actual = it.manifest!!.mainAttributes!!
           .map { Pair(it.key.toString(), it.value.toString()) }
           .filter {
             if (it.first in instrumental) false
             else if (it.first in required) { assertNotNull(it.second); false }
             else true
           }
-          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sort().join(",") else it.second}" }
+          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sorted().join(",") else it.second}" }
           .toSet()
       assertEquals(expected, actual)
     }
-  }
-
-  private fun JarFile.use(block: (JarFile) -> Unit) {
-    try { block(this) } finally { close() }
-  }
-
-  private fun<T> Enumeration<T>.asSequence(): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> = this@asSequence.iterator()
   }
 }

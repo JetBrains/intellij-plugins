@@ -28,20 +28,17 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.facet.OsmorcFacet
-
 import java.io.File
-
-import kotlin.properties.Delegates
 import kotlin.test.*
 
 class BndProjectImporterTest : IdeaTestCase() {
-  var myWorkspace: Workspace by Delegates.notNull()
-  var myImporter: BndProjectImporter by Delegates.notNull()
+  private lateinit var myWorkspace: Workspace
+  private lateinit var myImporter: BndProjectImporter
 
   override fun setUp() {
     super.setUp()
 
-    val path = myProject.getBasePath()!!
+    val path = myProject.basePath!!
     File(path, "cnf/ext").mkdirs()
     FileUtil.writeToFile(File(path, "cnf/build.bnd"), "javac.source: 1.8\njavac.target: 1.8")
     File(path, "hello.provider/src").mkdirs()
@@ -59,11 +56,11 @@ class BndProjectImporterTest : IdeaTestCase() {
 
 
   fun testProviders() {
-    val projectImporters = ImportModuleAction.getProviders(null).map { it.javaClass.getSimpleName() }.toSet()
+    val projectImporters = ImportModuleAction.getProviders(null).map { it.javaClass.simpleName }.toSet()
     assertTrue("BndProjectImportProvider" in projectImporters)
     assertFalse("BndModuleImportProvider" in projectImporters)
 
-    val moduleImporters = ImportModuleAction.getProviders(getProject()).map { it.javaClass.getSimpleName() }.toSet()
+    val moduleImporters = ImportModuleAction.getProviders(project).map { it.javaClass.simpleName }.toSet()
     assertFalse("BndProjectImportProvider" in moduleImporters)
     assertTrue("BndModuleImportProvider" in moduleImporters)
   }
@@ -71,7 +68,7 @@ class BndProjectImporterTest : IdeaTestCase() {
   fun testRootModule() {
     val rootModule: Module
 
-    val model = ModuleManager.getInstance(myProject).getModifiableModel()
+    val model = ModuleManager.getInstance(myProject).modifiableModel
     try {
       rootModule = myImporter.createRootModule(model)
       model.commit()
@@ -82,18 +79,18 @@ class BndProjectImporterTest : IdeaTestCase() {
     }
 
     val rootManager = ModuleRootManager.getInstance(rootModule)
-    assertEquals(1, rootManager.getContentRootUrls().size())
-    assertEquals(0, rootManager.getSourceRootUrls().size())
+    assertEquals(1, rootManager.contentRootUrls.size())
+    assertEquals(0, rootManager.sourceRootUrls.size())
     assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
   fun testProjectSetup() {
     myImporter.setupProject()
 
-    val sourceLevel = LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel()
+    val sourceLevel = LanguageLevelProjectExtension.getInstance(myProject).languageLevel
     assertEquals(LanguageLevel.JDK_1_8, sourceLevel)
 
-    val targetLevel = CompilerConfiguration.getInstance(myProject).getProjectBytecodeTarget()
+    val targetLevel = CompilerConfiguration.getInstance(myProject).projectBytecodeTarget
     assertEquals("1.8", targetLevel)
 
     val javacOptions = JavacConfiguration.getOptions(myProject, JavacConfiguration::class.java)
@@ -104,39 +101,39 @@ class BndProjectImporterTest : IdeaTestCase() {
   fun testImport() {
     myImporter.resolve()
 
-    val modules = ModuleManager.getInstance(myProject).getModules()
+    val modules = ModuleManager.getInstance(myProject).modules
     assertEquals(3, modules.size())
-    assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.getName() }.toSet())
+    assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.name }.toSet())
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
-      assertEquals(1, rootManager.getContentRootUrls().size(), it.getName())
-      assertEquals(2, rootManager.getSourceRootUrls().size(), it.getName())
-      assertEquals(3, rootManager.getExcludeRootUrls().size(), it.getName())
+      assertEquals(1, rootManager.contentRootUrls.size(), it.name)
+      assertEquals(2, rootManager.sourceRootUrls.size(), it.name)
+      assertEquals(3, rootManager.excludeRootUrls.size(), it.name)
 
       val dependencies = getDependencies(it)
-      when (it.getName()) {
+      when (it.name) {
         "hello.provider" -> assertEquals(listOf("<jdk>", "<src>"), dependencies)
         "hello.consumer" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider"), dependencies)
         "hello.tests" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), dependencies)
       }
 
-      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(LanguageLevelModuleExtension::class.java).getLanguageLevel()
-      val expectedSource = if (it.getName() == "hello.provider") LanguageLevel.JDK_1_7 else LanguageLevel.JDK_1_8
+      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(LanguageLevelModuleExtension::class.java).languageLevel
+      val expectedSource = if (it.name == "hello.provider") LanguageLevel.JDK_1_7 else LanguageLevel.JDK_1_8
       assertEquals(expectedSource, sourceLevel)
 
       val targetLevel = CompilerConfiguration.getInstance(myProject).getBytecodeTargetLevel(it)
-      val expectedTarget = if (it.getName() == "hello.provider") "1.7" else "1.8"
+      val expectedTarget = if (it.name == "hello.provider") "1.7" else "1.8"
       assertEquals(expectedTarget, targetLevel)
 
       val facet = OsmorcFacet.getInstance(it)
-      if (it.getName() != "hello.tests") {
-        assertNotNull(facet, it.getName())
+      if (it.name != "hello.tests") {
+        assertNotNull(facet, it.name)
 
-        val config = facet?.getConfiguration()
-        assertEquals(ManifestGenerationMode.Bnd, config?.getManifestGenerationMode())
-        assertEquals("bnd.bnd", config?.getBndFileLocation(), it.getName())
-        assertEquals("${VfsUtilCore.urlToPath(rootManager.getContentRootUrls()[0])}/generated/${it.getName()}.jar", config?.getJarFileLocation())
+        val config = facet?.configuration
+        assertEquals(ManifestGenerationMode.Bnd, config?.manifestGenerationMode)
+        assertEquals("bnd.bnd", config?.bndFileLocation, it.name)
+        assertEquals("${VfsUtilCore.urlToPath(rootManager.contentRootUrls[0])}/generated/${it.name}.jar", config?.jarFileLocation)
       }
       else {
         assertNull(facet)
@@ -148,16 +145,16 @@ class BndProjectImporterTest : IdeaTestCase() {
     assertNotNull(BndProjectImporter.findWorkspace(myProject))
     BndProjectImporter.reimportWorkspace(myProject)
 
-    assertEquals(LanguageLevel.JDK_1_8, LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel())
+    assertEquals(LanguageLevel.JDK_1_8, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
     val module = ModuleManager.getInstance(myProject).findModuleByName("hello.tests")!!
     assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), getDependencies(module))
     assertNull(OsmorcFacet.getInstance(module))
 
-    FileUtil.writeToFile(File(myProject.getBasePath()!!, "cnf/build.bnd"), "javac.source: 1.7\njavac.target: 1.8")
-    FileUtil.writeToFile(File(myProject.getBasePath()!!, "hello.tests/bnd.bnd"), "-testpath: hello.provider")
+    FileUtil.writeToFile(File(myProject.basePath!!, "cnf/build.bnd"), "javac.source: 1.7\njavac.target: 1.8")
+    FileUtil.writeToFile(File(myProject.basePath!!, "hello.tests/bnd.bnd"), "-testpath: hello.provider")
     BndProjectImporter.reimportWorkspace(myProject)
 
-    assertEquals(LanguageLevel.JDK_1_7, LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel())
+    assertEquals(LanguageLevel.JDK_1_7, LanguageLevelProjectExtension.getInstance(myProject).languageLevel)
     assertEquals(listOf("<jdk>", "<src>", "hello.provider"), getDependencies(module))
     assertNotNull(OsmorcFacet.getInstance(module))
   }
@@ -169,7 +166,7 @@ class BndProjectImporterTest : IdeaTestCase() {
       dependencies.add(when (it) {
         is ModuleSourceOrderEntry -> "<src>"
         is JdkOrderEntry -> "<jdk>"
-        else -> it.getPresentableName()
+        else -> it.presentableName
       })
     }
     return dependencies
