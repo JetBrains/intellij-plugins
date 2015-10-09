@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
@@ -82,6 +83,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           stackFrame instanceof DartVmServiceStackFrame ? ((DartVmServiceStackFrame)stackFrame).getIsolateId() : null;
       }
     });
+
+    scheduleConnect();
   }
 
   public VmServiceWrapper getVmServiceWrapper() {
@@ -125,32 +128,56 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  @Override
-  public void sessionInitialized() {
-    try {
-      final VmService vmService = VmService.localConnect(myObservatoryPort);
-      vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
+  public void scheduleConnect() {
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        long timeout = 5000;
+        long startTime = System.currentTimeMillis();
 
-      myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
+        try {
+          while (true) {
+            try {
+              connect();
+              break;
+            }
+            catch (IOException e) {
+              if (System.currentTimeMillis() > startTime + timeout) {
+                throw e;
+              }
+              else {
+                TimeoutUtil.sleep(50);
+              }
+            }
+          }
+        }
+        catch (IOException e) {
+          String message = "Failed to connect to the VM observatory service: " + e.toString() + "\n";
+          Throwable cause = e.getCause();
+          while (cause != null) {
+            message += "Caused by: " + cause.toString() + "\n";
+            final Throwable cause1 = cause.getCause();
+            if (cause1 != cause) {
+              cause = cause1;
+            }
+          }
 
-      myVmServiceWrapper.streamListen(VmService.DEBUG_STREAM_ID);
-      myVmServiceWrapper.streamListen(VmService.ISOLATE_STREAM_ID);
-      myVmServiceWrapper.handleDebuggerConnected();
-    }
-    catch (IOException e) {
-      String message = "Failed to connect to the VM observatory service: " + e.toString() + "\n";
-      Throwable cause = e.getCause();
-      while (cause != null) {
-        message += "Caused by: " + cause.toString() + "\n";
-        final Throwable cause1 = cause.getCause();
-        if (cause1 != cause) {
-          cause = cause1;
+          getSession().getConsoleView().print(message, ConsoleViewContentType.ERROR_OUTPUT);
+          getSession().stop();
         }
       }
+    });
+  }
 
-      getSession().getConsoleView().print(message, ConsoleViewContentType.ERROR_OUTPUT);
-      getSession().stop();
-    }
+  private void connect() throws IOException {
+    final VmService vmService = VmService.localConnect(myObservatoryPort);
+    vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
+
+    myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
+
+    myVmServiceWrapper.streamListen(VmService.DEBUG_STREAM_ID);
+    myVmServiceWrapper.streamListen(VmService.ISOLATE_STREAM_ID);
+    myVmServiceWrapper.handleDebuggerConnected();
   }
 
   @Override
