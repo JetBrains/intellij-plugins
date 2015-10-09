@@ -32,13 +32,7 @@ public class IsolatesInfo {
   private final Map<String, IsolateInfo> myIsolateIdToInfoMap = Collections.synchronizedMap(new THashMap<String, IsolateInfo>());
 
   public boolean addIsolate(@NotNull final IsolateRef isolateRef) {
-    if (myIsolateIdToInfoMap.containsKey(isolateRef.getId())) {
-      return false;
-    }
-    else {
-      myIsolateIdToInfoMap.put(isolateRef.getId(), new IsolateInfo(isolateRef.getId(), isolateRef.getName()));
-      return true;
-    }
+    return myIsolateIdToInfoMap.put(isolateRef.getId(), new IsolateInfo(isolateRef.getId(), isolateRef.getName())) == null;
   }
 
   public void deleteIsolate(@NotNull final IsolateRef isolateRef) {

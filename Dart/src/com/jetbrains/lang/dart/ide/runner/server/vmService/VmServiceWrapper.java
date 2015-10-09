@@ -17,10 +17,7 @@ import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
-import org.dartlang.vm.service.consumer.EvaluateConsumer;
-import org.dartlang.vm.service.consumer.EvaluateInFrameConsumer;
-import org.dartlang.vm.service.consumer.GetObjectConsumer;
-import org.dartlang.vm.service.consumer.StackConsumer;
+import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +43,8 @@ public class VmServiceWrapper implements Disposable {
 
   @Nullable private StepOption myLatestStep;
 
+  private boolean myFirstIsolateResumed = false;
+
   public VmServiceWrapper(@NotNull final DartVmServiceDebugProcess debugProcess,
                           @NotNull final VmService vmService,
                           @NotNull final IsolatesInfo isolatesInfo,
@@ -68,6 +67,10 @@ public class VmServiceWrapper implements Disposable {
   @Nullable
   public StepOption getLatestStep() {
     return myLatestStep;
+  }
+
+  boolean isFirstIsolateResumed() {
+    return myFirstIsolateResumed;
   }
 
   private void assertSyncRequestAllowed() {
@@ -114,31 +117,27 @@ public class VmServiceWrapper implements Disposable {
     // Probably some kind of a race condition: this method may ba called twice for the main isolate: from handleDebuggerConnected() and from PauseStart
     // event in DartVmServiceListener.received, but may be only once from handleDebuggerConnected().
     if (myIsolatesInfo.addIsolate(isolateRef)) {
-      addRequest(new Runnable() {
-        @Override
-        public void run() {
-          myVmService.getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
-            @Override
-            public void received(final Isolate isolate) {
-              handleIsolatePausedOnStart(isolate);
-            }
-          });
-        }
-      });
+      setInitialBreakpointsAndResume(isolateRef.getId());
+    }
+    else {
+      // resume() might fail for the main isolate if it was called before PauseStart event
+      if (!myFirstIsolateResumed) {
+        resumeIsolate(isolateRef.getId());
+      }
     }
   }
 
-  private void handleIsolatePausedOnStart(@NotNull final Isolate isolate) {
+  private void setInitialBreakpointsAndResume(@NotNull final String isolateId) {
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
     if (xBreakpoints.isEmpty()) {
-      resumeIsolate(isolate.getId());
+      resumeIsolate(isolateId);
       return;
     }
 
     final AtomicInteger counter = new AtomicInteger(xBreakpoints.size());
 
     for (final XLineBreakpoint<XBreakpointProperties> xBreakpoint : xBreakpoints) {
-      addBreakpoint(isolate.getId(), xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
+      addBreakpoint(isolateId, xBreakpoint, new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
         void sourcePositionNotApplicable() {
           checkDone();
@@ -146,7 +145,7 @@ public class VmServiceWrapper implements Disposable {
 
         @Override
         public void received(Breakpoint vmBreakpoint) {
-          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolate.getId(), vmBreakpoint);
+          myBreakpointHandler.vmBreakpointAdded(xBreakpoint, isolateId, vmBreakpoint);
           checkDone();
         }
 
@@ -158,7 +157,7 @@ public class VmServiceWrapper implements Disposable {
 
         private void checkDone() {
           if (counter.decrementAndGet() == 0) {
-            resumeIsolate(isolate.getId());
+            resumeIsolate(isolateId);
           }
         }
       });
@@ -222,7 +221,17 @@ public class VmServiceWrapper implements Disposable {
       @Override
       public void run() {
         myLatestStep = stepOption;
-        myVmService.resume(isolateId, stepOption, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
+        myVmService.resume(isolateId, stepOption, new SuccessConsumer() {
+          @Override
+          public void received(Success response) {
+            myFirstIsolateResumed = true;
+          }
+
+          @Override
+          public void onError(RPCError error) {
+            // if we failed to resume the first isolate to start debug session handleIsolatePausedOnStart() will call resume() again when PauseStart event arrives for it
+          }
+        });
       }
     });
   }

@@ -103,7 +103,9 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           return;
         }
 
-        getSession().getConsoleView().print("Error: " + message + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+        if (myVmServiceWrapper.isFirstIsolateResumed()) {
+          getSession().getConsoleView().print("Error: " + message + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+        }
         LOG.warn(message);
       }
 
