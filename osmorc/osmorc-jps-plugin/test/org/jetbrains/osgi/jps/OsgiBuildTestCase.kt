@@ -115,4 +115,8 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
       assertEquals(expected, actual)
     }
   }
+
+  private fun JarFile.use(block: (JarFile) -> Unit) {
+    try { block(this) } finally { close() }
+  }
 }
