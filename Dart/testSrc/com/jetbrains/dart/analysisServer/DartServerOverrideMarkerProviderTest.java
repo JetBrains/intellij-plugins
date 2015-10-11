@@ -37,24 +37,24 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
   public void testImplementMarker() throws Throwable {
-    final String testName = getTestName(false);
-    myFixture.configureByFile(testName + ".dart");
-    ensureOverrideMarkers();
     checkHasGutter("Implements method 'm' in 'A'", AllIcons.Gutter.ImplementingMethod);
   }
 
   public void testOverrideMarker() throws Throwable {
-    final String testName = getTestName(false);
-    myFixture.configureByFile(testName + ".dart");
-    ensureOverrideMarkers();
     checkHasGutter("Overrides method 'm' in 'A'", AllIcons.Gutter.OverridingMethod);
   }
 
   private void checkHasGutter(final String expectedText, final Icon expectedIcon) {
-    final List<GutterMark> gutters = myFixture.findAllGutters();
+    final String testName = getTestName(false);
+    myFixture.configureByFile(testName + ".dart");
+
+    myFixture.doHighlighting(); // make sure server is warmed up
+
+    final List<GutterMark> gutters = myFixture.findGuttersAtCaret();
     final List<String> textList = Lists.newArrayList();
     for (GutterMark gutter : gutters) {
       final String text = gutter.getTooltipText();
@@ -64,10 +64,5 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
       }
     }
     fail("Not found gutter mark: " + expectedText + "  " + expectedIcon + "\nin\n" + StringUtil.join(textList, "\n"));
-  }
-
-  private void ensureOverrideMarkers() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    myFixture.doHighlighting(); // make sure server is warmed up
   }
 }

@@ -3,5 +3,5 @@ class A {
 }
 
 class B implements A {
-  m() {}
+  <caret>m() {}
 }
