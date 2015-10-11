@@ -11,10 +11,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import org.dartlang.analysis.server.protocol.HighlightRegion;
-import org.dartlang.analysis.server.protocol.NavigationRegion;
-import org.dartlang.analysis.server.protocol.NavigationTarget;
-import org.dartlang.analysis.server.protocol.OverrideMember;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -24,6 +21,8 @@ public class DartServerData {
   private DartServerRootsHandler myRootsHandler;
 
   private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
+  private final Map<String, List<ImplementedClass>> myImplementedClassData = Maps.newHashMap();
+  private final Map<String, List<ImplementedMember>> myImplementedMemberData = Maps.newHashMap();
   private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
   private final Map<String, List<OverrideMember>> myOverrideData = Maps.newHashMap();
 
@@ -48,6 +47,31 @@ public class DartServerData {
     }
 
     forceFileAnnotation(filePath, false);
+  }
+
+  public void computedImplemented(@NotNull final String filePath,
+                                  @NotNull final List<ImplementedClass> implementedClasses,
+                                  @NotNull final List<ImplementedMember> implementedMembers) {
+    // check myFilePathsWithUnsentChanges? update offset in documentListener?
+    boolean hasChanges = false;
+    synchronized (myImplementedClassData) {
+      final List<ImplementedClass> old = myImplementedClassData.get(filePath);
+      if (old == null || !old.equals(implementedClasses)) {
+        hasChanges = true;
+        myImplementedClassData.put(filePath, implementedClasses);
+      }
+    }
+    synchronized (myImplementedMemberData) {
+      final List<ImplementedMember> old = myImplementedMemberData.get(filePath);
+      if (old == null || !old.equals(implementedMembers)) {
+        hasChanges = true;
+        myImplementedMemberData.put(filePath, implementedMembers);
+      }
+    }
+
+    if (hasChanges) {
+      forceFileAnnotation(filePath, false);
+    }
   }
 
   public void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
@@ -84,6 +108,28 @@ public class DartServerData {
         return PluginHighlightRegion.EMPTY_LIST;
       }
       return regions;
+    }
+  }
+
+  @NotNull
+  public List<ImplementedClass> getImplementedClasses(@NotNull final VirtualFile file) {
+    synchronized (myImplementedClassData) {
+      final List<ImplementedClass> classes = myImplementedClassData.get(file.getPath());
+      if (classes == null) {
+        return ImplementedClass.EMPTY_LIST;
+      }
+      return classes;
+    }
+  }
+
+  @NotNull
+  public List<ImplementedMember> getImplementedMembers(@NotNull final VirtualFile file) {
+    synchronized (myImplementedClassData) {
+      final List<ImplementedMember> classes = myImplementedMemberData.get(file.getPath());
+      if (classes == null) {
+        return ImplementedMember.EMPTY_LIST;
+      }
+      return classes;
     }
   }
 
