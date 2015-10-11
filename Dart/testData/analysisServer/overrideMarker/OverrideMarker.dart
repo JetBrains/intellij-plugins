@@ -3,5 +3,5 @@ class A {
 }
 
 class B extends A {
-  m() {}
+  <caret>m() {}
 }
