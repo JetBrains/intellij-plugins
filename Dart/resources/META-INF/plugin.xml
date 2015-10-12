@@ -82,8 +82,10 @@
     <renameHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartServerRenameHandler"/>
     <inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>
 
+    <!--<codeInsight.lineMarkerProvider language="Dart"-->
+                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"
-                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>
+                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerImplementationsMarkerProvider"/>
     <!--<codeInsight.lineMarkerProvider language="Dart"-->
                                     <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"

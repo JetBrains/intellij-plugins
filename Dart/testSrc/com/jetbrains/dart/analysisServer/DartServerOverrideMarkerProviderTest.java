@@ -37,24 +37,19 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
-  public void testImplementMarker() throws Throwable {
+  private void doTest(final String expectedText, final Icon expectedIcon) {
     final String testName = getTestName(false);
     myFixture.configureByFile(testName + ".dart");
-    ensureOverrideMarkers();
-    checkHasGutter("Implements method 'm' in 'A'", AllIcons.Gutter.ImplementingMethod);
+
+    myFixture.doHighlighting(); // make sure server is warmed up
+
+    checkGutter(myFixture.findGuttersAtCaret(), expectedText, expectedIcon);
   }
 
-  public void testOverrideMarker() throws Throwable {
-    final String testName = getTestName(false);
-    myFixture.configureByFile(testName + ".dart");
-    ensureOverrideMarkers();
-    checkHasGutter("Overrides method 'm' in 'A'", AllIcons.Gutter.OverridingMethod);
-  }
-
-  private void checkHasGutter(final String expectedText, final Icon expectedIcon) {
-    final List<GutterMark> gutters = myFixture.findAllGutters();
+  public static void checkGutter(final List<GutterMark> gutters, final String expectedText, final Icon expectedIcon) {
     final List<String> textList = Lists.newArrayList();
     for (GutterMark gutter : gutters) {
       final String text = gutter.getTooltipText();
@@ -66,8 +61,11 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
     fail("Not found gutter mark: " + expectedText + "  " + expectedIcon + "\nin\n" + StringUtil.join(textList, "\n"));
   }
 
-  private void ensureOverrideMarkers() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    myFixture.doHighlighting(); // make sure server is warmed up
+  public void testImplementMarker() throws Throwable {
+    doTest("Implements method 'm' in 'A'", AllIcons.Gutter.ImplementingMethod);
+  }
+
+  public void testOverrideMarker() throws Throwable {
+    doTest("Overrides method 'm' in 'A'", AllIcons.Gutter.OverridingMethod);
   }
 }

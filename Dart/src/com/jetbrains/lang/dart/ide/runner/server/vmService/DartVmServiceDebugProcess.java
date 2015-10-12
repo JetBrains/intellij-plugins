@@ -174,9 +174,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
 
     myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
-
-    myVmServiceWrapper.streamListen(VmService.DEBUG_STREAM_ID);
-    myVmServiceWrapper.streamListen(VmService.ISOLATE_STREAM_ID);
     myVmServiceWrapper.handleDebuggerConnected();
   }
 
@@ -234,7 +231,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Override
   public void resume() {
     for (String isolateId : new ArrayList<String>(mySuspendedIsolateIds)) {
-      myVmServiceWrapper.resumeIsolate(isolateId);
+      myVmServiceWrapper.resumeIsolate(isolateId, null);
     }
   }
 
