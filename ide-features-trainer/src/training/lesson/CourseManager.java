@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -23,6 +24,8 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +153,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                         if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
                             return getScratchFile(myProject, lesson);
                         } else {
-                            if (!initEduProject(myProject, lesson)) return null;
+                            if (!initEduProject(myProject)) return null;
                             return getFileInEduProject(lesson);
                         }
                     } catch (IOException e) {
@@ -241,10 +244,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return courseVirtualFile;
     }
 
-    private boolean initEduProject(Project project, Lesson lesson) {
+    private boolean initEduProject(Project projectToClose) {
         Project myEduProject = null;
 
-        //if project is open
+        //if projectToClose is open
         final Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
         for (Project openProject : openProjects) {
             final String name = openProject.getName();
@@ -253,7 +256,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             }
         }
         if (myEduProject == null) {
-            if (!NewEduProjectUtil.showDialogOpenEduProject(project)) return false; //if user abort to open lesson in a new Project
+            if (!NewEduProjectUtil.showDialogOpenEduProject(projectToClose)) return false; //if user abort to open lesson in a new Project
             if(myState.eduProjectPath != null) {
                 try {
                     myEduProject = ProjectManager.getInstance().loadAndOpenProject(myState.eduProjectPath);
@@ -268,7 +271,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
                 try {
                     JavaSdk jSdk = JavaSdk.getInstance();
-                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, project, SdkConfigurationUtil.findOrCreateSdk(null, jSdk));
+                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, projectToClose, SdkConfigurationUtil.findOrCreateSdk(null, jSdk));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -286,6 +289,25 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         //Hide EduProject from Recent projects
         RecentProjectsManager.getInstance().removePath(eduProject.getPresentableUrl());
         return true;
+    }
+
+    @Nullable
+    public Project getEduProject(){
+        if (eduProject == null) {
+            if (initEduProject(getCurrentProject()))
+                return eduProject;
+            else
+                return null;
+        } else {
+            return eduProject;
+        }
+    }
+
+    @Nullable
+    public Project getCurrentProject(){
+        final IdeFrame lastFocusedFrame = IdeFocusManager.getGlobalInstance().getLastFocusedFrame();
+        if (lastFocusedFrame == null) return null;
+        return lastFocusedFrame.getProject();
     }
 
     @NotNull
