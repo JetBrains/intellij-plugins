@@ -182,6 +182,12 @@ public class DartServerData {
     synchronized (myOverrideData) {
       myOverrideData.remove(file.getPath());
     }
+    synchronized (myImplementedClassData) {
+      myImplementedClassData.remove(file.getPath());
+    }
+    synchronized (myImplementedMemberData) {
+      myImplementedMemberData.remove(file.getPath());
+    }
   }
 
   public void onFlushedResults(@NotNull final List<String> filePaths) {
@@ -205,6 +211,38 @@ public class DartServerData {
           myOverrideData.remove(FileUtil.toSystemIndependentName(path));
         }
       }
+    }
+    if (!myImplementedClassData.isEmpty()) {
+      synchronized (myImplementedClassData) {
+        for (String path : filePaths) {
+          myImplementedClassData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+    if (!myImplementedMemberData.isEmpty()) {
+      synchronized (myImplementedMemberData) {
+        for (String path : filePaths) {
+          myImplementedMemberData.remove(FileUtil.toSystemIndependentName(path));
+        }
+      }
+    }
+  }
+
+  public void clearData() {
+    synchronized (myHighlightData) {
+      myHighlightData.clear();
+    }
+    synchronized (myNavigationData) {
+      myNavigationData.clear();
+    }
+    synchronized (myOverrideData) {
+      myOverrideData.clear();
+    }
+    synchronized (myImplementedClassData) {
+      myImplementedClassData.clear();
+    }
+    synchronized (myImplementedMemberData) {
+      myImplementedMemberData.clear();
     }
   }
 

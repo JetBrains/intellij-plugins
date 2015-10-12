@@ -1152,6 +1152,7 @@ public class DartAnalysisServerService {
       mySdkHome = null;
       myFilePathWithOverlaidContentToTimestamp.clear();
       myVisibleFiles.clear();
+      myServerData.clearData();
 
       ApplicationManager.getApplication().runReadAction(new Runnable() {
         @Override
