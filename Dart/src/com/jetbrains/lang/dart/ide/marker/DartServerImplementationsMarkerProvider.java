@@ -160,7 +160,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
         addSubClasses(name.getProject(), Sets.<TypeHierarchyItem>newHashSet(), items, components, items.get(0), false);
         PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
                                             DaemonBundle.message("navigation.title.subclass", name.getName(), components.size()),
-                                            "Implementations of " + name.getName(), new DefaultPsiElementCellRenderer());
+                                            "Subclasses of " + name.getName(), new DefaultPsiElementCellRenderer());
       }
     }, GutterIconRenderer.Alignment.RIGHT);
   }
@@ -185,8 +185,9 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
         // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
         final List<DartComponent> components = Lists.newArrayList();
         addSubMembers(name.getProject(), Sets.<TypeHierarchyItem>newHashSet(), items, components, items.get(0), false);
-        PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components), DaemonBundle
-                                              .message("navigation.title.implementation.method", name.getName(), components.size()), "Implementations of " + name.getName(),
+        PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
+                                            DaemonBundle.message("navigation.title.overrider.method", name.getName(), components.size()),
+                                            "Overriding methods of " + name.getName(),
                                             new DefaultPsiElementCellRenderer());
       }
     }, GutterIconRenderer.Alignment.RIGHT);
