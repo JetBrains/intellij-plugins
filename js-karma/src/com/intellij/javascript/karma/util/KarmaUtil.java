@@ -41,6 +41,7 @@ public class KarmaUtil {
   private static final String NAME_PART_DELIMITERS = ".-";
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
   private static final String[] EXTENSIONS = {"js", "coffee", "es6", "ts"};
+  private static final String[] MOST_RELEVANT_NAMES = {"karma.conf", "karma-conf"};
 
   private KarmaUtil() {
   }
@@ -63,7 +64,7 @@ public class KarmaUtil {
     for (FileType type : fileTypes) {
       Collection<VirtualFile> files = FileTypeIndex.getFiles(type, scope);
       for (VirtualFile file : files) {
-        if (file != null && file.isValid() && !file.isDirectory() && isKarmaConfigFile(file.getNameSequence())) {
+        if (file != null && file.isValid() && !file.isDirectory() && isKarmaConfigFile(file.getNameSequence(), false)) {
           if (!JSLibraryUtil.isProbableLibraryFile(file)) {
             result.add(file);
           }
@@ -73,7 +74,7 @@ public class KarmaUtil {
     return result;
   }
 
-  public static boolean isKarmaConfigFile(@NotNull CharSequence filename) {
+  public static boolean isKarmaConfigFile(@NotNull CharSequence filename, boolean matchMostRelevantNamesOnly) {
     int len = filename.length();
     int extensionInd = StringUtil.lastIndexOf(filename, '.', 0, len);
     if (extensionInd == -1) {
@@ -86,6 +87,9 @@ public class KarmaUtil {
         break;
       }
     }
+    if (matchMostRelevantNamesOnly) {
+      return isStartingPartMatched(filename, MOST_RELEVANT_NAMES);
+    }
     if (!extMatched) {
       return false;
     }
@@ -97,8 +101,12 @@ public class KarmaUtil {
         }
       }
     }
-    for (String startingPart : STARTING_PARTS) {
-      if (startingPart.length() < len && CharArrayUtil.regionMatches(filename, 0, startingPart)) {
+    return isStartingPartMatched(filename, STARTING_PARTS);
+  }
+
+  private static boolean isStartingPartMatched(@NotNull CharSequence filename, @NotNull String[] startingParts) {
+    for (String startingPart : startingParts) {
+      if (startingPart.length() < filename.length() && CharArrayUtil.regionMatches(filename, 0, startingPart)) {
         if (NAME_PART_DELIMITERS.indexOf(filename.charAt(startingPart.length())) >= 0) {
           return true;
         }
