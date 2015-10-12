@@ -81,52 +81,57 @@ public class Reveal {
     UsageTrigger.trigger("appcode.reveal.showInReveal");
 
     if (isCompatibleWithRevealOnePointSixOrHigher()) {
-
-      // Reveal 1.6 bundles the refresh script with the application — execute it using osascript
-      File inspectionScript = getRevealInspectionScript();
-      if (inspectionScript == null) {
-        throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found at path: " + inspectionScript.toString());
-      }
-
-      try {
-        ProcessBuilder pb = new ProcessBuilder(
-                "/usr/bin/osascript",
-                inspectionScript.toString(),
-                bundleID,
-                deviceName
-        );
-
-        Process p = pb.start();
-        p.waitFor();
-      }
-      catch (IOException e) {
-        throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
-      } catch (InterruptedException e) {
-        throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
-      }
-
+      refreshRevealPostOnePointSix(bundleID, deviceName);
     } else {
+      refreshRevealPreOnePointSix(bundleID, deviceName);
+    }
+  }
 
-      // Pre Reveal 1.6, the refresh script was not bundled with the application
-      String script = "activate\n" +
-              "repeat with doc in documents\n" +
-              " refresh doc " +
-              "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
-              "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
-              "   when available\n" +
-              "end repeat\n" +
-              "activate\n";
+  private static void refreshRevealPostOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+    // Reveal 1.6 bundles the refresh script with the application — execute it using osascript
+    File inspectionScript = getRevealInspectionScript();
+    if (inspectionScript == null) {
+      throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found at path: " + inspectionScript.toString());
+    }
 
-      try {
-        AppleScript.tell("Reveal",
-                script,
-                true
-        );
-      }
-      catch (ScriptException e) {
-        LOG.info("Reveal script failed:\n" + script);
-        throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
-      }
+    try {
+      ProcessBuilder pb = new ProcessBuilder(
+              "/usr/bin/osascript",
+              inspectionScript.toString(),
+              bundleID,
+              deviceName
+      );
+
+      Process p = pb.start();
+      p.waitFor();
+    }
+    catch (IOException e) {
+      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+    } catch (InterruptedException e) {
+      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+    }
+  }
+
+  private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+    // Pre Reveal 1.6, the refresh script was not bundled with the application
+    String script = "activate\n" +
+            "repeat with doc in documents\n" +
+            " refresh doc " +
+            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
+            "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
+            "   when available\n" +
+            "end repeat\n" +
+            "activate\n";
+
+    try {
+      AppleScript.tell("Reveal",
+              script,
+              true
+      );
+    }
+    catch (ScriptException e) {
+      LOG.info("Reveal script failed:\n" + script);
+      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
     }
   }
 }
