@@ -318,6 +318,16 @@ public class DartServerData {
     public final int getLength() {
       return myLength;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      return o instanceof DartRegion && myOffset == ((DartRegion)o).myOffset && myLength == ((DartRegion)o).myLength;
+    }
+
+    @Override
+    public int hashCode() {
+      return myOffset * 31 + myLength;
+    }
   }
 
   public static class DartHighlightRegion extends DartRegion {
