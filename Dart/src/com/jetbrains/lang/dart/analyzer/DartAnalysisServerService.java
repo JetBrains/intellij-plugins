@@ -51,6 +51,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.*;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -104,6 +105,7 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myVisibleFiles = new ArrayList<String>();
+  private final Set<Document> myChangedDocuments = new THashSet<Document>();
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
@@ -232,6 +234,20 @@ public class DartAnalysisServerService {
     @Override
     public void beforeDocumentChange(DocumentEvent e) {
       myServerData.onDocumentChanged(e);
+
+      final VirtualFile file = FileDocumentManager.getInstance().getFile(e.getDocument());
+      if (isLocalDartOrHtmlFile(file)) {
+        for (Project project : myRootsHandler.getTrackedProjects()) {
+          for (VirtualFile fileInEditor : FileEditorManager.getInstance(project).getSelectedFiles()) {
+            if (fileInEditor.equals(file)) {
+              synchronized (myLock) {
+                myChangedDocuments.add(e.getDocument());
+              }
+              break;
+            }
+          }
+        }
+      }
     }
   };
 
@@ -501,7 +517,14 @@ public class DartAnalysisServerService {
       final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-      for (Document document : fileDocumentManager.getUnsavedDocuments()) {
+
+      // some documents in myChangedDocuments may be updated by external change, suxh as switch branch, that's why we track them,
+      // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
+      final Set<Document> documents = new THashSet<Document>(myChangedDocuments);
+      myChangedDocuments.clear();
+      ContainerUtil.addAll(documents, fileDocumentManager.getUnsavedDocuments());
+
+      for (Document document : documents) {
         final VirtualFile file = fileDocumentManager.getFile(document);
         if (isLocalDartOrHtmlFile(file)) {
           oldTrackedFiles.remove(file.getPath());
@@ -522,12 +545,16 @@ public class DartAnalysisServerService {
       }
 
       if (LOG.isDebugEnabled()) {
-        if (!filesToUpdate.isEmpty()) {
-          LOG.debug("Sending overlaid content of the following files:\n" + StringUtil.join(filesToUpdate.keySet(), ",\n"));
+        final Set<String> overlaid = new THashSet<String>(filesToUpdate.keySet());
+        for (String removeOverlaid : oldTrackedFiles) {
+          overlaid.remove(FileUtil.toSystemDependentName(removeOverlaid));
+        }
+        if (!overlaid.isEmpty()) {
+          LOG.debug("Sending overlaid content: " + StringUtil.join(overlaid, ",\n"));
         }
 
         if (!oldTrackedFiles.isEmpty()) {
-          LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
+          LOG.debug("Removing overlaid content: " + StringUtil.join(oldTrackedFiles, ",\n"));
         }
       }
     }
@@ -1152,6 +1179,7 @@ public class DartAnalysisServerService {
       mySdkHome = null;
       myFilePathWithOverlaidContentToTimestamp.clear();
       myVisibleFiles.clear();
+      myChangedDocuments.clear();
       myServerData.clearData();
 
       ApplicationManager.getApplication().runReadAction(new Runnable() {
