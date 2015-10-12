@@ -37,7 +37,9 @@ import java.util.List;
 public class KarmaUtil {
 
   public static final String NODE_PACKAGE_NAME = "karma";
-  private static final String[] BEFORE_EXT_PARTS = new String[] {".conf", "-conf"};
+  private static final String[] STARTING_PARTS = new String[] {"karma"};
+  private static final String NAME_PART_DELIMITERS = ".-";
+  private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
   private static final String[] EXTENSIONS = {"js", "coffee", "es6", "ts"};
 
   private KarmaUtil() {
@@ -84,9 +86,20 @@ public class KarmaUtil {
         break;
       }
     }
-    if (extMatched) {
-      for (String beforeExt : BEFORE_EXT_PARTS) {
-        if (CharArrayUtil.regionMatches(filename, extensionInd - beforeExt.length(), beforeExt)) {
+    if (!extMatched) {
+      return false;
+    }
+    for (String beforeExtPart : BEFORE_EXT_PARTS) {
+      int startOffset = extensionInd - beforeExtPart.length();
+      if (startOffset > 0 && CharArrayUtil.regionMatches(filename, startOffset, beforeExtPart)) {
+        if (NAME_PART_DELIMITERS.indexOf(filename.charAt(startOffset - 1)) >= 0) {
+          return true;
+        }
+      }
+    }
+    for (String startingPart : STARTING_PARTS) {
+      if (startingPart.length() < len && CharArrayUtil.regionMatches(filename, 0, startingPart)) {
+        if (NAME_PART_DELIMITERS.indexOf(filename.charAt(startingPart.length())) >= 0) {
           return true;
         }
       }
