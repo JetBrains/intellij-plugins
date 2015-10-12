@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
@@ -69,6 +70,7 @@ import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.ide.PooledThreadExecutor;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -104,6 +106,9 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myVisibleFiles = new ArrayList<String>();
+
+  private final Set<Document> myUpdatedDocuments = Sets.newHashSet();
+  private Runnable myUpdateFilesContextRunner = null;
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
@@ -232,8 +237,42 @@ public class DartAnalysisServerService {
     @Override
     public void beforeDocumentChange(DocumentEvent e) {
       myServerData.onDocumentChanged(e);
+      synchronized (myLock) {
+        final Document document = e.getDocument();
+        myUpdatedDocuments.add(document);
+        scheduleUpdateFilesContent();
+      }
     }
   };
+
+  private void scheduleUpdateFilesContent() {
+    synchronized (myLock) {
+      if (myUpdateFilesContextRunner != null) {
+        return;
+      }
+      myUpdateFilesContextRunner = new Runnable() {
+        @Override
+        public void run() {
+          final Set<Document> updatedDocuments = Sets.newHashSet();
+          // Grab updated documents, wait for more.
+          while (true) {
+            Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+            synchronized (myLock) {
+              if (myUpdatedDocuments.isEmpty()) {
+                myUpdateFilesContextRunner = null;
+                break;
+              }
+              updatedDocuments.addAll(myUpdatedDocuments);
+              myUpdatedDocuments.clear();
+            }
+          }
+          // Enough waiting, let's send the documents to the server.
+          updateFilesContent(updatedDocuments);
+        }
+      };
+      PooledThreadExecutor.INSTANCE.execute(myUpdateFilesContextRunner);
+    }
+  }
 
   void addDocumentListener() {
     // by design document listener must not be already registered, next line is for the safety only
@@ -489,6 +528,10 @@ public class DartAnalysisServerService {
   }
 
   public void updateFilesContent() {
+    updateFilesContent(Collections.<Document>emptySet());
+  }
+
+  public void updateFilesContent(@NotNull final Set<Document> additionalUpdatedDocuments) {
     // may be use DocumentListener to collect deltas instead of sending the whole Document.getText() each time?
 
     AnalysisServer server = myServer;
@@ -501,7 +544,13 @@ public class DartAnalysisServerService {
       final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-      for (Document document : fileDocumentManager.getUnsavedDocuments()) {
+
+      // Prepare all updated documents.
+      final Set<Document> updatedDocuments = Sets.newHashSet();
+      Collections.addAll(updatedDocuments, fileDocumentManager.getUnsavedDocuments());
+      updatedDocuments.addAll(additionalUpdatedDocuments);
+
+      for (Document document : updatedDocuments) {
         final VirtualFile file = fileDocumentManager.getFile(document);
         if (isLocalDartOrHtmlFile(file)) {
           oldTrackedFiles.remove(file.getPath());
