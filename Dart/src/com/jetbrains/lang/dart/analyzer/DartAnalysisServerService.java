@@ -437,28 +437,28 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
-  public List<DartServerData.PluginHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
+  public List<DartServerData.DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     return myServerData.getHighlight(file);
   }
 
   @NotNull
-  public List<ImplementedClass> getImplementedClasses(@NotNull final VirtualFile file) {
-    return myServerData.getImplementedClasses(file);
-  }
-
-  @NotNull
-  public List<ImplementedMember> getImplementedMembers(@NotNull final VirtualFile file) {
-    return myServerData.getImplementedMembers(file);
-  }
-
-  @NotNull
-  public List<DartServerData.PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
+  public List<DartServerData.DartNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
     return myServerData.getNavigation(file);
   }
 
   @NotNull
-  public List<OverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
+  public List<DartServerData.DartOverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
     return myServerData.getOverrideMembers(file);
+  }
+
+  @NotNull
+  public List<DartServerData.DartRegion> getImplementedClasses(@NotNull final VirtualFile file) {
+    return myServerData.getImplementedClasses(file);
+  }
+
+  @NotNull
+  public List<DartServerData.DartRegion> getImplementedMembers(@NotNull final VirtualFile file) {
+    return myServerData.getImplementedMembers(file);
   }
 
   @SuppressWarnings("NestedSynchronizedStatement")

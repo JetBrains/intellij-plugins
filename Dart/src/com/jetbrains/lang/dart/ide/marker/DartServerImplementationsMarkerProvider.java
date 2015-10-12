@@ -31,10 +31,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import org.dartlang.analysis.server.protocol.*;
+import org.dartlang.analysis.server.protocol.Element;
+import org.dartlang.analysis.server.protocol.Location;
+import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,14 +123,14 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
       return null;
     }
     // classes
-    for (ImplementedClass clazz : service.getImplementedClasses(file)) {
-      if (clazz.getOffset() == nameOffset && clazz.getLength() == nameLength) {
+    for (DartServerData.DartRegion implementedClassRegion : service.getImplementedClasses(file)) {
+      if (implementedClassRegion.getOffset() == nameOffset && implementedClassRegion.getLength() == nameLength) {
         return createMarkerClass(name);
       }
     }
     // members
-    for (ImplementedMember member : service.getImplementedMembers(file)) {
-      if (member.getOffset() == nameOffset && member.getLength() == nameLength) {
+    for (DartServerData.DartRegion implementedMemberRegion : service.getImplementedMembers(file)) {
+      if (implementedMemberRegion.getOffset() == nameOffset && implementedMemberRegion.getLength() == nameLength) {
         return createMarkerMember(name);
       }
     }

@@ -32,8 +32,8 @@ import com.intellij.refactoring.inline.InlineOptionsDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationRegion;
-import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationTarget;
+import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationTarget;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
@@ -143,11 +143,11 @@ public class DartInlineHandler extends InlineActionHandler {
     final String filePath = virtualFile.getPath();
     // prepare navigation regions
     final int offset = editor.getCaretModel().getOffset();
-    final List<PluginNavigationRegion> navigationRegions = DartAnalysisServerService.getInstance().getNavigation(virtualFile);
+    final List<DartNavigationRegion> navigationRegions = DartAnalysisServerService.getInstance().getNavigation(virtualFile);
     // find the navigation region
-    for (PluginNavigationRegion region : navigationRegions) {
+    for (DartNavigationRegion region : navigationRegions) {
       if (region.getOffset() <= offset && offset <= region.getOffset() + region.getLength()) {
-        final List<PluginNavigationTarget> targets = region.getTargets();
+        final List<DartNavigationTarget> targets = region.getTargets();
         final String kind = targets.get(0).getKind();
         return new InlineRefactoringContext(virtualFile, filePath, offset, kind);
       }

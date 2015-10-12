@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -20,11 +21,11 @@ public class DartServerData {
 
   private DartServerRootsHandler myRootsHandler;
 
-  private final Map<String, List<PluginHighlightRegion>> myHighlightData = Maps.newHashMap();
-  private final Map<String, List<ImplementedClass>> myImplementedClassData = Maps.newHashMap();
-  private final Map<String, List<ImplementedMember>> myImplementedMemberData = Maps.newHashMap();
-  private final Map<String, List<PluginNavigationRegion>> myNavigationData = Maps.newHashMap();
-  private final Map<String, List<OverrideMember>> myOverrideData = Maps.newHashMap();
+  private final Map<String, List<DartHighlightRegion>> myHighlightData = Maps.newHashMap();
+  private final Map<String, List<DartNavigationRegion>> myNavigationData = Maps.newHashMap();
+  private final Map<String, List<DartOverrideMember>> myOverrideData = Maps.newHashMap();
+  private final Map<String, List<DartRegion>> myImplementedClassData = Maps.newHashMap();
+  private final Map<String, List<DartRegion>> myImplementedMemberData = Maps.newHashMap();
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -35,15 +36,49 @@ public class DartServerData {
   public void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
-    final List<PluginHighlightRegion> pluginRegions = new ArrayList<PluginHighlightRegion>(regions.size());
+    final List<DartHighlightRegion> newRegions = new ArrayList<DartHighlightRegion>(regions.size());
     for (HighlightRegion region : regions) {
       if (region.getLength() > 0) {
-        pluginRegions.add(new PluginHighlightRegion(region));
+        newRegions.add(new DartHighlightRegion(region));
       }
     }
 
     synchronized (myHighlightData) {
-      myHighlightData.put(filePath, pluginRegions);
+      myHighlightData.put(filePath, newRegions);
+    }
+
+    forceFileAnnotation(filePath, false);
+  }
+
+  public void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
+    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
+
+    final List<DartNavigationRegion> newRegions = new ArrayList<DartNavigationRegion>(regions.size());
+    for (NavigationRegion region : regions) {
+      if (region.getLength() > 0) {
+        newRegions.add(new DartNavigationRegion(region));
+      }
+    }
+
+    synchronized (myNavigationData) {
+      myNavigationData.put(filePath, newRegions);
+    }
+
+    forceFileAnnotation(filePath, true);
+  }
+
+  public void computedOverrides(@NotNull final String filePath, @NotNull final List<OverrideMember> overrides) {
+    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
+
+    final List<DartOverrideMember> newOverrides = new ArrayList<DartOverrideMember>(overrides.size());
+    for (OverrideMember override : overrides) {
+      if (override.getLength() > 0) {
+        newOverrides.add(new DartOverrideMember(override));
+      }
+    }
+
+    synchronized (myOverrideData) {
+      myOverrideData.put(filePath, newOverrides);
     }
 
     forceFileAnnotation(filePath, false);
@@ -52,20 +87,32 @@ public class DartServerData {
   public void computedImplemented(@NotNull final String filePath,
                                   @NotNull final List<ImplementedClass> implementedClasses,
                                   @NotNull final List<ImplementedMember> implementedMembers) {
-    // check myFilePathsWithUnsentChanges? update offset in documentListener?
+    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
+
+    final List<DartRegion> newImplementedClasses = new ArrayList<DartRegion>(implementedClasses.size());
+    for (ImplementedClass implementedClass : implementedClasses) {
+      newImplementedClasses.add(new DartRegion(implementedClass.getOffset(), implementedClass.getLength()));
+    }
+
+    final List<DartRegion> newImplementedMembers = new ArrayList<DartRegion>(implementedMembers.size());
+    for (ImplementedMember implementedMember : implementedMembers) {
+      newImplementedMembers.add(new DartRegion(implementedMember.getOffset(), implementedMember.getLength()));
+    }
+
     boolean hasChanges = false;
     synchronized (myImplementedClassData) {
-      final List<ImplementedClass> old = myImplementedClassData.get(filePath);
-      if (old == null || !old.equals(implementedClasses)) {
+      final List<DartRegion> old = myImplementedClassData.get(filePath);
+      if (old == null || !old.equals(newImplementedClasses)) {
         hasChanges = true;
-        myImplementedClassData.put(filePath, implementedClasses);
+        myImplementedClassData.put(filePath, newImplementedClasses);
       }
     }
+
     synchronized (myImplementedMemberData) {
-      final List<ImplementedMember> old = myImplementedMemberData.get(filePath);
-      if (old == null || !old.equals(implementedMembers)) {
+      final List<DartRegion> old = myImplementedMemberData.get(filePath);
+      if (old == null || !old.equals(newImplementedMembers)) {
         hasChanges = true;
-        myImplementedMemberData.put(filePath, implementedMembers);
+        myImplementedMemberData.put(filePath, newImplementedMembers);
       }
     }
 
@@ -74,84 +121,43 @@ public class DartServerData {
     }
   }
 
-  public void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
-    if (myFilePathsWithUnsentChanges.contains(filePath)) return;
-
-    final List<PluginNavigationRegion> pluginRegions = new ArrayList<PluginNavigationRegion>(regions.size());
-    for (NavigationRegion region : regions) {
-      if (region.getLength() > 0) {
-        pluginRegions.add(new PluginNavigationRegion(region));
-      }
-    }
-
-    synchronized (myNavigationData) {
-      myNavigationData.put(filePath, pluginRegions);
-    }
-
-    forceFileAnnotation(filePath, true);
-  }
-
-  public void computedOverrides(@NotNull final String filePath, @NotNull final List<OverrideMember> overrides) {
-    // check myFilePathsWithUnsentChanges? update offset in documentListener?
-    synchronized (myOverrideData) {
-      myOverrideData.put(filePath, overrides);
-    }
-
-    forceFileAnnotation(filePath, false);
-  }
-
   @NotNull
-  public List<PluginHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
+  public List<DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     synchronized (myHighlightData) {
-      final List<PluginHighlightRegion> regions = myHighlightData.get(file.getPath());
-      if (regions == null) {
-        return PluginHighlightRegion.EMPTY_LIST;
-      }
-      return regions;
+      final List<DartHighlightRegion> regions = myHighlightData.get(file.getPath());
+      return regions != null ? regions : Collections.<DartHighlightRegion>emptyList();
     }
   }
 
   @NotNull
-  public List<ImplementedClass> getImplementedClasses(@NotNull final VirtualFile file) {
-    synchronized (myImplementedClassData) {
-      final List<ImplementedClass> classes = myImplementedClassData.get(file.getPath());
-      if (classes == null) {
-        return ImplementedClass.EMPTY_LIST;
-      }
-      return classes;
-    }
-  }
-
-  @NotNull
-  public List<ImplementedMember> getImplementedMembers(@NotNull final VirtualFile file) {
-    synchronized (myImplementedClassData) {
-      final List<ImplementedMember> classes = myImplementedMemberData.get(file.getPath());
-      if (classes == null) {
-        return ImplementedMember.EMPTY_LIST;
-      }
-      return classes;
-    }
-  }
-
-  @NotNull
-  public List<PluginNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
+  public List<DartNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
     synchronized (myNavigationData) {
-      final List<PluginNavigationRegion> regions = myNavigationData.get(file.getPath());
-      if (regions == null) {
-        return PluginNavigationRegion.EMPTY_LIST;
-      }
-      return regions;
+      final List<DartNavigationRegion> regions = myNavigationData.get(file.getPath());
+      return regions != null ? regions : Collections.<DartNavigationRegion>emptyList();
     }
   }
 
   @NotNull
-  public List<OverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
+  public List<DartOverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
     synchronized (myOverrideData) {
-      List<OverrideMember> regions = myOverrideData.get(file.getPath());
-      if (regions == null) {
-        return OverrideMember.EMPTY_LIST;
-      }
-      return regions;
+      List<DartOverrideMember> regions = myOverrideData.get(file.getPath());
+      return regions != null ? regions : Collections.<DartOverrideMember>emptyList();
+    }
+  }
+
+  @NotNull
+  public List<DartRegion> getImplementedClasses(@NotNull final VirtualFile file) {
+    synchronized (myImplementedClassData) {
+      final List<DartRegion> classes = myImplementedClassData.get(file.getPath());
+      return classes != null ? classes : Collections.<DartRegion>emptyList();
+    }
+  }
+
+  @NotNull
+  public List<DartRegion> getImplementedMembers(@NotNull final VirtualFile file) {
+    synchronized (myImplementedClassData) {
+      final List<DartRegion> classes = myImplementedMemberData.get(file.getPath());
+      return classes != null ? classes : Collections.<DartRegion>emptyList();
     }
   }
 
@@ -253,113 +259,131 @@ public class DartServerData {
     final String filePath = file.getPath();
     myFilePathsWithUnsentChanges.add(filePath);
 
-    // navigation region must be deleted if touched by editing and updated otherwise
     synchronized (myNavigationData) {
-      final List<PluginNavigationRegion> regions = myNavigationData.get(filePath);
-      if (regions != null) {
-        final int eventOffset = e.getOffset();
-        final int deltaLength = e.getNewLength() - e.getOldLength();
-
-        final Iterator<PluginNavigationRegion> iterator = regions.iterator();
-        while (iterator.hasNext()) {
-          final PluginNavigationRegion region = iterator.next();
-
-          // may be we'd better delete target touched by editing?
-          for (PluginNavigationTarget target : region.getTargets()) {
-            if (target.file.equals(filePath) && target.offset >= eventOffset) {
-              target.offset += deltaLength;
-            }
-          }
-
-          if (deltaLength > 0) {
-            // Something was typed. Shift untouched regions, delete touched.
-            if (eventOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (region.offset < eventOffset && eventOffset < region.offset + region.length) {
-              iterator.remove();
-            }
-          }
-          else if (deltaLength < 0) {
-            // Some text was deleted. Shift untouched regions, delete touched.
-            final int eventRightOffset = eventOffset - deltaLength;
-
-            if (eventRightOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (eventOffset < region.offset + region.length) {
-              iterator.remove();
-            }
-          }
-        }
-      }
+      updateRegionsDeletingTouched(filePath, myNavigationData.get(filePath), e);
     }
-
     synchronized (myHighlightData) {
-      final List<PluginHighlightRegion> regions = myHighlightData.get(filePath);
-      if (regions != null) {
-        final int eventOffset = e.getOffset();
-        final int deltaLength = e.getNewLength() - e.getOldLength();
+      updateRegionsUpdatingTouched(myHighlightData.get(filePath), e);
+    }
+    synchronized (myOverrideData) {
+      updateRegionsDeletingTouched(filePath, myOverrideData.get(filePath), e);
+    }
+    synchronized (myImplementedClassData) {
+      updateRegionsDeletingTouched(filePath, myImplementedClassData.get(filePath), e);
+    }
+    synchronized (myImplementedMemberData) {
+      updateRegionsDeletingTouched(filePath, myImplementedMemberData.get(filePath), e);
+    }
+  }
 
-        final Iterator<PluginHighlightRegion> iterator = regions.iterator();
-        while (iterator.hasNext()) {
-          final PluginHighlightRegion region = iterator.next();
+  private static void updateRegionsDeletingTouched(@NotNull final String filePath,
+                                                   @Nullable final List<? extends DartRegion> regions,
+                                                   @NotNull final DocumentEvent e) {
+    if (regions == null) return;
 
-          if (deltaLength > 0) {
-            // Something was typed. Shift untouched regions, update touched.
-            if (eventOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (region.offset < eventOffset && eventOffset < region.offset + region.length) {
-              region.length += deltaLength;
-            }
+    // delete touched regions, shift untouched
+    final int eventOffset = e.getOffset();
+    final int deltaLength = e.getNewLength() - e.getOldLength();
+
+    final Iterator<? extends DartRegion> iterator = regions.iterator();
+    while (iterator.hasNext()) {
+      final DartRegion region = iterator.next();
+
+      if (region instanceof DartNavigationRegion) {
+        // may be we'd better delete target touched by editing?
+        for (DartNavigationTarget target : ((DartNavigationRegion)region).getTargets()) {
+          if (target.myFile.equals(filePath) && target.myOffset >= eventOffset) {
+            target.myOffset += deltaLength;
           }
-          else if (deltaLength < 0) {
-            // Some text was deleted. Shift untouched regions, delete or update touched.
-            final int eventRightOffset = eventOffset - deltaLength;
-            final int regionRightOffset = region.offset + region.length;
+        }
+      }
 
-            if (eventRightOffset <= region.offset) {
-              region.offset += deltaLength;
-            }
-            else if (region.offset <= eventOffset && eventRightOffset <= regionRightOffset && region.length != -deltaLength) {
-              region.length += deltaLength;
-            }
-            else if (eventOffset < regionRightOffset) {
-              iterator.remove();
-            }
-          }
+      if (deltaLength > 0) {
+        // Something was typed. Shift untouched regions, delete touched.
+        if (eventOffset <= region.myOffset) {
+          region.myOffset += deltaLength;
+        }
+        else if (region.myOffset < eventOffset && eventOffset < region.myOffset + region.myLength) {
+          iterator.remove();
+        }
+      }
+      else if (deltaLength < 0) {
+        // Some text was deleted. Shift untouched regions, delete touched.
+        final int eventRightOffset = eventOffset - deltaLength;
+
+        if (eventRightOffset <= region.myOffset) {
+          region.myOffset += deltaLength;
+        }
+        else if (eventOffset < region.myOffset + region.myLength) {
+          iterator.remove();
+        }
+      }
+    }
+  }
+
+  private static void updateRegionsUpdatingTouched(@Nullable final List<? extends DartRegion> regions,
+                                                   @NotNull final DocumentEvent e) {
+    if (regions == null) return;
+
+    final int eventOffset = e.getOffset();
+    final int deltaLength = e.getNewLength() - e.getOldLength();
+
+    final Iterator<? extends DartRegion> iterator = regions.iterator();
+    while (iterator.hasNext()) {
+      final DartRegion region = iterator.next();
+
+      if (deltaLength > 0) {
+        // Something was typed. Shift untouched regions, update touched.
+        if (eventOffset <= region.myOffset) {
+          region.myOffset += deltaLength;
+        }
+        else if (region.myOffset < eventOffset && eventOffset < region.myOffset + region.myLength) {
+          region.myLength += deltaLength;
+        }
+      }
+      else if (deltaLength < 0) {
+        // Some text was deleted. Shift untouched regions, delete or update touched.
+        final int eventRightOffset = eventOffset - deltaLength;
+        final int regionRightOffset = region.myOffset + region.myLength;
+
+        if (eventRightOffset <= region.myOffset) {
+          region.myOffset += deltaLength;
+        }
+        else if (region.myOffset <= eventOffset && eventRightOffset <= regionRightOffset && region.myLength != -deltaLength) {
+          region.myLength += deltaLength;
+        }
+        else if (eventOffset < regionRightOffset) {
+          iterator.remove();
         }
       }
     }
   }
 
 
-  public interface PluginRegion {
-    int getOffset();
+  public static class DartRegion {
+    protected int myOffset;
+    protected int myLength;
 
-    int getLength();
+    public DartRegion(final int offset, final int length) {
+      myOffset = offset;
+      myLength = length;
+    }
+
+    public final int getOffset() {
+      return myOffset;
+    }
+
+    public final int getLength() {
+      return myLength;
+    }
   }
 
-  public static class PluginHighlightRegion implements PluginRegion {
-    public static final List<PluginHighlightRegion> EMPTY_LIST = Lists.newArrayList();
-
-    private int offset;
-    private int length;
+  public static class DartHighlightRegion extends DartRegion {
     private final String type;
 
-    private PluginHighlightRegion(HighlightRegion region) {
-      offset = region.getOffset();
-      length = region.getLength();
+    private DartHighlightRegion(HighlightRegion region) {
+      super(region.getOffset(), region.getLength());
       type = region.getType();
-    }
-
-    public int getOffset() {
-      return offset;
-    }
-
-    public int getLength() {
-      return length;
     }
 
     public String getType() {
@@ -367,60 +391,71 @@ public class DartServerData {
     }
   }
 
-  public static class PluginNavigationRegion implements PluginRegion {
-    public static final List<PluginNavigationRegion> EMPTY_LIST = Lists.newArrayList();
+  public static class DartNavigationRegion extends DartRegion {
+    private final List<DartNavigationTarget> targets = Lists.newArrayList();
 
-    private int offset;
-    private int length;
-    private final List<PluginNavigationTarget> targets = Lists.newArrayList();
+    private DartNavigationRegion(@NotNull final NavigationRegion region) {
+      super(region.getOffset(), region.getLength());
 
-    private PluginNavigationRegion(NavigationRegion region) {
-      offset = region.getOffset();
-      length = region.getLength();
       for (NavigationTarget target : region.getTargetObjects()) {
-        targets.add(new PluginNavigationTarget(target));
+        targets.add(new DartNavigationTarget(target));
       }
     }
 
     @Override
     public String toString() {
-      return "PluginNavigationRegion(" + offset + ", " + length + ")";
+      return "DartNavigationRegion(" + myOffset + ", " + myLength + ")";
     }
 
-    public int getOffset() {
-      return offset;
-    }
-
-    public int getLength() {
-      return length;
-    }
-
-    public List<PluginNavigationTarget> getTargets() {
+    public List<DartNavigationTarget> getTargets() {
       return targets;
     }
   }
 
-  public static class PluginNavigationTarget {
-    private final String file;
-    private int offset;
-    private final String kind;
+  public static class DartNavigationTarget {
+    private final String myFile;
+    private int myOffset;
+    private final String myKind;
 
-    private PluginNavigationTarget(NavigationTarget target) {
-      file = FileUtil.toSystemIndependentName(target.getFile());
-      offset = target.getOffset();
-      kind = target.getKind();
+    private DartNavigationTarget(@NotNull final NavigationTarget target) {
+      myFile = FileUtil.toSystemIndependentName(target.getFile());
+      myOffset = target.getOffset();
+      myKind = target.getKind();
     }
 
     public String getFile() {
-      return file;
+      return myFile;
     }
 
     public int getOffset() {
-      return offset;
+      return myOffset;
     }
 
     public String getKind() {
-      return kind;
+      return myKind;
+    }
+  }
+
+  public static class DartOverrideMember extends DartRegion {
+
+    @Nullable private final OverriddenMember mySuperclassMember;
+    @Nullable private final List<OverriddenMember> myInterfaceMembers;
+
+    public DartOverrideMember(@NotNull final OverrideMember overrideMember) {
+      super(overrideMember.getOffset(), overrideMember.getLength());
+
+      mySuperclassMember = overrideMember.getSuperclassMember();
+      myInterfaceMembers = overrideMember.getInterfaceMembers();
+    }
+
+    @Nullable
+    public OverriddenMember getSuperclassMember() {
+      return mySuperclassMember;
+    }
+
+    @Nullable
+    public List<OverriddenMember> getInterfaceMembers() {
+      return myInterfaceMembers;
     }
   }
 }

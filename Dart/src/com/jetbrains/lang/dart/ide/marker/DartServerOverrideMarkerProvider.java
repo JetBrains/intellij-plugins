@@ -36,13 +36,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.OverriddenMember;
-import org.dartlang.analysis.server.protocol.OverrideMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,11 +110,11 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
       return null;
     }
 
-    final List<OverrideMember> overrideMembers = DartAnalysisServerService.getInstance().getOverrideMembers(virtualFile);
+    final List<DartServerData.DartOverrideMember> overrideMembers = DartAnalysisServerService.getInstance().getOverrideMembers(virtualFile);
     final Project project = componentName.getProject();
     DartComponent superclassComponent = null;
     List<DartComponent> interfaceComponents = Lists.newArrayList();
-    for (OverrideMember overrideMember : overrideMembers) {
+    for (DartServerData.DartOverrideMember overrideMember : overrideMembers) {
       if (overrideMember.getOffset() == componentName.getTextOffset()) {
         superclassComponent = findDartComponent(project, overrideMember.getSuperclassMember());
         if (overrideMember.getInterfaceMembers() != null) {
@@ -128,7 +128,7 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
   }
 
   @Nullable
-  private static DartComponent findDartComponent(Project project, OverriddenMember member) {
+  private static DartComponent findDartComponent(@NotNull final Project project, @Nullable final OverriddenMember member) {
     if (member != null) {
       final Location location = member.getElement().getLocation();
       return findDartComponent(project, location.getFile(), location.getOffset());

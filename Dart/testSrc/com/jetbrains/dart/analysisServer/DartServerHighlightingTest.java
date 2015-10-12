@@ -12,8 +12,9 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.analyzer.DartServerData.PluginNavigationRegion;
-import com.jetbrains.lang.dart.analyzer.DartServerData.PluginRegion;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
+import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartServerData.DartRegion;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,10 +39,10 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  private static void checkRegions(final List<? extends PluginRegion> regions, final TextRange... ranges) {
+  private static void checkRegions(final List<? extends DartRegion> regions, final TextRange... ranges) {
     assertEquals("Incorrect regions amount", ranges.length, regions.size());
     int i = 0;
-    for (PluginRegion region : regions) {
+    for (DartServerData.DartRegion region : regions) {
       assertEquals("Mismatched region " + i, ranges[i++], TextRange.create(region.getOffset(), region.getOffset() + region.getLength()));
     }
   }
@@ -256,7 +257,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final VirtualFile file = getFile().getVirtualFile();
 
-    final List<PluginNavigationRegion> regions = service.getNavigation(file);
+    final List<DartNavigationRegion> regions = service.getNavigation(file);
     checkRegions(regions, TextRange.create(4, 5), TextRange.create(15, 16), TextRange.create(19, 20));
     assertEquals(4, regions.get(2).getTargets().get(0).getOffset());
 
