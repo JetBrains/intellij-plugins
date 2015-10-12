@@ -17,7 +17,7 @@ package org.osmorc;
 
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.components.ComponentsPackage;
+import com.intellij.openapi.components.ServiceKt;
 import com.intellij.openapi.components.impl.stores.IProjectStore;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -48,7 +48,7 @@ public abstract class HeavyOsgiFixtureTestCase {
     myFixture.setUp();
     Project project = myFixture.getProject();
     // load module components
-    ((IProjectStore)ComponentsPackage.getStateStore(project)).setOptimiseTestLoadSpeed(false);
+    ((IProjectStore)ServiceKt.getStateStore(project)).setOptimiseTestLoadSpeed(false);
     loadModules(getClass().getSimpleName(), project, myTempDirFixture.getTempDirPath());
   }
 
