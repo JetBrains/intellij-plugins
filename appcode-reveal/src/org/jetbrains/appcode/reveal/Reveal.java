@@ -35,7 +35,7 @@ public class Reveal {
     File bundle = getRevealBundle();
     if (bundle == null) return null;
 
-    File result = new File(bundle, "/Contents/Resources/Inspect Application.scpt");
+    File result = new File(bundle, "/Contents/Resources/InspectApplication.scpt");
     return result.exists() ? result : null;
   }
 
