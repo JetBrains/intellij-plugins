@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -11,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,11 +21,16 @@ public class DartServerData {
 
   private DartServerRootsHandler myRootsHandler;
 
-  private final Map<String, List<DartHighlightRegion>> myHighlightData = Maps.newHashMap();
-  private final Map<String, List<DartNavigationRegion>> myNavigationData = Maps.newHashMap();
-  private final Map<String, List<DartOverrideMember>> myOverrideData = Maps.newHashMap();
-  private final Map<String, List<DartRegion>> myImplementedClassData = Maps.newHashMap();
-  private final Map<String, List<DartRegion>> myImplementedMemberData = Maps.newHashMap();
+  private final Map<String, List<DartHighlightRegion>> myHighlightData =
+    Collections.synchronizedMap(new THashMap<String, List<DartHighlightRegion>>());
+  private final Map<String, List<DartNavigationRegion>> myNavigationData =
+    Collections.synchronizedMap(new THashMap<String, List<DartNavigationRegion>>());
+  private final Map<String, List<DartOverrideMember>> myOverrideData =
+    Collections.synchronizedMap(new THashMap<String, List<DartOverrideMember>>());
+  private final Map<String, List<DartRegion>> myImplementedClassData =
+    Collections.synchronizedMap(new THashMap<String, List<DartRegion>>());
+  private final Map<String, List<DartRegion>> myImplementedMemberData =
+    Collections.synchronizedMap(new THashMap<String, List<DartRegion>>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -43,10 +48,7 @@ public class DartServerData {
       }
     }
 
-    synchronized (myHighlightData) {
-      myHighlightData.put(filePath, newRegions);
-    }
-
+    myHighlightData.put(filePath, newRegions);
     forceFileAnnotation(filePath, false);
   }
 
@@ -60,10 +62,7 @@ public class DartServerData {
       }
     }
 
-    synchronized (myNavigationData) {
-      myNavigationData.put(filePath, newRegions);
-    }
-
+    myNavigationData.put(filePath, newRegions);
     forceFileAnnotation(filePath, true);
   }
 
@@ -77,10 +76,7 @@ public class DartServerData {
       }
     }
 
-    synchronized (myOverrideData) {
-      myOverrideData.put(filePath, newOverrides);
-    }
-
+    myOverrideData.put(filePath, newOverrides);
     forceFileAnnotation(filePath, false);
   }
 
@@ -100,20 +96,16 @@ public class DartServerData {
     }
 
     boolean hasChanges = false;
-    synchronized (myImplementedClassData) {
-      final List<DartRegion> old = myImplementedClassData.get(filePath);
-      if (old == null || !old.equals(newImplementedClasses)) {
-        hasChanges = true;
-        myImplementedClassData.put(filePath, newImplementedClasses);
-      }
+    final List<DartRegion> oldClasses = myImplementedClassData.get(filePath);
+    if (oldClasses == null || !oldClasses.equals(newImplementedClasses)) {
+      hasChanges = true;
+      myImplementedClassData.put(filePath, newImplementedClasses);
     }
 
-    synchronized (myImplementedMemberData) {
-      final List<DartRegion> old = myImplementedMemberData.get(filePath);
-      if (old == null || !old.equals(newImplementedMembers)) {
-        hasChanges = true;
-        myImplementedMemberData.put(filePath, newImplementedMembers);
-      }
+    final List<DartRegion> oldMembers = myImplementedMemberData.get(filePath);
+    if (oldMembers == null || !oldMembers.equals(newImplementedMembers)) {
+      hasChanges = true;
+      myImplementedMemberData.put(filePath, newImplementedMembers);
     }
 
     if (hasChanges) {
@@ -123,42 +115,32 @@ public class DartServerData {
 
   @NotNull
   public List<DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
-    synchronized (myHighlightData) {
-      final List<DartHighlightRegion> regions = myHighlightData.get(file.getPath());
-      return regions != null ? regions : Collections.<DartHighlightRegion>emptyList();
-    }
+    final List<DartHighlightRegion> regions = myHighlightData.get(file.getPath());
+    return regions != null ? regions : Collections.<DartHighlightRegion>emptyList();
   }
 
   @NotNull
   public List<DartNavigationRegion> getNavigation(@NotNull final VirtualFile file) {
-    synchronized (myNavigationData) {
-      final List<DartNavigationRegion> regions = myNavigationData.get(file.getPath());
-      return regions != null ? regions : Collections.<DartNavigationRegion>emptyList();
-    }
+    final List<DartNavigationRegion> regions = myNavigationData.get(file.getPath());
+    return regions != null ? regions : Collections.<DartNavigationRegion>emptyList();
   }
 
   @NotNull
   public List<DartOverrideMember> getOverrideMembers(@NotNull final VirtualFile file) {
-    synchronized (myOverrideData) {
-      List<DartOverrideMember> regions = myOverrideData.get(file.getPath());
-      return regions != null ? regions : Collections.<DartOverrideMember>emptyList();
-    }
+    final List<DartOverrideMember> regions = myOverrideData.get(file.getPath());
+    return regions != null ? regions : Collections.<DartOverrideMember>emptyList();
   }
 
   @NotNull
   public List<DartRegion> getImplementedClasses(@NotNull final VirtualFile file) {
-    synchronized (myImplementedClassData) {
-      final List<DartRegion> classes = myImplementedClassData.get(file.getPath());
-      return classes != null ? classes : Collections.<DartRegion>emptyList();
-    }
+    final List<DartRegion> classes = myImplementedClassData.get(file.getPath());
+    return classes != null ? classes : Collections.<DartRegion>emptyList();
   }
 
   @NotNull
   public List<DartRegion> getImplementedMembers(@NotNull final VirtualFile file) {
-    synchronized (myImplementedClassData) {
-      final List<DartRegion> classes = myImplementedMemberData.get(file.getPath());
-      return classes != null ? classes : Collections.<DartRegion>emptyList();
-    }
+    final List<DartRegion> classes = myImplementedMemberData.get(file.getPath());
+    return classes != null ? classes : Collections.<DartRegion>emptyList();
   }
 
   private void forceFileAnnotation(@NotNull final String filePath, final boolean clearCache) {
@@ -179,77 +161,47 @@ public class DartServerData {
   }
 
   void onFileClosed(@NotNull final VirtualFile file) {
-    synchronized (myHighlightData) {
-      myHighlightData.remove(file.getPath());
-    }
-    synchronized (myNavigationData) {
-      myNavigationData.remove(file.getPath());
-    }
-    synchronized (myOverrideData) {
-      myOverrideData.remove(file.getPath());
-    }
-    synchronized (myImplementedClassData) {
-      myImplementedClassData.remove(file.getPath());
-    }
-    synchronized (myImplementedMemberData) {
-      myImplementedMemberData.remove(file.getPath());
-    }
+    myHighlightData.remove(file.getPath());
+    myNavigationData.remove(file.getPath());
+    myOverrideData.remove(file.getPath());
+    myImplementedClassData.remove(file.getPath());
+    myImplementedMemberData.remove(file.getPath());
   }
 
   public void onFlushedResults(@NotNull final List<String> filePaths) {
     if (!myHighlightData.isEmpty()) {
-      synchronized (myHighlightData) {
-        for (String path : filePaths) {
-          myHighlightData.remove(FileUtil.toSystemIndependentName(path));
-        }
+      for (String path : filePaths) {
+        myHighlightData.remove(FileUtil.toSystemIndependentName(path));
       }
     }
     if (!myNavigationData.isEmpty()) {
-      synchronized (myNavigationData) {
-        for (String path : filePaths) {
-          myNavigationData.remove(FileUtil.toSystemIndependentName(path));
-        }
+      for (String path : filePaths) {
+        myNavigationData.remove(FileUtil.toSystemIndependentName(path));
       }
     }
     if (!myOverrideData.isEmpty()) {
-      synchronized (myOverrideData) {
-        for (String path : filePaths) {
-          myOverrideData.remove(FileUtil.toSystemIndependentName(path));
-        }
+      for (String path : filePaths) {
+        myOverrideData.remove(FileUtil.toSystemIndependentName(path));
       }
     }
     if (!myImplementedClassData.isEmpty()) {
-      synchronized (myImplementedClassData) {
-        for (String path : filePaths) {
-          myImplementedClassData.remove(FileUtil.toSystemIndependentName(path));
-        }
+      for (String path : filePaths) {
+        myImplementedClassData.remove(FileUtil.toSystemIndependentName(path));
       }
     }
     if (!myImplementedMemberData.isEmpty()) {
-      synchronized (myImplementedMemberData) {
-        for (String path : filePaths) {
-          myImplementedMemberData.remove(FileUtil.toSystemIndependentName(path));
-        }
+      for (String path : filePaths) {
+        myImplementedMemberData.remove(FileUtil.toSystemIndependentName(path));
       }
     }
   }
 
   public void clearData() {
-    synchronized (myHighlightData) {
-      myHighlightData.clear();
-    }
-    synchronized (myNavigationData) {
-      myNavigationData.clear();
-    }
-    synchronized (myOverrideData) {
-      myOverrideData.clear();
-    }
-    synchronized (myImplementedClassData) {
-      myImplementedClassData.clear();
-    }
-    synchronized (myImplementedMemberData) {
-      myImplementedMemberData.clear();
-    }
+    myHighlightData.clear();
+    myNavigationData.clear();
+    myOverrideData.clear();
+    myImplementedClassData.clear();
+    myImplementedMemberData.clear();
   }
 
   void onDocumentChanged(@NotNull final DocumentEvent e) {
@@ -259,21 +211,11 @@ public class DartServerData {
     final String filePath = file.getPath();
     myFilePathsWithUnsentChanges.add(filePath);
 
-    synchronized (myNavigationData) {
-      updateRegionsDeletingTouched(filePath, myNavigationData.get(filePath), e);
-    }
-    synchronized (myHighlightData) {
-      updateRegionsUpdatingTouched(myHighlightData.get(filePath), e);
-    }
-    synchronized (myOverrideData) {
-      updateRegionsDeletingTouched(filePath, myOverrideData.get(filePath), e);
-    }
-    synchronized (myImplementedClassData) {
-      updateRegionsDeletingTouched(filePath, myImplementedClassData.get(filePath), e);
-    }
-    synchronized (myImplementedMemberData) {
-      updateRegionsDeletingTouched(filePath, myImplementedMemberData.get(filePath), e);
-    }
+    updateRegionsUpdatingTouched(myHighlightData.get(filePath), e);
+    updateRegionsDeletingTouched(filePath, myNavigationData.get(filePath), e);
+    updateRegionsDeletingTouched(filePath, myOverrideData.get(filePath), e);
+    updateRegionsDeletingTouched(filePath, myImplementedClassData.get(filePath), e);
+    updateRegionsDeletingTouched(filePath, myImplementedMemberData.get(filePath), e);
   }
 
   private static void updateRegionsDeletingTouched(@NotNull final String filePath,
