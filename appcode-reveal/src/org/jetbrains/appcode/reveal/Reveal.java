@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.script.ScriptException;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class Reveal {
@@ -21,10 +22,20 @@ public class Reveal {
 
   @Nullable
   private static File getRevealBundle() {
+
     String path = NSWorkspace.absolutePathForAppBundleWithIdentifier("com.ittybittyapps.Reveal");
     if (path == null) return null;
     
     File result = new File(path);
+    return result.exists() ? result : null;
+  }
+
+  @Nullable
+  private static File getRevealInspectionScript() {
+    File bundle = getRevealBundle();
+    if (bundle == null) return null;
+
+    File result = new File(bundle, "/Contents/Resources/Inspect Application.scpt");
     return result.exists() ? result : null;
   }
 
@@ -40,6 +51,11 @@ public class Reveal {
   public static boolean isCompatible() {
     Version version = getRevealVersion();
     return version != null && version.isOrGreaterThan(2299);
+  }
+
+  public static boolean isCompatibleWithRevealOnePointSixOrHigher() {
+    Version version = getRevealVersion();
+    return version != null && version.isOrGreaterThan(5589);
   }
 
   @Nullable
@@ -64,24 +80,53 @@ public class Reveal {
   public static void refreshReveal(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
     UsageTrigger.trigger("appcode.reveal.showInReveal");
 
-    String script = "activate\n" +
-                    "repeat with doc in documents\n" +
-                    " refresh doc " +
-                    "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
-                    "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
-                    "   when available\n" +
-                    "end repeat\n" +
-                    "activate\n";
+    if (isCompatibleWithRevealOnePointSixOrHigher()) {
 
-    try {
-      AppleScript.tell("Reveal",
-                       script,
-                       true
-      );
-    }
-    catch (ScriptException e) {
-      LOG.info("Reveal script failed:\n" + script);
-      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      // Reveal 1.6 bundles the refresh script with the application — execute it using osascript
+      File inspectionScript = getRevealInspectionScript();
+      if (inspectionScript == null) {
+        throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found at path: " + inspectionScript.toString());
+      }
+
+      try {
+        ProcessBuilder pb = new ProcessBuilder(
+                "/usr/bin/osascript",
+                inspectionScript.toString(),
+                bundleID,
+                deviceName
+        );
+
+        Process p = pb.start();
+        p.waitFor();
+      }
+      catch (IOException e) {
+        throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      } catch (InterruptedException e) {
+        throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      }
+
+    } else {
+
+      // Pre Reveal 1.6, the refresh script was not bundled with the application
+      String script = "activate\n" +
+              "repeat with doc in documents\n" +
+              " refresh doc " +
+              "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
+              "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
+              "   when available\n" +
+              "end repeat\n" +
+              "activate\n";
+
+      try {
+        AppleScript.tell("Reveal",
+                script,
+                true
+        );
+      }
+      catch (ScriptException e) {
+        LOG.info("Reveal script failed:\n" + script);
+        throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      }
     }
   }
 }
