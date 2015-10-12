@@ -2,16 +2,19 @@ package training.lesson;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.Nullable;
 import training.editor.eduUI.EduIcons;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
+import training.lesson.exceptons.NoProjectException;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -28,6 +31,10 @@ public class Lesson extends AnAction {
 
     private boolean passed;
     private boolean isOpen;
+
+    /*Metrics*/
+    private Date startTimestamp;
+    private Date finishTimestamp;
 
 
     public boolean getPassed() {
@@ -94,12 +101,27 @@ public class Lesson extends AnAction {
         isOpen = true;
     }
 
+
+    public void open() throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadCourseException {
+        Project currentProject = CourseManager.getInstance().getCurrentProject();
+        if (currentProject == null) {
+            currentProject = CourseManager.getInstance().getEduProject();
+        }
+        if (currentProject == null) throw new NoProjectException();
+        CourseManager.getInstance().openLesson(currentProject, this);
+    }
+
+    public void open(Project projectWhereToOpenLesson) throws NoProjectException, BadLessonException, ExecutionException, LessonIsOpenedException, IOException, FontFormatException, InterruptedException, BadCourseException {
+        CourseManager.getInstance().openLesson(projectWhereToOpenLesson, this);
+    }
+
     @Deprecated
     public void close(){
         //destroy infoPanel (infoPanel = null)
         isOpen = false;
         onClose();
     }
+
 
 
     public boolean isOpen() {return isOpen;}
