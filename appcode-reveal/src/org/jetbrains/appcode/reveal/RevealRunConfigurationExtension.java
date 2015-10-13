@@ -183,7 +183,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     BuildDestination destination = buildConfiguration.getDestination();
-    if (!destination.isIOSDevice()) {
+    if (!destination.isDevice()) {
       return libReveal;
     }
 
@@ -240,7 +240,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
     UsageTrigger.trigger("appcode.reveal.installOnDevice");
 
-    AMDevice device = destination.getIOSDeviceSafe();
+    AMDevice device = destination.getDeviceSafe();
     return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
                            getBundleID(environment, product));
   }
