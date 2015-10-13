@@ -4,7 +4,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import training.lesson.ActionsRecorder;
 import training.check.Check;
-import training.lesson.LessonLog;
+import training.lesson.log.LessonLog;
 import training.util.MyClassLoader;
 import training.commandsEx.ActionCommandEx;
 import training.keymap.KeymapUtil;

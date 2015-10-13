@@ -1,6 +1,7 @@
-package training.lesson;
+package training.lesson.log;
 
 import com.intellij.openapi.util.Pair;
+import training.lesson.Lesson;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,31 +11,53 @@ import java.util.Date;
  */
 public class LessonLog {
 
-    final private Lesson myLesson;
-    private ArrayList<Pair<Date, String>> logData;
+    public Lesson myLesson;
+    public ArrayList<MyPair> logData;
     public int exerciseCount = 0;
+
+    public LessonLog(){
+        myLesson = null;
+        logData = new ArrayList<MyPair>();
+    }
+
+    public Lesson getMyLesson() {
+        return myLesson;
+    }
+
+    public void setMyLesson(Lesson myLesson) {
+        this.myLesson = myLesson;
+    }
 
     public LessonLog(Lesson lesson) {
         myLesson = lesson;
-        logData = new ArrayList<Pair<Date, String>>();
+        logData = new ArrayList<MyPair>();
         log("Log is created. Lesson:" + lesson.getName());
     }
 
     public void log(String actionString){
-        logData.add(Pair.create(new Date(), actionString));
+        logData.add(new MyPair(new Date(), actionString));
+    }
+
+    public void resetCounter(){
+        exerciseCount = 0;
+    }
+
+    public Date getFirstDate(){
+        return logData.get(0).first;
     }
 
     public void print(){
-        for (Pair<Date, String> dateStringPair : logData) {
+        for (MyPair dateStringPair : logData) {
             System.out.println(dateStringPair.first + ": " + dateStringPair.first);
         }
     }
 
     public String exportToString(){
         StringBuilder sb = new StringBuilder();
-        for (Pair<Date, String> dateStringPair : logData) {
+        for (MyPair dateStringPair : logData) {
             sb.append(dateStringPair.first).append(": ").append(dateStringPair.first).append("; ");
         }
         return sb.toString();
     }
+
 }
