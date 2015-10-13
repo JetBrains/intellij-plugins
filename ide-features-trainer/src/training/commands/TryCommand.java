@@ -4,6 +4,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import training.lesson.ActionsRecorder;
 import training.check.Check;
+import training.lesson.LessonLog;
 import training.util.MyClassLoader;
 import training.commandsEx.ActionCommandEx;
 import training.keymap.KeymapUtil;
@@ -92,8 +93,7 @@ public class TryCommand extends Command {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
-                executionList.getEduEditor().passExercise();
-                startNextCommand(executionList);
+                pass(executionList);
             }
         }, actionId, check);
     }
@@ -102,11 +102,18 @@ public class TryCommand extends Command {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
-                executionList.getEduEditor().passExercise();
-                startNextCommand(executionList);
+                pass(executionList);
             }
         }, actionIdArray, check);
     }
+
+    private void pass(ExecutionList executionList) {
+        executionList.getEduEditor().passExercise();
+        final LessonLog lessonLog = executionList.getLesson().getLessonLog();
+        lessonLog.log("Passed exercise. Exercise #" + lessonLog.exerciseCount++);
+        startNextCommand(executionList);
+    }
+
 
     private String getFromTarget(Lesson lesson, String targetPath) throws IOException {
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getCourse().getAnswersPath() + targetPath);

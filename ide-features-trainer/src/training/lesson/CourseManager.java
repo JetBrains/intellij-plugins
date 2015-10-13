@@ -4,28 +4,19 @@ import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.editor.EditorGutter;
-import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.SdkFinder;
-import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +29,6 @@ import training.lesson.exceptons.*;
 import training.util.GenerateCourseXml;
 import training.util.MyClassLoader;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -137,7 +127,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     public synchronized void openLesson(Project project, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
         try {
+
             assert lesson != null;
+
+
             checkEnvironment(project, lesson.getCourse());
 
             if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getName() + " is opened");
@@ -167,6 +160,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
             //open next lesson if current is passed
             final Project currentProject = project;
+
+            lesson.onStart();
+
             lesson.addLessonListener(new LessonListenerAdapter() {
                 @Override
                 public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
@@ -205,6 +201,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 public void selectionChanged(FileEditorManagerEvent event) {
                 }
             });
+
 
             //Get EduEditor for the lesson. Select corresponding when EduEditor for this course is opened. Create a new EduEditor if no lessons for this course are opened.
             EduEditor eduEditor = getEduEditor(project, vf);

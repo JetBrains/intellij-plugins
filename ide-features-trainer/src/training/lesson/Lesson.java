@@ -14,7 +14,6 @@ import training.lesson.exceptons.NoProjectException;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -32,10 +31,8 @@ public class Lesson extends AnAction {
     private boolean passed;
     private boolean isOpen;
 
-    /*Metrics*/
-    private Date startTimestamp;
-    private Date finishTimestamp;
-
+    /*Log lesson metrics*/
+    private LessonLog lessonLog;
 
     public boolean getPassed() {
         return passed;
@@ -70,25 +67,27 @@ public class Lesson extends AnAction {
 
     public Lesson(){
         passed = false;
+        lessonLog = new LessonLog(this);
     }
 
     public Lesson(Scenario scenario, boolean passed, @Nullable Course course) throws BadLessonException {
 
         super(scenario.getName());
-            scn = scenario;
-            name = scn.getName();
+        scn = scenario;
+        name = scn.getName();
 
-            this.passed = passed;
-            if (!scn.getSubtype().equals("aimless")) {
-                targetPath = scn.getTarget();
-            } else {
-                targetPath = null;
-            }
-            lessonListeners = new ArrayList<LessonListener>();
-            parentCourse = course;
+        this.passed = passed;
+        if (!scn.getSubtype().equals("aimless")) {
+            targetPath = scn.getTarget();
+        } else {
+            targetPath = null;
+        }
+        lessonListeners = new ArrayList<LessonListener>();
+        parentCourse = course;
 
-            isOpen = false;
+        isOpen = false;
 
+        lessonLog = new LessonLog(this);
 
     }
 
@@ -126,6 +125,9 @@ public class Lesson extends AnAction {
 
     public boolean isOpen() {return isOpen;}
 
+    public LessonLog getLessonLog(){
+        return lessonLog;
+    }
 
     public Scenario getScn(){
         return scn;
@@ -153,6 +155,7 @@ public class Lesson extends AnAction {
     }
 
     public void onStart(){
+        lessonLog.log("Lesson started");
         if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
 
         for (LessonListener lessonListener : lessonListeners) {
@@ -171,15 +174,11 @@ public class Lesson extends AnAction {
 
     //call onPass handlers in lessonListeners
     public void onPass(){
+        lessonLog.log("Lesson passed");
+
         if(passed) return;
-        scn.getRoot().getAttribute("passed").setValue("true");
-        try {
-            scn.saveState();
-            for (LessonListener lessonListener : lessonListeners) {
-                lessonListener.lessonPassed(this);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (LessonListener lessonListener : lessonListeners) {
+            lessonListener.lessonPassed(this);
         }
         passed = true;
     }
@@ -190,6 +189,10 @@ public class Lesson extends AnAction {
         }
     }
 
+    public void pass(){
+        setPassed(true);
+        onPass();
+    }
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {

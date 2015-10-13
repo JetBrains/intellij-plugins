@@ -1,14 +1,9 @@
 package training.editor.eduUI;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
-import training.editor.actions.EduActions;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
 import training.lesson.LessonIsOpenedException;
