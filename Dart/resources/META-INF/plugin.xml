@@ -92,7 +92,9 @@
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>
 
     <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>-->
+    <!--<definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>-->
     <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>
+    <definitionsScopedSearch implementation="com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher"/>
 
     <codeInsight.overrideMethod language="Dart"
                                 implementationClass="com.jetbrains.lang.dart.ide.generation.DartOverrideMethodHandler"/>
@@ -107,8 +109,6 @@
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartComponentIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSymbolIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex"/>
-
-    <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
     <!-- moduleBuilder works in IntelliJ IDEA only -->
     <moduleBuilder builderClass="com.jetbrains.lang.dart.projectWizard.DartModuleBuilder"/>

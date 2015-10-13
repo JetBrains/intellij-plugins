@@ -1,21 +1,29 @@
-package com.jetbrains.lang.dart.resolve;
+package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartGotoImplementationTest extends DartCodeInsightFixtureTestCase {
+public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+  }
+
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/gotoImplementation/");
+    return FileUtil.toSystemDependentName("/analysisServer/gotoImplementation");
   }
 
   protected void doTest(int expectedLength) throws Throwable {
     myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.doHighlighting();
     doTestInner(expectedLength);
   }
 

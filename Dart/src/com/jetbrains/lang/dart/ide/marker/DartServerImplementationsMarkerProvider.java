@@ -15,8 +15,6 @@
  */
 package com.jetbrains.lang.dart.ide.marker;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
@@ -26,17 +24,15 @@ import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
+import com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import org.dartlang.analysis.server.protocol.Element;
-import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class DartServerImplementationsMarkerProvider implements LineMarkerProvider {
 
@@ -59,54 +54,6 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
     }
     final DartComponentName name = (DartComponentName)element;
     return createMarker(name);
-  }
-
-  private static void addSubClasses(@NotNull final Project project,
-                                    @NotNull final Set<TypeHierarchyItem> visited,
-                                    @NotNull final List<TypeHierarchyItem> items,
-                                    @NotNull final List<DartComponent> components,
-                                    @NotNull final TypeHierarchyItem item,
-                                    final boolean addItem) {
-    if (!visited.add(item)) {
-      return;
-    }
-    if (addItem) {
-      final Element element = item.getClassElement();
-      final Location location = element.getLocation();
-      final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
-      if (component != null) {
-        components.add(component);
-      }
-    }
-    for (int subIndex : item.getSubclasses()) {
-      final TypeHierarchyItem subItem = items.get(subIndex);
-      addSubClasses(project, visited, items, components, subItem, true);
-    }
-  }
-
-  private static void addSubMembers(@NotNull final Project project,
-                                    @NotNull final Set<TypeHierarchyItem> visited,
-                                    @NotNull final List<TypeHierarchyItem> items,
-                                    @NotNull final List<DartComponent> components,
-                                    @NotNull final TypeHierarchyItem item,
-                                    final boolean addItem) {
-    if (!visited.add(item)) {
-      return;
-    }
-    if (addItem) {
-      final Element element = item.getMemberElement();
-      if (element != null) {
-        final Location location = element.getLocation();
-        final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
-        if (component != null) {
-          components.add(component);
-        }
-      }
-    }
-    for (int subIndex : item.getSubclasses()) {
-      final TypeHierarchyItem subItem = items.get(subIndex);
-      addSubMembers(project, visited, items, components, subItem, true);
-    }
   }
 
   @Nullable
@@ -156,8 +103,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
           return;
         }
         // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
-        final List<DartComponent> components = Lists.newArrayList();
-        addSubClasses(name.getProject(), Sets.<TypeHierarchyItem>newHashSet(), items, components, items.get(0), false);
+        final List<DartComponent> components = DartInheritorsSearcher.getSubClasses(name.getProject(), null, items);
         PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
                                             DaemonBundle.message("navigation.title.subclass", name.getName(), components.size()),
                                             "Subclasses of " + name.getName(), new DefaultPsiElementCellRenderer());
@@ -183,8 +129,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
           return;
         }
         // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
-        final List<DartComponent> components = Lists.newArrayList();
-        addSubMembers(name.getProject(), Sets.<TypeHierarchyItem>newHashSet(), items, components, items.get(0), false);
+        final List<DartComponent> components = DartInheritorsSearcher.getSubMembers(name.getProject(), null, items);
         PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
                                             DaemonBundle.message("navigation.title.overrider.method", name.getName(), components.size()),
                                             "Overriding methods of " + name.getName(),

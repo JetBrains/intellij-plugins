@@ -53,15 +53,15 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart", "SomePart.dart");
   }
 
-  public void testSubtypeExtends() throws Exception {
+  public void _testSubtypeExtends() throws Exception {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
-  public void testSubtypeImplements() throws Exception {
+  public void _testSubtypeImplements() throws Exception {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
-  public void testSubtypeMixins() throws Exception {
+  public void _testSubtypeMixins() throws Exception {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
