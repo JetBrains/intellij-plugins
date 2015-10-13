@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import training.editor.MouseListenerHolder;
 import training.editor.EduEditor;
 import training.lesson.Lesson;
-import training.lesson.LessonLog;
 
 import java.util.Queue;
 

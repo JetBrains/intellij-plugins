@@ -26,6 +26,7 @@ import training.editor.EduEditor;
 import training.editor.EduEditorProvider;
 import training.lesson.dialogs.SdkProblemDialog;
 import training.lesson.exceptons.*;
+import training.lesson.log.GlobalLessonLog;
 import training.util.GenerateCourseXml;
 import training.util.MyClassLoader;
 
@@ -425,8 +426,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     static class State {
         public final ArrayList<Course> courses = new ArrayList<Course>();
-        public final String STATE_DESCRIPTION = "Course manager state saver";
         public String eduProjectPath;
+        public GlobalLessonLog globalLessonLog = new GlobalLessonLog();
 
         public State() {
         }
@@ -447,6 +448,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         return myState.courses.toArray(new Course[myState.courses.size()]);
     }
 
+    public GlobalLessonLog getGlobalLessonLog(){
+        return myState.globalLessonLog;
+    }
+
     @Override
     public State getState() {
         return myState;
@@ -454,8 +459,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Override
     public void loadState(State state) {
-//        myState.eduProjectPath = state.eduProjectPath;
         myState.eduProjectPath = null;
+        myState.globalLessonLog = state.globalLessonLog;
 
         if (state.courses == null || state.courses.size() == 0) {
             try {
