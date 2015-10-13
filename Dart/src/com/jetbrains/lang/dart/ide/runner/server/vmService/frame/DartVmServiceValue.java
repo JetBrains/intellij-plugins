@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartVmServiceValue extends XNamedValue {
+  private static final int MAX_COLLECTION_ELEMENTS_TO_SHOW = 1000;
+
   private final DartVmServiceDebugProcess myDebugProcess;
   private String myIsolateId;
   private final InstanceRef myInstanceRef;
@@ -97,31 +99,12 @@ public class DartVmServiceValue extends XNamedValue {
   }
 
   private static boolean computeListPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
-    // List, Uint8ClampedList, Uint8List, Uint16List, Uint32List, Uint64List, Int8List, Int16List, Int32List, Int64List, Float32List,
-    // Float64List, Int32x4List, Float32x4List, Float64x2List
-    switch (instanceRef.getKind()) {
-      case List:
-      case Uint8ClampedList:
-      case Uint8List:
-      case Uint16List:
-      case Uint32List:
-      case Uint64List:
-      case Int8List:
-      case Int16List:
-      case Int32List:
-      case Int64List:
-      case Float32List:
-      case Float64List:
-      case Int32x4List:
-      case Float32x4List:
-      case Float64x2List:
-        final String value = "size = " + instanceRef.getLength();
-        node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, true);
-        break;
-      default:
-        return false;
+    if (isListKind(instanceRef.getKind())) {
+      final String value = "size = " + instanceRef.getLength();
+      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, true);
+      return true;
     }
-    return true;
+    return false;
   }
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
@@ -153,33 +136,23 @@ public class DartVmServiceValue extends XNamedValue {
 
   @Override
   public void computeChildren(@NotNull final XCompositeNode node) {
+    if ((isListKind(myInstanceRef.getKind()) || myInstanceRef.getKind() == InstanceKind.Map) &&
+        myInstanceRef.getLength() > MAX_COLLECTION_ELEMENTS_TO_SHOW) {
+      node.setErrorMessage("Too many items");
+      return;
+    }
+
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj obj) {
-        switch (myInstanceRef.getKind()) {
-          case List:
-          case Uint8ClampedList:
-          case Uint8List:
-          case Uint16List:
-          case Uint32List:
-          case Uint64List:
-          case Int8List:
-          case Int16List:
-          case Int32List:
-          case Int64List:
-          case Float32List:
-          case Float64List:
-          case Int32x4List:
-          case Float32x4List:
-          case Float64x2List:
-            addListChildren(node, ((Instance)obj).getElements());
-            break;
-          case Map:
-            addMapChildren(node, ((Instance)obj).getAssociations());
-            break;
-          default:
-            addFields(node, ((Instance)obj).getFields());
-            break;
+        if (isListKind(myInstanceRef.getKind())) {
+          addListChildren(node, ((Instance)obj).getElements());
+        }
+        else if (myInstanceRef.getKind() == InstanceKind.Map) {
+          addMapChildren(node, ((Instance)obj).getAssociations());
+        }
+        else {
+          addFields(node, ((Instance)obj).getFields());
         }
       }
 
@@ -261,5 +234,24 @@ public class DartVmServiceValue extends XNamedValue {
       default:
         return "[" + instanceRef.getClassRef().getName() + "]";
     }
+  }
+
+  private static boolean isListKind(@NotNull final InstanceKind kind) {
+    // List, Uint8ClampedList, Uint8List, Uint16List, Uint32List, Uint64List, Int8List, Int16List, Int32List, Int64List, Float32List, Float64List, Int32x4List, Float32x4List, Float64x2List
+    return kind == InstanceKind.List ||
+           kind == InstanceKind.Uint8ClampedList ||
+           kind == InstanceKind.Uint8List ||
+           kind == InstanceKind.Uint16List ||
+           kind == InstanceKind.Uint32List ||
+           kind == InstanceKind.Uint64List ||
+           kind == InstanceKind.Int8List ||
+           kind == InstanceKind.Int16List ||
+           kind == InstanceKind.Int32List ||
+           kind == InstanceKind.Int64List ||
+           kind == InstanceKind.Float32List ||
+           kind == InstanceKind.Float64List ||
+           kind == InstanceKind.Int32x4List ||
+           kind == InstanceKind.Float32x4List ||
+           kind == InstanceKind.Float64x2List;
   }
 }
