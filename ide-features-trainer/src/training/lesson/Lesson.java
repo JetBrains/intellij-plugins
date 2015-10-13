@@ -10,6 +10,7 @@ import training.editor.eduUI.EduIcons;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
 import training.lesson.exceptons.NoProjectException;
+import training.lesson.log.LessonLog;
 
 import java.awt.*;
 import java.io.IOException;
@@ -87,8 +88,6 @@ public class Lesson extends AnAction {
 
         isOpen = false;
 
-        lessonLog = new LessonLog(this);
-
     }
 
     @Deprecated
@@ -155,7 +154,9 @@ public class Lesson extends AnAction {
     }
 
     public void onStart(){
+        lessonLog = new LessonLog(this);
         lessonLog.log("Lesson started");
+        lessonLog.resetCounter();
         if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
 
         for (LessonListener lessonListener : lessonListeners) {
@@ -175,12 +176,12 @@ public class Lesson extends AnAction {
     //call onPass handlers in lessonListeners
     public void onPass(){
         lessonLog.log("Lesson passed");
+        CourseManager.getInstance().getGlobalLessonLog().commitSession(this);
 
-        if(passed) return;
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonPassed(this);
         }
-        passed = true;
+
     }
 
     public void onNextLesson() throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
