@@ -37,7 +37,7 @@ public class Scenario {
         root = doc.getRootElement();
     }
 
-
+    @Deprecated
     public void saveState() throws IOException {
         XMLOutputter xmlOutput = new XMLOutputter();
         String saveFile = this.getClass().getResource(path).getFile();

@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import training.lesson.*;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
+import training.lesson.LessonIsOpenedException;
 
 import java.awt.*;
 import java.io.IOException;

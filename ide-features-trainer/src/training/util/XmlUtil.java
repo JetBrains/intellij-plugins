@@ -3,17 +3,9 @@ package training.util;
 import training.editor.eduUI.Message;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
-import training.lesson.CourseManager;
-import training.lesson.Lesson;
-import training.lesson.LessonIsOpenedException;
-import training.lesson.exceptons.BadCourseException;
-import training.lesson.exceptons.BadLessonException;
 
 import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 19/03/15.

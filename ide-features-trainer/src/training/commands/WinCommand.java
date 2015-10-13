@@ -15,7 +15,7 @@ public class WinCommand extends Command {
     public void execute(ExecutionList executionList) throws InterruptedException {
 
         Element element = executionList.getElements().poll();
-        executionList.getLesson().setPassed(true);
+        executionList.getLesson().pass();
         executionList.getEduEditor().passLesson(executionList.getLesson());
 
     }
