@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
-import com.jetbrains.cidr.execution.IOSBuildDestination;
+import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
@@ -108,11 +108,11 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
   @NotNull
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (destination.isIOSDevice()) {
-      return destination.getIOSDeviceSafe().getName();
+    if (destination.isDevice()) {
+      return destination.getDeviceSafe().getName();
     }
-    else if (destination.isIOSSimulator()) {
-      IOSBuildDestination.Simulator simulator = destination.getIOSSimulator();
+    else if (destination.isSimulator()) {
+      SimulatedBuildDestination.Simulator simulator = destination.getSimulator();
       if (simulator == null) throw new ExecutionException("Simulator not specified.");
 
       switch (simulator.getDeviceFamilyID()) {
