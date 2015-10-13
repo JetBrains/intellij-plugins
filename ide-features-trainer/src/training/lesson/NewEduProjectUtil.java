@@ -38,8 +38,8 @@ public class NewEduProjectUtil {
     public static Project createEduProject(@NotNull String projectName, @Nullable Project projectToClose, @Nullable final Sdk projectSdk) throws IOException {
         final ProjectManagerEx projectManager = ProjectManagerEx.getInstanceEx();
 
-        final String allProjectsDir = "/Users/jetbrains/IdeaProjects";
-
+        String allProjectsDir = "/Users/jetbrains/IdeaProjects";
+        allProjectsDir = ProjectUtil.getBaseDir().toString();
         final ProjectBuilder projectBuilder = new JavaModuleBuilder();
 
         try {
