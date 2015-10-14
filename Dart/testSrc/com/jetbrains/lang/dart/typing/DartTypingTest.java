@@ -1,9 +1,14 @@
 package com.jetbrains.lang.dart.typing;
 
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 
 public class DartTypingTest extends DartCodeInsightFixtureTestCase {
@@ -18,8 +23,15 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after.dart");
   }
 
-  private void doTypingTest(final char charToType, final @NotNull String textBefore, final @NotNull String textAfter) {
-    myFixture.configureByText(DartFileType.INSTANCE, textBefore);
+  private void doTypingTest(final char charToType, @NotNull final String textBefore, @NotNull final String textAfter) {
+    doTypingTest(DartFileType.INSTANCE, charToType, textBefore, textAfter);
+  }
+
+  private void doTypingTest(@NotNull final LanguageFileType fileType,
+                            final char charToType,
+                            @NotNull final String textBefore,
+                            @NotNull final String textAfter) {
+    myFixture.configureByText(fileType, textBefore);
     myFixture.type(charToType);
     myFixture.checkResult(textAfter);
   }
@@ -354,6 +366,14 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', "  ///   q  <caret>    z", "  ///   q  \n  ///   <caret> z");
     doTypingTest('\n', "///q<caret>z", "///q\n///<caret>z");
     doTypingTest('\n', " ///q<caret> \t ///z", " ///q \t \n ///<caret>z");
+
+    doTypingTest(HtmlFileType.INSTANCE, '\n',
+                 "<script type=\"application/dart\">\n" +
+                 "///   q<caret>   z\n" +
+                 "</script>",
+                 "<script type=\"application/dart\">\n" +
+                 "///   q\n///   <caret>z\n" +
+                 "</script>");
   }
 
   public void testEnterAfterSingleLineComment() {
@@ -373,5 +393,218 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "  <caret>\n" +
                  "  print(file.path);\n" +
                  "}\n");
+  }
+
+  public void testEnterAfterIncompleteStatement() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds<caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds\n" +
+                 "        <caret>\n" +
+                 "  }\n" +
+                 "}");
+  }
+
+  public void testEnterAfterCompleteStatement() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}");
+  }
+
+  public void testEnterAfterBlankLine() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    \n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}");
+  }
+
+  public void testEnterAfterCompleteStatementInIncompleteBlock() {
+    doTypingTest('\n',
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>\n" +
+                 "  }\n" +
+                 "",
+                 "class T {\n" +
+                 "  void r() {\n" +
+                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "");
+  }
+
+  public void testEnterBetweenEmptyStringQuotes() {
+    // Checks single quotes.
+    doTypingTest('\n',
+                 "var x = '<caret>'",
+                 "var x = ''\n" +
+                 "    '<caret>'");
+  }
+
+  public void testEnterBetweenStringQuotes() {
+    // Checks single quotes.
+    doTypingTest('\n',
+                 "var x = 'content<caret>'",
+                 "var x = 'content'\n" +
+                 "    '<caret>'");
+  }
+
+  public void testEnterMidString() {
+    doTypingTest('\n',
+                 "var x = 'content<caret>and stuff'",
+                 "var x = 'content'\n" +
+                 "    '<caret>and stuff'");
+  }
+
+  public void testAutoWrapString() {
+    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
+    settings.RIGHT_MARGIN = 42;
+    doTypingTest('3',
+                 "var x = '12345678901234567890123456789012<caret>'",
+                 "var x = '123456789012345678901234567890'\n" +
+                 "    '123<caret>'");
+  }
+
+  public void testAutoWrapCascade() {
+    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
+    settings.RIGHT_MARGIN = 42;
+    doTypingTest('3',
+                 "var x = a123456789012345..b890123456789012<caret>",
+                 "var x = a123456789012345\n" +
+                 "  ..b8901234567890123");
+  }
+
+  public void testAutoWrapStringEscape() {
+    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
+    settings.RIGHT_MARGIN = 42;
+    doTypingTest('3',
+                 "var x = '123456789012345\\t890123456789012<caret>'",
+                 "var x = '123456789012345'\n" +
+                 "    '\\t8901234567890123'");
+  }
+
+  public void testAutoIndentMultilineString() {
+    doTypingTest('\n',
+                 "var q = '''<caret>",
+                 "var q = '''\n" +
+                 "<caret>");
+  }
+
+  public void testEnterMidRawString() {
+    doTypingTest('\n',
+                 "var x = r'content<caret>and stuff'",
+                 "var x = r'content'\n" +
+                 "    r'<caret>and stuff'");
+  }
+
+  public void testEnterMidInterpolatedString() {
+    doTypingTest('\n',
+                 "var x = 'content<caret>and $some stuff'",
+                 "var x = 'content'\n" +
+                 "    '<caret>and $some stuff'");
+  }
+
+  public void testEnterBetweenInterpolations() {
+    doTypingTest('\n',
+                 "var a = '$x and <caret> also $y';",
+                 "var a = '$x and '\n" +
+                 "    '<caret> also $y';");
+  }
+
+  public void testEnterBetweenInterpolationsHtml() {
+    doTypingTest(HtmlFileType.INSTANCE, '\n',
+                 "<script type=\"application/dart\">\n" +
+                 "var a = '$x and <caret> also $y';\n" +
+                 "</script>",
+                 "<script type=\"application/dart\">\n" +
+                 "var a = '$x and '\n" +
+                 // 8 spaces continuation indent is taken from HTML language instead of Dart's 4 spaces. Fix expected result when it is fixed in Platform
+                 "        '<caret> also $y';\n" +
+                 "</script>");
+  }
+
+  public void testEnterBeforeInterpolation() {
+    doTypingTest('\n',
+                 "var a = \"see <caret>$y\";",
+                 "var a = \"see \"\n" +
+                 "    \"<caret>$y\";");
+  }
+
+  public void testEnterBeforeInterpolationSequence() {
+    doTypingTest('\n',
+                 "var a = \"see <caret>$y${z}\";",
+                 "var a = \"see \"\n" +
+                 "    \"<caret>$y${z}\";");
+  }
+
+  public void testEnterBeforeInterpolatedExpr() {
+    doTypingTest('\n',
+                 "var a = 'see <caret> also ${y}';",
+                 "var a = 'see '\n" +
+                 "    '<caret> also ${y}';");
+  }
+
+  public void testEnterInMultilineString() {
+    doTypingTest('\n',
+                 "var a = '''some<caret>content''';",
+                 "var a = '''some\n" +
+                 "<caret>content''';");
+  }
+
+  public void testEnterInRawMultilineString() {
+    doTypingTest('\n',
+                 "var a = r'''some<caret>content''';",
+                 "var a = r'''some\n" +
+                 "<caret>content''';");
+  }
+
+  public void testEnterBeforeEmbeddedInterpolation() {
+    // We are not going to address the whole issue of
+    // "how do I format an entire functional program written in an interpolation expression"
+    doTypingTest('\n',
+                 "var b = \"see ${'${<caret>a}'} and more\";",
+                 "var b = \"see ${'${\n" +
+                 "    a}'} and more\";");
+  }
+
+  public void testEnterAfterEqualsVar() {
+    doTypingTest('\n',
+                 "o =<caret>",
+                 "o =\n" +
+                 "    <caret>");
+  }
+
+  public void testEnterAfterEqualsProperty() {
+    doTypingTest('\n',
+                 "o.x =<caret>",
+                 "o.x =\n" +
+                 "    <caret>");
   }
 }

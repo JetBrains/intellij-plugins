@@ -1,0 +1,7 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <debug>true</debug>
+    <services>\path\to\services-config.xml</services>
+    <context-root>context-root</context-root>
+  </compiler>
+</flex-config>

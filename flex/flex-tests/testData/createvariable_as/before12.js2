@@ -1,0 +1,10 @@
+// "Create Field 'yyy33'" "true"
+package foo {
+  class Foo2 {}
+}
+
+import foo.*;
+
+class Bar {
+    var x:Foo2 = yy<caret>y33;
+}

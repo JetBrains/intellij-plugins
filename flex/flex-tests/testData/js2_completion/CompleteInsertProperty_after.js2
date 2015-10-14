@@ -1,0 +1,5 @@
+var _actionManagerAwareWorker:IActionManagerAware;
+
+function foo():void {
+    _actionManagerAwareWorker.actionManager = actionM<caret>
+}

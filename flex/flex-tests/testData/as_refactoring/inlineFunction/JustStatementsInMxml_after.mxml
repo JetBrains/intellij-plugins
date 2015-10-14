@@ -1,0 +1,16 @@
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+           xmlns:ui="com.adobe.empdir.ui.*" currentState="info"
+           horizontalScrollPolicy="off" verticalScrollPolicy="off" mouseDown="doMouseDown()">
+
+  <mx:Script>
+<![CDATA[
+      private function bar() {
+          var x = 1 + 2;
+          alert(x);
+          var x = 1 + 3;
+          alert(x);
+      }
+      ]]>
+  </mx:Script>
+  <mx:Canvas id="canvas" />
+</mx:Canvas>

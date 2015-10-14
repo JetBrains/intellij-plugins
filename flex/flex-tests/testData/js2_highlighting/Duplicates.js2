@@ -1,0 +1,107 @@
+native function bbb(expression:Object):*
+
+class BBB {
+  function <error>BBB</error>() {} 
+  function <error>BBB</error>() {}
+}
+
+class AAA {
+  public native function bbb(expression:Object):*
+
+  public static native function get ignoreWhitespace():Boolean
+  public static native function set ignoreWhitespace(value:Boolean):void
+  function AAA(<error>b</error>, <error>b</error>) {}
+}
+
+class <error>C</error> {}
+class <error>C</error> {}
+
+class D {
+    private var <error>foo</error>:int;
+    private var <error>foo</error>:uint;
+
+    private function <error>bar</error>():void {}
+    private function <error>bar</error>():int {}
+}
+
+function foo(e:int) {
+    var <warning>e</warning> = e;
+}
+
+class Foo {
+    protected var clazz:Class;
+}
+
+class Bar extends Foo {
+    function Bar() {
+        var x = new clazz();
+    }
+}
+
+function foo2() {
+  var <warning>b</warning> = 0;
+  var <warning>b</warning> = 0;
+  {
+    var <warning>a</warning> = 0;
+    // ...
+  }
+
+  {
+    var <warning>a</warning> = 1;
+    // ...
+  }
+
+}
+
+class Wtf {
+  <error>CONFIG</error>::Release
+  private static const FRAMERATE: Number = 32.0;
+
+  <error>CONFIG</error>::Debug
+  private static const FRAMERATE: Number = 999.0;
+  
+  <error>CONFIG</error>::Debug
+  private static const <error>FRAMERATE2</error>: Number = 999.0;
+  
+  <error>CONFIG</error>::Debug
+  private static const <error>FRAMERATE2</error>: Number = 999.0;
+}
+
+class NsUser {
+  private namespace <error>ns</error> = "http://www.someuri.com";
+  private namespace <error>ns</error> = "http://www.someuri.com";
+}
+
+function test():void {
+  for each (var <warning>s</warning>:String in "") {
+      var <warning>s</warning>:String;
+  }
+  for each (var <warning>s</warning>:String in "") {
+  }
+  
+  animateProperty = 0;
+  var animateProperty : int = 1;
+}
+
+function foo12(arguments:Array):void {
+  var s:String;
+  switch (s) {
+    case 'a':
+      var <warning>myVar</warning> = 1;
+      break;
+    case 'b':
+      var <warning>myVar</warning> = 2;
+      break;
+  }
+}
+
+namespace ns2 = "ns"
+class DuplicateSetterDeclaration {
+    public function set <error>someProperty</error>(s:String) {}
+    public function set <error>someProperty</error>(s:String) {}
+
+    ns2 function set <error>someProperty2</error>(s:String) {}
+    ns2 function set <error>someProperty2</error>(s:String) {}
+
+    <error descr="Unresolved variable or type ns">ns</error> function set someProperty3(s:String) {}
+}

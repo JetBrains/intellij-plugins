@@ -26,7 +26,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import cucumber.runtime.snippets.CamelCaseConcatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
@@ -36,7 +35,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: Andrey.Vokin
@@ -75,36 +73,46 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       assert editor != null;
 
-      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
-
-      final PsiAnnotation annotation = addedElement.getModifierList().getAnnotations()[0];
-      final PsiNameValuePair regexpElement = annotation.getParameterList().getAttributes()[0];
-      final TextRange range = new TextRange(1, regexpElement.getTextLength() - 1);
-      builder.replaceElement(regexpElement, range, regexpElement.getText().substring(range.getStartOffset(), range.getEndOffset()));
-
       final PsiParameterList blockVars = addedElement.getParameterList();
-      for (PsiParameter var : blockVars.getParameters()) {
-        final PsiElement nameIdentifier = var.getNameIdentifier();
-        if (nameIdentifier != null) {
-          builder.replaceElement(nameIdentifier, nameIdentifier.getText());
-        }
-      }
-
       final PsiCodeBlock body = addedElement.getBody();
-      if (body != null && body.getStatements().length > 0) {
-        final PsiElement firstStatement = body.getStatements()[0];
-        final TextRange pendingRange = new TextRange(0, firstStatement.getTextLength() - 1);
-        builder.replaceElement(firstStatement, pendingRange,
-                               firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
-      }
+      final PsiAnnotation annotation = addedElement.getModifierList().getAnnotations()[0];
+      final PsiElement regexpElement = annotation.getParameterList().getAttributes()[0];
 
-      final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-      documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
-      builder.run(editor, false);
+      runTemplateBuilderOnAddedStep(editor, addedElement, regexpElement, blockVars, body);
     }
 
     return true;
   }
+
+  protected void runTemplateBuilderOnAddedStep(Editor editor,
+                                               PsiElement addedElement,
+                                               PsiElement regexpElement,
+                                               PsiParameterList blockVars, PsiCodeBlock body) {
+    Project project = regexpElement.getProject();
+    final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
+
+    final TextRange range = new TextRange(1, regexpElement.getTextLength() - 1);
+    builder.replaceElement(regexpElement, range, regexpElement.getText().substring(range.getStartOffset(), range.getEndOffset()));
+
+    for (PsiParameter var : blockVars.getParameters()) {
+      final PsiElement nameIdentifier = var.getNameIdentifier();
+      if (nameIdentifier != null) {
+        builder.replaceElement(nameIdentifier, nameIdentifier.getText());
+      }
+    }
+
+    if (body.getStatements().length > 0) {
+      final PsiElement firstStatement = body.getStatements()[0];
+      final TextRange pendingRange = new TextRange(0, firstStatement.getTextLength() - 1);
+      builder.replaceElement(firstStatement, pendingRange,
+                             firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
+    }
+
+    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+    documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
+    builder.run(editor, false);
+  }
+
 
   @Override
   public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String name) {
@@ -210,43 +218,6 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
     JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
     return factory.createMethodFromText(snippet, step);
-  }
-
-  private static class JavaSnippet implements Snippet {
-    public JavaSnippet() {}
-
-    public String arguments(List<Class<?>> argumentTypes) {
-      StringBuilder result = new StringBuilder();
-      for (int i = 0; i < argumentTypes.size(); i++) {
-        Class<?> arg = argumentTypes.get(i);
-        if (i > 0) {
-          result.append(", ");
-        }
-        result.append(arg.getSimpleName()).append(" arg").append(i);
-      }
-
-      return result.toString();
-    }
-
-    public String template() {
-      return "@{0}(\"{1}\")\npublic void {2}({3}) throws Throwable \'{\'\n    // {4}\n{5}    throw new PendingException();\n\'}\'\n";
-    }
-
-    public String tableHint() {
-      return "";
-    }
-
-    public String namedGroupStart() {
-      return null;
-    }
-
-    public String namedGroupEnd() {
-      return null;
-    }
-
-    public String escapePattern(String pattern) {
-      return pattern.replace("\\", "\\\\").replace("\"", "\\\"");
-    }
   }
 }
 

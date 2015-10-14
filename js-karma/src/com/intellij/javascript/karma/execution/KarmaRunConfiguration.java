@@ -8,13 +8,16 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.NodePackageVersionUtil;
+import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.text.SemVer;
@@ -24,7 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider {
+public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
+                                                                                 PreferableRunConfiguration {
 
   private static final Logger LOG = Logger.getInstance(KarmaRunConfiguration.class);
 
@@ -91,6 +95,9 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   @Nullable
   private static KarmaRunConfiguration getTemplateRunConfiguration(@NotNull Project project) {
+    if (project.isDisposed()) {
+      return null;
+    }
     RunManager runManager = RunManager.getInstance(project);
     RunnerAndConfigurationSettings templateSettings = runManager.getConfigurationTemplate(KarmaConfigurationType.getFactory());
     RunConfiguration rc = templateSettings.getConfiguration();
@@ -107,11 +114,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     String karmaPackageDir = getKarmaPackageDir();
     String nodeInterpreterPath = KarmaProjectSettings.getNodeInterpreterPath(getProject());
     return new KarmaRunProfileState(getProject(),
+                                    this,
                                     env,
                                     nodeInterpreterPath,
-                                    karmaPackageDir,
-                                    myRunSettings,
-                                    executor);
+                                    karmaPackageDir);
   }
 
   @Override
@@ -188,5 +194,17 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   @Override
   public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
     return KarmaRunConfigurationRefactoringHandler.getRefactoringElementListener(this, element);
+  }
+
+  @Override
+  public boolean isPreferredOver(@NotNull RunConfiguration otherRc, @NotNull PsiElement sourceElement) {
+    PsiFile psiFile = ObjectUtils.tryCast(sourceElement, PsiFile.class);
+    if (psiFile != null) {
+      VirtualFile virtualFile = psiFile.getVirtualFile();
+      if (virtualFile != null) {
+        return KarmaUtil.isKarmaConfigFile(virtualFile.getNameSequence(), true);
+      }
+    }
+    return false;
   }
 }

@@ -1,0 +1,4 @@
+class XXX {
+[Inject(source="userService", twoWay="true")]
+public var model:*;
+}

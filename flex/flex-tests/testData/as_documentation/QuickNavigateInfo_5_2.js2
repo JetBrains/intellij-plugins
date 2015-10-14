@@ -1,0 +1,3 @@
+public function xxx.getTimer() {}
+
+xxx.get<caret>Timer()

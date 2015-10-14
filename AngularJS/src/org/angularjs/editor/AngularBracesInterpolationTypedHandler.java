@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
@@ -25,12 +26,13 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
 
     // we should use AngularJSBracesUtil here
     if (file.getFileType() == HtmlFileType.INSTANCE) {
+      final Document document = editor.getDocument();
       if (c == '{') {
         if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
             !AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
         boolean addWhiteSpaceBetweenBraces = AngularJSConfig.getInstance().INSERT_WHITESPACE;
         int offset = editor.getCaretModel().getOffset();
-        String chars = editor.getDocument().getText();
+        String chars = document.getText();
         if (offset > 0 && (chars.charAt(offset - 1)) == '{') {
           if (offset < 2 || (chars.charAt(offset - 2)) != '{') {
             if (alreadyHasEnding(chars, offset)) {
@@ -53,10 +55,21 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
         if (!AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
 
         final int offset = editor.getCaretModel().getOffset();
-        final char charAt = editor.getDocument().getCharsSequence().charAt(offset);
-        if (charAt == '}') {
-          editor.getCaretModel().moveCaretRelatively(1, 0, false, false, true);
-          return Result.STOP;
+
+        final char charAt;
+        if (offset < document.getTextLength()) {
+          charAt = document.getCharsSequence().charAt(offset);
+          if (charAt == '}') {
+            editor.getCaretModel().moveCaretRelatively(1, 0, false, false, true);
+            return Result.STOP;
+          }
+        }
+        else {
+          charAt = document.getCharsSequence().charAt(offset - 1);
+          if (charAt != '}') {
+            EditorModificationUtil.insertStringAtCaret(editor, "}}", true, 2);
+            return Result.STOP;
+          }
         }
       }
     }

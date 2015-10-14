@@ -1,0 +1,4 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:foo="*">
+  <foo:Foo id="as1" xxx="some_value" /> (1)
+  <mx:Label text="{as1.xxx}"/> (2)
+</mx:Application>

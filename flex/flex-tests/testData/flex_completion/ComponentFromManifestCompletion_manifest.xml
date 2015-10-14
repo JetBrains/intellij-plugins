@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<componentPackage>
+  <component id="ComponentFromManifest" class="ComponentFromManifestCompletion_other"/>
+</componentPackage>

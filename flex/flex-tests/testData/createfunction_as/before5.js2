@@ -1,0 +1,7 @@
+// "Create Method '_bbb'" "true"
+
+class C {
+  static function foo() {
+    _b<caret>bb("1","2");
+  }
+}

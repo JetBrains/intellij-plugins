@@ -1,0 +1,13 @@
+class A {
+    function xxx() {
+        var a = B.XXX
+    }
+}
+
+package foo {
+  public class B {
+      internal static const XXX:String = "XXX";
+  }
+}
+
+import foo.B;

@@ -1,0 +1,27 @@
+<caret expected=""><?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:mxComps="*">
+  <s:Button label="foo" skinClass="MxmlDependencies_4"/>
+  <s:Group id="mygroup"/>
+  <fx:Script><![CDATA[
+    import com.bar.A;
+
+    var v = new Button();
+
+    var v2 : Foo;
+    var v3 : Vector.<Bar>;
+    ]]></fx:Script>
+
+  <fx:Script>
+    function aa() {
+      new Hello();
+    }
+  </fx:Script>
+  <mxComps:MxmlDependencies_3 label="from MXML" id="myComponent"/>
+  <s:List itemRenderer="com.foo.MyRenderer"/>
+  <fx:Style>
+    @namespace mx "library://ns.adobe.com/flex/mx";
+    mx|Button {
+      upSkin: ClassReference("MySkin");
+    }  </fx:Style>
+</s:Application>

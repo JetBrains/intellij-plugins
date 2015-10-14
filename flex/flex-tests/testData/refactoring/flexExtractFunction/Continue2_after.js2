@@ -1,0 +1,28 @@
+package org.intellij
+{
+import mx.collections.ArrayCollection;
+
+public class Continue
+{
+    private var eventAC:ArrayCollection = new ArrayCollection();
+    private const ID_SLOT:String = 'id';
+
+    public function get events():ArrayCollection {
+        var filteredAC:ArrayCollection = new ArrayCollection();
+        for each (var data:Object in eventAC) {
+            created(data, filteredAC);
+        }
+        return filteredAC;
+    }
+
+    public function created(data:Object, filteredAC:ArrayCollection):void {
+        if (!data.hasOwnProperty(ID_SLOT)) {
+            return;
+        }
+        if (false) return;
+        if (uint(data[ID_SLOT]) != 0) {
+            filteredAC.addItem(data);
+        }
+    }
+}
+}

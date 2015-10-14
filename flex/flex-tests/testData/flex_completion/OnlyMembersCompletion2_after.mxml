@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<local:Test xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:local="*"
+            xmlns:mypackage="mypackage.*">
+  <mypackage:StrangeUIComponentOutOfComponentList
+</local:Test>

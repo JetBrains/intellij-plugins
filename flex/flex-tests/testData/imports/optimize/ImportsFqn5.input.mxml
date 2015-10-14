@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100" height="100" creationComplete="foo();"
+           implements="mx.controls.listClasses.IDropInListItemRenderer">
+    <mx:Script>
+
+    protected function foo():void {
+        var t : mx.messaging.AbstractMessageStore;
+    }
+    <caret>
+
+    </mx:Script>
+
+    <mx:Script><![CDATA[
+
+		]]></mx:Script>
+
+</mx:Canvas>

@@ -34,7 +34,6 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
@@ -64,16 +63,13 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     return DartBundle.message("dart.sort.members.action.name.ellipsis"); // because with dialog
   }
 
-  protected void runOverEditor(@NotNull final Project project,
-                               @NotNull final Editor editor,
-                               @NotNull final PsiFile psiFile,
-                               @NotNull final DartSdk sdk) {
+  protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
     final Runnable runnable = new Runnable() {
       public void run() {
-        final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
+        final String path = psiFile.getVirtualFile().getPath();
 
         final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
         service.updateFilesContent();
@@ -130,7 +126,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
             indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
           }
 
-          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+          final String path = virtualFile.getPath();
           final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_sortMembers(path);
           if (fileEdit != null) {
             fileToFileEditMap.put(virtualFile, fileEdit);

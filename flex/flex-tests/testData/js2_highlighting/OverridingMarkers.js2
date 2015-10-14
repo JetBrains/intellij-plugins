@@ -1,0 +1,13 @@
+class AAA {
+  function bbb() {}
+  function bbb2(x) {}
+  private function bbb3() {}
+  public static function instance() {}
+}
+
+class BBB extends AAA {
+  override function b<caret>bb() {}
+  function <error descr="Method overrides method in superclass AAA without override keyword">bbb2</error>() {}
+  function bbb3() {}
+  public static function instance() {}
+}

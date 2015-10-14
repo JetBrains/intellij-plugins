@@ -1,0 +1,46 @@
+package foo {
+import mypackage.Button;
+
+public class LocalVarDerived3 {
+      private var xxx:Button
+      private static const UNIT_MAP:Object/*<String, int>*/ = {
+        "px":23,
+        "lpx":23,
+        "lpy":3
+      };
+
+
+    function LocalVarDerived3() {
+          var yyy:Button
+          xxx.selected = true;
+          yyy.label = "xxx";
+          var zzz = {};
+          zzz.id = "11";
+      }
+
+      function get ttt():int {}
+
+      function set rrr(a:int):void {}
+
+      function get sss():int {}
+      function set sss(a:int):void {}
+
+  }
+}
+
+<structure activeFilters="HIDE_INHERITED">
+    <node text="LocalVarDerived3.js2">
+        <node text="LocalVarDerived3" icon="AS_CLASS_ICON">
+        <node text="LocalVarDerived3()" icon="CONSTRUCTOR_ICON"/>
+        <node text="ttt():int" icon="PROPERTY_READ_ICON"/>
+        <node text="rrr(a:int):void" icon="PROPERTY_WRITE_ICON"/>
+        <node text="sss():int" icon="PROPERTY_READ_WRITE_ICON"/>
+        <node text="xxx:Button" icon="FIELD_ICON"/>
+        <node text="UNIT_MAP:Object">
+          <node text="px" icon="PROPERTY_ICON"/>
+          <node text="lpx" icon="PROPERTY_ICON"/>
+          <node text="lpy" icon="PROPERTY_ICON"/>
+        </node>
+    </node>
+    </node>
+</structure>

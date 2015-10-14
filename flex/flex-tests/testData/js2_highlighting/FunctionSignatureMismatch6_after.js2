@@ -1,0 +1,9 @@
+package {
+    public class FunctionSignatureMismatch6 {
+        public function foo(p:Boolean, ...args) {}
+
+        function zzz() {
+            foo(true, 1, 2, 3);
+        }
+    }
+}

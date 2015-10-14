@@ -1,0 +1,13 @@
+package foo {
+public class Test {
+     var f : ClassA<caret>
+ }
+}
+
+package foo {
+  public class ClassA {}
+}
+
+package bar {
+  public class ClassA {}
+}

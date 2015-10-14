@@ -45,9 +45,17 @@ public class AngularAttributesRegistry {
     final JSImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.KEY, attributeName);
     if (directive != null) {
       final String restrict = directive.getTypeString();
-      final String type = restrict.split(";", -1)[2];
+      final String type = restrict != null ? restrict.split(";", -1)[2] : "";
       return type.contains("object literal") || type.equals("mixed");
     }
     return false;
+  }
+
+  public static boolean isEventAttribute(String name, Project project) {
+    return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(project);
+  }
+
+  public static boolean isVariableAttribute(String name, Project project) {
+    return name.startsWith("#") && AngularIndexUtil.hasAngularJS2(project);
   }
 }

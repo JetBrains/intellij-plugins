@@ -1,0 +1,10 @@
+package {
+public interface ChangeSignatureFixForIncompatibleReturnType2 {
+  function foo():  int;
+}
+}
+
+class C implements ChangeSignatureFixForIncompatibleReturnType2 {
+  public function <error>foo</error>() {
+  }
+}

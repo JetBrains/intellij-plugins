@@ -1,0 +1,23 @@
+package ideaBug {
+public class Singleton {
+
+	private static var instance:Singleton;
+
+	public static function getInstance():Singleton {
+		if (instance == null) {
+			instance = new Singleton(new Singletoniser());
+		}
+		return instance;
+	}
+
+	public function Singleton(singletoniser:Singletoniser) {
+		if (singletoniser == null) {
+			throw new Error("Singleton is a singleton class, use getInstance() instead.");
+		}
+		// code here
+	}
+
+}
+}
+
+class Singletoniser{}

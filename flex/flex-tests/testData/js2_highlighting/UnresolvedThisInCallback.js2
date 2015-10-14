@@ -1,0 +1,20 @@
+package {
+class UnresolvedThisInCallback {
+    static function foo():void {
+        var employees:Array = new Array();
+        employees.push({name:"Employee 1", manager:false});
+        employees.push({name:"Employee 2", manager:true});
+        employees.push({name:"Employee 3", manager:false});
+
+        var array2:Array;
+
+        filter(function intersectFilter(item:*, index:int, array:Array):Boolean {
+            return this.indexOf(item) != -1;
+        }, array2);
+    }
+
+    static function filter(f:Function, thisObject:Object):void {
+        f.apply(thisObject, null);
+    }
+}
+}

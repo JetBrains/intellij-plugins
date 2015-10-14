@@ -1,0 +1,21 @@
+package {
+    import foo.Baz
+	public class DynamicUsageNoTypeCheck
+	{
+		public function ImportFunction()
+		{
+			var x:Object
+            var x2:Baz = x.f<caret>oo()
+            var x3:* = Baz;
+            if (x2 is x3) {}
+
+            var l:XMLList = <></>
+            var l2:XML = <div/>
+            l+=l2;
+
+            with(x) {
+                foo = 1;
+            }
+		}
+	}
+}

@@ -1,0 +1,3 @@
+package aaa {
+  public function ValidateFunctionAndPackageName2() {}
+}

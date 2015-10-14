@@ -1,0 +1,18 @@
+// fake "swc" file so that classes resolve
+
+package {
+
+
+public interface IFoo {
+    function foo();
+}
+
+public class Foo implements IFoo {
+    public function foo() {}
+}
+
+public class FooEx extends Foo {
+    public override function foo() {}
+}
+
+}

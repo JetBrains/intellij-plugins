@@ -1,0 +1,9 @@
+package {
+import foo.A;
+
+public class CastAmbiguousType {
+    public function foo() {
+        Test.func2(<error>Test.func1()</error>);
+    }
+}
+}

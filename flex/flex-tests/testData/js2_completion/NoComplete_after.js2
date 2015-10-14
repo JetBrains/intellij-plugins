@@ -1,0 +1,6 @@
+package foo {
+  class Foo extends <caret>Bar
+  {
+      static function getInstance() {}
+  }
+}

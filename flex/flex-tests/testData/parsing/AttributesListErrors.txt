@@ -1,0 +1,172 @@
+JSFile:AttributesListErrors.js2
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('ServerEventHandler')
+        PsiElement(JS:LPAR)('(')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('type')
+          PsiElement(JS:EQ)('=')
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('SFSEvent')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('onConnection')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSAttributeNameValuePair
+          PsiElement(JS:DEFAULT_KEYWORD)('default')
+          PsiElement(JS:EQ)('=')
+          PsiElement(JS:STRING_LITERAL)('"true"')
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+      PsiWhiteSpace('\n')
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('Before')
+        PsiElement(JS:LPAR)('(')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('async')
+        PsiElement(JS:COMMA)(',')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('ui')
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('A')
+        PsiErrorElement:( expected
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiErrorElement:identifier expected
+          <empty list>
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('A')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:LPAR)('(')
+        PsiErrorElement:) expected
+          <empty list>
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('A')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:LPAR)('(')
+        PsiErrorElement:identifier or value expected
+          <empty list>
+        PsiElement(JS:COMMA)(',')
+        PsiErrorElement:( expected
+          <empty list>
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('A')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:LPAR)('(')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:EQ)('=')
+          PsiErrorElement:value expected
+            <empty list>
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSAttributeList
+    PsiElement(JS:PUBLIC_KEYWORD)('public')
+    PsiErrorElement:Declaration expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  JSExpressionStatement
+    JSArrayLiteralExpression
+      PsiElement(JS:LBRACKET)('[')
+      JSCallExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Embed')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(JS:RBRACKET)(']')
+    PsiErrorElement:Expecting newline or semicolon
+      <empty list>
+  PsiWhiteSpace(' ')
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')

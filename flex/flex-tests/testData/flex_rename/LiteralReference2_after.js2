@@ -1,0 +1,9 @@
+package {
+  public class Abc {
+      var bar;
+
+      function zz() {
+          var s = "bar";
+      }
+  }
+}

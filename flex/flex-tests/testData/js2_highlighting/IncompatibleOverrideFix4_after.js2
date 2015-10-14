@@ -1,0 +1,12 @@
+package {
+class FooBase {
+    function foo() {}
+}
+}
+
+package {
+class Foo extends FooBase {
+    override function foo() {
+    }
+}
+}

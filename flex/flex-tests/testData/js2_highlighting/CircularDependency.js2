@@ -1,0 +1,5 @@
+class Foo extends <error descr="Circular dependency">Foo</error> {
+}
+
+interface Bar extends <error descr="Circular dependency">Bar</error> {
+}

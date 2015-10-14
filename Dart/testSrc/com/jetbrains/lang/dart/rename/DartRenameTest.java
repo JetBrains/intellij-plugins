@@ -14,6 +14,7 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
     myFixture.testRename(getTestName(false) + ".dart", getTestName(false) + "After.dart", newName, additionalFiles);
   }
 
+  /*
   public void testConstructor1() throws Throwable {
     doTest("FooNew");
   }
@@ -22,7 +23,7 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
     doTest("FooNew");
   }
 
-  public void testConstructor3() throws Throwable {
+  public void _testConstructor3() throws Throwable {
     doTest("FooNew");
   }
 
@@ -83,6 +84,7 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
   public void testWEB_7218() throws Throwable {
     doTest("colorTextNew");
   }
+  */
 
   public void testReferencedHtmlInPackage() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n");

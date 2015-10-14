@@ -1,0 +1,7 @@
+/**
+ *
+ */
+native function a():int
+
+/**<caret>
+function c(b) {}

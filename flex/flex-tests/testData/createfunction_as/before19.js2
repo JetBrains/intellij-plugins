@@ -1,0 +1,4 @@
+// "Create Method 'create'" "true"
+class Interface {
+}
+Interface.cr<caret>eate(null as Interface);

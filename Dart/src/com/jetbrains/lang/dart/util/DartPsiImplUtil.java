@@ -108,6 +108,18 @@ public class DartPsiImplUtil {
   }
 
   @Nullable
+  public static DartComponentName getComponentName(@NotNull DartNamedConstructorDeclaration element) {
+    final List<DartComponentName> list = element.getComponentNameList();
+    return  list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
+  }
+
+  @Nullable
+  public static DartComponentName getComponentName(@NotNull DartFactoryConstructorDeclaration element) {
+    final List<DartComponentName> list = element.getComponentNameList();
+    return  list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
+  }
+
+  @Nullable
   public static PsiElement resolveReference(@NotNull final DartType dartType) {
     CachedValue<PsiElement> cachedValue = dartType.getUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY);
 

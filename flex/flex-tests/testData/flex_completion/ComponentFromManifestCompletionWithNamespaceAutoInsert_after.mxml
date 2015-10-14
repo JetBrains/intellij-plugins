@@ -1,0 +1,3 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mynamespace="schema://www.MyNamespace.com/2010">
+    <mynamespace:Zzzzz<caret>
+</mx:Application>

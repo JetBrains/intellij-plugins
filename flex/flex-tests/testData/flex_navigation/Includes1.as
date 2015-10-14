@@ -1,0 +1,1 @@
+[Style(name="bbottom", type="String", inherit="no")]

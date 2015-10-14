@@ -1,0 +1,88 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant type='@' const='true' name='EAAccessoryDidConnectNotification' declared_type='NSString*'/>
+<constant type='@' const='true' name='EAAccessoryDidDisconnectNotification' declared_type='NSString*'/>
+<constant type='@' const='true' name='EAAccessoryKey' declared_type='NSString*'/>
+<enum name='EAConnectionIDNone' value='0'/>
+<class name='EAAccessory'>
+<method selector='connectionID'>
+<retval type='I' declared_type='NSUInteger'/>
+</method>
+<method selector='delegate'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='firmwareRevision'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='hardwareRevision'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='isConnected'>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='manufacturer'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='modelNumber'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='name'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='protocolStrings'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='serialNumber'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='setDelegate:'>
+<arg type='@' name='delegate' declared_type='id' index='0'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='EAAccessoryManager'>
+<method selector='connectedAccessories'>
+<retval type='@' declared_type='NSArray*'/>
+</method>
+<method selector='registerForLocalNotifications'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='sharedAccessoryManager' class_method='true'>
+<retval type='@' declared_type='EAAccessoryManager*'/>
+</method>
+<method selector='unregisterForLocalNotifications'>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<class name='EASession'>
+<method selector='accessory'>
+<retval type='@' declared_type='EAAccessory*'/>
+</method>
+<method selector='initWithAccessory:forProtocol:'>
+<arg type='@' name='accessory' declared_type='EAAccessory*' index='0'/>
+<arg type='@' name='protocolString' declared_type='NSString*' index='1'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='inputStream'>
+<retval type='@' declared_type='NSInputStream*'/>
+</method>
+<method selector='outputStream'>
+<retval type='@' declared_type='NSOutputStream*'/>
+</method>
+<method selector='protocolString'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='accessoryDidDisconnect:'>
+<arg type='@' name='accessory' declared_type='EAAccessory*' index='0'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<informal_protocol name='EAAccessoryDelegate'>
+<method type='v12@0:4@8' selector='accessoryDidDisconnect:'>
+<arg type='@' name='accessory' declared_type='EAAccessory*' index='0'/>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+</signatures>

@@ -1,0 +1,10 @@
+class MyClass {
+  protected function myFunction() {}
+}
+
+class MySubClass extends MyClass {
+  function foo() {
+     var a:MySubClass
+     a.myFunction()<caret>
+  }
+}

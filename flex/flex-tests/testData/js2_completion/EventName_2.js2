@@ -1,0 +1,8 @@
+package {
+import mypackage.Application
+public class EventName_2 extends Application {
+    function foo() {
+      addEventListener(Ke<caret>)
+    }
+}
+}

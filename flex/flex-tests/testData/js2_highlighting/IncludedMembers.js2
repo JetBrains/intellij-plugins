@@ -1,0 +1,15 @@
+class C {
+  function foo() {}
+  #include "IncludedMembers_2.js2"
+}
+
+var c:C;
+
+c.field = 1;
+c.method(c.field);
+
+class B {
+    function B() {
+        <error>method</error>.length;
+    }
+}

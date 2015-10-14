@@ -230,5 +230,5 @@ public interface CfscriptTokenTypes {
     TokenSet.create(EQ_L, NEQ_L, CONTAINS_L, NOT_CONTAINS_L, GT_L, LT_L, GE_L, LE_L, EQEQ, NEQ, LT, LTE, GT, GTE);
   TokenSet ADDITIVE_OPERATIONS = TokenSet.create(ADD, MINUS);
   TokenSet MULTIPLICATIVE_OPERATIONS = TokenSet.create(POW, MUL, DEV, MOD_L, CONCAT);
-  TokenSet UNARY_OPERATIONS = TokenSet.create(MINUS, NOT, NOT_L);
+  TokenSet UNARY_OPERATIONS = TokenSet.create(MINUS, NOT, NOT_L, INC, DEC);
 }

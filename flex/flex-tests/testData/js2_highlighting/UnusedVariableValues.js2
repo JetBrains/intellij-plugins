@@ -1,0 +1,30 @@
+class Foo {
+  private var foo:int = 1;
+  private var moduleContext:Object;
+
+  internal function foo2(... x):void {
+    moduleContext = {};
+    moduleContext = null;
+    bar();
+  }
+
+  internal function bar(x:int = 1) {
+    foo2(foo, x);
+    trace(moduleContext);
+  }
+}
+
+new Foo();
+var fooValue:int = 1;
+var fooValue2:int = fooValue;
+
+for(var i:int;<warning>i</warning> <fooValue2;<warning>i</warning>++) {
+  <warning>i</warning>;
+}
+
+var arr:Array = [];
+var <warning descr="Unused variable index">index</warning>:int = 0
+var o:Object
+while((o = arr[i++]) != null) trace(o);
+
+function trace(v:*) {}

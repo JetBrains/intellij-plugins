@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:HTTPService id="testSvc" url="/project/test.xml">
+     <mx:request xmlns="">
+         <test1>test1</test1>
+         <test2>{"xx"}</test2>
+         <test3>test3</test3>
+         <test4>{"xx"}</test4>
+     </mx:request>
+  </mx:HTTPService>
+</mx:Application>

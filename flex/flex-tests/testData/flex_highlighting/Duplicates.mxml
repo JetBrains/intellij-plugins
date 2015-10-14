@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    var <error>xxx</error>;
+    var <error>xxx</error>;
+    function <error>aaa</error>() {}
+    function <error>aaa</error>() {}
+    function <error>bbb</error>() {}
+  </mx:Script>
+  <mx:Script>
+    function <error>bbb</error>() {}
+  </mx:Script>
+</mx:Application>

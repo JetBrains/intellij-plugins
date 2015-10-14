@@ -1,0 +1,8 @@
+// "Create Field 'aaa'" "true"
+class A2 {
+    private var aaa<caret>:;
+  function A2() {
+    trace(this.aaa);
+  }
+}
+

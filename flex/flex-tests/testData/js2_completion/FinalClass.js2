@@ -1,0 +1,3 @@
+package test {
+ <caret> class Foo {}
+}

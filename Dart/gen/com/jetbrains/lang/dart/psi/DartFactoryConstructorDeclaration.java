@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface DartFactoryConstructorDeclaration extends DartComponent {
 
-  @Nullable
-  DartComponentName getComponentName();
-
   @NotNull
-  List<DartExpression> getExpressionList();
+  List<DartComponentName> getComponentNameList();
+
+  @Nullable
+  DartExpression getExpression();
 
   @Nullable
   DartFormalParameterList getFormalParameterList();
@@ -24,5 +24,8 @@ public interface DartFactoryConstructorDeclaration extends DartComponent {
 
   @Nullable
   DartType getType();
+
+  @Nullable
+  DartComponentName getComponentName();
 
 }

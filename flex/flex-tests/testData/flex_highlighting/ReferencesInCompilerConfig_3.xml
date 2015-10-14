@@ -1,0 +1,13 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <debug>true</debug>
+  </compiler>
+  <include-classes>
+    <class>
+      mx.core.UIComponent
+    </class>
+    <class>
+      <error>some</error>.<error>invalid</error>.<error>package</error>.<error>Class</error>
+    </class>
+  </include-classes>
+</flex-config>

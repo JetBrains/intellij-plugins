@@ -91,12 +91,13 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(false, true, true);
   }
 
-  public void testColorAnnotator() {
+  public void testSyncAsyncAwaitYield() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
   }
 
-  public void testColorAnnotator_varDeclarationListPart() {
+  public void testColorAnnotatorIdePart() {
+    // includes cases not covered by testSyncAsyncAwaitYield, testBuiltInIdentifiers and testEscapeSequences
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
   }
@@ -115,16 +116,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(true, false, true);
   }
 
-  public void testSyncAsyncAwaitYield() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
-  }
-
-  public void testGetterSetter() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
-  }
-
   public void testPathPackageReferenceInspection() {
     myFixture.enableInspections(new DartPathPackageReferenceInspection());
     myFixture.copyDirectoryToProject(getTestName(false), "");
@@ -139,7 +130,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     }
   }
 
-  public void testRenameImportedFile() {
+  public void _testRenameImportedFile() {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     final PsiFile libFile = myFixture.addFileToProject("lib/libFile.dart", "");
     final PsiFile libFile2 = myFixture.addFileToProject("lib/sub/libFile2.dart", "import '''../libFile.dart''';\n" +
@@ -164,7 +155,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
                           "import r'package:ProjectName/renamed.dart'");
   }
 
-  public void testUpdateImportsOnFileMove() {
+  public void _testUpdateImportsOnFileMove() {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     final PsiFile libFile = myFixture.addFileToProject("lib/libFile.dart", "");
     final PsiFile libFile2 = myFixture.addFileToProject("lib/sub/libFile2.dart", "import '../libFile.dart';\n" +

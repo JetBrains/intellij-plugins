@@ -1,0 +1,9 @@
+package foo {
+  class Bar {
+      function Bar() {
+          f<caret>oo();
+      }
+      
+      function foo() {}
+  }
+}

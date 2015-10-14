@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="*">
+    <fx:Declarations>
+        <local:StyleValues_other color=" @Resource(bundle='<error descr="Cannot resolve property bundle">colors</error>', key='<error descr="Cannot resolve property key">bgColor</error>')"/>
+        <local:StyleValues_other color=<error descr="invalid integer value">""</error>/>
+        <local:StyleValues_other color=<error descr="Unknown color: 'pink'">"pink"</error>/>
+        <local:StyleValues_other color=<error descr="Unknown color: ' red'">" red"</error>/>
+        <local:StyleValues_other color="red"/>
+        <local:StyleValues_other color=<error descr="'@Clear' directive may only be used for state-specific style properties">"@Clear()"</error>/>
+        <local:StyleValues_other color.some=<error descr="'@Clear()' directive is allowed only for style properties of classes that implement mx.styles.IStyleClient interface">"@Clear()"</error>/>
+        <local:StyleValues_other>
+            <<error descr="invalid integer value">local:color</error>></<error descr="invalid integer value">local:color</error>>
+            <<error descr="invalid integer value">local:color.some</error>>  </<error descr="invalid integer value">local:color.some</error>>
+            <local:color.default><error descr="Unknown color: 'a'">a</error></local:color.default>
+        </local:StyleValues_other>
+        <local:StyleValues_other>
+            <<error descr="invalid integer value">local:color</error>/>
+            <local:color.some><error descr="'@Clear()' directive is allowed only for style properties of classes that implement mx.styles.IStyleClient interface">@Clear()</error></local:color.some>
+            <local:color.default>haloOrange</local:color.default>
+        </local:StyleValues_other>
+    </fx:Declarations>
+    <s:states>
+        <s:State name="default"/>
+        <s:State name="some"/>
+    </s:states>
+
+    <s:Button color=<error descr="'@Clear' directive may only be used for state-specific style properties">"@Clear()"</error> alignmentBaseline.default="@Clear() ">
+        <s:alignmentBaseline.some>@Clear()</s:alignmentBaseline.some>
+        <s:color.some>@Clear()</s:color.some>
+    </s:Button>
+</s:Application>

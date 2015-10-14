@@ -1,0 +1,7 @@
+/**
+* test: shown
+*/
+class foo
+{
+}
+var x:fo<caret>o

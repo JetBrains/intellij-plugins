@@ -45,7 +45,7 @@ class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
 
   fun testRegisteredBnd() {
     myFixture.addFileToProject("bnd.bnd", "Bundle-Activator: pkg.C")
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd)
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
     doTest("""
         package pkg;
         import org.osgi.framework.*;
@@ -97,6 +97,6 @@ class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
         }""")
     val intention = myFixture.findSingleIntention(OsmorcBundle.message("UnregisteredActivatorInspection.fix.manifest"))
     myFixture.launchAction(intention)
-    assertEquals(expected, manifest.getText())
+    assertEquals(expected, manifest.text)
   }
 }

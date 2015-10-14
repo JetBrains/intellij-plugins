@@ -1,0 +1,7 @@
+package {
+    public class FunctionSignatureMismatchRemoveParam3 {
+        function foo(f:FunctionSignatureMismatchRemoveParam3) {
+            foo(this);
+        }
+    }
+}

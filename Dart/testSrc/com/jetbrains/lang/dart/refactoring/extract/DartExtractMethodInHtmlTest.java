@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.refactoring.extract;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
 
-public class DartExtractMethodInHtmlTest extends DartCodeInsightFixtureTestCase {
+abstract public class DartExtractMethodInHtmlTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
     return "/refactoring/extractMethod/html/";

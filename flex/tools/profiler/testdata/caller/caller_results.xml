@@ -1,0 +1,5 @@
+<results>
+    <foo count="30" selftime="10"/>
+    <bar count="18" selftime="12"/>
+    <baz count="12" selftime="8"/>
+</results>

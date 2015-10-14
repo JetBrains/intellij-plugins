@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/flex-plugin.iml" filepath="$PROJECT_DIR$/flex-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jps-plugin/flex-plugin-jps.iml" filepath="$PROJECT_DIR$/jps-plugin/flex-plugin-jps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flex-shared/flex-plugin-shared.iml" filepath="$PROJECT_DIR$/flex-shared/flex-plugin-shared.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flex-tests/flex-plugin-tests.iml" filepath="$PROJECT_DIR$/flex-tests/flex-plugin-tests.iml" />
+    </modules>
+  </component>
+</project>

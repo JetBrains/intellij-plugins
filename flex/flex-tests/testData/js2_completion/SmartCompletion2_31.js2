@@ -1,0 +1,9 @@
+class SmartCompletionTest {
+    function SmartCompletionTest(x:String) {
+        new SmartCompletionTest(getU<caret>);
+    }
+
+    private function getUrl(x:int, y:int):String {
+        return "someurl";
+    }
+}

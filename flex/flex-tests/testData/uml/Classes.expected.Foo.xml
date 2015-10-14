@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="Foo">
+  <node id="Bar" nodeName="Class Bar" name="&lt;html&gt;&lt;b&gt;Bar&lt;/b&gt;&lt;/html&gt;">
+    <element name="bar()" type="Number" category="Methods" visibility="PUBLIC" />
+  </node>
+  <node id="Foo" nodeName="Class Foo" name="&lt;html&gt;&lt;b&gt;Foo&lt;/b&gt;&lt;/html&gt;">
+    <element name="foo()" type="String" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="proprw" type="Boolean" category="Properties" visibility="PRIVATE" />
+    <element name="propr" type="Boolean" category="Properties" visibility="PRIVATE" />
+    <element name="propw" type="Boolean" category="Properties" visibility="PRIVATE" />
+    <element name="v" type="int" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="t" type="String" category="Fields" visibility="PACKAGE_LOCAL" />
+  </node>
+  <edge from="Foo" to="Bar" idElement="Foo" relship="GENERALIZATION" />
+</umlModel>

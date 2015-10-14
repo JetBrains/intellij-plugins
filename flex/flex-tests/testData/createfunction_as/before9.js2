@@ -1,0 +1,7 @@
+// "Create Method 'bar'" "true"
+class C {
+  static function set x(y:String) {}
+  static function foo() {
+    x = ba<caret>r()
+  }
+}

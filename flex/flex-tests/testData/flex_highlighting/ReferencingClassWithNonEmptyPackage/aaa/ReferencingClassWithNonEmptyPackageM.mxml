@@ -1,0 +1,22 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:aaa="aaa.*" xmlns:xxx="<error>aaa2</error>.*" implements="<error>IFoo</error>">
+  <mx:creationComplete>
+    <![CDATA[
+      use namespace yyy;
+      import bbb.ReferencingClassWithNonEmptyPackageM2;
+      var a:ReferencingClassWithNonEmptyPackage;
+      a.zzz2 = this
+    ]]>
+  </mx:creationComplete>
+  <mx:Script>
+    import bbb._Underscore;
+    import bbb.lowercase;
+
+    public function foo():void {
+      var a:* = new ReferencingClassWithNonEmptyPackage()
+      var a2:* = new ReferencingClassWithNonEmptyPackageM()
+      var c:_Underscore = new _Underscore();
+      var d:lowercase = new lowercase();
+    }
+  </mx:Script>
+  <aaa:ReferencingClassWithNonEmptyPackage id="xxx"/>
+</mx:Application>

@@ -1,0 +1,8 @@
+[Event(<error>hz</error>="true")]
+[Event(name="true")]
+[SWF(width='400', height='300', backgroundColor='#ffffff', frameRate='30')]
+class Foo {
+  [Inspectable(category="General", defaultValue="null", type="Font Name")]
+  <error>[Embed]</error>
+  public static const successImage:int;  
+}

@@ -1,0 +1,11 @@
+// "Create Field 'aaa'" "true"
+class B {
+    internal var aaa<caret>:;
+}
+class A {
+  function A() {
+    var b:B;
+    trace(b.aaa);
+  }
+}
+

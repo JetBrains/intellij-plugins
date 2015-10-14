@@ -1,0 +1,11 @@
+public class JustStatements2_5 {
+    public function JustStatements2_5() {
+        fo<caret>o();
+    }
+    public function foo():void {
+        /* blah-blah-
+        blah */
+        trace(123);
+        trace(123);
+    }
+}

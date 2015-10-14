@@ -1,0 +1,12 @@
+<!-- "Create Method '_bbb'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+static function foo() {
+_bbb("1","2");
+}
+
+private static function _bbb(s:String, s2:String):void {
+    <caret>
+}
+</mx:Script>
+</mx:Application>

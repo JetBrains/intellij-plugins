@@ -1,0 +1,10 @@
+package {
+
+public class Test {
+    private var test;
+
+    public function Test() {
+        (new te<caret>() as String)
+    }
+}
+}

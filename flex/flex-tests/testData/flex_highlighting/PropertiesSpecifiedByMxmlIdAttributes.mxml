@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+    <local:PropertiesSpecifiedByMxmlIdAttributes_other buttonId="{null}" superButtonId="{null}" <error>noSuchId</error>="{null}"/>
+    <local:PropertiesSpecifiedByMxmlIdAttributes_other>
+        <local:buttonId>{null}</local:buttonId>
+        <local:superButtonId>{null}</local:superButtonId>
+        <<error>local:noSuchId</error>>{null}</<error>local:noSuchId</error>>
+        </local:PropertiesSpecifiedByMxmlIdAttributes_other>
+</mx:Application>

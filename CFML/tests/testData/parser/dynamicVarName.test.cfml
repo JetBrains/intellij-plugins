@@ -1,0 +1,1 @@
+<cfset "qIcon#fldNUM#" = "">

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+      function foo() {
+        addEventListener(KeyboardEvent.TYPED, <weak_warning>foo</weak_warning>)
+        addEventListener(KeyboardEvent.TYPED, foo2)
+        addEventListener(KeyboardEvent.TYPED, foo3)
+        addEventListener(KeyboardEvent.TYPED, <weak_warning>foo3_2</weak_warning>)
+        addEventListener(CallbackSignatureMismatch_2.MY_EVENT, foo2)
+        addEventListener(CallbackSignatureMismatch_2.MY_EVENT, <weak_warning>foo</weak_warning>)
+        addEventListener(CallbackSignatureMismatch_2.MY_EVENT, foo5)
+        addEventListener(CallbackSignatureMismatch_2.MY_EVENT, <weak_warning>foo3</weak_warning>)
+        addEventListener(KeyboardEvent.TYPED, foo4_2)
+        addEventListener(KeyboardEvent.TYPED, <weak_warning>foo4</weak_warning>)
+        addEventListener(true ? MouseEvent.CLICK:MouseEvent.DOUBLE_CLICK, foo3_2)
+      }
+      function foo2(e:Event) {}
+      function foo3(e:KeyboardEvent) {}
+      function foo3_2(e:MouseEvent) {}
+      function foo4(e:KeyboardEvent, e2:Event) {}
+      function foo4_2(e:KeyboardEvent, e2:Event = null) {}
+      function foo5(e:Object) {}
+    </mx:Script>
+  <mx:Metadata>
+    [Event(name="ttt", type="flash.events.Event")]
+  </mx:Metadata>
+</mx:Application>

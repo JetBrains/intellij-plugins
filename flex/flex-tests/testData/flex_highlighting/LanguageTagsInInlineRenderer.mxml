@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<s:Application xmlns:s="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009">
+      <fx:Script><![CDATA[
+        private function foo():void {
+          var a:* = comp.newInstance();
+        }
+        ]]></fx:Script>
+    <s:DataGroup>
+        <s:itemRenderer>
+            <fx:Component id="comp" <error descr="Attribute generator is not allowed here">generator</error>="a">
+              <<error descr="Element fx:Declarations is not allowed here">fx:Declarations</error>/>
+              <<error descr="Element fx:Script is not allowed here">fx:Script</error>/>
+              <<error descr="Element fx:Binding is not allowed here">fx:Binding</error>/>
+              <<error descr="Element fx:Metadata is not allowed here">fx:Metadata</error>/>
+              <<error descr="Element fx:Style is not allowed here">fx:Style</error>/>
+                <s:Group>
+                    <fx:Declarations/>
+                    <fx:Script/>
+                    <fx:Binding twoWay="TrUe"/>
+                    <fx:Binding twoWay="<error descr="Wrong attribute value">incorrect</error>"/>
+                    <fx:Metadata/>
+                    <fx:Style/>
+                </s:Group>
+            </fx:Component>
+        </s:itemRenderer>
+    </s:DataGroup>
+</s:Application>

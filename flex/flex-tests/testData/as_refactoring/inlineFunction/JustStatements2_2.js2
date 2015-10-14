@@ -1,0 +1,16 @@
+package {
+class Abc {
+    function a():* {
+        return <caret>b();
+    }
+
+    function b():void {
+        c();
+    }
+
+    private function c():int {
+        return 0;
+    }
+
+}
+}

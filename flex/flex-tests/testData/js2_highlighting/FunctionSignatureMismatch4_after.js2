@@ -1,0 +1,19 @@
+package {
+    public class Base {
+        internal function foo(i:String) {}
+    }
+}
+package {
+    public class FunctionSignatureMismatch4 extends Base {
+        internal override function foo(i:String) {}
+
+        function bar() {
+            foo("abc");
+        }
+
+        function zzz() {
+            foo();
+            foo(1);
+        }
+    }
+}

@@ -1,0 +1,21 @@
+JSFile:IncompleteCode2.js2
+  JSExpressionStatement
+    JSArrayLiteralExpression
+      PsiElement(JS:LBRACKET)('[')
+      JSObjectLiteralExpression
+        PsiElement(JS:LBRACE)('{')
+        JSProperty
+          PsiElement(JS:IDENTIFIER)('foo')
+          PsiElement(JS:COLON)(':')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('bar')
+        PsiElement(JS:RBRACE)('}')
+      PsiElement(JS:RBRACKET)(']')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSIndexedPropertyAccessExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('update')
+      PsiElement(JS:LBRACKET)('[')
+      PsiErrorElement:expression expected
+        <empty list>

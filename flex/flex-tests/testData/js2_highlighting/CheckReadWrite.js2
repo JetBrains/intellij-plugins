@@ -1,0 +1,8 @@
+interface IFoo {
+  function get foo():int;
+}
+
+var v:IFoo;
+const aConst = 2;
+++<error>aConst</error>;
+v.<error>foo</error>++;

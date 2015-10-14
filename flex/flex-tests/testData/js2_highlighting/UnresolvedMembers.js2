@@ -1,0 +1,108 @@
+package <error>BBB</error> {
+  class <error>B</error> {
+    var field2;
+  }
+
+  dynamic class <error>C</error> {
+    function zzz(p) {
+      this.aaa = 1;
+      zzz(this.<weak_warning>bbb</weak_warning>);
+      zzz(<weak_warning>bbb</weak_warning>);
+      zzz(this.aaa);
+    }
+  }
+}
+package <error>AAA</error> {
+  import BBB.B;
+
+  class <error>A</error> extends B {
+    var field;
+    function zzz(p):BBB2 {
+      if (false) zzz(this.field)
+      if (false) {
+        zzz(super.<error>field</error> + super.field2)
+        super.<error>field</error> = 1;
+        this.<error>field3</error> = 1;
+      }
+      if (false) {
+        zzz(<error>field3</error> + field2)
+      }
+
+      return new BBB2(ccc + ccc2 + <error>ccc3</error>);
+    }
+  }
+
+  var ccc2;
+
+  //class N {
+  //  function N() {
+  //    var e:BBB;
+  //    with(e) {
+  //      aaa2 = 1;
+  //    }
+  //  }
+  //}
+}
+
+var ccc;
+
+class BBB2 {
+  var aaa2;
+  function BBB2(x) { aaa2 = x; }
+}
+
+class XXX extends XXX {
+  function test() {
+    <error>aaa__</error> = 1;
+  }
+}
+
+<error>package</error> {
+  var String
+  String = null;
+  var a:String
+  var x:int = a.toUpperCase().length + a.substr(0, 3)
+}
+
+public class Foo {
+  public static var BAR : String;
+
+  public function foo():void {
+    BAR = "111";
+  }
+
+}
+
+class X {
+  private function xxx(x:String):void {
+    if (x) xxx(<error>BAR</error>);
+    var baz:int = <error>baz2</error>;
+    <error>baz2</error> = 2;
+    X.xxx(this)
+  }
+  static function xxx(x:X) {
+    x.xxx("1")
+  }
+}
+
+package <error>test</error> {
+  interface <error>IList</error> {}
+}
+
+package <error>test2</error> {
+  class <error>ArrayCollection</error> implements test.IList {
+    static var r:Class = ArrayCollection;
+    static var r2:ArrayCollection = new r();
+  }
+}
+
+package <error>test3</error> {
+  static var a:test.IList = new <weak_warning>ArrayCollection</weak_warning>
+  static var a2:test.IList = new test2.ArrayCollection
+}
+
+package <error>test4</error> {
+  import test.IList
+  import test2.ArrayCollection
+  static var a:IList = new ArrayCollection
+}

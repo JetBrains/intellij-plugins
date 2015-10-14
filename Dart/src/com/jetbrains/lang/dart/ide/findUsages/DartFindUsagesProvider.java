@@ -6,11 +6,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
+import java.util.Locale;
+
 public class DartFindUsagesProvider implements FindUsagesProvider {
   @Override
   public WordsScanner getWordsScanner() {
@@ -29,8 +29,11 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
 
   @NotNull
   public String getType(@NotNull final PsiElement element) {
+    if (element instanceof DartLibraryNameElement) {
+      return "library";
+    }
     final DartComponentType type = DartComponentType.typeOf(element.getParent());
-    return type == null ? "reference" : type.toString().toLowerCase();
+    return type == null ? "reference" : type.toString().toLowerCase(Locale.US);
   }
 
   @NotNull

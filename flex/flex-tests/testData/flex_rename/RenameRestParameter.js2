@@ -1,0 +1,7 @@
+class Dummy {
+    function dummy(s:String, i:uint, ... r<caret>est):void {
+         trace(s);
+         trace(i);
+         trace(rest);
+     }
+}

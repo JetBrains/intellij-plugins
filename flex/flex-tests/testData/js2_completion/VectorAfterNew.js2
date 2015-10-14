@@ -1,0 +1,14 @@
+package {
+  public class Vector$object {}
+}
+
+import foo.Bar;
+
+function noCompletion():void {
+    var vb:Vector.<Bar>;
+    vb = new V<caret>
+}
+
+package foo {
+  public class Bar {}
+}

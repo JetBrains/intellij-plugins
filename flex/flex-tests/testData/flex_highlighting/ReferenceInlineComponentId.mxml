@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+    <fx:Script><![CDATA[
+        private function foo():void {
+            var a = declaredComponent;
+            var b = inlineComponent;
+            var c = <error>innerButton</error>;
+        }
+        ]]></fx:Script>
+
+    <fx:Declarations>
+        <fx:Component id="declaredComponent">
+            <Group>
+                <Button id="innerButton"/>
+            </Group>
+        </fx:Component>
+    </fx:Declarations>
+
+    <DataGroup>
+        <itemRenderer>
+            <fx:Component id="inlineComponent">
+                <Group/>
+            </fx:Component>
+        </itemRenderer>
+    </DataGroup>
+</Application>

@@ -1,0 +1,10 @@
+Button {
+    skin: ClassReference("<error descr="Unresolved variable or type 'model'">model</error>.<error descr="Unresolved variable or type 'DuckChangeEvent'">DuckChangeEvent</error>");
+    fontSize: PropertyReference("skin");
+    color: PropertyReference("model.DuckChangeEvent");
+    icon: Embed("default.css");
+    icon: Embed(source="default.css");
+    icon: Embed(source="default.css", compression="false");
+    icon: Embed(source="default.css", compression="true");
+    icon: Embed(source="default.css",<error> compression="other_value"</error>);
+}

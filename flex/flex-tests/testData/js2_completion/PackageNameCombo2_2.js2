@@ -1,0 +1,7 @@
+package com {
+public class Z111 {}
+}
+
+package com.foo {
+public class Z111 {}
+}

@@ -1,0 +1,34 @@
+JSFile:ActionScriptSpecific_.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:AND_AND_EQ)('&&=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:TRUE_KEYWORD)('true')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR_OR_EQ)('||=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:TRUE_KEYWORD)('true')
+    PsiElement(JS:SEMICOLON)(';')

@@ -1,0 +1,10 @@
+class XXX extends Object {
+  public function xxx() {}
+  public function toString() {}
+  public static function instance() {}
+}
+
+class YYY extends XXX {
+  public function <error>xxx</error>() {}
+  public static function instance() {}
+}

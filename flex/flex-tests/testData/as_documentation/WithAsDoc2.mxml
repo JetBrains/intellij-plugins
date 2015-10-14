@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:root="*" xmlns:pckg="com.foo.*">
+    <root:TopLeve<caret expected="TopLevelSubClass">lSubClass myE<caret expected="TopLevelClassEvent">vent="var t : Event" myS<caret expected="TopLevelClassStyle">tyle="aa" myEf<caret expected="TopLevelClassEffect">fect="dd">
+    </root:TopLevelSubClass>
+
+    <pckg:SubCl<caret expected="SubClassInPackage">assInComFoo myE<caret expected="ClassInPackageEvent">vent="var t : Event" myS<caret expected="ClassInPackageStyle">tyle="aa" myEff<caret expected="ClassInPackageEffect">ect="dd">
+
+    </pckg:SubClassInComFoo>
+    <mx:Script><![CDATA[
+        import flash.events.Event;
+        ]]></mx:Script>
+</mx:Panel>

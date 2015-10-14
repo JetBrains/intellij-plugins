@@ -1,0 +1,16 @@
+package {
+import flash.events.EventDispatcher;
+
+interface FooBase {
+    function foo(p: EventDispatcher):void;
+}
+}
+
+package {
+import flash.events.EventDispatcher;
+
+class Foo implements FooBase {
+    public function foo(p:EventDispatcher):void {
+    }
+}
+}

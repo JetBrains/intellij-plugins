@@ -1,0 +1,256 @@
+JSFile:ConditionalBlocks.js2
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace('  ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n    ')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('mx')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('controls')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('Button')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n    ')
+    JSVarStatement
+      JSAttributeList
+        PsiElement(JS:PRIVATE_KEYWORD)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:STATIC_KEYWORD)('static')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CONST_KEYWORD)('const')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('companyName')
+        PsiElement(JS:COLON)(':')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          JSE4XNamespaceReference
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('NAMES')
+            PsiElement(JS:COLON_COLON)('::')
+          PsiElement(JS:IDENTIFIER)('Company')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n\n    ')
+    JSClass
+      JSAttributeList
+        JSConditionalCompileVariableReference
+          JSReferenceExpression
+            JSE4XNamespaceReference
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('CONFIG')
+              PsiElement(JS:COLON_COLON)('::')
+            PsiElement(JS:IDENTIFIER)('debugging')
+        PsiWhiteSpace('\n    ')
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('MyButton')
+      PsiWhiteSpace(' ')
+      JSReferenceList
+        PsiElement(JS:EXTENDS_KEYWORD)('extends')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Button')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n        ')
+      ActionScriptFunction
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('MyButton')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n            ')
+          JSExpressionStatement
+            JSCallExpression
+              JSSuperExpression
+                PsiElement(JS:SUPER_KEYWORD)('super')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n\n            ')
+          JSBlockStatement
+            JSAttributeList
+              JSConditionalCompileVariableReference
+                JSReferenceExpression
+                  JSE4XNamespaceReference
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('CONFIG')
+                    PsiElement(JS:COLON_COLON)('::')
+                  PsiElement(JS:IDENTIFIER)('debugging')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:LBRACE)('{')
+            PsiWhiteSpace('\n              ')
+            JSExpressionStatement
+              JSCallExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('setStyle')
+                JSArgumentList
+                  PsiElement(JS:LPAR)('(')
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)('"color"')
+                  PsiElement(JS:COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  JSLiteralExpression
+                    PsiElement(JS:NUMERIC_LITERAL)('0x0000FF')
+                  PsiElement(JS:RPAR)(')')
+              PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace('\n            ')
+            PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace('\n\n            ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('setStyle')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"color"')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('0x0000FF')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n        ')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n\n    ')
+    JSClass
+      JSAttributeList
+        JSConditionalCompileVariableReference
+          JSReferenceExpression
+            JSE4XNamespaceReference
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('CONFIG')
+              PsiElement(JS:COLON_COLON)('::')
+            PsiElement(JS:IDENTIFIER)('release')
+        PsiWhiteSpace('\n    ')
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('MyButton')
+      PsiWhiteSpace(' ')
+      JSReferenceList
+        PsiElement(JS:EXTENDS_KEYWORD)('extends')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Button')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n        ')
+      ActionScriptFunction
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('MyButton')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n            ')
+          JSExpressionStatement
+            JSCallExpression
+              JSSuperExpression
+                PsiElement(JS:SUPER_KEYWORD)('super')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n\n            ')
+          JSExpressionStatement
+            JSCallExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('setStyle')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"color"')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('0xFF0000')
+                PsiElement(JS:RPAR)(')')
+            PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n        ')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSBlockStatement
+    JSAttributeList
+      JSConditionalCompileVariableReference
+        JSReferenceExpression
+          JSE4XNamespaceReference
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('CONFIG')
+            PsiElement(JS:COLON_COLON)('::')
+          PsiElement(JS:IDENTIFIER)('release')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n  ')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('com')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('asfusion')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('mate')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('utils')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('debug')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('Debugger')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n  ')
+    JSVarStatement
+      JSAttributeList
+        <empty list>
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('x')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('  \n')
+    PsiElement(JS:RBRACE)('}')

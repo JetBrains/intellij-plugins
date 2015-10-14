@@ -1,0 +1,10 @@
+class A {
+  var field2;
+  function aaa() {
+    this.fi<caret>
+  }
+}
+
+class B {
+  var field3;
+}

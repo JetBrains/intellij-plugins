@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mx:Accordion xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import mx.events.FlexEvent;
+
+        private function foo(event:FlexEvent):void {
+
+            addEventListener(FlexEvent.ADD, function (i:int):void {
+
+            });
+        }
+        ]]></mx:Script>
+</mx:Accordion>

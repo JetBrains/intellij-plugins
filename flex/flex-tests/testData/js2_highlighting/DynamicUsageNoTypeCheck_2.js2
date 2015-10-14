@@ -1,0 +1,10 @@
+package foo {
+  public class Baz {}
+}
+
+package {
+import foo.Baz;
+public class Bar {
+    public function foo():Baz {}
+}
+}

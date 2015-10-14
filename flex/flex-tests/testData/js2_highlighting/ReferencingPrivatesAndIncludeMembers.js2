@@ -1,0 +1,31 @@
+dynamic class Baz {
+    private var _zzz:int;
+    var _zzz2:int;
+
+    function Baz() {
+        _zzz = 1;
+        _zzz2 = 1;
+    }
+    #include "ReferencingPrivatesAndIncludeMembers.js2";
+    #include "ReferencingPrivatesAndIncludeMembers_2.js2";
+}
+class Foo {
+    private var _zzz:int;
+}
+
+class Bar extends Foo {
+    function Bar() {
+        <error>fooxxx</error>();
+        if (<error>_zzz</error> != <error>_zzz2</error>) {}
+    }
+}
+
+class HelloWorld {
+    function HelloWorld() {
+        var x = SomeClass.<error>ns</error>;
+    }
+}
+
+class SomeClass {
+    private namespace ns = "http://www.someuri.com";
+}

@@ -1,0 +1,20 @@
+package xxx {
+import yyy.Foo2;
+
+class Foo {
+    function xxx():Foo2 {
+        <selection>return xxx().bar();</selection>
+    }
+}
+}
+
+package yyy {
+  import zzz.Foo3;
+  public class Foo2 {
+    public function bar():Foo3 {}
+  }
+}
+
+package zzz {
+  public class Foo3 {}
+}

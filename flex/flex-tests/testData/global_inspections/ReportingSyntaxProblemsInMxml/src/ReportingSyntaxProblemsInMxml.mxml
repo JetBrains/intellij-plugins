@@ -1,0 +1,11 @@
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+           currentState="info"
+           horizontalScrollPolicy="off" verticalScrollPolicy="off" mouseDown="doMouseDown()">
+
+  <mx:Script>
+<![CDATA[
+  function foo():
+]]>
+  </mx:Script>
+  <mx:Canvas id="canvas" />
+</mx:Canvas>

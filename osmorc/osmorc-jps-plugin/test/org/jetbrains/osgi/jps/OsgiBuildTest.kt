@@ -17,10 +17,9 @@ package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
-import kotlin.properties.Delegates
 
 class OsgiBuildTest : OsgiBuildTestCase() {
-  var myModule: JpsModule by Delegates.notNull()
+  private lateinit var myModule: JpsModule
 
   override fun setUp() {
     super.setUp()
@@ -72,7 +71,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
   fun testIdeaProjectNotSpecified() {
     ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = emptyMap()
+    extension(myModule).properties.myAdditionalProperties = emptyMap()
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/res/skipped.txt", "(empty)")
     makeAll().assertSuccessful()
@@ -83,7 +82,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
   fun testIdeaProjectWithImpl() {
     ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties.put("Private-Package", "impl")
+    extension(myModule).properties.myAdditionalProperties.put("Private-Package", "impl")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/src/impl/MainImpl.java", "package impl;\n\npublic class MainImpl implements main.Main { public String greeting() {return \"\";} }")
     makeAll().assertSuccessful()
@@ -95,7 +94,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testAdditionalContent() {
     ideaBuild(myModule)
     val entry = OsmorcJarContentEntry(getAbsolutePath("content/readme.txt"), "readme.txt")
-    extension(myModule).getProperties().myAdditionalJARContents.add(entry)
+    extension(myModule).properties.myAdditionalJARContents.add(entry)
     createFile("content/readme.txt", "Hiya there.")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     makeAll().assertSuccessful()
@@ -106,7 +105,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
   fun testIdeaProjectPartiallySpecified() {
     ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = mapOf("Private-Package" to "util")
+    extension(myModule).properties.myAdditionalProperties = mapOf("Private-Package" to "util")
     createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
     createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
     createFile("main/res/skipped.txt", "(empty)")
@@ -129,7 +128,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
   fun testEmptyMavenProjectNotSpecified() {
     ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = emptyMap()
+    extension(myModule).properties.myAdditionalProperties = emptyMap()
     createMavenConfig(myModule)
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     makeAll().assertSuccessful()
@@ -141,7 +140,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testMavenProjectPartiallySpecified() {
     ideaBuild(myModule)
     createMavenConfig(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = mapOf("Private-Package" to "util")
+    extension(myModule).properties.myAdditionalProperties = mapOf("Private-Package" to "util")
     createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
     createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
     makeAll().assertSuccessful()
@@ -154,7 +153,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testMavenResources() {
     ideaBuild(myModule)
     createMavenConfig(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = mapOf("Include-Resource" to "included.txt=${getAbsolutePath("main/res/included.txt")}")
+    extension(myModule).properties.myAdditionalProperties = mapOf("Include-Resource" to "included.txt=${getAbsolutePath("main/res/included.txt")}")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/res/included.txt", "")
     createFile("main/res/excluded.txt", "")
@@ -167,7 +166,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testCompositeBundle() {
     bndBuild(myModule)
     val subModule = module("util", false)
-    myModule.getDependenciesList().addModuleDependency(subModule)
+    myModule.dependenciesList.addModuleDependency(subModule)
 
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nPrivate-Package: main,util")
     createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return util.Util.GREET; } }")
@@ -197,7 +196,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     rebuildAll()
     makeAll().assertUpToDate()
 
-    extension(myModule).getProperties().myAlwaysRebuildBundleJar = true
+    extension(myModule).properties.myAlwaysRebuildBundleJar = true
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertBundleCompiled(myModule)
   }
@@ -205,7 +204,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testRebuildOnDependencyChange() {
     bndBuild(myModule)
     val subModule = module("sub", false)
-    myModule.getDependenciesList().addModuleDependency(subModule)
+    myModule.dependenciesList.addModuleDependency(subModule)
 
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main;-split-package:=merge-first")
     createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return Sub.GREET; } }")

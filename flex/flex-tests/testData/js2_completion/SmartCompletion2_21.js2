@@ -1,0 +1,11 @@
+package {
+  public class Vector$object {
+      public function pop():* {}
+  }
+}
+}
+
+function noCompletion():void {
+    var vb:Vector.<Boolean>;
+    var x:Boolean = vb.po<caret>
+}

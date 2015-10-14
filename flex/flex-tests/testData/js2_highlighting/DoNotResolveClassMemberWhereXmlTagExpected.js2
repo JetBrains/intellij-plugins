@@ -1,0 +1,23 @@
+package {
+public class DoNotResolveClassMemberWhereXmlTagExpected {
+    public function g() : int {
+        var xml : XML =
+                <xml>
+                    <data>
+                        <field data="data1"/>
+                        <field data="data2"/>
+                    </data>
+                </xml>;
+
+        return f(xml.data[0].field);
+    }
+
+    public function f(s : XMLList) : int {
+        return s.length();
+    }
+}
+}
+
+class B {
+    var field : String;
+}

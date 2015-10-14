@@ -1,0 +1,12 @@
+package xxx {
+  class Foo {
+    function foo() {}
+  }
+
+  interface IFoo {
+    function foo();
+    function foo2();
+    function bar();
+    function bar2();
+  }
+}

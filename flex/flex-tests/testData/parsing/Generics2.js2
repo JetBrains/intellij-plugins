@@ -1,0 +1,5 @@
+var a:Vector.<Column> = Vector.<Column>([new Column(0, 2)]);
+var rows:Vector.<Row> = new Vector.<Row>();
+rows.push(new Row(0, 25));
+var rows2:Vector.<Row> = new Vector.<Row>().concat(new Row(183, 3));
+const x:* = new Vector.<*>;

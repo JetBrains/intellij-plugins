@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300">
+  <mx:Script>
+    <![CDATA[
+//import com.test.Foo;
+function doSmth()
+{
+var foo : Foo;
+}
+    ]]>
+  </mx:Script>
+  <mx:Button x="10" y="10" label="Button"/>
+  <mx:Script>
+    <![CDATA[
+      import com.test.Foo;
+
+      function doSmthElse()
+{
+var foo2 : <caret>Foo;
+}
+    ]]>
+  </mx:Script>
+</mx:Panel>

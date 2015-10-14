@@ -1,0 +1,24 @@
+var xmlData:XML = <data><node></node></data>;
+var x = xmlData.descendants().(name() == "node");
+
+var doc : XML = <root>
+<sub>
+<subsub foo="bar">the bar one</subsub>
+<subsub foo="bleech">the bleech one</subsub>
+</sub>
+</root>;
+
+for each (var node : XML in doc.sub.subsub.(@foo=="bleech")) { }
+
+function describeType(c:Class):XML {
+    c = c;
+}
+class MyClass {}
+
+var description:XML = describeType(MyClass);
+trace(description.factory.accessor.(hasOwnProperty("metadata") &&
+        child("metadata").@name == "Bindable"));
+
+function trace(x:String) { x = x;}
+trace(doc.sub.source(@id == ' '));
+var valid1:XMLList = doc.*::svg;

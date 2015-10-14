@@ -1,0 +1,3427 @@
+
+public interface com.yworks.bridge.util.Collection
+{
+  native ns function addItem(a:Object):Boolean;
+  native ns function addAll(a:Collection):Boolean;
+  native ns function clear():void;
+  native ns function containsItem(a:Object):Boolean;
+
+  native ns function containsAll(a:Collection):Boolean;
+  native ns function get empty():Boolean;
+  native ns function iterator():com.yworks.bridge.util.Iterator;
+  native ns function removeItem(a:Object):Boolean;
+  native ns function removeAll(a:Collection):Boolean;
+
+  native ns function retainAll(a:Collection):Boolean;
+  native ns function get length():int;
+  native ns function toArray():Vector.<Object>;
+  native ns function toArray2(a:Vector.<Object>):Vector.<Object>;
+  static native private const ns:* = "each";
+}
+
+
+public class com.yworks.bridge.util.YObject extends Object
+{
+
+  native public function YObject():*;
+  native private var hashCodeValue:int;
+  native public function getClass():Class;
+  native public function equals(a:Object):Boolean;
+  native public function hashCode():int;
+
+  static native private var instanceCount:int = 0;
+}
+
+
+public class com.yworks.bridge.util.AbstractCollection extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Collection
+{
+  native public function AbstractCollection(a:Boolean = true):*;
+  native private final function initAbstractCollection0():void;
+  native public override function getClass():Class;
+  native protected final function initAbstractCollection():void;
+
+  native public function addItem(a:Object):Boolean;
+  native public function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function clear():void;
+  native public function containsItem(a:Object):Boolean;
+  native public function containsAll(a:com.yworks.bridge.util.Collection):Boolean;
+
+  native public function get empty():Boolean;
+  native public function iterator():com.yworks.bridge.util.Iterator;
+  native public function removeItem(a:Object):Boolean;
+  native public function removeAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function retainAll(a:com.yworks.bridge.util.Collection):Boolean;
+
+  native public function get length():int;
+  native public function toArray():Vector.<Object>;
+  native public function toArray2(a:Vector.<Object>):Vector.<Object>;
+  native public function toString():String;
+  native private function createCloneImpl():AbstractCollection;
+
+  native protected function cloneImpl(a:Object):void;
+  native public function clone():Object;
+}
+
+
+public interface com.yworks.bridge.util.List
+  extends com.yworks.bridge.util.Collection
+{
+  native ns function addItemAt(a:int,a2:Object):void;
+  native ns function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+  native ns function getItemAt(a:int):Object;
+
+  native ns function indexOf(a:Object):int;
+  native ns function lastIndexOf(a:Object):int;
+  native ns function listIterator():com.yworks.bridge.util.ListIterator;
+  native ns function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native ns function removeItemAt(a:int):Object;
+
+  native ns function setItemAt(a:int,a2:Object):Object;
+  native ns function subList(a:int,a2:int):List;
+  static native private const ns:* = "_-01";
+}
+
+
+public class com.yworks.bridge.util.AbstractList extends com.yworks.bridge.util.AbstractCollection
+  implements com.yworks.bridge.util.List
+{
+  native public function AbstractList(a:Boolean = true):*;
+  native protected var modCount:int;
+
+  native private final function initAbstractList0():void;
+  native public override function getClass():Class;
+  native internal function get modCountInternal():int;
+  native internal function set modCountInternal(a:int):void;
+  native protected final function initAbstractList():void;
+
+  native public function addItemAt(a:int,a2:Object):void;
+  native public override function addItem(a:Object):Boolean;
+  native public function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+  native public override function clear():void;
+  native public override function equals(a:Object):Boolean;
+
+  native public function getItemAt(a:int):Object;
+  native public override function hashCode():int;
+  native public function indexOf(a:Object):int;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public function lastIndexOf(a:Object):int;
+
+  native public function listIterator():com.yworks.bridge.util.ListIterator;
+  native public function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native public function removeItemAt(a:int):Object;
+  native internal function removeRangeInternal(a:int,a2:int):void;
+  native protected function removeRange(a:int,a2:int):void;
+
+  native public function setItemAt(a:int,a2:Object):Object;
+  native public function subList(a:int,a2:int):com.yworks.bridge.util.List;
+  native private function createCloneImpl():AbstractList;
+  native protected override function cloneImpl(a:Object):void;
+  native public override function clone():Object;
+}
+
+
+public class com.yworks.bridge.util.AbstractList_SubAbstractList extends com.yworks.bridge.util.AbstractList
+{
+
+  native public function AbstractList_SubAbstractList(a:Boolean = true):*;
+  native private var fullList:com.yworks.bridge.util.AbstractList;
+  native private var offset:int;
+  native private var size:int;
+  native private final function initAbstractList_SubAbstractList0():void;
+
+  native public override function getClass():Class;
+  native internal final function initAbstractList_SubAbstractList(a:com.yworks.bridge.util.AbstractList,a2:int,a3:int):void;
+  native public override function addItemAt(a:int,a2:Object):void;
+  native public override function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+  native public override function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+
+  native public override function getItemAt(a:int):Object;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public override function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native public override function removeItemAt(a:int):Object;
+  native protected override function removeRange(a:int,a2:int):void;
+
+  native public override function setItemAt(a:int,a2:Object):Object;
+  native public override function get length():int;
+  native internal function sizeChanged(a:Boolean):void;
+  static native internal final function newAbstractList_SubAbstractList(a:com.yworks.bridge.util.AbstractList,a2:int,a3:int):AbstractList_SubAbstractList;
+}
+
+
+public interface com.yworks.bridge.util.Iterator
+{
+  native ns function hasNext():Boolean;
+
+  native ns function nextItem():Object;
+  native ns function removeItem():void;
+  static native private const ns:* = "_-0N";
+}
+
+
+public interface com.yworks.bridge.util.ListIterator
+  extends com.yworks.bridge.util.Iterator
+{
+  native ns function addItem(a:Object):void;
+  native ns function hasPrevious():Boolean;
+
+  native ns function nextIndex():int;
+  native ns function previousItem():Object;
+  native ns function previousIndex():int;
+  native ns function setItem(a:Object):void;
+  static native private const ns:* = "try ";
+}
+
+
+public class com.yworks.bridge.util.LinkedList_LinkIterator extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.ListIterator
+{
+
+  native public function LinkedList_LinkIterator(a:Boolean = true):*;
+  native internal var pos:int;
+  native internal var expectedModCount:int;
+  native internal var list:com.yworks.bridge.util.LinkedList;
+  native internal var link:com.yworks.bridge.util.LinkedList_Link;
+
+  native internal var lastLink:com.yworks.bridge.util.LinkedList_Link;
+  native private final function initLinkedList_LinkIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initLinkedList_LinkIterator(a:com.yworks.bridge.util.LinkedList,a2:int):void;
+  native public function addItem(a:Object):void;
+
+  native public function hasNext():Boolean;
+  native public function hasPrevious():Boolean;
+  native public function nextItem():Object;
+  native public function nextIndex():int;
+  native public function previousItem():Object;
+
+  native public function previousIndex():int;
+  native public function removeItem():void;
+  native public function setItem(a:Object):void;
+  static native internal final function newLinkedList_LinkIterator(a:com.yworks.bridge.util.LinkedList,a2:int):LinkedList_LinkIterator;
+}
+
+
+public class com.yworks.bridge.util.AbstractSequentialList extends com.yworks.bridge.util.AbstractList
+{
+  native public function AbstractSequentialList(a:Boolean = true):*;
+
+  native private final function initAbstractSequentialList0():void;
+  native public override function getClass():Class;
+  native protected final function initAbstractSequentialList():void;
+  native public override function addItemAt(a:int,a2:Object):void;
+  native public override function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+
+  native public override function getItemAt(a:int):Object;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public override function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native public override function removeItemAt(a:int):Object;
+  native public override function setItemAt(a:int,a2:Object):Object;
+
+  native private function createCloneImpl():AbstractSequentialList;
+  native protected override function cloneImpl(a:Object):void;
+  native public override function clone():Object;
+}
+
+
+public interface com.yworks.bridge.util.Clonable
+{
+  native ns function clone():Object;
+  static native private const ns:* = "_-0w";
+}
+
+
+public class com.yworks.bridge.geom.Point2D extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+
+  native public function Point2D(a:Boolean = true):*;
+  native private final function initPoint2D0():void;
+  native public override function getClass():Class;
+  native protected final function initPoint2D():void;
+  native public function get x():Number;
+
+  native public function get y():Number;
+  native public function setLocation(a:Number,a2:Number):void;
+  native public function set location(a:Point2D):void;
+  native public function distanceSq2(a:Number,a2:Number):Number;
+  native public function distanceSq(a:Point2D):Number;
+
+  native public function distance2(a:Number,a2:Number):Number;
+  native public function distance(a:Point2D):Number;
+  native public function clone():Object;
+  native public override function hashCode():int;
+  native public override function equals(a:Object):Boolean;
+
+  native private function createCloneImpl():Point2D;
+  native protected function cloneImpl(a:Object):void;
+  static native public final function distanceBetweenSq(a:Number,a2:Number,a3:Number,a4:Number):Number;
+  static native public final function distanceBetween(a:Number,a2:Number,a3:Number,a4:Number):Number;
+}
+
+
+public class com.yworks.bridge.geom.Point2DDouble extends com.yworks.bridge.geom.Point2D
+{
+  native public function Point2DDouble(a:Number,a2:Number,a3:Boolean = true):*;
+
+  native public var x2:Number;
+  native public var y2:Number;
+  native private final function initPoint2DDouble0():void;
+  native public override function getClass():Class;
+  native protected final function initPoint2DDouble1():void;
+
+  native protected final function initPoint2DDouble2(a:Number,a2:Number):void;
+  native public override function get x():Number;
+  native public override function get y():Number;
+  native public override function setLocation(a:Number,a2:Number):void;
+  native public function toString():String;
+
+  native private function createCloneImpl():Point2DDouble;
+  native protected override function cloneImpl(a:Object):void;
+  native public override function clone():Object;
+  static native public final function newPoint2DDouble1():Point2DDouble;
+  static native public final function newPoint2DDouble2(a:Number,a2:Number):Point2DDouble;
+}
+
+
+public interface com.yworks.bridge.util.Map
+{
+
+  native ns function clear():void;
+  native ns function containsKey(a:Object):Boolean;
+  native ns function containsValue(a:Object):Boolean;
+  native ns function entrySet():com.yworks.bridge.util.Set;
+  native ns function getValue(a:Object):Object;
+
+  native ns function get empty():Boolean;
+  native ns function keySet():com.yworks.bridge.util.Set;
+  native ns function putValue(a:Object,a2:Object):Object;
+  native ns function putAll(a:Map):void;
+  native ns function remove(a:Object):Object;
+
+  native ns function size():int;
+  native ns function values():com.yworks.bridge.util.Collection;
+  static native private const ns:* = "case";
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedMap extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Map
+{
+  native public function Collections_SynchronizedMap(a:Boolean = true):*;
+  native private var m:com.yworks.bridge.util.Map;
+
+  native internal var mutex:Object;
+  native private final function initCollections_SynchronizedMap0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SynchronizedMap1(a:com.yworks.bridge.util.Map):void;
+  native internal final function initCollections_SynchronizedMap2(a:com.yworks.bridge.util.Map,a2:Object):void;
+
+  native public function clear():void;
+  native public function containsKey(a:Object):Boolean;
+  native public function containsValue(a:Object):Boolean;
+  native public function entrySet():com.yworks.bridge.util.Set;
+  native public override function equals(a:Object):Boolean;
+
+  native public function getValue(a:Object):Object;
+  native public override function hashCode():int;
+  native public function get empty():Boolean;
+  native public function keySet():com.yworks.bridge.util.Set;
+  native public function putValue(a:Object,a2:Object):Object;
+
+  native public function putAll(a:com.yworks.bridge.util.Map):void;
+  native public function remove(a:Object):Object;
+  native public function size():int;
+  native public function values():com.yworks.bridge.util.Collection;
+  native public function toString():String;
+
+  static native internal final function newCollections_SynchronizedMap1(a:com.yworks.bridge.util.Map):Collections_SynchronizedMap;
+  static native internal final function newCollections_SynchronizedMap2(a:com.yworks.bridge.util.Map,a2:Object):Collections_SynchronizedMap;
+}
+
+
+public interface com.yworks.bridge.util.SortedMap
+  extends com.yworks.bridge.util.Map
+{
+  native ns function comparator():com.yworks.bridge.util.Comparator;
+  native ns function firstKey():Object;
+  native ns function headMap(a:Object):SortedMap;
+
+  native ns function lastKey():Object;
+  native ns function subMap(a:Object,a2:Object):SortedMap;
+  native ns function tailMap(a:Object):SortedMap;
+  static native private const ns:* = true;
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedSortedMap extends com.yworks.bridge.util.Collections_SynchronizedMap
+  implements com.yworks.bridge.util.SortedMap
+{
+  native public function Collections_SynchronizedSortedMap(a:Boolean = true):*;
+
+  native private var sm:com.yworks.bridge.util.SortedMap;
+  native private final function initCollections_SynchronizedSortedMap0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SynchronizedSortedMap1(a:com.yworks.bridge.util.SortedMap):void;
+  native internal final function initCollections_SynchronizedSortedMap2(a:com.yworks.bridge.util.SortedMap,a2:Object):void;
+
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public function firstKey():Object;
+  native public function headMap(a:Object):com.yworks.bridge.util.SortedMap;
+  native public function lastKey():Object;
+  native public function subMap(a:Object,a2:Object):com.yworks.bridge.util.SortedMap;
+
+  native public function tailMap(a:Object):com.yworks.bridge.util.SortedMap;
+  static native internal final function newCollections_SynchronizedSortedMap1(a:com.yworks.bridge.util.SortedMap):Collections_SynchronizedSortedMap;
+  static native internal final function newCollections_SynchronizedSortedMap2(a:com.yworks.bridge.util.SortedMap,a2:Object):Collections_SynchronizedSortedMap;
+}
+
+
+public class com.yworks.bridge.util.LinkedList_Link extends com.yworks.bridge.util.YObject
+{
+  native public function LinkedList_Link(a:Boolean = true):*;
+  native internal var data:Object;
+
+  native internal var previous:LinkedList_Link;
+  native internal var next:LinkedList_Link;
+  native private final function initLinkedList_Link0():void;
+  native public override function getClass():Class;
+  native internal final function initLinkedList_Link(a:Object,a2:LinkedList_Link,a3:LinkedList_Link):void;
+
+  static native internal final function newLinkedList_Link(a:Object,a2:LinkedList_Link,a3:LinkedList_Link):LinkedList_Link;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_AbstractMapIterator extends com.yworks.bridge.util.YObject
+{
+  native public function TreeMap_AbstractMapIterator(a:Boolean = true):*;
+  native internal var backingMap:com.yworks.bridge.util.TreeMap;
+  native internal var expectedModCount:int;
+  native internal var node:com.yworks.bridge.util.TreeMapNode;
+
+  native internal var lastNode:com.yworks.bridge.util.TreeMapNode;
+  native internal var offset:int;
+  native internal var lastOffset:int;
+  native private final function initTreeMap_AbstractMapIterator0():void;
+  native public override function getClass():Class;
+
+  native internal final function initTreeMap_AbstractMapIterator3(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):void;
+  native internal final function initTreeMap_AbstractMapIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode):void;
+  native internal final function initTreeMap_AbstractMapIterator1(a:com.yworks.bridge.util.TreeMap):void;
+  native public function hasNext():Boolean;
+  native internal function makeNext():void;
+
+  native public function removeItem():void;
+  static native internal final function newTreeMap_AbstractMapIterator3(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):TreeMap_AbstractMapIterator;
+  static native internal final function newTreeMap_AbstractMapIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode):TreeMap_AbstractMapIterator;
+  static native internal final function newTreeMap_AbstractMapIterator1(a:com.yworks.bridge.util.TreeMap):TreeMap_AbstractMapIterator;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_BoundedMapIterator extends com.yworks.bridge.util.TreeMap_AbstractMapIterator
+{
+  native public function TreeMap_BoundedMapIterator(a:Boolean = true):*;
+
+  native internal var finalNode:com.yworks.bridge.util.TreeMapNode;
+  native internal var finalOffset:int;
+  native private final function initTreeMap_BoundedMapIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_BoundedMapIterator3(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):void;
+
+  native internal final function initTreeMap_BoundedMapIterator2(a:com.yworks.bridge.util.TreeMapNode,a2:com.yworks.bridge.util.TreeMap,a3:com.yworks.bridge.util.TreeMapNode,a4:int):void;
+  native internal final function initTreeMap_BoundedMapIterator1(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode):void;
+  native internal function makeBoundedNext():void;
+  static native internal final function newTreeMap_BoundedMapIterator3(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):TreeMap_BoundedMapIterator;
+  static native internal final function newTreeMap_BoundedMapIterator2(a:com.yworks.bridge.util.TreeMapNode,a2:com.yworks.bridge.util.TreeMap,a3:com.yworks.bridge.util.TreeMapNode,a4:int):TreeMap_BoundedMapIterator;
+
+  static native internal final function newTreeMap_BoundedMapIterator1(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode):TreeMap_BoundedMapIterator;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_BoundedValueIterator extends com.yworks.bridge.util.TreeMap_BoundedMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function TreeMap_BoundedValueIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int,a6:Boolean = true):*;
+  native private final function initTreeMap_BoundedValueIterator0():void;
+  native public override function getClass():Class;
+  native protected final function initTreeMap_BoundedValueIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):void;
+
+  native public function nextItem():Object;
+  static native public final function newTreeMap_BoundedValueIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):TreeMap_BoundedValueIterator;
+}
+
+
+public interface com.yworks.bridge.util.MapEntryImpl_Type
+{
+  native ns function get2(a:com.yworks.bridge.util.MapEntryImpl):Object;
+  static native private const ns:* = " use";
+}
+
+
+public class com.yworks.bridge.geom.Rectangle2D extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+  native public function Rectangle2D(a:Boolean = true):*;
+
+  native private final function initRectangle2D0():void;
+  native public override function getClass():Class;
+  native public function get x():Number;
+  native public function get y():Number;
+  native public function get width():Number;
+
+  native public function get height():Number;
+  native public function get empty():Boolean;
+  native public function get minX():Number;
+  native public function get minY():Number;
+  native public function get maxX():Number;
+
+  native public function get maxY():Number;
+  native public function get centerX():Number;
+  native public function get centerY():Number;
+  native public function get frame():Rectangle2D;
+  native public function setFrame2(a:com.yworks.bridge.geom.Point2D,a2:com.yworks.bridge.geom.Dimension):void;
+
+  native public function set frame(a:Rectangle2D):void;
+  native public function setFrameFromDiagonal2(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public function setFrameFromDiagonal(a:com.yworks.bridge.geom.Point2D,a2:com.yworks.bridge.geom.Point2D):void;
+  native public function setFrameFromCenter2(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public function setFrameFromCenter(a:com.yworks.bridge.geom.Point2D,a2:com.yworks.bridge.geom.Point2D):void;
+
+  native public function get bounds():com.yworks.bridge.geom.Rectangle;
+  native public function clone():Object;
+  native protected final function initRectangle2D():void;
+  native public function setRect(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public function outcode2(a:Number,a2:Number):int;
+
+  native public function createIntersection(a:Rectangle2D):Rectangle2D;
+  native public function createUnion(a:Rectangle2D):Rectangle2D;
+  native public function set rect(a:Rectangle2D):void;
+  native public function setFrame(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public function get bounds2D():Rectangle2D;
+
+  native public function intersectsLine(a:Number,a2:Number,a3:Number,a4:Number):Boolean;
+  native public function outcode(a:com.yworks.bridge.geom.Point2D):int;
+  native public function containsPoint2(a:Number,a2:Number):Boolean;
+  native public function intersectsRectangle2(a:Number,a2:Number,a3:Number,a4:Number):Boolean;
+  native public function containsRectangle2(a:Number,a2:Number,a3:Number,a4:Number):Boolean;
+
+  native public function addPoint2(a:Number,a2:Number):void;
+  native public function addPoint(a:com.yworks.bridge.geom.Point2D):void;
+  native public function addRectangle(a:Rectangle2D):void;
+  native public override function hashCode():int;
+  native public override function equals(a:Object):Boolean;
+
+  native public function containsRectangle(a:Rectangle2D):Boolean;
+  native public function intersectsRectangle(a:Rectangle2D):Boolean;
+  native private function createCloneImpl():Rectangle2D;
+  native protected function cloneImpl(a:Object):void;
+  static native public const OUT_LEFT:int = 1;
+
+  static native public const OUT_TOP:int = 2;
+  static native public const OUT_RIGHT:int = 4;
+  static native public const OUT_BOTTOM:int = 8;
+  static native private final function linesIntersect(a:Number,a2:Number,a3:Number,a4:Number,a5:Number,a6:Number,a7:Number,a8:Number):Boolean;
+  static native public final function intersect(a:Rectangle2D,a2:Rectangle2D,a3:Rectangle2D):void;
+
+  static native public final function unionOf(a:Rectangle2D,a2:Rectangle2D,a3:Rectangle2D):void;
+}
+
+
+public class com.yworks.bridge.geom.Rectangle extends com.yworks.bridge.geom.Rectangle2D
+{
+  native public function Rectangle(a:int,a2:int,a3:int,a4:int,a5:Boolean = true):*;
+  native public var x2:int;
+  native public var y2:int;
+  native public var width2:int;
+
+  native public var height2:int;
+  native private final function initRectangle0():void;
+  native public override function getClass():Class;
+  native protected final function initRectangle1():void;
+  native protected final function initRectangle5(a:int,a2:int,a3:int,a4:int):void;
+
+  native protected final function initRectangle4(a:int,a2:int):void;
+  native protected final function initRectangle3(a:Rectangle):void;
+  native protected final function initRectangle2(a:com.yworks.bridge.geom.Dimension):void;
+  native public override function get x():Number;
+  native public override function get y():Number;
+
+  native public override function get height():Number;
+  native public override function get width():Number;
+  native public override function get empty():Boolean;
+  native public function get size():com.yworks.bridge.geom.Dimension;
+  native public function setSize(a:int,a2:int):void;
+
+  native public function set size(a:com.yworks.bridge.geom.Dimension):void;
+  native public function setLocation(a:int,a2:int):void;
+  native public function move(a:int,a2:int):void;
+  native public override function setRect(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public function resize(a:int,a2:int):void;
+
+  native public function reshape(a:int,a2:int,a3:int,a4:int):void;
+  native public override function get bounds():Rectangle;
+  native public override function get bounds2D():com.yworks.bridge.geom.Rectangle2D;
+  native public function setBounds2(a:int,a2:int,a3:int,a4:int):void;
+  native public function setBounds(a:Rectangle):void;
+
+  native public function grow(a:int,a2:int):void;
+  native public function translate(a:int,a2:int):void;
+  native public function addRectangle2(a:Rectangle):void;
+  native public override function createIntersection(a:com.yworks.bridge.geom.Rectangle2D):com.yworks.bridge.geom.Rectangle2D;
+  native public function intersection(a:Rectangle):Rectangle;
+
+  native public function intersectsRectangle3(a:Rectangle):Boolean;
+  native public override function outcode2(a:Number,a2:Number):int;
+  native public override function createUnion(a:com.yworks.bridge.geom.Rectangle2D):com.yworks.bridge.geom.Rectangle2D;
+  native public function unionWith(a:Rectangle):Rectangle;
+  native public override function equals(a:Object):Boolean;
+
+  native public function toString():String;
+  native private function createCloneImpl():Rectangle;
+  native protected override function cloneImpl(a:Object):void;
+  native public override function clone():Object;
+  static native public final function newRectangle1():Rectangle;
+
+  static native public final function newRectangle5(a:int,a2:int,a3:int,a4:int):Rectangle;
+  static native public final function newRectangle4(a:int,a2:int):Rectangle;
+  static native public final function newRectangle3(a:Rectangle):Rectangle;
+  static native public final function newRectangle2(a:com.yworks.bridge.geom.Dimension):Rectangle;
+}
+
+
+public interface com.yworks.bridge.util.Set
+  extends com.yworks.bridge.util.Collection
+{
+}
+
+
+public class com.yworks.bridge.util.AbstractSet extends com.yworks.bridge.util.AbstractCollection
+  implements com.yworks.bridge.util.Set
+{
+  native public function AbstractSet(a:Boolean = true):*;
+
+  native private final function initAbstractSet0():void;
+  native public override function getClass():Class;
+  native protected final function initAbstractSet():void;
+  native public override function equals(a:Object):Boolean;
+  native public override function hashCode():int;
+
+  native public override function removeAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native private function createCloneImpl():AbstractSet;
+  native protected override function cloneImpl(a:Object):void;
+  native public override function clone():Object;
+}
+
+
+public class com.yworks.bridge.util.AbstractMap_AbstractSet100 extends com.yworks.bridge.util.AbstractSet
+{
+  native public function AbstractMap_AbstractSet100(a:com.yworks.bridge.util.AbstractMap,a2:Boolean = true):*;
+
+  native internal var enclosing0:com.yworks.bridge.util.AbstractMap;
+  native private final function initAbstractMap_AbstractSet1000():void;
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.AbstractMap extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Map
+{
+  native public function AbstractMap(a:Boolean = true):*;
+  native internal var keySet2:com.yworks.bridge.util.Set;
+  native internal var valuesCollection:com.yworks.bridge.util.Collection;
+  native private final function initAbstractMap0():void;
+
+  native public override function getClass():Class;
+  native protected final function initAbstractMap():void;
+  native public function clear():void;
+  native public function containsKey(a:Object):Boolean;
+  native public function containsValue(a:Object):Boolean;
+
+  native public function entrySet():com.yworks.bridge.util.Set;
+  native public override function equals(a:Object):Boolean;
+  native public function getValue(a:Object):Object;
+  native public override function hashCode():int;
+  native public function get empty():Boolean;
+
+  native public function keySet():com.yworks.bridge.util.Set;
+  native public function putValue(a:Object,a2:Object):Object;
+  native public function putAll(a:com.yworks.bridge.util.Map):void;
+  native public function remove(a:Object):Object;
+  native public function size():int;
+
+  native public function toString():String;
+  native public function values():com.yworks.bridge.util.Collection;
+  native public function clone():Object;
+  native private function createCloneImpl():AbstractMap;
+  native protected function cloneImpl(a:Object):void;
+}
+
+
+public class com.yworks.bridge.util.TreeMap extends com.yworks.bridge.util.AbstractMap
+  implements com.yworks.bridge.util.SortedMap,com.yworks.bridge.util.Clonable
+{
+
+  native public function TreeMap(a:Boolean = true):*;
+  native internal var size2:int;
+  native internal var comparator2:com.yworks.bridge.util.Comparator;
+  native internal var modCount:int;
+  native internal var entrySet2:com.yworks.bridge.util.Set;
+
+  native internal var root:com.yworks.bridge.util.TreeMapNode;
+  native private final function initTreeMap0():void;
+  native public override function getClass():Class;
+  native protected final function initTreeMap1():void;
+  native protected final function initTreeMap2(a:com.yworks.bridge.util.Comparator):void;
+
+  native protected final function initTreeMap3(a:com.yworks.bridge.util.Map):void;
+  native protected final function initTreeMap4(a:com.yworks.bridge.util.SortedMap):void;
+  native internal function addToLast(a:com.yworks.bridge.util.TreeMapNode,a2:Object,a3:Object):com.yworks.bridge.util.TreeMapNode;
+  native public override function clear():void;
+  native public override function clone():Object;
+
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public override function containsKey(a:Object):Boolean;
+  native public override function containsValue(a:Object):Boolean;
+  native public override function entrySet():com.yworks.bridge.util.Set;
+  native public function firstKey():Object;
+
+  native public override function getValue(a:Object):Object;
+  native internal function cmp(a:com.yworks.bridge.util.Comparable,a2:Object,a3:Object):int;
+  native public function headMap(a:Object):com.yworks.bridge.util.SortedMap;
+  native public override function keySet():com.yworks.bridge.util.Set;
+  native public function lastKey():Object;
+
+  native public override function putValue(a:Object,a2:Object):Object;
+  native private function appendFromLeft(a:com.yworks.bridge.util.TreeMapNode,a2:Object,a3:Object):void;
+  native private function attachToLeft(a:com.yworks.bridge.util.TreeMapNode,a2:com.yworks.bridge.util.TreeMapNode):void;
+  native private function appendFromRight(a:com.yworks.bridge.util.TreeMapNode,a2:Object,a3:Object):void;
+  native private function attachToRight(a:com.yworks.bridge.util.TreeMapNode,a2:com.yworks.bridge.util.TreeMapNode):void;
+
+  native private function createNode(a:Object,a2:Object):com.yworks.bridge.util.TreeMapNode;
+  native internal function balance(a:com.yworks.bridge.util.TreeMapNode):void;
+  native private function rightRotate(a:com.yworks.bridge.util.TreeMapNode):void;
+  native private function leftRotate(a:com.yworks.bridge.util.TreeMapNode):void;
+  native public override function putAll(a:com.yworks.bridge.util.Map):void;
+
+  native public override function remove(a:Object):Object;
+  native internal function removeLeftmost(a:com.yworks.bridge.util.TreeMapNode):void;
+  native internal function removeRightmost(a:com.yworks.bridge.util.TreeMapNode):void;
+  native internal function removeMiddleElement(a:com.yworks.bridge.util.TreeMapNode,a2:int):void;
+  native internal function removeFromIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int):void;
+
+  native private function deleteNode(a:com.yworks.bridge.util.TreeMapNode):void;
+  native private function attachToParentNoFixup(a:com.yworks.bridge.util.TreeMapNode,a2:com.yworks.bridge.util.TreeMapNode):void;
+  native private function attachToParent(a:com.yworks.bridge.util.TreeMapNode,a2:com.yworks.bridge.util.TreeMapNode):void;
+  native private function attachNullToParent(a:com.yworks.bridge.util.TreeMapNode):void;
+  native private function fixNextChain(a:com.yworks.bridge.util.TreeMapNode):void;
+
+  native private function fixup(a:com.yworks.bridge.util.TreeMapNode):void;
+  native public override function size():int;
+  native public function subMap(a:Object,a2:Object):com.yworks.bridge.util.SortedMap;
+  native public function tailMap(a:Object):com.yworks.bridge.util.SortedMap;
+  native public override function values():com.yworks.bridge.util.Collection;
+
+  native private function createCloneImpl():TreeMap;
+  native protected override function cloneImpl(a:Object):void;
+  static native internal final function toComparable(a:Object):com.yworks.bridge.util.Comparable;
+  static native public final function newTreeMap1():TreeMap;
+  static native public final function newTreeMap2(a:com.yworks.bridge.util.Comparator):TreeMap;
+
+  static native public final function newTreeMap3(a:com.yworks.bridge.util.Map):TreeMap;
+  static native public final function newTreeMap4(a:com.yworks.bridge.util.SortedMap):TreeMap;
+  static native private final function successor(a:com.yworks.bridge.util.TreeMapNode):com.yworks.bridge.util.TreeMapNode;
+  static native internal final function minimum(a:com.yworks.bridge.util.TreeMapNode):com.yworks.bridge.util.TreeMapNode;
+  static native internal final function maximum(a:com.yworks.bridge.util.TreeMapNode):com.yworks.bridge.util.TreeMapNode;
+}
+
+
+public interface com.yworks.bridge.util.Comparator
+{
+
+  native ns function compare(a:Object,a2:Object):int;
+  static native private const ns:* = "implements";
+}
+
+
+public class com.yworks.bridge.util.Collections_ReverseComparator extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Comparator
+{
+  native public function Collections_ReverseComparator(a:Boolean = true):*;
+  native private final function initCollections_ReverseComparator0():void;
+  native public override function getClass():Class;
+
+  native public function compare(a:Object,a2:Object):int;
+  native protected final function initCollections_ReverseComparator():void;
+  static native public final function newCollections_ReverseComparator():Collections_ReverseComparator;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableCollection extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Collection
+{
+  native public function Collections_UnmodifiableCollection(a:Boolean = true):*;
+  native internal var c:com.yworks.bridge.util.Collection;
+
+  native private final function initCollections_UnmodifiableCollection0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableCollection(a:com.yworks.bridge.util.Collection):void;
+  native public function addItem(a:Object):Boolean;
+  native public function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+
+  native public function clear():void;
+  native public function containsItem(a:Object):Boolean;
+  native public function containsAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function get empty():Boolean;
+  native public function iterator():com.yworks.bridge.util.Iterator;
+
+  native public function removeItem(a:Object):Boolean;
+  native public function removeAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function retainAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function get length():int;
+  native public function toArray():Vector.<Object>;
+
+  native public function toArray2(a:Vector.<Object>):Vector.<Object>;
+  native public function toString():String;
+  static native internal final function newCollections_UnmodifiableCollection(a:com.yworks.bridge.util.Collection):Collections_UnmodifiableCollection;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableSet extends com.yworks.bridge.util.Collections_UnmodifiableCollection
+  implements com.yworks.bridge.util.Set
+{
+  native public function Collections_UnmodifiableSet(a:Boolean = true):*;
+  native private final function initCollections_UnmodifiableSet0():void;
+
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableSet(a:com.yworks.bridge.util.Set):void;
+  native public override function equals(a:Object):Boolean;
+  native public override function hashCode():int;
+  static native internal final function newCollections_UnmodifiableSet(a:com.yworks.bridge.util.Set):Collections_UnmodifiableSet;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableMap extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Map
+{
+
+  native public function Collections_UnmodifiableMap(a:Boolean = true):*;
+  native private var m:com.yworks.bridge.util.Map;
+  native private final function initCollections_UnmodifiableMap0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableMap(a:com.yworks.bridge.util.Map):void;
+
+  native public function clear():void;
+  native public function containsKey(a:Object):Boolean;
+  native public function containsValue(a:Object):Boolean;
+  native public function entrySet():com.yworks.bridge.util.Set;
+  native public override function equals(a:Object):Boolean;
+
+  native public function getValue(a:Object):Object;
+  native public override function hashCode():int;
+  native public function get empty():Boolean;
+  native public function keySet():com.yworks.bridge.util.Set;
+  native public function putValue(a:Object,a2:Object):Object;
+
+  native public function putAll(a:com.yworks.bridge.util.Map):void;
+  native public function remove(a:Object):Object;
+  native public function size():int;
+  native public function values():com.yworks.bridge.util.Collection;
+  native public function toString():String;
+
+  static native internal final function newCollections_UnmodifiableMap(a:com.yworks.bridge.util.Map):Collections_UnmodifiableMap;
+}
+
+
+public class com.yworks.bridge.util.HashMap_AbstractMapIterator extends com.yworks.bridge.util.YObject
+{
+  native public function HashMap_AbstractMapIterator(a:Boolean = true):*;
+  native private var position:int;
+  native internal var expectedModCount:int;
+  native internal var futureEntry:com.yworks.bridge.util.HashMapEntry;
+
+  native internal var currentEntry:com.yworks.bridge.util.HashMapEntry;
+  native internal var prevEntry:com.yworks.bridge.util.HashMapEntry;
+  native internal var associatedMap:com.yworks.bridge.util.HashMap;
+  native private final function initHashMap_AbstractMapIterator0():void;
+  native public override function getClass():Class;
+
+  native internal final function initHashMap_AbstractMapIterator(a:com.yworks.bridge.util.HashMap):void;
+  native public function hasNext():Boolean;
+  native internal function checkConcurrentMod():void;
+  native internal function makeNext():void;
+  native public function removeItem():void;
+
+  static native internal final function newHashMap_AbstractMapIterator(a:com.yworks.bridge.util.HashMap):HashMap_AbstractMapIterator;
+}
+
+
+public class com.yworks.bridge.util.HashMap_ValueIterator extends com.yworks.bridge.util.HashMap_AbstractMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function HashMap_ValueIterator(a:Boolean = true):*;
+  native private final function initHashMap_ValueIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initHashMap_ValueIterator(a:com.yworks.bridge.util.HashMap):void;
+
+  native public function nextItem():Object;
+  static native internal final function newHashMap_ValueIterator(a:com.yworks.bridge.util.HashMap):HashMap_ValueIterator;
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedCollection extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Collection
+{
+  native public function Collections_SynchronizedCollection(a:Boolean = true):*;
+  native internal var c:com.yworks.bridge.util.Collection;
+  native internal var mutex:Object;
+
+  native private final function initCollections_SynchronizedCollection0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SynchronizedCollection1(a:com.yworks.bridge.util.Collection):void;
+  native internal final function initCollections_SynchronizedCollection2(a:com.yworks.bridge.util.Collection,a2:Object):void;
+  native public function addItem(a:Object):Boolean;
+
+  native public function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function clear():void;
+  native public function containsItem(a:Object):Boolean;
+  native public function containsAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function get empty():Boolean;
+
+  native public function iterator():com.yworks.bridge.util.Iterator;
+  native public function removeItem(a:Object):Boolean;
+  native public function removeAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function retainAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function get length():int;
+
+  native public function toArray():Vector.<Object>;
+  native public function toString():String;
+  native public function toArray2(a:Vector.<Object>):Vector.<Object>;
+  static native internal final function newCollections_SynchronizedCollection1(a:com.yworks.bridge.util.Collection):Collections_SynchronizedCollection;
+  static native internal final function newCollections_SynchronizedCollection2(a:com.yworks.bridge.util.Collection,a2:Object):Collections_SynchronizedCollection;
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedSet extends com.yworks.bridge.util.Collections_SynchronizedCollection
+  implements com.yworks.bridge.util.Set
+{
+
+  native public function Collections_SynchronizedSet(a:Boolean = true):*;
+  native private final function initCollections_SynchronizedSet0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SynchronizedSet1(a:com.yworks.bridge.util.Set):void;
+  native internal final function initCollections_SynchronizedSet2(a:com.yworks.bridge.util.Set,a2:Object):void;
+
+  native public override function equals(a:Object):Boolean;
+  native public override function hashCode():int;
+  static native internal final function newCollections_SynchronizedSet1(a:com.yworks.bridge.util.Set):Collections_SynchronizedSet;
+  static native internal final function newCollections_SynchronizedSet2(a:com.yworks.bridge.util.Set,a2:Object):Collections_SynchronizedSet;
+}
+
+
+public interface com.yworks.bridge.util.SortedSet
+  extends com.yworks.bridge.util.Set
+{
+  native ns function comparator():com.yworks.bridge.util.Comparator;
+
+  native ns function first():Object;
+  native ns function headSet(a:Object):SortedSet;
+  native ns function last():Object;
+  native ns function subSet(a:Object,a2:Object):SortedSet;
+  native ns function tailSet(a:Object):SortedSet;
+
+  static native private const ns:* = "_-X";
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedSortedSet extends com.yworks.bridge.util.Collections_SynchronizedSet
+  implements com.yworks.bridge.util.SortedSet
+{
+  native public function Collections_SynchronizedSortedSet(a:Boolean = true):*;
+  native private var ss:com.yworks.bridge.util.SortedSet;
+  native private final function initCollections_SynchronizedSortedSet0():void;
+  native public override function getClass():Class;
+
+  native internal final function initCollections_SynchronizedSortedSet1(a:com.yworks.bridge.util.SortedSet):void;
+  native internal final function initCollections_SynchronizedSortedSet2(a:com.yworks.bridge.util.SortedSet,a2:Object):void;
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public function first():Object;
+  native public function headSet(a:Object):com.yworks.bridge.util.SortedSet;
+
+  native public function last():Object;
+  native public function subSet(a:Object,a2:Object):com.yworks.bridge.util.SortedSet;
+  native public function tailSet(a:Object):com.yworks.bridge.util.SortedSet;
+  static native internal final function newCollections_SynchronizedSortedSet1(a:com.yworks.bridge.util.SortedSet):Collections_SynchronizedSortedSet;
+  static native internal final function newCollections_SynchronizedSortedSet2(a:com.yworks.bridge.util.SortedSet,a2:Object):Collections_SynchronizedSortedSet;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_SubMapKeySet extends com.yworks.bridge.util.AbstractSet
+  implements com.yworks.bridge.util.Set
+{
+
+  native public function TreeMap_SubMapKeySet(a:Boolean = true):*;
+  native internal var subMap:com.yworks.bridge.util.TreeMap_SubMap;
+  native private final function initTreeMap_SubMapKeySet0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_SubMapKeySet(a:com.yworks.bridge.util.TreeMap_SubMap):void;
+
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get empty():Boolean;
+  native public override function get length():int;
+  native public override function removeItem(a:Object):Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+
+  static native internal final function newTreeMap_SubMapKeySet(a:com.yworks.bridge.util.TreeMap_SubMap):TreeMap_SubMapKeySet;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_UnboundedValueIterator extends com.yworks.bridge.util.TreeMap_AbstractMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function TreeMap_UnboundedValueIterator(a:Boolean = true):*;
+  native private final function initTreeMap_UnboundedValueIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_UnboundedValueIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):void;
+
+  native internal final function initTreeMap_UnboundedValueIterator1(a:com.yworks.bridge.util.TreeMap):void;
+  native public function nextItem():Object;
+  static native internal final function newTreeMap_UnboundedValueIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):TreeMap_UnboundedValueIterator;
+  static native internal final function newTreeMap_UnboundedValueIterator1(a:com.yworks.bridge.util.TreeMap):TreeMap_UnboundedValueIterator;
+}
+
+
+public interface com.yworks.bridge.util.MapEntry
+{
+  native ns function get key():Object;
+
+  native ns function get value():Object;
+  native ns function setValue(a:Object):Object;
+  static native private const ns:* = "_-04";
+}
+
+
+public class com.yworks.bridge.util.Elementary extends com.yworks.bridge.util.YObject
+{
+  native public function Elementary(a:Boolean = true):*;
+  native private final function initElementary0():void;
+
+  native public override function getClass():Class;
+  native private final function initElementary():void;
+  static native private const LONG_LITERAL_FFFFFFFF:com.yworks.bridge.util.LongImpl;
+  static native private final function newElementary():Elementary;
+  static native internal final function compareArrays(a:Vector.<int>,a2:Vector.<int>,a3:int):int;
+
+  static native internal final function add(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native private final function add3(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:Vector.<int>,a5:int):void;
+  static native internal final function subtract(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native private final function subtract3(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:Vector.<int>,a5:int):void;
+  static native private final function add2(a:Vector.<int>,a2:int,a3:Vector.<int>,a4:int):Vector.<int>;
+
+  static native internal final function inplaceAdd(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):void;
+  static native internal final function inplaceAdd3(a:Vector.<int>,a2:int,a3:int):int;
+  static native internal final function inplaceAdd2(a:com.yworks.bridge.util.BigInteger,a2:int):void;
+  static native internal final function inplaceSubtract(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):void;
+  static native private final function inverseSubtract(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:Vector.<int>,a5:int):void;
+
+  static native private final function subtract2(a:Vector.<int>,a2:int,a3:Vector.<int>,a4:int):Vector.<int>;
+  static native internal final function completeInPlaceSubtract(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):void;
+  static native internal final function completeInPlaceAdd(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):void;
+  static native private final function unsignedArraysCompare(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:int):int;
+}
+
+
+public class com.yworks.bridge.util.HashMap_EntryIterator extends com.yworks.bridge.util.HashMap_AbstractMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function HashMap_EntryIterator(a:Boolean = true):*;
+
+  native private final function initHashMap_EntryIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initHashMap_EntryIterator(a:com.yworks.bridge.util.HashMap):void;
+  native public function nextItem():Object;
+  static native internal final function newHashMap_EntryIterator(a:com.yworks.bridge.util.HashMap):HashMap_EntryIterator;
+}
+
+
+public class com.yworks.bridge.util.AbstractMap_AbstractCollection100 extends com.yworks.bridge.util.AbstractCollection
+{
+
+  native public function AbstractMap_AbstractCollection100(a:com.yworks.bridge.util.AbstractMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.AbstractMap;
+  native private final function initAbstractMap_AbstractCollection1000():void;
+  native public override function getClass():Class;
+  native public override function get length():int;
+
+  native public override function containsItem(a:Object):Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableMap_UnmodifiableEntrySet_UnmodifiableMapEntry extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.MapEntry
+{
+  native public function Collections_UnmodifiableMap_UnmodifiableEntrySet_UnmodifiableMapEntry(a:Boolean = true):*;
+  native internal var mapEntry:com.yworks.bridge.util.MapEntry;
+  native private final function initCollections_UnmodifiableMap_UnmodifiableEntrySet_UnmodifiableMapEntry0():void;
+
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableMap_UnmodifiableEntrySet_UnmodifiableMapEntry(a:com.yworks.bridge.util.MapEntry):void;
+  native public override function equals(a:Object):Boolean;
+  native public function get key():Object;
+  native public function get value():Object;
+
+  native public override function hashCode():int;
+  native public function setValue(a:Object):Object;
+  native public function toString():String;
+  static native internal final function newCollections_UnmodifiableMap_UnmodifiableEntrySet_UnmodifiableMapEntry(a:com.yworks.bridge.util.MapEntry):Collections_UnmodifiableMap_UnmodifiableEntrySet_UnmodifiableMapEntry;
+}
+
+
+public class com.yworks.bridge.util.Collections_EmptySet_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function Collections_EmptySet_Iterator100(a:com.yworks.bridge.util.Collections_EmptySet,a2:Boolean = true):*;
+
+  native internal var enclosing0:com.yworks.bridge.util.Collections_EmptySet;
+  native private final function initCollections_EmptySet_Iterator1000():void;
+  native public override function getClass():Class;
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+
+  native public function removeItem():void;
+}
+
+
+public class com.yworks.bridge.util.Random extends com.yworks.bridge.util.YObject
+{
+  native public function Random(a:Boolean = true):*;
+  native private var haveNextNextGaussian:Boolean;
+  native private var seed2:com.yworks.bridge.util.LongImpl;
+  native private var nextNextGaussian:Number;
+
+  native private final function initRandom0():void;
+  native public override function getClass():Class;
+  native protected final function initRandom1():void;
+  native protected final function initRandom2(a:com.yworks.bridge.util.LongImpl):void;
+  native protected function next(a:int):int;
+
+  native public function nextBoolean():Boolean;
+  native public function nextBytes(a:Vector.<int>):void;
+  native public function nextDouble():Number;
+  native public function nextFloat():Number;
+  native public function nextGaussian():Number;
+
+  native public function nextInt():int;
+  native public function nextInt2(a:int):int;
+  native public function nextLong():com.yworks.bridge.util.LongImpl;
+  native public function set seed(a:com.yworks.bridge.util.LongImpl):void;
+  static native private const LONG_LITERAL_5DEECE66D:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_B:com.yworks.bridge.util.LongImpl;
+  static native private const multiplier:com.yworks.bridge.util.LongImpl;
+  static native public final function newRandom1():Random;
+  static native public final function newRandom2(a:com.yworks.bridge.util.LongImpl):Random;
+}
+
+
+public class com.yworks.bridge.util.MapEntryImpl extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.MapEntry,com.yworks.bridge.util.Clonable
+{
+  native public function MapEntryImpl(a:Boolean = true):*;
+
+  native internal var key2:Object;
+  native internal var value2:Object;
+  native private final function initMapEntryImpl0():void;
+  native public override function getClass():Class;
+  native internal final function initMapEntryImpl1(a:Object):void;
+
+  native internal final function initMapEntryImpl2(a:Object,a2:Object):void;
+  native public function clone():Object;
+  native public override function equals(a:Object):Boolean;
+  native public function get key():Object;
+  native public function get value():Object;
+
+  native public override function hashCode():int;
+  native public function setValue(a:Object):Object;
+  native public function toString():String;
+  native private function createCloneImpl():MapEntryImpl;
+  native protected function cloneImpl(a:Object):void;
+
+  static native internal final function newMapEntryImpl1(a:Object):MapEntryImpl;
+  static native internal final function newMapEntryImpl2(a:Object,a2:Object):MapEntryImpl;
+}
+
+
+public class com.yworks.bridge.util.HashMapEntry extends com.yworks.bridge.util.MapEntryImpl
+{
+  native public function HashMapEntry(a:Boolean = true):*;
+  native internal var origKeyHash:int;
+  native internal var next:HashMapEntry;
+
+  native private final function initHashMapEntry0():void;
+  native public override function getClass():Class;
+  native internal final function initHashMapEntry1(a:Object,a2:int):void;
+  native internal final function initHashMapEntry2(a:Object,a2:Object):void;
+  native public override function clone():Object;
+
+  native private function createCloneImpl():HashMapEntry;
+  native protected override function cloneImpl(a:Object):void;
+  static native internal final function newHashMapEntry1(a:Object,a2:int):HashMapEntry;
+  static native internal final function newHashMapEntry2(a:Object,a2:Object):HashMapEntry;
+}
+
+
+public class com.yworks.bridge.util.IllegalArgumentException extends Error
+{
+  native public function IllegalArgumentException(a:String = "",a2:int = 0):*;
+}
+
+
+public class com.yworks.bridge.util.Collections_ReverseComparatorWithComparator extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Comparator
+{
+
+  native public function Collections_ReverseComparatorWithComparator(a:Boolean = true):*;
+  native private var comparator:com.yworks.bridge.util.Comparator;
+  native private final function initCollections_ReverseComparatorWithComparator0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_ReverseComparatorWithComparator(a:com.yworks.bridge.util.Comparator):void;
+
+  native public function compare(a:Object,a2:Object):int;
+  static native internal final function newCollections_ReverseComparatorWithComparator(a:com.yworks.bridge.util.Comparator):Collections_ReverseComparatorWithComparator;
+}
+
+
+public class com.yworks.bridge.util.Collections_EmptyMap extends com.yworks.bridge.util.AbstractMap
+{
+  native public function Collections_EmptyMap(a:Boolean = true):*;
+  native private final function initCollections_EmptyMap0():void;
+  native public override function getClass():Class;
+
+  native public override function containsKey(a:Object):Boolean;
+  native public override function containsValue(a:Object):Boolean;
+  native public override function entrySet():com.yworks.bridge.util.Set;
+  native public override function getValue(a:Object):Object;
+  native public override function keySet():com.yworks.bridge.util.Set;
+
+  native public override function values():com.yworks.bridge.util.Collection;
+  native private function readResolve():Object;
+  native protected final function initCollections_EmptyMap():void;
+  static native public final function newCollections_EmptyMap():Collections_EmptyMap;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function Collections_SingletonMap_AbstractSet100_Iterator100(a:com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100,a2:Boolean = true):*;
+
+  native internal var hasNext2:Boolean;
+  native internal var enclosing0:com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100;
+  native private final function initCollections_SingletonMap_AbstractSet100_Iterator1000():void;
+  native public override function getClass():Class;
+  native public function hasNext():Boolean;
+
+  native public function nextItem():Object;
+  native public function removeItem():void;
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedList extends com.yworks.bridge.util.Collections_SynchronizedCollection
+  implements com.yworks.bridge.util.List
+{
+  native public function Collections_SynchronizedList(a:Boolean = true):*;
+  native internal var list:com.yworks.bridge.util.List;
+  native private final function initCollections_SynchronizedList0():void;
+
+  native public override function getClass():Class;
+  native internal final function initCollections_SynchronizedList1(a:com.yworks.bridge.util.List):void;
+  native internal final function initCollections_SynchronizedList2(a:com.yworks.bridge.util.List,a2:Object):void;
+  native public function addItemAt(a:int,a2:Object):void;
+  native public function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+
+  native public override function equals(a:Object):Boolean;
+  native public function getItemAt(a:int):Object;
+  native public override function hashCode():int;
+  native public function indexOf(a:Object):int;
+  native public function lastIndexOf(a:Object):int;
+
+  native public function listIterator():com.yworks.bridge.util.ListIterator;
+  native public function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native public function removeItemAt(a:int):Object;
+  native public function setItemAt(a:int,a2:Object):Object;
+  native public function subList(a:int,a2:int):com.yworks.bridge.util.List;
+
+  native private function readResolve():Object;
+  static native internal final function newCollections_SynchronizedList1(a:com.yworks.bridge.util.List):Collections_SynchronizedList;
+  static native internal final function newCollections_SynchronizedList2(a:com.yworks.bridge.util.List,a2:Object):Collections_SynchronizedList;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableCollection_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function Collections_UnmodifiableCollection_Iterator100(a:com.yworks.bridge.util.Collections_UnmodifiableCollection,a2:Boolean = true):*;
+  native internal var iterator:com.yworks.bridge.util.Iterator;
+
+  native internal var enclosing0:com.yworks.bridge.util.Collections_UnmodifiableCollection;
+  native private final function initCollections_UnmodifiableCollection_Iterator1000():void;
+  native public override function getClass():Class;
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+
+  native public function removeItem():void;
+}
+
+
+public class com.yworks.bridge.util.StringBuilder extends Object
+{
+  native public function StringBuilder(a:int = 64):*;
+  native internal var data:String;
+  native public function appendBoolean(a:Boolean):StringBuilder;
+  native public function appendNumber(a:Number):StringBuilder;
+
+  native public function appendInt(a:int):StringBuilder;
+  native public function appendLong(a:com.yworks.bridge.util.LongImpl):StringBuilder;
+  native public function appendString(a:String):StringBuilder;
+  native public function appendCharacters(a:Vector.<String>,a2:int,a3:int):StringBuilder;
+  native public function appendObject(a:Object):StringBuilder;
+
+  native public function setLength(a:int):void;
+  native public function length():int;
+  native public function toString():String;
+  static native private const NULL_CHAR:String;
+  static native public final function newStringBuilder(a:String = ""):StringBuilder;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_UnboundedEntryIterator extends com.yworks.bridge.util.TreeMap_AbstractMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+
+  native public function TreeMap_UnboundedEntryIterator(a:Boolean = true):*;
+  native private final function initTreeMap_UnboundedEntryIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_UnboundedEntryIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):void;
+  native internal final function initTreeMap_UnboundedEntryIterator1(a:com.yworks.bridge.util.TreeMap):void;
+
+  native public function nextItem():Object;
+  static native internal final function newTreeMap_UnboundedEntryIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):TreeMap_UnboundedEntryIterator;
+  static native internal final function newTreeMap_UnboundedEntryIterator1(a:com.yworks.bridge.util.TreeMap):TreeMap_UnboundedEntryIterator;
+}
+
+
+public class com.yworks.bridge.util.HashMap_HashMapEntrySet extends com.yworks.bridge.util.AbstractSet
+{
+  native public function HashMap_HashMapEntrySet(a:com.yworks.bridge.util.HashMap,a2:Boolean = true):*;
+  native private var associatedMap:com.yworks.bridge.util.HashMap;
+
+  native private final function initHashMap_HashMapEntrySet0():void;
+  native public override function getClass():Class;
+  native protected final function initHashMap_HashMapEntrySet(a:com.yworks.bridge.util.HashMap):void;
+  native internal function hashMap():com.yworks.bridge.util.HashMap;
+  native public override function get length():int;
+
+  native public override function clear():void;
+  native public override function removeItem(a:Object):Boolean;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  static native public final function newHashMap_HashMapEntrySet(a:com.yworks.bridge.util.HashMap):HashMap_HashMapEntrySet;
+
+  static native private final function valuesEq(a:com.yworks.bridge.util.HashMapEntry,a2:com.yworks.bridge.util.MapEntry):Boolean;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonList extends com.yworks.bridge.util.AbstractList
+{
+  native public function Collections_SingletonList(a:Boolean = true):*;
+  native internal var element:Object;
+  native private final function initCollections_SingletonList0():void;
+  native public override function getClass():Class;
+
+  native internal final function initCollections_SingletonList(a:Object):void;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function getItemAt(a:int):Object;
+  native public override function get length():int;
+  static native internal final function newCollections_SingletonList(a:Object):Collections_SingletonList;
+}
+
+
+public class com.yworks.bridge.util.Collections_CopiesList extends com.yworks.bridge.util.AbstractList
+{
+
+  native public function Collections_CopiesList(a:Boolean = true):*;
+  native private var n:int;
+  native private var element:Object;
+  native private final function initCollections_CopiesList0():void;
+  native public override function getClass():Class;
+
+  native internal final function initCollections_CopiesList(a:int,a2:Object):void;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+  native public override function getItemAt(a:int):Object;
+  static native internal final function newCollections_CopiesList(a:int,a2:Object):Collections_CopiesList;
+}
+
+
+public class com.yworks.bridge.util.AbstractList_SimpleListIterator extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+
+  native public function AbstractList_SimpleListIterator(a:com.yworks.bridge.util.AbstractList,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.AbstractList;
+  native internal var pos:int;
+  native internal var expectedModCount:int;
+  native internal var lastPosition:int;
+
+  native private final function initAbstractList_SimpleListIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initAbstractList_SimpleListIterator(a:com.yworks.bridge.util.AbstractList):void;
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+
+  native public function removeItem():void;
+  static native internal final function newAbstractList_SimpleListIterator(a:com.yworks.bridge.util.AbstractList):AbstractList_SimpleListIterator;
+}
+
+
+public class com.yworks.bridge.util.AbstractList_FullListIterator extends com.yworks.bridge.util.AbstractList_SimpleListIterator
+  implements com.yworks.bridge.util.ListIterator
+{
+  native public function AbstractList_FullListIterator(a:com.yworks.bridge.util.AbstractList,a2:Boolean = true):*;
+  native internal var enclosing1:com.yworks.bridge.util.AbstractList;
+  native private final function initAbstractList_FullListIterator0():void;
+
+  native public override function getClass():Class;
+  native internal final function initAbstractList_FullListIterator(a:com.yworks.bridge.util.AbstractList,a2:int):void;
+  native public function addItem(a:Object):void;
+  native public function hasPrevious():Boolean;
+  native public function nextIndex():int;
+
+  native public function previousItem():Object;
+  native public function previousIndex():int;
+  native public function setItem(a:Object):void;
+  static native internal final function newAbstractList_FullListIterator(a:com.yworks.bridge.util.AbstractList,a2:int):AbstractList_FullListIterator;
+}
+
+
+public class com.yworks.bridge.geom.Rectangle2DDouble extends com.yworks.bridge.geom.Rectangle2D
+{
+  native public function Rectangle2DDouble(a:Number,a2:Number,a3:Number,a4:Number,a5:Boolean = true):*;
+
+  native public var x2:Number;
+  native public var y2:Number;
+  native public var width2:Number;
+  native public var height2:Number;
+  native private final function initRectangle2DDouble0():void;
+
+  native public override function getClass():Class;
+  native protected final function initRectangle2DDouble1():void;
+  native protected final function initRectangle2DDouble2(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public override function get x():Number;
+  native public override function get y():Number;
+
+  native public override function get width():Number;
+  native public override function get height():Number;
+  native public override function get empty():Boolean;
+  native public override function setRect(a:Number,a2:Number,a3:Number,a4:Number):void;
+  native public override function set rect(a:com.yworks.bridge.geom.Rectangle2D):void;
+
+  native public override function outcode2(a:Number,a2:Number):int;
+  native public override function get bounds2D():com.yworks.bridge.geom.Rectangle2D;
+  native public override function createIntersection(a:com.yworks.bridge.geom.Rectangle2D):com.yworks.bridge.geom.Rectangle2D;
+  native public override function createUnion(a:com.yworks.bridge.geom.Rectangle2D):com.yworks.bridge.geom.Rectangle2D;
+  native public function toString():String;
+
+  native private function createCloneImpl():Rectangle2DDouble;
+  native protected override function cloneImpl(a:Object):void;
+  native public override function clone():Object;
+  static native public final function newRectangle2DDouble1():Rectangle2DDouble;
+  static native public final function newRectangle2DDouble2(a:Number,a2:Number,a3:Number,a4:Number):Rectangle2DDouble;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_SubMapEntrySet extends com.yworks.bridge.util.AbstractSet
+  implements com.yworks.bridge.util.Set
+{
+
+  native public function TreeMap_SubMapEntrySet(a:Boolean = true):*;
+  native internal var subMap:com.yworks.bridge.util.TreeMap_SubMap;
+  native private final function initTreeMap_SubMapEntrySet0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_SubMapEntrySet(a:com.yworks.bridge.util.TreeMap_SubMap):void;
+
+  native public override function get empty():Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public override function get length():int;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function removeItem(a:Object):Boolean;
+
+  static native internal final function newTreeMap_SubMapEntrySet(a:com.yworks.bridge.util.TreeMap_SubMap):TreeMap_SubMapEntrySet;
+}
+
+
+public interface com.yworks.bridge.util.RandomAccess
+{
+}
+
+
+public class com.yworks.bridge.util.Arrays_ArrayList extends com.yworks.bridge.util.AbstractList
+  implements com.yworks.bridge.util.List,com.yworks.bridge.util.RandomAccess
+{
+  native public function Arrays_ArrayList(a:Boolean = true):*;
+  native private var a:Vector.<Object>;
+  native private final function initArrays_ArrayList0():void;
+  native public override function getClass():Class;
+
+  native internal final function initArrays_ArrayList(a:Vector.<Object>):void;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function getItemAt(a:int):Object;
+  native public override function indexOf(a:Object):int;
+  native public override function lastIndexOf(a:Object):int;
+
+  native public override function setItemAt(a:int,a2:Object):Object;
+  native public override function get length():int;
+  native public override function toArray():Vector.<Object>;
+  native public override function toArray2(a:Vector.<Object>):Vector.<Object>;
+  static native internal final function newArrays_ArrayList(a:Vector.<Object>):Arrays_ArrayList;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100 extends com.yworks.bridge.util.AbstractSet
+{
+
+  native public function Collections_SingletonMap_AbstractSet100(a:com.yworks.bridge.util.Collections_SingletonMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.Collections_SingletonMap;
+  native private final function initCollections_SingletonMap_AbstractSet1000():void;
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+
+  native public override function get length():int;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.LinkedList extends com.yworks.bridge.util.AbstractSequentialList
+  implements com.yworks.bridge.util.List,com.yworks.bridge.util.Clonable
+{
+  native public function LinkedList(a:Boolean = true):*;
+  native internal var size:int;
+  native internal var voidLink:com.yworks.bridge.util.LinkedList_Link;
+
+  native private final function initLinkedList0():void;
+  native public override function getClass():Class;
+  native protected final function initLinkedList1():void;
+  native protected final function initLinkedList2(a:com.yworks.bridge.util.Collection):void;
+  native public override function addItemAt(a:int,a2:Object):void;
+
+  native public override function addItem(a:Object):Boolean;
+  native public override function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+  native public override function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public function addFirst(a:Object):void;
+  native public function addLast(a:Object):void;
+
+  native public override function clear():void;
+  native public override function clone():Object;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function getItemAt(a:int):Object;
+  native public function get first():Object;
+
+  native public function get last():Object;
+  native public override function indexOf(a:Object):int;
+  native public override function lastIndexOf(a:Object):int;
+  native public override function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native public override function removeItemAt(a:int):Object;
+
+  native public override function removeItem(a:Object):Boolean;
+  native public function removeFirst():Object;
+  native public function removeLast():Object;
+  native public override function setItemAt(a:int,a2:Object):Object;
+  native public override function get length():int;
+
+  native public function offer(a:Object):Boolean;
+  native public function poll():Object;
+  native public function peek():Object;
+  native public function element():Object;
+  native public override function toArray():Vector.<Object>;
+
+  native public override function toArray2(a:Vector.<Object>):Vector.<Object>;
+  native private function createCloneImpl():LinkedList;
+  native protected override function cloneImpl(a:Object):void;
+  static native public final function newLinkedList1():LinkedList;
+  static native public final function newLinkedList2(a:com.yworks.bridge.util.Collection):LinkedList;
+}
+
+
+public class com.yworks.bridge.util.Logical extends com.yworks.bridge.util.YObject
+{
+
+  native public function Logical(a:Boolean = true):*;
+  native private final function initLogical0():void;
+  native public override function getClass():Class;
+  native private final function initLogical():void;
+  static native private final function newLogical():Logical;
+
+  static native internal final function not(a:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function and(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andPositive(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andDiffSigns(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andNegative(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+
+  static native internal final function andNot(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andNotPositive(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andNotPositiveNegative(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andNotNegativePositive(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function andNotNegative(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+
+  static native internal final function or(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function orPositive(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function orNegative(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function orDiffSigns(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function xor(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+
+  static native internal final function xorPositive(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function xorNegative(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function xorDiffSigns(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableList_ListIterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.ListIterator
+{
+  native public function Collections_UnmodifiableList_ListIterator100(a:com.yworks.bridge.util.Collections_UnmodifiableList,a2:int,a3:Boolean = true):*;
+  native internal var iterator:com.yworks.bridge.util.ListIterator;
+
+  native internal var enclosing0:com.yworks.bridge.util.Collections_UnmodifiableList;
+  native private var location:int;
+  native private final function initCollections_UnmodifiableList_ListIterator1000():void;
+  native public override function getClass():Class;
+  native public function addItem(a:Object):void;
+
+  native public function hasNext():Boolean;
+  native public function hasPrevious():Boolean;
+  native public function nextItem():Object;
+  native public function nextIndex():int;
+  native public function previousItem():Object;
+
+  native public function previousIndex():int;
+  native public function removeItem():void;
+  native public function setItem(a:Object):void;
+}
+
+
+[ExcludeClass]
+public class _950f5047a18e78c2d2673cf1b3ea5d899bbcc02baf1cbd2bec1dc5551b96f716_flash_display_Sprite extends flash.display.Sprite
+{
+  native public function _950f5047a18e78c2d2673cf1b3ea5d899bbcc02baf1cbd2bec1dc5551b96f716_flash_display_Sprite():*;
+  native public function allowDomainInRSL(... a):void;
+
+  native public function allowInsecureDomainInRSL(... a):void;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_BoundedKeyIterator extends com.yworks.bridge.util.TreeMap_BoundedMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function TreeMap_BoundedKeyIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int,a6:Boolean = true):*;
+  native private final function initTreeMap_BoundedKeyIterator0():void;
+  native public override function getClass():Class;
+  native protected final function initTreeMap_BoundedKeyIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):void;
+
+  native public function nextItem():Object;
+  static native public final function newTreeMap_BoundedKeyIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):TreeMap_BoundedKeyIterator;
+}
+
+
+public class com.yworks.bridge.util.YNumber extends com.yworks.bridge.util.YObject
+{
+  native public function YNumber():*;
+  native public override function getClass():Class;
+  native public function intValue():int;
+
+  native public function numberValue():Number;
+}
+
+
+public interface com.yworks.bridge.util.Comparable
+{
+  native ns function compareTo(a:Object):int;
+  static native private const ns:* = "function";
+}
+
+
+public class com.yworks.bridge.util.Integer extends com.yworks.bridge.util.YNumber
+  implements com.yworks.bridge.util.Comparable
+{
+  native public function Integer(a:int):*;
+  native private var value:int;
+
+  native public override function getClass():Class;
+  native public override function intValue():int;
+  native public override function numberValue():Number;
+  native public override function equals(a:Object):Boolean;
+  native public override function hashCode():int;
+
+  native public function compareTo(a:Object):int;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableSortedMap extends com.yworks.bridge.util.Collections_UnmodifiableMap
+  implements com.yworks.bridge.util.SortedMap
+{
+  native public function Collections_UnmodifiableSortedMap(a:Boolean = true):*;
+  native private var sm:com.yworks.bridge.util.SortedMap;
+  native private final function initCollections_UnmodifiableSortedMap0():void;
+  native public override function getClass():Class;
+
+  native internal final function initCollections_UnmodifiableSortedMap(a:com.yworks.bridge.util.SortedMap):void;
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public function firstKey():Object;
+  native public function headMap(a:Object):com.yworks.bridge.util.SortedMap;
+  native public function lastKey():Object;
+
+  native public function subMap(a:Object,a2:Object):com.yworks.bridge.util.SortedMap;
+  native public function tailMap(a:Object):com.yworks.bridge.util.SortedMap;
+  static native internal final function newCollections_UnmodifiableSortedMap(a:com.yworks.bridge.util.SortedMap):Collections_UnmodifiableSortedMap;
+}
+
+
+public class com.yworks.bridge.util.BitSet extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+  native public function BitSet(a:Boolean = true):*;
+  native private var bits:Vector.<com.yworks.bridge.util.LongImpl>;
+
+  native private var needClear2:Boolean;
+  native private var actualArrayLength:int;
+  native private var isLengthActual:Boolean;
+  native private final function initBitSet0():void;
+  native public override function getClass():Class;
+
+  native protected final function initBitSet1():void;
+  native protected final function initBitSet2(a:int):void;
+  native private final function initBitSet3(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:Boolean,a3:int,a4:Boolean):void;
+  native public function clone():Object;
+  native public override function equals(a:Object):Boolean;
+
+  native private function growLength(a:int):void;
+  native public override function hashCode():int;
+  native public function getBit(a:int):Boolean;
+  native public function getBits(a:int,a2:int):BitSet;
+  native public function setBit(a:int):void;
+
+  native public function setBitValue(a:int,a2:Boolean):void;
+  native public function setBits(a:int,a2:int):void;
+  native private function needClear():void;
+  native public function setBitsValue(a:int,a2:int,a3:Boolean):void;
+  native public function clear():void;
+
+  native public function clearBit(a:int):void;
+  native public function clearBits(a:int,a2:int):void;
+  native public function flipBit(a:int):void;
+  native public function flipBits(a:int,a2:int):void;
+  native public function intersects(a:BitSet):Boolean;
+
+  native public function and(a:BitSet):void;
+  native public function andNot(a:BitSet):void;
+  native public function or(a:BitSet):void;
+  native public function xor(a:BitSet):void;
+  native public function size():int;
+
+  native public function length():int;
+  native private function getActualArrayLength():int;
+  native public function toString():String;
+  native public function nextSetBit(a:int):int;
+  native public function nextClearBit(a:int):int;
+
+  native public function get empty():Boolean;
+  native public function cardinality():int;
+  native private function pop(a:com.yworks.bridge.util.LongImpl):int;
+  native private function createCloneImpl():BitSet;
+  native protected function cloneImpl(a:Object):void;
+
+  static native private const LONG_LITERAL_4000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_100000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_400000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_400:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_2000000000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_100:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_200000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_2000000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_20000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_8000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_200000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_8000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_200000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_40000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_4000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_1000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_100000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_10000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_1000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_200000000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_800000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_2000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_20:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_80000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_100000000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_10000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_1000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_80000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_40000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_400000000000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_10000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_800000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_2000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_4000000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_800:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_1000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_10:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_80:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_20000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_2000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_80000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_4000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_100000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_20000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_8000000000000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_8000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_800000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_20000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_8:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_200:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_40000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_4:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_40:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_400000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_8000000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_FFFFFFFF:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_40000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_10000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_1000000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_4000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_80000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_800000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_400000000:com.yworks.bridge.util.LongImpl;
+  static native private const OFFSET:int = 6;
+  static native private const ELM_SIZE:int;
+
+  static native private const RIGHT_BITS:int;
+  static native private const TWO_N_ARRAY:Vector.<com.yworks.bridge.util.LongImpl>;
+  static native public final function newBitSet1():BitSet;
+  static native public final function newBitSet2(a:int):BitSet;
+  static native private final function newBitSet3(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:Boolean,a3:int,a4:Boolean):BitSet;
+}
+
+
+public class com.yworks.bridge.util.AbstractMap_AbstractSet100_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+
+  native public function AbstractMap_AbstractSet100_Iterator100(a:com.yworks.bridge.util.AbstractMap_AbstractSet100,a2:Boolean = true):*;
+  native internal var setIterator:com.yworks.bridge.util.Iterator;
+  native internal var enclosing0:com.yworks.bridge.util.AbstractMap_AbstractSet100;
+  native private final function initAbstractMap_AbstractSet100_Iterator1000():void;
+  native public override function getClass():Class;
+
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+  native public function removeItem():void;
+}
+
+
+public class com.yworks.bridge.util.EventObject extends com.yworks.bridge.util.YObject
+{
+  native public function EventObject(a:Object,a2:Boolean = true):*;
+  native protected var source2:Object;
+
+  native private final function initEventObject0():void;
+  native public override function getClass():Class;
+  native protected final function initEventObject(a:Object):void;
+  native public function get source():Object;
+  native public function toString():String;
+
+  static native public final function newEventObject(a:Object):EventObject;
+}
+
+
+public class com.yworks.bridge.util.ConcurrentModificationException extends Error
+{
+  native public function ConcurrentModificationException(a:String = ""):*;
+  static native public final function newConcurrentModificationException1():ConcurrentModificationException;
+  static native public final function newConcurrentModificationException2(a:String):ConcurrentModificationException;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonMap extends com.yworks.bridge.util.AbstractMap
+{
+  native public function Collections_SingletonMap(a:Boolean = true):*;
+
+  native internal var k:Object;
+  native internal var v:Object;
+  native private final function initCollections_SingletonMap0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SingletonMap(a:Object,a2:Object):void;
+
+  native public override function containsKey(a:Object):Boolean;
+  native public override function containsValue(a:Object):Boolean;
+  native public override function getValue(a:Object):Object;
+  native public override function size():int;
+  native public override function entrySet():com.yworks.bridge.util.Set;
+
+  static native internal final function newCollections_SingletonMap(a:Object,a2:Object):Collections_SingletonMap;
+}
+
+
+public class com.yworks.bridge.util.Primality extends com.yworks.bridge.util.YObject
+{
+  native public function Primality(a:Boolean = true):*;
+  native private final function initPrimality0():void;
+  native public override function getClass():Class;
+  native private final function initPrimality():void;
+
+  static native private const primes:Vector.<int>;
+  static native private const BIprimes:Vector.<Object>;
+  static native private const BITS:Vector.<int>;
+  static native private const offsetPrimes:Vector.<Object>;
+  static native private final function static_initializer():void;
+
+  static native private final function newPrimality():Primality;
+  static native internal final function nextProbablePrime(a:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function consBigInteger(a:int,a2:int,a3:com.yworks.bridge.util.Random):com.yworks.bridge.util.BigInteger;
+  static native internal final function isProbablePrime(a:com.yworks.bridge.util.BigInteger,a2:int):Boolean;
+  static native private final function millerRabin(a:com.yworks.bridge.util.BigInteger,a2:int):Boolean;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableSortedSet extends com.yworks.bridge.util.Collections_UnmodifiableSet
+  implements com.yworks.bridge.util.SortedSet
+{
+
+  native public function Collections_UnmodifiableSortedSet(a:Boolean = true):*;
+  native private var ss:com.yworks.bridge.util.SortedSet;
+  native private final function initCollections_UnmodifiableSortedSet0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableSortedSet(a:com.yworks.bridge.util.SortedSet):void;
+
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public function first():Object;
+  native public function headSet(a:Object):com.yworks.bridge.util.SortedSet;
+  native public function last():Object;
+  native public function subSet(a:Object,a2:Object):com.yworks.bridge.util.SortedSet;
+
+  native public function tailSet(a:Object):com.yworks.bridge.util.SortedSet;
+  static native internal final function newCollections_UnmodifiableSortedSet(a:com.yworks.bridge.util.SortedSet):Collections_UnmodifiableSortedSet;
+}
+
+
+public class com.yworks.bridge.util.BigInteger extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Comparable
+{
+  native public function BigInteger(a:Boolean = true):*;
+  native internal var digits:Vector.<int>;
+  native internal var numberLength:int;
+
+  native internal var sign:int;
+  native private var firstNonzeroDigit:int;
+  native private var hashCode2:int;
+  native private final function initBigInteger0():void;
+  native public override function getClass():Class;
+
+  native protected final function initBigInteger4(a:int,a2:com.yworks.bridge.util.Random):void;
+  native protected final function initBigInteger6(a:int,a2:int,a3:com.yworks.bridge.util.Random):void;
+  native protected final function initBigInteger2(a:String):void;
+  native protected final function initBigInteger5(a:String,a2:int):void;
+  native protected final function initBigInteger3(a:int,a2:Vector.<int>):void;
+
+  native protected final function initBigInteger1(a:Vector.<int>):void;
+  native internal final function initBigInteger7(a:int,a2:int):void;
+  native internal final function initBigInteger10(a:int,a2:int,a3:Vector.<int>):void;
+  native internal final function initBigInteger8(a:int,a2:com.yworks.bridge.util.LongImpl):void;
+  native internal final function initBigInteger9(a:int,a2:Vector.<int>):void;
+
+  native public function toByteArray():Vector.<int>;
+  native public function abs():BigInteger;
+  native public function negate():BigInteger;
+  native public function add(a:BigInteger):BigInteger;
+  native public function subtract(a:BigInteger):BigInteger;
+
+  native public function signum():int;
+  native public function shiftRight(a:int):BigInteger;
+  native public function shiftLeft(a:int):BigInteger;
+  native public function bitLength():int;
+  native public function testBit(a:int):Boolean;
+
+  native public function setBit(a:int):BigInteger;
+  native public function clearBit(a:int):BigInteger;
+  native public function flipBit(a:int):BigInteger;
+  native public function get lowestSetBit():int;
+  native public function bitCount():int;
+
+  native public function not():BigInteger;
+  native public function and(a:BigInteger):BigInteger;
+  native public function or(a:BigInteger):BigInteger;
+  native public function xor(a:BigInteger):BigInteger;
+  native public function andNot(a:BigInteger):BigInteger;
+
+  native public function byteValue():int;
+  native public function shortValue():int;
+  native public function intValue():int;
+  native public function longValue():com.yworks.bridge.util.LongImpl;
+  native public function floatValue():Number;
+
+  native public function doubleValue():Number;
+  native public function compareTo(a:Object):int;
+  native public function min(a:BigInteger):BigInteger;
+  native public function max(a:BigInteger):BigInteger;
+  native public override function hashCode():int;
+
+  native public override function equals(a:Object):Boolean;
+  native internal function equalsArrays(a:Vector.<int>):Boolean;
+  native public function toString():String;
+  native public function toBaseString(a:int):String;
+  native public function gcd(a:BigInteger):BigInteger;
+
+  native public function multiply(a:BigInteger):BigInteger;
+  native public function pow(a:int):BigInteger;
+  native public function divideAndRemainder(a:BigInteger):Vector.<Object>;
+  native public function divide(a:BigInteger):BigInteger;
+  native public function remainder(a:BigInteger):BigInteger;
+
+  native public function modInverse(a:BigInteger):BigInteger;
+  native public function modPow(a:BigInteger,a2:BigInteger):BigInteger;
+  native public function mod(a:BigInteger):BigInteger;
+  native public function isProbablePrime(a:int):Boolean;
+  native public function nextProbablePrime():BigInteger;
+
+  native internal function cutOffLeadingZeroes():void;
+  native internal function isOne():Boolean;
+  native private function putBytesPositiveToIntegers(a:Vector.<int>):void;
+  native private function putBytesNegativeToIntegers(a:Vector.<int>):void;
+  native internal function getFirstNonzeroDigit():int;
+
+  native internal function copy():BigInteger;
+  native internal function unCache():void;
+  static native private const LONG_LITERAL_FFFFFFFF:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_FFFFFFFF00000000:com.yworks.bridge.util.LongImpl;
+  static native public const ONE:BigInteger;
+
+  static native public const TEN:BigInteger;
+  static native public const ZERO:BigInteger;
+  static native internal const MINUS_ONE:BigInteger;
+  static native internal const EQUALS:int = 0;
+  static native internal const GREATER:int = 1;
+
+  static native internal const LESS:int = -1;
+  static native internal const SMALL_VALUES:Vector.<Object>;
+  static native public final function newBigInteger4(a:int,a2:com.yworks.bridge.util.Random):BigInteger;
+  static native public final function newBigInteger6(a:int,a2:int,a3:com.yworks.bridge.util.Random):BigInteger;
+  static native public final function newBigInteger2(a:String):BigInteger;
+
+  static native public final function newBigInteger5(a:String,a2:int):BigInteger;
+  static native public final function newBigInteger3(a:int,a2:Vector.<int>):BigInteger;
+  static native public final function newBigInteger1(a:Vector.<int>):BigInteger;
+  static native internal final function newBigInteger7(a:int,a2:int):BigInteger;
+  static native internal final function newBigInteger10(a:int,a2:int,a3:Vector.<int>):BigInteger;
+
+  static native internal final function newBigInteger8(a:int,a2:com.yworks.bridge.util.LongImpl):BigInteger;
+  static native internal final function newBigInteger9(a:int,a2:Vector.<int>):BigInteger;
+  static native public final function valueOf(a:com.yworks.bridge.util.LongImpl):BigInteger;
+  static native private final function setFromString(a:BigInteger,a2:String,a3:int):void;
+  static native public final function probablePrime(a:int,a2:com.yworks.bridge.util.Random):BigInteger;
+}
+
+
+public class com.yworks.bridge.geom.AffineTransform extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+
+  native public function AffineTransform(a:Boolean = true):*;
+  native internal var m00:Number;
+  native internal var m10:Number;
+  native internal var m01:Number;
+  native internal var m11:Number;
+
+  native internal var m02:Number;
+  native internal var m12:Number;
+  native internal var type2:int;
+  native private final function initAffineTransform0():void;
+  native public override function getClass():Class;
+
+  native protected final function initAffineTransform1():void;
+  native protected final function initAffineTransform4(a:AffineTransform):void;
+  native protected final function initAffineTransform5(a:Number,a2:Number,a3:Number,a4:Number,a5:Number,a6:Number):void;
+  native protected final function initAffineTransform6(a:Number,a2:Number,a3:Number,a4:Number,a5:Number,a6:Number):void;
+  native protected final function initAffineTransform3(a:Vector.<Number>):void;
+
+  native protected final function initAffineTransform2(a:Vector.<Number>):void;
+  native public function get type():int;
+  native public function get scaleX():Number;
+  native public function get scaleY():Number;
+  native public function get shearX():Number;
+
+  native public function get shearY():Number;
+  native public function get translateX():Number;
+  native public function get translateY():Number;
+  native public function get identity():Boolean;
+  native public function getMatrix(a:Vector.<Number>):void;
+
+  native public function get determinant():Number;
+  native public function setTransform2(a:Number,a2:Number,a3:Number,a4:Number,a5:Number,a6:Number):void;
+  native public function setTransform(a:AffineTransform):void;
+  native public function setToIdentity():void;
+  native public function setToTranslation(a:Number,a2:Number):void;
+
+  native public function setToScale(a:Number,a2:Number):void;
+  native public function setToShear(a:Number,a2:Number):void;
+  native public function set toRotation(a:Number):void;
+  native public function setToRotation(a:Number,a2:Number,a3:Number):void;
+  native public function translate(a:Number,a2:Number):void;
+
+  native public function scale(a:Number,a2:Number):void;
+  native public function shear(a:Number,a2:Number):void;
+  native public function rotate(a:Number):void;
+  native public function rotate2(a:Number,a2:Number,a3:Number):void;
+  native internal function multiply(a:AffineTransform,a2:AffineTransform):AffineTransform;
+
+  native public function concatenate(a:AffineTransform):void;
+  native public function preConcatenate(a:AffineTransform):void;
+  native public function transform(a:com.yworks.bridge.geom.Point2D,a2:com.yworks.bridge.geom.Point2D):com.yworks.bridge.geom.Point2D;
+  native public function transform2(a:Vector.<Object>,a2:int,a3:Vector.<Object>,a4:int,a5:int):void;
+  native public function transform3(a:Vector.<Number>,a2:int,a3:Vector.<Number>,a4:int,a5:int):void;
+
+  native public function transform4(a:Vector.<Number>,a2:int,a3:Vector.<Number>,a4:int,a5:int):void;
+  native public function transform5(a:Vector.<Number>,a2:int,a3:Vector.<Number>,a4:int,a5:int):void;
+  native public function transform6(a:Vector.<Number>,a2:int,a3:Vector.<Number>,a4:int,a5:int):void;
+  native public function deltaTransform(a:com.yworks.bridge.geom.Point2D,a2:com.yworks.bridge.geom.Point2D):com.yworks.bridge.geom.Point2D;
+  native public function deltaTransform2(a:Vector.<Number>,a2:int,a3:Vector.<Number>,a4:int,a5:int):void;
+
+  native public function toString():String;
+  native public function clone():Object;
+  native public override function hashCode():int;
+  native public override function equals(a:Object):Boolean;
+  native private function createCloneImpl():AffineTransform;
+
+  native protected function cloneImpl(a:Object):void;
+  static native public const TYPE_IDENTITY:int = 0;
+  static native public const TYPE_TRANSLATION:int = 1;
+  static native public const TYPE_UNIFORM_SCALE:int = 2;
+  static native public const TYPE_GENERAL_SCALE:int = 4;
+
+  static native public const TYPE_QUADRANT_ROTATION:int = 8;
+  static native public const TYPE_GENERAL_ROTATION:int = 16;
+  static native public const TYPE_GENERAL_TRANSFORM:int = 32;
+  static native public const TYPE_FLIP:int = 64;
+  static native public const TYPE_MASK_SCALE:int;
+
+  static native public const TYPE_MASK_ROTATION:int;
+  static native internal const TYPE_UNKNOWN:int = -1;
+  static native internal const ZERO:Number = NaN;
+  static native public final function newAffineTransform1():AffineTransform;
+  static native public final function newAffineTransform4(a:AffineTransform):AffineTransform;
+
+  static native public final function newAffineTransform5(a:Number,a2:Number,a3:Number,a4:Number,a5:Number,a6:Number):AffineTransform;
+  static native public final function newAffineTransform6(a:Number,a2:Number,a3:Number,a4:Number,a5:Number,a6:Number):AffineTransform;
+  static native public final function newAffineTransform3(a:Vector.<Number>):AffineTransform;
+  static native public final function newAffineTransform2(a:Vector.<Number>):AffineTransform;
+  static native public final function getTranslateInstance(a:Number,a2:Number):AffineTransform;
+
+  static native public final function getScaleInstance(a:Number,a2:Number):AffineTransform;
+  static native public final function getShearInstance(a:Number,a2:Number):AffineTransform;
+  static native public final function getRotateInstance(a:Number):AffineTransform;
+  static native public final function getRotateAroundInstance(a:Number,a2:Number,a3:Number):AffineTransform;
+}
+
+
+public class com.yworks.bridge.util.AbstractList_SubAbstractListRandomAccess extends com.yworks.bridge.util.AbstractList_SubAbstractList
+  implements com.yworks.bridge.util.RandomAccess
+{
+  native public function AbstractList_SubAbstractListRandomAccess(a:Boolean = true):*;
+
+  native private final function initAbstractList_SubAbstractListRandomAccess0():void;
+  native public override function getClass():Class;
+  native internal final function initAbstractList_SubAbstractListRandomAccess(a:com.yworks.bridge.util.AbstractList,a2:int,a3:int):void;
+  static native internal final function newAbstractList_SubAbstractListRandomAccess(a:com.yworks.bridge.util.AbstractList,a2:int,a3:int):AbstractList_SubAbstractListRandomAccess;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_UnboundedKeyIterator extends com.yworks.bridge.util.TreeMap_AbstractMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function TreeMap_UnboundedKeyIterator(a:Boolean = true):*;
+
+  native private final function initTreeMap_UnboundedKeyIterator0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_UnboundedKeyIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):void;
+  native internal final function initTreeMap_UnboundedKeyIterator1(a:com.yworks.bridge.util.TreeMap):void;
+  native public function nextItem():Object;
+
+  static native internal final function newTreeMap_UnboundedKeyIterator2(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):TreeMap_UnboundedKeyIterator;
+  static native internal final function newTreeMap_UnboundedKeyIterator1(a:com.yworks.bridge.util.TreeMap):TreeMap_UnboundedKeyIterator;
+}
+
+
+public class com.yworks.bridge.util.TreeMapEntry extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.MapEntry,com.yworks.bridge.util.Clonable
+{
+  native public function TreeMapEntry(a:com.yworks.bridge.util.TreeMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.TreeMap;
+  native internal var offset:int;
+
+  native internal var node:com.yworks.bridge.util.TreeMapNode;
+  native internal var key2:Object;
+  native private final function initTreeMapEntry0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMapEntry(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):void;
+
+  native public function clone():Object;
+  native public override function equals(a:Object):Boolean;
+  native public function get key():Object;
+  native public function get value():Object;
+  native public override function hashCode():int;
+
+  native public function setValue(a:Object):Object;
+  native public function toString():String;
+  native private function createCloneImpl():TreeMapEntry;
+  native protected function cloneImpl(a:Object):void;
+  static native internal final function newTreeMapEntry(a:com.yworks.bridge.util.TreeMap,a2:com.yworks.bridge.util.TreeMapNode,a3:int):TreeMapEntry;
+}
+
+
+public class com.yworks.bridge.util.HashMap_AbstractCollection100 extends com.yworks.bridge.util.AbstractCollection
+{
+
+  native public function HashMap_AbstractCollection100(a:com.yworks.bridge.util.HashMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.HashMap;
+  native private final function initHashMap_AbstractCollection1000():void;
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+
+  native public override function get length():int;
+  native public override function clear():void;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.AbstractList_SubAbstractList_SubAbstractListIterator extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.ListIterator
+{
+  native public function AbstractList_SubAbstractList_SubAbstractListIterator(a:Boolean = true):*;
+  native private var subList:com.yworks.bridge.util.AbstractList_SubAbstractList;
+
+  native private var iterator:com.yworks.bridge.util.ListIterator;
+  native private var start:int;
+  native private var end:int;
+  native private final function initAbstractList_SubAbstractList_SubAbstractListIterator0():void;
+  native public override function getClass():Class;
+
+  native internal final function initAbstractList_SubAbstractList_SubAbstractListIterator(a:com.yworks.bridge.util.ListIterator,a2:com.yworks.bridge.util.AbstractList_SubAbstractList,a3:int,a4:int):void;
+  native public function addItem(a:Object):void;
+  native public function hasNext():Boolean;
+  native public function hasPrevious():Boolean;
+  native public function nextItem():Object;
+
+  native public function nextIndex():int;
+  native public function previousItem():Object;
+  native public function previousIndex():int;
+  native public function removeItem():void;
+  native public function setItem(a:Object):void;
+
+  static native internal final function newAbstractList_SubAbstractList_SubAbstractListIterator(a:com.yworks.bridge.util.ListIterator,a2:com.yworks.bridge.util.AbstractList_SubAbstractList,a3:int,a4:int):AbstractList_SubAbstractList_SubAbstractListIterator;
+}
+
+
+public interface com.yworks.bridge.util.Runnable
+{
+  native ns function run():void;
+  static native private const ns:* = "for ";
+}
+
+
+public class com.yworks.bridge.util.ArrayList extends com.yworks.bridge.util.AbstractList
+  implements com.yworks.bridge.util.List,com.yworks.bridge.util.Clonable,com.yworks.bridge.util.RandomAccess
+{
+  native public function ArrayList(a:Boolean = true):*;
+  native private var firstIndex:int;
+
+  native private var lastIndex:int;
+  native private var array:Vector.<Object>;
+  native private final function initArrayList0():void;
+  native public override function getClass():Class;
+  native protected final function initArrayList1():void;
+
+  native protected final function initArrayList2(a:int):void;
+  native protected final function initArrayList3(a:com.yworks.bridge.util.Collection):void;
+  native public override function addItemAt(a:int,a2:Object):void;
+  native public override function addItem(a:Object):Boolean;
+  native public override function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+
+  native public override function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public override function clear():void;
+  native public override function clone():Object;
+  native public override function containsItem(a:Object):Boolean;
+  native public function ensureCapacity(a:int):void;
+
+  native public override function getItemAt(a:int):Object;
+  native private function growAtEnd(a:int):void;
+  native private function growAtFront(a:int):void;
+  native private function growForInsert(a:int,a2:int):void;
+  native public override function indexOf(a:Object):int;
+
+  native public override function get empty():Boolean;
+  native public override function lastIndexOf(a:Object):int;
+  native public override function removeItemAt(a:int):Object;
+  native public override function removeItem(a:Object):Boolean;
+  native protected override function removeRange(a:int,a2:int):void;
+
+  native public override function setItemAt(a:int,a2:Object):Object;
+  native public override function get length():int;
+  native public override function toArray():Vector.<Object>;
+  native public override function toArray2(a:Vector.<Object>):Vector.<Object>;
+  native public function trimToSize():void;
+
+  native private function createCloneImpl():ArrayList;
+  native protected override function cloneImpl(a:Object):void;
+  static native public final function newArrayList1():ArrayList;
+  static native public final function newArrayList2(a:int):ArrayList;
+  static native public final function newArrayList3(a:com.yworks.bridge.util.Collection):ArrayList;
+}
+
+
+public class com.yworks.bridge.util.LongImpl extends com.yworks.bridge.util.YObject
+{
+
+  native public function LongImpl(a:int,a2:int):*;
+  native internal var high:int;
+  native internal var low:int;
+  native public override function getClass():Class;
+  native public override function equals(a:Object):Boolean;
+
+  native public override function hashCode():int;
+  native public function toString():String;
+  static native public const MIN_VALUE:LongImpl;
+  static native public const MAX_VALUE:LongImpl;
+  static native public const ZERO:LongImpl;
+
+  static native public const ONE:LongImpl;
+  static native public const TWO:LongImpl;
+  static native public const NEG_ONE:LongImpl;
+  static native internal const POS_2_POW_31:Number;
+  static native internal const POS_2_POW_32:Number;
+
+  static native internal const POS_2_POW_63:Number;
+  static native internal const NEG_2_POW_63:Number;
+  static native public final function toDecimalString(a:LongImpl):String;
+  static native public final function toRadixString(a:LongImpl,a2:int):String;
+  static native public final function valueOf(a:int,a2:int):LongImpl;
+
+  static native public final function valueOfDouble(a:Number):LongImpl;
+  static native public final function valueOfInt(a:int):LongImpl;
+  static native public final function valueOfUint(a:uint):LongImpl;
+  static native public final function toChar(a:LongImpl):String;
+  static native public final function toDouble(a:LongImpl):Number;
+
+  static native public final function toInt(a:LongImpl):int;
+  static native public final function toUint(a:LongImpl):int;
+  static native public final function inc(a:LongImpl):LongImpl;
+  static native public final function dec(a:LongImpl):LongImpl;
+  static native public final function neg(a:LongImpl):LongImpl;
+
+  static native public final function abs(a:LongImpl):LongImpl;
+  static native public final function max(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function add(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function sub(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function mul(a:LongImpl,a2:LongImpl):LongImpl;
+
+  static native public final function div(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function mod(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function lt(a:LongImpl,a2:LongImpl):Boolean;
+  static native public final function lte(a:LongImpl,a2:LongImpl):Boolean;
+  static native public final function gt(a:LongImpl,a2:LongImpl):Boolean;
+
+  static native public final function gte(a:LongImpl,a2:LongImpl):Boolean;
+  static native public final function eq(a:LongImpl,a2:LongImpl):Boolean;
+  static native public final function neq(a:LongImpl,a2:LongImpl):Boolean;
+  static native public final function and(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function or(a:LongImpl,a2:LongImpl):LongImpl;
+
+  static native public final function xor(a:LongImpl,a2:LongImpl):LongImpl;
+  static native public final function not(a:LongImpl):LongImpl;
+  static native public final function shl(a:LongImpl,a2:int):LongImpl;
+  static native public final function shr(a:LongImpl,a2:int):LongImpl;
+  static native public final function shru(a:LongImpl,a2:int):LongImpl;
+
+  static native public final function numberOfTrailingZeros(a:LongImpl):int;
+  static native private final function divmod(a:LongImpl,a2:LongImpl,a3:Boolean):LongImpl;
+  static native private final function divmod4int(a:Vector.<int>,a2:Vector.<int>,a3:Vector.<int>,a4:Vector.<int>):void;
+  static native private final function nlz(a:uint):int;
+  static native private final function ult(a:int,a2:int):Boolean;
+
+  static native private final function ugt(a:int,a2:int):Boolean;
+  static native private final function ugte(a:int,a2:int):Boolean;
+  static native private final function ntz(a:int):int;
+  static native private final function toIntAbs(a:LongImpl):Vector.<int>;
+  static native private final function fromIntAbs(a:Vector.<int>):LongImpl;
+
+  static native private final function roundToZero(a:Number):Number;
+  static native private final function roundAbs(a:Number):Number;
+  static native private final function createPos2pow31():Number;
+  static native private final function createPos2pow32():Number;
+  static native private final function createPos2pow63():Number;
+
+  static native private final function createNeg2pow63():Number;
+}
+
+
+public class com.yworks.bridge.geom.Dimension extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+  native public function Dimension(a:int,a2:int,a3:Boolean = true):*;
+  native public var width2:int;
+  native public var height2:int;
+  native private final function initDimension0():void;
+
+  native public override function getClass():Class;
+  native protected final function initDimension2(a:Dimension):void;
+  native protected final function initDimension1():void;
+  native protected final function initDimension3(a:int,a2:int):void;
+  native public override function hashCode():int;
+
+  native public override function equals(a:Object):Boolean;
+  native public function toString():String;
+  native public function setSize(a:int,a2:int):void;
+  native public function set size(a:Dimension):void;
+  native public function setSize2(a:Number,a2:Number):void;
+
+  native public function get size():Dimension;
+  native public function get height():Number;
+  native public function get width():Number;
+  native public function clone():Object;
+  native private function createCloneImpl():Dimension;
+
+  native protected function cloneImpl(a:Object):void;
+  static native public final function newDimension2(a:Dimension):Dimension;
+  static native public final function newDimension1():Dimension;
+  static native public final function newDimension3(a:int,a2:int):Dimension;
+}
+
+
+public class com.yworks.bridge.util.Arrays extends com.yworks.bridge.util.YObject
+{
+  native public function Arrays(a:Boolean = true):*;
+
+  native private final function initArrays0():void;
+  native public override function getClass():Class;
+  native private final function initArrays():void;
+  static native private const SIMPLE_LENGTH:int = 7;
+  static native private final function newArrays():Arrays;
+
+  static native public final function asList(a:Vector.<Object>):com.yworks.bridge.util.List;
+  static native public final function binarySearch(a:Vector.<int>,a2:int):int;
+  static native public final function binarySearch2(a:Vector.<String>,a2:String):int;
+  static native public final function binarySearch3(a:Vector.<Number>,a2:Number):int;
+  static native public final function binarySearch4(a:Vector.<Number>,a2:Number):int;
+
+  static native public final function binarySearch5(a:Vector.<int>,a2:int):int;
+  static native public final function binarySearch6(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:com.yworks.bridge.util.LongImpl):int;
+  static native public final function binarySearch7(a:Vector.<Object>,a2:Object):int;
+  static native public final function binarySearch9(a:Vector.<Object>,a2:Object,a3:com.yworks.bridge.util.Comparator):int;
+  static native public final function binarySearch8(a:Vector.<int>,a2:int):int;
+
+  static native public final function fill(a:Vector.<int>,a2:int):void;
+  static native public final function fill10(a:Vector.<int>,a2:int,a3:int,a4:int):void;
+  static native public final function fill2(a:Vector.<int>,a2:int):void;
+  static native public final function fill11(a:Vector.<int>,a2:int,a3:int,a4:int):void;
+  static native public final function fill3(a:Vector.<String>,a2:String):void;
+
+  static native public final function fill12(a:Vector.<String>,a2:int,a3:int,a4:String):void;
+  static native public final function fill4(a:Vector.<int>,a2:int):void;
+  static native public final function fill13(a:Vector.<int>,a2:int,a3:int,a4:int):void;
+  static native public final function fill5(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:com.yworks.bridge.util.LongImpl):void;
+  static native public final function fill14(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:int,a3:int,a4:com.yworks.bridge.util.LongImpl):void;
+
+  static native public final function fill6(a:Vector.<Number>,a2:Number):void;
+  static native public final function fill15(a:Vector.<Number>,a2:int,a3:int,a4:Number):void;
+  static native public final function fill7(a:Vector.<Number>,a2:Number):void;
+  static native public final function fill16(a:Vector.<Number>,a2:int,a3:int,a4:Number):void;
+  static native public final function fill8(a:Vector.<Boolean>,a2:Boolean):void;
+
+  static native public final function fill17(a:Vector.<Boolean>,a2:int,a3:int,a4:Boolean):void;
+  static native public final function fill9(a:Vector.<Object>,a2:Object):void;
+  static native public final function fill18(a:Vector.<Object>,a2:int,a3:int,a4:Object):void;
+  static native public final function equals2(a:Vector.<Number>,a2:Vector.<Number>):Boolean;
+  static native private final function lessThan(a:Number,a2:Number):Boolean;
+
+  static native private final function lessThan2(a:Number,a2:Number):Boolean;
+  static native private final function med3(a:Vector.<int>,a2:int,a3:int,a4:int):int;
+  static native private final function med32(a:Vector.<String>,a2:int,a3:int,a4:int):int;
+  static native private final function med33(a:Vector.<Number>,a2:int,a3:int,a4:int):int;
+  static native private final function med34(a:Vector.<Number>,a2:int,a3:int,a4:int):int;
+
+  static native private final function med35(a:Vector.<int>,a2:int,a3:int,a4:int):int;
+  static native private final function med36(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:int,a3:int,a4:int):int;
+  static native private final function med37(a:Vector.<int>,a2:int,a3:int,a4:int):int;
+  static native public final function sort7(a:Vector.<int>):void;
+  static native public final function sort10(a:Vector.<int>,a2:int,a3:int):void;
+
+  static native private final function checkBounds(a:int,a2:int,a3:int):void;
+  static native private final function sort19(a:int,a2:int,a3:Vector.<int>):void;
+  static native public final function sort6(a:Vector.<String>):void;
+  static native public final function sort11(a:Vector.<String>,a2:int,a3:int):void;
+  static native private final function sort20(a:int,a2:int,a3:Vector.<String>):void;
+
+  static native public final function sort3(a:Vector.<Number>):void;
+  static native public final function sort12(a:Vector.<Number>,a2:int,a3:int):void;
+  static native private final function sort21(a:int,a2:int,a3:Vector.<Number>):void;
+  static native public final function sort8(a:Vector.<Number>):void;
+  static native public final function sort13(a:Vector.<Number>,a2:int,a3:int):void;
+
+  static native private final function sort22(a:int,a2:int,a3:Vector.<Number>):void;
+  static native public final function sort4(a:Vector.<int>):void;
+  static native public final function sort14(a:Vector.<int>,a2:int,a3:int):void;
+  static native private final function sort23(a:int,a2:int,a3:Vector.<int>):void;
+  static native public final function sort5(a:Vector.<com.yworks.bridge.util.LongImpl>):void;
+
+  static native public final function sort15(a:Vector.<com.yworks.bridge.util.LongImpl>,a2:int,a3:int):void;
+  static native private final function sort24(a:int,a2:int,a3:Vector.<com.yworks.bridge.util.LongImpl>):void;
+  static native public final function sort2(a:Vector.<Object>):void;
+  static native public final function sort16(a:Vector.<Object>,a2:int,a3:int):void;
+  static native private final function sort25(a:int,a2:int,a3:Vector.<Object>):void;
+
+  static native private final function mergeSort(a:Vector.<Object>,a2:Vector.<Object>,a3:int,a4:int):void;
+  static native private final function mergeSort2(a:Vector.<Object>,a2:Vector.<Object>,a3:int,a4:int,a5:com.yworks.bridge.util.Comparator):void;
+  static native private final function find(a:Vector.<Object>,a2:com.yworks.bridge.util.Comparable,a3:int,a4:int,a5:int):int;
+  static native private final function find2(a:Vector.<Object>,a2:Object,a3:int,a4:int,a5:int,a6:com.yworks.bridge.util.Comparator):int;
+  static native private final function medChar(a:int,a2:int,a3:int,a4:Vector.<String>,a5:int):int;
+
+  static native private final function charAt(a:String,a2:int):int;
+  static native private final function copySwap(a:Vector.<String>,a2:int,a3:Vector.<String>,a4:int,a5:int):void;
+  static native private final function stableStringSort(a:Vector.<String>,a2:int,a3:int):void;
+  static native private final function stableStringSort2(a:Vector.<String>,a2:Vector.<String>,a3:Vector.<String>,a4:int,a5:int,a6:int):void;
+  static native public final function sort18(a:Vector.<Object>,a2:int,a3:int,a4:com.yworks.bridge.util.Comparator):void;
+
+  static native private final function sort27(a:int,a2:int,a3:Vector.<Object>,a4:com.yworks.bridge.util.Comparator):void;
+  static native public final function sort(a:Vector.<Object>,a2:com.yworks.bridge.util.Comparator):void;
+  static native public final function sort9(a:Vector.<int>):void;
+  static native public final function sort17(a:Vector.<int>,a2:int,a3:int):void;
+  static native private final function sort26(a:int,a2:int,a3:Vector.<int>):void;
+}
+
+
+public class com.yworks.bridge.util.Thread extends Object
+{
+
+  native public function Thread(a:Object = null):*;
+  native public function setDaemon(a:Boolean):void;
+  native public function start():void;
+  static native public final function interrupted():Boolean;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_SubMap extends com.yworks.bridge.util.AbstractMap
+  implements com.yworks.bridge.util.SortedMap
+{
+  native public function TreeMap_SubMap(a:Boolean = true):*;
+
+  native internal var backingMap:com.yworks.bridge.util.TreeMap;
+  native internal var hasStart:Boolean;
+  native internal var hasEnd:Boolean;
+  native internal var startKey:Object;
+  native internal var endKey:Object;
+
+  native internal var entrySet2:com.yworks.bridge.util.Set;
+  native internal var firstKeyModCount:int;
+  native internal var lastKeyModCount:int;
+  native internal var firstKeyNode:com.yworks.bridge.util.TreeMapNode;
+  native internal var firstKeyIndex:int;
+
+  native internal var lastKeyNode:com.yworks.bridge.util.TreeMapNode;
+  native internal var lastKeyIndex:int;
+  native private final function initTreeMap_SubMap0():void;
+  native public override function getClass():Class;
+  native internal final function initTreeMap_SubMap1(a:Object,a2:com.yworks.bridge.util.TreeMap):void;
+
+  native internal final function initTreeMap_SubMap3(a:Object,a2:com.yworks.bridge.util.TreeMap,a3:Object):void;
+  native internal final function initTreeMap_SubMap2(a:com.yworks.bridge.util.TreeMap,a2:Object):void;
+  native private function checkRange(a:Object):void;
+  native internal function isInRange(a:Object):Boolean;
+  native private function checkUpperBound(a:Object):Boolean;
+
+  native private function checkLowerBound(a:Object):Boolean;
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public override function containsKey(a:Object):Boolean;
+  native public override function clear():void;
+  native public override function containsValue(a:Object):Boolean;
+
+  native public override function entrySet():com.yworks.bridge.util.Set;
+  native internal function setFirstKey():void;
+  native public function firstKey():Object;
+  native public override function getValue(a:Object):Object;
+  native public function headMap(a:Object):com.yworks.bridge.util.SortedMap;
+
+  native public override function get empty():Boolean;
+  native public override function keySet():com.yworks.bridge.util.Set;
+  native internal function setLastKey():void;
+  native public function lastKey():Object;
+  native public override function putValue(a:Object,a2:Object):Object;
+
+  native public override function remove(a:Object):Object;
+  native public function subMap(a:Object,a2:Object):com.yworks.bridge.util.SortedMap;
+  native public function tailMap(a:Object):com.yworks.bridge.util.SortedMap;
+  native public override function values():com.yworks.bridge.util.Collection;
+  native public override function size():int;
+
+  static native internal final function newTreeMap_SubMap1(a:Object,a2:com.yworks.bridge.util.TreeMap):TreeMap_SubMap;
+  static native internal final function newTreeMap_SubMap3(a:Object,a2:com.yworks.bridge.util.TreeMap,a3:Object):TreeMap_SubMap;
+  static native internal final function newTreeMap_SubMap2(a:com.yworks.bridge.util.TreeMap,a2:Object):TreeMap_SubMap;
+}
+
+
+public class com.yworks.bridge.util.Double extends com.yworks.bridge.util.YNumber
+  implements com.yworks.bridge.util.Comparable
+{
+  native public function Double(a:Number):*;
+  native private var value:Number;
+
+  native public override function getClass():Class;
+  native public override function intValue():int;
+  native public override function numberValue():Number;
+  native public override function equals(a:Object):Boolean;
+  native public override function hashCode():int;
+
+  native public function compareTo(a:Object):int;
+  native private function compareImpl(a:Number,a2:Number):int;
+  static native public final function doubleToLongBits(a:Number):com.yworks.bridge.util.LongImpl;
+  static native public final function longBitsToDouble(a:com.yworks.bridge.util.LongImpl):Number;
+}
+
+
+public class com.yworks.bridge.geom.Insets extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+  native public function Insets(a:int,a2:int,a3:int,a4:int,a5:Boolean = true):*;
+
+  native public var top:int;
+  native public var left:int;
+  native public var bottom:int;
+  native public var right:int;
+  native private final function initInsets0():void;
+
+  native public override function getClass():Class;
+  native protected final function initInsets(a:int,a2:int,a3:int,a4:int):void;
+  native public override function hashCode():int;
+  native public function clone():Object;
+  native public override function equals(a:Object):Boolean;
+
+  native public function toString():String;
+  native public function setInsets(a:int,a2:int,a3:int,a4:int):void;
+  native private function setValues(a:int,a2:int,a3:int,a4:int):void;
+  native private function createCloneImpl():Insets;
+  native protected function cloneImpl(a:Object):void;
+
+  static native public final function newInsets(a:int,a2:int,a3:int,a4:int):Insets;
+}
+
+
+public interface com.yworks.bridge.util.Enumeration
+{
+  native ns function hasMoreElements():Boolean;
+  native ns function nextElement():Object;
+  static native private const ns:* = "_-1";
+}
+
+
+public class com.yworks.bridge.util.Collections_Enumeration100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Enumeration
+{
+  native public function Collections_Enumeration100(a:com.yworks.bridge.util.Collection,a2:Boolean = true):*;
+
+  native internal var it:com.yworks.bridge.util.Iterator;
+  native private var c:com.yworks.bridge.util.Collection;
+  native private final function initCollections_Enumeration1000():void;
+  native public override function getClass():Class;
+  native public function hasMoreElements():Boolean;
+
+  native public function nextElement():Object;
+}
+
+
+public class com.yworks.bridge.util.Collections_EmptySet extends com.yworks.bridge.util.AbstractSet
+{
+  native public function Collections_EmptySet(a:Boolean = true):*;
+  native private final function initCollections_EmptySet0():void;
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+
+  native public override function get length():int;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native private function readResolve():Object;
+  native protected final function initCollections_EmptySet():void;
+  static native public final function newCollections_EmptySet():Collections_EmptySet;
+}
+
+
+public class com.yworks.bridge.util.TreeSet extends com.yworks.bridge.util.AbstractSet
+  implements com.yworks.bridge.util.SortedSet,com.yworks.bridge.util.Clonable
+{
+
+  native public function TreeSet(a:Boolean = true):*;
+  native private var backingMap:com.yworks.bridge.util.SortedMap;
+  native private final function initTreeSet0():void;
+  native public override function getClass():Class;
+  native private final function initTreeSet5(a:com.yworks.bridge.util.SortedMap):void;
+
+  native protected final function initTreeSet1():void;
+  native protected final function initTreeSet2(a:com.yworks.bridge.util.Collection):void;
+  native protected final function initTreeSet3(a:com.yworks.bridge.util.Comparator):void;
+  native protected final function initTreeSet4(a:com.yworks.bridge.util.SortedSet):void;
+  native public override function addItem(a:Object):Boolean;
+
+  native public override function addAll(a:com.yworks.bridge.util.Collection):Boolean;
+  native public override function clear():void;
+  native public override function clone():Object;
+  native public function comparator():com.yworks.bridge.util.Comparator;
+  native public override function containsItem(a:Object):Boolean;
+
+  native public function first():Object;
+  native public function headSet(a:Object):com.yworks.bridge.util.SortedSet;
+  native public override function get empty():Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public function last():Object;
+
+  native public override function removeItem(a:Object):Boolean;
+  native public override function get length():int;
+  native public function subSet(a:Object,a2:Object):com.yworks.bridge.util.SortedSet;
+  native public function tailSet(a:Object):com.yworks.bridge.util.SortedSet;
+  native private function createCloneImpl():TreeSet;
+
+  native protected override function cloneImpl(a:Object):void;
+  static native private final function newTreeSet5(a:com.yworks.bridge.util.SortedMap):TreeSet;
+  static native public final function newTreeSet1():TreeSet;
+  static native public final function newTreeSet2(a:com.yworks.bridge.util.Collection):TreeSet;
+  static native public final function newTreeSet3(a:com.yworks.bridge.util.Comparator):TreeSet;
+
+  static native public final function newTreeSet4(a:com.yworks.bridge.util.SortedSet):TreeSet;
+}
+
+
+public class com.yworks.bridge.util.Collections_SynchronizedRandomAccessList extends com.yworks.bridge.util.Collections_SynchronizedList
+  implements com.yworks.bridge.util.RandomAccess
+{
+  native public function Collections_SynchronizedRandomAccessList(a:Boolean = true):*;
+  native private final function initCollections_SynchronizedRandomAccessList0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SynchronizedRandomAccessList1(a:com.yworks.bridge.util.List):void;
+
+  native internal final function initCollections_SynchronizedRandomAccessList2(a:com.yworks.bridge.util.List,a2:Object):void;
+  native public override function subList(a:int,a2:int):com.yworks.bridge.util.List;
+  native private function writeReplace():Object;
+  static native internal final function newCollections_SynchronizedRandomAccessList1(a:com.yworks.bridge.util.List):Collections_SynchronizedRandomAccessList;
+  static native internal final function newCollections_SynchronizedRandomAccessList2(a:com.yworks.bridge.util.List,a2:Object):Collections_SynchronizedRandomAccessList;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonSet extends com.yworks.bridge.util.AbstractSet
+{
+
+  native public function Collections_SingletonSet(a:Boolean = true):*;
+  native internal var element:Object;
+  native private final function initCollections_SingletonSet0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_SingletonSet(a:Object):void;
+
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  static native internal final function newCollections_SingletonSet(a:Object):Collections_SingletonSet;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_SubMapValuesCollection extends com.yworks.bridge.util.AbstractCollection
+{
+  native public function TreeMap_SubMapValuesCollection(a:com.yworks.bridge.util.TreeMap_SubMap,a2:Boolean = true):*;
+
+  native internal var subMap:com.yworks.bridge.util.TreeMap_SubMap;
+  native private final function initTreeMap_SubMapValuesCollection0():void;
+  native public override function getClass():Class;
+  native protected final function initTreeMap_SubMapValuesCollection(a:com.yworks.bridge.util.TreeMap_SubMap):void;
+  native public override function get empty():Boolean;
+
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public override function get length():int;
+  static native public final function newTreeMap_SubMapValuesCollection(a:com.yworks.bridge.util.TreeMap_SubMap):TreeMap_SubMapValuesCollection;
+}
+
+
+public class com.yworks.bridge.util.FlexUtils extends Object
+{
+  native public function FlexUtils():*;
+  static native public final function getClass(a:Object):Class;
+
+  static native public final function getClassName(a:Class):String;
+  static native public final function compare(a:Object,a2:Object):int;
+  static native public final function isNotANumber(a:Number):Boolean;
+  static native public final function isInfinite(a:Number):Boolean;
+  static native public final function floatToIntBits(a:Number):int;
+
+  static native public final function doubleToLongBits(a:Number):com.yworks.bridge.util.LongImpl;
+  static native public final function longBitsToDouble(a:com.yworks.bridge.util.LongImpl):Number;
+  static native public final function currentTimeMillis():com.yworks.bridge.util.LongImpl;
+  static native public final function round(a:Number):com.yworks.bridge.util.LongImpl;
+  static native public final function sleep(a:com.yworks.bridge.util.LongImpl,a2:int = 0):void;
+
+  static native public final function longValue(a:com.yworks.bridge.util.YNumber):com.yworks.bridge.util.LongImpl;
+  static native public final function intValue(a:com.yworks.bridge.util.YNumber):int;
+  static native public final function numberValue(a:com.yworks.bridge.util.YNumber):Number;
+  static native public final function booleanValue(a:Object):Boolean;
+  static native public final function numberOfLeadingZeros(a:int):int;
+
+  static native public final function numberOfTrailingZeros(a:int):int;
+  static native public final function bitCount(a:int):int;
+  static native public final function toStringImpl(a:Object):String;
+  static native public final function equals(a:Object,a2:Object):Boolean;
+  static native public final function hashCode(a:Object):int;
+
+  static native public final function parseInt(a:String,a2:int = 10):int;
+  static native public final function intToString(a:int):String;
+  static native public final function charForDigit(a:int,a2:int):String;
+  static native public final function newString(a:Vector.<String>,a2:int,a3:int):String;
+  static native public final function startsWith(a:String,a2:String):Boolean;
+
+  static native public final function equalsIgnoreCase(a:String,a2:String):Boolean;
+  static native public final function printlnOut(a:Object = ""):void;
+  static native public final function printlnErr(a:Object = ""):void;
+  static native public final function printOut(a:Object = ""):void;
+  static native public final function printErr(a:Object = ""):void;
+
+  static native private final function printImpl(a:Object):void;
+  static native public final function arraycopy(a:Object,a2:int,a3:Object,a4:int,a5:int):void;
+  static native public final function newObjectArray1D(a:int):Vector.<Object>;
+  static native public final function newObjectArray2D(a:int,a2:int = -1):Vector.<Object>;
+  static native public final function newStringArray1D(a:int):Vector.<String>;
+
+  static native public final function newBooleanArray1D(a:int):Vector.<Boolean>;
+  static native public final function newBooleanArray2D(a:int,a2:int = -1):Vector.<Object>;
+  static native public final function newIntArray1D(a:int):Vector.<int>;
+  static native public final function newIntArray2D(a:int,a2:int = -1):Vector.<Object>;
+  static native public final function newLongImplArray1D(a:int):Vector.<com.yworks.bridge.util.LongImpl>;
+
+  static native public final function newNumberArray1D(a:int):Vector.<Number>;
+  static native public final function newNumberArray2D(a:int,a2:int = -1):Vector.<Object>;
+  static native public final function fillObjectArray(a:Vector.<Object>,... a2):Vector.<Object>;
+  static native public final function fillStringArray(a:Vector.<String>,... a2):Vector.<String>;
+  static native public final function fillBooleanArray(a:Vector.<Boolean>,... a2):Vector.<Boolean>;
+
+  static native public final function fillIntArray(a:Vector.<int>,... a2):Vector.<int>;
+  static native public final function fillLongImplArray(a:Vector.<com.yworks.bridge.util.LongImpl>,... a2):Vector.<com.yworks.bridge.util.LongImpl>;
+  static native public final function fillNumberArray(a:Vector.<Number>,... a2):Vector.<Number>;
+  static native public final function gc():void;
+  static native public final function printStackTrace(a:Error,a2:Object = null):void;
+
+  static native public final function exit(a:int):void;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableMap_UnmodifiableEntrySet extends com.yworks.bridge.util.Collections_UnmodifiableSet
+{
+  native public function Collections_UnmodifiableMap_UnmodifiableEntrySet(a:Boolean = true):*;
+  native private final function initCollections_UnmodifiableMap_UnmodifiableEntrySet0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableMap_UnmodifiableEntrySet(a:com.yworks.bridge.util.Set):void;
+
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public override function toArray():Vector.<Object>;
+  native public override function toArray2(a:Vector.<Object>):Vector.<Object>;
+  static native internal final function newCollections_UnmodifiableMap_UnmodifiableEntrySet(a:com.yworks.bridge.util.Set):Collections_UnmodifiableMap_UnmodifiableEntrySet;
+}
+
+
+public class com.yworks.bridge.util.Division extends com.yworks.bridge.util.YObject
+{
+  native public function Division(a:Boolean = true):*;
+
+  native private final function initDivision0():void;
+  native public override function getClass():Class;
+  native protected final function initDivision():void;
+  static native private const LONG_LITERAL_FFFFFFFF:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_100000000:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_8000000000000000:com.yworks.bridge.util.LongImpl;
+  static native internal final function divide(a:Vector.<int>,a2:int,a3:Vector.<int>,a4:int,a5:Vector.<int>,a6:int):Vector.<int>;
+  static native internal final function divideArrayByInt(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:int):int;
+  static native internal final function remainderArrayByInt(a:Vector.<int>,a2:int,a3:int):int;
+  static native internal final function remainder(a:com.yworks.bridge.util.BigInteger,a2:int):int;
+
+  static native internal final function divideLongByInt(a:com.yworks.bridge.util.LongImpl,a2:int):com.yworks.bridge.util.LongImpl;
+  static native internal final function divideAndRemainderByInteger(a:com.yworks.bridge.util.BigInteger,a2:int,a3:int):Vector.<Object>;
+  static native internal final function multiplyAndSubtract(a:Vector.<int>,a2:int,a3:Vector.<int>,a4:int,a5:com.yworks.bridge.util.LongImpl):int;
+  static native internal final function gcdBinary(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function gcdBinary2(a:com.yworks.bridge.util.LongImpl,a2:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.LongImpl;
+
+  static native internal final function modInverseMontgomery(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native private final function calcN(a:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.LongImpl;
+  static native private final function almostMonInv(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):Vector.<Object>;
+  static native private final function isPowerOfTwo(a:com.yworks.bridge.util.BigInteger,a2:int):Boolean;
+  static native private final function howManyIterations(a:com.yworks.bridge.util.BigInteger,a2:int):int;
+
+  static native internal final function modInverseLorencz(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function squareAndMultiply(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:com.yworks.bridge.util.BigInteger,a4:com.yworks.bridge.util.BigInteger,a5:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.BigInteger;
+  static native internal final function slidingWindow(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:com.yworks.bridge.util.BigInteger,a4:com.yworks.bridge.util.BigInteger,a5:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.BigInteger;
+  static native internal final function oddModPow(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function evenModPow(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+
+  static native internal final function pow2ModPow(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:int):com.yworks.bridge.util.BigInteger;
+  static native internal final function monSquare(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.BigInteger;
+  static native internal final function monPro(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger,a3:com.yworks.bridge.util.BigInteger,a4:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.BigInteger;
+  static native internal final function finalSubtraction(a:Vector.<int>,a2:int,a3:int,a4:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function modPow2Inverse(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+
+  static native internal final function inplaceModPow2(a:com.yworks.bridge.util.BigInteger,a2:int):void;
+  static native public final function newDivision():Division;
+}
+
+
+public class com.yworks.bridge.util.HashMap_KeyIterator extends com.yworks.bridge.util.HashMap_AbstractMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function HashMap_KeyIterator(a:Boolean = true):*;
+  native private final function initHashMap_KeyIterator0():void;
+  native public override function getClass():Class;
+
+  native internal final function initHashMap_KeyIterator(a:com.yworks.bridge.util.HashMap):void;
+  native public function nextItem():Object;
+  static native internal final function newHashMap_KeyIterator(a:com.yworks.bridge.util.HashMap):HashMap_KeyIterator;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_AbstractSet100 extends com.yworks.bridge.util.AbstractSet
+{
+  native public function TreeMap_AbstractSet100(a:com.yworks.bridge.util.TreeMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.TreeMap;
+
+  native private final function initTreeMap_AbstractSet1000():void;
+  native public override function getClass():Class;
+  native public override function get length():int;
+  native public override function clear():void;
+  native public override function containsItem(a:Object):Boolean;
+
+  native public override function removeItem(a:Object):Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.Collections extends com.yworks.bridge.util.YObject
+{
+  native public function Collections(a:Boolean = true):*;
+  native private final function initCollections0():void;
+  native public override function getClass():Class;
+
+  native private final function initCollections():void;
+  static native public const EMPTY_LIST:com.yworks.bridge.util.List;
+  static native public const EMPTY_SET:com.yworks.bridge.util.Set;
+  static native public const EMPTY_MAP:com.yworks.bridge.util.Map;
+  static native private final function newCollections():Collections;
+
+  static native public final function binarySearch(a:com.yworks.bridge.util.List,a2:Object):int;
+  static native public final function binarySearch2(a:com.yworks.bridge.util.List,a2:Object,a3:com.yworks.bridge.util.Comparator):int;
+  static native public final function copy(a:com.yworks.bridge.util.List,a2:com.yworks.bridge.util.List):void;
+  static native public final function enumeration(a:com.yworks.bridge.util.Collection):com.yworks.bridge.util.Enumeration;
+  static native public final function fill(a:com.yworks.bridge.util.List,a2:Object):void;
+
+  static native public final function max(a:com.yworks.bridge.util.Collection):Object;
+  static native public final function max2(a:com.yworks.bridge.util.Collection,a2:com.yworks.bridge.util.Comparator):Object;
+  static native public final function min(a:com.yworks.bridge.util.Collection):Object;
+  static native public final function min2(a:com.yworks.bridge.util.Collection,a2:com.yworks.bridge.util.Comparator):Object;
+  static native public final function nCopies(a:int,a2:Object):com.yworks.bridge.util.List;
+
+  static native public final function reverse(a:com.yworks.bridge.util.List):void;
+  static native public final function reverseOrder():com.yworks.bridge.util.Comparator;
+  static native public final function reverseOrder2(a:com.yworks.bridge.util.Comparator):com.yworks.bridge.util.Comparator;
+  static native public final function shuffle(a:com.yworks.bridge.util.List):void;
+  static native public final function shuffle2(a:com.yworks.bridge.util.List,a2:com.yworks.bridge.util.Random):void;
+
+  static native public final function singleton(a:Object):com.yworks.bridge.util.Set;
+  static native public final function singletonList(a:Object):com.yworks.bridge.util.List;
+  static native public final function singletonMap(a:Object,a2:Object):com.yworks.bridge.util.Map;
+  static native public final function sort2(a:com.yworks.bridge.util.List):void;
+  static native public final function sort(a:com.yworks.bridge.util.List,a2:com.yworks.bridge.util.Comparator):void;
+
+  static native public final function swap(a:com.yworks.bridge.util.List,a2:int,a3:int):void;
+  static native public final function replaceAll(a:com.yworks.bridge.util.List,a2:Object,a3:Object):Boolean;
+  static native public final function rotate(a:com.yworks.bridge.util.List,a2:int):void;
+  static native public final function indexOfSubList(a:com.yworks.bridge.util.List,a2:com.yworks.bridge.util.List):int;
+  static native public final function lastIndexOfSubList(a:com.yworks.bridge.util.List,a2:com.yworks.bridge.util.List):int;
+
+  static native public final function list(a:com.yworks.bridge.util.Enumeration):com.yworks.bridge.util.ArrayList;
+  static native public final function synchronizedCollection(a:com.yworks.bridge.util.Collection):com.yworks.bridge.util.Collection;
+  static native public final function synchronizedList(a:com.yworks.bridge.util.List):com.yworks.bridge.util.List;
+  static native public final function synchronizedMap(a:com.yworks.bridge.util.Map):com.yworks.bridge.util.Map;
+  static native public final function synchronizedSet(a:com.yworks.bridge.util.Set):com.yworks.bridge.util.Set;
+
+  static native public final function synchronizedSortedMap(a:com.yworks.bridge.util.SortedMap):com.yworks.bridge.util.SortedMap;
+  static native public final function synchronizedSortedSet(a:com.yworks.bridge.util.SortedSet):com.yworks.bridge.util.SortedSet;
+  static native public final function unmodifiableCollection(a:com.yworks.bridge.util.Collection):com.yworks.bridge.util.Collection;
+  static native public final function unmodifiableList(a:com.yworks.bridge.util.List):com.yworks.bridge.util.List;
+  static native public final function unmodifiableMap(a:com.yworks.bridge.util.Map):com.yworks.bridge.util.Map;
+
+  static native public final function unmodifiableSet(a:com.yworks.bridge.util.Set):com.yworks.bridge.util.Set;
+  static native public final function unmodifiableSortedMap(a:com.yworks.bridge.util.SortedMap):com.yworks.bridge.util.SortedMap;
+  static native public final function unmodifiableSortedSet(a:com.yworks.bridge.util.SortedSet):com.yworks.bridge.util.SortedSet;
+  static native public final function frequency(a:com.yworks.bridge.util.Collection,a2:Object):int;
+  static native public final function emptyList():com.yworks.bridge.util.List;
+
+  static native public final function emptySet():com.yworks.bridge.util.Set;
+  static native public final function emptyMap():com.yworks.bridge.util.Map;
+  static native public final function addAll(a:com.yworks.bridge.util.Collection,a2:Vector.<Object>):Boolean;
+  static native public final function disjoint(a:com.yworks.bridge.util.Collection,a2:com.yworks.bridge.util.Collection):Boolean;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_AbstractSet101 extends com.yworks.bridge.util.AbstractSet
+{
+  native public function TreeMap_AbstractSet101(a:com.yworks.bridge.util.TreeMap,a2:Boolean = true):*;
+
+  native internal var enclosing0:com.yworks.bridge.util.TreeMap;
+  native private final function initTreeMap_AbstractSet1010():void;
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+
+  native public override function clear():void;
+  native public override function removeItem(a:Object):Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.EmptyStackException extends Error
+{
+  native public function EmptyStackException(a:Boolean = true):*;
+  native private final function initEmptyStackException0():void;
+
+  native protected final function initEmptyStackException():void;
+  static native public final function newEmptyStackException():EmptyStackException;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonSet_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function Collections_SingletonSet_Iterator100(a:com.yworks.bridge.util.Collections_SingletonSet,a2:Boolean = true):*;
+  native internal var hasNext2:Boolean;
+  native internal var enclosing0:com.yworks.bridge.util.Collections_SingletonSet;
+
+  native private final function initCollections_SingletonSet_Iterator1000():void;
+  native public override function getClass():Class;
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+  native public function removeItem():void;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableList extends com.yworks.bridge.util.Collections_UnmodifiableCollection
+  implements com.yworks.bridge.util.List
+{
+
+  native public function Collections_UnmodifiableList(a:Boolean = true):*;
+  native internal var list:com.yworks.bridge.util.List;
+  native private final function initCollections_UnmodifiableList0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableList(a:com.yworks.bridge.util.List):void;
+
+  native public function addItemAt(a:int,a2:Object):void;
+  native public function addAllAt(a:int,a2:com.yworks.bridge.util.Collection):Boolean;
+  native public override function equals(a:Object):Boolean;
+  native public function getItemAt(a:int):Object;
+  native public override function hashCode():int;
+
+  native public function indexOf(a:Object):int;
+  native public function lastIndexOf(a:Object):int;
+  native public function listIterator():com.yworks.bridge.util.ListIterator;
+  native public function listIterator2(a:int):com.yworks.bridge.util.ListIterator;
+  native public function removeItemAt(a:int):Object;
+
+  native public function setItemAt(a:int,a2:Object):Object;
+  native public function subList(a:int,a2:int):com.yworks.bridge.util.List;
+  native private function readResolve():Object;
+  static native internal final function newCollections_UnmodifiableList(a:com.yworks.bridge.util.List):Collections_UnmodifiableList;
+}
+
+
+public class com.test.ClassA extends Object
+{
+  native public function ClassA():*;
+
+  native private function privateFunc(a:Number,a2:Object):void;
+  native public function publicFunc(a:*):String;
+}
+
+
+public class com.test.ClassC extends com.test.ClassA
+{
+  native public function ClassC():*;
+}
+
+
+public class com.test.ClassB extends Object
+{
+  native public function ClassB(a:com.test.ClassA):*;
+  native protected var aaa:com.test.ClassA;
+
+  native private function myPrivate(a:com.test.ClassA):ClassB;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_AbstractCollection100 extends com.yworks.bridge.util.AbstractCollection
+{
+  native public function TreeMap_AbstractCollection100(a:com.yworks.bridge.util.TreeMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.TreeMap;
+  native private final function initTreeMap_AbstractCollection1000():void;
+  native public override function getClass():Class;
+
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+  native public override function clear():void;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.Conversion extends com.yworks.bridge.util.YObject
+{
+  native public function Conversion(a:Boolean = true):*;
+
+  native private final function initConversion0():void;
+  native public override function getClass():Class;
+  native private final function initConversion():void;
+  static native private const LONG_LITERAL_3B9ACA00:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_FFFFFFFF:com.yworks.bridge.util.LongImpl;
+
+  static native private const LONG_LITERAL_1FFFFFFFFFFFFE:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_1FFFFFFFFFFFFF:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_8000000000000000:com.yworks.bridge.util.LongImpl;
+  static native private const LONG_LITERAL_7FF0000000000000:com.yworks.bridge.util.LongImpl;
+  static native internal const digitFitInInt:Vector.<int>;
+
+  static native internal const bigRadices:Vector.<int>;
+  static native private final function newConversion():Conversion;
+  static native internal final function bigInteger2String(a:com.yworks.bridge.util.BigInteger,a2:int):String;
+  static native internal final function toDecimalScaledString(a:com.yworks.bridge.util.BigInteger,a2:int):String;
+  static native internal final function toDecimalScaledString2(a:com.yworks.bridge.util.LongImpl,a2:int):String;
+
+  static native internal final function divideLongByBillion(a:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.LongImpl;
+  static native internal final function bigInteger2Double(a:com.yworks.bridge.util.BigInteger):Number;
+}
+
+
+public class com.yworks.bridge.util.HashMap_AbstractSet100 extends com.yworks.bridge.util.AbstractSet
+{
+  native public function HashMap_AbstractSet100(a:com.yworks.bridge.util.HashMap,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.HashMap;
+  native private final function initHashMap_AbstractSet1000():void;
+
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+  native public override function clear():void;
+  native public override function removeItem(a:Object):Boolean;
+
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+}
+
+
+public class com.yworks.bridge.util.HashMap extends com.yworks.bridge.util.AbstractMap
+  implements com.yworks.bridge.util.Map,com.yworks.bridge.util.Clonable
+{
+  native public function HashMap(a:Boolean = true):*;
+  native internal var elementCount:int;
+  native internal var elementData:Vector.<Object>;
+  native internal var loadFactor:Number;
+
+  native internal var threshold:int;
+  native internal var modCount:int;
+  native private final function initHashMap0():void;
+  native public override function getClass():Class;
+  native internal function newElementArray(a:int):Vector.<Object>;
+
+  native protected final function initHashMap1():void;
+  native protected final function initHashMap2(a:int):void;
+  native protected final function initHashMap4(a:int,a2:Number):void;
+  native protected final function initHashMap3(a:com.yworks.bridge.util.Map):void;
+  native public override function clear():void;
+
+  native public override function clone():Object;
+  native private function computeMaxSize():void;
+  native public override function containsKey(a:Object):Boolean;
+  native public override function containsValue(a:Object):Boolean;
+  native public override function entrySet():com.yworks.bridge.util.Set;
+
+  native public override function getValue(a:Object):Object;
+  native internal function getEntry(a:Object):com.yworks.bridge.util.HashMapEntry;
+  native internal function findNonNullKeyEntry(a:Object,a2:int,a3:int):com.yworks.bridge.util.HashMapEntry;
+  native internal function findNullKeyEntry():com.yworks.bridge.util.HashMapEntry;
+  native public override function get empty():Boolean;
+
+  native public override function keySet():com.yworks.bridge.util.Set;
+  native public override function putValue(a:Object,a2:Object):Object;
+  native internal function putImpl(a:Object,a2:Object):Object;
+  native internal function createEntry(a:Object,a2:int,a3:Object):com.yworks.bridge.util.HashMapEntry;
+  native internal function createHashedEntry(a:Object,a2:int,a3:int):com.yworks.bridge.util.HashMapEntry;
+
+  native public override function putAll(a:com.yworks.bridge.util.Map):void;
+  native private function putAllImpl(a:com.yworks.bridge.util.Map):void;
+  native internal function rehash2(a:int):void;
+  native internal function rehash():void;
+  native public override function remove(a:Object):Object;
+
+  native internal function removeEntry(a:com.yworks.bridge.util.HashMapEntry):void;
+  native internal function removeEntry2(a:Object):com.yworks.bridge.util.HashMapEntry;
+  native public override function size():int;
+  native public override function values():com.yworks.bridge.util.Collection;
+  native private function createCloneImpl():HashMap;
+
+  native protected override function cloneImpl(a:Object):void;
+  static native private const DEFAULT_SIZE:int = 16;
+  static native public final function newHashMap1():HashMap;
+  static native public final function newHashMap2(a:int):HashMap;
+  static native private final function calculateCapacity(a:int):int;
+
+  static native public final function newHashMap4(a:int,a2:Number):HashMap;
+  static native public final function newHashMap3(a:com.yworks.bridge.util.Map):HashMap;
+}
+
+
+public class com.yworks.bridge.util.HashSet extends com.yworks.bridge.util.AbstractSet
+  implements com.yworks.bridge.util.Set,com.yworks.bridge.util.Clonable
+{
+  native public function HashSet(a:Boolean = true):*;
+  native internal var backingMap:com.yworks.bridge.util.HashMap;
+  native private final function initHashSet0():void;
+
+  native public override function getClass():Class;
+  native protected final function initHashSet1():void;
+  native protected final function initHashSet2(a:int):void;
+  native protected final function initHashSet4(a:int,a2:Number):void;
+  native protected final function initHashSet3(a:com.yworks.bridge.util.Collection):void;
+
+  native internal final function initHashSet5(a:com.yworks.bridge.util.HashMap):void;
+  native public override function addItem(a:Object):Boolean;
+  native public override function clear():void;
+  native public override function clone():Object;
+  native public override function containsItem(a:Object):Boolean;
+
+  native public override function get empty():Boolean;
+  native public override function iterator():com.yworks.bridge.util.Iterator;
+  native public override function removeItem(a:Object):Boolean;
+  native public override function get length():int;
+  native internal function createBackingMap(a:int,a2:Number):com.yworks.bridge.util.HashMap;
+
+  native private function createCloneImpl():HashSet;
+  native protected override function cloneImpl(a:Object):void;
+  static native public final function newHashSet1():HashSet;
+  static native public final function newHashSet2(a:int):HashSet;
+  static native public final function newHashSet4(a:int,a2:Number):HashSet;
+
+  static native public final function newHashSet3(a:com.yworks.bridge.util.Collection):HashSet;
+  static native internal final function newHashSet5(a:com.yworks.bridge.util.HashMap):HashSet;
+}
+
+
+public class com.yworks.bridge.util.CloneNotSupportedException extends Error
+{
+  native public function CloneNotSupportedException(a:String = ""):*;
+}
+
+
+public class com.yworks.bridge.util.TreeMapNode extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Clonable
+{
+  native public function TreeMapNode(a:Boolean = true):*;
+  native internal var prev:TreeMapNode;
+
+  native internal var next:TreeMapNode;
+  native internal var parent:TreeMapNode;
+  native internal var left:TreeMapNode;
+  native internal var right:TreeMapNode;
+  native internal var values:Vector.<Object>;
+
+  native internal var keys:Vector.<Object>;
+  native internal var left_idx:int;
+  native internal var right_idx:int;
+  native internal var size:int;
+  native internal var color:Boolean;
+
+  native private final function initTreeMapNode0():void;
+  native public override function getClass():Class;
+  native protected final function initTreeMapNode():void;
+  native public function clone():Object;
+  native internal function clone2(a:TreeMapNode):TreeMapNode;
+
+  native private function createCloneImpl():TreeMapNode;
+  native protected function cloneImpl(a:Object):void;
+  static native internal const NODE_SIZE:int = 64;
+  static native public final function newTreeMapNode():TreeMapNode;
+}
+
+
+public class com.yworks.bridge.util.BitLevel extends com.yworks.bridge.util.YObject
+{
+  native public function BitLevel(a:Boolean = true):*;
+
+  native private final function initBitLevel0():void;
+  native public override function getClass():Class;
+  native private final function initBitLevel():void;
+  static native private final function newBitLevel():BitLevel;
+  static native internal final function bitLength(a:com.yworks.bridge.util.BigInteger):int;
+
+  static native internal final function bitCount(a:com.yworks.bridge.util.BigInteger):int;
+  static native internal final function testBit(a:com.yworks.bridge.util.BigInteger,a2:int):Boolean;
+  static native internal final function nonZeroDroppedBits(a:int,a2:Vector.<int>):Boolean;
+  static native internal final function shiftLeft(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+  static native internal final function inplaceShiftLeft(a:com.yworks.bridge.util.BigInteger,a2:int):void;
+
+  static native internal final function shiftLeft2(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:int):void;
+  static native internal final function shiftRight(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+  static native internal final function inplaceShiftRight(a:com.yworks.bridge.util.BigInteger,a2:int):void;
+  static native internal final function shiftRight2(a:Vector.<int>,a2:int,a3:Vector.<int>,a4:int,a5:int):Boolean;
+  static native internal final function flipBit(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+}
+
+
+public class com.yworks.bridge.util.Multiplication extends com.yworks.bridge.util.YObject
+{
+
+  native public function Multiplication(a:Boolean = true):*;
+  native private final function initMultiplication0():void;
+  native public override function getClass():Class;
+  native private final function initMultiplication():void;
+  static native private const LONG_LITERAL_FFFFFFFF:com.yworks.bridge.util.LongImpl;
+
+  static native internal const whenUseKaratsuba:int = 63;
+  static native internal const tenPows:Vector.<int>;
+  static native internal const fivePows:Vector.<int>;
+  static native internal const bigTenPows:Vector.<Object>;
+  static native internal const bigFivePows:Vector.<Object>;
+
+  static native private final function static_initializer():void;
+  static native private final function newMultiplication():Multiplication;
+  static native internal final function multiply(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function karatsuba(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+  static native internal final function multiplyPAP(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.BigInteger):com.yworks.bridge.util.BigInteger;
+
+  static native private final function multiplyByInt2(a:Vector.<int>,a2:Vector.<int>,a3:int,a4:int):int;
+  static native internal final function multiplyByInt(a:Vector.<int>,a2:int,a3:int):int;
+  static native internal final function multiplyByPositiveInt(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+  static native internal final function pow(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+  static native internal final function square(a:Vector.<int>,a2:int):Vector.<int>;
+
+  static native internal final function multiplyByTenPow(a:com.yworks.bridge.util.BigInteger,a2:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.BigInteger;
+  static native internal final function powerOf10(a:com.yworks.bridge.util.LongImpl):com.yworks.bridge.util.BigInteger;
+  static native internal final function multiplyByFivePow(a:com.yworks.bridge.util.BigInteger,a2:int):com.yworks.bridge.util.BigInteger;
+}
+
+
+public class com.yworks.bridge.util.Collections_EmptyList extends com.yworks.bridge.util.AbstractList
+{
+  native public function Collections_EmptyList(a:Boolean = true):*;
+  native private final function initCollections_EmptyList0():void;
+
+  native public override function getClass():Class;
+  native public override function containsItem(a:Object):Boolean;
+  native public override function get length():int;
+  native public override function getItemAt(a:int):Object;
+  native private function readResolve():Object;
+
+  native protected final function initCollections_EmptyList():void;
+  static native public final function newCollections_EmptyList():Collections_EmptyList;
+}
+
+
+public class com.yworks.bridge.util.TreeMap_BoundedEntryIterator extends com.yworks.bridge.util.TreeMap_BoundedMapIterator
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function TreeMap_BoundedEntryIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int,a6:Boolean = true):*;
+  native private final function initTreeMap_BoundedEntryIterator0():void;
+  native public override function getClass():Class;
+
+  native protected final function initTreeMap_BoundedEntryIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):void;
+  native public function nextItem():Object;
+  static native public final function newTreeMap_BoundedEntryIterator(a:com.yworks.bridge.util.TreeMapNode,a2:int,a3:com.yworks.bridge.util.TreeMap,a4:com.yworks.bridge.util.TreeMapNode,a5:int):TreeMap_BoundedEntryIterator;
+}
+
+
+public class com.yworks.bridge.util.AbstractMap_AbstractCollection100_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function AbstractMap_AbstractCollection100_Iterator100(a:com.yworks.bridge.util.AbstractMap_AbstractCollection100,a2:Boolean = true):*;
+  native internal var setIterator:com.yworks.bridge.util.Iterator;
+
+  native internal var enclosing0:com.yworks.bridge.util.AbstractMap_AbstractCollection100;
+  native private final function initAbstractMap_AbstractCollection100_Iterator1000():void;
+  native public override function getClass():Class;
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+
+  native public function removeItem():void;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableRandomAccessList extends com.yworks.bridge.util.Collections_UnmodifiableList
+  implements com.yworks.bridge.util.RandomAccess
+{
+  native public function Collections_UnmodifiableRandomAccessList(a:Boolean = true):*;
+  native private final function initCollections_UnmodifiableRandomAccessList0():void;
+  native public override function getClass():Class;
+  native internal final function initCollections_UnmodifiableRandomAccessList(a:com.yworks.bridge.util.List):void;
+
+  native public override function subList(a:int,a2:int):com.yworks.bridge.util.List;
+  native private function writeReplace():Object;
+  static native internal final function newCollections_UnmodifiableRandomAccessList(a:com.yworks.bridge.util.List):Collections_UnmodifiableRandomAccessList;
+}
+
+
+public class com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100_Iterator100_MapEntry100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.MapEntry
+{
+  native public function Collections_SingletonMap_AbstractSet100_Iterator100_MapEntry100(a:com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100_Iterator100,a2:Boolean = true):*;
+  native internal var enclosing0:com.yworks.bridge.util.Collections_SingletonMap_AbstractSet100_Iterator100;
+
+  native private final function initCollections_SingletonMap_AbstractSet100_Iterator100_MapEntry1000():void;
+  native public override function getClass():Class;
+  native public override function equals(a:Object):Boolean;
+  native public function get key():Object;
+  native public function get value():Object;
+
+  native public override function hashCode():int;
+  native public function setValue(a:Object):Object;
+}
+
+
+public class com.yworks.bridge.util.Collections_UnmodifiableMap_UnmodifiableEntrySet_Iterator100 extends com.yworks.bridge.util.YObject
+  implements com.yworks.bridge.util.Iterator
+{
+  native public function Collections_UnmodifiableMap_UnmodifiableEntrySet_Iterator100(a:com.yworks.bridge.util.Collections_UnmodifiableMap_UnmodifiableEntrySet,a2:Boolean = true):*;
+  native internal var iterator:com.yworks.bridge.util.Iterator;
+  native internal var enclosing0:com.yworks.bridge.util.Collections_UnmodifiableMap_UnmodifiableEntrySet;
+
+  native private final function initCollections_UnmodifiableMap_UnmodifiableEntrySet_Iterator1000():void;
+  native public override function getClass():Class;
+  native public function hasNext():Boolean;
+  native public function nextItem():Object;
+  native public function removeItem():void;
+}
+

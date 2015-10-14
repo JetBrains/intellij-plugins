@@ -1,6 +1,8 @@
 package org.angularjs.index;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSDocTokenTypes;
+import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
@@ -18,10 +20,12 @@ import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -38,8 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Dennis.Ushakov
@@ -108,11 +110,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
-  private static final String RESTRICT = "@restrict";
-  private static final String ELEMENT = "@element";
+  static final String RESTRICT = "@restrict";
+  static final String ELEMENT = "@element";
   private static final String PARAM = "@param";
-  private static final Pattern RESTRICT_PATTERN = Pattern.compile(RESTRICT + "\\s*(.*)");
-  private static final Pattern ELEMENT_PATTERN = Pattern.compile(ELEMENT + "\\s*(.*)");
 
   public static boolean isInjectable(PsiElement context) {
     final JSCallExpression call = PsiTreeUtil.getParentOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
@@ -265,8 +265,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     String param = "";
     StringBuilder attributes = new StringBuilder();
     for (String line : commentLines) {
-      restrict = getParamValue(restrict, line, RESTRICT_PATTERN, RESTRICT);
-      tag = getParamValue(tag, line, ELEMENT_PATTERN, ELEMENT);
+      restrict = getParamValue(restrict, line, RESTRICT);
+      tag = getParamValue(tag, line, ELEMENT);
       final int start = line.indexOf(PARAM);
       if (start >= 0) {
         final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
@@ -277,19 +277,20 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
-    return restrict.trim() + ";" + tag.trim() + ";" + param.trim() + ";" + attributes.toString().trim();
+    return restrict + ";" + tag + ";" + param.trim() + ";" + attributes.toString().trim();
   }
 
   public static boolean isAngularRestrictions(@Nullable String restrictions) {
     return restrictions == null || StringUtil.countChars(restrictions, ';') >= 3;
   }
 
-  private static String getParamValue(String previousValue, String line, final Pattern pattern, final String docTag) {
-    if (line.contains(docTag)) {
-      final Matcher matcher = pattern.matcher(line);
-      if (matcher.find()) {
-        previousValue = matcher.group(1);
-      }
+  static String getParamValue(String previousValue, String line, final String docTag) {
+    final int indexOfTag = line.indexOf(docTag);
+    if (indexOfTag >= 0) {
+      final int commentAtEndIndex = line.indexOf("//", indexOfTag);
+      String newValue = line.substring(indexOfTag + docTag.length(), commentAtEndIndex > 0 ? commentAtEndIndex : line.length());
+      newValue = newValue.trim();
+      if (!StringUtil.isEmpty(newValue)) return newValue;
     }
     return previousValue;
   }
@@ -383,7 +384,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       JSArrayLiteralExpression array = PsiTreeUtil.getNextSiblingOfType(element, JSArrayLiteralExpression.class);
       function = PsiTreeUtil.findChildOfType(array, JSFunction.class);
       if (function == null) {
-        final JSExpression candidate = array != null ?PsiTreeUtil.getPrevSiblingOfType(array.getLastChild(), JSExpression.class) : null;
+        final JSExpression candidate = array != null ? PsiTreeUtil.getPrevSiblingOfType(array.getLastChild(), JSExpression.class) : null;
         function = findDeclaredFunction(candidate);
       }
     }
@@ -391,31 +392,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static JSFunction findDeclaredFunction(JSExpression expression) {
-    final Ref<JSFunction> result = Ref.create();
-    if (expression instanceof JSReferenceExpression) {
-      final String name = ((JSReferenceExpression)expression).getReferenceName();
-      expression.getContainingFile().accept(new JSRecursiveWalkingElementVisitor() {
-        @Override
-        public void visitJSFunctionExpression(JSFunctionExpression node) {
-          checkFunction(node);
-          super.visitJSFunctionExpression(node);
-        }
-
-        public void checkFunction(JSFunction node) {
-          if (StringUtil.equals(name, node.getName())) {
-            result.set(node);
-            stopWalking();
-          }
-        }
-
-        @Override
-        public void visitJSFunctionDeclaration(JSFunction node) {
-          checkFunction(node);
-          super.visitJSFunctionDeclaration(node);
-        }
-      });
+    final String name = expression instanceof JSReferenceExpression ? ((JSReferenceExpression)expression).getReferenceName() : null;
+    if (name != null) {
+      ASTNode node = expression.getNode();
+      final JSTreeUtil.JSScopeDeclarationsAndAssignments declaration = JSTreeUtil.getDeclarationsAndAssignmentsInScopeAndUp(name, node);
+      CompositeElement definition = declaration != null ? declaration.findNearestDefinition(node) : null;
+      if (definition != null && JSElementTypes.FUNCTION_DECLARATIONS.contains(definition.getElementType())) {
+        return (JSFunction)definition.getPsi();
+      }
     }
-    return result.get();
+    return null;
   }
 
   @Override
@@ -449,11 +435,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   @Override
   public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator,
-                                          JSReferenceExpression expression,
-                                          PsiElement parent,
                                           PsiElement resolveResult,
                                           boolean hasSomeType) {
-    if (!AngularIndexUtil.hasAngularJS(expression.getProject())) return false;
+    if (!AngularIndexUtil.hasAngularJS(resolveResult.getProject())) return false;
 
     if (resolveResult instanceof JSDefinitionExpression) {
       final PsiElement resolveParent = resolveResult.getParent();

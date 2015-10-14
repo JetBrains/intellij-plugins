@@ -3,22 +3,27 @@ package org.intellij.plugins.markdown.preview;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.ast.ASTNode;
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.lexer.MarkdownLexer;
-import org.intellij.markdown.parser.LexerBasedTokensCache;
+import org.intellij.markdown.parser.LinkMap;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.markdown.parser.TokensCache;
-import org.intellij.markdown.parser.dialects.commonmark.CommonMarkMarkerProcessor;
+import org.intellij.markdown.parser.sequentialparsers.LexerBasedTokensCache;
+import org.intellij.markdown.parser.sequentialparsers.TokensCache;
+import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.jetbrains.annotations.NotNull;
@@ -46,19 +51,30 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       }
     };
 
-  public MarkdownPreviewFileEditor(@NotNull VirtualFile file) {
+  @Nullable
+  private Runnable myLastScrollRequest = null;
+
+  private int myLastScrollOffset;
+
+  public MarkdownPreviewFileEditor(@NotNull  Project project, @NotNull VirtualFile file) {
     myFile = file;
     myDocument = FileDocumentManager.getInstance().getDocument(myFile);
 
     if (myDocument != null) {
       myDocument.addDocumentListener(new DocumentAdapter() {
+
         @Override
-        public void documentChanged(DocumentEvent e) {
+        public void beforeDocumentChange(DocumentEvent e) {
           myAlarm.cancelAllRequests();
+        }
+
+        @Override
+        public void documentChanged(final DocumentEvent e) {
           myAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
-              updateHtml();
+              //myLastScrollOffset = e.getOffset();
+              updateHtml(true);
             }
           }, PARSING_CALL_TIMEOUT_MS);
         }
@@ -71,6 +87,21 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
     settingsConnection.subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, mySettingsChangedListener);
     mySettingsChangedListener.onSettingsChange(MarkdownApplicationSettings.getInstance());
+  }
+
+  public void scrollToSrcOffset(final int offset) {
+
+    if (myLastScrollRequest != null) {
+      myAlarm.cancelRequest(myLastScrollRequest);
+    }
+    myLastScrollRequest = new Runnable() {
+      @Override
+      public void run() {
+        myLastScrollOffset = offset;
+        myPanel.scrollToSrcOffset(myLastScrollOffset);
+      }
+    };
+    myAlarm.addRequest(myLastScrollRequest, PARSING_CALL_TIMEOUT_MS);
   }
 
   @NotNull
@@ -113,27 +144,34 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   @Override
   public void selectNotify() {
-    updateHtml();
     myAlarm.cancelAllRequests();
     myAlarm.addRequest(new Runnable() {
       @Override
       public void run() {
+        updateHtml(true);
       }
     }, 0);
   }
 
-  private void updateHtml() {
+  private void updateHtml(boolean preserveScrollOffset) {
     if (!myFile.isValid() || myDocument == null) {
       return;
     }
 
     String text = myDocument.getText();
-    final TokensCache tokensCache = new LexerBasedTokensCache(new MarkdownLexer(text));
-    final ASTNode parsedTree = new MarkdownParser(CommonMarkMarkerProcessor.Factory.INSTANCE$)
-      .parse(MarkdownElementTypes.MARKDOWN_FILE, tokensCache);
-    final String html = new HtmlGenerator(text, parsedTree).generateHtml();
+    final ASTNode parsedTree = new MarkdownParser(MarkdownParserManager.FLAVOUR).buildMarkdownTreeFromString(text);
+    final String html = new HtmlGenerator(text,
+                                          parsedTree,
+                                          MarkdownParserManager.FLAVOUR,
+                                          LinkMap.Builder.buildLinkMap(parsedTree, text),
+                                          true)
+      .generateHtml();
 
     myPanel.setHtml("<html><head></head>" + html + "</html>");
+
+    if (preserveScrollOffset) {
+      myPanel.scrollToSrcOffset(myLastScrollOffset);
+    }
   }
 
   private void updatePanelCssSettings(@NotNull MarkdownCssSettings cssSettings) {

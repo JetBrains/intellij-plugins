@@ -1,0 +1,7 @@
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    @font-face {
+      <caret>
+    }
+  </mx:Style>
+</mx:Panel>

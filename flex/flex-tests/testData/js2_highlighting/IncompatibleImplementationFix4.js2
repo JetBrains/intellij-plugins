@@ -1,0 +1,12 @@
+package {
+interface <error>FooBase</error> {
+    function foo();
+}
+}
+
+package {
+class <error>Foo</error> implements FooBase {
+    public function foo():<error>int</error> {
+    }
+}
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" add="addHandler(event)">
+    <mx:Script><![CDATA[
+        import mx.events.FlexEvent;
+
+        private function addHandler(event:FlexEvent):void {<caret>
+        }
+        ]]></mx:Script>
+</mx:Application>

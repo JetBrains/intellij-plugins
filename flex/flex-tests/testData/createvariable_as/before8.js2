@@ -1,0 +1,9 @@
+// "Create Field 'selectionManager'" "false"
+interface IA {}
+class A {
+  public function getSelectionManager():ISelectionManager {
+    var foo:IA;
+    foo = foo.selection<caret>Manager;
+  }
+}
+

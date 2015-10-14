@@ -1,0 +1,4 @@
+class Foo {}
+var x:Foo = Foo<error>()</error>
+var x2:Foo = Foo(null)
+var x3:Foo = Foo<error>(1, 2)</error>

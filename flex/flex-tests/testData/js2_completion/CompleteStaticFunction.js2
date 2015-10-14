@@ -1,0 +1,9 @@
+package test {
+  public function getXXX():Class {}
+}
+
+package test2 {
+  public function getYYY():Class {}
+}
+
+get<caret>

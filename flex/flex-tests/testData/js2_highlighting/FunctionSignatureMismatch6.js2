@@ -1,0 +1,9 @@
+package {
+    public class FunctionSignatureMismatch6 {
+        public function foo(p: String, ...args) {}
+
+        function zzz() {
+            foo(<error>true</error>, 1, 2, 3);
+        }
+    }
+}

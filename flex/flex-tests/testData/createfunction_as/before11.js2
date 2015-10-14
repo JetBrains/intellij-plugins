@@ -1,0 +1,16 @@
+// "Create Method 'anymethod'" "true"
+package yyy {
+import xxx.B2010;
+
+class A {
+  public function foo() {
+    var x:B2010 = new B2010();
+    x.any<caret>method();
+  }
+}
+}
+
+package xxx {
+  public class B2010 {
+  }
+}

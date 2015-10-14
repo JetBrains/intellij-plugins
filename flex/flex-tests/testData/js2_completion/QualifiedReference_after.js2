@@ -1,0 +1,5 @@
+package {
+ [HostComponent("mx.controls<caret>")]
+ public class Test {
+ }
+}

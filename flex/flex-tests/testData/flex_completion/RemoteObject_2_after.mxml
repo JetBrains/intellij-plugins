@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    function foo() {
+      EnrollmentServ.closeAccount.lastResult<caret>
+    }
+  </mx:Script>
+  <mx:RemoteObject id="EnrollmentServ" destination="PrimaryCardEnrollService">
+    <mx:method name="closeAccount"/>
+  </mx:RemoteObject>
+</mx:Application>

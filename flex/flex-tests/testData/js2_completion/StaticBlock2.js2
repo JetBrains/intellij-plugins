@@ -1,0 +1,8 @@
+package {
+
+class Foo {
+  var abcde;
+  ab<caret>
+}
+
+}

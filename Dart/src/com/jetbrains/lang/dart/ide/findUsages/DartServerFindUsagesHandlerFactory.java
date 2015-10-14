@@ -18,8 +18,7 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.lang.dart.psi.DartNamedElement;
-import com.jetbrains.lang.dart.psi.DartUriElement;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ public class DartServerFindUsagesHandlerFactory extends FindUsagesHandlerFactory
   @Override
   public boolean canFindUsages(@NotNull PsiElement element) {
     if (DartResolver.isServerDrivenResolution()) {
-      return element instanceof DartNamedElement || element instanceof DartUriElement;
+      return element.getLanguage() == DartLanguage.INSTANCE;
     }
     return false;
   }

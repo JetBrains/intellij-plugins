@@ -1,0 +1,3 @@
+<warning>private</warning> function clickHandler():void {
+    var r:RegExp = this;
+}

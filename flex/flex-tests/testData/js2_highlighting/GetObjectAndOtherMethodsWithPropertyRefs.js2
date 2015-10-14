@@ -1,0 +1,12 @@
+class XXX {
+    function getObject(x:String):String {
+        return "1";
+    }
+}
+
+class Bar {
+    var x:XXX;
+    function foo() {
+        x.getObject("xxx");
+    }
+}

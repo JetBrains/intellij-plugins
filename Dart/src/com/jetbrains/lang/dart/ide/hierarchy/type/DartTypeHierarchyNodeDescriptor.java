@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -24,12 +25,8 @@ public final class DartTypeHierarchyNodeDescriptor extends HierarchyNodeDescript
 
   @Nullable
   public final DartClass getDartClass() {
-    return (myElement instanceof DartClass) ? (DartClass)myElement : null;
-  }
-
-  public final boolean isValid() {
-    final DartClass dartClass = getDartClass();
-    return dartClass != null && dartClass.isValid();
+    PsiElement element = getPsiElement();
+    return element instanceof DartClass ? (DartClass)element : null;
   }
 
   public final boolean update() {

@@ -1,0 +1,10 @@
+class B {
+  function B(x:int, x2:int) {}
+}
+
+class A extends B {
+
+    public function A(x:int, x2:int) {
+        super(x, x2);
+    }
+}

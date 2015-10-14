@@ -1,0 +1,4 @@
+function foo() {
+    var xxx:Vector.<int> = new Vector.<int>();
+    xx<caret>x
+}

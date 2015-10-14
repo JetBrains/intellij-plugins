@@ -7,14 +7,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverServer;
-import com.google.jstestdriver.idea.TestRunner;
+import com.google.jstestdriver.idea.common.JstdCommonConstants;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
+import com.google.jstestdriver.idea.rt.TestRunner;
+import com.google.jstestdriver.idea.rt.util.EscapeUtils;
+import com.google.jstestdriver.idea.rt.util.TestFileScope;
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
-import com.google.jstestdriver.idea.util.EscapeUtils;
-import com.google.jstestdriver.idea.util.TestFileScope;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -154,7 +155,7 @@ public class JstdRunProfileState implements RunProfileState {
   private KillableColoredProcessHandler createOSProcessHandler(@NotNull String serverUrl) throws ExecutionException {
     Map<TestRunner.ParameterKey, String> params = createParameterMap(serverUrl);
     GeneralCommandLine commandLine = createCommandLine(params);
-    KillableColoredProcessHandler processHandler = KillableColoredProcessHandler.create(commandLine);
+    KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(commandLine, true);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }
@@ -184,6 +185,7 @@ public class JstdRunProfileState implements RunProfileState {
 
   private static String buildClasspath() {
     List<File> classpathFiles = getClasspathRootFiles(
+      JstdCommonConstants.class,
       TestRunner.class,
       JsTestDriverServer.class,
       Maps.class,

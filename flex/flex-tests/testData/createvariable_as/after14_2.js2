@@ -1,0 +1,8 @@
+// "Create Field 'aaa'" "true"
+class A___2 {
+    private var aaa<caret>:int;
+  function A___2() {
+    aaa--;
+  }
+}
+

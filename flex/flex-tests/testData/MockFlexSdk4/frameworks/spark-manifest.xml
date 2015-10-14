@@ -1,0 +1,28 @@
+<componentPackage>
+    <component id="Application" class="spark.components.Application"/>
+    <component id="ViewNavigatorApplication" class="spark.components.ViewNavigatorApplication"/>
+    <component id="View" class="spark.components.View"/>
+    <component id="Button" class="spark.components.Button"/>
+    <component id="ButtonBarButton" class="spark.components.ButtonBarButton"/>
+    <component id="Group" class="spark.components.Group"/>
+    <component id="Rect" class="spark.primitives.Rect"/>
+    <component id="Skin" class="spark.components.supportClasses.Skin"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor" lookupOnly="true"/>
+    <component id="XMLListCollection" class="mx.collections.XMLListCollection" lookupOnly="true"/>
+    <component id="State" class="mx.states.State" lookupOnly="true"/>
+    <component id="Transition" class="mx.states.Transition" lookupOnly="true"/>
+    <component id="HTTPService" class="mx.rpc.http.mxml.HTTPService" lookupOnly="true"/>
+    <component id="WebService" class="mx.rpc.soap.mxml.WebService" lookupOnly="true"/>
+    <component id="WebServiceOperation" class="mx.rpc.soap.mxml.Operation" lookupOnly="true"/>
+    <component id="DataGroup" class="spark.components.DataGroup"/>
+    <component id="RadioButtonGroup" class="mx.controls.RadioButtonGroup"/>
+    <component id="SpriteVisualElement" class="spark.core.SpriteVisualElement"/>
+    <component id="List" class="spark.components.List"/>
+    <component id="Sort" class="spark.collections.Sort"/>
+    <component id="TextInput" class="spark.components.TextInput"/>
+    <component id="CheckBox" class="spark.components.CheckBox"/>
+    <component id="SkinnableComponent" class="spark.components.supportClasses.SkinnableComponent"/>
+    <component id="HGroup" class="spark.components.HGroup"/>
+    <component id="ArrayCollection" class="mx.collections.ArrayCollection"/>
+    <component id="SkinnableContainer" class="spark.components.SkinnableContainer"/>
+</componentPackage>

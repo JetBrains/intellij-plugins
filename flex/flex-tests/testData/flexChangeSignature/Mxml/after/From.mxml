@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                creationComplete="abc2('def',0,this);">
+
+    <mx:Script><![CDATA[
+        internal function abc2(s:String, p:int, z:Object) {
+            trace('a');
+        }
+
+        function ref() {
+            abc2("def", 0, this);
+        }
+        ]]></mx:Script>
+
+    <mx:add><![CDATA[
+            abc2("def", 0, this);
+
+            function aaa() {
+                abc2("def", 0, this);
+            }
+        ]]></mx:add>
+</mx:Application>

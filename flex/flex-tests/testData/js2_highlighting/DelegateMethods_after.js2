@@ -1,0 +1,44 @@
+package {
+import flash.events.EventDispatcher;
+
+class DelegateMethods {
+     var foobar : MyClass;
+
+
+     public function foo(p:int, p2:String = "abc", p3:Object = "null"):MyClass {
+         return foobar.foo(p, p2, p3);
+     }
+
+     public function bar():* {
+         return foobar.bar();
+     }
+
+     public function zzz() {
+         return foobar.zzz();
+     }
+
+    public function get prop1():EventDispatcher {
+        return foobar.prop1;
+    }
+
+    public function set prop1(value:EventDispatcher):void {
+        foobar.prop1 = value;
+    }
+
+    public function get prop2():Boolean {
+        return foobar.prop2;
+    }
+
+    public function set prop2(value:Boolean):void {
+        foobar.prop2 = value;
+    }
+
+    public function get prop4():Boolean {
+        return foobar.prop4;
+    }
+
+    public function set prop4(value:Boolean):void {
+        foobar.prop4 = value;
+    }
+ }
+}

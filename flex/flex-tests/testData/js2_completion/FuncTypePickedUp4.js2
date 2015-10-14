@@ -1,0 +1,16 @@
+dynamic class A {
+  native function method();
+}
+
+class B {
+  native function met();
+}
+
+class C {
+  native function get myvar():A;
+  native function get myDvar2():B;
+
+  function C() {
+    myvar.<caret>
+  }
+}

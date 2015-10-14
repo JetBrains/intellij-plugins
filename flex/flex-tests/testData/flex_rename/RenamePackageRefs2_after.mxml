@@ -1,0 +1,7 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:aaa="yyy2.*">
+   <mx:Script>
+       import yyy2.Foo;
+
+       var a:y<caret>yy2.Foo
+   </mx:Script>
+</mx:Application>

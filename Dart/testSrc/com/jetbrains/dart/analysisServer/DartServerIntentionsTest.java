@@ -4,7 +4,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,8 +12,8 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    final DartSdk sdk = DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject(), sdk);
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 

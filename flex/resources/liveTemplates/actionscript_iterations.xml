@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="ActionScript">
+
+  <template name="iter" value="for each (var $VAR$:$ELEMENT_TYPE$ in $ARRAY$) {&#10;  $END$&#10;}"
+            resource-bundle="com.intellij.lang.javascript.flex.FlexBundle" key="livetemplate.description.iter" toReformat="true" toShortenFQNames="true">
+    <variable name="ARRAY" expression="jsArrayVariable()" defaultValue="&quot;array &quot;" alwaysStopAt="true"/>
+    <variable name="ELEMENT_TYPE" expression="jsComponentTypeOf(ARRAY)" defaultValue="&quot;Object&quot;" alwaysStopAt="true"/>
+    <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ACTION_SCRIPT" value="true" />
+    </context>
+  </template>
+
+  <template name="itin" value="for (var $VAR$:String in $ARRAY$) {&#10;  $END$&#10;}"
+            resource-bundle="com.intellij.lang.javascript.flex.FlexBundle" key="livetemplate.description.itin" toReformat="true" toShortenFQNames="true">
+    <variable name="ARRAY" expression="jsArrayVariable()" defaultValue="&quot;array &quot;" alwaysStopAt="true"/>
+    <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ACTION_SCRIPT" value="true" />
+    </context>
+  </template>
+
+  <template name="itar" value="for (var $INDEX$:int = 0; $INDEX$ &lt; $ARRAY$.length; $INDEX$++) {&#10;  var $VAR$:$ELEMENT_TYPE$ = $ARRAY$[$INDEX$];&#10;  $END$&#10;}"
+            resource-bundle="com.intellij.lang.javascript.flex.FlexBundle" key="livetemplate.description.itar" toReformat="true" toShortenFQNames="true">
+    <variable name="INDEX" expression="jsSuggestIndexName()" defaultValue="&quot;i&quot;" alwaysStopAt="true" />
+    <variable name="ARRAY" expression="jsArrayVariable()" defaultValue="&quot;array&quot;" alwaysStopAt="true" />
+    <variable name="ELEMENT_TYPE" expression="jsComponentTypeOf(ARRAY)" defaultValue="&quot;Object&quot;" alwaysStopAt="true" />
+    <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="ACTION_SCRIPT" value="true" />
+    </context>
+  </template>
+
+  <template name="ritar" value="for (var $INDEX$:int = $ARRAY$.length - 1; $INDEX$ &gt;= 0; $INDEX$--) {&#10;  var $VAR$:$ELEMENT_TYPE$ = $ARRAY$[$INDEX$];&#10;  $END$&#10;}"
+            resource-bundle="com.intellij.lang.javascript.flex.FlexBundle" key="livetemplate.description.ritar"  toReformat="true" toShortenFQNames="true">
+    <variable name="INDEX" expression="jsSuggestIndexName()" defaultValue="&quot;i&quot;" alwaysStopAt="true" />
+    <variable name="ARRAY" expression="jsArrayVariable()" defaultValue="&quot;array&quot;" alwaysStopAt="true" />
+    <variable name="ELEMENT_TYPE" expression="jsComponentTypeOf(ARRAY)" defaultValue="&quot;Object&quot;" alwaysStopAt="true" />
+    <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="ACTION_SCRIPT" value="true" />
+    </context>
+  </template>
+
+</templateSet>
+

@@ -571,18 +571,18 @@ public class DartResolveUtil {
                                    @NotNull final List<DartClass> superInterfaces,
                                    @Nullable DartClass rootDartClass) {
     processSupers(new PsiElementProcessor<DartClass>() {
-                    @Override
-                    public boolean execute(@NotNull DartClass dartClass) {
-                      superClasses.add(dartClass);
-                      return true;
-                    }
-                  }, new PsiElementProcessor<DartClass>() {
-                    @Override
-                    public boolean execute(@NotNull DartClass dartClass) {
-                      superInterfaces.add(dartClass);
-                      return true;
-                    }
-                  }, rootDartClass);
+      @Override
+      public boolean execute(@NotNull DartClass dartClass) {
+        superClasses.add(dartClass);
+        return true;
+      }
+    }, new PsiElementProcessor<DartClass>() {
+      @Override
+      public boolean execute(@NotNull DartClass dartClass) {
+        superInterfaces.add(dartClass);
+        return true;
+      }
+    }, rootDartClass);
   }
 
   public static void processSupers(@Nullable PsiElementProcessor<DartClass> superClassProcessor,
@@ -643,11 +643,11 @@ public class DartResolveUtil {
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields, boolean filterPrivate) {
     return getComponentNames(filterPrivate ? ContainerUtil.filter(fields, new Condition<DartComponent>() {
-                               @Override
-                               public boolean value(DartComponent component) {
-                                 return component.isPublic();
-                               }
-                             }) : fields);
+      @Override
+      public boolean value(DartComponent component) {
+        return component.isPublic();
+      }
+    }) : fields);
   }
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields) {
@@ -657,6 +657,11 @@ public class DartResolveUtil {
         return component.getComponentName();
       }
     }), Condition.NOT_NULL);
+  }
+
+  public static DartComponentName[] getComponentNameArray(List<? extends DartComponent> components) {
+    final List<DartComponentName> names = getComponentNames(components);
+    return names.toArray(new DartComponentName[names.size()]);
   }
 
   @NotNull
@@ -844,7 +849,7 @@ public class DartResolveUtil {
 
   /**
    * Returns the constructor invoked by the given {@link DartNewExpression}.
-   *
+   * <p/>
    * TODO(scheglov) Add non-named constructor declarations (they're methods now).
    */
   @Nullable

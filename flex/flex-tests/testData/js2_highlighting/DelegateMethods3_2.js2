@@ -1,0 +1,12 @@
+package com.foo {
+
+import flash.events.EventDispatcher;
+
+    public class MyClass {
+        CONFIG::debug
+        myns final native override dynamic function foo():MyClass {
+            return null;
+        }
+
+   }
+}

@@ -1,8 +1,11 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.intention.HighPriorityAction;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -16,7 +19,7 @@ public class CucumberCreateStepFix extends CucumberCreateStepFixBase implements 
   }
 
   @Override
-  protected void createStepOrSteps(GherkinStep step, PsiFile file) {
-    createFileOrStepDefinition(step, file);
+  protected void createStepOrSteps(GherkinStep step, @Nullable final Pair<PsiFile, BDDFrameworkType> fileAndFrameworkType) {
+    createFileOrStepDefinition(step, fileAndFrameworkType);
   }
 }

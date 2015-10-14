@@ -1,0 +1,12 @@
+<!-- "Create Field 'xxx'" "true" -->
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="">
+    <mx:Script><![CDATA[
+        var xxxx = 2;
+        private var xxx<caret>:int;
+        
+        function foo() {
+          xxx = 1;
+        }
+        ]]></mx:Script>
+</mx:Application>

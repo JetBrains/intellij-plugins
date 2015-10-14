@@ -1,0 +1,7 @@
+// "Create Method 'create'" "true"
+class Foo {
+    internal static function create(cls:Class):void {
+        <caret>
+    }
+}
+Foo.create(null as Class);

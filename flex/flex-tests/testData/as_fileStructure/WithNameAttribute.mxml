@@ -1,0 +1,22 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" name="aaa">
+    <mx:Panel name="bbb" id="panel1">
+        <mx:Button name="ccc" id="button1" label="Button1"/>
+    </mx:Panel>
+
+  <mx:Script>
+    function foo() {}
+  </mx:Script>
+</mx:Application>
+
+<structure>
+<node text="WithNameAttribute.mxml">
+  <node text="aaa:Application">
+    <node text="panel1:Panel">
+      <node text="button1:Button"/>
+    </node>
+    <node text="mx:Script">
+      <node text="foo()"/>
+    </node>
+  </node>
+</node>
+</structure>

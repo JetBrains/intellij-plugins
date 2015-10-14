@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="import mx.rpc.AbstractInvoker; var t: mx.rpc.AbstractInvoker">
+	<mx:Script>
+	<![CDATA[
+          <caret>var p : String;
+	]]>
+	</mx:Script>
+</mx:Panel>

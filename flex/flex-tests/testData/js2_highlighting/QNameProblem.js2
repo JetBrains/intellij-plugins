@@ -1,0 +1,25 @@
+package <error>test.utils</error>
+{
+import mypackage.ICollectionView;
+import mypackage.IList;
+
+public interface <error>IListView</error> extends test.utils.IList, ICollectionView
+{
+    function addAll(addList:mypackage.IList):void
+}
+}
+
+package <error>test.utils</error>
+{
+import mypackage.IList;
+public interface <error>ICollection</error> extends IList
+{
+}
+}
+
+package <error>test.utils</error>
+{
+public interface <error>IList</error> extends ICollection
+{
+}
+}

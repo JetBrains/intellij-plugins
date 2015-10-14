@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="ActionScript">
+
+  <template name="pv" value="public var $END$" description="public var" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="prv" value="private var $END$" description="private var" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="psv" value="public static var $END$" description="public static var" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="prsv" value="private static var $END$" description="private static var" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="pf" value="public function $NAME$($ARGS$):$RETURN_TYPE$ {&#10; $END$ &#10;}" description="public function"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <variable name="RETURN_TYPE" expression="&quot;void&quot;" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="prf" value="private function $NAME$($ARGS$):$RETURN_TYPE$ {&#10; $END$ &#10;}" description="private function"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <variable name="RETURN_TYPE" expression="&quot;void&quot;" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="psf" value="public static function $NAME$($ARGS$):$RETURN_TYPE$ {&#10; $END$ &#10;}" description="public static function"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <variable name="RETURN_TYPE" expression="&quot;void&quot;" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="prsf" value="private static function $NAME$($ARGS$):$RETURN_TYPE$ {&#10; $END$ &#10;}"
+            description="private static function" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <variable name="RETURN_TYPE" expression="&quot;void&quot;" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="pc" value="public const $END$" description="public const" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="prc" value="private const $END$" description="private const" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="psc" value="public static const $END$" description="public static const" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="prsc" value="private static const $END$" description="private static const" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="ACTION_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+</templateSet>
+

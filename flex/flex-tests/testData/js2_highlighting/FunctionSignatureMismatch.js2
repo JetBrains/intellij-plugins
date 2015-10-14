@@ -1,0 +1,78 @@
+function xxx(i) {}
+function yyy(i, ...j) {}
+function zzz(i, j = 1) {}
+
+xxx<error descr="Invalid number of arguments, expected 1">()</error>
+yyy<error descr="Invalid number of arguments, expected 1 or more">()</error>
+yyy(1)
+yyy(1, 2, 3)
+
+zzz(1)
+zzz<error descr="Invalid number of arguments, expected 1..2">()</error>
+
+class D {
+  function D() {}
+}
+
+class C extends D {
+  function C() {
+    super<error>(1)</error>;
+    new D<error>(1)</error>;
+  }
+}
+
+function zzz2(a:Number) {}
+function zzz3(b:Boolean) {}
+
+function zzz5(... a) {
+  zzz4(a)
+}
+
+function zzz4(a:Array) {}
+
+zzz2(1);
+zzz2(<error descr="Argument type Function is not assignable to parameter type Number">zzz2</error>);
+zzz3(true);
+
+var s:String;
+var z = s.indexOf("1");
+var t = s.split(':');
+
+class MyClassWithoutConstructor {}
+class MyClassWithConstructor { function MyClassWithConstructor(a) {} }
+var t2 = new MyClassWithoutConstructor<error descr="Invalid number of arguments, expected 0">(1)</error>;
+var t2_2 = new MyClassWithoutConstructor();
+var t3 = new MyClassWithConstructor<error>()</error>;
+var t3_2 = new MyClassWithConstructor(1);
+
+var a:Number;
+a.toString();
+var arr:Array;
+arr = arr.concat([a]).concat([a]);
+
+throw new Error("Bug");
+
+function foo(a:int, ... b:Array) {
+  foo(1,[1],[1]);
+}
+
+function staticFun() {}
+
+class Test
+{
+function M():void
+{ P("Here we go again!");
+
+function get <error>P</error>():Function
+{ return staticFun; }
+
+}
+}
+
+var x:Date = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
+var y:RegExp = new RegExp("xxx", "g")
+var exec:Array = y.exec("tttt");
+
+Date.parse("111");
+function replacer():String { return ""; }
+'aaa'.replace(/\w/, replacer);

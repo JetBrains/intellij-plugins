@@ -1,0 +1,7 @@
+package {
+import mypackage.Application;
+
+public class ApplicationEx extends Application {
+       function foo() {}
+}
+}

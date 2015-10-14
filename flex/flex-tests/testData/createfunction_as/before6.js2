@@ -1,0 +1,7 @@
+// "Create Method '_bbb'" "true"
+class D {}
+class C {
+  static function foo() {
+    D._b<caret>bb("1","2");
+  }
+}

@@ -1,0 +1,10 @@
+class Z {
+  function bar():Boolean {}
+  function baz():Object {}
+}
+class C {
+  function baz() {
+      var x:Z;
+      if(!x.b<caret>) {}
+  }
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+  <s:states>
+    <s:State name="state1" stateGroups="group1"/>
+    <s:State name="state2" stateGroups="group3, group2"/>
+    <s:State stateGroups="<caret expected="group1,group2,group3">"/>
+  </s:states>
+  <s:transitions>
+    <s:Transition fromState="<caret expected="*,group1,group2,group3,state1,state2">" toState="<caret expected="*,group1,group2,group3,state1,state2">"/>
+  </s:transitions>
+  <s:Button label.<caret expected="group1,group2,group3,state1,state2">="" includeIn="<caret expected="group1,group2,group3,state1,state2">" excludeFrom="<caret expected="group1,group2,group3,state1,state2">"/>
+</s:Application>

@@ -1,0 +1,10 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <namespaces>
+      <namespace>
+        <uri>http://SomeNamespace</uri>
+        <manifest>NamespacesAndManifestsFromCustomConfigFile_manifest.xml</manifest>
+      </namespace>
+    </namespaces>
+  </compiler>
+</flex-config>

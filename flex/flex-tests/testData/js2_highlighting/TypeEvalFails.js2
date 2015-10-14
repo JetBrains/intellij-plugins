@@ -1,0 +1,28 @@
+package
+{
+    import xxx.MySprite;
+
+    public class TypeEvalFails
+    {
+
+        public function HelloWorld()
+        {
+            var items:Array = new Array();
+            items[0] = new Demo();
+            items[0].sprite.addChild(new MySprite());
+        }
+    }
+}
+
+import xxx.MySprite;
+
+class Demo
+{
+    public var sprite:MySprite = new MySprite();
+}
+
+package <error>xxx</error> {
+  public class <error>MySprite</error> {
+      public function addChild(s:MySprite) {}
+  }
+}

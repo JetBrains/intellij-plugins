@@ -8,6 +8,8 @@ main() {
   <weak_warning descr="'bar' is deprecated" type="DEPRECATED">bar</weak_warning>();
   // todo smth
   var <weak_warning descr="The value of the local variable 'unused' is not used" type="UNUSED_SYMBOL">unused</weak_warning>;
+  return;
+  <weak_warning descr="Dead code" type="UNUSED_SYMBOL">1 + 1;</weak_warning>
 }
 
 @deprecated

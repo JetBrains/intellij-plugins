@@ -1,0 +1,5 @@
+<mx:Application xmlns:pack="pack.*"
+
+                xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:sub="abc">
+    <pack:Bar/>
+</mx:Application>

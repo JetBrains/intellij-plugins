@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="<error>Object</error>">
+  <mx:Model id="MyEmployee">
+    <root>
+      <name>
+        <first />
+      </name>
+    </root>
+  </mx:Model>
+  <mx:Script>
+      <![CDATA[
+          private static function foo() {
+              <error>label1</error>.text = "bar";
+          }
+          
+          private function foo() {
+            xmlListColl = new XMLListCollection();
+          }
+     ]]>
+  </mx:Script>
+  <mx:Label id="label1" />
+  <mx:XMLListCollection id="xmlListColl" />
+</mx:Application>

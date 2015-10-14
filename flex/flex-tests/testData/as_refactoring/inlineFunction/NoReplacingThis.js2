@@ -1,0 +1,11 @@
+import xxx.baz;
+class Some {
+    function bar() {
+        new Some().f<caret>oo();
+    }
+
+    function foo() {
+        var arr:Array = new Array(1, 2, 3);
+        trace(arr);
+    }
+}

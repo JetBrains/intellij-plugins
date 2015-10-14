@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<HBox xmlns="http://www.adobe.com/2006/mxml">
+    <Button/>
+    <Metadata>
+        [Event(name="bar", type="flash.events.Event")]
+    </Metadata>
+</HBox>

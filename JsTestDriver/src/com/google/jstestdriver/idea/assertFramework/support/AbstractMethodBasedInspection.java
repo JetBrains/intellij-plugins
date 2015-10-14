@@ -2,7 +2,6 @@ package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
 import com.google.jstestdriver.idea.util.JstdResolveUtil;
-import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -18,10 +17,12 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Sergey Simonchik
- */
 public abstract class AbstractMethodBasedInspection extends JSInspection {
+
+  @Override
+  public boolean isEnabledByDefault() {
+    return false;
+  }
 
   protected abstract boolean isSuitableElement(@NotNull JSFile jsFile, @NotNull JSCallExpression callExpression);
 
@@ -36,11 +37,8 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
       return JSElementVisitor.NOP_ELEMENT_VISITOR;
     }
     Project project = holder.getProject();
-    if (project == null) {
-      return JSElementVisitor.NOP_ELEMENT_VISITOR;
-    }
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      if (!JstdSettingsUtil.areJstdConfigFilesInProject(project)) {
+      if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
         return JSElementVisitor.NOP_ELEMENT_VISITOR;
       }
     }

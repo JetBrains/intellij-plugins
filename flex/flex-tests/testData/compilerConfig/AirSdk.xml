@@ -1,0 +1,24 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <warn-no-constructor>false</warn-no-constructor>
+    <source-path>
+      <path-element>$MODULE_DIR$/src</path-element>
+    </source-path>
+    <debug>true</debug>
+    <locale>
+      <locale-element>en_US</locale-element>
+    </locale>
+    <theme />
+    <library-path>
+      <path-element>$FLEX_SDK$/frameworks/locale/{locale}</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/asc-support.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/core.swc</path-element>
+    </library-path>
+    <external-library-path>
+      <path-element>$FLEX_SDK$/frameworks/libs/player/11.6/playerglobal.swc</path-element>
+    </external-library-path>
+  </compiler>
+  <target-player>11.6</target-player>
+  <swf-version>19</swf-version>
+  <output>output/folder/Unnamed.swf</output>
+</flex-config>

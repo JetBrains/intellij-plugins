@@ -1,0 +1,2014 @@
+native public const cmodule.stringecho.__2E_str95:int;
+native public const cmodule.stringecho.__2E_str99:int;
+native public const cmodule.stringecho._abort1:int;
+native public const cmodule.stringecho._malloc_origo:int;
+
+native public function cmodule.stringecho.vgl_unlock():void;
+
+public final class cmodule.stringecho.FSM___lo0bits_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___lo0bits_D2A():*;
+  static native public final function start():void;
+}
+
+public interface cmodule.stringecho.Debuggee
+{
+  native function cancelDebug():void;
+  native function suspend():void;
+
+  native function resume():void;
+  native function get isRunning():Boolean;
+}
+
+public final class cmodule.stringecho.FSM___Balloc_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___Balloc_D2A():*;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public final override function work():void;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 6;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho._page_dir:int;
+native public const cmodule.stringecho.mstate:cmodule.stringecho.MState;
+
+public interface cmodule.stringecho.CSystem
+{
+
+  native function tell(fd:int):int;
+  native function access(path:int,mode:int):int;
+  native function fsize(fd:int):int;
+  native function open(path:int,flags:int,mode:int):int;
+  native function lseek(fd:int,offset:int,whence:int):int;
+
+  native function setup(f:Function):void;
+  native function psize(p:int):int;
+  native function ioctl(fd:int,req:int,va:int):int;
+  native function read(fd:int,buf:int,nbytes:int):int;
+  native function getenv():Object;
+
+  native function close(fd:int):int;
+  native function getargv():Array;
+  native function exit(val:int):void;
+  native function write(fd:int,buf:int,nbytes:int):int;
+}
+native public const cmodule.stringecho.i_AS3_Function:int;
+
+native public var cmodule.stringecho.gdomainClass:Class;
+native public function cmodule.stringecho.AS3_ObjectValue(object:Object,tt:String,sp:int):void;
+native public const cmodule.stringecho._sprintf:int;
+
+public final class cmodule.stringecho.FSM__sseek extends cmodule.stringecho.Machine
+{
+  native public function FSM__sseek():*;
+  native public var i0:int;
+
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+
+  native public var i6:int;
+  native public final override function work():void;
+  native public var i7:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 8;
+
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___floatdisf:int;
+
+public final class cmodule.stringecho.FSM_malloc_pages extends cmodule.stringecho.Machine
+{
+  native public function FSM_malloc_pages():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___fixunsdfdi:int;
+
+public final class cmodule.stringecho.FSM___sread extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___sread():*;
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 3;
+  static native public const NumberRegCount:int = 0;
+}
+native public var cmodule.stringecho.vglKeyFirst:Boolean;
+native public const cmodule.stringecho.i_setjmp:*;
+
+public class cmodule.stringecho.CAllocedValueTypemap extends cmodule.stringecho.CTypemap
+{
+
+  native public function CAllocedValueTypemap(_allocator:cmodule.stringecho.ICAllocator):*;
+  native public override function fromC(v:Array):*;
+  native protected function alloc(v:*):int;
+  native public override function createC(v:*,ptr:int = 0):Array;
+  native public override function destroyC(v:Array):void;
+
+  native private var allocator:cmodule.stringecho.ICAllocator;
+  native protected function free(ptr:int):void;
+}
+
+public class cmodule.stringecho.CStrUTF8Buffer extends cmodule.stringecho.CBuffer
+{
+  native public function CStrUTF8Buffer(_size:int,_nullTerm:Boolean = true,alloc:cmodule.stringecho.ICAllocator = null):*;
+  native protected override function computeValue():*;
+  native private var nullTerm:Boolean;
+
+  native protected override function setValue(v:*):void;
+}
+
+public class cmodule.stringecho.ValueTracker extends Object
+{
+  native public function ValueTracker():*;
+  native public function acquireId(id:int):int;
+  native private var snum:int = 1;
+  native private var val2rcv:flash.utils.Dictionary;
+
+  native public function get(id:int):*;
+  native public function release(id:int):*;
+  native public function acquire(val:*):int;
+  native private var id2key:Object;
+}
+
+public class cmodule.stringecho.NotifyMachine extends cmodule.stringecho.Machine
+{
+  native public function NotifyMachine(_proc:Function):*;
+
+  native public override function work():void;
+  native private var proc:Function;
+}
+native public const cmodule.stringecho.___ashrdi3:int;
+native public const cmodule.stringecho.___qdivrem:int;
+native public const cmodule.stringecho.__2E_str20157:int;
+
+native public function cmodule.stringecho.unregFunc(n:int):void;
+native public var cmodule.stringecho._AS3_Object:int;
+native public const cmodule.stringecho.i_AS3_Shim:int;
+native public const cmodule.stringecho.i_AS3_FunctionAsyncT:int;
+native public const cmodule.stringecho.i_AS3_Call:int;
+
+public final class cmodule.stringecho.FSM___negdi2 extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___negdi2():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___iordi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___iordi3():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___error:int;
+
+public class cmodule.stringecho.FSM__setjmp extends cmodule.stringecho.Machine
+{
+
+  native public function FSM__setjmp():*;
+  native public override function work():void;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho._atexit:int;
+
+public class cmodule.stringecho.CLibDummySprite extends flash.display.Sprite
+{
+  native public function CLibDummySprite():*;
+}
+
+native public function cmodule.stringecho.establishEnv():void;
+native public const cmodule.stringecho.__2E_str219277:int;
+native public const cmodule.stringecho.__2E_str522:int;
+
+public final class cmodule.stringecho.FSM___multadd_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___multadd_D2A():*;
+  native public var i10:int;
+
+  native public var i11:int;
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+
+  native public var i8:int;
+  native public var i9:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 12;
+  static native public const NumberRegCount:int = 0;
+}
+
+native public const cmodule.stringecho._free_list:int;
+native public const cmodule.stringecho.nan:Number = NaN;
+
+public class cmodule.stringecho.IO extends Object
+{
+  native public function IO():*;
+  native public function get size():int;
+  native public function set size(n:int):void;
+
+  native public function set position(offs:int):void;
+  native public function read(buf:int,nbytes:int):int;
+  native public function close():int;
+  native public function get position():int;
+  native public function write(buf:int,nbytes:int):int;
+}
+
+native public const cmodule.stringecho.__2E_str775:int;
+native public const cmodule.stringecho._pubrealloc:int;
+native public const cmodule.stringecho.i_AS3_False:int;
+native public const cmodule.stringecho.___atexit:int;
+native public const cmodule.stringecho.i_AS3_ByteArray_writeBytes:int;
+
+native public const cmodule.stringecho._xdigs_lower_2E_4036:int;
+native public function cmodule.stringecho.modStaticInit():void;
+native public function cmodule.stringecho.AS3_Set(obj:*,prop:*,val:*):void;
+native public const cmodule.stringecho.i_AS3_Trace:int;
+native public const cmodule.stringecho.___adddi3:int;
+
+native public const cmodule.stringecho.__2E_str311:int;
+native public const cmodule.stringecho.__2E_str113328:int;
+native public var cmodule.stringecho.glogLvl:int;
+native public const cmodule.stringecho.i__longjmp:*;
+
+public final class cmodule.stringecho.FSM_sprintf extends cmodule.stringecho.Machine
+{
+  native public function FSM_sprintf():*;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 4;
+  static native public const NumberRegCount:int = 0;
+}
+native public var cmodule.stringecho.gvglbm:flash.display.Bitmap;
+native public const cmodule.stringecho.i_AS3_String:int;
+
+public final class cmodule.stringecho.FSM___floatdisf extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___floatdisf():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.i_AS3_FunctionT:int;
+native public const cmodule.stringecho.i_AS3_FunctionAsync:int;
+native public function cmodule.stringecho.AS3_Shim(func:Function,thiz:Object,rt:String,tt:String,varargs:Boolean):int;
+
+public final class cmodule.stringecho.FSM___sfvwrite extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___sfvwrite():*;
+  native public var i10:int;
+  native public var i11:int;
+  native public var i12:int;
+  native public var i13:int;
+
+  native public var i14:int;
+  native public var i15:int;
+  native public var i17:int;
+  native public var i19:int;
+  native public var i16:int;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+  native public var i9:int;
+
+  native public var i18:int;
+  native public final override function work():void;
+  static native public final function start():void;
+  static native public const intRegCount:int = 20;
+  static native public const NumberRegCount:int = 0;
+}
+
+public class cmodule.stringecho.AlchemyExit extends Object
+{
+
+  native public function AlchemyExit(_rv:int):*;
+  native public var rv:int;
+}
+native public const cmodule.stringecho.__fini:int;
+native public function cmodule.stringecho.vgl_keych():int;
+
+public final class cmodule.stringecho.FSM__cleanup extends cmodule.stringecho.Machine
+{
+  native public function FSM__cleanup():*;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public final override function work():void;
+  static native public final function start():void;
+  static native public const intRegCount:int = 6;
+  static native public const NumberRegCount:int = 0;
+}
+
+native public const cmodule.stringecho.___udivdi3:int;
+native public const cmodule.stringecho.i_longjmp:*;
+native public const cmodule.stringecho.gstaticInitter:cmodule.stringecho.StaticInitter;
+native public const cmodule.stringecho.__2E_str320278:int;
+native public const cmodule.stringecho.i_AS3_CallS:int;
+
+native public const cmodule.stringecho.i_AS3_CallT:int;
+native public function cmodule.stringecho.AS3_Call(func:*,thiz:Object,params:Array):*;
+
+public final class cmodule.stringecho.FSM___ashrdi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___ashrdi3():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho._bcopy:int;
+
+public final class cmodule.stringecho.FSM___qdivrem extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___qdivrem():*;
+  static native public final function start():void;
+}
+native public var cmodule.stringecho.gvglpixels:int;
+native public function cmodule.stringecho.AS3_Reg_jmp_buf_AbuseHelpers(alloc:Function,free:Function):void;
+native public var cmodule.stringecho.gsprite:flash.display.Sprite;
+
+native public const cmodule.stringecho._exit:int;
+
+public class cmodule.stringecho.CHeapAllocator extends Object
+  implements cmodule.stringecho.ICAllocator
+{
+  native public function CHeapAllocator():*;
+  native public function free(ptr:int):void;
+  native public function alloc(n:int):int;
+  native private var pmalloc:Function;
+
+  native private var pfree:Function;
+}
+native public const cmodule.stringecho._malloc_hint_2E_b:int;
+
+public final class cmodule.stringecho.FSM_getenv extends cmodule.stringecho.Machine
+{
+  native public function FSM_getenv():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___error extends cmodule.stringecho.Machine
+{
+  native public function FSM___error():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.__2E_str138:int;
+
+public final class cmodule.stringecho.FSM___lshift_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___lshift_D2A():*;
+  native public var i10:int;
+  native public var i11:int;
+
+  native public var i12:int;
+  native public var i13:int;
+  native public var i14:int;
+  native public var i15:int;
+  native public final override function work():void;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+  native public var i9:int;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 16;
+  static native public const NumberRegCount:int = 0;
+}
+
+public class cmodule.stringecho.CTypemap extends Object
+{
+  native public function CTypemap():*;
+  native public function fromC(v:Array):*;
+
+  native public function writeValue(ptr:int,v:*):void;
+  native public function readValue(ptr:int):*;
+  native public function get ptrLevel():int;
+  native public function createC(v:*,ptr:int = 0):Array;
+  native public function fromReturnRegs(regs:Object):*;
+
+  native public function destroyC(v:Array):void;
+  native public function toReturnRegs(regs:Object,v:*,ptr:int = 0):void;
+  native public function get typeSize():int;
+  native public function getValueSize(v:*):int;
+  static native public var AS3ValType:cmodule.stringecho.CAS3ValTypemap;
+
+  static native public var DoubleType:cmodule.stringecho.CDoubleTypemap;
+  static native public var VoidType:cmodule.stringecho.CVoidTypemap;
+  static native public var DoubleRefType:cmodule.stringecho.CRefTypemap;
+  static native public final function getTypeByName(name:String):CTypemap;
+  static native public var StrRefType:cmodule.stringecho.CRefTypemap;
+
+  static native public var IntRefType:cmodule.stringecho.CRefTypemap;
+  static native public var SizedStrType:cmodule.stringecho.CSizedStrUTF8Typemap;
+  static native public var IntType:cmodule.stringecho.CIntTypemap;
+  static native public var StrType:cmodule.stringecho.CStrUTF8Typemap;
+  static native public final function getTypesByNames(names:String):Array;
+
+  static native public var PtrType:cmodule.stringecho.CPtrTypemap;
+  static native public final function getTypesByNameArray(names:Array):Array;
+  static native public var BufferType:cmodule.stringecho.CBufferTypemap;
+}
+native public const cmodule.stringecho.___fixunssfdi:int;
+native public const cmodule.stringecho.i_AS3_Reg_jmp_buf_AbuseHelpers:int;
+
+public final class cmodule.stringecho.FSM_free extends cmodule.stringecho.Machine
+{
+
+  native public function FSM_free():*;
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 2;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.i_AS3_GetS:int;
+
+public final class cmodule.stringecho.FSM___divdi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___divdi3():*;
+  static native public final function start():void;
+}
+
+native public const cmodule.stringecho.___gdtoa:int;
+native public const cmodule.stringecho.___lshldi3:int;
+native public var cmodule.stringecho._AS3_Release:int;
+
+public class cmodule.stringecho.CSystemLocal extends Object
+  implements cmodule.stringecho.CSystem
+{
+  native public function CSystemLocal(_forceSync:Boolean = false):*;
+  native public function getargv():Array;
+
+  native public function lseek(fd:int,offset:int,whence:int):int;
+  native private const statCache:Object;
+  native public function open(path:int,flags:int,mode:int):int;
+  native public function psize(p:int):int;
+  native public function read(fd:int,buf:int,nbytes:int):int;
+
+  native public function getenv():Object;
+  native public function write(fd:int,buf:int,nbytes:int):int;
+  native public function access(path:int,mode:int):int;
+  native public function exit(val:int):void;
+  native private var forceSync:Boolean;
+
+  native public function fsize(fd:int):int;
+  native public function tell(fd:int):int;
+  native public function ioctl(fd:int,req:int,va:int):int;
+  native public function close(fd:int):int;
+  native private function fetch(path:String):Object;
+
+  native private const fds:Array;
+  native public function setup(f:Function):void;
+}
+native public const cmodule.stringecho.i_AS3_Get:int;
+native public const cmodule.stringecho.i_AS3_Array:int;
+native public const cmodule.stringecho.__2E_str161:int;
+
+public final class cmodule.stringecho.FSM___vfprintf extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___vfprintf():*;
+  native public var i21:int;
+  native public var i30:int;
+  native public var i31:int;
+  native public var f0:Number;
+
+  native public var f1:Number;
+  native public var f3:Number;
+  native public final override function work():void;
+  native public var f2:Number;
+  native public var f4:Number;
+
+  native public var i10:int;
+  native public var i11:int;
+  native public var i12:int;
+  native public var i13:int;
+  native public var i14:int;
+
+  native public var i15:int;
+  native public var i17:int;
+  native public var i19:int;
+  native public var i16:int;
+  native public var i18:int;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i22:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+  native public var i2:int;
+
+  native public var i23:int;
+  native public var i24:int;
+  native public var i25:int;
+  native public var i26:int;
+  native public var i27:int;
+
+  native public var i20:int;
+  native public var i9:int;
+  native public var i28:int;
+  native public var i29:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 32;
+  static native public const NumberRegCount:int = 5;
+}
+native public const cmodule.stringecho.__2E_str150:int;
+native public function cmodule.stringecho.memset(dst:int,v:int,size:int):int;
+native public const cmodule.stringecho.__2E_str169:int;
+
+native public var cmodule.stringecho.gfiles:Object;
+
+public class cmodule.stringecho.CBuffer extends Object
+{
+  native public function CBuffer(_size:int,_alloc:cmodule.stringecho.ICAllocator = null):*;
+  native private var sizeVal:int;
+  native private var valCache:*;
+  native public function get size():int;
+
+  native public function set value(v:*):void;
+  native private var allocator:cmodule.stringecho.ICAllocator;
+  native public function free():void;
+  native public function get ptr():int;
+  native protected function setValue(v:*):void;
+
+  native public function get value():*;
+  native private var ptrVal:int;
+  native protected function computeValue():*;
+  native private function alloc():void;
+  native public function reset():void;
+
+  static native public final function free(ptr:int):void;
+  static native private var ptr2Buffer:Object;
+}
+native public function cmodule.stringecho.isinf(a:Number):int;
+
+public final class cmodule.stringecho.FSM___xordi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___xordi3():*;
+  static native public final function start():void;
+}
+
+native public function cmodule.stringecho.modEnd():void;
+
+public class cmodule.stringecho.CSystemBridge extends Object
+  implements cmodule.stringecho.CSystem
+{
+  native public function CSystemBridge(host:String,port:int):*;
+  native public function psize(p:int):int;
+  native private function asyncReq(create:Function,handle:Function):*;
+  native public function setup(f:Function):void;
+
+  native private function sockConnect(e:flash.events.Event):void;
+  native private function sockData(e:flash.events.ProgressEvent):void;
+  native public function read(fd:int,buf:int,nbytes:int):int;
+  native public function exit(val:int):void;
+  native private function sockError(e:flash.events.IOErrorEvent):void;
+
+  native public function tell(fd:int):int;
+  native private var curPackBuf:flash.utils.ByteArray;
+  native public function ioctl(fd:int,req:int,va:int):int;
+  native public function getargv():Array;
+  native private var sock:flash.net.Socket;
+
+  native public function open(path:int,flags:int,mode:int):int;
+  native private var requests:Object;
+  native private var sentPackId:int = 1;
+  native private function handlePacket():void;
+  native public function getenv():Object;
+
+  native private var curPackLen:int;
+  native public function write(fd:int,buf:int,nbytes:int):int;
+  native internal var argv:Array;
+  native private function sendRequest(buf:flash.utils.ByteArray,handler:Function):void;
+  native private var handlers:Object;
+
+  native public function lseek(fd:int,offset:int,whence:int):int;
+  native internal var env:Object;
+  native public function fsize(fd:int):int;
+  native public function access(path:int,mode:int):int;
+  native private var curPackId:int;
+
+  native public function close(fd:int):int;
+  static native internal const TELL:int = 9;
+  static native internal const ACCESS:int = 3;
+  static native internal const EXIT:int = 10;
+  static native internal const FSIZE:int = 1;
+
+  static native internal const OPEN:int = 4;
+  static native internal const LSEEK:int = 8;
+  static native internal const PSIZE:int = 2;
+  static native internal const READ:int = 7;
+  static native internal const CLOSE:int = 5;
+
+  static native internal const SETUP:int = 11;
+  static native internal const WRITE:int = 6;
+}
+
+public final class cmodule.stringecho.FSM___fflush extends cmodule.stringecho.Machine
+{
+  native public function FSM___fflush():*;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public final override function work():void;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 6;
+  static native public const NumberRegCount:int = 0;
+}
+native public function cmodule.stringecho.vgl_end(dummy:int):int;
+native public const cmodule.stringecho.i_AS3_Proxy:int;
+
+public final class cmodule.stringecho.FSM___mult_D2A extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___mult_D2A():*;
+  native public var i10:int;
+  native public var i11:int;
+  native public var i12:int;
+  native public var i13:int;
+
+  native public var i14:int;
+  native public var i15:int;
+  native public var i17:int;
+  native public var i19:int;
+  native public var i16:int;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+  native public var i9:int;
+
+  native public var i18:int;
+  native public final override function work():void;
+  native public var i20:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 21;
+
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___cmpdi2:int;
+native public const cmodule.stringecho.___lmulq:int;
+native public const cmodule.stringecho._freelist:int;
+native public const cmodule.stringecho._p05_2E_3275:int;
+
+native public function cmodule.stringecho.AS3_TypeOf(v:*):String;
+
+public final class cmodule.stringecho.FSM___sflush extends cmodule.stringecho.Machine
+{
+  native public function FSM___sflush():*;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+  native public final override function work():void;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 7;
+  static native public const NumberRegCount:int = 0;
+}
+
+public final class cmodule.stringecho.FSM___udivdi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___udivdi3():*;
+  static native public final function start():void;
+}
+
+native public const cmodule.stringecho._p5s:int;
+native public var cmodule.stringecho.vglMouseButtons:int;
+
+public class cmodule.stringecho.StaticInitter extends Object
+{
+  native public function StaticInitter():*;
+  native private function ST16int(ptr:int,v:int):void;
+  native public function set ascii(v:String):void;
+
+  native public function set asciz(v:String):void;
+  native public function start(sym:int):void;
+  native internal var ptr:int = 0;
+  native private function ST32int(ptr:int,v:int):void;
+  native public function set i32(v:uint):void;
+
+  native public function alloc(size:int,align:int):int;
+  native public function set zero(n:int):void;
+  native private function ST8int(ptr:int,v:int):void;
+  native public function set i16(v:uint):void;
+  native public function set i8(v:uint):void;
+}
+
+native public const cmodule.stringecho.___sclose:int;
+
+public final class cmodule.stringecho.FSM___trailz_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___trailz_D2A():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.i_AS3_RegAbused_jmp_buf:int;
+native public const cmodule.stringecho.i_AS3_NumberValue:int;
+
+public final class cmodule.stringecho.FSM___diff_D2A extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___diff_D2A():*;
+  native public var i10:int;
+  native public var i11:int;
+  native public var i12:int;
+  native public var i13:int;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+
+  native public var i9:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 14;
+  static native public const NumberRegCount:int = 0;
+}
+
+public final class cmodule.stringecho.FSM__fini extends cmodule.stringecho.Machine
+{
+  native public function FSM__fini():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho._px:int;
+native public const cmodule.stringecho._dorounding:int;
+native public function cmodule.stringecho.AS3_FunctionT(data:int,func:int,rt:String,tt:String,varargs:Boolean):Function;
+native public const cmodule.stringecho.__UTF8_wcrtomb:int;
+
+native public const cmodule.stringecho.___sF:int;
+native public var cmodule.stringecho.gvglbmd:flash.display.BitmapData;
+native public const cmodule.stringecho._malloc_active_2E_3023:int;
+native public const cmodule.stringecho.i_AS3_StringValue:int;
+
+public final class cmodule.stringecho.FSM_abort1 extends cmodule.stringecho.Machine
+{
+  native public function FSM_abort1():*;
+
+  native public var i10:int;
+  native public var i11:int;
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+
+  native public var i7:int;
+  native public var i8:int;
+  native public var i9:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 12;
+
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho._usual:int;
+native public const cmodule.stringecho._echo:int;
+
+public final class cmodule.stringecho.FSM_bcopy extends cmodule.stringecho.Machine
+{
+  native public function FSM_bcopy():*;
+  static native public final function start():void;
+}
+
+native public const cmodule.stringecho.i_AS3_Int:int;
+native public const cmodule.stringecho.i_AS3_Stage:int;
+native public function cmodule.stringecho.AS3_Object(tt:String,sp:int):*;
+
+public class cmodule.stringecho.MemUser extends Object
+{
+  native public function MemUser():*;
+  native public final function _mrd(addr:int):Number;
+
+  native public final function _mrf(addr:int):Number;
+  native public final function _mr32(addr:int):int;
+  native public final function _mru8(addr:int):int;
+  native public final function _mw32(addr:int,val:int):void;
+  native public final function _mrs8(addr:int):int;
+
+  native public final function _mw16(addr:int,val:int):void;
+  native public final function _mw8(addr:int,val:int):void;
+  native public final function _mrs16(addr:int):int;
+  native public final function _mru16(addr:int):int;
+  native public final function _mwd(addr:int,val:Number):void;
+
+  native public final function _mwf(addr:int,val:Number):void;
+}
+
+public class cmodule.stringecho.GLEByteArrayProvider extends Object
+{
+  native public function GLEByteArrayProvider():*;
+  static native public final function get():flash.utils.ByteArray;
+}
+native public var cmodule.stringecho.genv:Object;
+native public const cmodule.stringecho.i_AS3_Ram:int;
+
+native public const cmodule.stringecho.__swrite:int;
+native public const cmodule.stringecho.i_AS3_IntValue:int;
+native public function cmodule.stringecho.log(lvl:int,msg:String):void;
+native public var cmodule.stringecho.vglMouseFirst:Boolean;
+native public const cmodule.stringecho.___muldi3:int;
+
+native public const cmodule.stringecho.___subdi3:int;
+
+public final class cmodule.stringecho.FSM___gdtoa extends cmodule.stringecho.Machine
+{
+  native public function FSM___gdtoa():*;
+  native public var i21:int;
+  native public var i30:int;
+  native public var i31:int;
+
+  native public var f0:Number;
+  native public var f1:Number;
+  native public var f3:Number;
+  native public final override function work():void;
+  native public var f2:Number;
+
+  native public var i10:int;
+  native public var i11:int;
+  native public var i12:int;
+  native public var i13:int;
+  native public var i14:int;
+
+  native public var i15:int;
+  native public var i17:int;
+  native public var i19:int;
+  native public var i16:int;
+  native public var i18:int;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i22:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+  native public var i2:int;
+
+  native public var i23:int;
+  native public var i24:int;
+  native public var i25:int;
+  native public var i26:int;
+  native public var i27:int;
+
+  native public var i20:int;
+  native public var i9:int;
+  native public var i28:int;
+  native public var i29:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 32;
+  static native public const NumberRegCount:int = 4;
+}
+native public const cmodule.stringecho.___moddi3:int;
+native public const cmodule.stringecho._imalloc:int;
+native public const cmodule.stringecho.i_AS3_Undefined:int;
+
+public class cmodule.stringecho.CStrUTF8Typemap extends cmodule.stringecho.CAllocedValueTypemap
+{
+
+  native public function CStrUTF8Typemap(allocator:cmodule.stringecho.ICAllocator = null):*;
+  native protected function ByteArrayForString(s:String):flash.utils.ByteArray;
+  native public override function readValue(ptr:int):*;
+  native public override function getValueSize(v:*):int;
+  native public override function get ptrLevel():int;
+
+  native public override function writeValue(ptr:int,v:*):void;
+}
+native public var cmodule.stringecho.gtextField:flash.text.TextField;
+
+public class cmodule.stringecho.CProcTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CProcTypemap(_retTypemap:cmodule.stringecho.CTypemap,_argTypemaps:Array,_varargs:Boolean = false,_async:Boolean = false):*;
+  native private var retTypemap:cmodule.stringecho.CTypemap;
+  native private var varargs:Boolean;
+
+  native public override function createC(v:*,ptr:int = 0):Array;
+  native public override function destroyC(v:Array):void;
+  native private var argTypemaps:Array;
+  native public override function fromC(v:Array):*;
+  native private function push(arg:*):void;
+
+  native private var async:Boolean;
+}
+
+public class cmodule.stringecho.CVoidTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CVoidTypemap():*;
+  native public override function fromReturnRegs(regs:Object):*;
+  native public override function toReturnRegs(regs:Object,v:*,ptr:int = 0):void;
+  native public override function get typeSize():int;
+}
+
+native public const cmodule.stringecho.__2E_str1679:int;
+native public function cmodule.stringecho.shellExit(res:int):void;
+
+public final class cmodule.stringecho.FSM___fixunsdfdi extends cmodule.stringecho.Machine
+{
+  native public function FSM___fixunsdfdi():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___lshldi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___lshldi3():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.i_AS3_NSGet:int;
+native public var cmodule.stringecho.gpostStaticInits:Array;
+native public const cmodule.stringecho._last_index:int;
+native public const cmodule.stringecho.___sdidinit_2E_b:int;
+
+public final class cmodule.stringecho.FSM___lmulq extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___lmulq():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___smakebuf:int;
+native public const cmodule.stringecho._numempty22:int;
+native public function cmodule.stringecho.isnan(a:Number):int;
+
+native public const cmodule.stringecho.___sFX:int;
+native public function cmodule.stringecho.AS3_NOP(v:*):*;
+native public function cmodule.stringecho.modPreStaticInit():void;
+
+public final class cmodule.stringecho.FSM__UTF8_wcrtomb extends cmodule.stringecho.Machine
+{
+  native public function FSM__UTF8_wcrtomb():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM_pubrealloc extends cmodule.stringecho.Machine
+{
+
+  native public function FSM_pubrealloc():*;
+  native public var i10:int;
+  native public var i11:int;
+  native public var i12:int;
+  native public final override function work():void;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+  native public var i9:int;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 13;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho._usual_extra:int;
+
+public final class cmodule.stringecho.FSM_atexit extends cmodule.stringecho.Machine
+{
+  native public function FSM_atexit():*;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public final override function work():void;
+  static native public final function start():void;
+  static native public const intRegCount:int = 5;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___floatunsdidf:int;
+
+native public const cmodule.stringecho.___grow_type_table:int;
+native public const cmodule.stringecho.___pow5mult_D2A:int;
+native public const cmodule.stringecho._blanks_2E_4034:int;
+native public const cmodule.stringecho._malloc_ninfo:int;
+native public const cmodule.stringecho.__2E_str118276:int;
+
+native public const cmodule.stringecho.___one_cmpldi2:int;
+native public const cmodule.stringecho.i_AS3_Null:int;
+
+public class cmodule.stringecho.CBufferTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CBufferTypemap():*;
+  native public override function destroyC(v:Array):void;
+  native public override function createC(v:*,ptr:int = 0):Array;
+}
+
+native public const cmodule.stringecho.i_AS3_True:int;
+native public function cmodule.stringecho.AS3_UnregAbused_jmp_buf(ptr:int):void;
+native public const cmodule.stringecho._malloc:int;
+native public const cmodule.stringecho.___sglue:int;
+native public const cmodule.stringecho.i_AS3_TypeOf:int;
+
+public class cmodule.stringecho.Machine extends cmodule.stringecho.MemUser
+{
+
+  native public function Machine():*;
+  native public var dbgFileId:int = 0;
+  native public function debugTraceMem(start:int,end:int):void;
+  native public var mstate:cmodule.stringecho.MState;
+  native public var dbgLabel:int = 0;
+
+  native public function get dbgFuncId():int;
+  native public function work():void;
+  native public var caller:Machine;
+  native public function stringFromPtr(addr:int):String;
+  native public function get dbgLoc():Object;
+
+  native public var state:int = 0;
+  native public function get dbgDepth():int;
+  native public function get dbgTrace():String;
+  native public var dbgLineNo:int = 0;
+  native public function debugTraverseCurrentScope(f:Function):void;
+
+  native public function debugLabel(label:int):void;
+  native public function stringToPtr(addr:int,max:int,str:String):int;
+  native public function debugBreak(bp:Object):void;
+  native public function debugLoc(fileId:int,lineNo:int):void;
+  native public function get dbgFileName():String;
+
+  native public function getSecsSetMS():uint;
+  native public function get dbgFuncName():String;
+  native public function backtrace():void;
+  static native public var dbgFrameBreakLow:int = 0;
+  static native public const dbgFileNames:Array;
+
+  static native public const dbgFuncs:Array;
+  static native public const dbgGlobals:Array;
+  static native public const dbgScopes:Array;
+  static native public const dbgLabels:Array;
+  static native public var sMS:uint;
+
+  static native public const dbgBreakpoints:Object;
+  static native public const dbgFuncNames:Array;
+  static native public const dbgLocs:Array;
+  static native public var dbgFrameBreakHigh:int = -1;
+  static native public final function debugTraverseScope(scope:Object,label:int,f:Function):void;
+}
+
+native public const cmodule.stringecho.___cleanup_2E_b:int;
+native public function cmodule.stringecho.AS3_Function(data:int,func:Function):Function;
+native public function cmodule.stringecho.AS3_Get(obj:*,prop:*):*;
+native public const cmodule.stringecho.__2E_str2101:int;
+native public const cmodule.stringecho.___sseek:int;
+
+public class cmodule.stringecho.AlchemyBlock extends Object
+{
+
+  native public function AlchemyBlock():*;
+}
+
+public class cmodule.stringecho.MState extends cmodule.stringecho.MemUser
+{
+  native public function MState(machine:cmodule.stringecho.Machine):*;
+  native public var esp:int;
+  native public const syms:Object;
+  native public const ds:flash.utils.ByteArray;
+
+  native public function copyTo(state:MState):void;
+  native public function pop():int;
+  native public function push(v:int):void;
+  native public var eax:int;
+  native public var cf:uint;
+
+  native public var gworker:cmodule.stringecho.Machine;
+  native public var st0:Number;
+  native public var ebp:int;
+  native public var funcs:Vector.<Object>;
+  native public var edx:int;
+
+  native public var system:cmodule.stringecho.CSystem;
+}
+native public var cmodule.stringecho.vglKeys:Array;
+native public const cmodule.stringecho.i_AS3_NSGetS:int;
+native public const cmodule.stringecho.___anddi3:int;
+
+public class cmodule.stringecho.AlchemyDispatch extends Object
+{
+  native public function AlchemyDispatch():*;
+}
+
+native public function cmodule.stringecho.vgl_mouse_buttons():int;
+native public const cmodule.stringecho.__start:int;
+native public const cmodule.stringecho.gstate:cmodule.stringecho.MState;
+native public const cmodule.stringecho.i_AS3_ObjectValue:int;
+
+public final class cmodule.stringecho.FSM___adddi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___adddi3():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___swrite:int;
+native public const cmodule.stringecho.___lshrdi3:int;
+native public const cmodule.stringecho.___ucmpdi2:int;
+
+public class cmodule.stringecho.CRefTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CRefTypemap(_subtype:cmodule.stringecho.CTypemap):*;
+
+  native public override function fromC(v:Array):*;
+  native private var subtype:cmodule.stringecho.CTypemap;
+  native public override function createC(v:*,ptr:int = 0):Array;
+}
+
+public final class cmodule.stringecho.FSM__swrite extends cmodule.stringecho.Machine
+{
+  native public function FSM__swrite():*;
+  native public var i10:int;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public var i8:int;
+  native public final override function work():void;
+  native public var i7:int;
+
+  native public var i9:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 11;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___find_arguments:int;
+
+native public const cmodule.stringecho.i_AS3_New:int;
+native public const cmodule.stringecho._zeroes_2E_4035:int;
+native public const cmodule.stringecho._initial_2E_4084:int;
+native public const cmodule.stringecho.i_AS3_Object:int;
+
+public class cmodule.stringecho.LEByteArray extends flash.utils.ByteArray
+{
+  native public function LEByteArray():*;
+
+  native public override function set endian(e:String):void;
+}
+native public const cmodule.stringecho.i_AS3_Number:int;
+native public var cmodule.stringecho.vglKeyUEL:*;
+native public const cmodule.stringecho.i_AS3_InstanceOf:int;
+native public function cmodule.stringecho.AS3_ByteArray_readBytes(ptr:int,ba:flash.utils.ByteArray,len:int):int;
+
+native public const cmodule.stringecho._malloc_realloc_2E_b:int;
+native public const cmodule.stringecho.___fixdfdi:int;
+native public const cmodule.stringecho.gsetjmpMachine2ESPMap:flash.utils.Dictionary;
+native public const cmodule.stringecho._malloc_junk_2E_b:int;
+native public function cmodule.stringecho.importSym(s:String):int;
+
+public final class cmodule.stringecho.FSM_exit extends cmodule.stringecho.Machine
+{
+
+  native public function FSM_exit():*;
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 2;
+  static native public const NumberRegCount:int = 0;
+}
+
+public final class cmodule.stringecho.FSM_imalloc extends cmodule.stringecho.Machine
+{
+  native public function FSM_imalloc():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___bigtens_D2A:int;
+
+native public const cmodule.stringecho.__exit:int;
+native public const cmodule.stringecho._val_2E_939:int;
+
+public final class cmodule.stringecho.FSM___fixunssfdi extends cmodule.stringecho.Machine
+{
+  native public function FSM___fixunssfdi():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___grow_type_table extends cmodule.stringecho.Machine
+{
+  native public function FSM___grow_type_table():*;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+
+  native public var i5:int;
+  native public var i6:int;
+  native public final override function work():void;
+  native public var i7:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 8;
+  static native public const NumberRegCount:int = 0;
+}
+native public function cmodule.stringecho.modPostStaticInit():void;
+native public const cmodule.stringecho.___quorem_D2A:int;
+native public const cmodule.stringecho.__2E_str643:int;
+
+native public const cmodule.stringecho.i_AS3_Release:int;
+native public var cmodule.stringecho.gpreStaticInits:Array;
+
+public class cmodule.stringecho.AlchemyLibInit extends Object
+{
+  native public function AlchemyLibInit(_rv:int):*;
+  native public var rv:int;
+}
+
+public final class cmodule.stringecho.FSM___one_cmpldi2 extends cmodule.stringecho.Machine
+{
+  native public function FSM___one_cmpldi2():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.flash_delegate:* = "http://www.adobe.com/2008/actionscript/flash/delegate";
+native public function cmodule.stringecho.AS3_Ram():flash.utils.ByteArray;
+native public function cmodule.stringecho.AS3_FunctionAsyncT(data:int,func:int,rt:String,tt:String,varargs:Boolean):Function;
+native public const cmodule.stringecho._ret_2E_993_2E_0_2E_b:int;
+
+native public const cmodule.stringecho.___swsetup:int;
+native public function cmodule.stringecho.AS3_CallTS(func:String,thiz:Object,tt:String,sp:int):*;
+native public const cmodule.stringecho.___Balloc_D2A:int;
+
+public class cmodule.stringecho.CRunner extends Object
+  implements cmodule.stringecho.Debuggee
+{
+  native public function CRunner(_forceSyncSystem:Boolean = false):*;
+  native public function cancelDebug():void;
+
+  native public function get isRunning():Boolean;
+  native internal var timer:flash.utils.Timer;
+  native public function createArgv(arr:Array):Array;
+  native internal var forceSyncSystem:Boolean;
+  native public function createEnv(obj:Object):Array;
+
+  native public function startInit():void;
+  native private function startWork():void;
+  native public function work():void;
+  native public function startSystemBridge(host:String,port:int):void;
+  native internal var suspended:int = 0;
+
+  native public function rawAllocString(str:String):int;
+  native internal var debugger:cmodule.stringecho.GDBMIDebugger;
+  native public function rawAllocStringArray(arr:Array):Array;
+  native private function startDebugger():void;
+  native public function resume():void;
+
+  native public function startSystem():void;
+  native public function rawAllocIntArray(arr:Array):int;
+  native public function startSystemLocal(forceSync:Boolean = false):void;
+  native public function suspend():void;
+}
+native public function cmodule.stringecho._brk(addr:int):int;
+
+native public const cmodule.stringecho._ifree:int;
+
+public final class cmodule.stringecho.FSM___cmpdi2 extends cmodule.stringecho.Machine
+{
+  native public function FSM___cmpdi2():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___umoddi3:int;
+
+public final class cmodule.stringecho.FSM___sseek extends cmodule.stringecho.Machine
+{
+  native public function FSM___sseek():*;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 3;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.__2E_str441:int;
+native public function cmodule.stringecho.regFunc(fsm:Function):int;
+native public const cmodule.stringecho.__2E_str421:int;
+
+native public const cmodule.stringecho._malloc_pages:int;
+native public const cmodule.stringecho._malloc_cache:int;
+
+public final class cmodule.stringecho.FSM___sclose extends cmodule.stringecho.Machine
+{
+  native public function FSM___sclose():*;
+  native public final override function work():void;
+  native public var i0:int;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 1;
+  static native public const NumberRegCount:int = 0;
+}
+
+public class cmodule.stringecho.CIntTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CIntTypemap():*;
+  native public override function fromC(v:Array):*;
+
+  native public override function createC(v:*,ptr:int = 0):Array;
+}
+native public const cmodule.stringecho.__sseek:int;
+native public var cmodule.stringecho._AS3_ArrayValue:int;
+
+public final class cmodule.stringecho.FSM_dorounding extends cmodule.stringecho.Machine
+{
+  native public function FSM_dorounding():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___lshrdi3 extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___lshrdi3():*;
+  static native public final function start():void;
+}
+
+public dynamic class cmodule.stringecho.DynamicProxy extends flash.utils.Proxy
+{
+  native public function DynamicProxy():*;
+  native flash_delegate var nextValue:Function;
+  native flash_delegate var getProperty:Function;
+
+  native flash_proxy override function hasProperty(name:*):Boolean;
+  native flash_delegate var isAttribute:Function;
+  native flash_proxy override function callProperty(name:*,... rest):*;
+  native flash_delegate var nextNameIndex:Function;
+  native flash_delegate var hasProperty:Function;
+
+  native flash_proxy override function setProperty(name:*,value:*):void;
+  native flash_proxy override function isAttribute(name:*):Boolean;
+  native flash_proxy override function getProperty(name:*):*;
+  native flash_proxy override function nextNameIndex(index:int):int;
+  native flash_proxy override function deleteProperty(name:*):Boolean;
+
+  native flash_delegate var callProperty:Function;
+  native flash_proxy override function nextName(index:int):String;
+  native flash_proxy override function getDescendants(name:*):*;
+  native flash_delegate var nextName:Function;
+  native flash_delegate var getDescendants:Function;
+
+  native flash_delegate var deleteProperty:Function;
+  native flash_delegate var setProperty:Function;
+  native flash_proxy override function nextValue(index:int):*;
+  static native private const flash_proxy:* = "http://www.adobe.com/2006/actionscript/flash/proxy";
+  static native private const flash_delegate:* = "http://www.adobe.com/2008/actionscript/flash/delegate";
+}
+
+native public function cmodule.stringecho._sbrk(incr:int):int;
+
+public class cmodule.stringecho.CPtrTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CPtrTypemap():*;
+  native public override function fromC(v:Array):*;
+  native public override function createC(v:*,ptr:int = 0):Array;
+}
+native public const cmodule.stringecho._malloc_started_2E_3024_2E_b:int;
+
+native public var cmodule.stringecho._AS3_String:int;
+native public var cmodule.stringecho.gargs:Array;
+native public const cmodule.stringecho.___nlocale_changed_2E_b:int;
+
+public class cmodule.stringecho.RCValue extends Object
+{
+  native public function RCValue(_value:*,_id:int):*;
+  native public var rc:int = 1;
+
+  native public var value:*;
+  native public var id:int;
+}
+
+public final class cmodule.stringecho.FSM___ucmpdi2 extends cmodule.stringecho.Machine
+{
+  native public function FSM___ucmpdi2():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___fixdfdi extends cmodule.stringecho.Machine
+{
+  native public function FSM___fixdfdi():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho._xdigs_upper_2E_4037:int;
+native public const cmodule.stringecho.i_AS3_Acquire:int;
+native public const cmodule.stringecho._malloc_brk:int;
+
+public final class cmodule.stringecho.FSM_echo extends cmodule.stringecho.Machine
+{
+  native public function FSM_echo():*;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 3;
+  static native public const NumberRegCount:int = 0;
+}
+native public function cmodule.stringecho.findMachineForESP(esp:int):cmodule.stringecho.Machine;
+native public function cmodule.stringecho.AS3_ByteArray_writeBytes(ba:flash.utils.ByteArray,ptr:int,len:int):int;
+native public const cmodule.stringecho.i_AS3_Ptr:int;
+
+native public const cmodule.stringecho.___negdi2:int;
+native public function cmodule.stringecho.AS3_RegAbused_jmp_buf(ptr:int):void;
+native public const cmodule.stringecho.___iordi3:int;
+native public function cmodule.stringecho.__sube(a:uint,b:uint):uint;
+native public function cmodule.stringecho.__subc(a:uint,b:uint):uint;
+
+native public const cmodule.stringecho.i_AS3_ArrayValue:int;
+native public const cmodule.stringecho._environ:int;
+native public var cmodule.stringecho._AS3_Function:int;
+native public function cmodule.stringecho.AS3_CallS(func:String,thiz:Object,params:Array):*;
+
+public interface cmodule.stringecho.ICAllocator
+{
+  native function free(ptr:int):void;
+
+  native function alloc(size:int):int;
+}
+native public const cmodule.stringecho._pmem_next:int;
+
+public final class cmodule.stringecho.FSM__exit extends cmodule.stringecho.Machine
+{
+  native public function FSM__exit():*;
+  static native public final function start():void;
+}
+native public function cmodule.stringecho.AS3_CallT(func:*,thiz:Object,tt:String,sp:int):*;
+
+native public const cmodule.stringecho.gstackSize:int = 1048576.0;
+native public const cmodule.stringecho.__2E_str:int;
+native public const cmodule.stringecho.___atexit0_2E_2520:int;
+native public var cmodule.stringecho.gshell:Boolean;
+
+public final class cmodule.stringecho.FSM___subdi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___subdi3():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.i_AS3_UnregAbused_jmp_buf:int;
+
+public final class cmodule.stringecho.FSM___muldi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___muldi3():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho._ioctl:int;
+
+native public var cmodule.stringecho._abort:int;
+native public function cmodule.stringecho.AS3_InstanceOf(val:*,type:Class):Boolean;
+
+public final class cmodule.stringecho.FSM___moddi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___moddi3():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___ultoa:int;
+
+public class cmodule.stringecho.TextFieldI extends cmodule.stringecho.IO
+{
+
+  native public function TextFieldI(tf:flash.text.TextField):*;
+  native private var m_buf:String = "";
+  native private var m_tf:flash.text.TextField;
+  native public override function read(buf:int,nbytes:int):int;
+  native private var m_start:int = -1;
+
+  native private var m_closed:Boolean = false;
+}
+native public const cmodule.stringecho.___fixsfdi:int;
+
+public final class cmodule.stringecho.FSM___smakebuf extends cmodule.stringecho.Machine
+{
+  native public function FSM___smakebuf():*;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+
+  native public final override function work():void;
+  native public var i7:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 8;
+  static native public const NumberRegCount:int = 0;
+}
+
+native public const cmodule.stringecho.__2E_str262:int;
+native public var cmodule.stringecho.grunner:Object;
+
+public final class cmodule.stringecho.FSM___swsetup extends cmodule.stringecho.Machine
+{
+  native public function FSM___swsetup():*;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public final override function work():void;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 5;
+  static native public const NumberRegCount:int = 0;
+}
+
+public class cmodule.stringecho.TextFieldO extends cmodule.stringecho.IO
+{
+  native public function TextFieldO(tf:flash.text.TextField,shouldTrace:Boolean = false):*;
+  native private var m_trace:Boolean;
+  native private var m_tf:flash.text.TextField;
+
+  native public override function write(buf:int,nbytes:int):int;
+}
+
+public class cmodule.stringecho.CSizedStrUTF8Typemap extends cmodule.stringecho.CTypemap
+{
+  native public function CSizedStrUTF8Typemap():*;
+  native public override function fromC(v:Array):*;
+  native public override function get typeSize():int;
+}
+native public function cmodule.stringecho.exportSym(s:String,a:int):int;
+
+native public const cmodule.stringecho._ret_2E_993_2E_2_2E_b:int;
+native public const cmodule.stringecho._malloc_zero_2E_b:int;
+
+public final class cmodule.stringecho.FSM_ifree extends cmodule.stringecho.Machine
+{
+  native public function FSM_ifree():*;
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.___floatdidf:int;
+
+native public const cmodule.stringecho.___ashldi3:int;
+native public function cmodule.stringecho.AS3_New(constr:*,params:Array):*;
+
+public class cmodule.stringecho.FSM__longjmp extends cmodule.stringecho.Machine
+{
+  native public function FSM__longjmp():*;
+  native public override function work():void;
+  static native public final function start():void;
+}
+
+public class cmodule.stringecho.GDBMIDebugger extends Object
+{
+
+  native public function GDBMIDebugger(dbge:cmodule.stringecho.Debuggee):*;
+  native private var buffer:String = "";
+  native private function done(id:String,rest:Object = null):void;
+  native private function varCreate(id:String,paramString:String):void;
+  native internal var sock:flash.net.Socket;
+
+  native private function sockConnect(e:flash.events.Event):void;
+  native public function signal(sig:Object):void;
+  native public function command(cmd:String):void;
+  native public function stackListFrames(id:String,paramString:String):void;
+  native private function stopped(id:String,rest:Object = null):void;
+
+  native private function sockData(e:flash.events.ProgressEvent):void;
+  native private function error(id:String,msg:String):void;
+  native private function varUpdate(id:String,paramString:String):void;
+  native private function getMachine(n:int):cmodule.stringecho.Machine;
+  native private function findSymLoc(sym:String):Object;
+
+  native internal var debuggee:cmodule.stringecho.Debuggee;
+  native private function respond(str:String,resp:String = "",rest:Object = null):void;
+  native private function toMI(obj:*,outer:Boolean = true):String;
+  native private function findSymNum(sym:String):int;
+  native private function toCString(str:String):String;
+
+  native private var selectedFrameNum:int = 0;
+  native private var breakpointNum:int = 1;
+  native public function stackListLocals(id:String,paramString:String):void;
+  native private function console(str:String):void;
+  native private function breakInsert(cmdId:String,paramStr:String):void;
+
+  native private function get selectedFrame():int;
+  native private function sockError(e:*):void;
+  native private var vars:Object;
+  native public function stackListArguments(id:String,paramString:String):void;
+  native private function prompt():void;
+
+  native private function get selectedMachine():cmodule.stringecho.Machine;
+  native private var promptStr:String = "(gdb) ";
+  native private function info(id:String,paramString:String):void;
+  native private function getMachineR(n:int):cmodule.stringecho.Machine;
+  native private function varDelete(id:String,paramString:String):void;
+
+  native private function getFrame(n:int):int;
+  native public function broken(bp:Object):void;
+  native private function varEvaluateExpression(id:String,paramString:String):void;
+  native private function getFrameR(n:int):int;
+  native private function execStep(id:String,how:String):void;
+
+  native private function running(id:String,rest:Object = null):void;
+  static native internal const regNames:Array;
+  static native internal const maxStack:int = 10000;
+}
+
+public final class cmodule.stringecho.FSM___umoddi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___umoddi3():*;
+  static native public final function start():void;
+}
+
+native public const cmodule.stringecho.i_AS3_SetS:int;
+native public const cmodule.stringecho._malloc_sysv_2E_b:int;
+native public const cmodule.stringecho.__2E_str4:int;
+native public function cmodule.stringecho.AS3_Array(tt:String,sp:int):*;
+native public const cmodule.stringecho._fstat:int;
+
+public final class cmodule.stringecho.FSM___floatunsdidf extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___floatunsdidf():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___pow5mult_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___pow5mult_D2A():*;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public final override function work():void;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 6;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.i_AS3_CallTS:int;
+
+public class cmodule.stringecho.ConSprite extends flash.display.Sprite
+{
+  native public function ConSprite():*;
+
+  native private var runner:cmodule.stringecho.CRunner;
+}
+native public const cmodule.stringecho.__2E_str8:int;
+native public const cmodule.stringecho.__cleanup:int;
+
+public final class cmodule.stringecho.FSM_malloc extends cmodule.stringecho.Machine
+{
+  native public function FSM_malloc():*;
+  native public final override function work():void;
+
+  native public var i0:int;
+  native public var i1:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 2;
+  static native public const NumberRegCount:int = 0;
+}
+
+native public const cmodule.stringecho.___sfvwrite:int;
+native public const cmodule.stringecho.i_AS3_ByteArray_readBytes:int;
+
+public class cmodule.stringecho.ByteArrayIO extends cmodule.stringecho.IO
+{
+  native public function ByteArrayIO():*;
+  native public var byteArray:flash.utils.ByteArray;
+  native public override function set size(n:int):void;
+
+  native public override function read(buf:int,nbytes:int):int;
+  native public override function get size():int;
+  native public override function get position():int;
+  native public override function set position(offs:int):void;
+  native public override function write(buf:int,nbytes:int):int;
+}
+
+native public function cmodule.stringecho.vgl_init(width:int,height:int,pixels:int):int;
+native public const cmodule.stringecho._getenv:int;
+native public const cmodule.stringecho.___lo0bits_D2A:int;
+native public function cmodule.stringecho.vgl_lock():void;
+native public function cmodule.stringecho.regPostStaticInit(f:Function):void;
+
+native public function cmodule.stringecho.vgl_mouse_y():int;
+native public function cmodule.stringecho.AS3_Proxy():*;
+native public const cmodule.stringecho.__2E_str1:int;
+native public function cmodule.stringecho.vgl_mouse_x():int;
+native public const cmodule.stringecho.___lshift_D2A:int;
+
+native public const cmodule.stringecho._uglue:int;
+native public function cmodule.stringecho.memmove(dst:int,src:int,size:int):int;
+
+public class cmodule.stringecho.AlchemyYield extends Object
+{
+  native public function AlchemyYield(_ms:int = 0):*;
+  native public var ms:int;
+}
+
+public final class cmodule.stringecho.FSM___anddi3 extends cmodule.stringecho.Machine
+{
+  native public function FSM___anddi3():*;
+
+  static native public final function start():void;
+}
+native public const cmodule.stringecho.i__setjmp:*;
+
+public class cmodule.stringecho.CAS3ValTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CAS3ValTypemap():*;
+  native public override function fromC(v:Array):*;
+  native private var values:cmodule.stringecho.ValueTracker;
+
+  native public override function createC(v:*,ptr:int = 0):Array;
+  native public override function destroyC(v:Array):void;
+  native public function get valueTracker():cmodule.stringecho.ValueTracker;
+}
+native public const cmodule.stringecho._free:int;
+
+public class cmodule.stringecho.CDoubleTypemap extends cmodule.stringecho.CTypemap
+{
+  native public function CDoubleTypemap():*;
+
+  native public override function fromReturnRegs(regs:Object):*;
+  native public override function toReturnRegs(regs:Object,v:*,ptr:int = 0):void;
+  native public override function createC(v:*,ptr:int = 0):Array;
+  native public override function fromC(v:Array):*;
+  native private var scratch:flash.utils.ByteArray;
+
+  native public override function get typeSize():int;
+}
+
+public final class cmodule.stringecho.FSM___ultoa extends cmodule.stringecho.Machine
+{
+  native public function FSM___ultoa():*;
+  native public var i10:int;
+  native public var i0:int;
+  native public var i1:int;
+
+  native public var i2:int;
+  native public var i3:int;
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+
+  native public var i8:int;
+  native public final override function work():void;
+  native public var i7:int;
+  native public var i9:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 11;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___xordi3:int;
+native public const cmodule.stringecho.___divdi3:int;
+
+public final class cmodule.stringecho.FSM_ioctl extends cmodule.stringecho.Machine
+{
+  native public function FSM_ioctl():*;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+
+  static native public final function start():void;
+  static native public const intRegCount:int = 4;
+  static native public const NumberRegCount:int = 0;
+}
+native public function cmodule.stringecho.AS3_Stage():Object;
+
+public final class cmodule.stringecho.FSM__start extends cmodule.stringecho.Machine
+{
+  native public function FSM__start():*;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  static native public final function start():void;
+
+  static native public const intRegCount:int = 3;
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___sread:int;
+
+public final class cmodule.stringecho.FSM___swrite extends cmodule.stringecho.Machine
+{
+  native public function FSM___swrite():*;
+  native public final override function work():void;
+
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 3;
+
+  static native public const NumberRegCount:int = 0;
+}
+native public function cmodule.stringecho.regPreStaticInit(f:Function):void;
+native public const cmodule.stringecho.i_AS3_Set:int;
+
+public class cmodule.stringecho.CLibInit extends Object
+{
+  native public function CLibInit():*;
+  native public function init():*;
+
+  native public function supplyFile(path:String,data:flash.utils.ByteArray):void;
+  native public function putEnv(key:String,value:String):void;
+  native public function setSprite(sprite:flash.display.Sprite):void;
+}
+
+public final class cmodule.stringecho.FSM___fixsfdi extends cmodule.stringecho.Machine
+{
+  native public function FSM___fixsfdi():*;
+  static native public final function start():void;
+}
+
+native public const cmodule.stringecho.___mlocale_changed_2E_b:int;
+
+public final class cmodule.stringecho.FSM___find_arguments extends cmodule.stringecho.Machine
+{
+  native public function FSM___find_arguments():*;
+  native public var i10:int;
+  native public var i11:int;
+  native public var f0:Number;
+
+  native public final override function work():void;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+  native public var i3:int;
+
+  native public var i4:int;
+  native public var i5:int;
+  native public var i6:int;
+  native public var i7:int;
+  native public var i8:int;
+
+  native public var i9:int;
+  static native public final function start():void;
+  static native public const intRegCount:int = 12;
+  static native public const NumberRegCount:int = 1;
+}
+native public const cmodule.stringecho.___mult_D2A:int;
+
+native public function cmodule.stringecho.AS3_ArrayValue(array:Array,tt:String,sp:int):void;
+native public const cmodule.stringecho._private_mem:int;
+native public const cmodule.stringecho.i_AS3_StringN:int;
+native public const cmodule.stringecho.___vfprintf:int;
+native public const cmodule.stringecho.i_AS3_PtrValue:int;
+
+public final class cmodule.stringecho.FSM___ashldi3 extends cmodule.stringecho.Machine
+{
+
+  native public function FSM___ashldi3():*;
+  static native public final function start():void;
+}
+
+public final class cmodule.stringecho.FSM___floatdidf extends cmodule.stringecho.Machine
+{
+  native public function FSM___floatdidf():*;
+  static native public final function start():void;
+}
+
+public class cmodule.stringecho.AlchemyBreakpoint extends Object
+{
+  native public function AlchemyBreakpoint(_bp:Object):*;
+
+  native public var bp:Object;
+}
+native public const cmodule.stringecho.___fflush:int;
+native public function cmodule.stringecho.memcpy(dst:int,src:int,size:int):int;
+native public const cmodule.stringecho.__2E_str1100:int;
+native public function cmodule.stringecho.__adde(a:uint,b:uint):uint;
+
+native public const cmodule.stringecho.__2E_str37:int;
+native public const cmodule.stringecho.___trailz_D2A:int;
+native public function cmodule.stringecho.__addc(a:uint,b:uint):uint;
+native public const cmodule.stringecho.___sflush:int;
+native public function cmodule.stringecho.AS3_NSGet(ns:*,prop:*):*;
+
+native public const cmodule.stringecho.___diff_D2A:int;
+
+public final class cmodule.stringecho.FSM_fstat extends cmodule.stringecho.Machine
+{
+  native public function FSM_fstat():*;
+  native public var i0:int;
+  native public var i1:int;
+  native public var i2:int;
+
+  native public var i3:int;
+  native public var i4:int;
+  native public final override function work():void;
+  static native public final function start():void;
+  static native public const intRegCount:int = 5;
+
+  static native public const NumberRegCount:int = 0;
+}
+native public const cmodule.stringecho.___tens_D2A:int;
+native public const cmodule.stringecho.inf:Number = Infinity;
+
+public final class cmodule.stringecho.FSM___quorem_D2A extends cmodule.stringecho.Machine
+{
+  native public function FSM___quorem_D2A():*;
+  static native public final function start():void;
+}
+
+native public function cmodule.stringecho.AS3_FunctionAsync(data:int,func:Function):Function;
+native public const cmodule.stringecho.___multadd_D2A:int;
+

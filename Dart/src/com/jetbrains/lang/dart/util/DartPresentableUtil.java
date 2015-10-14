@@ -270,7 +270,7 @@ public class DartPresentableUtil {
         DartComponentName componentName = typeParameter.getComponentName();
         String typeParamName = componentName.getText();
         DartClassResolveResult resolveResult = specialization.get(dartClass, typeParamName);
-        DartClass paramDartClass = resolveResult.getDartClass();
+        DartClass paramDartClass = resolveResult == null ? null : resolveResult.getDartClass();
         if (paramDartClass == null) {
           result.append(typeParamName);
         }

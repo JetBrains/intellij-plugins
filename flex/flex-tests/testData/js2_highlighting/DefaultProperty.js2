@@ -1,0 +1,14 @@
+package {
+  [DefaultProperty("<error>foo</error>")]
+  class DefaultProperty {}
+}
+
+[DefaultProperty("bar")]
+class DefaultProperty2 {
+    var bar;
+}
+
+[DefaultProperty("baz")]
+class DefaultProperty3 {
+    function set baz(v:String) {}
+}

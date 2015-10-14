@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" mouseDown="copy()" mouseUp="copy()"
+                mouseMove="<error descr="Unresolved function or method copy2()">copy2</error>()" initialize="<error descr="Unresolved function or method copy2()">copy2</error>()" implements="MyInterface"
+                xmlns:some="SomeInterface">
+    <mx:Style <error descr="Attribute some:incorrect is not allowed here">some:incorrect</error>="a">
+      .designArea { skinClass: ClassReference("mx.core.<error descr="Unresolved variable or type 'UIComponent2'">UIComponent2</error>"); }
+      .designArea2 { skinClass: ClassReference("mx.core.UIComponent"); }
+    </mx:Style>
+    <mx:HBox <error descr="Attribute some:incorrect is not allowed here">some:incorrect</error>="a" <error descr="Attribute mx:incorrect2 is not allowed here">mx:incorrect2</error>=''>
+      <mx:Tree/>
+        <mx:VBox>
+            <mx:DataGrid/>
+            <mx:TextArea/>
+        </mx:VBox>
+    </mx:HBox>
+    <mx:Script>
+
+    public function <error descr="Method overrides method in superclass flash.events.EventDispatcher without override keyword">addEventListener</error>(type:String, listener:Function, useCapture:Boolean = false):void {}
+    public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {}
+
+    function copy() {
+        destination.text=source.text = ' '
+        var aaa:Function = copy_
+        addEventListener("xxx", null);
+        super.addEventListener("close", aaa);
+        <error descr="Unresolved variable or type destination2">destination2</error>.text=<error descr="Unresolved variable or type source2">source2</error>.text
+    }
+
+    function copy_() {
+      this.addEventListener("xxx", null)
+    }
+
+    function <error descr="Incompatible implementation, should have 'public' access modifier">doIt</error>() {}
+    </mx:Script>
+    <mx:Script><![CDATA[
+    var a = <xxx>{<error descr="Unresolved variable or type zzz">zzz</error>}</xxx>;
+    var b = <xxx>{a}</xxx>;
+ ]]></mx:Script>
+
+    <mx:TextInput id="source" width="100" horizontalCenter="0" verticalCenter="1"/>
+    <mx:Button label="Copy" click="copy()" itemClick="<error descr="Unresolved function or method copy3()">copy3</error>()"/>
+    <mx:Button label="Copy2" click="<error descr="Unresolved function or method copy2()">copy2</error>()" change="<error descr="Unresolved function or method copy2()">copy2</error>()"
+               creationComplete="<error descr="Unresolved function or method copy2()">copy2</error>()"/>
+    <mx:TextInput id="destination" width="100"/>
+
+    <mx:List id="list" width="100%" height="100%">
+      <mx:itemRenderer>
+        <mx:Component>
+          <mx:Text text="{listx.name}" relativeTo="{<error descr="Unresolved variable or type aa">aa</error>}:{listx.name}" target="aa" relativeTo2="aa" <error descr="Attribute resizeEffect is not allowed here">resizeEffect</error>="aa"/>
+          <mx:Text id="listx">
+            <mx:text> { <error descr="Unresolved variable or type list2">list2</error> } </mx:text>
+          </mx:Text>
+          <mx:Text>
+            <mx:text> { listx } </mx:text>
+          </mx:Text>
+        </mx:Component>
+      </mx:itemRenderer>
+    </mx:List>
+
+    <mx:EmailValidator source="{list}"/>
+
+    <mx:Image id="ebtLogo" source="@Embed('<error descr="Cannot resolve file 'jpmlogo.gif'">jpmlogo.gif</error>')" />
+    <mx:Image id="ebtLogo2" source="@Embed('FlexWithMockFlex.mxml')" />
+
+    <mx:WebService id="authWS">
+      <mx:operation name="login">
+        <mx:request>
+          <loginParameters>
+            <email>true</email>
+            <password>true</password>
+            <rememberMe>true</rememberMe>
+          </loginParameters>
+        </mx:request>
+      </mx:operation>
+    </mx:WebService>
+
+    <mx:RemoteObject id="authServ" destination="authenticationService">
+        <mx:method name="resetUser" />
+    </mx:RemoteObject>
+
+    <mx:HTTPService resultFormat="e4x"/>
+    <mx:HTTPService resultFormat="<error descr="Wrong attribute value">e4x2</error>"/>
+
+    <mx:DataGrid id="dataGrid" width="100%" height="100%" resizeEffect="aa" name="xxx">
+        <mx:dataProvider>
+          <mx:Object label="abcdef" />          
+        </mx:dataProvider>
+        <mx:columns>
+          <mx:DataGridColumn dataField="id" id = "zz"/>
+          <<error descr="Element mx:DataGrid is not allowed here">mx:DataGrid</error>/>
+        </mx:columns>
+      </mx:DataGrid>
+
+  <<error descr="Element Incorrect is not allowed here">Incorrect</error>/>
+  <<error descr="Element mx:Incorrect is not allowed here">mx:Incorrect</error>/>
+</mx:Application>

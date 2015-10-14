@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+   <mx:Script>
+       var a:Renamed<caret>Component2
+   </mx:Script>
+   <local:RenamedComponent2 />
+   <local:RenamedComponent2 />
+   <local:RenamedComponent2 />
+</mx:Application>

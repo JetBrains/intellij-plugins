@@ -1,0 +1,10 @@
+package xxx {
+public class Test {
+    private static var abc;
+
+
+    public function Test() {
+        ab<caret>
+    }
+}
+}

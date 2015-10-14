@@ -1,0 +1,5 @@
+var xml =
+        <body id="aaa">
+            <p>hello &amp; </p>
+        </body>;
+xml.<caret>

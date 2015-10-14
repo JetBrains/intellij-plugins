@@ -1,0 +1,13 @@
+<node text="Class2 (pack2)" base="true">
+  <node text="SupertypesHierarchy ()">
+    <node text="Application (mypackage)">
+      <any/>
+    </node>
+    <node text="Interface1 (pack)"/>
+    <node text="Interface2 (pack)">
+      <node text="Interface3 (pack)"/>
+      <node text="Interface4 (pack2)"/>
+    </node>
+  </node>
+  <node text="Interface1 (pack)"/>
+</node>

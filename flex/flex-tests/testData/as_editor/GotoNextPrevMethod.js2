@@ -1,0 +1,35 @@
+<caret>package foo {
+class <caret expected="true">A {
+    function <caret expected="true">f1() {
+
+    }
+
+    public function <caret expected="true">f2():int {
+        function f21() {
+
+        }
+
+        var v = function() {}
+        var v2 = function aa() {}
+    }
+
+    function <caret expected="true">f3():void {
+
+
+    }
+<caret expected="true">}
+}
+
+class <caret expected="true">Inner {
+    function <caret expected="true">zz() {}
+    function <caret expected="true">uu() {}
+<caret expected="true">}
+
+class <caret expected="true">Inner2 {
+    function <caret expected="true">a() {}
+    function <caret expected="true">b() {}
+<caret expected="true">}
+
+function <caret expected="true">ffff() {
+
+}

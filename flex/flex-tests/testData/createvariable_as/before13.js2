@@ -1,0 +1,10 @@
+// "Create Field 'aaa'" "true"
+class A__ {
+  var x;
+  var y;
+
+  function A__() {
+    aa<caret>a = 1;
+  }
+}
+

@@ -16,16 +16,13 @@
 package org.intellij.plugins.markdown.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
+import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.intellij.plugins.markdown.highlighting.MarkdownColorSettingsPage;
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 
 public class MarkdownParserTest extends ParsingTestCase {
-  @Nullable
-  private String myTestDataPath = null;
 
   public MarkdownParserTest() {
     super("parser", "md", true, new MarkdownParserDefinition());
@@ -33,14 +30,16 @@ public class MarkdownParserTest extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    if (myTestDataPath == null) {
-      myTestDataPath = new File("test/data").getAbsolutePath();
-    }
-    return myTestDataPath;
+    return MarkdownTestingUtil.TEST_DATA_PATH;
   }
 
   public void testColorsAndFontsSample() throws IOException {
-    final String demoText = new MarkdownColorSettingsPage().getDemoText();
+    final MarkdownColorSettingsPage colorSettingsPage = new MarkdownColorSettingsPage();
+    String demoText = colorSettingsPage.getDemoText();
+    for (String tag : colorSettingsPage.getAdditionalHighlightingTagToDescriptorMap().keySet()) {
+      demoText = demoText.replaceAll("<" + tag + ">", "");
+      demoText = demoText.replaceAll("</" + tag + ">", "");
+    }
     doCodeTest(demoText);
   }
 

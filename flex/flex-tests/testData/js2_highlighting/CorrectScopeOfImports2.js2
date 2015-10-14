@@ -1,0 +1,16 @@
+package {
+import mypackage.StringUtil; // reported as unused
+
+    public class CorrectScopeOfImports2 extends Error{
+        public function CorrectScopeOfImports2() {
+            var message:String = StringUtil.substitute("{0}", "error");
+            super(message);
+        }
+    }
+}
+
+public class mypackage.StringUtil {
+  public static function substitute(s:String, s2:String):String {
+    return s + s2;  
+  }
+}

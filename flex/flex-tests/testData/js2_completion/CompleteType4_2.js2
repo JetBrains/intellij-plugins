@@ -1,0 +1,11 @@
+package AAA {
+import AAA2.BBB;
+  class A {
+    function zzz():ZZ<caret> {}
+  }
+}
+
+package AAA2 {
+  class BBB {}
+  public class ZZZ {}
+}

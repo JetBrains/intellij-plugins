@@ -1,0 +1,12 @@
+<!-- "Convert to local" "true" -->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+    <fx:Script><![CDATA[
+        private var ADVAN<caret>CE_DELAY: int = 50;
+
+        private var _advanceTimer: Timer;
+
+        private function creationComplete(): void {
+            _advanceTimer = new Timer(ADVANCE_DELAY);
+        }
+        ]]></fx:Script>
+</s:Application>

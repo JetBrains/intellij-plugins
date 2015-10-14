@@ -1,0 +1,4 @@
+package <error>aaa</error> {
+  public function <error>XXX</error>() {}
+  public function <error descr="More than one externally visible symbol defined in file">ValidateFunctionAndPackageName</error>() {}
+}

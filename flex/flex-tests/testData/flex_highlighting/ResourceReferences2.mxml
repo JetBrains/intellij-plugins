@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+  function foo() {
+    resourceManager.getString('mybundle', 'prompt2')
+    resourceManager.getClass('mybundle', 'prompt2')
+    resourceManager.getBoolean('mybundle', 'prompt2')
+    resourceManager.getStringArray('mybundle', 'prompt2')
+
+    resourceManager.getObject('mybundle', 'prompt2')
+    resourceManager.getInt('mybundle', 'prompt2')
+    resourceManager.getUint('mybundle', 'prompt2')
+    resourceManager.getResourceBundle('ru', 'mybundle')
+
+    resourceManager.findResourceBundleWithResource('mybundle', 'prompt2')
+    resourceManager.getString('<error>mybundle2</error>', '<error>prompt1</error>')
+    resourceManager.getStringArray('<error>mybundle2</error>', '<error>prompt1</error>')
+    resourceManager.getObject('<error>mybundle2</error>', '<error>prompt1</error>')
+
+    resourceManager.getInt('<error>mybundle2</error>', '<error>prompt1</error>')
+    resourceManager.getUint('<error>mybundle2</error>', '<error>prompt1</error>')
+    resourceManager.getBoolean('<error>mybundle2</error>', '<error>prompt1</error>')
+
+    resourceManager.getClass('<error>mybundle2</error>', '<error>prompt1</error>')
+    resourceManager.getResourceBundle('ru', '<error>mybundle2</error>')
+    resourceManager.findResourceBundleWithResource('<error>mybundle2</error>', '<error>prompt1</error>')
+    resourceManager.findResourceBundleWithResource('mybundle3', '<error>prompt2</error>')
+  }
+
+    import mypackage.ResourceManager
+    ResourceManager.getInstance().getString('<error>mybundle2</error>', '<error>prompt1</error>')
+    ResourceManager.getInstance().getString('mybundle', 'prompt2')
+
+    private function init():void { trace(getString("hello")); }
+    private function getString(input:String):String { return input + "1"; }
+    private function trace(input:String):void { }
+
+    import mypackage.ResourceBundle
+
+    [ResourceBundle("mybundle")]
+    private static var rb:ResourceBundle;
+    rb.getString("prompt2");
+    rb.getString("<error>prompt1</error>");
+  </mx:Script>
+</mx:Application>

@@ -16,5 +16,6 @@
     <orderEntry type="module" module-name="JavaScript-tests" />
     <orderEntry type="module" module-name="JsTestDriver-rt" />
     <orderEntry type="module" module-name="js-test-common-test" />
+    <orderEntry type="module" module-name="JsTestDriver-common" scope="TEST" />
   </component>
 </module>

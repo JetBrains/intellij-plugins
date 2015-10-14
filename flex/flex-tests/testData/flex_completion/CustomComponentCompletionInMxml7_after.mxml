@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+  <mx:Script>
+    var b:CustomComponentCompletionInMxml7_2
+    function foo() {
+      b.a.text<caret>
+    }
+  </mx:Script>
+</mx:Application>

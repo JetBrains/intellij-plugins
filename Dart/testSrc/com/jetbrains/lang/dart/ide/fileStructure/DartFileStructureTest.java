@@ -8,8 +8,8 @@ import static com.jetbrains.lang.dart.util.DartTestUtils.BASE_TEST_DATA_PATH;
 public class DartFileStructureTest extends FileStructureTestBase {
 
   @Override
-  protected void checkTree() {
-    assertSameLinesWithFile(BASE_TEST_DATA_PATH + getBasePath() + "/" + getTreeFileName(), PlatformTestUtil.print(getTree(), true).trim());
+  protected void checkResult() {
+    assertSameLinesWithFile(BASE_TEST_DATA_PATH + getBasePath() + "/" + getTreeFileName(), PlatformTestUtil.print(myPopupFixture.getTree(), true).trim());
   }
 
   @Override
@@ -23,7 +23,7 @@ public class DartFileStructureTest extends FileStructureTestBase {
     return "/fileStructure/";
   }
 
-  public void testConstructor() {
+  public void _testConstructor() {
     checkTree();
   }
 

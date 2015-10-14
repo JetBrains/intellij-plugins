@@ -46,6 +46,9 @@ public class DartServerRootsHandler {
       @Override
       public void afterProjectClosed(@NotNull final Project project) {
         if (myTrackedProjects.remove(project)) {
+          if (myTrackedProjects.isEmpty()) {
+            DartAnalysisServerService.getInstance().removeDocumentListener();
+          }
           updateRoots();
           DartAnalysisServerService.getInstance().updateVisibleFiles();
         }
@@ -61,6 +64,10 @@ public class DartServerRootsHandler {
 
   public void ensureProjectServed(@NotNull final Project project) {
     if (myTrackedProjects.contains(project)) return;
+
+    if (myTrackedProjects.isEmpty()) {
+      DartAnalysisServerService.getInstance().addDocumentListener();
+    }
 
     myTrackedProjects.add(project);
     updateRoots();
@@ -90,13 +97,13 @@ public class DartServerRootsHandler {
 
     if (sdk != null) {
       for (Project project : myTrackedProjects) {
+        @SuppressWarnings("ConstantConditions")
         final String dotIdeaPath = PathUtil.getParentPath(project.getProjectFilePath());
         if (dotIdeaPath.endsWith("/.idea")) {
           newExcludedRoots.add(FileUtil.toSystemDependentName(dotIdeaPath));
         }
 
-        for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkGlobalLibAttached(project, sdk.getGlobalLibName())) {
-
+        for (Module module : DartSdkGlobalLibUtil.getModulesWithDartSdkEnabled(project)) {
           newPackageRoots.putAll(DartConfigurable.getContentRootPathToCustomPackageRootMap(module));
 
           final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);

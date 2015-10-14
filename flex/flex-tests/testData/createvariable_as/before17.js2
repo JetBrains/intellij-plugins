@@ -1,0 +1,9 @@
+// "Create Field 'ccccc'" "true"
+public class A3____ {
+  
+}
+
+class B {
+  var v = A3____.cc<caret>ccc;
+}
+

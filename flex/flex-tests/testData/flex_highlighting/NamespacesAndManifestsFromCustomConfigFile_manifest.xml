@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component id="NamespacesAndManifestsFromCustomConfigFile_other_id" class="foo:NamespacesAndManifestsFromCustomConfigFile_other"/>
+</componentPackage>

@@ -1,0 +1,46 @@
+var aaa:Object = null;
+var aaa2:* = null;
+function aaa(a:*):Void {}
+function aaa3(a:* = null, b:int = -1, c:int = 1*2):Void {}
+function aaa4(a:int = *) {}
+
+function aaa2(a:*):void {
+  super.aaa();
+}
+
+var aaa2: = null;
+var myvar = int(1) + uint(2)
+
+try {
+  function bbb(a:): {}
+} catch(e:Error) {}
+
+function functionName(parameter0, parameter1, ...rest){
+  // statement(s) 
+}
+
+/*
+on(release) {
+   play();
+}
+*/
+
+/**
+ *
+ */
+native function zzz()
+
+/**
+ * 
+ */
+native function zzz2():int;
+
+/**
+ *
+ */
+native function zzz3()
+
+if (true && a++ < b) {}
+if (true && a -- < b) {}
+
+!{(TestEnum.X): 'value'}

@@ -1,0 +1,40 @@
+native function aaa(a);
+function bar(<warning descr="Unused parameter a">a</warning>:int) {}
+import flash.events.*;
+import starling.events.*;
+import flash.display.Sprite;
+
+class XXX extends Sprite {
+    private function mouseDownHandler(event:MouseEvent):void {}
+    private function someHandler(event:flash.events.Event):void {}
+    function someHandler2(<warning descr="Unused parameter event">event</warning>:Event, <warning descr="Unused parameter a">a</warning>:int):void {}
+    private function <warning descr="Unused method starlingHandler">starlingHandler</warning>(event:starling.events.Event):void {}
+    private function <warning descr="Unused method starlingHandler2">starlingHandler2</warning>(event:TouchEvent):void {}
+    private function <warning descr="Unused method starlingHandler3">starlingHandler3</warning>(<warning descr="Unused parameter event">event</warning>:NotEvent):void {}
+    private function <warning descr="Unused method starlingHandler4">starlingHandler4</warning>(<warning descr="Unused parameter event">event</warning>:TouchEvent, <warning descr="Unused parameter i">i</warning>:int):void {}
+
+    function XXX() {
+        addEventListener("click", mouseDownHandler);
+        addEventListener("event", someHandler);
+        aaa(1);
+        bar(1);
+        var x:XXX;
+        x = XXX(bar(1));
+    }
+
+
+    override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {}
+}
+
+class <warning descr="Unused class InvalidUnusedSymbol">InvalidUnusedSymbol</warning> {
+    private var s:String;
+    public function InvalidUnusedSymbol() {
+        this.s = "test";
+    }
+}
+
+package <error descr="Package name 'starling.events' does not correspond to file path ''">starling.events</error> {
+    public class <error descr="Class 'Event' should be defined in file 'Event.js2'"><error descr="More than one externally visible symbol defined in file">Event</error></error> {}
+    public class <error descr="Class 'TouchEvent' should be defined in file 'TouchEvent.js2'"><error descr="More than one externally visible symbol defined in file">TouchEvent</error></error> extends Event {}
+    public class <error descr="Class 'NotEvent' should be defined in file 'NotEvent.js2'"><error descr="More than one externally visible symbol defined in file">NotEvent</error></error> {}
+}

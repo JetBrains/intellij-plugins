@@ -1,0 +1,1 @@
+[Style(name="verticalCenter", type="Number", format="Length", inherit="no")]

@@ -1,0 +1,11 @@
+// "Create Get Property 'selectionManager'" "true"
+class A {
+  public function getSelectionManager():ISelectionManager {
+    var foo:int = selectionManager;
+  }
+
+    private function get selectionManager():int {
+        return _selectionManager<caret>;
+    }
+}
+

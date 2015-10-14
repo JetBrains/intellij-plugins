@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:List id="list" width="100%" height="100%">
+      <mx:itemR<caret>
+    </mx:List>
+</mx:Application>

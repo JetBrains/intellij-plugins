@@ -1,0 +1,11 @@
+package <error>com.foo</error>
+{
+    import xxx.bar.baz.Baz;
+    import xxx.bar2.baz2.Baz2;
+
+    function QualifiedThings(clazz:Class) {
+        com.foo.QualifiedThings(xxx.bar.baz.Baz);
+        xxx.bar.baz.Baz.doIt(xxx.bar.baz.Baz.doIt);
+        xxx.bar2.baz2.Baz2.doIt2(xxx.bar2.baz2.Baz2.doIt2);
+    }
+}

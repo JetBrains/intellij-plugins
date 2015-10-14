@@ -1,0 +1,8 @@
+package {
+<error>static</error> function NoStaticFunctionWithoutClass() {}
+<error>static</error> var <error>NoStaticVarWithoutClass</error>;
+}
+
+<warning>static</warning> function foo2() {}
+<warning>static</warning> var v1;
+<warning>static</warning> const c1 = 100;

@@ -1,0 +1,10 @@
+package {
+public class JustStatements2_6 {
+    public function JustStatements2_6() {
+        //		blah-blah-blah
+        trace(123);
+//		blah-blah-blah
+    }
+
+}
+}

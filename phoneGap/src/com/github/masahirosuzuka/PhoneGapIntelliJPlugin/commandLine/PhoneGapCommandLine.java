@@ -2,6 +2,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
@@ -182,7 +183,7 @@ public class PhoneGapCommandLine {
   private OSProcessHandler serve(String extraArg) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(concat(newArrayList(myPath, "serve"), parseArgs(extraArg)));
     commandLine.withWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+    return new KillableColoredProcessHandler(commandLine, true);
   }
 
   @NotNull
@@ -390,7 +391,7 @@ public class PhoneGapCommandLine {
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.withWorkDirectory(myWorkDir);
-    commandLine.setPassParentEnvironment(myPassParentEnv);
+    commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
     commandLine.withEnvironment(myEnv);
 
     Process process = commandLine.createProcess();
@@ -425,7 +426,7 @@ public class PhoneGapCommandLine {
   private OSProcessHandler createProcessHandler(String... commands) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(commands);
     commandLine.withWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+    return new KillableColoredProcessHandler(commandLine, true);
   }
 
   private static List<String> parseArgs(String paramList) {

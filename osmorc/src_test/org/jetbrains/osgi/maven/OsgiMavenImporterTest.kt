@@ -33,8 +33,8 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("simple"))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertEquals("1.0.1", configuration.getBundleVersion())
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertEquals("1.0.1", configuration.bundleVersion)
   }
 
   fun testWrongPackaging() {
@@ -47,8 +47,8 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("osmorc-simple"))
     assertModules("osmorc-simple")
     val configuration = assertConfiguration("osmorc-simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertEquals("1.0.1", configuration.getBundleVersion())
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertEquals("1.0.1", configuration.bundleVersion)
   }
 
   fun testExplicitBundleVersion() {
@@ -56,8 +56,8 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("simple", instructions))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertEquals("1.2.3", configuration.getBundleVersion())
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertEquals("1.2.3", configuration.bundleVersion)
   }
 
   fun testUseExistingManifest() {
@@ -65,9 +65,9 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("simple", instructions, ""))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isManifestManuallyEdited())
-    assertFalse(configuration.isUseProjectDefaultManifestFileLocation())
-    assertTrue(configuration.getManifestLocation().endsWith("/foo/Manifest.MF"))
+    assertTrue(configuration.isManifestManuallyEdited)
+    assertFalse(configuration.isUseProjectDefaultManifestFileLocation)
+    assertTrue(configuration.manifestLocation.endsWith("/foo/Manifest.MF"))
   }
 
   fun testDefaultOutputPath() {
@@ -75,45 +75,46 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("simple", instructions))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertTrue(configuration.getJarFileLocation().endsWith("simple-1.0.1.jar"))
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertTrue(configuration.jarFileLocation.endsWith("simple-1.0.1.jar"))
   }
 
   fun testSpecificOutputPath() {
     importProject(pomContents("simple", buildConfig = "<finalName>\${artifactId}-special-\${version}</finalName>"))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertTrue(configuration.getJarFileLocation().endsWith("simple-special-1.0.1.jar"))
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertTrue(configuration.jarFileLocation.endsWith("simple-special-1.0.1.jar"))
   }
 
   fun testVersionCleanerSupport() {
-    val instructions =
-        "<configuration><instructions><Bundle-Version>\${my.version.clean}</Bundle-Version></instructions></configuration>" +
-        "<executions><execution>" +
-        "  <id>versions</id><goals><goal>cleanVersions</goal></goals>" +
-        "  <configuration><versions><my.version.clean>\${project.version}</my.version.clean></versions></configuration>" +
-        "</execution></executions>"
+    val instructions = """
+         <configuration><instructions><Bundle-Version>${'$'}{my.version.clean}</Bundle-Version></instructions></configuration>
+         <executions><execution>
+           <id>versions</id>
+           <goals><goal>cleanVersions</goal></goals>
+           <configuration><versions><my.version.clean>${'$'}{project.version}</my.version.clean></versions></configuration>
+         </execution></executions>""".trimIndent()
     importProject(pomContents("simple", instructions))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertEquals("1.0.1", configuration.getBundleVersion())
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertEquals("1.0.1", configuration.bundleVersion)
   }
 
   fun testDescription() {
     importProject("<description>bundle description</description>\n" + pomContents("simple"))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
-    assertEquals("bundle description", configuration.getAdditionalPropertiesAsMap()[Constants.BUNDLE_DESCRIPTION])
+    assertTrue(configuration.isOsmorcControlsManifest)
+    assertEquals("bundle description", configuration.additionalPropertiesAsMap[Constants.BUNDLE_DESCRIPTION])
   }
 
   fun testExplicitProjectName() {
     importProject("<name>explicit</name>\n" + pomContents("simple"))
     assertModules("simple")
     val configuration = assertConfiguration("simple", "explicit")
-    assertTrue(configuration.isOsmorcControlsManifest())
+    assertTrue(configuration.isOsmorcControlsManifest)
   }
 
   fun testImplicitResources() {
@@ -124,7 +125,7 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("simple"))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
+    assertTrue(configuration.isOsmorcControlsManifest)
     assertResources(configuration, resource1, resource2)
   }
 
@@ -140,7 +141,7 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     importProject(pomContents("simple", instructions))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
-    assertTrue(configuration.isOsmorcControlsManifest())
+    assertTrue(configuration.isOsmorcControlsManifest)
     assertResources(configuration, included)
   }
 
@@ -168,16 +169,16 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
 
   private fun assertConfiguration(moduleName: String, bundleName: String): OsmorcFacetConfiguration {
     val facet = getFacet(moduleName)
-    val configuration = facet.getConfiguration()
+    val configuration = facet.configuration
     assertNotNull(configuration)
-    assertEquals(bundleName, configuration.getAdditionalPropertiesAsMap().get(Constants.BUNDLE_NAME))
-    assertEquals("org.osmorc.simple", configuration.getBundleSymbolicName())
+    assertEquals(bundleName, configuration.additionalPropertiesAsMap.get(Constants.BUNDLE_NAME))
+    assertEquals("org.osmorc.simple", configuration.bundleSymbolicName)
     return configuration
   }
 
   private fun assertResources(configuration: OsmorcFacetConfiguration, vararg files: File) {
-    val expected = files.map { "${it.getName()}=${FileUtil.toSystemIndependentName(it.getPath())}" }.toSet()
-    val actual = (configuration.getAdditionalPropertiesAsMap()[Constants.INCLUDE_RESOURCE] ?: "").split(',').toSet()
+    val expected = files.map { "${it.name}=${FileUtil.toSystemIndependentName(it.path)}" }.toSet()
+    val actual = (configuration.additionalPropertiesAsMap[Constants.INCLUDE_RESOURCE] ?: "").split(',').toSet()
     assertEquals(expected, actual)
   }
 }

@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -180,6 +181,16 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.enableInspections(CommaExpressionJSInspection.class);
     myFixture.configureByFiles("commaExpression.html", "angular.js", "custom.js");
     myFixture.checkHighlighting();
+  }
+
+  public void testEventHandler2Resolve() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("event.html", "angular2.js", "event.ts");
+        checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+      }
+    });
   }
 
   private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSNamedElement> varClass) {

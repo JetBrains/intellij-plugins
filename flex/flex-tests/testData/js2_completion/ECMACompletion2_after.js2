@@ -1,0 +1,17 @@
+import aaa.AAA;
+import bbb.AAA;
+
+package aaa {
+  public class AAA {
+    public var aaField;
+  }
+}
+
+package bbb {
+  public class AAA {
+    public var abField;
+  }
+}
+
+var x:AAA;
+x.abField<caret>

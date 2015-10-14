@@ -1,0 +1,11 @@
+package {
+    public class FunctionSignatureMismatch7 {
+        public function foo() {}
+
+        function zzz() {
+            <error>foo</error>(function() {
+
+            });
+        }
+    }
+}

@@ -1,0 +1,9 @@
+package {
+	public class ImportFunction
+	{
+		public function ImportFunction()
+		{
+			<error>get<caret>DefinitionByName</error>();
+		}
+	}
+}

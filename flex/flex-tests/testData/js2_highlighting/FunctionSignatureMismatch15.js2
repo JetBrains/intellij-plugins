@@ -1,0 +1,7 @@
+package {
+public class FunctionSignatureMismatch15 {
+    public function foo(ss:String, ...rest):void {
+        foo(<error>5</error>);
+    }
+}
+}

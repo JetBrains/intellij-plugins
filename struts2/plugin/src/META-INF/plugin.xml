@@ -44,7 +44,7 @@
   <depends optional="true" config-file="struts2-tiles.xml">StrutsAssistant</depends>
   <depends optional="true" config-file="struts2-velocity.xml">com.intellij.velocity</depends>
 
-  <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@gmail.com">Yann Cébron</vendor>
+  <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@gmail.com">Yann Cébron, JetBrains</vendor>
 
   <xi:include href="/META-INF/ognl.xml" xpointer="xpointer(/idea-plugin/*)"/>
 

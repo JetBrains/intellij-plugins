@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+
+  <fx:Metadata>
+    [HostComponent("spark.components.Application")]
+  </fx:Metadata>
+
+  <s:states>
+    <s:State name="disabled"/>
+    <s:State name="normal"/>
+  </s:states>
+
+  <s:List>
+    <s:itemRenderer>
+      <fx:Component>
+        <s:Group>
+          <fx:Script><![CDATA[
+            public function bar():void {
+              trace(outerDocument);
+            }
+
+            public function <warning descr="Method can be static">bar2</warning>():void {
+              trace("");
+            }
+            ]]></fx:Script>
+        </s:Group>
+      </fx:Component>
+    </s:itemRenderer>
+  </s:List>
+
+  <fx:Script><![CDATA[
+    public function foo():void {
+      trace(hostComponent);
+    }
+
+    public function <warning descr="Method can be static">foo2</warning>():void {
+      trace("");
+    }
+    ]]></fx:Script>
+</s:Skin>

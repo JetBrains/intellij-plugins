@@ -18,7 +18,9 @@ package org.intellij.plugins.markdown.lang.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
-import org.intellij.markdown.parser.TokensCache;
+import kotlin.IntRange;
+import kotlin.Range;
+import org.intellij.markdown.parser.sequentialparsers.TokensCache;
 import org.intellij.plugins.markdown.lang.MarkdownElementType;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +34,8 @@ class PsiBuilderTokensCache extends TokensCache {
   private final List<TokenInfo> filteredTokens;
   @NotNull
   private final PsiBuilder builder;
+  private int startOffset;
+  private int endOffset;
 
   public PsiBuilderTokensCache(@NotNull PsiBuilder builder) {
     this.builder = builder;
@@ -47,6 +51,7 @@ class PsiBuilderTokensCache extends TokensCache {
   }
 
   private void cacheTokens() {
+    startOffset = builder.getCurrentOffset();
     PsiBuilder.Marker startMarker = builder.mark();
 
     for (int i = 0; builder.rawLookup(i) != null; ++i) {
@@ -73,6 +78,7 @@ class PsiBuilderTokensCache extends TokensCache {
 
       builder.advanceLexer();
     }
+    endOffset = builder.getCurrentOffset();
 
     startMarker.rollbackTo();
   }
@@ -93,5 +99,11 @@ class PsiBuilderTokensCache extends TokensCache {
   @Override
   public CharSequence getOriginalText() {
     return builder.getOriginalText();
+  }
+
+  @NotNull
+  @Override
+  public Range<Integer> getOriginalTextRange() {
+    return new IntRange(startOffset, endOffset);
   }
 }

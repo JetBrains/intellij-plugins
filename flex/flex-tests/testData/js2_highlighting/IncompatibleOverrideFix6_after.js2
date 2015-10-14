@@ -1,0 +1,16 @@
+package {
+import flash.events.EventDispatcher;
+
+class FooBase {
+    function foo(p: EventDispatcher):void {}
+}
+}
+
+package {
+import flash.events.EventDispatcher;
+
+class Foo extends FooBase {
+    override function foo(p:EventDispatcher):void {
+    }
+}
+}

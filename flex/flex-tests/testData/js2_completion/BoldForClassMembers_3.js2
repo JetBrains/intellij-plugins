@@ -1,0 +1,13 @@
+package {
+public class BoldForClassMembers_3 extends Bar {
+    function ____(param) {
+        var lVar;
+        <caret>
+    }
+}
+public class Bar2 {}
+}
+
+class Bar {
+    function Bar() {}
+}

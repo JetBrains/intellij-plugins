@@ -1,0 +1,17 @@
+package {
+public class PropertyPrefix {
+  private var _element:Object;
+
+  public function get propelement():Object {
+    return _element;
+  }
+
+  public function ff():void {
+    ee<error>(propelement)</error>;
+  }
+
+  public function ee():void {
+
+  }
+}
+}

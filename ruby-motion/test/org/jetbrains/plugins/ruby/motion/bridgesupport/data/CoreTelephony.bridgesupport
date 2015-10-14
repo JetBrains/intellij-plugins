@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant name='CTCallStateConnected' declared_type='NSString*' type='@' const='true'/>
+<constant name='CTCallStateDialing' declared_type='NSString*' type='@' const='true'/>
+<constant name='CTCallStateDisconnected' declared_type='NSString*' type='@' const='true'/>
+<constant name='CTCallStateIncoming' declared_type='NSString*' type='@' const='true'/>
+<class name='CTCall'>
+<method selector='callID'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='callState'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='CTCallCenter'>
+<method selector='callEventHandler'>
+<retval declared_type='void (^)(CTCall *)' type='@?' function_pointer='true'>
+<arg declared_type='CTCall*' type='@'/>
+<retval declared_type='void' type='v'/>
+</retval>
+</method>
+<method selector='currentCalls'>
+<retval declared_type='NSSet*' type='@'/>
+</method>
+<method selector='setCallEventHandler:'>
+<arg index='0' name='callEventHandler' declared_type='void (^)(CTCall *)' type='@?' function_pointer='true'>
+<arg declared_type='CTCall*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='CTCarrier'>
+<method selector='allowsVOIP'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='carrierName'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='isoCountryCode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='mobileCountryCode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='mobileNetworkCode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='CTTelephonyNetworkInfo'>
+<method selector='setSubscriberCellularProviderDidUpdateNotifier:'>
+<arg index='0' name='subscriberCellularProviderDidUpdateNotifier' declared_type='void (^)(CTCarrier *)' type='@?' function_pointer='true'>
+<arg declared_type='CTCarrier*' type='@'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='subscriberCellularProvider'>
+<retval declared_type='CTCarrier*' type='@'/>
+</method>
+<method selector='subscriberCellularProviderDidUpdateNotifier'>
+<retval declared_type='void (^)(CTCarrier *)' type='@?' function_pointer='true'>
+<arg declared_type='CTCarrier*' type='@'/>
+<retval declared_type='void' type='v'/>
+</retval>
+</method>
+</class>
+</signatures>

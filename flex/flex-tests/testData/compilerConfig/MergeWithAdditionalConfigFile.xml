@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <fonts>
+      <managers>
+        <manager-class>flash.fonts.AFEFontManager</manager-class>
+      </managers>
+    </fonts>
+    <source-path>
+      <path-element>$MODULE_DIR$/src</path-element>
+      <path-element>$MODULE_DIR$/src</path-element>
+    </source-path>
+    <locale>
+      <locale-element>en_US</locale-element>
+    </locale>
+    <library-path>
+      <path-element>$FLEX_SDK$/frameworks/libs\framework.swc</path-element>
+      <path-element>path/to/external_lib.swc</path-element>
+    </library-path>
+    <external-library-path>
+      <path-element>path/to/playerglobal.swc</path-element>
+    </external-library-path>
+  </compiler>
+  <debug-password>z</debug-password>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/advancedgrids.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6/advancedgrids_4.6.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>advancedgrids_4.6.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <compiler>
+    <warn-no-constructor>false</warn-no-constructor>
+    <accessible>true</accessible>
+    <fonts />
+    <debug>true</debug>
+    <theme>
+      <filename>$FLEX_SDK$/frameworks/themes/Spark/spark.css</filename>
+    </theme>
+    <namespaces>
+      <namespace>
+        <uri>http://ns.adobe.com/mxml/2009</uri>
+        <manifest>$FLEX_SDK$/frameworks/mxml-2009-manifest.xml</manifest>
+      </namespace>
+      <namespace>
+        <uri>library://ns.adobe.com/flex/spark</uri>
+        <manifest>$FLEX_SDK$/frameworks/spark-manifest.xml</manifest>
+      </namespace>
+      <namespace>
+        <uri>library://ns.adobe.com/flex/mx</uri>
+        <manifest>$FLEX_SDK$/frameworks/mx-manifest.xml</manifest>
+      </namespace>
+      <namespace>
+        <uri>http://www.adobe.com/2006/mxml</uri>
+        <manifest>$FLEX_SDK$/frameworks/mxml-manifest.xml</manifest>
+      </namespace>
+    </namespaces>
+    <library-path>
+      <path-element>$FLEX_SDK$/frameworks/locale/{locale}</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/advancedgrids.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/authoringsupport.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/charts.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/flash-integration.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/osmf.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/rpc.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/spark.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/spark_dmv.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/sparkskins.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/textLayout.swc</path-element>
+      <path-element>$FLEX_SDK$/frameworks/libs/mx/mx.swc</path-element>
+    </library-path>
+    <external-library-path>
+      <path-element>$FLEX_SDK$/frameworks/libs/player/11.1/playerglobal.swc</path-element>
+    </external-library-path>
+    <locale>
+      <locale-element>ja_JP</locale-element>
+    </locale>
+    <services>services</services>
+    <context-root />
+  </compiler>
+  <target-player>11.1</target-player>
+  <swf-version>14</swf-version>
+  <static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/framework.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/framework_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>framework_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/textLayout.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/tlf/2.0.0.232/textLayout_2.0.0.232.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>textLayout_2.0.0.232.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/osmf.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/osmf_1.0.0.16316.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>osmf_1.0.0.16316.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/spark.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/spark_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>spark_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/sparkskins.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/sparkskins_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>sparkskins_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/rpc.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/rpc_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>rpc_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/charts.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/charts_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>charts_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/spark_dmv.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/spark_dmv_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>spark_dmv_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/mx/mx.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/mx_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>mx_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/advancedgrids.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6.0.23201/advancedgrids_4.6.0.23201.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>advancedgrids_4.6.0.23201.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+  <output>$MODULE_DIR$/path/in/config/SetInBC.swf</output>
+</flex-config>
+

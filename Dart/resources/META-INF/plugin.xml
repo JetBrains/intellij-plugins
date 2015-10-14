@@ -3,7 +3,7 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="142.1" until-build="142.*"/>
+  <idea-version since-build="144.1" until-build="144.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
@@ -15,7 +15,7 @@
   <change-notes>
     <![CDATA[
         <ul>
-          <li>Various improvements and bug fixes</li>
+          <li>Improvements and bug fixes</li>
         </ul>
       ]]>
   </change-notes>
@@ -44,11 +44,14 @@
     <lang.parserDefinition language="Dart" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
 
     <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInDocLineCommentHandler"/>
+    <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInStringHandler" order="first"/>
+    <lang.lineWrapStrategy language="Dart" implementationClass="com.jetbrains.lang.dart.ide.editor.DartLineWrapPositionStrategy"/>
 
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
 
     <colorSettingsPage implementation="com.jetbrains.lang.dart.highlight.DartColorsAndFontsPage"/>
     <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.folding.DartFoldingBuilder"/>
+    <extendWordSelectionHandler implementation="com.jetbrains.lang.dart.ide.editor.DartDocLineCommentSelectionHandler"/>
 
     <html.scriptContentProvider language="Dart" implementationClass="com.jetbrains.lang.dart.DartScriptContentProvider"/>
     <writingAccessProvider implementation="com.jetbrains.lang.dart.ide.DartWritingAccessProvider"/>
@@ -71,16 +74,27 @@
     <codeInsight.parameterInfo language="Dart"
                                implementationClass="com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler"/>
 
-    <renamePsiElementProcessor implementation="com.jetbrains.lang.dart.ide.DartRenamePsiElementProcessor"/>
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartLanguageCodeStyleSettingsProvider"/>
+    <lang.importOptimizer language="Dart" implementationClass="com.jetbrains.lang.dart.ide.imports.DartImportOptimizer"/>
 
-    <codeInsight.lineMarkerProvider language="Dart"
-                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>
-    <codeInsight.lineMarkerProvider language="Dart"
-                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.lang.dart.ide.DartRenamePsiElementProcessor"/>
+    <renameHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartServerRenameHandler"/>
+    <inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>
 
-    <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>
+    <!--<codeInsight.lineMarkerProvider language="Dart"-->
+                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>-->
+    <codeInsight.lineMarkerProvider language="Dart"
+                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerImplementationsMarkerProvider"/>
+    <!--<codeInsight.lineMarkerProvider language="Dart"-->
+                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>-->
+    <codeInsight.lineMarkerProvider language="Dart"
+                                    implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>
+
+    <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>-->
+    <!--<definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>-->
+    <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>
+    <definitionsScopedSearch implementation="com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher"/>
 
     <codeInsight.overrideMethod language="Dart"
                                 implementationClass="com.jetbrains.lang.dart.ide.generation.DartOverrideMethodHandler"/>
@@ -95,8 +109,6 @@
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartComponentIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSymbolIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex"/>
-
-    <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
     <!-- moduleBuilder works in IntelliJ IDEA only -->
     <moduleBuilder builderClass="com.jetbrains.lang.dart.projectWizard.DartModuleBuilder"/>
@@ -144,10 +156,10 @@
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
-    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerColorAnnotator"/>-->
-    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>
-    <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
+    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
+
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
     <lang.findUsagesProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.findUsages.DartFindUsagesProvider"/>
@@ -155,6 +167,11 @@
     <findUsagesHandlerFactory implementation="com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandlerFactory"/>
     <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartUnitMemberGroupRuleProvider"/>
     <fileStructureGroupRuleProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartClassMemberGroupRuleProvider"/>
+
+    <intentionAction>
+      <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention</className>
+      <category>Dart</category>
+    </intentionAction>
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
                         serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
@@ -204,10 +221,6 @@
   </extensions>
 
   <actions>
-    <!-- Action for Google internal developers only, action can be found only using 'Find Action' -->
-    <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction"
-            text="Configure Dart package roots using 'pub list-package-dirs'"/>
-
     <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
 
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"

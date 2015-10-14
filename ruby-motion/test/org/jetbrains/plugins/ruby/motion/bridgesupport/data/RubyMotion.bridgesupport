@@ -1,0 +1,8 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+  <class name='NSObject'>
+    <method selector='dispatch_object'>
+      <retval declared_type='void*' type='^v'/>
+    </method>
+  </class>
+</signatures>

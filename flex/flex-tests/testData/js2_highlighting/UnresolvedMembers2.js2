@@ -1,0 +1,46 @@
+package <error>xxx</error> {
+  class <error>AAA</error> {
+    static var log:AAA;
+    function getLogger():void {}
+  }
+}
+
+package <error>xxx.yyy</error> {
+   public class <error>BBB</error> {
+       function AAA():void {
+           <error>log</error>.getLogger()
+       }
+   }
+}
+
+package <error>xxx.yyy</error> {
+    class <error>Foo</error> {
+        function foo() {
+            var a = String(<error>data</error>["aaa"]);
+            <error>bar</error>.setStyle();
+        }
+    }
+
+    class <error>Bar</error> {
+        function Bar() {
+            Object(this).data = null;
+            Bar(this).<error>data</error> = null;
+
+        }
+        function bar() {}
+        function bar2(x:*) { bar2(x.ttt)}
+    }
+
+    dynamic class <error>Baz</error> {
+        static function foo() {
+            var data;
+            data = new Object();
+        }
+    }
+
+    class <error>Fault</error> extends Error {
+      function Fault() {
+          getStackTrace();
+      }
+    }
+}

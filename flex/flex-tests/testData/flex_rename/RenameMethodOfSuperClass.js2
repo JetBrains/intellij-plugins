@@ -1,0 +1,24 @@
+package xxx {
+  class YYY extends yyy.XXX {
+    public override function test() {
+      if (false) test();
+      var a:yyy.XXX
+      a.test()
+      this.test()
+    }
+  }
+}
+
+class YYY2 extends yyy.XXX {
+    public function test() {
+        super.test();
+    }
+}
+
+package yyy {
+  public class XXX {
+    public function te<caret>st() {
+      if (true) test()
+    }
+  }
+}

@@ -1,0 +1,22 @@
+package com.bla.blub
+{
+class Base
+{
+    public function zaa() {}
+    private function basePrivate{}
+}
+}
+package com.bla.blub
+{
+class Extended extends Base
+{
+    public function zzz(param) {
+        var e = 1;
+        <caret>
+    }
+
+    private function zbb() {}
+    static function a(){}
+}
+
+}

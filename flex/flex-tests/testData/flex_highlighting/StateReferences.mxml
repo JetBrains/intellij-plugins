@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    function bar() {}
+    var xxx:Boolean;
+    import mypackage.ResourceManager
+    <warning>ResourceManager.getInstance</warning>
+  </mx:Script>
+  <mx:Button label.state4="a" label.<error>incorrect1</error>="b">
+    <mx:label.state5>a</mx:label.state5>
+    <mx:label.<error>incorrect2</error>>a</mx:label.<error>incorrect2</error>>
+  </mx:Button>
+  <mx:transitions>
+  <mx:Transition fromState="<error descr="Invalid state reference">foo</error>" toState="<error descr="Invalid state reference">bar</error>">
+    <mx:Resize easingFunction="<warning descr="Expression statement is not assignment or call"><error descr="Unresolved variable or type foo">foo</error></warning>" />
+    <mx:Resize easingFunction="bar" />
+  </mx:Transition>
+  <<error descr="Element mx:Object is not allowed here">mx:Object</error> />
+  <mx:Transition fromState="state" toState="state2"/>
+  <mx:Transition fromState="*" toState="*"/>
+  <mx:Transition id="toRegister" fromState="*" toState=""/>
+  </mx:transitions>
+  <mx:states>
+  <mx:State name = "state"/>
+  <mx:State name = "state2" basedOn="state"/>
+  <mx:State name = "state4" basedOn="<error descr="Invalid state reference">foo</error>"/>
+  <mx:State name = "state5" basedOn="">
+    <mx:SetProperty target="{loginButton}"
+            name="label" value="Register"/>
+    <mx:SetProperty name="width" value="200"/>
+    <mx:AddChild><mx:Label id="loginButton" /></mx:AddChild>
+  </mx:State>
+    <mx:State name = <error descr="Non-unique declaration name state3">"state3"</error>/>
+  <mx:State name = <error descr="Non-unique declaration name state3">"state3"</error>/>
+  <mx:State name="state6" basedOn="{xxx ? 'yyy' : 'zzz'}"/>
+  </mx:states>
+</mx:Application>

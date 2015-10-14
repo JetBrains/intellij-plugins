@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="Test">
+  <node id="Bar" nodeName="Class Bar" name="&lt;html&gt;&lt;b&gt;Bar&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Foo" nodeName="Class Foo" name="&lt;html&gt;&lt;b&gt;Foo&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Test" nodeName="Class Test" name="&lt;html&gt;&lt;b&gt;Test&lt;/b&gt;&lt;/html&gt;">
+    <element name="v" type="Vector.&lt;Foo&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v2" type="Vector" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v3" type="Vector.&lt;Vector.&lt;Bar&gt;&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v4" type="Vector.&lt;Object&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v5" type="Vector.&lt;int&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v6" type="Vector.&lt;uint&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="Vector" nodeName="Class Vector" name="&lt;html&gt;&lt;b&gt;Vector&lt;/b&gt;&lt;/html&gt;">
+    <element name="Vector$object(uint, Boolean)" category="Constructors" visibility="PUBLIC" />
+    <element name="type" type="Object" category="Properties" visibility="PRIVATE" />
+    <element name="newThisType(uint)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PRIVATE" />
+    <element name="length" type="uint" category="Properties" visibility="PUBLIC" />
+    <element name="fixed" type="Boolean" category="Properties" visibility="PUBLIC" />
+    <element name="toString()" type="String" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="toLocaleString()" type="String" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="join(String)" type="String" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="_concat(Array)" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="every(Function, Object)" type="Boolean" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="forEach(Function, Object)" type="void" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="map(Function, Object)" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="push(Array)" type="uint" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="_reverse()" type="void" category="Methods" visibility="PRIVATE" />
+    <element name="some(*, Object)" type="Boolean" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="_slice(Number, Number)" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="_splice(*, *, Array)" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="_spliceHelper(uint, uint, uint, Object, int)" type="void" category="Methods" visibility="PRIVATE" />
+    <element name="_shift()" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="unshift(Array)" type="uint" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="_filter(Function, *)" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="_map(Function, *)" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="clamp(Number, uint)" type="uint" category="Methods" visibility="PRIVATE" />
+    <element name="concat(Array)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="filter(Function, Object)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="pop()" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="reverse()" type="Vector.&lt;Object&gt;" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="shift()" type="*" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="slice(Number, Number)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="sort(*)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="splice(Number, Number, Array)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="indexOf(Object, Number)" type="Number" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="lastIndexOf(Object, Number)" type="Number" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="castToThisType(*)" type="Vector.&lt;Object&gt;" category="Methods" visibility="PRIVATE" />
+    <element name="_every(*, Function, *)" type="Boolean" category="Methods" visibility="PRIVATE" />
+    <element name="_forEach(*, Function, *)" type="void" category="Methods" visibility="PRIVATE" />
+    <element name="_some(*, Function, *)" type="Boolean" category="Methods" visibility="PRIVATE" />
+    <element name="_sort(*, Array)" type="*" category="Methods" visibility="PRIVATE" />
+    <element name="AS3" type="*" category="Fields" visibility="PRIVATE" />
+  </node>
+  <edge from="Test" to="Bar" idElement="Test" relship="ONE_TO_MANY" relshipLabel="v3" />
+  <edge from="Test" to="Foo" idElement="Test" relship="ONE_TO_MANY" relshipLabel="v" />
+  <edge from="Test" to="Vector" idElement="Test" relship="DEPENDENCY" relshipLabel="v5" />
+  <edge from="Test" to="Vector" idElement="Test" relship="DEPENDENCY" relshipLabel="v6" />
+  <edge from="Test" to="Vector" idElement="Test" relship="ONE_TO_MANY" relshipLabel="v3" />
+  <edge from="Test" to="Vector" idElement="Test" relship="ONE_TO_ONE" relshipLabel="v" />
+  <edge from="Test" to="Vector" idElement="Test" relship="ONE_TO_ONE" relshipLabel="v2" />
+  <edge from="Test" to="Vector" idElement="Test" relship="ONE_TO_ONE" relshipLabel="v3" />
+</umlModel>

@@ -1,0 +1,18 @@
+import flash.utils.Proxy;
+
+class Test2 {
+  function foo(f:Function):void {
+    var x:Test = new Test()
+    foo(x.bar());
+
+    const myClass: Object = {
+        expensiveComputation: function(x: int): int {
+          return 2
+        }
+      };
+    foo(x.expensiveComputation(1));
+    foo(x.a);
+  }
+}
+
+dynamic class Test extends Proxy {}

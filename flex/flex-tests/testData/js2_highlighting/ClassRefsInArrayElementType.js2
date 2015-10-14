@@ -1,0 +1,19 @@
+package {
+    public class ClassRefsInArrayElementType extends Foo {
+        [ArrayElementType("ClassRefsInArrayElementType")]
+        var foo:Array;
+
+        [ArrayElementType("<error descr="Unresolved variable or type 'ClassRefsInArrayElementType2'">ClassRefsInArrayElementType2</error>")]
+        var bar:Array;
+
+        static function foo() {
+            <error descr="Instance member is not accessible">xxx</error> = 1;
+            xxx2 = 1;
+        }
+    }
+}
+
+class Foo {
+  protected var xxx;
+  protected static var xxx2;
+}

@@ -1,0 +1,16 @@
+package <error>foo</error> {
+import flash.events.EventDispatcher;
+
+public class GenerateGetterAndSetter extends EventDispatcher {
+    internal var _i:EventDispatcher;
+    [ArrayElementType("String")]
+    public var _j:Array;
+    public var t:int;
+    var k;   <caret>
+}
+}
+package <error>bar</error> {
+  import foo.GenerateGetterAndSetter;
+  var <error>a</error>:GenerateGetterAndSetter;
+  a.t = a.t + 1;
+}

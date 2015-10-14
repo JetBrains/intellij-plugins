@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ex.QuickFixWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
@@ -19,11 +20,15 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
     doTest(true);
   }
 
+  public void testJava8Step() {
+    doTest(false);
+  }
+
   private void doTest(boolean createAll) {
     CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new CucumberStepInspection());
-    myFixture.copyDirectoryToProject("createStep", "");
-    myFixture.configureByFile("createStep/" + getTestName(true) + ".feature");
+    myFixture.copyDirectoryToProject("createStep/" + getTestName(true) , "");
+    myFixture.configureByFile("createStep/" + getTestName(true) + "/test.feature");
 
     myFixture.checkHighlighting(true, false, false);
 
@@ -37,9 +42,9 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
 
     if (quickFix != null) {
       myFixture.launchAction(quickFix);
-      VirtualFile expectedFile = myFixture.findFileInTempDir("CreateAllStepDefs.java");
+      VirtualFile expectedFile = myFixture.findFileInTempDir("StepDefs.java");
       myFixture.openFileInEditor(expectedFile);
-      myFixture.checkResultByFile("createStep/CreateAllStepDefs_fixed.txt");
+      myFixture.checkResultByFile("createStep/" + getTestName(true) + "/StepDefs_fixed.txt");
     }
   }
 
@@ -57,5 +62,10 @@ public class CucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase 
   @Override
   protected boolean isWriteActionRequired() {
     return false;
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
   }
 }

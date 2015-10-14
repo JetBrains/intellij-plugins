@@ -1,0 +1,8 @@
+package xxx {
+  public class AAA {
+    public var ttt:* = new Object
+  }
+}
+
+var z:xxx.AAA;
+z.t<caret>tt

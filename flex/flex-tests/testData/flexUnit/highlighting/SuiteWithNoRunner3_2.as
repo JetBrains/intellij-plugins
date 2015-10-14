@@ -1,0 +1,7 @@
+package {
+
+public class MyTest {
+
+
+}
+}

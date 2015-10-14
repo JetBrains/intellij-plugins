@@ -1,0 +1,10 @@
+package test {
+ var t = new ClassA<caret>
+}
+
+package com.a {
+public class ClassA {
+    public function ClassA() {
+    }
+}
+}

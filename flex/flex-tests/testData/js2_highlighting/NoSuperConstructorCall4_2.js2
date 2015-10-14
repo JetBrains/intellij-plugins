@@ -1,0 +1,21 @@
+package {
+  import com.Foo;
+  import zzz.Bar;
+  import zzz2.*;
+
+  public class A {
+    public function A(p: Foo, b: zzz.Bar, e, b2: zzz2.Bar=null, ...others) {}
+  }
+}
+
+package com {
+   public class Foo{}
+}
+
+package zzz {
+   public class Bar{}
+}
+
+package zzz2 {
+   public class Bar{}
+}

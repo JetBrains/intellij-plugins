@@ -1,0 +1,9 @@
+class Constants {
+    public static const SOME_CONST:String = "test";
+}
+
+class Foo2 {
+    public function f():void {
+        var aa:String = SOME<caret>
+    }
+}

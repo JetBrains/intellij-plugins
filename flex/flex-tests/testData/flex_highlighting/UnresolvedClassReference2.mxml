@@ -1,0 +1,8 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Style>
+        Application {
+            disabledColor: undefined;
+            upSkin: ClassReference("<error>foo</error>.<error>boo2</error>.<error>Missing</error>");
+        }
+    </mx:Style>
+</mx:Application>

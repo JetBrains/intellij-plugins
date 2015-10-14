@@ -1,0 +1,119 @@
+var x:Array;
+for (var y:<error descr="Variable type Array is not assignable to type String">Array</error> in x
+)
+{
+}
+for (var y2:String in x) {
+}
+for (var y3:int in x
+)
+{
+}
+
+class Foo {
+    import flash.utils.Dictionary;
+
+    private var dictionary:Dictionary;
+    private var map:Map;
+    private var string:String;
+
+    function foo() {
+        // actual: error: Variable type Object is not assignable to type String
+        // expected: warning: Array key type should be String
+        var stringArray:Array = ["ff"];
+        for (var key:<weak_warning descr="Array key type should be String">Object</weak_warning> in stringArray
+    )
+        {
+            key = "g";
+        }
+
+        var array:Object = new Array("a", "b", "c");
+        for (var objKey:<weak_warning descr="Array key type should be String">Object</weak_warning> in array
+    )
+        {
+            key = "g";
+        }
+    }
+
+    function bar() {
+        // actual: Variable type Object is not assignable to type String
+        // expected: no error
+        for (var key:Object in dictionary) {
+            key = "g";
+        }
+
+        for (var key2:String in dictionary) {
+            key2 = "g";
+        }
+
+        for (var key2_2:* in dictionary) {
+            key2_2 = "g";
+        }
+
+        for (var key10:XML in dictionary){}
+        for (var key11:Foo in dictionary){}
+        for (var key12:* in dictionary){}
+        for (var key13:Object in dictionary){}
+        for (var key14:String in dictionary){}
+        for (var key141:int in dictionary){}
+        for (var key142:uint in dictionary){}
+        for (var key143:Number in dictionary){}
+
+        for (var key15:XML in map){}
+        for (var key16:Foo in map){}
+        for (var key17:* in map){}
+        for (var key18:Object in map){}
+        for (var key19:String in map){}
+        for (var key191:int in map){}
+        for (var key192:uint in map){}
+        for (var key193:Number in map){}
+
+        var obj:Object;
+        for (var key20:<weak_warning descr="Array key type should be String">XML</weak_warning> in obj){}
+        for (var key21:<weak_warning descr="Array key type should be String">Foo</weak_warning> in obj){}
+        for (var key22:<weak_warning descr="Array key type should be String">*</weak_warning> in obj){}
+        for (var key23:<weak_warning descr="Array key type should be String">Object</weak_warning> in obj){}
+        for (var key24:String in obj){}
+        for (var key241:<weak_warning descr="Array key type should be String">int</weak_warning> in obj){}
+        for (var key242:<weak_warning descr="Array key type should be String">uint</weak_warning> in obj){}
+        for (var key243:<weak_warning descr="Array key type should be String">Number</weak_warning> in obj){}
+
+        var arr:Array;
+        for (var key25:<error descr="Variable type XML is not assignable to type String">XML</error> in arr){}
+        for (var key26:<error descr="Variable type Foo is not assignable to type String">Foo</error> in arr){}
+        for (var key27:<weak_warning descr="Array key type should be String">*</weak_warning> in arr){}
+        for (var key28:<weak_warning descr="Array key type should be String">Object</weak_warning> in arr){}
+        for (var key29:String in arr){}
+        for (var key291:int in arr){}
+        for (var key292:uint in arr){}
+        for (var key293:Number in arr){}
+
+        for (var key4:Object in map) {
+            key = "g";
+        }
+
+        for (var key5:<weak_warning descr="Array key type should be String">Object</weak_warning> in string
+    )
+        {
+            key = "g";
+        }
+
+        var testMethodDictionary:Array;
+        for (var testMethod:<weak_warning descr="Array key type should be String">*</weak_warning> in testMethodDictionary
+    )
+        {
+        }
+
+        for (var fieldKey:<weak_warning descr="Array key type should be String">*</weak_warning> in this) {}
+    }
+}
+
+class Map extends Dictionary {
+}
+
+var xxx:Array;
+var yyy:String = xxx[1].pop();
+for each(var node:XML in <></>) {
+    var tmp_str:String = node.name();
+    var tmp_str2:String = <error descr="Initializer type Object is not assignable to variable type String"><a></a>.name()</error>;
+}

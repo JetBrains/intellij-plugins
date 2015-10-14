@@ -1,0 +1,4 @@
+class C {}
+function x() {
+    x = C(arg<caret>
+}

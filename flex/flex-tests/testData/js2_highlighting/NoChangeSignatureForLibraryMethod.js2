@@ -1,0 +1,8 @@
+package {
+public class NoChangeSignatureForLibraryMethod {
+    private function foo():* {
+        var v : Boolean;
+        decodeURI(<error>1</error>)
+}
+}
+}

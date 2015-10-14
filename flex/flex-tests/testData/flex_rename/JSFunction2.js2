@@ -1,0 +1,4 @@
+
+package foo {
+    function JSFunction2() {}
+}

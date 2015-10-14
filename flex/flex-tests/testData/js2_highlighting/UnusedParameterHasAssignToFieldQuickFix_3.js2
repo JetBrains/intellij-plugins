@@ -1,0 +1,10 @@
+package {
+  public class UnusedParameterHasAssignToFieldQuickFix_3 {
+    private var <warning>_xxx</warning>:int;
+    private var _yyy:int;
+    public function UnusedParameterHasAssignToFieldQuickFix_3(<warning>x<caret>xx</warning>:int, yyy): void {
+        super();
+        _yyy = yyy;
+    }
+  }
+}

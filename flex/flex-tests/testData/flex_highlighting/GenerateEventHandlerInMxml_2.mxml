@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        public function button2_addHandler():void {
+        }
+        function button1_addHandler():void {
+        }
+
+    ]]></mx:Script>
+    <mx:Button add="var i:i<caret>nt"/>
+</mx:Application>

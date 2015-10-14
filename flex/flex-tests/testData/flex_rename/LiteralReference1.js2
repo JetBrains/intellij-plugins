@@ -1,0 +1,9 @@
+package {
+  public class Abc {
+      var fo<caret>o;
+
+      function zz() {
+          var s = "foo";
+      }
+  }
+}

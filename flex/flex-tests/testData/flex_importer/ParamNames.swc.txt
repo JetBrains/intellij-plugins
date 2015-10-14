@@ -1,0 +1,6 @@
+
+public interface MyInterface
+{
+  native function doIt(a:int = 1):*;
+}
+

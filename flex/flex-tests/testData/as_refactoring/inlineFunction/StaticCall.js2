@@ -1,0 +1,14 @@
+class C {
+    static var a, b;
+
+    function foo() {
+        var c = C.fo<caret>o2();
+    }
+
+    /**
+     * Very important function
+     */
+    static function foo2() {
+        return a + b;
+    }
+}

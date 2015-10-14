@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script source="${SOME_ABSOLUTE_PATH}"/>
+    <mx:Script source="MxScriptAndStyleSource.mxml"/>
+    <mx:Script source="./.././pack/MxScriptAndStyleSource.mxml"/>
+    <mx:Script source="../empty.txt"/>
+    <mx:Script source="/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:Script source="<error>pack</error>/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:Script source="/<error>pack</error>/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:Script source="<error>empty.txt</error>"/>
+    <mx:Script source="/<error>empty.txt</error>"/>
+    <mx:Script source="<error>http:</error>/<error></error>/<error>some.site</error>/<error>style.css</error>"/>
+    <mx:Script source="<error>dir</error>/<error>css.css</error>"/>
+
+    <mx:Style source="${SOME_ABSOLUTE_PATH}"/>
+    <mx:Style source="MxScriptAndStyleSource.mxml"/>
+    <mx:Style source="./.././pack/MxScriptAndStyleSource.mxml"/>
+    <mx:Style source="../empty.txt"/>
+    <mx:Style source="/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:Style source="pack/MxScriptAndStyleSource.mxml"/>
+    <mx:Style source="/pack/MxScriptAndStyleSource.mxml"/>
+    <mx:Style source="empty.txt"/>
+    <mx:Style source="/empty.txt"/>
+    <mx:Style source="http://some.site/style.css"/>
+    <mx:Style source="dir/css.css"/>
+
+    <mx:XML source="${SOME_ABSOLUTE_PATH}"/>
+    <mx:XML source="MxScriptAndStyleSource.mxml"/>
+    <mx:XML source="./.././pack/MxScriptAndStyleSource.mxml"/>
+    <mx:XML source="../empty.txt"/>
+    <mx:XML source="/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:XML source="<error>pack</error>/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:XML source="/pack/MxScriptAndStyleSource.mxml"/>
+    <mx:XML source="<error>empty.txt</error>"/>
+    <mx:XML source="/empty.txt"/>
+
+    <mx:Model source="${SOME_ABSOLUTE_PATH}"/>
+    <mx:Model source="MxScriptAndStyleSource.mxml"/>
+    <mx:Model source="./.././pack/MxScriptAndStyleSource.mxml"/>
+    <mx:Model source="../empty.txt"/>
+    <mx:Model source="/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:Model source="<error>pack</error>/<error>MxScriptAndStyleSource.mxml</error>"/>
+    <mx:Model source="/pack/MxScriptAndStyleSource.mxml"/>
+    <mx:Model source="<error>empty.txt</error>"/>
+    <mx:Model source="/empty.txt"/>
+</mx:Application>

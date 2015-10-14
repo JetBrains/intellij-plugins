@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+      import foo.getFoo
+      getFoo("xxx");
+      private static const THIS_IS_NOT_USED_ANYWHERE:int = 0; // TODO:should be reported as unused
+      private function onclick(e:Event) {}
+    </mx:Script>
+  <mx:Button click="onclick(event)"/>
+</mx:Application>

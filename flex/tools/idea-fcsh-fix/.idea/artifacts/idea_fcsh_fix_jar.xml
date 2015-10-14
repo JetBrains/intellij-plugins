@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="idea-fcsh-fix.jar">
+    <output-path>$PROJECT_DIR$/../../lib</output-path>
+    <root id="archive" name="idea-fcsh-fix.jar">
+      <element id="module-output" name="common" />
+      <element id="module-output" name="flex3" />
+      <element id="module-output" name="flex4_0" />
+      <element id="module-output" name="launcher" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/launcher/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="flex45_0" />
+    </root>
+  </artifact>
+</component>

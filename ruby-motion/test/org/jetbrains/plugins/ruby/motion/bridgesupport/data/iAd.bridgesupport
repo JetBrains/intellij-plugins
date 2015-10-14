@@ -1,0 +1,186 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant declared_type='NSString*' name='ADBannerContentSizeIdentifier320x50' const='true' type='@'/>
+<constant declared_type='NSString*' name='ADBannerContentSizeIdentifier480x32' const='true' type='@'/>
+<constant declared_type='NSString*' name='ADBannerContentSizeIdentifierLandscape' const='true' type='@'/>
+<constant declared_type='NSString*' name='ADBannerContentSizeIdentifierPortrait' const='true' type='@'/>
+<constant declared_type='NSString*' name='ADErrorDomain' const='true' type='@'/>
+<enum value='6' name='ADErrorApplicationInactive'/>
+<enum value='5' name='ADErrorBannerVisibleWithoutContent'/>
+<enum value='4' name='ADErrorConfigurationError'/>
+<enum value='3' name='ADErrorInventoryUnavailable'/>
+<enum value='2' name='ADErrorLoadingThrottled'/>
+<enum value='1' name='ADErrorServerFailure'/>
+<enum value='0' name='ADErrorUnknown'/>
+<class name='ADBannerView'>
+<method selector='advertisingSection'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='cancelBannerViewAction'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='currentContentSizeIdentifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isBannerLoaded'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isBannerViewActionInProgress'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='requiredContentSizeIdentifiers'>
+<retval declared_type='NSSet*' type='@'/>
+</method>
+<method selector='setAdvertisingSection:'>
+<arg declared_type='NSString*' name='advertisingSection' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCurrentContentSizeIdentifier:'>
+<arg declared_type='NSString*' name='currentContentSizeIdentifier' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDelegate:'>
+<arg declared_type='id' name='delegate' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRequiredContentSizeIdentifiers:'>
+<arg declared_type='NSSet*' name='requiredContentSizeIdentifiers' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='sizeFromBannerContentSizeIdentifier:' class_method='true'>
+<arg declared_type='NSString*' name='contentSizeIdentifier' type='@' index='0'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</method>
+</class>
+<class name='ADInterstitialAd'>
+<method selector='cancelAction'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isActionInProgress'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isLoaded'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='presentFromViewController:'>
+<arg declared_type='UIViewController*' name='viewController' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='presentInView:'>
+<arg declared_type='UIView*' name='containerView' type='@' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='setDelegate:'>
+<arg declared_type='id' name='delegate' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='bannerView:didFailToReceiveAdWithError:'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<arg declared_type='NSError*' name='error' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='bannerViewActionDidFinish:'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='bannerViewActionShouldBegin:willLeaveApplication:'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<arg declared_type='BOOL' name='willLeave' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='bannerViewDidLoadAd:'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='bannerViewWillLoadAd:'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAd:didFailWithError:'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<arg declared_type='NSError*' name='error' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdActionDidFinish:'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdActionShouldBegin:willLeaveApplication:'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<arg declared_type='BOOL' name='willLeave' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='interstitialAdDidLoad:'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdDidUnload:'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdWillLoad:'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<informal_protocol name='ADBannerViewDelegate'>
+<method selector='bannerView:didFailToReceiveAdWithError:' type='v16@0:4@8@12'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<arg declared_type='NSError*' name='error' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='bannerViewActionDidFinish:' type='v12@0:4@8'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='bannerViewActionShouldBegin:willLeaveApplication:' type='B16@0:4@8B12'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<arg declared_type='BOOL' name='willLeave' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='bannerViewDidLoadAd:' type='v12@0:4@8'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='bannerViewWillLoadAd:' type='v12@0:4@8'>
+<arg declared_type='ADBannerView*' name='banner' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='ADInterstitialAdDelegate'>
+<method selector='interstitialAd:didFailWithError:' type='v16@0:4@8@12'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<arg declared_type='NSError*' name='error' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdActionDidFinish:' type='v12@0:4@8'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdActionShouldBegin:willLeaveApplication:' type='B16@0:4@8B12'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<arg declared_type='BOOL' name='willLeave' type='B' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='interstitialAdDidLoad:' type='v12@0:4@8'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdDidUnload:' type='v12@0:4@8'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='interstitialAdWillLoad:' type='v12@0:4@8'>
+<arg declared_type='ADInterstitialAd*' name='interstitialAd' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+</signatures>

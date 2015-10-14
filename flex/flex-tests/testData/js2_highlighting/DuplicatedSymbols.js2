@@ -1,0 +1,17 @@
+class Test {
+  private var variable:String;
+  public function test():void { var variable:String; this.variable = variable; }
+
+  public static const <error descr="Duplicate declaration">x</error> = 1;
+  public static const <error descr="Duplicate declaration">x</error> = 1;
+}
+
+class Base {
+    protected var width:int;
+    protected static const XXX:int = 1;
+}
+
+class Derived extends Base {
+    public var <error descr="Conflicting inherited declaration Base.width was found in namespace protected">width</error>:int;
+    protected static const XXX:int = 1;
+}

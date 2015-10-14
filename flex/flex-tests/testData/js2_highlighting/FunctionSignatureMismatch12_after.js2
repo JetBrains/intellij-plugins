@@ -1,0 +1,9 @@
+package {
+class FunctionSignatureMismatch12 {
+  private var say: Function = function (msg:String, b:Boolean):void {}
+
+  private function foo() {
+    say("hello", true);
+  }
+}
+}

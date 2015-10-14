@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application   xmlns:unused1="Unused1"
+                xmlns:mx="http://www.adobe.com/2006/mxml"
+                xmlns:unused2="Unused2"  >
+    <mx:Script>
+        <warning>import some.unusedimport.withstar.*;</warning>
+        <warning>import some.unusedimp<caret>ort.UnusedClass;</warning>
+        import some.usedimport.UsedClass;
+        import some.usedimport.withstar.*;
+        import some.usedimport.UsedClass3;
+        var i:UsedClass;
+        function foo (<warning descr="Unused parameter x">x</warning>:Class) {}
+        function bar() {
+        foo(UsedClass3)
+        }
+        <warning descr="Qualified name may be replaced with import statement">mypackage.getDefinitionByName</warning>("UsedClass3");
+    </mx:Script>
+    <mx:Label onclick="{UsedClass2}"/>
+</mx:Application>

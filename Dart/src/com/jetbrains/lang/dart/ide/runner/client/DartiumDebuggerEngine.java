@@ -20,12 +20,12 @@ import com.intellij.util.Url;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xml.util.HtmlUtil;
-import com.jetbrains.javascript.debugger.Location;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.debugger.Location;
 
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   private static final Logger LOG = Logger.getInstance(DartiumDebuggerEngine.class);

@@ -93,7 +93,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     if (myIndex != null) {
       return AngularIndexUtil.resolve(xmlElement.getProject(), myIndex, value);
     }
-    return super.getEnumeratedValueDeclaration(xmlElement, value);
+    return xmlElement;
   }
 
   @Nullable

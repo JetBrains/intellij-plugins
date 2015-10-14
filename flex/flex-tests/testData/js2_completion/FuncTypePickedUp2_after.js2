@@ -1,0 +1,12 @@
+class A {
+  native function method();
+}
+
+class B {
+  native function met();
+}
+
+native function get myvar():A;
+native function get myDvar2():B;
+
+myvar.method()<caret>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    function bar() {}
+  </mx:Script>
+  <mx:transitions>
+  <mx:Transition fromState="<error>foo</error>" toState="<error>bar</error>">
+    <mx:Resize easingFunction="<error>foo</error>" />
+    <mx:Resize easingFunction="bar" />
+  </mx:Transition>
+  <mx:Transition fromState="state" toState="state2"/>
+  <mx:Transition fromState="*" toState="*"/>
+  </mx:transitions>
+  <mx:states>
+  <mx:State name = "state"/>
+  <mx:State name = "state2" basedOn="state"/>
+  <mx:State name = "state4" basedOn="<error>foo</error>"/>
+  <mx:State name = "state5" basedOn="">
+    <mx:SetProperty target="{loginButton}"
+            name="label" value="Register"/>
+    <mx:SetProperty target="{loginButton}"
+            name="<error>label2</error>" value="Register"/>
+    <mx:SetProperty name="width" value="200"/>
+    <mx:SetProperty name="<error>width2</error>" value="200"/>
+    <mx:Label id="loginButton" />
+  </mx:State>
+    <mx:State name = <error>"state3"</error>/>
+  <mx:State name = <error>"state3"</error>/>
+  </mx:states>
+</mx:Application>

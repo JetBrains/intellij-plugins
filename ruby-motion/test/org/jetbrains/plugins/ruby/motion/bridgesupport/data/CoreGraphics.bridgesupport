@@ -1,0 +1,2567 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct type='{CGAffineTransform=&quot;a&quot;f&quot;b&quot;f&quot;c&quot;f&quot;d&quot;f&quot;tx&quot;f&quot;ty&quot;f}' name='CGAffineTransform'>
+<field declared_type='CGFloat' type='f' name='a'/>
+<field declared_type='CGFloat' type='f' name='b'/>
+<field declared_type='CGFloat' type='f' name='c'/>
+<field declared_type='CGFloat' type='f' name='d'/>
+<field declared_type='CGFloat' type='f' name='tx'/>
+<field declared_type='CGFloat' type='f' name='ty'/>
+</struct>
+<struct type='{CGDataConsumerCallbacks=&quot;putBytes&quot;^?&quot;releaseConsumer&quot;^?}' name='CGDataConsumerCallbacks'>
+<field declared_type='CGDataConsumerPutBytesCallback' type='^?' function_pointer='true' name='putBytes'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v' const='true'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='size_t' type='L'/>
+</field>
+<field declared_type='CGDataConsumerReleaseInfoCallback' type='^?' function_pointer='true' name='releaseConsumer'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGDataProviderCallbacks=&quot;getBytes&quot;^?&quot;skipBytes&quot;^?&quot;rewind&quot;^?&quot;releaseProvider&quot;^?}' name='CGDataProviderCallbacks'>
+<field declared_type='CGDataProviderGetBytesCallback' type='^?' function_pointer='true' name='getBytes'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='size_t' type='L'/>
+</field>
+<field declared_type='CGDataProviderSkipBytesCallback' type='^?' function_pointer='true' name='skipBytes'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGDataProviderRewindCallback' type='^?' function_pointer='true' name='rewind'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGDataProviderReleaseInfoCallback' type='^?' function_pointer='true' name='releaseProvider'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGDataProviderDirectAccessCallbacks=&quot;getBytePointer&quot;^?&quot;releaseBytePointer&quot;^?&quot;getBytes&quot;^?&quot;releaseProvider&quot;^?}' name='CGDataProviderDirectAccessCallbacks'>
+<field declared_type='CGDataProviderGetBytePointerCallback' type='^?' function_pointer='true' name='getBytePointer'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void*' type='^v' const='true'/>
+</field>
+<field declared_type='CGDataProviderReleaseBytePointerCallback' type='^?' function_pointer='true' name='releaseBytePointer'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGDataProviderGetBytesAtOffsetCallback' type='^?' function_pointer='true' name='getBytes'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='size_t' type='L'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='size_t' type='L'/>
+</field>
+<field declared_type='CGDataProviderReleaseInfoCallback' type='^?' function_pointer='true' name='releaseProvider'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGDataProviderDirectCallbacks=&quot;version&quot;I&quot;getBytePointer&quot;^?&quot;releaseBytePointer&quot;^?&quot;getBytesAtPosition&quot;^?&quot;releaseInfo&quot;^?}' name='CGDataProviderDirectCallbacks'>
+<field declared_type='unsigned int' type='I' name='version'/>
+<field declared_type='CGDataProviderGetBytePointerCallback' type='^?' function_pointer='true' name='getBytePointer'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void*' type='^v' const='true'/>
+</field>
+<field declared_type='CGDataProviderReleaseBytePointerCallback' type='^?' function_pointer='true' name='releaseBytePointer'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v' const='true'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGDataProviderGetBytesAtPositionCallback' type='^?' function_pointer='true' name='getBytesAtPosition'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='off_t' type='q'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='size_t' type='L'/>
+</field>
+<field declared_type='CGDataProviderReleaseInfoCallback' type='^?' function_pointer='true' name='releaseInfo'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGDataProviderSequentialCallbacks=&quot;version&quot;I&quot;getBytes&quot;^?&quot;skipForward&quot;^?&quot;rewind&quot;^?&quot;releaseInfo&quot;^?}' name='CGDataProviderSequentialCallbacks'>
+<field declared_type='unsigned int' type='I' name='version'/>
+<field declared_type='CGDataProviderGetBytesCallback' type='^?' function_pointer='true' name='getBytes'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='size_t' type='L'/>
+</field>
+<field declared_type='CGDataProviderSkipForwardCallback' type='^?' function_pointer='true' name='skipForward'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='off_t' type='q'/>
+<retval declared_type='off_t' type='q'/>
+</field>
+<field declared_type='CGDataProviderRewindCallback' type='^?' function_pointer='true' name='rewind'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGDataProviderReleaseInfoCallback' type='^?' function_pointer='true' name='releaseInfo'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGFunctionCallbacks=&quot;version&quot;I&quot;evaluate&quot;^?&quot;releaseInfo&quot;^?}' name='CGFunctionCallbacks'>
+<field declared_type='unsigned int' type='I' name='version'/>
+<field declared_type='CGFunctionEvaluateCallback' type='^?' function_pointer='true' name='evaluate'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='CGFloat*' type='^f' const='true'/>
+<arg declared_type='CGFloat*' type='^f'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGFunctionReleaseInfoCallback' type='^?' function_pointer='true' name='releaseInfo'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGPathElement=&quot;type&quot;i&quot;points&quot;^{CGPoint}}' name='CGPathElement'>
+<field declared_type='CGPathElementType' type='i' name='type'/>
+<field declared_type='CGPoint*' type='^{CGPoint=ff}' name='points'/>
+</struct>
+<struct type='{CGPatternCallbacks=&quot;version&quot;I&quot;drawPattern&quot;^?&quot;releaseInfo&quot;^?}' name='CGPatternCallbacks'>
+<field declared_type='unsigned int' type='I' name='version'/>
+<field declared_type='CGPatternDrawPatternCallback' type='^?' function_pointer='true' name='drawPattern'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='CGContextRef' type='^{CGContext=}'/>
+<retval declared_type='void' type='v'/>
+</field>
+<field declared_type='CGPatternReleaseInfoCallback' type='^?' function_pointer='true' name='releaseInfo'>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</field>
+</struct>
+<struct type='{CGPoint=&quot;x&quot;f&quot;y&quot;f}' name='CGPoint'>
+<field declared_type='CGFloat' type='f' name='x'/>
+<field declared_type='CGFloat' type='f' name='y'/>
+</struct>
+<struct type='{CGRect=&quot;origin&quot;{CGPoint=&quot;x&quot;f&quot;y&quot;f}&quot;size&quot;{CGSize=&quot;width&quot;f&quot;height&quot;f}}' name='CGRect'>
+<field declared_type='CGPoint' type='{CGPoint=&quot;x&quot;f&quot;y&quot;f}' name='origin'/>
+<field declared_type='CGSize' type='{CGSize=&quot;width&quot;f&quot;height&quot;f}' name='size'/>
+</struct>
+<struct type='{CGSize=&quot;width&quot;f&quot;height&quot;f}' name='CGSize'>
+<field declared_type='CGFloat' type='f' name='width'/>
+<field declared_type='CGFloat' type='f' name='height'/>
+</struct>
+<cftype type='^{CGColor=}' name='CGColorRef'/>
+<cftype type='^{CGColorSpace=}' name='CGColorSpaceRef'/>
+<cftype type='^{CGContext=}' name='CGContextRef'/>
+<cftype type='^{CGDataConsumer=}' name='CGDataConsumerRef'/>
+<cftype type='^{CGDataProvider=}' name='CGDataProviderRef'/>
+<cftype type='^{CGFont=}' name='CGFontRef'/>
+<cftype type='^{CGFunction=}' name='CGFunctionRef'/>
+<cftype type='^{CGGradient=}' name='CGGradientRef'/>
+<cftype type='^{CGImage=}' name='CGImageRef'/>
+<cftype type='^{CGLayer=}' name='CGLayerRef'/>
+<cftype type='^{CGPath=}' name='CGMutablePathRef'/>
+<cftype type='^{CGPDFArray=}' name='CGPDFArrayRef'/>
+<cftype type='^{CGPDFContentStream=}' name='CGPDFContentStreamRef'/>
+<cftype type='^{CGPDFDictionary=}' name='CGPDFDictionaryRef'/>
+<cftype type='^{CGPDFDocument=}' name='CGPDFDocumentRef'/>
+<cftype type='^{CGPDFOperatorTable=}' name='CGPDFOperatorTableRef'/>
+<cftype type='^{CGPDFPage=}' name='CGPDFPageRef'/>
+<cftype type='^{CGPDFScanner=}' name='CGPDFScannerRef'/>
+<cftype type='^{CGPDFStream=}' name='CGPDFStreamRef'/>
+<cftype type='^{CGPDFString=}' name='CGPDFStringRef'/>
+<cftype type='^{CGPath=}' name='CGPathRef'/>
+<cftype type='^{CGPattern=}' name='CGPatternRef'/>
+<cftype type='^{CGShading=}' name='CGShadingRef'/>
+<constant declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' const='true' name='CGAffineTransformIdentity'/>
+<constant declared_type='CGPoint' type='{CGPoint=ff}' const='true' name='CGPointZero'/>
+<constant declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='CGRectInfinite'/>
+<constant declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='CGRectNull'/>
+<constant declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='CGRectZero'/>
+<constant declared_type='CGSize' type='{CGSize=ff}' const='true' name='CGSizeZero'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGFontVariationAxisDefaultValue'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGFontVariationAxisMaxValue'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGFontVariationAxisMinValue'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGFontVariationAxisName'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextAllowsCopying'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextAllowsPrinting'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextArtBox'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextAuthor'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextBleedBox'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextCreator'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextCropBox'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextEncryptionKeyLength'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextKeywords'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextMediaBox'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextOwnerPassword'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextSubject'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextTitle'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextTrimBox'/>
+<constant declared_type='CFStringRef' type='^{__CFString=}' const='true' name='kCGPDFContextUserPassword'/>
+<enum value='1' name='CGFLOAT_DEFINED'/>
+<enum value='0' name='CGFLOAT_IS_DOUBLE'/>
+<enum value='65534' name='CGGlyphMax'/>
+<enum value='0' name='CGGlyphMin'/>
+<enum value='2' name='CGPDFDataFormatJPEG2000'/>
+<enum value='1' name='CGPDFDataFormatJPEGEncoded'/>
+<enum value='0' name='CGPDFDataFormatRaw'/>
+<enum value='2' name='CGRectMaxXEdge'/>
+<enum value='3' name='CGRectMaxYEdge'/>
+<enum value='0' name='CGRectMinXEdge'/>
+<enum value='1' name='CGRectMinYEdge'/>
+<enum value='31' name='kCGBitmapAlphaInfoMask'/>
+<enum value='12288' name='kCGBitmapByteOrder16Big'/>
+<enum value='4096' name='kCGBitmapByteOrder16Host'/>
+<enum value='4096' name='kCGBitmapByteOrder16Little'/>
+<enum value='16384' name='kCGBitmapByteOrder32Big'/>
+<enum value='8192' name='kCGBitmapByteOrder32Host'/>
+<enum value='8192' name='kCGBitmapByteOrder32Little'/>
+<enum value='0' name='kCGBitmapByteOrderDefault'/>
+<enum value='28672' name='kCGBitmapByteOrderMask'/>
+<enum value='256' name='kCGBitmapFloatComponents'/>
+<enum value='16' name='kCGBlendModeClear'/>
+<enum value='14' name='kCGBlendModeColor'/>
+<enum value='7' name='kCGBlendModeColorBurn'/>
+<enum value='6' name='kCGBlendModeColorDodge'/>
+<enum value='17' name='kCGBlendModeCopy'/>
+<enum value='4' name='kCGBlendModeDarken'/>
+<enum value='24' name='kCGBlendModeDestinationAtop'/>
+<enum value='22' name='kCGBlendModeDestinationIn'/>
+<enum value='23' name='kCGBlendModeDestinationOut'/>
+<enum value='21' name='kCGBlendModeDestinationOver'/>
+<enum value='10' name='kCGBlendModeDifference'/>
+<enum value='11' name='kCGBlendModeExclusion'/>
+<enum value='9' name='kCGBlendModeHardLight'/>
+<enum value='12' name='kCGBlendModeHue'/>
+<enum value='5' name='kCGBlendModeLighten'/>
+<enum value='15' name='kCGBlendModeLuminosity'/>
+<enum value='1' name='kCGBlendModeMultiply'/>
+<enum value='0' name='kCGBlendModeNormal'/>
+<enum value='3' name='kCGBlendModeOverlay'/>
+<enum value='26' name='kCGBlendModePlusDarker'/>
+<enum value='27' name='kCGBlendModePlusLighter'/>
+<enum value='13' name='kCGBlendModeSaturation'/>
+<enum value='2' name='kCGBlendModeScreen'/>
+<enum value='8' name='kCGBlendModeSoftLight'/>
+<enum value='20' name='kCGBlendModeSourceAtop'/>
+<enum value='18' name='kCGBlendModeSourceIn'/>
+<enum value='19' name='kCGBlendModeSourceOut'/>
+<enum value='25' name='kCGBlendModeXOR'/>
+<enum value='2' name='kCGColorSpaceModelCMYK'/>
+<enum value='4' name='kCGColorSpaceModelDeviceN'/>
+<enum value='5' name='kCGColorSpaceModelIndexed'/>
+<enum value='3' name='kCGColorSpaceModelLab'/>
+<enum value='0' name='kCGColorSpaceModelMonochrome'/>
+<enum value='6' name='kCGColorSpaceModelPattern'/>
+<enum value='1' name='kCGColorSpaceModelRGB'/>
+<enum value='-1' name='kCGColorSpaceModelUnknown'/>
+<enum value='0' name='kCGEncodingFontSpecific'/>
+<enum value='1' name='kCGEncodingMacRoman'/>
+<enum value='1025' name='kCGErrorApplicationAlreadyRunning'/>
+<enum value='1026' name='kCGErrorApplicationCanOnlyBeRunInOneSessionAtATime'/>
+<enum value='1023' name='kCGErrorApplicationIncorrectExecutableFormatFound'/>
+<enum value='1024' name='kCGErrorApplicationIsLaunching'/>
+<enum value='1016' name='kCGErrorApplicationNotPermittedToExecute'/>
+<enum value='1015' name='kCGErrorApplicationRequiresNewerSystem'/>
+<enum value='1004' name='kCGErrorCannotComplete'/>
+<enum value='1027' name='kCGErrorClassicApplicationsMustBeLaunchedByClassic'/>
+<enum value='1000' name='kCGErrorFailure'/>
+<enum value='1000' name='kCGErrorFirst'/>
+<enum value='1028' name='kCGErrorForkFailed'/>
+<enum value='1001' name='kCGErrorIllegalArgument'/>
+<enum value='1002' name='kCGErrorInvalidConnection'/>
+<enum value='1003' name='kCGErrorInvalidContext'/>
+<enum value='1010' name='kCGErrorInvalidOperation'/>
+<enum value='1029' name='kCGErrorLast'/>
+<enum value='1005' name='kCGErrorNameTooLong'/>
+<enum value='1009' name='kCGErrorNoCurrentPoint'/>
+<enum value='1011' name='kCGErrorNoneAvailable'/>
+<enum value='1006' name='kCGErrorNotImplemented'/>
+<enum value='1007' name='kCGErrorRangeCheck'/>
+<enum value='1029' name='kCGErrorRetryRegistration'/>
+<enum value='0' name='kCGErrorSuccess'/>
+<enum value='1008' name='kCGErrorTypeCheck'/>
+<enum value='65535' name='kCGFontIndexInvalid'/>
+<enum value='65534' name='kCGFontIndexMax'/>
+<enum value='1' name='kCGFontPostScriptFormatType1'/>
+<enum value='3' name='kCGFontPostScriptFormatType3'/>
+<enum value='42' name='kCGFontPostScriptFormatType42'/>
+<enum value='65534' name='kCGGlyphMax'/>
+<enum value='2' name='kCGGradientDrawsAfterEndLocation'/>
+<enum value='1' name='kCGGradientDrawsBeforeStartLocation'/>
+<enum value='4' name='kCGImageAlphaFirst'/>
+<enum value='3' name='kCGImageAlphaLast'/>
+<enum value='0' name='kCGImageAlphaNone'/>
+<enum value='6' name='kCGImageAlphaNoneSkipFirst'/>
+<enum value='5' name='kCGImageAlphaNoneSkipLast'/>
+<enum value='7' name='kCGImageAlphaOnly'/>
+<enum value='2' name='kCGImageAlphaPremultipliedFirst'/>
+<enum value='1' name='kCGImageAlphaPremultipliedLast'/>
+<enum value='0' name='kCGInterpolationDefault'/>
+<enum value='3' name='kCGInterpolationHigh'/>
+<enum value='2' name='kCGInterpolationLow'/>
+<enum value='4' name='kCGInterpolationMedium'/>
+<enum value='1' name='kCGInterpolationNone'/>
+<enum value='0' name='kCGLineCapButt'/>
+<enum value='1' name='kCGLineCapRound'/>
+<enum value='2' name='kCGLineCapSquare'/>
+<enum value='2' name='kCGLineJoinBevel'/>
+<enum value='0' name='kCGLineJoinMiter'/>
+<enum value='1' name='kCGLineJoinRound'/>
+<enum value='4' name='kCGPDFArtBox'/>
+<enum value='2' name='kCGPDFBleedBox'/>
+<enum value='1' name='kCGPDFCropBox'/>
+<enum value='0' name='kCGPDFMediaBox'/>
+<enum value='7' name='kCGPDFObjectTypeArray'/>
+<enum value='2' name='kCGPDFObjectTypeBoolean'/>
+<enum value='8' name='kCGPDFObjectTypeDictionary'/>
+<enum value='3' name='kCGPDFObjectTypeInteger'/>
+<enum value='5' name='kCGPDFObjectTypeName'/>
+<enum value='1' name='kCGPDFObjectTypeNull'/>
+<enum value='4' name='kCGPDFObjectTypeReal'/>
+<enum value='9' name='kCGPDFObjectTypeStream'/>
+<enum value='6' name='kCGPDFObjectTypeString'/>
+<enum value='3' name='kCGPDFTrimBox'/>
+<enum value='1' name='kCGPathEOFill'/>
+<enum value='4' name='kCGPathEOFillStroke'/>
+<enum value='3' name='kCGPathElementAddCurveToPoint'/>
+<enum value='1' name='kCGPathElementAddLineToPoint'/>
+<enum value='2' name='kCGPathElementAddQuadCurveToPoint'/>
+<enum value='4' name='kCGPathElementCloseSubpath'/>
+<enum value='0' name='kCGPathElementMoveToPoint'/>
+<enum value='0' name='kCGPathFill'/>
+<enum value='3' name='kCGPathFillStroke'/>
+<enum value='2' name='kCGPathStroke'/>
+<enum value='2' name='kCGPatternTilingConstantSpacing'/>
+<enum value='1' name='kCGPatternTilingConstantSpacingMinimalDistortion'/>
+<enum value='0' name='kCGPatternTilingNoDistortion'/>
+<enum value='1' name='kCGRenderingIntentAbsoluteColorimetric'/>
+<enum value='0' name='kCGRenderingIntentDefault'/>
+<enum value='3' name='kCGRenderingIntentPerceptual'/>
+<enum value='2' name='kCGRenderingIntentRelativeColorimetric'/>
+<enum value='4' name='kCGRenderingIntentSaturation'/>
+<enum value='7' name='kCGTextClip'/>
+<enum value='0' name='kCGTextFill'/>
+<enum value='4' name='kCGTextFillClip'/>
+<enum value='2' name='kCGTextFillStroke'/>
+<enum value='6' name='kCGTextFillStrokeClip'/>
+<enum value='3' name='kCGTextInvisible'/>
+<enum value='1' name='kCGTextStroke'/>
+<enum value='5' name='kCGTextStrokeClip'/>
+<function name='CGAffineTransformConcat'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t1'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t2'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformEqualToTransform'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t1'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGAffineTransformInvert'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformIsIdentity'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGAffineTransformMake'>
+<arg declared_type='CGFloat' type='f' name='a'/>
+<arg declared_type='CGFloat' type='f' name='b'/>
+<arg declared_type='CGFloat' type='f' name='c'/>
+<arg declared_type='CGFloat' type='f' name='d'/>
+<arg declared_type='CGFloat' type='f' name='tx'/>
+<arg declared_type='CGFloat' type='f' name='ty'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformMakeRotation'>
+<arg declared_type='CGFloat' type='f' name='angle'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformMakeScale'>
+<arg declared_type='CGFloat' type='f' name='sx'/>
+<arg declared_type='CGFloat' type='f' name='sy'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformMakeTranslation'>
+<arg declared_type='CGFloat' type='f' name='tx'/>
+<arg declared_type='CGFloat' type='f' name='ty'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformRotate'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<arg declared_type='CGFloat' type='f' name='angle'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformScale'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<arg declared_type='CGFloat' type='f' name='sx'/>
+<arg declared_type='CGFloat' type='f' name='sy'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGAffineTransformTranslate'>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<arg declared_type='CGFloat' type='f' name='tx'/>
+<arg declared_type='CGFloat' type='f' name='ty'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGBitmapContextCreate'>
+<arg declared_type='void*' type='^v' name='data'/>
+<arg declared_type='size_t' type='L' name='width'/>
+<arg declared_type='size_t' type='L' name='height'/>
+<arg declared_type='size_t' type='L' name='bitsPerComponent'/>
+<arg declared_type='size_t' type='L' name='bytesPerRow'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGBitmapInfo' type='I' name='bitmapInfo'/>
+<retval declared_type='CGContextRef' type='^{CGContext=}'/>
+</function>
+<function name='CGBitmapContextCreateImage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGBitmapContextCreateWithData'>
+<arg declared_type='void*' type='^v' name='data'/>
+<arg declared_type='size_t' type='L' name='width'/>
+<arg declared_type='size_t' type='L' name='height'/>
+<arg declared_type='size_t' type='L' name='bitsPerComponent'/>
+<arg declared_type='size_t' type='L' name='bytesPerRow'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGBitmapInfo' type='I' name='bitmapInfo'/>
+<arg declared_type='CGBitmapContextReleaseDataCallback' type='^?' function_pointer='true' name='releaseCallback'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='void*' type='^v' name='releaseInfo'/>
+<retval declared_type='CGContextRef' type='^{CGContext=}'/>
+</function>
+<function name='CGBitmapContextGetAlphaInfo'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGImageAlphaInfo' type='i'/>
+</function>
+<function name='CGBitmapContextGetBitmapInfo'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGBitmapInfo' type='I'/>
+</function>
+<function name='CGBitmapContextGetBitsPerComponent'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGBitmapContextGetBitsPerPixel'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGBitmapContextGetBytesPerRow'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGBitmapContextGetColorSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGBitmapContextGetData'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='void*' type='^v'/>
+</function>
+<function name='CGBitmapContextGetHeight'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGBitmapContextGetWidth'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGColorCreate'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</function>
+<function name='CGColorCreateCopy'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</function>
+<function name='CGColorCreateCopyWithAlpha'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</function>
+<function name='CGColorCreateWithPattern'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGPatternRef' type='^{CGPattern=}' name='pattern'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</function>
+<function name='CGColorEqualToColor'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color1'/>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGColorGetAlpha'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGColorGetColorSpace'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorGetComponents'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='CGFloat*' type='^f' const='true'/>
+</function>
+<function name='CGColorGetNumberOfComponents'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGColorGetPattern'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='CGPatternRef' type='^{CGPattern=}'/>
+</function>
+<function name='CGColorGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGColorRelease'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGColorRetain'>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='CGColorRef' type='^{CGColor=}'/>
+</function>
+<function name='CGColorSpaceCreateCalibratedGray'>
+<arg declared_type='CGFloat*' type='^f' const='true' name='whitePoint'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='blackPoint'/>
+<arg declared_type='CGFloat' type='f' name='gamma'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateCalibratedRGB'>
+<arg declared_type='CGFloat*' type='^f' const='true' name='whitePoint'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='blackPoint'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='gamma'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='matrix'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateDeviceCMYK'>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateDeviceGray'>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateDeviceRGB'>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateICCBased'>
+<arg declared_type='size_t' type='L' name='nComponents'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='range'/>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='profile'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='alternate'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateIndexed'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='baseSpace'/>
+<arg declared_type='size_t' type='L' name='lastIndex'/>
+<arg declared_type='unsigned char*' type='*' const='true' name='colorTable'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateLab'>
+<arg declared_type='CGFloat*' type='^f' const='true' name='whitePoint'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='blackPoint'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='range'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreatePattern'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='baseSpace'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateWithICCProfile'>
+<arg declared_type='CFDataRef' type='^{__CFData=}' name='data'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceCreateWithName'>
+<arg declared_type='CFStringRef' type='^{__CFString=}' name='name'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceGetBaseColorSpace'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGColorSpaceGetColorTable'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='uint8_t*' type='*' name='table'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGColorSpaceGetColorTableCount'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGColorSpaceGetModel'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='CGColorSpaceModel' type='i'/>
+</function>
+<function name='CGColorSpaceGetNumberOfComponents'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGColorSpaceGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGColorSpaceRelease'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGColorSpaceRetain'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGContextAddArc'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<arg declared_type='CGFloat' type='f' name='radius'/>
+<arg declared_type='CGFloat' type='f' name='startAngle'/>
+<arg declared_type='CGFloat' type='f' name='endAngle'/>
+<arg declared_type='int' type='i' name='clockwise'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddArcToPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='x1'/>
+<arg declared_type='CGFloat' type='f' name='y1'/>
+<arg declared_type='CGFloat' type='f' name='x2'/>
+<arg declared_type='CGFloat' type='f' name='y2'/>
+<arg declared_type='CGFloat' type='f' name='radius'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddCurveToPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='cp1x'/>
+<arg declared_type='CGFloat' type='f' name='cp1y'/>
+<arg declared_type='CGFloat' type='f' name='cp2x'/>
+<arg declared_type='CGFloat' type='f' name='cp2y'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddEllipseInRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddLineToPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddLines'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGPoint*' type='^{CGPoint=ff}' const='true' name='points'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddQuadCurveToPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='cpx'/>
+<arg declared_type='CGFloat' type='f' name='cpy'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextAddRects'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='rects'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextBeginPage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='mediaBox'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextBeginPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextBeginTransparencyLayer'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='auxiliaryInfo'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextBeginTransparencyLayerWithRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='auxiliaryInfo'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextClearRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextClip'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextClipToMask'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='mask'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextClipToRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextClipToRects'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='rects'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextClosePath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextConcatCTM'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='transform'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextConvertPointToDeviceSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGContextConvertPointToUserSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGContextConvertRectToDeviceSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGContextConvertRectToUserSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGContextConvertSizeToDeviceSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</function>
+<function name='CGContextConvertSizeToUserSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</function>
+<function name='CGContextCopyPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGContextDrawImage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawLayerAtPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<arg declared_type='CGLayerRef' type='^{CGLayer=}' name='layer'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawLayerInRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGLayerRef' type='^{CGLayer=}' name='layer'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawLinearGradient'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGGradientRef' type='^{CGGradient=}' name='gradient'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='startPoint'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='endPoint'/>
+<arg declared_type='CGGradientDrawingOptions' type='I' name='options'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawPDFPage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGPathDrawingMode' type='i' name='mode'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawRadialGradient'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGGradientRef' type='^{CGGradient=}' name='gradient'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='startCenter'/>
+<arg declared_type='CGFloat' type='f' name='startRadius'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='endCenter'/>
+<arg declared_type='CGFloat' type='f' name='endRadius'/>
+<arg declared_type='CGGradientDrawingOptions' type='I' name='options'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawShading'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGShadingRef' type='^{CGShading=}' name='shading'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextDrawTiledImage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextEOClip'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextEOFillPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextEndPage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextEndTransparencyLayer'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextFillEllipseInRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextFillPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextFillRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextFillRects'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='rects'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextFlush'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextGetCTM'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGContextGetClipBoundingBox'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGContextGetInterpolationQuality'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGInterpolationQuality' type='i'/>
+</function>
+<function name='CGContextGetPathBoundingBox'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGContextGetPathCurrentPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGContextGetTextMatrix'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGContextGetTextPosition'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGContextGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGContextGetUserSpaceToDeviceSpaceTransform'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGContextIsPathEmpty'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGContextMoveToPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextPathContainsPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<arg declared_type='CGPathDrawingMode' type='i' name='mode'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGContextRelease'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextReplacePathWithStrokedPath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextRestoreGState'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextRetain'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='CGContextRef' type='^{CGContext=}'/>
+</function>
+<function name='CGContextRotateCTM'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='angle'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSaveGState'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextScaleCTM'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='sx'/>
+<arg declared_type='CGFloat' type='f' name='sy'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSelectFont'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='char*' type='*' const='true' name='name'/>
+<arg declared_type='CGFloat' type='f' name='size'/>
+<arg declared_type='CGTextEncoding' type='i' name='textEncoding'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetAllowsAntialiasing'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='allowsAntialiasing'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetAllowsFontSmoothing'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='allowsFontSmoothing'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetAllowsFontSubpixelPositioning'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='allowsFontSubpixelPositioning'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetAllowsFontSubpixelQuantization'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='allowsFontSubpixelQuantization'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetAlpha'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetBlendMode'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGBlendMode' type='i' name='mode'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetCMYKFillColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='cyan'/>
+<arg declared_type='CGFloat' type='f' name='magenta'/>
+<arg declared_type='CGFloat' type='f' name='yellow'/>
+<arg declared_type='CGFloat' type='f' name='black'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetCMYKStrokeColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='cyan'/>
+<arg declared_type='CGFloat' type='f' name='magenta'/>
+<arg declared_type='CGFloat' type='f' name='yellow'/>
+<arg declared_type='CGFloat' type='f' name='black'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetCharacterSpacing'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='spacing'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFillColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFillColorSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFillColorWithColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFillPattern'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPatternRef' type='^{CGPattern=}' name='pattern'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFlatness'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='flatness'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFont'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetFontSize'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='size'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetGrayFillColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='gray'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetGrayStrokeColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='gray'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetInterpolationQuality'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGInterpolationQuality' type='i' name='quality'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetLineCap'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGLineCap' type='i' name='cap'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetLineDash'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='phase'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='lengths'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetLineJoin'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGLineJoin' type='i' name='join'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetLineWidth'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='width'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetMiterLimit'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='limit'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetPatternPhase'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='phase'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetRGBFillColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='red'/>
+<arg declared_type='CGFloat' type='f' name='green'/>
+<arg declared_type='CGFloat' type='f' name='blue'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetRGBStrokeColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='red'/>
+<arg declared_type='CGFloat' type='f' name='green'/>
+<arg declared_type='CGFloat' type='f' name='blue'/>
+<arg declared_type='CGFloat' type='f' name='alpha'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetRenderingIntent'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGColorRenderingIntent' type='i' name='intent'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetShadow'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='offset'/>
+<arg declared_type='CGFloat' type='f' name='blur'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetShadowWithColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='offset'/>
+<arg declared_type='CGFloat' type='f' name='blur'/>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetShouldAntialias'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='shouldAntialias'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetShouldSmoothFonts'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='shouldSmoothFonts'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetShouldSubpixelPositionFonts'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='shouldSubpixelPositionFonts'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetShouldSubpixelQuantizeFonts'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='_Bool' type='B' name='shouldSubpixelQuantizeFonts'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetStrokeColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetStrokeColorSpace'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetStrokeColorWithColor'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGColorRef' type='^{CGColor=}' name='color'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetStrokePattern'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGPatternRef' type='^{CGPattern=}' name='pattern'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetTextDrawingMode'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGTextDrawingMode' type='i' name='mode'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetTextMatrix'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSetTextPosition'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextShowGlyphs'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='g'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextShowGlyphsAtPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='glyphs'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextShowGlyphsAtPositions'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='glyphs'/>
+<arg declared_type='CGPoint*' type='^{CGPoint=ff}' const='true' name='positions'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextShowGlyphsWithAdvances'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='glyphs'/>
+<arg declared_type='CGSize*' type='^{CGSize=ff}' const='true' name='advances'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextShowText'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='char*' type='*' const='true' name='string'/>
+<arg declared_type='size_t' type='L' name='length'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextShowTextAtPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<arg declared_type='char*' type='*' const='true' name='string'/>
+<arg declared_type='size_t' type='L' name='length'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextStrokeEllipseInRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextStrokeLineSegments'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGPoint*' type='^{CGPoint=ff}' const='true' name='points'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextStrokePath'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextStrokeRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextStrokeRectWithWidth'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGFloat' type='f' name='width'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextSynchronize'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGContextTranslateCTM'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='c'/>
+<arg declared_type='CGFloat' type='f' name='tx'/>
+<arg declared_type='CGFloat' type='f' name='ty'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGDataConsumerCreate'>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='CGDataConsumerCallbacks*' type='^{CGDataConsumerCallbacks=^?^?}' const='true' name='callbacks'/>
+<retval declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}'/>
+</function>
+<function name='CGDataConsumerCreateWithCFData'>
+<arg declared_type='CFMutableDataRef' type='^{__CFData=}' name='data'/>
+<retval declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}'/>
+</function>
+<function name='CGDataConsumerCreateWithURL'>
+<arg declared_type='CFURLRef' type='^{__CFURL=}' name='url'/>
+<retval declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}'/>
+</function>
+<function name='CGDataConsumerGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGDataConsumerRelease'>
+<arg declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}' name='consumer'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGDataConsumerRetain'>
+<arg declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}' name='consumer'/>
+<retval declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}'/>
+</function>
+<function name='CGDataProviderCopyData'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CGDataProviderCreateDirect'>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='off_t' type='q' name='size'/>
+<arg declared_type='CGDataProviderDirectCallbacks*' type='^{CGDataProviderDirectCallbacks=I^?^?^?^?}' const='true' name='callbacks'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGDataProviderCreateSequential'>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='CGDataProviderSequentialCallbacks*' type='^{CGDataProviderSequentialCallbacks=I^?^?^?^?}' const='true' name='callbacks'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGDataProviderCreateWithCFData'>
+<arg declared_type='CFDataRef' type='^{__CFData=}' name='data'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGDataProviderCreateWithData'>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='void*' type='^v' const='true' name='data'/>
+<arg declared_type='size_t' type='L' name='size'/>
+<arg declared_type='CGDataProviderReleaseDataCallback' type='^?' function_pointer='true' name='releaseData'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='void*' type='^v' const='true'/>
+<arg declared_type='size_t' type='L'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGDataProviderCreateWithFilename'>
+<arg declared_type='char*' type='*' const='true' name='filename'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGDataProviderCreateWithURL'>
+<arg declared_type='CFURLRef' type='^{__CFURL=}' name='url'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGDataProviderGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGDataProviderRelease'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGDataProviderRetain'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGFontCanCreatePostScriptSubset'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CGFontPostScriptFormat' type='i' name='format'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGFontCopyFullName'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CGFontCopyGlyphNameForGlyph'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CGGlyph' type='S' name='glyph'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CGFontCopyPostScriptName'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CGFontCopyTableForTag'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='uint32_t' type='I' name='tag'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CGFontCopyTableTags'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CGFontCopyVariationAxes'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CGFontCopyVariations'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CGFontCreateCopyWithVariations'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='variations'/>
+<retval declared_type='CGFontRef' type='^{CGFont=}'/>
+</function>
+<function name='CGFontCreatePostScriptEncoding'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='encoding'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CGFontCreatePostScriptSubset'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CFStringRef' type='^{__CFString=}' name='subsetName'/>
+<arg declared_type='CGFontPostScriptFormat' type='i' name='format'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='glyphs'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='encoding'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CGFontCreateWithDataProvider'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<retval declared_type='CGFontRef' type='^{CGFont=}'/>
+</function>
+<function name='CGFontCreateWithFontName'>
+<arg declared_type='CFStringRef' type='^{__CFString=}' name='name'/>
+<retval declared_type='CGFontRef' type='^{CGFont=}'/>
+</function>
+<function name='CGFontGetAscent'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGFontGetCapHeight'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGFontGetDescent'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGFontGetFontBBox'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGFontGetGlyphAdvances'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='glyphs'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<arg declared_type='int*' type='^i' name='advances'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGFontGetGlyphBBoxes'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CGGlyph*' type='^S' const='true' name='glyphs'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='bboxes'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGFontGetGlyphWithGlyphName'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<arg declared_type='CFStringRef' type='^{__CFString=}' name='name'/>
+<retval declared_type='CGGlyph' type='S'/>
+</function>
+<function name='CGFontGetItalicAngle'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGFontGetLeading'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGFontGetNumberOfGlyphs'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGFontGetStemV'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGFontGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGFontGetUnitsPerEm'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGFontGetXHeight'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGFontRelease'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGFontRetain'>
+<arg declared_type='CGFontRef' type='^{CGFont=}' name='font'/>
+<retval declared_type='CGFontRef' type='^{CGFont=}'/>
+</function>
+<function name='CGFunctionCreate'>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='size_t' type='L' name='domainDimension'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='domain'/>
+<arg declared_type='size_t' type='L' name='rangeDimension'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='range'/>
+<arg declared_type='CGFunctionCallbacks*' type='^{CGFunctionCallbacks=I^?^?}' const='true' name='callbacks'/>
+<retval declared_type='CGFunctionRef' type='^{CGFunction=}'/>
+</function>
+<function name='CGFunctionGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGFunctionRelease'>
+<arg declared_type='CGFunctionRef' type='^{CGFunction=}' name='function'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGFunctionRetain'>
+<arg declared_type='CGFunctionRef' type='^{CGFunction=}' name='function'/>
+<retval declared_type='CGFunctionRef' type='^{CGFunction=}'/>
+</function>
+<function name='CGGradientCreateWithColorComponents'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='locations'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='CGGradientRef' type='^{CGGradient=}'/>
+</function>
+<function name='CGGradientCreateWithColors'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CFArrayRef' type='^{__CFArray=}' name='colors'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='locations'/>
+<retval declared_type='CGGradientRef' type='^{CGGradient=}'/>
+</function>
+<function name='CGGradientGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGGradientRelease'>
+<arg declared_type='CGGradientRef' type='^{CGGradient=}' name='gradient'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGGradientRetain'>
+<arg declared_type='CGGradientRef' type='^{CGGradient=}' name='gradient'/>
+<retval declared_type='CGGradientRef' type='^{CGGradient=}'/>
+</function>
+<function name='CGImageCreate'>
+<arg declared_type='size_t' type='L' name='width'/>
+<arg declared_type='size_t' type='L' name='height'/>
+<arg declared_type='size_t' type='L' name='bitsPerComponent'/>
+<arg declared_type='size_t' type='L' name='bitsPerPixel'/>
+<arg declared_type='size_t' type='L' name='bytesPerRow'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGBitmapInfo' type='I' name='bitmapInfo'/>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='decode'/>
+<arg declared_type='_Bool' type='B' name='shouldInterpolate'/>
+<arg declared_type='CGColorRenderingIntent' type='i' name='intent'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateCopy'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateCopyWithColorSpace'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateWithImageInRect'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateWithJPEGDataProvider'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='source'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='decode'/>
+<arg declared_type='_Bool' type='B' name='shouldInterpolate'/>
+<arg declared_type='CGColorRenderingIntent' type='i' name='intent'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateWithMask'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='mask'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateWithMaskingColors'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='components'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageCreateWithPNGDataProvider'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='source'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='decode'/>
+<arg declared_type='_Bool' type='B' name='shouldInterpolate'/>
+<arg declared_type='CGColorRenderingIntent' type='i' name='intent'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageGetAlphaInfo'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGImageAlphaInfo' type='i'/>
+</function>
+<function name='CGImageGetBitmapInfo'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGBitmapInfo' type='I'/>
+</function>
+<function name='CGImageGetBitsPerComponent'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGImageGetBitsPerPixel'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGImageGetBytesPerRow'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGImageGetColorSpace'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGColorSpaceRef' type='^{CGColorSpace=}'/>
+</function>
+<function name='CGImageGetDataProvider'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGDataProviderRef' type='^{CGDataProvider=}'/>
+</function>
+<function name='CGImageGetDecode'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGFloat*' type='^f' const='true'/>
+</function>
+<function name='CGImageGetHeight'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGImageGetRenderingIntent'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGColorRenderingIntent' type='i'/>
+</function>
+<function name='CGImageGetShouldInterpolate'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGImageGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGImageGetWidth'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGImageIsMask'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGImageMaskCreate'>
+<arg declared_type='size_t' type='L' name='width'/>
+<arg declared_type='size_t' type='L' name='height'/>
+<arg declared_type='size_t' type='L' name='bitsPerComponent'/>
+<arg declared_type='size_t' type='L' name='bitsPerPixel'/>
+<arg declared_type='size_t' type='L' name='bytesPerRow'/>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='decode'/>
+<arg declared_type='_Bool' type='B' name='shouldInterpolate'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGImageRelease'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGImageRetain'>
+<arg declared_type='CGImageRef' type='^{CGImage=}' name='image'/>
+<retval declared_type='CGImageRef' type='^{CGImage=}'/>
+</function>
+<function name='CGLayerCreateWithContext'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='auxiliaryInfo'/>
+<retval declared_type='CGLayerRef' type='^{CGLayer=}'/>
+</function>
+<function name='CGLayerGetContext'>
+<arg declared_type='CGLayerRef' type='^{CGLayer=}' name='layer'/>
+<retval declared_type='CGContextRef' type='^{CGContext=}'/>
+</function>
+<function name='CGLayerGetSize'>
+<arg declared_type='CGLayerRef' type='^{CGLayer=}' name='layer'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</function>
+<function name='CGLayerGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGLayerRelease'>
+<arg declared_type='CGLayerRef' type='^{CGLayer=}' name='layer'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGLayerRetain'>
+<arg declared_type='CGLayerRef' type='^{CGLayer=}' name='layer'/>
+<retval declared_type='CGLayerRef' type='^{CGLayer=}'/>
+</function>
+<function name='CGPDFArrayGetArray'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFArrayRef*' type='^^{CGPDFArray}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetBoolean'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFBoolean*' type='*' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetCount'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGPDFArrayGetDictionary'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFDictionaryRef*' type='^^{CGPDFDictionary}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetInteger'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFInteger*' type='^i' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetName'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='char**' type='^*' const='true' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetNull'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetNumber'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFReal*' type='^f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetObject'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFObjectRef*' type='^^(CGPDFObject)' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetStream'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFStreamRef*' type='^^{CGPDFStream}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFArrayGetString'>
+<arg declared_type='CGPDFArrayRef' type='^{CGPDFArray=}' name='array'/>
+<arg declared_type='size_t' type='L' name='index'/>
+<arg declared_type='CGPDFStringRef*' type='^^{CGPDFString}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFContentStreamCreateWithPage'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}'/>
+</function>
+<function name='CGPDFContentStreamCreateWithStream'>
+<arg declared_type='CGPDFStreamRef' type='^{CGPDFStream=}' name='stream'/>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='streamResources'/>
+<arg declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}' name='parent'/>
+<retval declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}'/>
+</function>
+<function name='CGPDFContentStreamGetResource'>
+<arg declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}' name='cs'/>
+<arg declared_type='char*' type='*' const='true' name='category'/>
+<arg declared_type='char*' type='*' const='true' name='name'/>
+<retval declared_type='CGPDFObjectRef' type='^(CGPDFObject=)'/>
+</function>
+<function name='CGPDFContentStreamGetStreams'>
+<arg declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}' name='cs'/>
+<retval declared_type='CFArrayRef' type='^{__CFArray=}'/>
+</function>
+<function name='CGPDFContentStreamRelease'>
+<arg declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}' name='cs'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContentStreamRetain'>
+<arg declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}' name='cs'/>
+<retval declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}'/>
+</function>
+<function name='CGPDFContextAddDestinationAtPoint'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CFStringRef' type='^{__CFString=}' name='name'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContextAddDocumentMetadata'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CFDataRef' type='^{__CFData=}' name='metadata'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContextBeginPage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='pageInfo'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContextClose'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContextCreate'>
+<arg declared_type='CGDataConsumerRef' type='^{CGDataConsumer=}' name='consumer'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='mediaBox'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='auxiliaryInfo'/>
+<retval declared_type='CGContextRef' type='^{CGContext=}'/>
+</function>
+<function name='CGPDFContextCreateWithURL'>
+<arg declared_type='CFURLRef' type='^{__CFURL=}' name='url'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='mediaBox'/>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='auxiliaryInfo'/>
+<retval declared_type='CGContextRef' type='^{CGContext=}'/>
+</function>
+<function name='CGPDFContextEndPage'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContextSetDestinationForRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CFStringRef' type='^{__CFString=}' name='name'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFContextSetURLForRect'>
+<arg declared_type='CGContextRef' type='^{CGContext=}' name='context'/>
+<arg declared_type='CFURLRef' type='^{__CFURL=}' name='url'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFDictionaryApplyFunction'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='CGPDFDictionaryApplierFunction' type='^?' function_pointer='true' name='function'>
+<arg declared_type='char*' type='*' const='true'/>
+<arg declared_type='CGPDFObjectRef' type='^(CGPDFObject=)'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<arg declared_type='void*' type='^v' name='info'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFDictionaryGetArray'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFArrayRef*' type='^^{CGPDFArray}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetBoolean'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFBoolean*' type='*' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetCount'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGPDFDictionaryGetDictionary'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFDictionaryRef*' type='^^{CGPDFDictionary}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetInteger'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFInteger*' type='^i' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetName'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='char**' type='^*' const='true' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetNumber'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFReal*' type='^f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetObject'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFObjectRef*' type='^^(CGPDFObject)' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetStream'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFStreamRef*' type='^^{CGPDFStream}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDictionaryGetString'>
+<arg declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}' name='dict'/>
+<arg declared_type='char*' type='*' const='true' name='key'/>
+<arg declared_type='CGPDFStringRef*' type='^^{CGPDFString}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDocumentAllowsCopying'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDocumentAllowsPrinting'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDocumentCreateWithProvider'>
+<arg declared_type='CGDataProviderRef' type='^{CGDataProvider=}' name='provider'/>
+<retval declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}'/>
+</function>
+<function name='CGPDFDocumentCreateWithURL'>
+<arg declared_type='CFURLRef' type='^{__CFURL=}' name='url'/>
+<retval declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}'/>
+</function>
+<function name='CGPDFDocumentGetCatalog'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}'/>
+</function>
+<function name='CGPDFDocumentGetID'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='CGPDFArrayRef' type='^{CGPDFArray=}'/>
+</function>
+<function name='CGPDFDocumentGetInfo'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}'/>
+</function>
+<function name='CGPDFDocumentGetNumberOfPages'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGPDFDocumentGetPage'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<arg declared_type='size_t' type='L' name='pageNumber'/>
+<retval declared_type='CGPDFPageRef' type='^{CGPDFPage=}'/>
+</function>
+<function name='CGPDFDocumentGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGPDFDocumentGetVersion'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<arg declared_type='int*' type='^i' name='majorVersion'/>
+<arg declared_type='int*' type='^i' name='minorVersion'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFDocumentIsEncrypted'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDocumentIsUnlocked'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFDocumentRelease'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFDocumentRetain'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<retval declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}'/>
+</function>
+<function name='CGPDFDocumentUnlockWithPassword'>
+<arg declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}' name='document'/>
+<arg declared_type='char*' type='*' const='true' name='password'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFObjectGetType'>
+<arg declared_type='CGPDFObjectRef' type='^(CGPDFObject=)' name='object'/>
+<retval declared_type='CGPDFObjectType' type='i'/>
+</function>
+<function name='CGPDFObjectGetValue'>
+<arg declared_type='CGPDFObjectRef' type='^(CGPDFObject=)' name='object'/>
+<arg declared_type='CGPDFObjectType' type='i' name='type'/>
+<arg declared_type='void*' type='^v' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFOperatorTableCreate'>
+<retval declared_type='CGPDFOperatorTableRef' type='^{CGPDFOperatorTable=}'/>
+</function>
+<function name='CGPDFOperatorTableRelease'>
+<arg declared_type='CGPDFOperatorTableRef' type='^{CGPDFOperatorTable=}' name='table'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFOperatorTableRetain'>
+<arg declared_type='CGPDFOperatorTableRef' type='^{CGPDFOperatorTable=}' name='table'/>
+<retval declared_type='CGPDFOperatorTableRef' type='^{CGPDFOperatorTable=}'/>
+</function>
+<function name='CGPDFOperatorTableSetCallback'>
+<arg declared_type='CGPDFOperatorTableRef' type='^{CGPDFOperatorTable=}' name='table'/>
+<arg declared_type='char*' type='*' const='true' name='name'/>
+<arg declared_type='CGPDFOperatorCallback' type='^?' function_pointer='true' name='callback'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}'/>
+<arg declared_type='void*' type='^v'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFPageGetBoxRect'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<arg declared_type='CGPDFBox' type='i' name='box'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGPDFPageGetDictionary'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}'/>
+</function>
+<function name='CGPDFPageGetDocument'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='CGPDFDocumentRef' type='^{CGPDFDocument=}'/>
+</function>
+<function name='CGPDFPageGetDrawingTransform'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<arg declared_type='CGPDFBox' type='i' name='box'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='int' type='i' name='rotate'/>
+<arg declared_type='_Bool' type='B' name='preserveAspectRatio'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function name='CGPDFPageGetPageNumber'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGPDFPageGetRotationAngle'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='int' type='i'/>
+</function>
+<function name='CGPDFPageGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGPDFPageRelease'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFPageRetain'>
+<arg declared_type='CGPDFPageRef' type='^{CGPDFPage=}' name='page'/>
+<retval declared_type='CGPDFPageRef' type='^{CGPDFPage=}'/>
+</function>
+<function name='CGPDFScannerCreate'>
+<arg declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}' name='cs'/>
+<arg declared_type='CGPDFOperatorTableRef' type='^{CGPDFOperatorTable=}' name='table'/>
+<arg declared_type='void*' type='^v' name='info'/>
+<retval declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}'/>
+</function>
+<function name='CGPDFScannerGetContentStream'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<retval declared_type='CGPDFContentStreamRef' type='^{CGPDFContentStream=}'/>
+</function>
+<function name='CGPDFScannerPopArray'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFArrayRef*' type='^^{CGPDFArray}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopBoolean'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFBoolean*' type='*' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopDictionary'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFDictionaryRef*' type='^^{CGPDFDictionary}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopInteger'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFInteger*' type='^i' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopName'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='char**' type='^*' const='true' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopNumber'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFReal*' type='^f' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopObject'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFObjectRef*' type='^^(CGPDFObject)' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopStream'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFStreamRef*' type='^^{CGPDFStream}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerPopString'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<arg declared_type='CGPDFStringRef*' type='^^{CGPDFString}' name='value'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFScannerRelease'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPDFScannerRetain'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<retval declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}'/>
+</function>
+<function name='CGPDFScannerScan'>
+<arg declared_type='CGPDFScannerRef' type='^{CGPDFScanner=}' name='scanner'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPDFStreamCopyData'>
+<arg declared_type='CGPDFStreamRef' type='^{CGPDFStream=}' name='stream'/>
+<arg declared_type='CGPDFDataFormat*' type='^i' name='format'/>
+<retval declared_type='CFDataRef' type='^{__CFData=}'/>
+</function>
+<function name='CGPDFStreamGetDictionary'>
+<arg declared_type='CGPDFStreamRef' type='^{CGPDFStream=}' name='stream'/>
+<retval declared_type='CGPDFDictionaryRef' type='^{CGPDFDictionary=}'/>
+</function>
+<function name='CGPDFStringCopyDate'>
+<arg declared_type='CGPDFStringRef' type='^{CGPDFString=}' name='string'/>
+<retval declared_type='CFDateRef' type='^{__CFDate=}'/>
+</function>
+<function name='CGPDFStringCopyTextString'>
+<arg declared_type='CGPDFStringRef' type='^{CGPDFString=}' name='string'/>
+<retval declared_type='CFStringRef' type='^{__CFString=}'/>
+</function>
+<function name='CGPDFStringGetBytePtr'>
+<arg declared_type='CGPDFStringRef' type='^{CGPDFString=}' name='string'/>
+<retval declared_type='unsigned char*' type='*' const='true'/>
+</function>
+<function name='CGPDFStringGetLength'>
+<arg declared_type='CGPDFStringRef' type='^{CGPDFString=}' name='string'/>
+<retval declared_type='size_t' type='L'/>
+</function>
+<function name='CGPathAddArc'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<arg declared_type='CGFloat' type='f' name='radius'/>
+<arg declared_type='CGFloat' type='f' name='startAngle'/>
+<arg declared_type='CGFloat' type='f' name='endAngle'/>
+<arg declared_type='_Bool' type='B' name='clockwise'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddArcToPoint'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGFloat' type='f' name='x1'/>
+<arg declared_type='CGFloat' type='f' name='y1'/>
+<arg declared_type='CGFloat' type='f' name='x2'/>
+<arg declared_type='CGFloat' type='f' name='y2'/>
+<arg declared_type='CGFloat' type='f' name='radius'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddCurveToPoint'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGFloat' type='f' name='cp1x'/>
+<arg declared_type='CGFloat' type='f' name='cp1y'/>
+<arg declared_type='CGFloat' type='f' name='cp2x'/>
+<arg declared_type='CGFloat' type='f' name='cp2y'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddEllipseInRect'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddLineToPoint'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddLines'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGPoint*' type='^{CGPoint=ff}' const='true' name='points'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddPath'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path1'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path2'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddQuadCurveToPoint'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGFloat' type='f' name='cpx'/>
+<arg declared_type='CGFloat' type='f' name='cpy'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddRect'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddRects'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' const='true' name='rects'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathAddRelativeArc'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='matrix'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<arg declared_type='CGFloat' type='f' name='radius'/>
+<arg declared_type='CGFloat' type='f' name='startAngle'/>
+<arg declared_type='CGFloat' type='f' name='delta'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathApply'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='CGPathApplierFunction' type='^?' function_pointer='true' name='function'>
+<arg declared_type='void*' type='^v'/>
+<arg declared_type='CGPathElement*' type='^{CGPathElement=i^{CGPoint}}' const='true'/>
+<retval declared_type='void' type='v'/>
+</arg>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathCloseSubpath'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathContainsPoint'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<arg declared_type='_Bool' type='B' name='eoFill'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPathCreateCopy'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateCopyByDashingPath'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='transform'/>
+<arg declared_type='CGFloat' type='f' name='phase'/>
+<arg declared_type='CGFloat*' type='^f' const='true' name='lengths'/>
+<arg declared_type='size_t' type='L' name='count'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateCopyByStrokingPath'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='transform'/>
+<arg declared_type='CGFloat' type='f' name='lineWidth'/>
+<arg declared_type='CGLineCap' type='i' name='lineCap'/>
+<arg declared_type='CGLineJoin' type='i' name='lineJoin'/>
+<arg declared_type='CGFloat' type='f' name='miterLimit'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateCopyByTransformingPath'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='transform'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateMutable'>
+<retval declared_type='CGMutablePathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateMutableCopy'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='CGMutablePathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateMutableCopyByTransformingPath'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='transform'/>
+<retval declared_type='CGMutablePathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateWithEllipseInRect'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='transform'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathCreateWithRect'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='transform'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPathEqualToPath'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path1'/>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPathGetBoundingBox'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGPathGetCurrentPoint'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGPathGetPathBoundingBox'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGPathGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGPathIsEmpty'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPathIsRect'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGPathMoveToPoint'>
+<arg declared_type='CGMutablePathRef' type='^{CGPath=}' name='path'/>
+<arg declared_type='CGAffineTransform*' type='^{CGAffineTransform=ffffff}' const='true' name='m'/>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathRelease'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPathRetain'>
+<arg declared_type='CGPathRef' type='^{CGPath=}' name='path'/>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</function>
+<function name='CGPatternCreate'>
+<arg declared_type='void*' type='^v' name='info'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='bounds'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='matrix'/>
+<arg declared_type='CGFloat' type='f' name='xStep'/>
+<arg declared_type='CGFloat' type='f' name='yStep'/>
+<arg declared_type='CGPatternTiling' type='i' name='tiling'/>
+<arg declared_type='_Bool' type='B' name='isColored'/>
+<arg declared_type='CGPatternCallbacks*' type='^{CGPatternCallbacks=I^?^?}' const='true' name='callbacks'/>
+<retval declared_type='CGPatternRef' type='^{CGPattern=}'/>
+</function>
+<function name='CGPatternGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGPatternRelease'>
+<arg declared_type='CGPatternRef' type='^{CGPattern=}' name='pattern'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGPatternRetain'>
+<arg declared_type='CGPatternRef' type='^{CGPattern=}' name='pattern'/>
+<retval declared_type='CGPatternRef' type='^{CGPattern=}'/>
+</function>
+<function name='CGPointApplyAffineTransform'>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGPointCreateDictionaryRepresentation'>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CGPointEqualToPoint'>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point1'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='CGPointMake'>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function name='CGPointMakeWithDictionaryRepresentation'>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='dict'/>
+<arg declared_type='CGPoint*' type='^{CGPoint=ff}' name='point'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectApplyAffineTransform'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectContainsPoint'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectContainsRect'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect1'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectCreateDictionaryRepresentation'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CGRectDivide'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='slice'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='remainder'/>
+<arg declared_type='CGFloat' type='f' name='amount'/>
+<arg declared_type='CGRectEdge' type='i' name='edge'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGRectEqualToRect'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect1'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectGetHeight'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetMaxX'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetMaxY'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetMidX'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetMidY'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetMinX'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetMinY'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectGetWidth'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='CGRectInset'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGFloat' type='f' name='dx'/>
+<arg declared_type='CGFloat' type='f' name='dy'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectIntegral'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectIntersection'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='r1'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='r2'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectIntersectsRect'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect1'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectIsEmpty'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectIsInfinite'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectIsNull'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='CGRectMake'>
+<arg declared_type='CGFloat' type='f' name='x'/>
+<arg declared_type='CGFloat' type='f' name='y'/>
+<arg declared_type='CGFloat' type='f' name='width'/>
+<arg declared_type='CGFloat' type='f' name='height'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectMakeWithDictionaryRepresentation'>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='dict'/>
+<arg declared_type='CGRect*' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function name='CGRectOffset'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<arg declared_type='CGFloat' type='f' name='dx'/>
+<arg declared_type='CGFloat' type='f' name='dy'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectStandardize'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='rect'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGRectUnion'>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='r1'/>
+<arg declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' name='r2'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</function>
+<function name='CGShadingCreateAxial'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='start'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='end'/>
+<arg declared_type='CGFunctionRef' type='^{CGFunction=}' name='function'/>
+<arg declared_type='_Bool' type='B' name='extendStart'/>
+<arg declared_type='_Bool' type='B' name='extendEnd'/>
+<retval declared_type='CGShadingRef' type='^{CGShading=}'/>
+</function>
+<function name='CGShadingCreateRadial'>
+<arg declared_type='CGColorSpaceRef' type='^{CGColorSpace=}' name='space'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='start'/>
+<arg declared_type='CGFloat' type='f' name='startRadius'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='end'/>
+<arg declared_type='CGFloat' type='f' name='endRadius'/>
+<arg declared_type='CGFunctionRef' type='^{CGFunction=}' name='function'/>
+<arg declared_type='_Bool' type='B' name='extendStart'/>
+<arg declared_type='_Bool' type='B' name='extendEnd'/>
+<retval declared_type='CGShadingRef' type='^{CGShading=}'/>
+</function>
+<function name='CGShadingGetTypeID'>
+<retval declared_type='CFTypeID' type='L'/>
+</function>
+<function name='CGShadingRelease'>
+<arg declared_type='CGShadingRef' type='^{CGShading=}' name='shading'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='CGShadingRetain'>
+<arg declared_type='CGShadingRef' type='^{CGShading=}' name='shading'/>
+<retval declared_type='CGShadingRef' type='^{CGShading=}'/>
+</function>
+<function name='CGSizeApplyAffineTransform'>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</function>
+<function name='CGSizeCreateDictionaryRepresentation'>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size'/>
+<retval declared_type='CFDictionaryRef' type='^{__CFDictionary=}'/>
+</function>
+<function name='CGSizeEqualToSize'>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size1'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='CGSizeMake'>
+<arg declared_type='CGFloat' type='f' name='width'/>
+<arg declared_type='CGFloat' type='f' name='height'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</function>
+<function name='CGSizeMakeWithDictionaryRepresentation'>
+<arg declared_type='CFDictionaryRef' type='^{__CFDictionary=}' name='dict'/>
+<arg declared_type='CGSize*' type='^{CGSize=ff}' name='size'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='__CGAffineTransformMake'>
+<arg declared_type='CGFloat' type='f' name='a'/>
+<arg declared_type='CGFloat' type='f' name='b'/>
+<arg declared_type='CGFloat' type='f' name='c'/>
+<arg declared_type='CGFloat' type='f' name='d'/>
+<arg declared_type='CGFloat' type='f' name='tx'/>
+<arg declared_type='CGFloat' type='f' name='ty'/>
+<retval declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}'/>
+</function>
+<function inline='true' name='__CGPointApplyAffineTransform'>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</function>
+<function inline='true' name='__CGPointEqualToPoint'>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point1'/>
+<arg declared_type='CGPoint' type='{CGPoint=ff}' name='point2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function inline='true' name='__CGSizeApplyAffineTransform'>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size'/>
+<arg declared_type='CGAffineTransform' type='{CGAffineTransform=ffffff}' name='t'/>
+<retval declared_type='CGSize' type='{CGSize=ff}'/>
+</function>
+<function inline='true' name='__CGSizeEqualToSize'>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size1'/>
+<arg declared_type='CGSize' type='{CGSize=ff}' name='size2'/>
+<retval declared_type='_Bool' type='B'/>
+</function>
+<function_alias name='CGAffineTransformMake' original='__CGAffineTransformMake'/>
+<function_alias name='CGPointApplyAffineTransform' original='__CGPointApplyAffineTransform'/>
+<function_alias name='CGPointEqualToPoint' original='__CGPointEqualToPoint'/>
+<function_alias name='CGSizeApplyAffineTransform' original='__CGSizeApplyAffineTransform'/>
+<function_alias name='CGSizeEqualToSize' original='__CGSizeEqualToSize'/>
+</signatures>

@@ -1,0 +1,8 @@
+function doItStatic() {}
+
+class Vector {
+  function doIt() {}
+}
+var a:Vector.<Vector.<String>>;
+
+a[1][1].substring(<caret>)

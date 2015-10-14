@@ -1,0 +1,3 @@
+Original source files can be found at:
+svn://opensource.adobe.com/svn/opensource/flex/sdk/trunk/modules/debugger/src/java/flex/tools/debugger/cli/ExpressionCache.java (revision 21499)
+svn://opensource.adobe.com/svn/opensource/flex/sdk/trunk/modules/debugger/src/java/flex/tools/debugger/cli/DebugCLI.java (revision 21499)

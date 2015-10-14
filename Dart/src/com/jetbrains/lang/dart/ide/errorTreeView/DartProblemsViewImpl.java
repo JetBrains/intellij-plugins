@@ -19,7 +19,7 @@ import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
+import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -55,8 +55,8 @@ public class DartProblemsViewImpl {
   }
 
   @NotNull
-  public static String createGroupName(@NotNull final String path) {
-    return FileUtil.toSystemDependentName(path);
+  public static String createGroupName(@NotNull final String filePath) {
+    return FileUtil.toSystemDependentName(filePath);
   }
 
   public DartProblemsViewImpl(final Project project, final ToolWindowManager wm) {
@@ -99,6 +99,11 @@ public class DartProblemsViewImpl {
   }
 
   public void updateErrorsForFile(@NotNull final VirtualFile vFile, @NotNull final List<AnalysisError> errors) {
+    if (errors.isEmpty()) {
+      removeErrorsForFile(vFile.getPath());
+      return;
+    }
+
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
@@ -106,7 +111,7 @@ public class DartProblemsViewImpl {
         myPanel.removeGroup(groupName);
 
         for (final AnalysisError analysisError : errors) {
-          if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
+          if (analysisError == null || DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
           final Location location = analysisError.getLocation();
           final int line = location.getStartLine() - 1; // editor lines are zero-based
           final Navigatable navigatable = line >= 0
@@ -119,8 +124,6 @@ public class DartProblemsViewImpl {
 
           myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
         }
-
-        myPanel.updateTree();
       }
     });
   }

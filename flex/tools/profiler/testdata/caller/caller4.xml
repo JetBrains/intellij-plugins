@@ -1,0 +1,12 @@
+<root frames="bar,foo,foo">
+  <bar count="2">
+    <foo count="2">
+      <foo count="2">
+        <bar count="1"/>
+        <foo count="1">
+          <bar count="1"/>
+        </foo>
+      </foo>
+    </foo>
+  </bar>
+</root>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:HBox verticalAlign="top" selected="<error descr="Wrong attribute value">yyy</error>"/>
+    <mx:VBox kerning="<error descr="Wrong attribute value">top</error>"/>
+    <mx:VBox kerning="{true}" selected="true"/>
+    <mx:VBox kerning="true" selected="<error descr="Wrong attribute value">ff</error>"/>
+    <mx:HBox verticalAlign="<error descr="Wrong attribute value">top2</error>" selected="true"/>
+
+</mx:Application>

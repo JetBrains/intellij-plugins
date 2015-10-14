@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:xxx="com.*">
+  <mx:Script>
+    import com.MyClass;
+    public static function doIt2(p):* {
+      var a:Application = null
+      var b:UsingImportFromScriptInAttribute_2 = null
+      doIt2(a.height)
+      a = doIt3(UsingImportFromScriptInAttribute);
+    }
+
+    static function doIt3(c:Class):* {
+      if (false) doIt3(c);
+    }
+  </mx:Script>
+
+  <mx:TextInput count="111" width="20%" mouseDown="MyClass.doIt()" mouseUp="UsingImportFromScriptInAttribute.doIt2(1)"/>
+  <mx:DataGrid id="lastTenDataGrid">
+    <mx:columns>
+      <mx:DataGridColumn dataField="@id"/>
+      <xxx:MyClass <error>myconst</error>="2"/>
+    </mx:columns>
+    <mx:dataProvider>
+      <mx:ArrayCollection>
+        <mx:Object>
+          <mx:name>�������� ���</mx:name>
+        </mx:Object>
+      </mx:ArrayCollection>
+    </mx:dataProvider>
+  </mx:DataGrid>
+
+  <mx:DataGrid id="lastTenDataGrid2">
+    <mx:dataProvider>
+      <mx:XML xmlns="">
+        <nodes>
+          <node label="Lorem Ipsum">
+            <node label="Dolor sit amet"/>
+            <node label="Consectetuer adipiscing elit"/>
+          </node>
+        </nodes>
+      </mx:XML>
+    </mx:dataProvider>
+  </mx:DataGrid>
+
+  <mx:RegExpValidator id="validator_passCode" expression="\d\{4,18\}" />
+  <mx:TextInput text="{[ {rangeStart: new Object()} ]}"/>
+</mx:Application>

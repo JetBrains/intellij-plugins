@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="AsDependencies">
+  <node id="A1" nodeName="Class A1" name="&lt;html&gt;&lt;b&gt;A1&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A10" nodeName="Class A10" name="&lt;html&gt;&lt;b&gt;A10&lt;/b&gt;&lt;/html&gt;">
+    <element name="foo()" type="void" category="Methods" visibility="PUBLIC" />
+  </node>
+  <node id="A2" nodeName="Class A2" name="&lt;html&gt;&lt;b&gt;A2&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A3" nodeName="Class A3" name="&lt;html&gt;&lt;b&gt;A3&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A4" nodeName="Class A4" name="&lt;html&gt;&lt;b&gt;A4&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A5" nodeName="Class A5" name="&lt;html&gt;&lt;b&gt;A5&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A6" nodeName="Class A6" name="&lt;html&gt;&lt;b&gt;A6&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A7" nodeName="Class A7" name="&lt;html&gt;&lt;b&gt;A7&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A8" nodeName="Class A8" name="&lt;html&gt;&lt;b&gt;A8&lt;/b&gt;&lt;/html&gt;" />
+  <node id="A9" nodeName="Class A9" name="&lt;html&gt;&lt;b&gt;A9&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Abc" nodeName="Class Abc" name="&lt;html&gt;&lt;b&gt;Abc&lt;/b&gt;&lt;/html&gt;" />
+  <node id="AsDependencies" nodeName="Class AsDependencies" name="&lt;html&gt;&lt;b&gt;AsDependencies&lt;/b&gt;&lt;/html&gt;">
+    <element name="i1" type="A5" visibility="PACKAGE_LOCAL" />
+    <element name="i2" type="Vector.&lt;A6&gt;" visibility="PACKAGE_LOCAL" />
+    <element name="i3" type="AsDependencies" visibility="PACKAGE_LOCAL" />
+    <element name="f" type="Foo" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="v" type="Vector.&lt;Bar&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="t" type="Zz" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="t" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="we" type="Vector.&lt;AsDependencies&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="f1" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="f2" type="Vector.&lt;A8&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="f3" type="A8" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="f5" type="Vector.&lt;A9&gt;" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="f6" type="A9" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="xx" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="xx2" type="*" category="Fields" visibility="PACKAGE_LOCAL" />
+    <element name="aa2(Oo, Vector.&lt;W&gt;)" type="Pp" category="Methods" visibility="PACKAGE_LOCAL" />
+    <element name="aa(Oo, Vector.&lt;W&gt;)" type="Pp" category="Methods" visibility="PACKAGE_LOCAL" />
+  </node>
+  <node id="Bar" nodeName="Class Bar" name="&lt;html&gt;&lt;b&gt;Bar&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Def" nodeName="Class Def" name="&lt;html&gt;&lt;b&gt;Def&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Foo" nodeName="Class Foo" name="&lt;html&gt;&lt;b&gt;Foo&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Inner1" nodeName="Class Inner1" name="&lt;html&gt;&lt;b&gt;Inner1&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Inner2" nodeName="Class Inner2" name="&lt;html&gt;&lt;b&gt;Inner2&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Oo" nodeName="Class Oo" name="&lt;html&gt;&lt;b&gt;Oo&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Pp" nodeName="Class Pp" name="&lt;html&gt;&lt;b&gt;Pp&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Rt" nodeName="Class Rt" name="&lt;html&gt;&lt;b&gt;Rt&lt;/b&gt;&lt;/html&gt;" />
+  <node id="UI" nodeName="Class UI" name="&lt;html&gt;&lt;b&gt;UI&lt;/b&gt;&lt;/html&gt;" />
+  <node id="W" nodeName="Class W" name="&lt;html&gt;&lt;b&gt;W&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Zz" nodeName="Class Zz" name="&lt;html&gt;&lt;b&gt;Zz&lt;/b&gt;&lt;/html&gt;" />
+  <node id="Zz2" nodeName="Class Zz2" name="&lt;html&gt;&lt;b&gt;Zz2&lt;/b&gt;&lt;/html&gt;">
+    <element name="Zz2()" category="Constructors" visibility="PUBLIC" />
+  </node>
+  <edge from="AsDependencies" to="A1" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="A10" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="A10" idElement="AsDependencies" relship="DEPENDENCY" relshipLabel="xx" />
+  <edge from="AsDependencies" to="A10" idElement="AsDependencies" relship="DEPENDENCY" relshipLabel="xx2" />
+  <edge from="AsDependencies" to="A2" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="A3" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="A3" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="A4" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="A4" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="A5" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="i1" />
+  <edge from="AsDependencies" to="A6" idElement="AsDependencies" relship="ONE_TO_MANY" relshipLabel="i2" />
+  <edge from="AsDependencies" to="A8" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="A8" idElement="AsDependencies" relship="ONE_TO_MANY" relshipLabel="f2" />
+  <edge from="AsDependencies" to="A8" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="f3" />
+  <edge from="AsDependencies" to="A9" idElement="AsDependencies" relship="ONE_TO_MANY" relshipLabel="f5" />
+  <edge from="AsDependencies" to="A9" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="f6" />
+  <edge from="AsDependencies" to="Abc" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="AsDependencies" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="AsDependencies" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="AsDependencies" idElement="AsDependencies" relship="ONE_TO_MANY" relshipLabel="we" />
+  <edge from="AsDependencies" to="AsDependencies" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="i3" />
+  <edge from="AsDependencies" to="Bar" idElement="AsDependencies" relship="ONE_TO_MANY" relshipLabel="v" />
+  <edge from="AsDependencies" to="Def" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="Foo" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="Foo" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="f" />
+  <edge from="AsDependencies" to="Inner1" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="Inner2" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="Oo" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="Pp" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="Rt" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="UI" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="W" idElement="AsDependencies" relship="DEPENDENCY" />
+  <edge from="AsDependencies" to="Zz" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+  <edge from="AsDependencies" to="Zz" idElement="AsDependencies" relship="ONE_TO_ONE" relshipLabel="t" />
+  <edge from="AsDependencies" to="Zz2" idElement="AsDependencies" relship="CREATE" relshipLabel="&lt;html&gt;&amp;laquo;create&amp;raquo;&lt;/html&gt;" />
+</umlModel>

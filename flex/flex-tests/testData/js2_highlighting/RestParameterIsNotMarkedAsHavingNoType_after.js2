@@ -1,0 +1,15 @@
+function aaa(... rest):void {
+  if (arguments.length == 0) aaa(rest);
+}
+
+function aaa2(... arguments):void {
+  if (arguments.length == 0) aaa(arguments);
+}
+
+function bbb(... rest):void {
+}
+
+function ccc(... rest, x):void {
+}
+
+function ddd(x:int = 1, y):void {}

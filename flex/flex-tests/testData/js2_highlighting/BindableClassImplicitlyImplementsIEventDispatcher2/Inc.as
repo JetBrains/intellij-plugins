@@ -1,0 +1,2 @@
+[Bindable]
+public var foo;

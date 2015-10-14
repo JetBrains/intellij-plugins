@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        public static function foo():void {
+            for (var i:int = 0; i < arguments.length; i++) {
+                var i1:int = arguments[i];
+                <caret>
+            }
+        }
+]]></mx:Script>
+</mx:Application>

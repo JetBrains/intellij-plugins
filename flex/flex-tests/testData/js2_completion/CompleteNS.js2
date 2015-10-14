@@ -1,0 +1,7 @@
+import mypackage.MyNamespace;
+
+use namespace My<caret>
+
+package mypackage {
+  public namespace MyNamespace;
+}

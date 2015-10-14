@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Part of {@link com.jetbrains.lang.dart.resolve.DartGotoDeclarationActionTest} tests in script block
  */
-public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActionTestBase {
+abstract public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActionTestBase {
 
   protected void doTest(int expectedSize, String... files) throws IOException {
     doTest(DartHtmlUtil.createHtmlAndConfigureFixture(myFixture, files), expectedSize);

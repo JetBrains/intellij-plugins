@@ -1,0 +1,13 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    <![CDATA[
+      function foo() {
+          return created();
+      }
+
+      public function created():int {
+          return 1;
+      }
+      ]]>
+  </mx:Script>
+</mx:Application>

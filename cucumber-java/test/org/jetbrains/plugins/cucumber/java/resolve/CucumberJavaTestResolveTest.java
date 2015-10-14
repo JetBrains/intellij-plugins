@@ -1,15 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.resolve;
 
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 /**
  * User: Andrey.Vokin
@@ -46,21 +38,12 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_w", "plast<caret>ic", "payment_mode");
   }
 
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return DESCRIPTOR;
+  public void testJava8StepDef() throws Exception {
+    doTest("stepResolve_java8", "I have cuk<caret>es", "Given");
   }
 
-  private static final DefaultLightProjectDescriptor DESCRIPTOR = new DefaultLightProjectDescriptor() {
-    @Override
-    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
-      PsiTestUtil.addLibrary(module, model, "cucumber-java", PathManager.getHomePath() + "/community/lib", "cucumber-java-1.2.2.jar");
-
-      VirtualFile sourceRoot = VirtualFileManager.getInstance().refreshAndFindFileByUrl("temp:///src");
-      if (sourceRoot != null) {
-        contentEntry.removeSourceFolder(contentEntry.getSourceFolders()[0]);
-        contentEntry.addSourceFolder(sourceRoot, true);
-      }
-    }
-  };
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
+  }
 }

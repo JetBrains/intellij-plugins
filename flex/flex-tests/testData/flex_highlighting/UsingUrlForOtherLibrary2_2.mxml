@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="<error>http://www.adobe.com/2006/mxml</error>" >
+    <mx:Script><![CDATA[
+        function filter() {}
+        ]]></mx:Script>
+    <mx:DataGrid id="lastTenDataGrid">
+    <mx:columns>
+      <mx:DataGridColumn dataField="@id"/>
+    </mx:columns>
+    <mx:dataProvider>
+      <mx:ArrayCollection>
+        <mx:Object>
+          <mx:name>xxx</mx:name>
+        </mx:Object>
+      </mx:ArrayCollection>
+    </mx:dataProvider>
+  </mx:DataGrid>
+</mx:Application>

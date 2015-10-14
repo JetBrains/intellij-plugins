@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<<error descr="Circular dependency">local:CircularDependency</error> xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*" implements="<error descr="Circular dependency">CircularDependency</error>">
+    <mx:Script>
+      function foo() {
+       var xxxx:<error>XXX</error>;
+       xxxx.<error>foo</error>();
+      }
+    </mx:Script>
+</<error descr="Circular dependency">local:CircularDependency</error>>

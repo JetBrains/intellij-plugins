@@ -1,0 +1,11 @@
+@namespace "library://ns.adobe.com/flex/mx";
+
+Menu, Panel, TitleWindow 
+{
+	dropShadowVisible: true;
+}
+
+VideoDisplay
+{
+	contentBackgroundColor: #000000;
+}

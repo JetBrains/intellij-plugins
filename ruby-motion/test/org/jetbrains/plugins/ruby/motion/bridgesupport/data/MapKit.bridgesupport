@@ -1,0 +1,1164 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct name='MKCoordinateRegion' type='{_MKCoordinateRegion=&quot;center&quot;{?=&quot;latitude&quot;d&quot;longitude&quot;d}&quot;span&quot;{_MKCoordinateSpan=&quot;latitudeDelta&quot;d&quot;longitudeDelta&quot;d}}'>
+<field name='center' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=&quot;latitude&quot;d&quot;longitude&quot;d}'/>
+<field name='span' declared_type='MKCoordinateSpan' type='{_MKCoordinateSpan=&quot;latitudeDelta&quot;d&quot;longitudeDelta&quot;d}'/>
+</struct>
+<struct name='MKCoordinateSpan' type='{_MKCoordinateSpan=&quot;latitudeDelta&quot;d&quot;longitudeDelta&quot;d}'>
+<field name='latitudeDelta' declared_type='CLLocationDegrees' type='d'/>
+<field name='longitudeDelta' declared_type='CLLocationDegrees' type='d'/>
+</struct>
+<struct name='MKMapPoint' type='{_MKMapPoint=&quot;x&quot;d&quot;y&quot;d}'>
+<field name='x' declared_type='double' type='d'/>
+<field name='y' declared_type='double' type='d'/>
+</struct>
+<struct name='MKMapRect' type='{_MKMapRect=&quot;origin&quot;{_MKMapPoint=&quot;x&quot;d&quot;y&quot;d}&quot;size&quot;{_MKMapSize=&quot;width&quot;d&quot;height&quot;d}}'>
+<field name='origin' declared_type='MKMapPoint' type='{_MKMapPoint=&quot;x&quot;d&quot;y&quot;d}'/>
+<field name='size' declared_type='MKMapSize' type='{_MKMapSize=&quot;width&quot;d&quot;height&quot;d}'/>
+</struct>
+<struct name='MKMapSize' type='{_MKMapSize=&quot;width&quot;d&quot;height&quot;d}'>
+<field name='width' declared_type='double' type='d'/>
+<field name='height' declared_type='double' type='d'/>
+</struct>
+<constant name='MKAnnotationCalloutInfoDidChangeNotification' declared_type='NSString*' const='true' type='@'/>
+<constant name='MKErrorDomain' declared_type='NSString*' type='@'/>
+<constant name='MKMapRectNull' declared_type='MKMapRect' const='true' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<constant name='MKMapRectWorld' declared_type='MKMapRect' const='true' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<constant name='MKMapSizeWorld' declared_type='MKMapSize' const='true' type='{_MKMapSize=dd}'/>
+<enum value='3' name='MKAnnotationViewDragStateCanceling'/>
+<enum value='2' name='MKAnnotationViewDragStateDragging'/>
+<enum value='4' name='MKAnnotationViewDragStateEnding'/>
+<enum value='0' name='MKAnnotationViewDragStateNone'/>
+<enum value='1' name='MKAnnotationViewDragStateStarting'/>
+<enum value='3' name='MKErrorLoadingThrottled'/>
+<enum value='4' name='MKErrorPlacemarkNotFound'/>
+<enum value='2' name='MKErrorServerFailure'/>
+<enum value='1' name='MKErrorUnknown'/>
+<enum value='2' name='MKMapTypeHybrid'/>
+<enum value='1' name='MKMapTypeSatellite'/>
+<enum value='0' name='MKMapTypeStandard'/>
+<enum value='1' name='MKPinAnnotationColorGreen'/>
+<enum value='2' name='MKPinAnnotationColorPurple'/>
+<enum value='0' name='MKPinAnnotationColorRed'/>
+<enum value='1' name='MKUserTrackingModeFollow'/>
+<enum value='2' name='MKUserTrackingModeFollowWithHeading'/>
+<enum value='0' name='MKUserTrackingModeNone'/>
+<function name='MKCoordinateForMapPoint'>
+<arg name='mapPoint' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</function>
+<function name='MKCoordinateRegionForMapRect'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}'/>
+</function>
+<function name='MKCoordinateRegionMake' inline='true'>
+<arg name='centerCoordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+<arg name='span' declared_type='MKCoordinateSpan' type='{_MKCoordinateSpan=dd}'/>
+<retval declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}'/>
+</function>
+<function name='MKCoordinateRegionMakeWithDistance'>
+<arg name='centerCoordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+<arg name='latitudinalMeters' declared_type='CLLocationDistance' type='d'/>
+<arg name='longitudinalMeters' declared_type='CLLocationDistance' type='d'/>
+<retval declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}'/>
+</function>
+<function name='MKCoordinateSpanMake' inline='true'>
+<arg name='latitudeDelta' declared_type='CLLocationDegrees' type='d'/>
+<arg name='longitudeDelta' declared_type='CLLocationDegrees' type='d'/>
+<retval declared_type='MKCoordinateSpan' type='{_MKCoordinateSpan=dd}'/>
+</function>
+<function name='MKMapPointEqualToPoint' inline='true'>
+<arg name='point1' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<arg name='point2' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapPointForCoordinate'>
+<arg name='coordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+<retval declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+</function>
+<function name='MKMapPointMake' inline='true'>
+<arg name='x' declared_type='double' type='d'/>
+<arg name='y' declared_type='double' type='d'/>
+<retval declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+</function>
+<function name='MKMapPointsPerMeterAtLatitude'>
+<arg name='latitude' declared_type='CLLocationDegrees' type='d'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectContainsPoint'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='point' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectContainsRect'>
+<arg name='rect1' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='rect2' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectDivide'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='slice' declared_type='MKMapRect*' type='^{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='remainder' declared_type='MKMapRect*' type='^{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='amount' declared_type='double' type='d'/>
+<arg name='edge' declared_type='CGRectEdge' type='i'/>
+<retval declared_type='void' type='v'/>
+</function>
+<function name='MKMapRectEqualToRect' inline='true'>
+<arg name='rect1' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='rect2' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectGetHeight' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetMaxX' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetMaxY' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetMidX' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetMidY' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetMinX' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetMinY' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectGetWidth' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='double' type='d'/>
+</function>
+<function name='MKMapRectInset'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='dx' declared_type='double' type='d'/>
+<arg name='dy' declared_type='double' type='d'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</function>
+<function name='MKMapRectIntersection'>
+<arg name='rect1' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='rect2' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</function>
+<function name='MKMapRectIntersectsRect'>
+<arg name='rect1' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='rect2' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectIsEmpty' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectIsNull' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectMake' inline='true'>
+<arg name='x' declared_type='double' type='d'/>
+<arg name='y' declared_type='double' type='d'/>
+<arg name='width' declared_type='double' type='d'/>
+<arg name='height' declared_type='double' type='d'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</function>
+<function name='MKMapRectOffset'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='dx' declared_type='double' type='d'/>
+<arg name='dy' declared_type='double' type='d'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</function>
+<function name='MKMapRectRemainder'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</function>
+<function name='MKMapRectSpans180thMeridian'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapRectUnion'>
+<arg name='rect1' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<arg name='rect2' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</function>
+<function name='MKMapSizeEqualToSize' inline='true'>
+<arg name='size1' declared_type='MKMapSize' type='{_MKMapSize=dd}'/>
+<arg name='size2' declared_type='MKMapSize' type='{_MKMapSize=dd}'/>
+<retval declared_type='BOOL' type='B'/>
+</function>
+<function name='MKMapSizeMake' inline='true'>
+<arg name='width' declared_type='double' type='d'/>
+<arg name='height' declared_type='double' type='d'/>
+<retval declared_type='MKMapSize' type='{_MKMapSize=dd}'/>
+</function>
+<function name='MKMetersBetweenMapPoints'>
+<arg name='a' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<arg name='b' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<retval declared_type='CLLocationDistance' type='d'/>
+</function>
+<function name='MKMetersPerMapPointAtLatitude'>
+<arg name='latitude' declared_type='CLLocationDegrees' type='d'/>
+<retval declared_type='CLLocationDistance' type='d'/>
+</function>
+<function name='MKRoadWidthAtZoomScale'>
+<arg name='zoomScale' declared_type='MKZoomScale' type='f'/>
+<retval declared_type='CGFloat' type='f'/>
+</function>
+<function name='MKStringFromMapPoint' inline='true'>
+<arg name='point' declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='MKStringFromMapRect' inline='true'>
+<arg name='rect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<function name='MKStringFromMapSize' inline='true'>
+<arg name='size' declared_type='MKMapSize' type='{_MKMapSize=dd}'/>
+<retval declared_type='NSString*' type='@'/>
+</function>
+<class name='MKAnnotationView'>
+<method selector='annotation'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='calloutOffset'>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='canShowCallout'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='centerOffset'>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='dragState'>
+<retval declared_type='MKAnnotationViewDragState' type='I'/>
+</method>
+<method selector='image'>
+<retval declared_type='UIImage*' type='@'/>
+</method>
+<method selector='initWithAnnotation:reuseIdentifier:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<arg name='reuseIdentifier' declared_type='NSString*' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isDraggable'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isHighlighted'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isSelected'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='leftCalloutAccessoryView'>
+<retval declared_type='UIView*' type='@'/>
+</method>
+<method selector='prepareForReuse'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='reuseIdentifier'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='rightCalloutAccessoryView'>
+<retval declared_type='UIView*' type='@'/>
+</method>
+<method selector='setAnnotation:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCalloutOffset:'>
+<arg name='calloutOffset' declared_type='CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCanShowCallout:'>
+<arg name='canShowCallout' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCenterOffset:'>
+<arg name='centerOffset' declared_type='CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDragState:'>
+<arg name='dragState' declared_type='MKAnnotationViewDragState' type='I' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDragState:animated:'>
+<arg name='newDragState' declared_type='MKAnnotationViewDragState' type='I' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDraggable:'>
+<arg name='draggable' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setEnabled:'>
+<arg name='enabled' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setHighlighted:'>
+<arg name='highlighted' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setImage:'>
+<arg name='image' declared_type='UIImage*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLeftCalloutAccessoryView:'>
+<arg name='leftCalloutAccessoryView' declared_type='UIView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRightCalloutAccessoryView:'>
+<arg name='rightCalloutAccessoryView' declared_type='UIView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSelected:'>
+<arg name='selected' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSelected:animated:'>
+<arg name='selected' declared_type='BOOL' type='B' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='MKCircle'>
+<method selector='boundingMapRect'>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+<method class_method='true' selector='circleWithCenterCoordinate:radius:'>
+<arg name='coord' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='radius' declared_type='CLLocationDistance' type='d' index='1'/>
+<retval declared_type='MKCircle*' type='@'/>
+</method>
+<method class_method='true' selector='circleWithMapRect:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='MKCircle*' type='@'/>
+</method>
+<method selector='coordinate'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='radius'>
+<retval declared_type='CLLocationDistance' type='d'/>
+</method>
+</class>
+<class name='MKCircleView'>
+<method selector='circle'>
+<retval declared_type='MKCircle*' type='@'/>
+</method>
+<method selector='initWithCircle:'>
+<arg name='circle' declared_type='MKCircle*' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='MKMapView'>
+<method selector='addAnnotation:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='addAnnotations:'>
+<arg name='annotations' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='addOverlay:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='addOverlays:'>
+<arg name='overlays' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='annotationVisibleRect'>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</method>
+<method selector='annotations'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='annotationsInMapRect:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='NSSet*' type='@'/>
+</method>
+<method selector='centerCoordinate'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='convertCoordinate:toPointToView:'>
+<arg name='coordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='view' declared_type='UIView*' type='@' index='1'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='convertPoint:toCoordinateFromView:'>
+<arg name='point' declared_type='CGPoint' type='{CGPoint=ff}' index='0'/>
+<arg name='view' declared_type='UIView*' type='@' index='1'/>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='convertRect:toRegionFromView:'>
+<arg name='rect' declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' index='0'/>
+<arg name='view' declared_type='UIView*' type='@' index='1'/>
+<retval declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}'/>
+</method>
+<method selector='convertRegion:toRectToView:'>
+<arg name='region' declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}' index='0'/>
+<arg name='view' declared_type='UIView*' type='@' index='1'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='dequeueReusableAnnotationViewWithIdentifier:'>
+<arg name='identifier' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='MKAnnotationView*' type='@'/>
+</method>
+<method selector='deselectAnnotation:animated:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='exchangeOverlayAtIndex:withOverlayAtIndex:'>
+<arg name='index1' declared_type='NSUInteger' type='I' index='0'/>
+<arg name='index2' declared_type='NSUInteger' type='I' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='insertOverlay:aboveOverlay:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<arg name='sibling' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='insertOverlay:atIndex:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<arg name='index' declared_type='NSUInteger' type='I' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='insertOverlay:belowOverlay:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<arg name='sibling' declared_type='id' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isScrollEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isUserLocationVisible'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isZoomEnabled'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mapRectThatFits:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+<method selector='mapRectThatFits:edgePadding:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<arg name='insets' declared_type='UIEdgeInsets' type='{UIEdgeInsets=ffff}' index='1'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+<method selector='mapType'>
+<retval declared_type='MKMapType' type='I'/>
+</method>
+<method selector='overlays'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='region'>
+<retval declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}'/>
+</method>
+<method selector='regionThatFits:'>
+<arg name='region' declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}' index='0'/>
+<retval declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}'/>
+</method>
+<method selector='removeAnnotation:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeAnnotations:'>
+<arg name='annotations' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeOverlay:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='removeOverlays:'>
+<arg name='overlays' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='selectAnnotation:animated:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='selectedAnnotations'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setCenterCoordinate:'>
+<arg name='centerCoordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCenterCoordinate:animated:'>
+<arg name='coordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDelegate:'>
+<arg name='delegate' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMapType:'>
+<arg name='mapType' declared_type='MKMapType' type='I' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRegion:'>
+<arg name='region' declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setRegion:animated:'>
+<arg name='region' declared_type='MKCoordinateRegion' type='{_MKCoordinateRegion={?=dd}{_MKCoordinateSpan=dd}}' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setScrollEnabled:'>
+<arg name='scrollEnabled' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setSelectedAnnotations:'>
+<arg name='selectedAnnotations' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setShowsUserLocation:'>
+<arg name='showsUserLocation' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setUserTrackingMode:'>
+<arg name='userTrackingMode' declared_type='MKUserTrackingMode' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setUserTrackingMode:animated:'>
+<arg name='mode' declared_type='MKUserTrackingMode' type='i' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVisibleMapRect:'>
+<arg name='visibleMapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVisibleMapRect:animated:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<arg name='animate' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setVisibleMapRect:edgePadding:animated:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<arg name='insets' declared_type='UIEdgeInsets' type='{UIEdgeInsets=ffff}' index='1'/>
+<arg name='animate' declared_type='BOOL' type='B' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setZoomEnabled:'>
+<arg name='zoomEnabled' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='showsUserLocation'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='userLocation'>
+<retval declared_type='MKUserLocation*' type='@'/>
+</method>
+<method selector='userTrackingMode'>
+<retval declared_type='MKUserTrackingMode' type='i'/>
+</method>
+<method selector='viewForAnnotation:'>
+<arg name='annotation' declared_type='id' type='@' index='0'/>
+<retval declared_type='MKAnnotationView*' type='@'/>
+</method>
+<method selector='viewForOverlay:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<retval declared_type='MKOverlayView*' type='@'/>
+</method>
+<method selector='visibleMapRect'>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+</class>
+<class name='MKMultiPoint'>
+<method selector='getCoordinates:range:'>
+<arg name='coords' declared_type='CLLocationCoordinate2D*' type='^{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='range' declared_type='NSRange' type='{_NSRange=II}' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='pointCount'>
+<retval declared_type='NSUInteger' type='I'/>
+</method>
+<method selector='points'>
+<retval declared_type='MKMapPoint*' type='^{_MKMapPoint=dd}'/>
+</method>
+</class>
+<class name='MKOverlayPathView'>
+<method selector='applyFillPropertiesToContext:atZoomScale:'>
+<arg name='context' declared_type='CGContextRef' type='^{CGContext=}' index='0'/>
+<arg name='zoomScale' declared_type='MKZoomScale' type='f' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='applyStrokePropertiesToContext:atZoomScale:'>
+<arg name='context' declared_type='CGContextRef' type='^{CGContext=}' index='0'/>
+<arg name='zoomScale' declared_type='MKZoomScale' type='f' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='createPath'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='fillColor'>
+<retval declared_type='UIColor*' type='@'/>
+</method>
+<method selector='fillPath:inContext:'>
+<arg name='path' declared_type='CGPathRef' type='^{CGPath=}' index='0'/>
+<arg name='context' declared_type='CGContextRef' type='^{CGContext=}' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='invalidatePath'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='lineCap'>
+<retval declared_type='CGLineCap' type='i'/>
+</method>
+<method selector='lineDashPattern'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='lineDashPhase'>
+<retval declared_type='CGFloat' type='f'/>
+</method>
+<method selector='lineJoin'>
+<retval declared_type='CGLineJoin' type='i'/>
+</method>
+<method selector='lineWidth'>
+<retval declared_type='CGFloat' type='f'/>
+</method>
+<method selector='miterLimit'>
+<retval declared_type='CGFloat' type='f'/>
+</method>
+<method selector='path'>
+<retval declared_type='CGPathRef' type='^{CGPath=}'/>
+</method>
+<method selector='setFillColor:'>
+<arg name='fillColor' declared_type='UIColor*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLineCap:'>
+<arg name='lineCap' declared_type='CGLineCap' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLineDashPattern:'>
+<arg name='lineDashPattern' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLineDashPhase:'>
+<arg name='lineDashPhase' declared_type='CGFloat' type='f' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLineJoin:'>
+<arg name='lineJoin' declared_type='CGLineJoin' type='i' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setLineWidth:'>
+<arg name='lineWidth' declared_type='CGFloat' type='f' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setMiterLimit:'>
+<arg name='miterLimit' declared_type='CGFloat' type='f' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPath:'>
+<arg name='path' declared_type='CGPathRef' type='^{CGPath=}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setStrokeColor:'>
+<arg name='strokeColor' declared_type='UIColor*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='strokeColor'>
+<retval declared_type='UIColor*' type='@'/>
+</method>
+<method selector='strokePath:inContext:'>
+<arg name='path' declared_type='CGPathRef' type='^{CGPath=}' index='0'/>
+<arg name='context' declared_type='CGContextRef' type='^{CGContext=}' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='MKOverlayView'>
+<method selector='canDrawMapRect:zoomScale:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<arg name='zoomScale' declared_type='MKZoomScale' type='f' index='1'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='drawMapRect:zoomScale:inContext:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<arg name='zoomScale' declared_type='MKZoomScale' type='f' index='1'/>
+<arg name='context' declared_type='CGContextRef' type='^{CGContext=}' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='initWithOverlay:'>
+<arg name='overlay' declared_type='id' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='mapPointForPoint:'>
+<arg name='point' declared_type='CGPoint' type='{CGPoint=ff}' index='0'/>
+<retval declared_type='MKMapPoint' type='{_MKMapPoint=dd}'/>
+</method>
+<method selector='mapRectForRect:'>
+<arg name='rect' declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}' index='0'/>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+<method selector='overlay'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='pointForMapPoint:'>
+<arg name='mapPoint' declared_type='MKMapPoint' type='{_MKMapPoint=dd}' index='0'/>
+<retval declared_type='CGPoint' type='{CGPoint=ff}'/>
+</method>
+<method selector='rectForMapRect:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='CGRect' type='{CGRect={CGPoint=ff}{CGSize=ff}}'/>
+</method>
+<method selector='setNeedsDisplayInMapRect:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setNeedsDisplayInMapRect:zoomScale:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<arg name='zoomScale' declared_type='MKZoomScale' type='f' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='MKPinAnnotationView'>
+<method selector='animatesDrop'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='pinColor'>
+<retval declared_type='MKPinAnnotationColor' type='I'/>
+</method>
+<method selector='setAnimatesDrop:'>
+<arg name='animatesDrop' declared_type='BOOL' type='B' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setPinColor:'>
+<arg name='pinColor' declared_type='MKPinAnnotationColor' type='I' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='MKPlacemark'>
+<method selector='countryCode'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='initWithCoordinate:addressDictionary:'>
+<arg name='coordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='addressDictionary' declared_type='NSDictionary*' type='@' index='1'/>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='MKPointAnnotation'>
+<method selector='coordinate'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='setCoordinate:'>
+<arg name='coordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='MKPolygon'>
+<method selector='interiorPolygons'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method class_method='true' selector='polygonWithCoordinates:count:'>
+<arg name='coords' declared_type='CLLocationCoordinate2D*' type='^{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='count' declared_type='NSUInteger' type='I' index='1'/>
+<retval declared_type='MKPolygon*' type='@'/>
+</method>
+<method class_method='true' selector='polygonWithCoordinates:count:interiorPolygons:'>
+<arg name='coords' declared_type='CLLocationCoordinate2D*' type='^{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='count' declared_type='NSUInteger' type='I' index='1'/>
+<arg name='interiorPolygons' declared_type='NSArray*' type='@' index='2'/>
+<retval declared_type='MKPolygon*' type='@'/>
+</method>
+<method class_method='true' selector='polygonWithPoints:count:'>
+<arg name='points' declared_type='MKMapPoint*' type='^{_MKMapPoint=dd}' index='0'/>
+<arg name='count' declared_type='NSUInteger' type='I' index='1'/>
+<retval declared_type='MKPolygon*' type='@'/>
+</method>
+<method class_method='true' selector='polygonWithPoints:count:interiorPolygons:'>
+<arg name='points' declared_type='MKMapPoint*' type='^{_MKMapPoint=dd}' index='0'/>
+<arg name='count' declared_type='NSUInteger' type='I' index='1'/>
+<arg name='interiorPolygons' declared_type='NSArray*' type='@' index='2'/>
+<retval declared_type='MKPolygon*' type='@'/>
+</method>
+</class>
+<class name='MKPolygonView'>
+<method selector='initWithPolygon:'>
+<arg name='polygon' declared_type='MKPolygon*' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='polygon'>
+<retval declared_type='MKPolygon*' type='@'/>
+</method>
+</class>
+<class name='MKPolyline'>
+<method class_method='true' selector='polylineWithCoordinates:count:'>
+<arg name='coords' declared_type='CLLocationCoordinate2D*' type='^{_CLLocationCoordinate2D=dd}' index='0'/>
+<arg name='count' declared_type='NSUInteger' type='I' index='1'/>
+<retval declared_type='MKPolyline*' type='@'/>
+</method>
+<method class_method='true' selector='polylineWithPoints:count:'>
+<arg name='points' declared_type='MKMapPoint*' type='^{_MKMapPoint=dd}' index='0'/>
+<arg name='count' declared_type='NSUInteger' type='I' index='1'/>
+<retval declared_type='MKPolyline*' type='@'/>
+</method>
+</class>
+<class name='MKPolylineView'>
+<method selector='initWithPolyline:'>
+<arg name='polyline' declared_type='MKPolyline*' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='polyline'>
+<retval declared_type='MKPolyline*' type='@'/>
+</method>
+</class>
+<class name='MKReverseGeocoder'>
+<method selector='cancel'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='coordinate'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithCoordinate:'>
+<arg name='coordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='isQuerying'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='placemark'>
+<retval declared_type='MKPlacemark*' type='@'/>
+</method>
+<method selector='setDelegate:'>
+<arg name='delegate' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='start'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='MKShape'>
+<method selector='setSubtitle:'>
+<arg name='subtitle' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTitle:'>
+<arg name='title' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='subtitle'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='title'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='MKUserLocation'>
+<method selector='heading'>
+<retval declared_type='CLHeading*' type='@'/>
+</method>
+<method selector='isUpdating'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='location'>
+<retval declared_type='CLLocation*' type='@'/>
+</method>
+<method selector='setSubtitle:'>
+<arg name='subtitle' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setTitle:'>
+<arg name='title' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='subtitle'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='title'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<class name='MKUserTrackingBarButtonItem'>
+<method selector='initWithMapView:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='mapView'>
+<retval declared_type='MKMapView*' type='@'/>
+</method>
+<method selector='setMapView:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='boundingMapRect'>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+<method selector='coordinate'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='intersectsMapRect:'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='mapView:annotationView:calloutAccessoryControlTapped:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<arg name='control' declared_type='UIControl*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:annotationView:didChangeDragState:fromOldState:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<arg name='newState' declared_type='MKAnnotationViewDragState' type='I' index='2'/>
+<arg name='oldState' declared_type='MKAnnotationViewDragState' type='I' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didAddAnnotationViews:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='views' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didAddOverlayViews:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='overlayViews' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didChangeUserTrackingMode:animated:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='mode' declared_type='MKUserTrackingMode' type='i' index='1'/>
+<arg name='animated' declared_type='BOOL' type='B' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didDeselectAnnotationView:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didFailToLocateUserWithError:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didSelectAnnotationView:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didUpdateUserLocation:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='userLocation' declared_type='MKUserLocation*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:regionDidChangeAnimated:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:regionWillChangeAnimated:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:viewForAnnotation:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='annotation' declared_type='id' type='@' index='1'/>
+<retval declared_type='MKAnnotationView*' type='@'/>
+</method>
+<method selector='mapView:viewForOverlay:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='overlay' declared_type='id' type='@' index='1'/>
+<retval declared_type='MKOverlayView*' type='@'/>
+</method>
+<method selector='mapViewDidFailLoadingMap:withError:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewDidFinishLoadingMap:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewDidStopLocatingUser:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewWillStartLoadingMap:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewWillStartLocatingUser:'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='reverseGeocoder:didFailWithError:'>
+<arg name='geocoder' declared_type='MKReverseGeocoder*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='reverseGeocoder:didFindPlacemark:'>
+<arg name='geocoder' declared_type='MKReverseGeocoder*' type='@' index='0'/>
+<arg name='placemark' declared_type='MKPlacemark*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setCoordinate:'>
+<arg name='newCoordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='subtitle'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='title'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</class>
+<informal_protocol name='MKAnnotation'>
+<method selector='coordinate' type='{?=dd}8@0:4'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='setCoordinate:' type='v24@0:4{?=dd}8'>
+<arg name='newCoordinate' declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='subtitle' type='@8@0:4'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='title' type='@8@0:4'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+</informal_protocol>
+<informal_protocol name='MKMapViewDelegate'>
+<method selector='mapView:annotationView:calloutAccessoryControlTapped:' type='v20@0:4@8@12@16'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<arg name='control' declared_type='UIControl*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:annotationView:didChangeDragState:fromOldState:' type='v24@0:4@8@12I16I20'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<arg name='newState' declared_type='MKAnnotationViewDragState' type='I' index='2'/>
+<arg name='oldState' declared_type='MKAnnotationViewDragState' type='I' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didAddAnnotationViews:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='views' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didAddOverlayViews:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='overlayViews' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didChangeUserTrackingMode:animated:' type='v20@0:4@8i12B16'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='mode' declared_type='MKUserTrackingMode' type='i' index='1'/>
+<arg name='animated' declared_type='BOOL' type='B' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didDeselectAnnotationView:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didFailToLocateUserWithError:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didSelectAnnotationView:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='view' declared_type='MKAnnotationView*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:didUpdateUserLocation:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='userLocation' declared_type='MKUserLocation*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:regionDidChangeAnimated:' type='v16@0:4@8B12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:regionWillChangeAnimated:' type='v16@0:4@8B12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='animated' declared_type='BOOL' type='B' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapView:viewForAnnotation:' type='@16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='annotation' declared_type='id' type='@' index='1'/>
+<retval declared_type='MKAnnotationView*' type='@'/>
+</method>
+<method selector='mapView:viewForOverlay:' type='@16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='overlay' declared_type='id' type='@' index='1'/>
+<retval declared_type='MKOverlayView*' type='@'/>
+</method>
+<method selector='mapViewDidFailLoadingMap:withError:' type='v16@0:4@8@12'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewDidFinishLoadingMap:' type='v12@0:4@8'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewDidStopLocatingUser:' type='v12@0:4@8'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewWillStartLoadingMap:' type='v12@0:4@8'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='mapViewWillStartLocatingUser:' type='v12@0:4@8'>
+<arg name='mapView' declared_type='MKMapView*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='MKOverlay'>
+<method selector='boundingMapRect' type='{?={?=dd}{?=dd}}8@0:4'>
+<retval declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}'/>
+</method>
+<method selector='coordinate' type='{?=dd}8@0:4'>
+<retval declared_type='CLLocationCoordinate2D' type='{_CLLocationCoordinate2D=dd}'/>
+</method>
+<method selector='intersectsMapRect:' type='B40@0:4{?={?=dd}{?=dd}}8'>
+<arg name='mapRect' declared_type='MKMapRect' type='{_MKMapRect={_MKMapPoint=dd}{_MKMapSize=dd}}' index='0'/>
+<retval declared_type='BOOL' type='B'/>
+</method>
+</informal_protocol>
+<informal_protocol name='MKReverseGeocoderDelegate'>
+<method selector='reverseGeocoder:didFailWithError:' type='v16@0:4@8@12'>
+<arg name='geocoder' declared_type='MKReverseGeocoder*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='reverseGeocoder:didFindPlacemark:' type='v16@0:4@8@12'>
+<arg name='geocoder' declared_type='MKReverseGeocoder*' type='@' index='0'/>
+<arg name='placemark' declared_type='MKPlacemark*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+</signatures>

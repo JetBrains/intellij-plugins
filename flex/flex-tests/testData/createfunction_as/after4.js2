@@ -1,0 +1,11 @@
+// "Create Method '_bbb'" "true"
+
+class C2 {
+  function C2() {
+    this._bbb("1","2");
+  }
+
+    private function _bbb(s:String, s2:String):void {
+        <caret>
+    }
+}

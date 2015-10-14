@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*">
+
+    <local:DefaultPropertyWithArrayType_2>
+      <<error>mx:Object</error> />
+      <mx:Label/>
+    </local:DefaultPropertyWithArrayType_2>
+
+    <local:DefaultPropertyWithArrayType_3>
+      <<error>mx:Object</error> />
+      <mx:Label/>
+    </local:DefaultPropertyWithArrayType_3>
+
+</mx:Application>

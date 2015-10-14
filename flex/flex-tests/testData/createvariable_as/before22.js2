@@ -1,0 +1,6 @@
+// "Create Constant Field 'CONST'" "true"
+public class A3 {
+    function A3() {
+        if(CON<caret>ST < 2) {}
+    }
+}

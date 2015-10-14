@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+	The class level comment for the component. 
+	This tag supports all ASDoc tags, 
+	and does not require a CDATA block.
+
+	@see mx.core.UIComponent
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" horizontalCenter="">
+<mx:Script>
+  var z:Mxml<caret>Doc6;
+</mx:Script>
+</mx:Application>

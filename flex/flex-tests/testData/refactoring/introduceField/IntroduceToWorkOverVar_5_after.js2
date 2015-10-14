@@ -1,0 +1,12 @@
+package {
+public class Example {
+
+    private var created:String;
+
+    internal function f():void {
+        created = "def";
+        trace(created);
+    }
+
+}
+}

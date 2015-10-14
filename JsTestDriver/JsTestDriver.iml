@@ -17,6 +17,7 @@
     <orderEntry type="library" name="jcip" level="project" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="coverage-common" />
+    <orderEntry type="module" module-name="JsTestDriver-common" />
     <orderEntry type="module" module-name="JsTestDriver-rt" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="library" name="Guava" level="project" />

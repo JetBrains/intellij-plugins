@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:xxx="com.*">
+ <mx:DataGrid id="lastTenDataGrid">
+    <mx:columns>
+      <mx:DataGridColumn dataField="@id"/>
+      <xxx:My<caret> />
+    </mx:columns>
+  </mx:DataGrid>
+</mx:Application>

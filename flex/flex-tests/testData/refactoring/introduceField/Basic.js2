@@ -1,0 +1,5 @@
+class A {
+    function xxx() {
+        var a = <selection>1</selection>;
+    }
+}

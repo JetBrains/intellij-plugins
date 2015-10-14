@@ -1,0 +1,12 @@
+package {
+public class Example {
+
+    private var created:Vector.<String>;
+
+    internal function f():void {
+        
+        trace(created);
+    }
+
+}
+}

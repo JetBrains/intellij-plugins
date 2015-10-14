@@ -188,7 +188,7 @@ Dart File
       CLASS_MEMBERS
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           FORMAL_PARAMETER_LIST
@@ -220,7 +220,7 @@ Dart File
           PsiElement(MULTI_LINE_COMMENT_END)('*/')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           PsiElement(.)('.')
@@ -282,7 +282,7 @@ Dart File
           PsiElement(MULTI_LINE_COMMENT_END)('*/')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           PsiElement(.)('.')
@@ -322,7 +322,7 @@ Dart File
           PsiElement(MULTI_LINE_COMMENT_END)('*/')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           PsiElement(.)('.')
@@ -414,7 +414,7 @@ Dart File
           PsiElement(MULTI_LINE_COMMENT_END)('*/')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Map')
           PsiElement(.)('.')
@@ -816,7 +816,7 @@ Dart File
       CLASS_MEMBERS
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
-          REFERENCE_EXPRESSION
+          COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('Exception')
           FORMAL_PARAMETER_LIST

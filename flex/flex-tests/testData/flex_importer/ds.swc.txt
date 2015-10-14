@@ -1,0 +1,2361 @@
+
+public class de.polygonal.ds.Compare extends Object
+{
+  native public function Compare():void;
+  static native public final function compareNumberFall(a:Number,b:Number):int;
+  static native public final function compareNumberRise(a:Number,b:Number):int;
+  static native public final function compareStringCaseInSensitiveFall(a:String,b:String):int;
+
+  static native public final function compareStringCaseInSensitiveRise(a:String,b:String):int;
+  static native public final function compareStringCaseSensitiveFall(a:String,b:String):int;
+  static native public final function compareStringCaseSensitiveRise(a:String,b:String):int;
+}
+
+
+public class de.polygonal.ds.pooling.LinkedObjectPool extends Object
+{
+  native public function LinkedObjectPool(x:int = null,growable:Boolean = false):void;
+  native public function toString():String;
+
+  native public function put(o:Object):void;
+  native public function purge():void;
+  native public function getWasteCount():int;
+  native public function getUsageCount():int;
+  native public function getSize():int;
+
+  native public function get():Object;
+  native public function free():void;
+  native public function allocate(C:Class = null,fabricate:Object = null,factory:de.polygonal.ds.pooling.Factory = null):void;
+  native public var _usageCount:int;
+  native public var _tail:de.polygonal.ds.pooling.ObjNode;
+
+  native public var _initSize:int;
+  native public var _head:de.polygonal.ds.pooling.ObjNode;
+  native public var _growable:Boolean;
+  native public function _grow():void;
+  native public function _getInternal():Object;
+
+  native public function _fill(buffer:Array):void;
+  native public var _factory:de.polygonal.ds.pooling.Factory;
+  native public var _fabricate:Function;
+  native public var _emptyNode:de.polygonal.ds.pooling.ObjNode;
+  native public var _currSize:int;
+
+  native public var _allocNode:de.polygonal.ds.pooling.ObjNode;
+  native public var _C:Class;
+}
+
+
+public class de.polygonal.ds.pooling.ObjNode extends Object
+{
+  native public function ObjNode():void;
+  native public var val:Object;
+  native public var next:ObjNode;
+}
+
+
+public class de.polygonal.ds.GraphArc extends Object
+{
+
+  native public function GraphArc(node:de.polygonal.ds.GraphNode = null,cost:Number = 0):void;
+  native public function val():Object;
+  native public var prev:GraphArc;
+  native public var node:de.polygonal.ds.GraphNode;
+  native public var next:GraphArc;
+
+  native public var cost:Number;
+  native public function _unlink(owner:de.polygonal.ds.GraphNode):void;
+  native public function _link(owner:de.polygonal.ds.GraphNode):void;
+}
+
+
+public class de.polygonal.ds.mem.MemoryAccess extends Object
+{
+  native public function MemoryAccess(bytes:int = null):void;
+  native public function resize(bytes:int):void;
+
+  native public var offset:int;
+  native public function free():void;
+  native public function clear():void;
+  native public var bytes:int;
+  native public var _offset:int;
+
+  native public var _bytes:int;
+  native public function __offset():int;
+  native public function __bytes():int;
+}
+
+
+public class de.polygonal.ds.mem.ByteMemory extends de.polygonal.ds.mem.MemoryAccess
+{
+  native public function ByteMemory(size:int = null):void;
+  native public function toString():String;
+
+  native public function swp(i:int,j:int):void;
+  native public var size:int;
+  native public function set(i:int,x:int):void;
+  native public override function resize(newSize:int):void;
+  native public function getAddr(i:int):int;
+
+  native public function get(i:int):int;
+  native public var _size:int;
+  native public function __size():int;
+  static native public final function toByteArray(input:ByteMemory,min:int = -1,max:int = -1):flash.utils.ByteArray;
+  static native public final function ofByteArray(input:flash.utils.ByteArray,min:int = -1,max:int = -1):ByteMemory;
+
+  static native public final function toArray(input:ByteMemory,min:int = -1,max:int = -1):Array;
+  static native public final function ofArray(input:Array,min:int = -1,max:int = -1):ByteMemory;
+  static native public final function toVector(input:ByteMemory,min:int = -1,max:int = -1):Vector.<int>;
+  static native public final function ofVector(input:Vector.<int>,min:int = -1,max:int = -1):ByteMemory;
+}
+
+
+public interface de.polygonal.ds.Itr
+{
+  native function reset():void;
+
+  native function next():Object;
+  native function hasNext():Boolean;
+}
+
+
+public class IntIter extends Object
+{
+  native public function IntIter(min:int = null,max:int = null):void;
+  native public function next():int;
+  native public var min:int;
+
+  native public var max:int;
+  native public function hasNext():Boolean;
+}
+
+
+public interface de.polygonal.ds.Collection
+{
+  native function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native function toArray(output:Array = null):Array;
+  native function size():int;
+
+  native function iterator():Object;
+  native function isEmpty():Boolean;
+  native function contains(x:Object):Boolean;
+  native function clone(assign:Boolean,copier:Object = null):Collection;
+  native function clear():void;
+}
+
+
+public class de.polygonal.ds.Graph extends Object
+  implements de.polygonal.ds.Collection
+{
+
+  native public function Graph(maxSize:int = -1):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function size():int;
+
+  native public function removeNode(node:de.polygonal.ds.GraphNode):void;
+  native public function maxSize():int;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function getNodeList():de.polygonal.ds.GraphNode;
+
+  native public function findNode(x:Object):de.polygonal.ds.GraphNode;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clearMarks():void;
+  native public function clear():void;
+
+  native public function addSingleArc(source:de.polygonal.ds.GraphNode,target:de.polygonal.ds.GraphNode,cost:Number):void;
+  native public function addNode(x:Object):de.polygonal.ds.GraphNode;
+  native public function addMutualArc(source:de.polygonal.ds.GraphNode,target:de.polygonal.ds.GraphNode,cost:Number):void;
+  native public var _stack:Array;
+  native public var _size:int;
+
+  native public var _que:Array;
+  native public var _nodeList:de.polygonal.ds.GraphNode;
+  native public function __unlink(f:Object,graph:Graph):void;
+  native public function __setMarked(f:Object,flag:Boolean):void;
+  native public function __next(f:Object):de.polygonal.ds.GraphNode;
+
+  native public function __link(f:Object,graph:Graph):void;
+  native public function __getMarked(f:Object):Boolean;
+  native public function DFS(prepass:Boolean = false,node:de.polygonal.ds.GraphNode = null,process:Object = null,userData:* = null):void;
+  native public function BFS(prepass:Boolean = false,node:de.polygonal.ds.GraphNode = null,process:Object = null,userData:* = null):void;
+}
+
+
+public class de.polygonal.ds.GraphIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function GraphIterator(f:de.polygonal.ds.Graph = null):void;
+
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _node:de.polygonal.ds.GraphNode;
+  native public var _f:de.polygonal.ds.Graph;
+
+  native public function __nodeList(f:Object):de.polygonal.ds.GraphNode;
+}
+
+
+public class de.polygonal.ds.SLL extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function SLL(maxSize:int = -1):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+
+  native public function tail():de.polygonal.ds.SLLNode;
+  native public function sort(compare:Function,useInsertionSort:Boolean = false):void;
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function shiftUp():void;
+
+  native public function reverse():void;
+  native public function removeTail():Object;
+  native public function removeHead():Object;
+  native public function remove(node:de.polygonal.ds.SLLNode):de.polygonal.ds.SLLNode;
+  native public function prepend(x:Object):de.polygonal.ds.SLLNode;
+
+  native public function popDown():void;
+  native public function nodeOf(x:Object,from:de.polygonal.ds.SLLNode = null):de.polygonal.ds.SLLNode;
+  native public function merge(x:SLL):void;
+  native public function maxSize():int;
+  native public function join(x:String):String;
+
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function insertBefore(node:de.polygonal.ds.SLLNode,x:Object):de.polygonal.ds.SLLNode;
+  native public function insertAfter(node:de.polygonal.ds.SLLNode,x:Object):de.polygonal.ds.SLLNode;
+  native public function head():de.polygonal.ds.SLLNode;
+
+  native public function getNodeAt(i:int):de.polygonal.ds.SLLNode;
+  native public function contains(x:Object):Boolean;
+  native public function concat(x:SLL):SLL;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+  native public function append(x:Object):de.polygonal.ds.SLLNode;
+  native public function _valid(node:de.polygonal.ds.SLLNode):Boolean;
+  native public var _tail:de.polygonal.ds.SLLNode;
+  native public var _size:int;
+
+  native public function _mergeSortComparable(node:de.polygonal.ds.SLLNode):de.polygonal.ds.SLLNode;
+  native public function _mergeSort(node:de.polygonal.ds.SLLNode,cmp:Function):de.polygonal.ds.SLLNode;
+  native public function _insertionSortComparable(node:de.polygonal.ds.SLLNode):de.polygonal.ds.SLLNode;
+  native public function _insertionSort(node:de.polygonal.ds.SLLNode,cmp:Function):de.polygonal.ds.SLLNode;
+  native public var _head:de.polygonal.ds.SLLNode;
+
+  native public function _getNodeBefore(x:de.polygonal.ds.SLLNode):de.polygonal.ds.SLLNode;
+  native public function _getNode(x:Object):de.polygonal.ds.SLLNode;
+  native public function __insertAfter(f:Object,x:de.polygonal.ds.SLLNode):void;
+}
+
+
+public class de.polygonal.ds.SLLIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function SLLIterator(f:de.polygonal.ds.SLL = null):void;
+  native public function reset():void;
+
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _walker:de.polygonal.ds.SLLNode;
+  native public var _f:de.polygonal.ds.SLL;
+  native public function __head(f:Object):de.polygonal.ds.SLLNode;
+}
+
+
+public class de.polygonal.ds.BSTIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+
+  native public function BSTIterator(node:de.polygonal.ds.BinaryTreeNode = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _top:int;
+
+  native public var _stack:Array;
+  native public var _node:de.polygonal.ds.BinaryTreeNode;
+}
+
+
+public class de.polygonal.ds.BST extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function BST():void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+
+  native public function toArray(output:Array = null):Array;
+  native public function size():int;
+  native public function root():de.polygonal.ds.BinaryTreeNode;
+  native public function removeNode(x:de.polygonal.ds.BinaryTreeNode):Boolean;
+  native public function remove(x:de.polygonal.ds.Comparable):Boolean;
+
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function insert(x:de.polygonal.ds.Comparable):de.polygonal.ds.BinaryTreeNode;
+  native public function find(x:de.polygonal.ds.Comparable):de.polygonal.ds.BinaryTreeNode;
+  native public function contains(x:Object):Boolean;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public var _size:int;
+  native public var _root:de.polygonal.ds.BinaryTreeNode;
+}
+
+
+public class de.polygonal.gl.color.RGB extends Object
+{
+  native public function RGB(r:Number = 0.0,g:Number = 0.0,b:Number = 0.0):void;
+
+  native public function toString():String;
+  native public function set24(r:int,g:int,b:int):void;
+  native public function set(r:Number,g:Number,b:Number):void;
+  native public var r:Number;
+  native public function lerp(input:RGB,output:RGB,t:Number):void;
+
+  native public function getR8():int;
+  native public function getG8():int;
+  native public function getB8():int;
+  native public function get24():int;
+  native public var g:Number;
+
+  native public function copy(target:RGB):RGB;
+  native public var b:Number;
+  static native public var BLACK:int;
+  static native public var WHITE:int;
+  static native public var RED:int;
+
+  static native public var GREEN:int;
+  static native public var BLUE:int;
+  static native public var CYAN:int;
+  static native public var MAGENTA:int;
+  static native public var YELLOW:int;
+
+  static native public final function setRGBi(r:int,g:int,b:int):int;
+  static native public final function setRGBf(r:Number,g:Number,b:Number):int;
+  static native public final function getR(x:int):int;
+  static native public final function getRf(x:int):Number;
+  static native public final function getG(x:int):int;
+
+  static native public final function getGf(x:int):Number;
+  static native public final function getB(x:int):int;
+  static native public final function getBf(x:int):Number;
+  static native public final function setR(x:int,r:int):int;
+  static native public final function setRf(x:int,r:Number):int;
+
+  static native public final function setG(x:int,g:int):int;
+  static native public final function setGf(x:int,g:Number):int;
+  static native public final function setB(x:int,b:int):int;
+  static native public final function setBf(x:int,b:Number):int;
+}
+
+
+public interface de.polygonal.ds.Prioritizable
+{
+}
+
+
+public class flash.Memory extends Object
+{
+  native public function Memory():void;
+
+  static native public final function select(b:flash.utils.ByteArray):void;
+  static native public final function setByte(addr:int,v:int):void;
+  static native public final function setI16(addr:int,v:int):void;
+  static native public final function setI32(addr:int,v:int):void;
+  static native public final function setFloat(addr:int,v:Number):void;
+
+  static native public final function setDouble(addr:int,v:Number):void;
+  static native public final function getByte(addr:int):int;
+  static native public final function getUI16(addr:int):int;
+  static native public final function getI32(addr:int):int;
+  static native public final function getFloat(addr:int):Number;
+
+  static native public final function getDouble(addr:int):Number;
+  static native public final function signExtend1(v:int):int;
+  static native public final function signExtend8(v:int):int;
+  static native public final function signExtend16(v:int):int;
+}
+
+
+public class de.polygonal.ds.mem.IntMemory extends de.polygonal.ds.mem.MemoryAccess
+{
+  native public function IntMemory(size:int = null):void;
+
+  native public function toString():String;
+  native public function swp(i:int,j:int):void;
+  native public var size:int;
+  native public function set(i:int,x:int):void;
+  native public override function resize(newSize:int):void;
+
+  native public function getAddr(i:int):int;
+  native public function get(i:int):int;
+  native public var _size:int;
+  native public function __size():int;
+  static native public final function toByteArray(input:IntMemory,min:int = -1,max:int = -1):flash.utils.ByteArray;
+
+  static native public final function ofByteArray(input:flash.utils.ByteArray,min:int = -1,max:int = -1):IntMemory;
+  static native public final function toArray(input:IntMemory,min:int = -1,max:int = -1):Array;
+  static native public final function ofArray(input:Array,min:int = -1,max:int = -1):IntMemory;
+  static native public final function toVector(input:IntMemory,min:int = -1,max:int = -1):Vector.<int>;
+  static native public final function toUnsignedVector(input:IntMemory,min:int = -1,max:int = -1):Vector.<uint>;
+
+  static native public final function ofVector(input:Vector.<int>,min:int = -1,max:int = -1):IntMemory;
+}
+
+
+public class de.polygonal.core.math.Mathematics extends Object
+{
+  native public function Mathematics():void;
+  static native public var INT8_MIN:int;
+  static native public var INT8_MAX:int;
+  static native public var UINT8_MAX:int;
+
+  static native public var INT16_MIN:int;
+  static native public var INT16_MAX:int;
+  static native public var UINT16_MAX:int;
+  static native public var INT32_MIN:int;
+  static native public var INT32_MAX:int;
+
+  static native public var UINT32_MAX:int;
+  static native public var NaN:Number;
+  static native public var POSITIVE_INFINITY:Number;
+  static native public var NEGATIVE_INFINITY:Number;
+  static native public var FLOAT_MAX:Number;
+
+  static native public var FLOAT_MIN:Number;
+  static native public var DOUBLE_MIN:Number;
+  static native public var DOUBLE_MAX:Number;
+  static native public var RAD_DEG:Number;
+  static native public var DEG_RAD:Number;
+
+  static native public var LN2:Number;
+  static native public var PIHALF:Number;
+  static native public var PI:Number;
+  static native public var PI2:Number;
+  static native public var EPS:Number;
+
+  static native public var EPS_SQ:Number;
+  static native public final function floatInt(x:Number):int;
+  static native public final function intFloat(x:int):Number;
+  static native public final function isFinite(x:Number):Boolean;
+  static native public final function isNaN(x:Number):Boolean;
+
+  static native public final function min(a:int,b:int):int;
+  static native public final function max(a:int,b:int):int;
+  static native public final function abs(x:int):int;
+  static native public final function sign(x:int):int;
+  static native public final function clamp(x:int,min:int,max:int):int;
+
+  static native public final function clampSymmetric(x:int,i:int):int;
+  static native public final function wrap(x:int,min:int,max:int):int;
+  static native public final function fmin(a:Number,b:Number):Number;
+  static native public final function fmax(a:Number,b:Number):Number;
+  static native public final function fabs(x:Number):Number;
+
+  static native public final function fsign(x:Number):int;
+  static native public final function fclamp(x:Number,min:Number,max:Number):Number;
+  static native public final function fclampSymmetric(x:Number,i:Number):Number;
+  static native public final function fwrap(x:Number,min:Number,max:Number):Number;
+  static native public final function equalSign(x:int,y:int):Boolean;
+
+  static native public final function isEven(x:int):Boolean;
+  static native public final function isOdd(x:int):Boolean;
+  static native public final function isPow2(x:int):Boolean;
+  static native public final function lerp(a:Number,b:Number,t:Number):Number;
+  static native public final function slerp(a:Number,b:Number,t:Number):Number;
+
+  static native public final function nextPow2(x:int):int;
+  static native public final function exp(base:int,exponent:int):int;
+  static native public final function roundTo(x:Number,interval:Number):Number;
+  static native public final function round(val:Number):int;
+  static native public final function ceil(x:Number):int;
+
+  static native public final function floor(x:Number):int;
+  static native public final function sqr(x:Number):Number;
+  static native public final function invSqrt(x:Number):Number;
+  static native public final function wrapPI(x:Number):Number;
+  static native public final function compareAbsolute(x:Number,y:Number,eps:Number):Boolean;
+
+  static native public final function snap(x:Number,grid:Number):Number;
+  static native public final function inRange(x:Number,min:Number,max:Number):Boolean;
+  static native public final function frand():Number;
+  static native public final function irand():int;
+  static native public final function frandRange(min:Number,max:Number):Number;
+
+  static native public final function frandRangeSymmetric(range:Number):Number;
+  static native public final function irandRange(min:int,max:int):int;
+  static native public final function irandRangeSymmetric(range:int):Number;
+  static native public final function almostEqual2sComplement(x:Number,y:Number,maxUlps:int):Boolean;
+}
+
+
+public class de.polygonal.ds.TreeBuilder extends Object
+{
+  native public function TreeBuilder(node:de.polygonal.ds.TreeNode = null):void;
+
+  native public function valid():Boolean;
+  native public function up():Boolean;
+  native public function toString():String;
+  native public function setVal(x:Object):void;
+  native public function root():void;
+
+  native public function removeChild():Boolean;
+  native public function prevChild():Boolean;
+  native public function prependChild(x:Object):de.polygonal.ds.TreeNode;
+  native public function nextChild():Boolean;
+  native public function insertBeforeChild(x:Object):de.polygonal.ds.TreeNode;
+
+  native public function insertAfterChild(x:Object):de.polygonal.ds.TreeNode;
+  native public function getVal():Object;
+  native public function getNode():de.polygonal.ds.TreeNode;
+  native public function getChildVal():Object;
+  native public function getChildNode():de.polygonal.ds.TreeNode;
+
+  native public function down():Boolean;
+  native public function childValid():Boolean;
+  native public function childStart():Boolean;
+  native public function childEnd():Boolean;
+  native public function appendChild(x:Object):de.polygonal.ds.TreeNode;
+
+  native public function _reset():void;
+  native public var _node:de.polygonal.ds.TreeNode;
+  native public function _getTail(node:de.polygonal.ds.TreeNode):de.polygonal.ds.TreeNode;
+  native public function _createChildNode(x:Object,append:Boolean):de.polygonal.ds.TreeNode;
+  native public var _child:de.polygonal.ds.TreeNode;
+}
+
+
+public class de.polygonal.ds.mem.FloatMemory extends de.polygonal.ds.mem.MemoryAccess
+{
+
+  native public function FloatMemory(size:int = null):void;
+  native public function toString():String;
+  native public function swp(i:int,j:int):void;
+  native public var size:int;
+  native public function set(i:int,x:Number):void;
+
+  native public override function resize(newSize:int):void;
+  native public function getAddr(i:int):int;
+  native public function get(i:int):Number;
+  native public var _size:int;
+  native public function __size():int;
+
+  static native public final function toByteArray(input:FloatMemory,min:int = -1,max:int = -1):flash.utils.ByteArray;
+  static native public final function ofByteArray(input:flash.utils.ByteArray,min:int = -1,max:int = -1):FloatMemory;
+  static native public final function toArray(input:FloatMemory,min:int = -1,max:int = -1):Array;
+  static native public final function ofArray(input:Array,min:int = -1,max:int = -1):FloatMemory;
+  static native public final function toVector(input:FloatMemory,min:int = -1,max:int = -1):Vector.<Number>;
+
+  static native public final function ofVector(input:Vector.<Number>,min:int = -1,max:int = -1):FloatMemory;
+}
+
+
+public class haxe.io.Bytes extends Object
+{
+  native public function Bytes(length:int = null,b:flash.utils.ByteArray = null):void;
+  native public function toString():String;
+  native public function sub(pos:int,len:int):Bytes;
+  native public function set(pos:int,v:int):void;
+
+  native public function readString(pos:int,len:int):String;
+  native public var length:int;
+  native public function getData():flash.utils.ByteArray;
+  native public function get(pos:int):int;
+  native public function compare(other:Bytes):int;
+
+  native public function blit(pos:int,src:Bytes,srcpos:int,len:int):void;
+  native public var b:flash.utils.ByteArray;
+  static native public final function alloc(length:int):Bytes;
+  static native public final function ofString(s:String):Bytes;
+  static native public final function ofData(b:flash.utils.ByteArray):Bytes;
+}
+
+
+public dynamic class flash.Boot extends flash.display.MovieClip
+{
+
+  native public function Boot(mc:flash.display.MovieClip = null):void;
+  static native public var init:Function;
+  static native public var tf:flash.text.TextField;
+  static native public var lines:Array;
+  static native public var lastError:Error;
+
+  static native public var skip_constructor:Boolean;
+  static native public final function enum_to_string(e:Object):String;
+  static native public final function __instanceof(v:*,t:*):Boolean;
+  static native public final function __clear_trace():void;
+  static native public final function __set_trace_color(rgb:uint):void;
+
+  static native public final function getTrace():flash.text.TextField;
+  static native public final function __trace(v:*,pos:Object):void;
+  static native public final function __string_rec(v:*,str:String):String;
+  static native public final function __unprotect__(s:String):String;
+}
+
+
+public class de.polygonal.ds.mem.ShortMemory extends de.polygonal.ds.mem.MemoryAccess
+{
+  native public function ShortMemory(size:int = null):void;
+
+  native public function toString():String;
+  native public function swp(i:int,j:int):void;
+  native public var size:int;
+  native public function set(i:int,x:int):void;
+  native public override function resize(newSize:int):void;
+
+  native public function getAddr(i:int):int;
+  native public function get(i:int):int;
+  native public var _size:int;
+  native public function __size():int;
+  static native public final function toByteArray(input:ShortMemory,min:int = -1,max:int = -1):flash.utils.ByteArray;
+
+  static native public final function ofByteArray(input:flash.utils.ByteArray,min:int = -1,max:int = -1):ShortMemory;
+  static native public final function toArray(input:ShortMemory,min:int = -1,max:int = -1):Array;
+  static native public final function ofArray(input:Array,min:int = -1,max:int = -1):ShortMemory;
+  static native public final function toVector(input:ShortMemory,min:int = -1,max:int = -1):Vector.<int>;
+  static native public final function toUnsignedVector(input:ShortMemory,min:int = -1,max:int = -1):Vector.<uint>;
+
+  static native public final function ofVector(input:Vector.<int>,min:int = -1,max:int = -1):ShortMemory;
+}
+
+
+public class de.polygonal.core.fmt.Sprintf extends Object
+{
+  native public function Sprintf():void;
+  native public function cca(s:String,pos:int):int;
+  native public function _rpad(s:String,c:String,k:int):String;
+  native public function _padNumber(x:String,n:Number,bits:int,width:int):String;
+
+  native public function _lpad(s:String,c:String,k:int):String;
+  native public function _format(fmt:String,arg:Array):String;
+  native public var _bits:Vector.<int>;
+  static native public var BIT_MINUS:int;
+  static native public var BIT_PLUS:int;
+
+  static native public var BIT_SPACE:int;
+  static native public var BIT_SHARP:int;
+  static native public var BIT_ZERO:int;
+  static native public var BIT_h:int;
+  static native public var BIT_l:int;
+
+  static native public var BIT_L:int;
+  static native public var BIT_c:int;
+  static native public var BIT_d:int;
+  static native public var BIT_i:int;
+  static native public var BIT_e:int;
+
+  static native public var BIT_E:int;
+  static native public var BIT_f:int;
+  static native public var BIT_g:int;
+  static native public var BIT_G:int;
+  static native public var BIT_o:int;
+
+  static native public var BIT_s:int;
+  static native public var BIT_u:int;
+  static native public var BIT_x:int;
+  static native public var BIT_X:int;
+  static native public var BIT_p:int;
+
+  static native public var BIT_n:int;
+  static native public var BIT_b:int;
+  static native public var MASK_SPECIFIERS:int;
+  static native public var _instance:Sprintf;
+  static native public final function get():Sprintf;
+
+  static native public final function free():void;
+  static native public final function format(fmt:String,arg:Array):String;
+}
+
+
+public class de.polygonal.ds.GraphNode extends Object
+{
+  native public function GraphNode(x:Object = null):void;
+  native public var val:Object;
+  native public function toString():String;
+
+  native public function removeSingleArcs():void;
+  native public function removeMutualArcs():void;
+  native public function removeArc(target:GraphNode):void;
+  native public var prev:GraphNode;
+  native public var next:GraphNode;
+
+  native public function iterator():Object;
+  native public function isMutuallyConnected(target:GraphNode):Boolean;
+  native public function isMarked():Boolean;
+  native public function isConnected(target:GraphNode):Boolean;
+  native public function getArc(target:GraphNode):de.polygonal.ds.GraphArc;
+
+  native public var arcList:de.polygonal.ds.GraphArc;
+  native public function addArc(target:GraphNode,cost:Number):void;
+  native public function _unlink(graph:de.polygonal.ds.Graph):void;
+  native public var _marked:Boolean;
+  native public function _link(graph:de.polygonal.ds.Graph):void;
+
+  native public function __unlink(f:Object,n:GraphNode):void;
+  native public function __setNodeList(f:Object,x:GraphNode):void;
+  native public function __link(f:Object,n:GraphNode):void;
+  native public function __getNodeList(f:Object):GraphNode;
+}
+
+
+public class de.polygonal.ds.GraphNodeIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function GraphNodeIterator(node:de.polygonal.ds.GraphNode = null):void;
+
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _node:de.polygonal.ds.GraphNode;
+  native public var _arcList:de.polygonal.ds.GraphArc;
+}
+
+
+public class de.polygonal.ds.Array3 extends Object
+  implements de.polygonal.ds.Collection
+{
+
+  native public function Array3(w:int = null,h:int = null,d:int = null):void;
+  native public function walk(process:Function):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+
+  native public function swap(x0:int,y0:int,z0:int,x1:int,y1:int,z1:int):void;
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function setW(w:int):void;
+  native public function setRow(z:int,y:int,input:Array):void;
+
+  native public function setPile(x:int,y:int,input:Array):void;
+  native public function setH(h:int):void;
+  native public function setD(d:int):void;
+  native public function setCol(z:int,x:int,input:Array):void;
+  native public function set(x:int,y:int,z:int,val:Object):void;
+
+  native public function resize(w:int,h:int,d:int):void;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function getW():int;
+  native public function getRow(z:int,y:int,output:Array):void;
+
+  native public function getPile(x:int,y:int,output:Array):void;
+  native public function getLayer(z:int,output:de.polygonal.ds.Array2):de.polygonal.ds.Array2;
+  native public function getH():int;
+  native public function getD():int;
+  native public function getCol(z:int,x:int,output:Array):void;
+
+  native public function getArray():Array;
+  native public function get(x:int,y:int,z:int):Object;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+
+  native public function assign(x:*,args:Array = null):void;
+  native public var _w:int;
+  native public var _h:int;
+  native public var _d:int;
+  native public var _a:Array;
+
+  native public function __set(i:int,x:Object):void;
+  native public function __get(i:int):Object;
+}
+
+
+public class de.polygonal.ds.Array3Iterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function Array3Iterator(f:de.polygonal.ds.Array3 = null):void;
+  native public function reset():void;
+  native public function next():Object;
+
+  native public function hasNext():Boolean;
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.Array3;
+  native public var _a:Array;
+
+  native public function __size(f:Object):int;
+  native public function __a(f:Object):Array;
+}
+
+
+public class flash.Lib extends Object
+{
+  native public function Lib():void;
+  static native public var current:flash.display.MovieClip;
+  static native public final function getTimer():int;
+
+  static native public final function eval(path:String):*;
+  static native public final function getURL(url:flash.net.URLRequest,target:String = ""):void;
+  static native public final function fscommand(cmd:String,param:String = ""):void;
+  static native public final function trace(arg:*):void;
+  static native public final function attach(name:String):flash.display.MovieClip;
+
+  static native public final function vectorOfArray(v:Array):Vector.<Object>;
+  static native public final function vectorConvert(v:Vector.<Object>):Vector.<Object>;
+}
+
+
+public class de.polygonal.ds.mem.MemoryManager extends Object
+{
+  native public function MemoryManager():void;
+  native public function _wipe(destination:int,size:int,offset:int):void;
+  native public function _realloc(access:de.polygonal.ds.mem.MemoryAccess,numBytes:int):void;
+
+  native public function _pack():void;
+  native public function _mergeRight(m:de.polygonal.ds.mem._MemoryManager.MemoryArea):void;
+  native public function _mergeLeft(m:de.polygonal.ds.mem._MemoryManager.MemoryArea):void;
+  native public function _memmove(destination:int,source:int,size:int,offset:int):void;
+  native public var _map:de.polygonal.ds.HashMap;
+
+  native public function _malloc(access:de.polygonal.ds.mem.MemoryAccess,numBytes:int):void;
+  native public var _intervalList:de.polygonal.ds.mem._MemoryManager.MemoryArea;
+  native public function _grow(numBytes:int):void;
+  native public function _free():void;
+  native public function _findEmptySpace(size:int):de.polygonal.ds.mem._MemoryManager.MemoryArea;
+
+  native public function _defrag():void;
+  native public function _dealloc(access:de.polygonal.ds.mem.MemoryAccess):void;
+  native public var _bytesUsed:int;
+  native public var _bytesTotal:int;
+  native public var _bytesRaw:int;
+
+  native public var _bytes:flash.utils.ByteArray;
+  native public var _buffer:flash.utils.ByteArray;
+  native public var _blockSizeShift:int;
+  native public var _blockSizeBytes:int;
+  static native public var _I:MemoryManager;
+
+  static native public var get:MemoryManager;
+  static native public final function __get():MemoryManager;
+  static native public var RESERVE_BYTES:int;
+  static native public var MEMORY_LIMIT_BYTES:int;
+  static native public var BLOCK_SIZE_BYTES:int;
+
+  static native public var RAW_BYTES:int;
+  static native public final function free():void;
+  static native public var bytesTotal:int;
+  static native public final function __bytesTotal():int;
+  static native public var bytesUsed:int;
+
+  static native public final function __bytesUsed():int;
+  static native public var bytesFree:int;
+  static native public final function __bytesFree():int;
+  static native public final function malloc(access:de.polygonal.ds.mem.MemoryAccess,numBytes:int):void;
+  static native public final function dealloc(access:de.polygonal.ds.mem.MemoryAccess):void;
+
+  static native public final function realloc(access:de.polygonal.ds.mem.MemoryAccess,numBytes:int):void;
+  static native public final function defrag():void;
+  static native public final function pack():void;
+  static native public final function draw(g:flash.display.Graphics,bounds:flash.geom.Rectangle):void;
+  static native public final function toString():String;
+}
+
+
+public class de.polygonal.ds.mem._MemoryManager.MemoryArea extends Object
+{
+
+  native public function MemoryArea(manager:de.polygonal.ds.mem.MemoryManager = null,offset:int = null):void;
+  native public function wipe():void;
+  native public function toString():String;
+  native public var size:int;
+  native public function shrinkRight(s:int):void;
+
+  native public function shrinkLeft(s:int):void;
+  native public function shiftRight(x:int):void;
+  native public function shiftLeft(x:int):void;
+  native public function setOffset():void;
+  native public function setByteOffset(access:Object,x:int):void;
+
+  native public var prev:MemoryArea;
+  native public var offset:int;
+  native public var next:MemoryArea;
+  native public var manager:de.polygonal.ds.mem.MemoryManager;
+  native public var isEmpty:Boolean;
+
+  native public function expandRight(s:int):void;
+  native public function expandLeft(s:int):void;
+  native public var e:int;
+  native public function copy():MemoryArea;
+  native public var b:int;
+
+  native public var access:de.polygonal.ds.mem.MemoryAccess;
+}
+
+
+public class de.polygonal.ds.pooling.ObjectPool extends Object
+{
+  native public function ObjectPool(x:int = null):void;
+  native public function toString():String;
+  native public function size():int;
+  native public function put(id:int):void;
+
+  native public function next():int;
+  native public function iterator():Object;
+  native public function get(id:int):Object;
+  native public function free():void;
+  native public function allocate(C:Class = null,fabricate:Object = null,factory:de.polygonal.ds.pooling.Factory = null):void;
+
+  native public var _size:int;
+  native public var _pool:Vector.<de.polygonal.ds.pooling.ObjectPoolItem>;
+  native public var _last:int;
+  native public var _item:de.polygonal.ds.pooling.ObjectPoolItem;
+  native public var _free:int;
+
+  native public function _fill(buffer:Array):void;
+}
+
+
+public class de.polygonal.ds.pooling.ObjectPoolItem extends Object
+{
+  native public function ObjectPoolItem():void;
+  native public function toString():String;
+  native public var obj:Object;
+  native public var next:int;
+
+  native public var id:int;
+}
+
+
+public class de.polygonal.ds.pooling.ObjectPoolIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function ObjectPoolIterator(f:Object = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+
+  native public var _v:Vector.<de.polygonal.ds.pooling.ObjectPoolItem>;
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:Object;
+}
+
+
+public class de.polygonal.gl.color.ColorConversion extends Object
+{
+  native public function ColorConversion():void;
+
+  static native public final function RGBtoHSV(rgb:de.polygonal.gl.color.RGB,hsv:de.polygonal.gl.color.HSV = null):de.polygonal.gl.color.HSV;
+  static native public final function HSVtoRGB(hsv:de.polygonal.gl.color.HSV,rgb:de.polygonal.gl.color.RGB = null):de.polygonal.gl.color.RGB;
+}
+
+
+public class haxe.Int32 extends Object
+{
+  native public function Int32():void;
+  static native public final function make(a:int,b:int):int;
+  static native public final function ofInt(x:int):int;
+
+  static native public final function toInt(x:int):int;
+  static native public final function toNativeInt(x:int):int;
+  static native public final function add(a:int,b:int):int;
+  static native public final function sub(a:int,b:int):int;
+  static native public final function mul(a:int,b:int):int;
+
+  static native public final function div(a:int,b:int):int;
+  static native public final function mod(a:int,b:int):int;
+  static native public final function shl(a:int,b:int):int;
+  static native public final function shr(a:int,b:int):int;
+  static native public final function ushr(a:int,b:int):int;
+
+  static native public final function and(a:int,b:int):int;
+  static native public final function or(a:int,b:int):int;
+  static native public final function xor(a:int,b:int):int;
+  static native public final function neg(a:int):int;
+  static native public final function complement(a:int):int;
+
+  static native public final function compare(a:int,b:int):int;
+}
+
+
+public final class ValueType extends Object
+{
+  native public function ValueType(tag:String,index:int,params:*):void;
+  native public var tag:String;
+  native public var index:int;
+  native public var params:Array;
+
+  native public const __enum__:Boolean = true;
+  native public final function toString():String;
+  static native public const __isenum:Boolean = true;
+  static native public var __constructs__:*;
+  static native public var TUnknown:ValueType;
+
+  static native public var TObject:ValueType;
+  static native public var TNull:ValueType;
+  static native public var TInt:ValueType;
+  static native public var TFunction:ValueType;
+  static native public var TFloat:ValueType;
+
+  static native public final function TEnum(e:Class):ValueType;
+  static native public final function TClass(c:Class):ValueType;
+  static native public var TBool:ValueType;
+}
+
+
+public class Type extends Object
+{
+  native public function Type():void;
+  static native public final function getClass(o:Object):Class;
+
+  static native public final function getEnum(o:*):Class;
+  static native public final function getSuperClass(c:Class):Class;
+  static native public final function getClassName(c:Class):String;
+  static native public final function getEnumName(e:Class):String;
+  static native public final function resolveClass(name:String):Class;
+
+  static native public final function resolveEnum(name:String):Class;
+  static native public final function createInstance(cl:Class,args:Array):Object;
+  static native public final function createEmptyInstance(cl:Class):Object;
+  static native public final function createEnum(e:Class,constr:String,params:Array = null):Object;
+  static native public final function createEnumIndex(e:Class,index:int,params:Array = null):Object;
+
+  static native public final function describe(t:*,fact:Boolean):Array;
+  static native public final function getInstanceFields(c:Class):Array;
+  static native public final function getClassFields(c:Class):Array;
+  static native public final function getEnumConstructs(e:Class):Array;
+  static native public final function enumEq(a:Object,b:Object):Boolean;
+
+  static native public final function enumConstructor(e:*):String;
+  static native public final function enumParameters(e:*):Array;
+  static native public final function enumIndex(e:*):int;
+}
+
+
+public class Reflect extends Object
+{
+  native public function Reflect():void;
+  static native public final function hasField(o:*,field:String):Boolean;
+
+  static native public final function field(o:*,field:String):*;
+  static native public final function setField(o:*,field:String,value:*):void;
+  static native public final function callMethod(o:*,func:*,args:Array):*;
+  static native public final function fields(o:*):Array;
+  static native public final function isFunction(f:*):Boolean;
+
+  static native public final function compare(a:Object,b:Object):int;
+  static native public final function compareMethods(f1:*,f2:*):Boolean;
+  static native public final function isObject(v:*):Boolean;
+  static native public final function deleteField(o:*,f:String):Boolean;
+  static native public final function copy(o:Object):Object;
+
+  static native public final function makeVarArgs(f:Function):*;
+}
+
+
+public class de.polygonal.ds.BitVector extends Object
+{
+  native public function BitVector(x:int = null):void;
+  native public function toString():String;
+  native public function toBytes(bigEndian:Boolean = false):flash.utils.ByteArray;
+  native public function size():int;
+
+  native public function setAll():void;
+  native public function set(i:int):void;
+  native public function resize(x:int):void;
+  native public function ofBytes(bytes:flash.utils.ByteArray,bigEndian:Boolean = false):void;
+  native public function has(i:int):Boolean;
+
+  native public function clrAll():void;
+  native public function clr(i:int):void;
+  native public function clone():BitVector;
+  native public function capacity():int;
+  native public function bucketSize():int;
+
+  native public var _bits:Vector.<int>;
+  native public var _bitSize:int;
+  native public var _arrSize:int;
+}
+
+
+public interface de.polygonal.ds.Visitable
+{
+  native function visit(preflight:Boolean,userData:*):Boolean;
+}
+
+
+public class de.polygonal.ds.DLLNode extends Object
+{
+  native public function DLLNode(x:Object = null,list:de.polygonal.ds.DLL = null):void;
+
+  native public var val:Object;
+  native public function toString():String;
+  native public function remove():DLLNode;
+  native public function prevVal():Object;
+  native public var prev:DLLNode;
+
+  native public function prependTo(node:DLLNode):DLLNode;
+  native public function prepend(node:DLLNode):DLLNode;
+  native public function nextVal():Object;
+  native public var next:DLLNode;
+  native public function hasPrev():Boolean;
+
+  native public function hasNext():Boolean;
+  native public function getList():de.polygonal.ds.DLL;
+  native public function appendTo(node:DLLNode):DLLNode;
+  native public function append(node:DLLNode):DLLNode;
+  native public function _unlink():DLLNode;
+
+  native public var _list:de.polygonal.ds.DLL;
+  native public function _insertBefore(node:DLLNode):void;
+  native public function _insertAfter(node:DLLNode):void;
+}
+
+
+public class de.polygonal.ds.HeapIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function HeapIterator(f:Object = null):void;
+  native public function reset():void;
+
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:Object;
+
+  native public var _a:Array;
+}
+
+
+public class de.polygonal.ds.Heap extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function Heap(removable:Boolean = false,maxSize:int = -1):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+
+  native public function size():int;
+  native public function remove(x:de.polygonal.ds.Comparable):void;
+  native public function maxSize():int;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+
+  native public function front():de.polygonal.ds.Comparable;
+  native public function enqueue(x:de.polygonal.ds.Comparable):void;
+  native public function dequeue():de.polygonal.ds.Comparable;
+  native public function contains(x:Object):Boolean;
+  native public function compact():void;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public var _size:int;
+  native public var _removable:Boolean;
+  native public var _position:de.polygonal.ds.HashMap;
+
+  native public var _a:Array;
+  native public function __set(i:int,x:de.polygonal.ds.Comparable):void;
+  native public function __get(i:int):de.polygonal.ds.Comparable;
+}
+
+
+public class de.polygonal.gl.text.ASCII extends Object
+{
+  native public function ASCII():void;
+  static native public final function isASCII(x:int):Boolean;
+
+  static native public final function isDigit(x:int):Boolean;
+  static native public final function isWhite(x:int):Boolean;
+  static native public final function isPrintable(x:int):Boolean;
+  static native public final function isUpperCaseAlphabetic(x:int):Boolean;
+  static native public final function isLowerCaseAlphabetic(x:int):Boolean;
+
+  static native public final function isAlphabetic(x:int):Boolean;
+  static native public final function isAlphaNumeric(x:int):Boolean;
+  static native public var BACKSPACE:int;
+  static native public var TAB:int;
+  static native public var NEWLINE:int;
+
+  static native public var SPACE:int;
+  static native public var EXCLAM:int;
+  static native public var QUOTEDBL:int;
+  static native public var NUMBERSIGN:int;
+  static native public var DOLLAR:int;
+
+  static native public var PERCENT:int;
+  static native public var AMPERSAND:int;
+  static native public var QUOTESINGLE:int;
+  static native public var PARENLEFT:int;
+  static native public var PARENRIGHT:int;
+
+  static native public var ASTERISK:int;
+  static native public var PLUS:int;
+  static native public var COMMA:int;
+  static native public var HYPHEN:int;
+  static native public var PERIOD:int;
+
+  static native public var SLASH:int;
+  static native public var ZERO:int;
+  static native public var ONE:int;
+  static native public var TWO:int;
+  static native public var THREE:int;
+
+  static native public var FOUR:int;
+  static native public var FIVE:int;
+  static native public var SIX:int;
+  static native public var SEVEN:int;
+  static native public var EIGHT:int;
+
+  static native public var NINE:int;
+  static native public var COLON:int;
+  static native public var SEMICOLON:int;
+  static native public var LESS:int;
+  static native public var EQUAL:int;
+
+  static native public var GREATER:int;
+  static native public var QUESTION:int;
+  static native public var AT:int;
+  static native public var A:int;
+  static native public var B:int;
+
+  static native public var C:int;
+  static native public var D:int;
+  static native public var E:int;
+  static native public var F:int;
+  static native public var G:int;
+
+  static native public var H:int;
+  static native public var I:int;
+  static native public var J:int;
+  static native public var K:int;
+  static native public var L:int;
+
+  static native public var M:int;
+  static native public var N:int;
+  static native public var O:int;
+  static native public var P:int;
+  static native public var Q:int;
+
+  static native public var R:int;
+  static native public var S:int;
+  static native public var T:int;
+  static native public var U:int;
+  static native public var V:int;
+
+  static native public var W:int;
+  static native public var X:int;
+  static native public var Y:int;
+  static native public var Z:int;
+  static native public var BRACKETLEFT:int;
+
+  static native public var BACKSLASH:int;
+  static native public var BRACKETRIGHT:int;
+  static native public var CIRCUM:int;
+  static native public var UNDERSCORE:int;
+  static native public var GRAVE:int;
+
+  static native public var a:int;
+  static native public var b:int;
+  static native public var c:int;
+  static native public var d:int;
+  static native public var e:int;
+
+  static native public var f:int;
+  static native public var g:int;
+  static native public var h:int;
+  static native public var i:int;
+  static native public var j:int;
+
+  static native public var k:int;
+  static native public var l:int;
+  static native public var m:int;
+  static native public var n:int;
+  static native public var o:int;
+
+  static native public var p:int;
+  static native public var q:int;
+  static native public var r:int;
+  static native public var s:int;
+  static native public var t:int;
+
+  static native public var u:int;
+  static native public var v:int;
+  static native public var w:int;
+  static native public var x:int;
+  static native public var y:int;
+
+  static native public var z:int;
+  static native public var BRACELEFT:int;
+  static native public var BAR:int;
+  static native public var BRACERIGTH:int;
+  static native public var TILDE:int;
+}
+
+
+public class de.polygonal.gl.color.HSV extends Object
+{
+
+  native public function HSV(h:Number = 0.0,s:Number = 0.0,v:Number = 0.0):void;
+  native public var v:Number;
+  native public function set(h:Number,s:Number,v:Number):void;
+  native public var s:Number;
+  native public var h:Number;
+}
+
+
+public class de.polygonal.ds.PriorityQueueIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+
+  native public function PriorityQueueIterator(f:de.polygonal.ds.PriorityQueue = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _s:int;
+
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.PriorityQueue;
+  native public var _a:Array;
+  native public function __size(f:Object):int;
+  native public function __a(f:Object):Array;
+}
+
+
+public class de.polygonal.ds.PriorityQueue extends Object
+  implements de.polygonal.ds.Collection
+{
+
+  native public function PriorityQueue(inverse:Boolean = false,maxSize:int = -1):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function size():int;
+
+  native public function reprioritize(x:de.polygonal.ds.Prioritizable,newPriority:int):void;
+  native public function remove(x:de.polygonal.ds.Prioritizable):void;
+  native public function maxSize():int;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+
+  native public function front():de.polygonal.ds.Prioritizable;
+  native public function enqueue(x:de.polygonal.ds.Prioritizable):void;
+  native public function dequeue():de.polygonal.ds.Prioritizable;
+  native public function contains(x:Object):Boolean;
+  native public function compact():void;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function _walkUp(index:int):void;
+  native public function _walkDown(index:int):void;
+  native public var _size:int;
+
+  native public var _inverse:Boolean;
+  native public var _a:Array;
+  native public function __set(i:int,x:de.polygonal.ds.Prioritizable):void;
+  native public function __get(i:int):de.polygonal.ds.Prioritizable;
+}
+
+
+public class de.polygonal.ds.Bits extends Object
+{
+  native public function Bits():void;
+
+  static native public var BIT_01:int;
+  static native public var BIT_02:int;
+  static native public var BIT_03:int;
+  static native public var BIT_04:int;
+  static native public var BIT_05:int;
+
+  static native public var BIT_06:int;
+  static native public var BIT_07:int;
+  static native public var BIT_08:int;
+  static native public var BIT_09:int;
+  static native public var BIT_10:int;
+
+  static native public var BIT_11:int;
+  static native public var BIT_12:int;
+  static native public var BIT_13:int;
+  static native public var BIT_14:int;
+  static native public var BIT_15:int;
+
+  static native public var BIT_16:int;
+  static native public var BIT_17:int;
+  static native public var BIT_18:int;
+  static native public var BIT_19:int;
+  static native public var BIT_20:int;
+
+  static native public var BIT_21:int;
+  static native public var BIT_22:int;
+  static native public var BIT_23:int;
+  static native public var BIT_24:int;
+  static native public var BIT_25:int;
+
+  static native public var BIT_26:int;
+  static native public var BIT_27:int;
+  static native public var BIT_28:int;
+  static native public var BIT_29:int;
+  static native public var BIT_30:int;
+
+  static native public var BIT_31:int;
+  static native public var BIT_32:int;
+  static native public var ALL:int;
+  static native public final function hasBits(x:int,bits:int):Boolean;
+  static native public final function hasAllBits(x:int,bits:int):Boolean;
+
+  static native public final function setBits(x:int,bits:int):int;
+  static native public final function clrBits(x:int,bits:int):int;
+  static native public final function invBits(x:int,bits:int):int;
+  static native public final function mask(n:int):int;
+  static native public final function ones(x:int):int;
+
+  static native public final function ntz(x:int):int;
+  static native public final function nlz(x:int):int;
+  static native public final function msb(x:int):int;
+  static native public final function reverse(x:int):int;
+  static native public final function hasBitAt(x:int,p:int):Boolean;
+
+  static native public final function setBitAt(x:int,p:int):int;
+  static native public final function clrBitAt(x:int,p:int):int;
+  static native public final function invBitAt(x:int,p:int):int;
+  static native public final function setBitsIf(x:int,expr:Boolean,bits:int):int;
+  static native public final function setBitsRange(x:int,min:int,max:int):int;
+}
+
+
+public interface de.polygonal.ds.pooling.Factory
+{
+
+  native function create():Object;
+}
+
+
+public class de.polygonal.ds.SLLNode extends Object
+{
+  native public function SLLNode(x:Object = null,list:de.polygonal.ds.SLL = null):void;
+  native public var val:Object;
+  native public function toString():String;
+  native public function remove():SLLNode;
+
+  native public function nextVal():Object;
+  native public var next:SLLNode;
+  native public function hasNext():Boolean;
+  native public function getList():de.polygonal.ds.SLL;
+  native public var _list:de.polygonal.ds.SLL;
+
+  native public function _insertAfter(node:SLLNode):void;
+}
+
+
+public class de.polygonal.ds.ArrayedDeque extends Object
+{
+  native public function ArrayedDeque(size:int = null):void;
+  native public function pushFront(x:Object):void;
+  native public function pushBack(x:Object):void;
+  native public function popFront():Object;
+
+  native public function popBack():Object;
+  native public function front():Object;
+  native public function clear():void;
+  native public function back():Object;
+  native public var _size:int;
+
+  native public var _front:int;
+  native public var _count:int;
+  native public var _a:Array;
+  native public function __set(i:int,x:Object):void;
+  native public function __get(i:int):Object;
+}
+
+
+public interface de.polygonal.ds.Stack
+  extends de.polygonal.ds.Collection
+{
+
+  native function top():Object;
+  native function push(x:Object):void;
+  native function pop():Object;
+}
+
+
+public class de.polygonal.ds.ArrayedStack extends Object
+  implements de.polygonal.ds.Stack
+{
+  native public function ArrayedStack(maxSize:int = -1):void;
+  native public function walk(process:Function):void;
+
+  native public function top():Object;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function swp(i:int,j:int):void;
+
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function set(i:int,x:Object):void;
+  native public function push(x:Object):void;
+  native public function pop():Object;
+
+  native public function maxSize():int;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function get(i:int):Object;
+  native public function cpy(i:int,j:int):void;
+
+  native public function contains(x:Object):Boolean;
+  native public function compact():void;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+
+  native public var _top:int;
+  native public var _a:Array;
+  native public function __set(i:int,x:Object):void;
+  native public function __get(i:int):Object;
+}
+
+
+public class de.polygonal.ds.ArrayedStackIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function ArrayedStackIterator(f:de.polygonal.ds.ArrayedStack = null):void;
+
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.ArrayedStack;
+
+  native public var _a:Array;
+  native public function __top(f:Object):int;
+  native public function __a(f:Object):Array;
+}
+
+
+public class de.polygonal.ds.TreeNode extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function TreeNode(x:Object = null,parent:TreeNode = null):void;
+  native public var val:Object;
+
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function size():int;
+  native public var prev:TreeNode;
+
+  native public function preorder(process:Function,iterative:Boolean = false,userData:* = null):void;
+  native public function postorder(process:Function,iterative:Boolean = false,userData:* = null):void;
+  native public var parent:TreeNode;
+  native public function numSiblings():int;
+  native public function numChildren():int;
+
+  native public var next:TreeNode;
+  native public function iterator():Object;
+  native public function isRoot():Boolean;
+  native public function isLeaf():Boolean;
+  native public function isEmpty():Boolean;
+
+  native public function isChild():Boolean;
+  native public function height():int;
+  native public function hasSiblings():Boolean;
+  native public function hasPrevSibling():Boolean;
+  native public function hasParent():Boolean;
+
+  native public function hasNextSibling():Boolean;
+  native public function hasChildren():Boolean;
+  native public function getRoot():TreeNode;
+  native public function getLastSibling():TreeNode;
+  native public function getLastChild():TreeNode;
+
+  native public function getFirstSibling():TreeNode;
+  native public function getChildIndex():int;
+  native public function getBuilder():de.polygonal.ds.TreeBuilder;
+  native public function findTail(node:TreeNode):TreeNode;
+  native public function find(x:Object):TreeNode;
+
+  native public function depth():int;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public var children:TreeNode;
+
+  native public function _valid(node:TreeNode):Boolean;
+  native public var _timestamp:int;
+  native public function _preOrderInternalVisitable(node:TreeNode,userData:*):Boolean;
+  native public function _preOrderInternal(node:TreeNode,process:Function,userData:*):Boolean;
+  native public function _postOrderInternalVisitable(node:TreeNode,userData:*):Boolean;
+
+  native public function _postOrderInternal(node:TreeNode,process:Function,userData:*):Boolean;
+  native public function _findHead(node:TreeNode):TreeNode;
+  native public function _describe():String;
+}
+
+
+public class de.polygonal.ds.TreeIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function TreeIterator(node:de.polygonal.ds.TreeNode = null):void;
+  native public function reset():void;
+
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _top:int;
+  native public var _stack:Array;
+  native public var _node:de.polygonal.ds.TreeNode;
+}
+
+
+public class de.polygonal.ds.BinaryTreeNode extends Object
+  implements de.polygonal.ds.Collection
+{
+
+  native public function BinaryTreeNode(x:Object = null):void;
+  native public var val:Object;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+
+  native public function size():int;
+  native public function setR(x:Object):void;
+  native public function setL(x:Object):void;
+  native public var r:BinaryTreeNode;
+  native public function preorder(process:Object = null,iterative:Boolean = false,userData:* = null):void;
+
+  native public function postorder(process:Object = null,iterative:Boolean = false,userData:* = null):void;
+  native public var p:BinaryTreeNode;
+  native public var l:BinaryTreeNode;
+  native public function iterator():Object;
+  native public function isRoot():Boolean;
+
+  native public function isR():Boolean;
+  native public function isL():Boolean;
+  native public function isEmpty():Boolean;
+  native public function inorder(process:Object = null,iterative:Boolean = false,userData:* = null):void;
+  native public function height():int;
+
+  native public function hasR():Boolean;
+  native public function hasL():Boolean;
+  native public function depth():int;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+
+  native public function clear():void;
+  native public var _timestamp:int;
+  native public function _preorderRecursiveVisitable(node:BinaryTreeNode,userData:*):Boolean;
+  native public function _preorderRecursive(node:BinaryTreeNode,process:Function,userData:*):Boolean;
+  native public function _postorderRecursiveVisitable(node:BinaryTreeNode,userData:*):Boolean;
+
+  native public function _postorderRecursive(node:BinaryTreeNode,process:Function,userData:*):Boolean;
+  native public function _inorderRecursiveVisitable(node:BinaryTreeNode,userData:*):Boolean;
+  native public function _inorderRecursive(node:BinaryTreeNode,process:Function,userData:*):Boolean;
+  native public function _heightRecursive(node:BinaryTreeNode):int;
+}
+
+
+public class de.polygonal.ds.BinaryTreeNodeIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function BinaryTreeNodeIterator(node:de.polygonal.ds.BinaryTreeNode = null):void;
+
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _top:int;
+  native public var _stack:Array;
+
+  native public var _node:de.polygonal.ds.BinaryTreeNode;
+}
+
+
+public class de.polygonal.ds.Set extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function Set(weak:Boolean = false):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+
+  native public function size():int;
+  native public function setIfAbsent(x:Object):Boolean;
+  native public function setAll(x:Set,assign:Boolean,copier:Object = null):void;
+  native public function set(x:Object):void;
+  native public function removeIfExists(x:Object):Boolean;
+
+  native public function remove(x:Object):void;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function has(x:Object):Boolean;
+  native public function contains(x:Object):Boolean;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public var _weak:Boolean;
+  native public var _size:int;
+  native public var _set:flash.utils.Dictionary;
+
+  native public function _isNullAllowed(x:Object):Boolean;
+}
+
+
+public class de.polygonal.ds.SetIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function SetIterator(f:de.polygonal.ds.Set = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+
+  native public var _values:Array;
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.Set;
+  native public function __set(f:Object):flash.utils.Dictionary;
+}
+
+
+public class de.polygonal.ds.LinkedDeque extends Object
+{
+
+  native public function LinkedDeque():void;
+}
+
+
+public class Std extends Object
+{
+  native public function Std():void;
+  static native public final function string(s:*):String;
+  static native public final function _int(x:Number):int;
+  static native public final function parseInt(x:String):Object;
+
+  static native public final function parseFloat(x:String):Number;
+  static native public final function random(x:int):int;
+}
+
+
+public interface de.polygonal.ds.Deque
+  extends de.polygonal.ds.Collection
+{
+  native function pushFront(x:Object):void;
+  native function pushBack(x:Object):void;
+  native function popFront():Object;
+
+  native function popBack():Object;
+  native function front():Object;
+  native function back():Object;
+}
+
+
+public class de.polygonal.ds.LinkedStack extends Object
+  implements de.polygonal.ds.Stack
+{
+  native public function LinkedStack(maxSize:int = -1):void;
+  native public function top():Object;
+
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+
+  native public function push(x:Object):void;
+  native public function pop():Object;
+  native public function maxSize():int;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+  native public var _top:int;
+
+  native public var _head:de.polygonal.ds.LinkedStackNode;
+}
+
+
+public class de.polygonal.ds.LinkedStackNode extends Object
+{
+  native public function LinkedStackNode():void;
+  native public var val:Object;
+  native public function toString():String;
+  native public var next:LinkedStackNode;
+}
+
+
+public class de.polygonal.ds.LinkedStackIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+
+  native public function LinkedStackIterator(f:de.polygonal.ds.LinkedStack = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _walker:de.polygonal.ds.LinkedStackNode;
+
+  native public var _f:de.polygonal.ds.LinkedStack;
+  native public function __head(f:Object):de.polygonal.ds.LinkedStackNode;
+}
+
+
+public class de.polygonal.ds.mem.BitMemory extends de.polygonal.ds.mem.MemoryAccess
+{
+  native public function BitMemory(size:int = null):void;
+  native public function toString():String;
+  native public var size:int;
+
+  native public function setAll():void;
+  native public function set(i:int):void;
+  native public override function resize(newSize:int):void;
+  native public function has(i:int):Boolean;
+  native public function getAddr(i:int):int;
+
+  native public function clrAll():void;
+  native public function clr(i:int):void;
+  native public var _size:int;
+  native public function __size():int;
+  static native public final function toByteArray(input:BitMemory):flash.utils.ByteArray;
+
+  static native public final function ofByteArray(input:flash.utils.ByteArray,min:int = -1,max:int = -1):BitMemory;
+  static native public final function toBitVector(input:BitMemory):de.polygonal.ds.BitVector;
+}
+
+
+public class de.polygonal.ds.Array2 extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function Array2(w:int = null,h:int = null):void;
+  native public function walk(process:Function):void;
+  native public function transpose():void;
+
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function swap(x0:int,y0:int,x1:int,y1:int):void;
+  native public function size():int;
+
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function shiftW():void;
+  native public function shiftS():void;
+  native public function shiftN():void;
+  native public function shiftE():void;
+
+  native public function setW(x:int):void;
+  native public function setRow(y:int,input:Array):void;
+  native public function setH(x:int):void;
+  native public function setCol(x:int,input:Array):void;
+  native public function set(x:int,y:int,val:Object):void;
+
+  native public function resize(w:int,h:int):void;
+  native public function prependRow(input:Array):void;
+  native public function prependCol(input:Array):void;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+
+  native public function getW():int;
+  native public function getRow(y:int,output:Array):Array;
+  native public function getH():int;
+  native public function getCol(x:int,output:Array):Array;
+  native public function getArray():Array;
+
+  native public function get(x:int,y:int):Object;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function assign(x:*,args:Array = null):void;
+
+  native public function appendRow(input:Array):void;
+  native public function appendCol(input:Array):void;
+  native public var _w:int;
+  native public var _h:int;
+  native public var _a:Array;
+
+  native public function __set(i:int,x:Object):void;
+  native public function __get(i:int):Object;
+}
+
+
+public class de.polygonal.ds.Array2Iterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function Array2Iterator(f:de.polygonal.ds.Array2 = null):void;
+  native public function reset():void;
+  native public function next():Object;
+
+  native public function hasNext():Boolean;
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.Array2;
+  native public var _a:Array;
+
+  native public function __size(f:Object):int;
+  native public function __a(f:Object):Array;
+}
+
+
+public interface de.polygonal.ds.Queue
+  extends de.polygonal.ds.Collection
+{
+  native function peek():Object;
+  native function enqueue(x:Object):void;
+  native function dequeue():Object;
+
+  native function back():Object;
+}
+
+
+public class de.polygonal.ds.ArrayedQueue extends Object
+  implements de.polygonal.ds.Queue
+{
+  native public function ArrayedQueue(size:int = null):void;
+  native public function walk(process:Function):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+
+  native public function toArray(output:Array = null):Array;
+  native public function swp(i:int,j:int):void;
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function set(i:int,x:Object):void;
+
+  native public function peek():Object;
+  native public function iterator():Object;
+  native public function isFull():Boolean;
+  native public function isEmpty():Boolean;
+  native public function get(i:int):Object;
+
+  native public function enqueue(x:Object):void;
+  native public function dispose():void;
+  native public function dequeue():Object;
+  native public function cpy(i:int,j:int):void;
+  native public function contains(x:Object):Boolean;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function capacity():int;
+  native public function back():Object;
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+
+  native public var _size:int;
+  native public var _mask:int;
+  native public var _front:int;
+  native public var _count:int;
+  native public var _a:Array;
+
+  native public function __set(i:int,x:Object):void;
+  native public function __get(i:int):Object;
+}
+
+
+public class de.polygonal.ds.ArrayedQueueIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function ArrayedQueueIterator(f:de.polygonal.ds.ArrayedQueue = null):void;
+  native public function reset():void;
+  native public function next():Object;
+
+  native public function hasNext():Boolean;
+  native public var _mask:int;
+  native public var _i:int;
+  native public var _front:int;
+  native public var _f:de.polygonal.ds.ArrayedQueue;
+
+  native public var _count:int;
+  native public var _a:Array;
+  native public function __mask(f:Object):int;
+  native public function __front(f:Object):int;
+  native public function __count(f:Object):int;
+
+  native public function __a(f:Object):Array;
+}
+
+
+public class de.polygonal.core.fmt.NumberFormat extends Object
+{
+  native public function NumberFormat():void;
+  static native public final function toBin(x:int):String;
+  static native public final function toHex(x:int):String;
+  static native public final function toOct(x:int):String;
+
+  static native public final function toRadix(x:int,radix:int):String;
+  static native public final function toFixed(x:Number,decimalPlaces:int):String;
+  static native public final function toMMSS(millis:int):String;
+  static native public final function groupDigits(x:int,thousandsSeparator:String):String;
+  static native public final function centToEuro(c:int,decimalSeparator:String = ",",thousandsSeparator:String = "."):String;
+}
+
+
+public final class Void extends Object
+{
+
+  native public function Void(tag:String,index:int,params:*):void;
+  native public var tag:String;
+  native public var index:int;
+  native public var params:Array;
+  native public const __enum__:Boolean = true;
+
+  native public final function toString():String;
+  static native public const __isenum:Boolean = true;
+  static native public var __constructs__:*;
+}
+
+
+public class Dynamic extends Object
+{
+  native public function Dynamic():void;
+}
+
+
+public final class haxe.io.Error extends Object
+{
+  native public function Error(tag:String,index:int,params:*):void;
+
+  native public var tag:String;
+  native public var index:int;
+  native public var params:Array;
+  native public const __enum__:Boolean = true;
+  native public final function toString():String;
+
+  static native public const __isenum:Boolean = true;
+  static native public var __constructs__:*;
+  static native public var Overflow:Error;
+  static native public var OutsideBounds:Error;
+  static native public final function Custom(e:*):Error;
+
+  static native public var Blocked:Error;
+}
+
+
+public class de.polygonal.ds.LinkedQueue extends Object
+  implements de.polygonal.ds.Queue
+{
+  native public function LinkedQueue(maxSize:int = -1):void;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function peek():Object;
+  native public function maxSize():int;
+  native public function iterator():Object;
+
+  native public function isEmpty():Boolean;
+  native public function enqueue(x:Object):void;
+  native public function dequeue():Object;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+
+  native public function clear():void;
+  native public function back():Object;
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+  native public var _tail:de.polygonal.ds.LinkedQueueNode;
+  native public var _size:int;
+
+  native public var _head:de.polygonal.ds.LinkedQueueNode;
+}
+
+
+public class de.polygonal.ds.LinkedQueueNode extends Object
+{
+  native public function LinkedQueueNode(x:Object = null):void;
+  native public var val:Object;
+  native public function toString():String;
+  native public var next:LinkedQueueNode;
+}
+
+
+public class de.polygonal.ds.LinkedQueueIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+
+  native public function LinkedQueueIterator(f:de.polygonal.ds.LinkedQueue = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _walker:de.polygonal.ds.LinkedQueueNode;
+
+  native public var _f:de.polygonal.ds.LinkedQueue;
+  native public function __head(f:Object):de.polygonal.ds.LinkedQueueNode;
+}
+
+
+public interface de.polygonal.ds.Comparable
+{
+  native function compare(other:Object):int;
+}
+
+
+public class de.polygonal.ds.mem.DoubleMemory extends de.polygonal.ds.mem.MemoryAccess
+{
+  native public function DoubleMemory(size:int = null):void;
+  native public function toString():String;
+
+  native public function swp(i:int,j:int):void;
+  native public var size:int;
+  native public function set(i:int,x:Number):void;
+  native public override function resize(newSize:int):void;
+  native public function getAddr(i:int):int;
+
+  native public function get(i:int):Number;
+  native public var _size:int;
+  native public function __size():int;
+  static native public final function toByteArray(input:DoubleMemory,min:int = -1,max:int = -1):flash.utils.ByteArray;
+  static native public final function ofByteArray(input:flash.utils.ByteArray,min:int = -1,max:int = -1):DoubleMemory;
+
+  static native public final function toArray(input:DoubleMemory,min:int = -1,max:int = -1):Array;
+  static native public final function ofArray(input:Array,min:int = -1,max:int = -1):DoubleMemory;
+  static native public final function toVector(input:DoubleMemory,min:int = -1,max:int = -1):Vector.<Number>;
+  static native public final function ofVector(input:Vector.<Number>,min:int = -1,max:int = -1):DoubleMemory;
+}
+
+
+public class de.polygonal.ds.ArrayConvert extends Object
+{
+  native public function ArrayConvert():void;
+
+  static native public final function toArray2(x:Array,w:int,h:int):de.polygonal.ds.Array2;
+  static native public final function toArray3(x:Array,w:int,h:int,d:int):de.polygonal.ds.Array3;
+  static native public final function toArrayedQueue(x:Array):de.polygonal.ds.ArrayedQueue;
+  static native public final function toArrayedStack(x:Array,maxSize:int = -1):de.polygonal.ds.ArrayedStack;
+  static native public final function toDLL(x:Array,maxSize:int = -1):de.polygonal.ds.DLL;
+
+  static native public final function toLinkedQueue(x:Array,maxSize:int = -1):de.polygonal.ds.LinkedQueue;
+  static native public final function toLinkedStack(x:Array,maxSize:int = -1):de.polygonal.ds.LinkedStack;
+  static native public final function toSLL(x:Array,maxSize:int = -1):de.polygonal.ds.SLL;
+  static native public final function toVector(x:Array,maxSize:int = -1):de.polygonal.ds.Vector;
+}
+
+
+public class de.polygonal.ds.DLL extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function DLL(maxSize:int = -1):void;
+
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function tail():de.polygonal.ds.DLLNode;
+  native public function sort(compare:Function,useInsertionSort:Boolean = false):void;
+
+  native public function size():int;
+  native public function shuffle(rval:de.polygonal.ds.Vector = null):void;
+  native public function shiftUp():void;
+  native public function reverse():void;
+  native public function removeTail():Object;
+
+  native public function removeHead():Object;
+  native public function remove(node:de.polygonal.ds.DLLNode):de.polygonal.ds.DLLNode;
+  native public function prepend(x:Object):de.polygonal.ds.DLLNode;
+  native public function popDown():void;
+  native public function open():void;
+
+  native public function nodeOf(x:Object,from:de.polygonal.ds.DLLNode = null):de.polygonal.ds.DLLNode;
+  native public function merge(x:DLL):void;
+  native public function maxSize():int;
+  native public function lastNodeOf(x:Object,from:de.polygonal.ds.DLLNode = null):de.polygonal.ds.DLLNode;
+  native public function join(x:String):String;
+
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+  native public function isCircular():Boolean;
+  native public function insertBefore(node:de.polygonal.ds.DLLNode,x:Object):de.polygonal.ds.DLLNode;
+  native public function insertAfter(node:de.polygonal.ds.DLLNode,x:Object):de.polygonal.ds.DLLNode;
+
+  native public function head():de.polygonal.ds.DLLNode;
+  native public function getNodeAt(i:int):de.polygonal.ds.DLLNode;
+  native public function contains(x:Object):Boolean;
+  native public function concat(x:DLL):DLL;
+  native public function close():void;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+  native public function append(x:Object):de.polygonal.ds.DLLNode;
+  native public function _valid(node:de.polygonal.ds.DLLNode):Boolean;
+
+  native public var _tail:de.polygonal.ds.DLLNode;
+  native public var _size:int;
+  native public function _mergeSortComparable(node:de.polygonal.ds.DLLNode):de.polygonal.ds.DLLNode;
+  native public function _mergeSort(node:de.polygonal.ds.DLLNode,cmp:Function):de.polygonal.ds.DLLNode;
+  native public function _insertionSortComparable(node:de.polygonal.ds.DLLNode):de.polygonal.ds.DLLNode;
+
+  native public function _insertionSort(node:de.polygonal.ds.DLLNode,cmp:Function):de.polygonal.ds.DLLNode;
+  native public var _head:de.polygonal.ds.DLLNode;
+  native public function _getNode(x:Object):de.polygonal.ds.DLLNode;
+  native public var _circular:Boolean;
+  native public function __unlink(f:Object):void;
+
+  native public function __list(f:Object,x:DLL):void;
+  native public function __insertBefore(f:Object,x:de.polygonal.ds.DLLNode):void;
+  native public function __insertAfter(f:Object,x:de.polygonal.ds.DLLNode):void;
+}
+
+
+public class de.polygonal.ds.DLLIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function DLLIterator(f:de.polygonal.ds.DLL = null):void;
+  native public function reset():void;
+
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _walker:de.polygonal.ds.DLLNode;
+  native public var _f:de.polygonal.ds.DLL;
+  native public function __head(f:Object):de.polygonal.ds.DLLNode;
+}
+
+
+public class de.polygonal.ds.CircularDLLIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+
+  native public function CircularDLLIterator(f:de.polygonal.ds.DLL = null):void;
+  native public function reset():void;
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _walker:de.polygonal.ds.DLLNode;
+
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.DLL;
+  native public function __size(f:Object):int;
+  native public function __head(f:Object):de.polygonal.ds.DLLNode;
+}
+
+
+public class de.polygonal.ds.HashMap extends Object
+  implements de.polygonal.ds.Collection
+{
+
+  native public function HashMap(weak:Boolean = false):void;
+  native public function valuesToVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function valuesToArray(output:Array = null):Array;
+  native public function toVector(output:de.polygonal.ds.Vector = null):de.polygonal.ds.Vector;
+  native public function toString():String;
+
+  native public function toArray(output:Array = null):Array;
+  native public function size():int;
+  native public function setIfAbsent(key:Object,val:Object):Boolean;
+  native public function setAll(x:HashMap,keyAssign:Boolean,valAssign:Boolean,keyCopier:Object = null,valCopier:Object = null):void;
+  native public function set(key:Object,val:Object):void;
+
+  native public function removeIfExists(key:Object):Boolean;
+  native public function remove(key:Object):void;
+  native public function remap(key:Object,val:Object):void;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+
+  native public function has(key:Object):Boolean;
+  native public function get(key:Object):Object;
+  native public function contains(x:Object):Boolean;
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+
+  native public var _weak:Boolean;
+  native public var _size:int;
+  native public var _map:flash.utils.Dictionary;
+}
+
+
+public class de.polygonal.ds.HashMapIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function HashMapIterator(f:de.polygonal.ds.HashMap = null):void;
+  native public function reset():void;
+
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _s:int;
+  native public var _keys:Array;
+  native public var _i:int;
+
+  native public var _f:de.polygonal.ds.HashMap;
+  native public function __map(f:Object):flash.utils.Dictionary;
+}
+
+
+public interface de.polygonal.ds.Cloneable
+{
+  native function clone():Object;
+}
+
+
+public class de.polygonal.ds.Vector extends Object
+  implements de.polygonal.ds.Collection
+{
+  native public function Vector(maxSize:int = -1):void;
+  native public function toVector(output:Vector = null):Vector;
+
+  native public function toString():String;
+  native public function toArray(output:Array = null):Array;
+  native public function swp(i:int,j:int):void;
+  native public function sort(compare:Function,useInsertionSort:Boolean = false):void;
+  native public function size():int;
+
+  native public function shuffle(rval:Vector = null):void;
+  native public function set(i:int,x:Object):void;
+  native public function reverse():void;
+  native public function removeRange(i:int,num:int,output:Vector = null):Vector;
+  native public function removeAt(i:int):Object;
+
+  native public function pushFront(x:Object):void;
+  native public function pushBack(x:Object):void;
+  native public function popFront():Object;
+  native public function popBack():Object;
+  native public function move(destination:int,source:int,num:int):void;
+
+  native public function maxSize():int;
+  native public function lastIndexOf(x:Object,from:int = -1):int;
+  native public function join(x:String):String;
+  native public function iterator():Object;
+  native public function isEmpty():Boolean;
+
+  native public function insertAt(i:int,x:Object):void;
+  native public function indexOf(x:Object,from:int = 0):int;
+  native public function getArray():Array;
+  native public function get(i:int):Object;
+  native public function front():Object;
+
+  native public function erase(x:Object):Boolean;
+  native public function cpy(i:int,j:int):void;
+  native public function contains(x:Object):Boolean;
+  native public function concat(x:Vector,copy:Boolean = false):Vector;
+  native public function compact():void;
+
+  native public function clone(assign:Boolean,copier:Object = null):de.polygonal.ds.Collection;
+  native public function clear():void;
+  native public function back():Object;
+  native public function assign(x:*,args:Array = null,limit:int = 0):void;
+  native public var _size:int;
+
+  native public function _quickSortComparable(first:int,k:int):void;
+  native public function _quickSort(first:int,k:int,cmp:Function):void;
+  native public function _insertionSortComparable():void;
+  native public function _insertionSort(cmp:Function):void;
+  native public var _a:Array;
+
+  native public function __set(i:int,x:Object):void;
+  native public function __get(i:int):Object;
+  native public function __cpy(i:int,j:int):void;
+}
+
+
+public class de.polygonal.ds.VectorIterator extends Object
+  implements de.polygonal.ds.Itr
+{
+  native public function VectorIterator(f:de.polygonal.ds.Vector = null):void;
+  native public function reset():void;
+
+  native public function next():Object;
+  native public function hasNext():Boolean;
+  native public var _s:int;
+  native public var _i:int;
+  native public var _f:de.polygonal.ds.Vector;
+
+  native public var _a:Array;
+  native public function __size(f:Object):int;
+  native public function __a(f:Object):Array;
+}
+

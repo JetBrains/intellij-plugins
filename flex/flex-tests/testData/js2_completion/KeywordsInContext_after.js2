@@ -1,0 +1,4 @@
+package {
+public class A extends <caret>{
+}
+}

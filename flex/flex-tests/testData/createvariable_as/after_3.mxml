@@ -1,0 +1,10 @@
+<!-- "Create Field 'aaaxxx'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+    private var aaaxxx<caret>:;
+    /**
+     * Hi
+     */
+    var yyy = aaaxxx;
+</mx:Script>
+</mx:Application>

@@ -1,0 +1,14 @@
+class A extends B
+{
+    public function <error descr="Missed superclass's constructor invocation">A</error>()
+    {
+    }
+}
+
+class B
+{
+	public function B(needParam:String)
+	{
+	}
+}
+

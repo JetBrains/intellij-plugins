@@ -1,0 +1,4 @@
+package {
+public class CreateClassOrInterfaceAction3 extends <error>A<caret>bc</error> {
+}
+}

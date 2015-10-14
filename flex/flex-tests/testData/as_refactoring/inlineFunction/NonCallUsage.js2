@@ -1,0 +1,10 @@
+class Foo {
+    function fo<caret>o() {
+
+    }
+
+    function bar() {
+        var t : IEventDispatcher;
+        t.addEventListener("aa", foo);
+    }
+}

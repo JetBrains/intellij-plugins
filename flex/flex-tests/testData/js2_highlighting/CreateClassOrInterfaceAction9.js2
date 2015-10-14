@@ -1,0 +1,7 @@
+package {
+public class CreateClassOrInterfaceAction9 {
+  private function foo() {
+    var v : CreateClassOrInterfaceAction9 = new <error>Abc<caret></error>(this);
+  }
+}
+}

@@ -1,0 +1,10 @@
+package {
+public class <error>TopLevelTypeOne</error> {
+}
+}
+
+class Base<caret>Type {
+}
+
+class DerivedType extends BaseType {
+}

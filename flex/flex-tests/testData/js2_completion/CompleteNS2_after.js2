@@ -1,0 +1,9 @@
+package mypackage2 {
+import mypackage.MyNamespace;
+
+MyNamespace<caret>
+}
+
+package mypackage {
+  public namespace MyNamespace;
+}

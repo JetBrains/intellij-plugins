@@ -1,0 +1,6 @@
+package {
+public dynamic class Blabla {
+    public function Blabla() {
+    }
+}
+}

@@ -1,0 +1,6 @@
+class mx.mypackage.MyClazz {
+  var aaa;
+}
+class mx.mypackage.MyClazz2 {
+  var bbb;
+}

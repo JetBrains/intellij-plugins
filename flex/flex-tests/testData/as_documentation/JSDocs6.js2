@@ -1,0 +1,8 @@
+/**
+ * Evaluates if given string is <b>valid</b> xml <i>name</i>.
+ * @param a string to test.
+ * @returns
+ * true if given string is xml identifier
+ * <code> aaa </code>
+ */
+native function isXmlNa<caret>me(a:String):Boolean;

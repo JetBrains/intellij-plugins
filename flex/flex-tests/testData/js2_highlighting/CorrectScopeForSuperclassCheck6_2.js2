@@ -1,0 +1,5 @@
+package mx.core {
+
+public class UIComponent {
+}
+}

@@ -1,0 +1,3 @@
+ppp.aaa = function() {
+  <caret>
+}

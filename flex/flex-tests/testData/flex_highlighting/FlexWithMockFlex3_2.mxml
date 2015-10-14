@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="<error>IFoo</error>">
+  <mx:Script>
+    <warning>import foo.bar.IFoo;</warning>
+  </mx:Script>
+</mx:Application>

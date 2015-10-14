@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<<error>mx:Application</error> xmlns:mx="http://www.adobe.com/2006/mxml" implements="INonImplementedInterface">
+    <mx:Script></mx:Script>
+</<error>mx:Application</error>>

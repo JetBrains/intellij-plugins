@@ -1,0 +1,4 @@
+class XXX {
+[Autowired]
+public var model:*;
+}

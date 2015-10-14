@@ -1,0 +1,43 @@
+package <error>aaa</error> {
+public class <error>A</error> {
+  public function <warning>fo<caret>o</warning>():void { var i : int; }
+}
+}
+
+package <error>bbb</error> {
+import aaa.A;
+
+public class <error>B</error> {
+  public static function ref1():void {
+    var v : A;
+    v.foo();
+  }
+  public static function getA():A {}
+}
+}
+
+package <error>ccc</error> {
+import bbb.B;
+
+public class <error>C</error> {
+  public static function ref1():void {
+    B.getA().foo();
+  }
+}
+}
+
+package <error>ddd</error> {
+import bbb.B;
+
+public class <error>D</error> {
+  public static function ref1():void {
+    B.getA().foo();
+  }
+}
+}
+
+package <error>ddd</error> {
+
+public class <error>A</error> {
+}
+}

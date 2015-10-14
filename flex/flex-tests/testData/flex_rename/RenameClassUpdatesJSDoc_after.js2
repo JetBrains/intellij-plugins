@@ -1,0 +1,6 @@
+class DDD {
+/**
+ * @see D<caret>DD
+ */
+function xxx(yyy) {}
+}

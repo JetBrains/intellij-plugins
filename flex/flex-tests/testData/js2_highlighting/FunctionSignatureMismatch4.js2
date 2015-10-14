@@ -1,0 +1,19 @@
+package {
+    public class <error>Base</error> {
+        internal function foo(i:int) {}
+    }
+}
+package {
+    public class FunctionSignatureMismatch4 extends Base {
+        internal override function foo(i: int) {}
+
+        function bar() {
+            foo(<error><caret>"abc"</error>);
+        }
+
+        function zzz() {
+            foo<error>()</error>;
+            foo(1);
+        }
+    }
+}

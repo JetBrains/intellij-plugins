@@ -1,0 +1,8 @@
+<!-- "Create Method 'foo'" "true" -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="foo('111')">
+    <mx:Script><![CDATA[
+        private function foo(s:String):void {
+            <caret>
+        }
+        ]]></mx:Script>
+</mx:Application>

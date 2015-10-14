@@ -1,0 +1,7 @@
+package {
+class FunctionSignatureMismatch14 {
+  function zz(a:int) {
+    zz(15);
+  }
+}
+}

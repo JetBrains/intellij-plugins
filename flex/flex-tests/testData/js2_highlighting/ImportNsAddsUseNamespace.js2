@@ -1,0 +1,9 @@
+package <error>foo</error> {
+public namespace <error>Foo</error> = "xxx";
+}
+
+package <error>bar</error> {
+  class <error>C</error> {
+      <err<caret>or>Foo</error> function foo() {}
+  }
+}

@@ -1,0 +1,12 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:<caret expected="Script,Binding,Metadata,Script,Style,Component,Button,XMLListCollection,XML,XMLList,Model">
+    <mx:List>
+        <mx:itemRenderer>
+            <mx:Component>
+                <mx:Panel>
+                    <<caret expected="mx:Script,mx:Binding,mx:Metadata,mx:Script,mx:Style,mx:Component,mx:Button,mx:XMLListCollection,mx:XML,mx:XMLList,mx:Model">
+                </mx:Panel>
+            </mx:Component>
+        </mx:itemRenderer>
+    </mx:List>
+</mx:Application>

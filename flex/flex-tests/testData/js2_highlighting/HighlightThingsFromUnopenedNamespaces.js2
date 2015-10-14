@@ -1,0 +1,29 @@
+package {
+class HighlightThingsFromUnopenedNamespaces {
+    namespace Foo;
+
+    Foo var xxx;
+
+    function foo():void {
+        <error descr="Member from unopened namespace">xxx</error> = 1;
+    }
+
+    function foo2():void {
+        use namespace Foo;
+        xxx = 1;
+    }
+}
+}
+
+namespace some_namespace = "xxx";
+
+[Deprecated]
+use namespace some_namespace;
+
+class <warning>Foo</warning> {
+  some_namespace var varInNamespace:int;
+
+public function foo():void {
+    varInNamespace = 5;
+}
+}

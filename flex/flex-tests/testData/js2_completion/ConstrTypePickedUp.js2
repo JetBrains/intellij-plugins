@@ -1,0 +1,12 @@
+class A {
+  var fieldA;
+  function A() {}
+}
+
+class B {
+  var fieldB;
+  function B() {}
+}
+
+var a:*;
+A(a).f<caret>

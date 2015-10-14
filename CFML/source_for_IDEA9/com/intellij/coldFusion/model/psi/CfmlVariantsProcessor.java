@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.intellij.psi.PsiModifier.*;
@@ -162,12 +163,17 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
 
     // continue if names differ
     if (!myIsForCompletion) {
-      if (myIsMethodCall && (myReferenceName.toLowerCase().startsWith("get") || myReferenceName.toLowerCase().startsWith("set")) &&
-        myReferenceName.substring(3).equalsIgnoreCase(elementName.toLowerCase())) {
-        addIfNotNull(execute((PsiNamedElement)element,  false), myResult);
+      final String referenceNameLoweCase = myReferenceName.toLowerCase(Locale.ENGLISH);
+      if (myIsMethodCall &&
+          (referenceNameLoweCase.startsWith("get") || referenceNameLoweCase.startsWith("set")) &&
+          referenceNameLoweCase.substring(3).equalsIgnoreCase(elementName)
+        ) {
+        if (!referenceNameLoweCase.startsWith("get") || methodCallArity() == 0) {
+          addIfNotNull(execute((PsiNamedElement)element, false), myResult);
+        }
         return myResult.isEmpty();
       }
-      if (!myReferenceName.toLowerCase().equals(elementName.toLowerCase())) {
+      if (!referenceNameLoweCase.equalsIgnoreCase(elementName)) {
         return true;
       }
     }
@@ -193,6 +199,15 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
       return false;
     }
     return true;
+  }
+
+  private int methodCallArity() {
+    if (!myIsMethodCall) return 0;
+    final CfmlArgumentList argumentList = ((CfmlFunctionCall)myElement.getParent()).findArgumentList();
+    if (argumentList != null) {
+      return argumentList.getArguments().length;
+    }
+    return 0;
   }
 
   @Nullable

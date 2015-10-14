@@ -1,0 +1,8 @@
+// "Create Field 'ccccc2'" "true"
+public class A2____ {
+    var x
+    private var ccccc2<caret>:int;
+    function A2____() {
+        ccccc2 = 1;
+    }
+}

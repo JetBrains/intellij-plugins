@@ -1,0 +1,17 @@
+package com.example.idea{
+
+import flash.display.Sprite;
+import flash.text.TextField;
+
+public class HelloWorld extends Sprite {
+    var x = 1;
+    public function HelloWorld() {
+        <selection>/* Extract method block begins here */
+        var textField:TextField = new TextField();
+        textField.text = "Hello, World:" + x;
+        x = 1;
+        addChild(textField);
+        // Extract method block ends here. Call the new method e.g. addHello()</selection>
+    }
+}
+}

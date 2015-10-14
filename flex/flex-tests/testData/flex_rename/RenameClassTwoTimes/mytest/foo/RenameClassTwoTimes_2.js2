@@ -1,0 +1,10 @@
+package mytest.foo {
+
+import mytest.boo.RenameClassTwoTimes;
+
+public class BBB {
+    public function BBB() {
+        var a:RenameClassTwoTimes;
+    }
+}
+}

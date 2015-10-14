@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="<error>INonImplementedInterface2</error>">
+  <mx:transitions>
+    <mx:Transition>
+      <mx:Resize<caret>
+    </mx:Transition>
+  </mx:transitions>
+</mx:Application>

@@ -1,0 +1,10 @@
+package {
+
+    import foo.Bar;
+    import foo.zzz.Bar2;
+
+    public class SameClassAndPackage {
+        private var v : Bar;
+        private var v2 : Bar2;
+    }
+}

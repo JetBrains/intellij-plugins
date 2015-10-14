@@ -1,0 +1,17 @@
+CfmlFile:dynamicVarName.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    Assignment
+      PsiElement(DOUBLE_QUOTE)('"')
+      PsiElement(STRING_TEXT)('qIcon')
+      PsiElement(OPENSHARP)('#')
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('fldNUM')
+      PsiElement(CLOSESHARP)('#')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+      PsiElement(ASSIGN)('=')
+      StringLiteral
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(CLOSER)('>')

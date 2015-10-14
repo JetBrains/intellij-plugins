@@ -1,0 +1,31 @@
+class Test {
+    private function initObject():Object {
+        var object:Object;
+        switch (1) {
+            case 23:
+                object = {};
+                break;
+
+            case 4:
+                object = [];
+                break;
+
+            default:
+                throw {};
+        }
+
+        return object;
+    }
+
+    function copy(value:Object):Vector.<String> {
+        var keys:Vector.<String> = new Vector.<String>();
+        var keysIndex:int = 0;
+        var key:String;
+        for (key in value) {
+            keys[keysIndex++] = key;
+        }
+    }
+
+}
+
+class Vector$object {}

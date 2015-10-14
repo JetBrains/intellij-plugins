@@ -1,0 +1,7 @@
+package {
+    public class FunctionSignatureMismatchChangeParam1 {
+        function foo(i:String, s:int, f:FunctionSignatureMismatchChangeParam1) {
+            foo("zz", 5, this);
+        }
+    }
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="Bar">
+  <node id="Bar" nodeName="Class Bar" name="&lt;html&gt;&lt;b&gt;Bar&lt;/b&gt;&lt;/html&gt;">
+    <element name="bar()" type="Number" category="Methods" visibility="PUBLIC" />
+  </node>
+</umlModel>

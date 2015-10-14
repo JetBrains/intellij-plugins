@@ -71,7 +71,12 @@ public class HbConfigurationPage implements SearchableConfigurable {
            || myAutocompleteMustaches.isSelected() != HbConfig.isAutocompleteMustachesEnabled()
            || myFormattingCheckBox.isSelected() != HbConfig.isFormattingEnabled()
            || htmlAsHb.isSelected() != HbConfig.shouldOpenHtmlAsHandlebars(myProject)
-           || !((Language)myCommenterLanguage.getSelectedItem()).getID().equals(HbConfig.getCommenterLanguage().getID());
+           || !HbConfig.getCommenterLanguage().getID().equals(getSelectedLanguageId());
+  }
+
+  private String getSelectedLanguageId() {
+    final Object item = myCommenterLanguage.getSelectedItem();
+    return item == null ? null : ((Language)item).getID();
   }
 
   @Override
@@ -100,7 +105,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
     resetCommentLanguageCombo(HbConfig.getCommenterLanguage());
   }
 
-  private void resetCommentLanguageCombo(Language commentLanguage) {
+  private void resetCommentLanguageCombo(@NotNull Language commentLanguage) {
     final DefaultComboBoxModel model = (DefaultComboBoxModel)myCommenterLanguage.getModel();
     final List<Language> languages = TemplateDataLanguageMappings.getTemplateableLanguages();
 

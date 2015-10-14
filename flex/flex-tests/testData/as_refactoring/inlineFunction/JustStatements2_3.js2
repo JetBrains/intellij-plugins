@@ -1,0 +1,15 @@
+package
+{
+public class TestInline
+{
+    public function TestInline() {
+        fo<caret>o(true);
+    }
+
+    public function foo(b:Boolean):void {
+        if (b) {
+            return;
+        }
+    }
+}
+}

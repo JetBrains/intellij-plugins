@@ -1,0 +1,12 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:
+    <mx:List>
+        <mx:itemRenderer>
+            <mx:Component>
+                <mx:Panel>
+                    <mx:Accordition<caret>
+                </mx:Panel>
+            </mx:Component>
+        </mx:itemRenderer>
+    </mx:List>
+</mx:Application>

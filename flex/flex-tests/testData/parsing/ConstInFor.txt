@@ -1,0 +1,24 @@
+JSFile:ConstInFor.js2
+  JSForStatement
+    PsiElement(JS:FOR_KEYWORD)('for')
+    PsiElement(JS:LPAR)('(')
+    JSVarStatement
+      PsiElement(JS:CONST_KEYWORD)('const')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('x')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:UINT_KEYWORD)('uint')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiElement(JS:RBRACE)('}')

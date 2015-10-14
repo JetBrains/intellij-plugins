@@ -1,0 +1,26 @@
+var data:XML = <t><name>test</name></t>;
+data.a.(b2 == "11");
+var s:String = data.name;
+var s2:int = data.name.length();
+var b:Boolean = data.name is XMLList
+
+package {
+  //import mypackage.getQualifiedClassName;
+  class <error>Test</error> {
+    public function E4XFilterByFunction() {
+        var data2:XML = <data><type name="test::E4XFilter"/></data>;
+        var aTypeId:uint = data2.type.(@name == getQualifiedClassName(E4XFilterByFunction)).@id;
+
+        var objectsNode:XMLList = new XMLList();
+		delete objectsNode.(@id == 2)[0];
+		delete foo.(@id == 2)[0];
+		delete foo.<error descr="Invalid number of arguments, expected one">(@id == 2, @id)</error>[0];
+		delete foo.("1")[0];
+		delete <error descr="Invalid e4x filter query argument, should be of XML or XMLList type">aTypeId</error>.(@id == 2)[0];
+    }
+
+    private function get foo():XMLList {
+        return null;
+    }
+  }
+}

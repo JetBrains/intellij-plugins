@@ -1,0 +1,10 @@
+class Test {
+  public var v<caret>vv = foo;
+  public function foo():void {}
+}
+
+class Some {
+    function bar() {
+        new Test().vvv();
+    }
+}

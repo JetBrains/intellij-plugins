@@ -1,0 +1,8 @@
+package foo {
+import flash.events.IEventDispatcher;
+
+public class Abc implements IEventDispatcher {
+    public function Abc(i:int) {
+    }
+}
+}

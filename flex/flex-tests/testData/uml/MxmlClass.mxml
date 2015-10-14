@@ -1,0 +1,19 @@
+<caret expected="MxmlClass"><?xml ve<caret expected="MxmlClass">rsion="1.0"?>
+  <caret expected="MxmlClass">
+<mx:But<caret expected="Button">ton xmlns:mx="http://www.adobe.com/2006/mxml">
+         <caret expected="MxmlClass">
+    <mx:Scr<caret expected="Object">ipt><![C<caret expected="MxmlClass">DATA[
+           <caret expected="MxmlClass">
+        function abc() {}
+
+        function get prop():int {<caret expected="MxmlClass">}
+        function set prop(p:int) {}
+
+        var foo;
+
+        const bar;
+
+]]></mx:Script>
+             <caret expected="MxmlClass">
+</mx:Button>
+<caret expected="MxmlClass">

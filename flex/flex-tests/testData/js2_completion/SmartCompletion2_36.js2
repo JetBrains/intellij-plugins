@@ -1,0 +1,5 @@
+var x:Array
+var y:int
+function () {
+    x[<caret>]
+}

@@ -1,0 +1,4 @@
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script source="ImportedMember_2_script.as"/>
+<mx:Label text="{test}"/>
+</mx:VBox>

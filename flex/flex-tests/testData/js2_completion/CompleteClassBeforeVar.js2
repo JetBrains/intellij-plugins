@@ -1,0 +1,10 @@
+class Simple {
+    public function Simple() {
+        BB<caret>
+        var x;
+    }
+}
+
+package foo {
+  public class BarBaz {}
+}

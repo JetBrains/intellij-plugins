@@ -1,0 +1,14 @@
+class A extends B
+{
+    public function A(<error descr="Rest parameter should not be initialized">... rest = null</error>)
+    {
+    }
+}
+
+class B
+{
+	public function B(needParam:String = "", <error descr="Rest parameter should not be initialized"><caret>... rest = null</error>)
+	{
+	}
+}
+

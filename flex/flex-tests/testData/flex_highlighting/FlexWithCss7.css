@@ -1,0 +1,31 @@
+.buttonStyle {
+  disabledColor: "0xFFFFFFF";
+}
+
+Panel {
+  borderAlpha: "0.9";
+}
+
+Panel {
+  borderAlpha: 0.9;
+}
+
+Panel {
+  borderAlpha: <error descr="Mismatched property value (<number> | <string> | undefined | PropertyReference | Embed?)">red</error>;
+}
+
+.c {
+  disabledColor: #FFFFFF;
+}
+
+.d {
+  disabledColor: red;
+}
+
+.e {
+  disabledColor: <error descr="Mismatched property value (<color> | undefined | PropertyReference | Embed?)">"#FFFFFFF"</error>;
+}
+
+.f {
+  disabledColor: 0;
+}

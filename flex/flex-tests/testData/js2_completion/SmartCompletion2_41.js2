@@ -1,0 +1,6 @@
+package {
+public class Vector$object {}
+}
+
+var v:Vector.<String> = []
+for each(var v2:<caret> in v) {}

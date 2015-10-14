@@ -1,0 +1,13 @@
+class Foo {
+    function xxx() {
+        var x:int = 1;
+        var y:int = 1;
+        x = created(x);
+        alert(y);
+    }
+
+    public function created(x:int):int {
+        x = 2;
+        return x;
+    }
+}

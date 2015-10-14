@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*">
+    <<error>Incorrect</error>/>
+    <<error>mx:Incorrect</error>/>
+    <<error>s:Incorrect</error>/>
+    <<error>fx:Incorrect</error>/>
+    <<error>local:Incorrect</error>/>
+    <fx:Declarations>
+        <<error>Incorrect</error>/>
+        <<error>mx:Incorrect</error>/>
+        <<error>s:Incorrect</error>/>
+        <<error>fx:Incorrect</error>/>
+        <<error>local:Incorrect</error>/>
+        <mx:HTTPService>
+            <mx:request>
+                <Any good="{a}" bad="{<error>b</error>}">
+                    <Any good="{a}" bad="{<error>b</error>}"/>
+                    <mx:Any good="{a}" bad="{<error>b</error>}"/>
+                    <s:Any good="{a}" bad="{<error>b</error>}"/>
+                    <fx:Any good="{a}" bad="{<error>b</error>}"/>
+                    <local:Any good="{a}" bad="{<error>b</error>}"/>
+                </Any>
+                <mx:Any>
+                    <Any good="{a}" bad="{<error>b</error>}"/>
+                    <mx:Any good="{a}" bad="{<error>b</error>}"/>
+                    <s:Any good="{a}" bad="{<error>b</error>}"/>
+                    <fx:Any good="{a}" bad="{<error>b</error>}"/>
+                    <local:Any good="{a}" bad="{<error>b</error>}"/>
+                </mx:Any>
+                <s:Any/>
+                <fx:Any/>
+                <local:Any/>
+            </mx:request>
+            <<error>Incorrect</error>/>
+            <<error>mx:Incorrect</error>/>
+            <<error>s:Incorrect</error>/>
+            <<error>fx:Incorrect</error>/>
+            <<error>local:Incorrect</error>/>
+        </mx:HTTPService>
+        <s:HTTPService>
+            <s:request>
+                <Any/>
+                <mx:Any>
+                    <Any good="{a}" bad="{<error>b</error>}"/>
+                    <mx:Any good="{a}" bad="{<error>b</error>}"/>
+                    <s:Any good="{a}" bad="{<error>b</error>}"/>
+                    <fx:Any good="{a}" bad="{<error>b</error>}"/>
+                    <local:Any good="{a}" bad="{<error>b</error>}"/>
+                </mx:Any>
+                <s:Any/>
+                <fx:Any/>
+                <local:Any/>
+            </s:request>
+        </s:HTTPService>
+        <s:WebService id="ws1">
+            <s:operation name="login">
+                <s:request>
+                    <Any/>
+                    <mx:Any/>
+                    <s:Any>
+                        <Any good="{a}" bad="{<error>b</error>}"/>
+                        <mx:Any good="{a}" bad="{<error>b</error>}"/>
+                        <s:Any good="{a}" bad="{<error>b</error>}"/>
+                        <fx:Any good="{a}" bad="{<error>b</error>}"/>
+                        <local:Any good="{a}" bad="{<error>b</error>}"/>
+                    </s:Any>
+                    <fx:Any/>
+                    <local:Any/>
+                </s:request>
+            </s:operation>
+        </s:WebService>
+        <mx:WebService id="ws2">
+            <mx:operation name="login">
+                <mx:request>
+                    <Any/>
+                    <mx:Any/>
+                    <s:Any/>
+                    <fx:Any/>
+                    <local:Any>
+                        <Any good="{a}" bad="{<error>b</error>}"/>
+                        <mx:Any good="{a}" bad="{<error>b</error>}"/>
+                        <s:Any good="{a}" bad="{<error>b</error>}"/>
+                        <fx:Any good="{a}" bad="{<error>b</error>}"/>
+                        <local:Any good="{a}" bad="{<error>b</error>}"/>
+                    </local:Any>
+                </mx:request>
+            </mx:operation>
+        </mx:WebService>
+    </fx:Declarations>
+
+    <fx:Script><![CDATA[
+        private var a:*;
+        ]]></fx:Script>
+</s:Application>

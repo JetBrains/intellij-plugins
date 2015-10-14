@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.coverage;
 
+import com.google.jstestdriver.idea.rt.coverage.CoverageReport;
+import com.google.jstestdriver.idea.rt.coverage.CoverageSerializationUtils;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;

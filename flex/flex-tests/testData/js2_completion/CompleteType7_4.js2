@@ -1,0 +1,10 @@
+package xxx.yyy {
+  public class C {
+    public function set doIt() {}
+    public static function doItStatic() {}
+  }
+}
+
+import xxx.yyy.C;
+var c:C;
+c.do<caret>

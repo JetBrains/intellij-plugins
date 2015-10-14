@@ -1,0 +1,948 @@
+JSFile:E4X.js2
+  PsiComment(JS:END_OF_LINE_COMMENT)('// E4X, JavaScript 1.6')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace('\n  ')
+      XmlTag:people
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('people')
+        XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n   ')
+        XmlTag:person
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('person')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('gender')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('male')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace('\n     ')
+          XmlTag:name
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('Ant')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace('\n      ')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('<?pi?>')
+          PsiWhiteSpace('\n      ')
+          XmlToken:XML_ENTITY_REF_TOKEN('&amp;')
+          PsiWhiteSpace('\n      ')
+          XmlToken:XML_ENTITY_REF_TOKEN('&#xFFFF;')
+          PsiWhiteSpace('\n      ')
+          XmlToken:XML_ENTITY_REF_TOKEN('&#1111;')
+          PsiWhiteSpace('\n      ')
+          PsiComment(JS:XML_STYLE_COMMENT)('<!-- example -->')
+          PsiWhiteSpace('\n      ')
+          XmlTag:height
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('height')
+            PsiWhiteSpace(' ')
+            PsiElement(XML_ATTRIBUTE)
+              XmlToken:XML_NAME('measure')
+              XmlToken:XML_EQ('=')
+              PsiElement(XML_ATTRIBUTE_VALUE)
+                XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('metric&#FFFF;')
+                XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('176')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('height')
+            XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace('\n   ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('person')
+          XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_NAME('people')
+        XmlToken:XML_TAG_END('>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSForInStatement
+    PsiElement(JS:FOR_KEYWORD)('for')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:EACH_KEYWORD)('each')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LPAR)('(')
+    JSVarStatement
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('h')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:IN_KEYWORD)('in')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiElement(JS:DOT_DOT)('..')
+      PsiElement(JS:IDENTIFIER)('height')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace(' ')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('print')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('h')
+            PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:RBRACE)('}')
+  JSEmptyStatement
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('print')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSReferenceExpression
+          JSCallExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('x')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('person')
+            PsiElement(JS:DOT)('.')
+            JSE4XFilterQueryArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('name')
+                PsiElement(JS:EQEQ)('==')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"Ant"')
+              PsiElement(JS:RPAR)(')')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('height')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  ActionScriptFunction
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:FUNCTION_KEYWORD)('function')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('metricToImperial')
+    JSParameterList
+      PsiElement(JS:LPAR)('(')
+      JSParameter
+        PsiElement(JS:IDENTIFIER)('cms')
+      PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('totalinches')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSCallExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('Math')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('round')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('cms')
+                PsiElement(JS:DIV)('/')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('2.54')
+              PsiElement(JS:RPAR)(')')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('inch')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('totalinches')
+            PsiElement(JS:PERC)('%')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('ft')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSBinaryExpression
+            JSParenthesizedExpression
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('totalinches')
+                PsiElement(JS:MINUS)('-')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('inch')
+              PsiElement(JS:RPAR)(')')
+            PsiElement(JS:DIV)('/')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n  ')
+      JSVarStatement
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        JSLocalVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('response')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          XmlTag:height
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('height')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n  ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('response')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('feet')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('ft')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('response')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('inches')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSBinaryExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('inch')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:PLUS)('+')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      PsiComment(JS:END_OF_LINE_COMMENT)('// we sounded a bit short')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSAssignmentExpression
+          JSDefinitionExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('response')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:AT)('@')
+              PsiElement(JS:IDENTIFIER)('measure')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)('"imperial"')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      JSReturnStatement
+        PsiElement(JS:RETURN_KEYWORD)('return')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('response')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('num')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('36')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('p')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:paul
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('paul')
+        XmlToken:XML_TAG_END('>')
+        XmlTag:age
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('age')
+          XmlToken:XML_TAG_END('>')
+          JSEmbeddedContent:XML_JS_SCRIPT
+            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+              PsiElement(JS:LBRACE)('{')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('num')
+              PsiElement(JS:RBRACE)('}')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('age')
+          XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_NAME('paul')
+        XmlToken:XML_TAG_END('>')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('xh')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSNewExpression
+        PsiElement(JS:NEW_KEYWORD)('new')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('XMLHttpRequest')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('xh')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('open')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"GET"')
+        PsiElement(JS:COMMA)(',')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl"')
+        PsiElement(JS:COMMA)(',')
+        JSLiteralExpression
+          PsiElement(JS:FALSE_KEYWORD)('false')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('xh')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('send')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSLiteralExpression
+          PsiElement(JS:NULL_KEYWORD)('null')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('wsdl')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSNewExpression
+        PsiElement(JS:NEW_KEYWORD)('new')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('XML')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('xh')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('responseText')
+          PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('print')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSReferenceExpression
+          JSIndexedPropertyAccessExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('wsdl')
+              PsiElement(JS:DOT_DOT)('..')
+              JSE4XNamespaceReference
+                JSReferenceExpression
+                  PsiElement(JS:ANY_IDENTIFIER)('*')
+                PsiElement(JS:COLON_COLON)('::')
+              PsiElement(JS:IDENTIFIER)('addresses')
+            PsiElement(JS:LBRACKET)('[')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('0')
+            PsiElement(JS:RBRACKET)(']')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:AT)('@')
+          PsiElement(JS:IDENTIFIER)('location')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('print')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        PsiWhiteSpace(' ')
+        JSCallExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('mainXML')
+            PsiElement(JS:DOT_DOT)('..')
+            PsiElement(JS:IDENTIFIER)('item')
+          PsiElement(JS:DOT)('.')
+          JSE4XFilterQueryArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSBinaryExpression
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('author')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:AT)('@')
+                PsiElement(JS:IDENTIFIER)('email')
+              PsiElement(JS:EQEQ)('==')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"fk@alex.com"')
+            PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PsiComment(JS:END_OF_LINE_COMMENT)('// print all the employee names')
+  PsiWhiteSpace('\n')
+  JSForInStatement
+    PsiElement(JS:FOR_KEYWORD)('for')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LPAR)('(')
+    JSVarStatement
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('n')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:IN_KEYWORD)('in')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('e')
+      PsiElement(JS:DOT_DOT)('..')
+      PsiElement(JS:IDENTIFIER)('name')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n')
+      JSExpressionStatement
+        JSCallExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('print')
+          PsiWhiteSpace(' ')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            JSBinaryExpression
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"Employee name: "')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSIndexedPropertyAccessExpression
+                JSReferenceExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('e')
+                  PsiElement(JS:DOT_DOT)('..')
+                  PsiElement(JS:IDENTIFIER)('name')
+                PsiElement(JS:LBRACKET)('[')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('n')
+                PsiElement(JS:RBRACKET)(']')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(JS:END_OF_LINE_COMMENT)('// print each child of the first item')
+  PsiWhiteSpace('\n')
+  JSForInStatement
+    PsiElement(JS:FOR_KEYWORD)('for')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LPAR)('(')
+    JSVarStatement
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('child')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:IN_KEYWORD)('in')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSIndexedPropertyAccessExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('order')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('item')
+        PsiElement(JS:LBRACKET)('[')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:RBRACKET)(']')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:ANY_IDENTIFIER)('*')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace(' ')
+    JSBlockStatement
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSExpressionStatement
+        JSBinaryExpression
+          JSCallExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('print')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"item child: "')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSIndexedPropertyAccessExpression
+                  JSReferenceExpression
+                    JSIndexedPropertyAccessExpression
+                      JSReferenceExpression
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('order')
+                        PsiElement(JS:DOT)('.')
+                        PsiElement(JS:IDENTIFIER)('item')
+                      PsiElement(JS:LBRACKET)('[')
+                      JSLiteralExpression
+                        PsiElement(JS:NUMERIC_LITERAL)('0')
+                      PsiElement(JS:RBRACKET)(']')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:ANY_IDENTIFIER)('*')
+                  PsiElement(JS:LBRACKET)('[')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('child')
+                  PsiElement(JS:RBRACKET)(']')
+              PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          PsiWhiteSpace(' ')
+          JSIndexedPropertyAccessExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('order')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:AT)('@')
+            PsiElement(JS:LBRACKET)('[')
+            JSBinaryExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('a')
+              PsiElement(JS:EQEQ)('==')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:RBRACKET)(']')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('order')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:
+        XmlToken:XML_START_TAG_START('<')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('x')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_TAG_END('>')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('item')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_END_TAG_START('</')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('x')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_TAG_END('>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('emplist')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:
+        PsiElement(JS:XML_TAG__LIST_START)('<>')
+        PsiWhiteSpace('\n')
+        XmlTag:employee
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('employee')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('id')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('0')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_TAG_END('>')
+          XmlTag:name
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('Jim')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+          XmlTag:age
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('25')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('employee')
+          XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n')
+        XmlTag:employee
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('employee')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('id')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('1')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_TAG_END('>')
+          XmlTag:name
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('Joe')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+          XmlTag:age
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('20')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('employee')
+          XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n')
+        XmlTag:employee
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('employee')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('id')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('2')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_TAG_END('>')
+          XmlTag:name
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('Sue')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+          XmlTag:age
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('30')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('employee')
+          XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace('\n')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_END('>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:
+        XmlToken:XML_START_TAG_START('<')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('tagname')
+            PsiElement(JS:RBRACE)('}')
+        PsiWhiteSpace(' ')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('attributename')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_EQ('=')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('attributevalue')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_TAG_END('>')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('content')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_END_TAG_START('</')
+        JSEmbeddedContent:XML_JS_SCRIPT
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('tagname')
+            PsiElement(JS:RBRACE)('}')
+        XmlToken:XML_TAG_END('>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSForStatement
+    PsiElement(JS:FOR_KEYWORD)('for')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LPAR)('(')
+    JSVarStatement
+      PsiElement(JS:VAR_KEYWORD)('var')
+      PsiWhiteSpace(' ')
+      ActionScriptVariable
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('i')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSBinaryExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('i')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LT)('<')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('10')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSPostfixExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('i')
+      PsiElement(JS:PLUSPLUS)('++')
+    PsiElement(JS:RPAR)(')')
+    PsiWhiteSpace('\n')
+    JSExpressionStatement
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSIndexedPropertyAccessExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('e')
+            PsiElement(JS:LBRACKET)('[')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('i')
+            PsiElement(JS:RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        XmlTag:employee
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_TAG_NAME('employee')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('id')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSEmbeddedContent:XML_JS_SCRIPT
+                JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+                  PsiElement(JS:LBRACE)('{')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('i')
+                  PsiElement(JS:RBRACE)('}')
+          XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace('\n')
+          XmlTag:name
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+            JSEmbeddedContent:XML_JS_SCRIPT
+              JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+                PsiElement(JS:LBRACE)('{')
+                JSCallExpression
+                  JSReferenceExpression
+                    JSIndexedPropertyAccessExpression
+                      JSReferenceExpression
+                        PsiElement(JS:IDENTIFIER)('names')
+                      PsiElement(JS:LBRACKET)('[')
+                      JSReferenceExpression
+                        PsiElement(JS:IDENTIFIER)('i')
+                      PsiElement(JS:RBRACKET)(']')
+                    PsiElement(JS:DOT)('.')
+                    PsiElement(JS:IDENTIFIER)('toUpperCase')
+                  JSArgumentList
+                    PsiElement(JS:LPAR)('(')
+                    PsiElement(JS:RPAR)(')')
+                PsiElement(JS:RBRACE)('}')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('name')
+            XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace('\n')
+          XmlTag:age
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+            JSEmbeddedContent:XML_JS_SCRIPT
+              JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+                PsiElement(JS:LBRACE)('{')
+                JSIndexedPropertyAccessExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('ages')
+                  PsiElement(JS:LBRACKET)('[')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('i')
+                  PsiElement(JS:RBRACKET)(']')
+                PsiElement(JS:RBRACE)('}')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_TAG_NAME('age')
+            XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace(' \n')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_TAG_NAME('employee')
+          XmlToken:XML_TAG_END('>')
+      PsiElement(JS:SEMICOLON)(';')

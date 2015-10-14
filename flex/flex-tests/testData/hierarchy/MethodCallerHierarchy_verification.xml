@@ -1,0 +1,24 @@
+<node text="Class1.bar(Function) (pack)" base="true">
+  <node text="global(Array)(2 usages)">
+    <node text="global(Array)">
+      <any/>
+    </node>
+    <node text="&lt;anonymous&gt;()"/>
+    <node text="Class2.&lt;anonymous&gt;() (pack)"/>
+  </node>
+  <node text="Class2.foo()(2 usages) (pack)">
+    <node text="global(Array)(2 usages)">
+      <any/>
+    </node>
+  </node>
+  <node text="Class2.bar(Function) (pack)">
+    <node text="global(Array)(2 usages)">
+      <any/>
+    </node>
+    <node text="Class2.foo() (pack)">
+      <any/>
+    </node>
+    <node text="Class2.Class2() (pack)"/>
+  </node>
+  <node text="Class2.Class2() (pack)"/>
+</node>

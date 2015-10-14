@@ -1,0 +1,24 @@
+package <error>foo</error> {
+public <error>final</error> interface <error>Target</error> {
+    <error>fi<caret>nal</error> function doIt();
+}
+}
+
+class Foo {
+  final function foo() {}
+  <error descr="Final modifier can be applied only to classes and class methods">final</error> var x;
+  <error descr="Final modifier can be applied only to classes and class methods">final</error> const x2 = 1;
+}
+
+final class Foo_ {
+  function foo() {}
+}
+
+class Foo2 extends Foo {
+  <error>override</error> function foo() {}
+}
+
+class Foo2_ extends <error>Foo_</error> {
+  <error>override</error> function foo() {}
+}
+<error descr="Final modifier can be applied only to classes and class methods">final</error> function zz() {}

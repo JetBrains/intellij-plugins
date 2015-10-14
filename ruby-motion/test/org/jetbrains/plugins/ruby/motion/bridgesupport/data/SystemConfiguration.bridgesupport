@@ -1,0 +1,232 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<struct type='{_SCDynamicStoreContext=&quot;version&quot;i&quot;info&quot;^v&quot;retain&quot;^?&quot;release&quot;^?&quot;copyDescription&quot;^?}' name='SCDynamicStoreContext'>
+<field type='l' name='version' declared_type='CFIndex'/>
+<field type='^v' name='info' declared_type='void*'/>
+<field function_pointer='true' type='^?' name='retain' declared_type='void *(*)(void *)' const='true'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^v' declared_type='void*' const='true'/>
+</field>
+<field function_pointer='true' type='^?' name='release' declared_type='void (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='v' declared_type='void'/>
+</field>
+<field function_pointer='true' type='^?' name='copyDescription' declared_type='CFStringRef (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</field>
+</struct>
+<struct type='{_SCNetworkConnectionContext=&quot;version&quot;i&quot;info&quot;^v&quot;retain&quot;^?&quot;release&quot;^?&quot;copyDescription&quot;^?}' name='SCNetworkConnectionContext'>
+<field type='l' name='version' declared_type='CFIndex'/>
+<field type='^v' name='info' declared_type='void*'/>
+<field function_pointer='true' type='^?' name='retain' declared_type='void *(*)(void *)' const='true'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^v' declared_type='void*' const='true'/>
+</field>
+<field function_pointer='true' type='^?' name='release' declared_type='void (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='v' declared_type='void'/>
+</field>
+<field function_pointer='true' type='^?' name='copyDescription' declared_type='CFStringRef (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</field>
+</struct>
+<struct type='{_SCNetworkReachabilityContext=&quot;version&quot;i&quot;info&quot;^v&quot;retain&quot;^?&quot;release&quot;^?&quot;copyDescription&quot;^?}' name='SCNetworkReachabilityContext'>
+<field type='l' name='version' declared_type='CFIndex'/>
+<field type='^v' name='info' declared_type='void*'/>
+<field function_pointer='true' type='^?' name='retain' declared_type='void *(*)(void *)' const='true'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^v' declared_type='void*' const='true'/>
+</field>
+<field function_pointer='true' type='^?' name='release' declared_type='void (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='v' declared_type='void'/>
+</field>
+<field function_pointer='true' type='^?' name='copyDescription' declared_type='CFStringRef (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</field>
+</struct>
+<struct type='{_SCPreferencesContext=&quot;version&quot;i&quot;info&quot;^v&quot;retain&quot;^?&quot;release&quot;^?&quot;copyDescription&quot;^?}' name='SCPreferencesContext'>
+<field type='l' name='version' declared_type='CFIndex'/>
+<field type='^v' name='info' declared_type='void*'/>
+<field function_pointer='true' type='^?' name='retain' declared_type='void *(*)(void *)' const='true'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^v' declared_type='void*' const='true'/>
+</field>
+<field function_pointer='true' type='^?' name='release' declared_type='void (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='v' declared_type='void'/>
+</field>
+<field function_pointer='true' type='^?' name='copyDescription' declared_type='CFStringRef (*)(void *)'>
+<arg type='^v' declared_type='void*' const='true'/>
+<retval type='^{__CFString=}' declared_type='CFStringRef'/>
+</field>
+</struct>
+<cftype type='^{AuthorizationOpaqueRef=}' name='AuthorizationRef'/>
+<cftype type='^{__SCBondStatus=}' name='SCBondStatusRef'/>
+<cftype type='^{__SCDynamicStore=}' name='SCDynamicStoreRef'/>
+<cftype type='^{__SCNetworkConnection=}' name='SCNetworkConnectionRef'/>
+<cftype type='^{__SCNetworkInterface=}' name='SCNetworkInterfaceRef'/>
+<cftype type='^{__SCNetworkProtocol=}' name='SCNetworkProtocolRef'/>
+<cftype type='^{__SCNetworkReachability=}' name='SCNetworkReachabilityRef'/>
+<cftype type='^{__SCNetworkService=}' name='SCNetworkServiceRef'/>
+<cftype type='^{__SCNetworkSet=}' name='SCNetworkSetRef'/>
+<cftype type='^{__SCPreferences=}' name='SCPreferencesRef'/>
+<constant type='^{__CFString=}' name='kCFErrorDomainSystemConfiguration' declared_type='CFStringRef' const='true'/>
+<constant type='^{__CFString=}' name='kCNNetworkInfoKeyBSSID' declared_type='CFStringRef' const='true'/>
+<constant type='^{__CFString=}' name='kCNNetworkInfoKeySSID' declared_type='CFStringRef' const='true'/>
+<constant type='^{__CFString=}' name='kCNNetworkInfoKeySSIDData' declared_type='CFStringRef' const='true'/>
+<string_constant name='kSCNetworkConnectionBytesIn' nsstring='true' value='BytesIn'/>
+<string_constant name='kSCNetworkConnectionBytesOut' nsstring='true' value='BytesOut'/>
+<string_constant name='kSCNetworkConnectionErrorsIn' nsstring='true' value='ErrorsIn'/>
+<string_constant name='kSCNetworkConnectionErrorsOut' nsstring='true' value='ErrorsOut'/>
+<string_constant name='kSCNetworkConnectionPacketsIn' nsstring='true' value='PacketsIn'/>
+<string_constant name='kSCNetworkConnectionPacketsOut' nsstring='true' value='PacketsOut'/>
+<string_constant name='kSCNetworkConnectionSelectionOptionOnDemandHostName' nsstring='true' value='OnDemandHostName'/>
+<string_constant name='kSCNetworkConnectionSelectionOptionOnDemandRetry' nsstring='true' value='OnDemandRetry'/>
+<enum name='kSCBondStatusLinkInvalid' value='1'/>
+<enum name='kSCBondStatusNoPartner' value='2'/>
+<enum name='kSCBondStatusNotInActiveGroup' value='3'/>
+<enum name='kSCBondStatusOK' value='0'/>
+<enum name='kSCBondStatusUnknown' value='999'/>
+<enum name='kSCNetworkConnectionConnected' value='2'/>
+<enum name='kSCNetworkConnectionConnecting' value='1'/>
+<enum name='kSCNetworkConnectionDisconnected' value='0'/>
+<enum name='kSCNetworkConnectionDisconnecting' value='3'/>
+<enum name='kSCNetworkConnectionInvalid' value='-1'/>
+<enum name='kSCNetworkConnectionPPPAuthenticating' value='5'/>
+<enum name='kSCNetworkConnectionPPPConnected' value='8'/>
+<enum name='kSCNetworkConnectionPPPConnectingLink' value='2'/>
+<enum name='kSCNetworkConnectionPPPDialOnTraffic' value='3'/>
+<enum name='kSCNetworkConnectionPPPDisconnected' value='0'/>
+<enum name='kSCNetworkConnectionPPPDisconnectingLink' value='10'/>
+<enum name='kSCNetworkConnectionPPPHoldingLinkOff' value='11'/>
+<enum name='kSCNetworkConnectionPPPInitializing' value='1'/>
+<enum name='kSCNetworkConnectionPPPNegotiatingLink' value='4'/>
+<enum name='kSCNetworkConnectionPPPNegotiatingNetwork' value='7'/>
+<enum name='kSCNetworkConnectionPPPSuspended' value='12'/>
+<enum name='kSCNetworkConnectionPPPTerminating' value='9'/>
+<enum name='kSCNetworkConnectionPPPWaitingForCallBack' value='6'/>
+<enum name='kSCNetworkConnectionPPPWaitingForRedial' value='13'/>
+<enum name='kSCNetworkFlagsConnectionAutomatic' value='8'/>
+<enum name='kSCNetworkFlagsConnectionRequired' value='4'/>
+<enum name='kSCNetworkFlagsInterventionRequired' value='16'/>
+<enum name='kSCNetworkFlagsIsDirect' value='131072'/>
+<enum name='kSCNetworkFlagsIsLocalAddress' value='65536'/>
+<enum name='kSCNetworkFlagsReachable' value='2'/>
+<enum name='kSCNetworkFlagsTransientConnection' value='1'/>
+<enum name='kSCNetworkReachabilityFlagsConnectionAutomatic' value='8'/>
+<enum name='kSCNetworkReachabilityFlagsConnectionOnDemand' value='32'/>
+<enum name='kSCNetworkReachabilityFlagsConnectionOnTraffic' value='8'/>
+<enum name='kSCNetworkReachabilityFlagsConnectionRequired' value='4'/>
+<enum name='kSCNetworkReachabilityFlagsInterventionRequired' value='16'/>
+<enum name='kSCNetworkReachabilityFlagsIsDirect' value='131072'/>
+<enum name='kSCNetworkReachabilityFlagsIsLocalAddress' value='65536'/>
+<enum name='kSCNetworkReachabilityFlagsIsWWAN' value='262144'/>
+<enum name='kSCNetworkReachabilityFlagsReachable' value='2'/>
+<enum name='kSCNetworkReachabilityFlagsTransientConnection' value='1'/>
+<enum name='kSCPreferencesNotificationApply' value='2'/>
+<enum name='kSCPreferencesNotificationCommit' value='1'/>
+<enum name='kSCStatusAccessError' value='1003'/>
+<enum name='kSCStatusConnectionNoService' value='5001'/>
+<enum name='kSCStatusFailed' value='1001'/>
+<enum name='kSCStatusInvalidArgument' value='1002'/>
+<enum name='kSCStatusKeyExists' value='1005'/>
+<enum name='kSCStatusLocked' value='1006'/>
+<enum name='kSCStatusMaxLink' value='3006'/>
+<enum name='kSCStatusNeedLock' value='1007'/>
+<enum name='kSCStatusNoConfigFile' value='3003'/>
+<enum name='kSCStatusNoKey' value='1004'/>
+<enum name='kSCStatusNoLink' value='3004'/>
+<enum name='kSCStatusNoPrefsSession' value='3001'/>
+<enum name='kSCStatusNoStoreServer' value='2002'/>
+<enum name='kSCStatusNoStoreSession' value='2001'/>
+<enum name='kSCStatusNotifierActive' value='2003'/>
+<enum name='kSCStatusOK' value='0'/>
+<enum name='kSCStatusPrefsBusy' value='3002'/>
+<enum name='kSCStatusReachabilityUnknown' value='4001'/>
+<enum name='kSCStatusStale' value='3005'/>
+<function name='CNCopyCurrentNetworkInfo'>
+<arg type='^{__CFString=}' name='interfaceName' declared_type='CFStringRef'/>
+<retval type='^{__CFDictionary=}' declared_type='CFDictionaryRef'/>
+</function>
+<function name='CNCopySupportedInterfaces'>
+<retval type='^{__CFArray=}' declared_type='CFArrayRef'/>
+</function>
+<function name='CNMarkPortalOffline'>
+<arg type='^{__CFString=}' name='interfaceName' declared_type='CFStringRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='CNMarkPortalOnline'>
+<arg type='^{__CFString=}' name='interfaceName' declared_type='CFStringRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='CNSetSupportedSSIDs'>
+<arg type='^{__CFArray=}' name='ssidArray' declared_type='CFArrayRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='SCCopyLastError'>
+<retval type='^{__CFError=}' declared_type='CFErrorRef'/>
+</function>
+<function name='SCError'>
+<retval type='i' declared_type='int'/>
+</function>
+<function name='SCErrorString'>
+<arg type='i' name='status' declared_type='int'/>
+<retval type='*' declared_type='char*' const='true'/>
+</function>
+<function name='SCNetworkReachabilityCreateWithAddress'>
+<arg type='^{__CFAllocator=}' name='allocator' declared_type='CFAllocatorRef'/>
+<arg type='^{sockaddr=CC[14c]}' name='address' declared_type='struct sockaddr*' const='true'/>
+<retval type='^{__SCNetworkReachability=}' declared_type='SCNetworkReachabilityRef'/>
+</function>
+<function name='SCNetworkReachabilityCreateWithAddressPair'>
+<arg type='^{__CFAllocator=}' name='allocator' declared_type='CFAllocatorRef'/>
+<arg type='^{sockaddr=CC[14c]}' name='localAddress' declared_type='struct sockaddr*' const='true'/>
+<arg type='^{sockaddr=CC[14c]}' name='remoteAddress' declared_type='struct sockaddr*' const='true'/>
+<retval type='^{__SCNetworkReachability=}' declared_type='SCNetworkReachabilityRef'/>
+</function>
+<function name='SCNetworkReachabilityCreateWithName'>
+<arg type='^{__CFAllocator=}' name='allocator' declared_type='CFAllocatorRef'/>
+<arg type='*' name='nodename' declared_type='char*' const='true'/>
+<retval type='^{__SCNetworkReachability=}' declared_type='SCNetworkReachabilityRef'/>
+</function>
+<function name='SCNetworkReachabilityGetFlags'>
+<arg type='^{__SCNetworkReachability=}' name='target' declared_type='SCNetworkReachabilityRef'/>
+<arg type='^I' name='flags' declared_type='SCNetworkReachabilityFlags*'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='SCNetworkReachabilityGetTypeID'>
+<retval type='L' declared_type='CFTypeID'/>
+</function>
+<function name='SCNetworkReachabilityScheduleWithRunLoop'>
+<arg type='^{__SCNetworkReachability=}' name='target' declared_type='SCNetworkReachabilityRef'/>
+<arg type='^{__CFRunLoop=}' name='runLoop' declared_type='CFRunLoopRef'/>
+<arg type='^{__CFString=}' name='runLoopMode' declared_type='CFStringRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='SCNetworkReachabilitySetCallback'>
+<arg type='^{__SCNetworkReachability=}' name='target' declared_type='SCNetworkReachabilityRef'/>
+<arg function_pointer='true' type='^?' name='callout' declared_type='SCNetworkReachabilityCallBack'>
+<arg type='^{__SCNetworkReachability=}' declared_type='SCNetworkReachabilityRef'/>
+<arg type='I' declared_type='SCNetworkReachabilityFlags'/>
+<arg type='^v' declared_type='void*'/>
+<retval type='v' declared_type='void'/>
+</arg>
+<arg type='^{_SCNetworkReachabilityContext=i^v^?^?^?}' name='context' declared_type='SCNetworkReachabilityContext*'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='SCNetworkReachabilitySetDispatchQueue'>
+<arg type='^{__SCNetworkReachability=}' name='target' declared_type='SCNetworkReachabilityRef'/>
+<arg type='^{dispatch_queue_s=}' name='queue' declared_type='dispatch_queue_t'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+<function name='SCNetworkReachabilityUnscheduleFromRunLoop'>
+<arg type='^{__SCNetworkReachability=}' name='target' declared_type='SCNetworkReachabilityRef'/>
+<arg type='^{__CFRunLoop=}' name='runLoop' declared_type='CFRunLoopRef'/>
+<arg type='^{__CFString=}' name='runLoopMode' declared_type='CFStringRef'/>
+<retval type='B' declared_type='Boolean'/>
+</function>
+</signatures>

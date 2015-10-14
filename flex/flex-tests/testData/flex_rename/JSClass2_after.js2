@@ -1,0 +1,4 @@
+class BBB {
+  function B<caret>BB() {}
+  function test():BBB { return new BBB(); }
+}

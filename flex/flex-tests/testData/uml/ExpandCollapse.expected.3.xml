@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umlModel origin="com.test.Foo">
+  <node id="Root" nodeName="Class Root" name="&lt;html&gt;&lt;b&gt;Root&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.test.Bar" nodeName="Class com.test.Bar" name="&lt;html&gt;&lt;b&gt;com.test.Bar&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.test.Foo" nodeName="Class com.test.Foo" name="&lt;html&gt;&lt;b&gt;com.test.Foo&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.test.MyButton" nodeName="Class com.test.MyButton" name="&lt;html&gt;&lt;b&gt;com.test.MyButton&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.test.MyButton2" nodeName="Class com.test.MyButton2" name="&lt;html&gt;&lt;b&gt;com.test.MyButton2&lt;/b&gt;&lt;/html&gt;" />
+  <node id="com.test.Zzz" nodeName="Class com.test.Zzz" name="&lt;html&gt;&lt;b&gt;com.test.Zzz&lt;/b&gt;&lt;/html&gt;" />
+</umlModel>

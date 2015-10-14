@@ -96,7 +96,7 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
     else {
       jsFile = ObjectUtils.tryCast(element.getContainingFile(), JSFile.class);
     }
-    if (jsFile != null && KarmaUtil.isKarmaConfigFile(jsFile.getName())) {
+    if (jsFile != null && KarmaUtil.isKarmaConfigFile(jsFile.getName(), false)) {
       return jsFile;
     }
     return null;

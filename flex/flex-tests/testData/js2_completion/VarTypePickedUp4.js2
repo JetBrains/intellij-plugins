@@ -1,0 +1,6 @@
+class A {
+  var a:XML;
+  function aaa() {
+    a.<caret>
+  }
+}

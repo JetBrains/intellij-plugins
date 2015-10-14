@@ -1,0 +1,10 @@
+package {
+class Foo implements IFoo {
+    [Bindable]
+    public var xxx:int;
+}
+interface IFoo {
+    function get xxx():int;
+    function set x<caret>xx(x:int);
+}
+}

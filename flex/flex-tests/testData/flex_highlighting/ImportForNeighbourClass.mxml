@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<qqq:MyClass
+        xmlns:mx="http://www.adobe.com/2006/mxml"
+        xmlns:qqq="foo.*">
+    <mx:Script><![CDATA[
+        var a : <error>A</error>;
+        var b : foo.A;
+        var c : mx.controls.CheckBox;
+        var d : <error>CheckBox</error>;
+        var e : foo.B;
+      ]]></mx:Script>
+    <mx:Button
+            click="mx.controls.Alert.show('hello')"/>
+
+  <mx:DataGrid>
+                        <mx:itemRenderer>
+                            <mx:Component>
+                                <mx:VBox>
+                                    <mx:Script>
+                                      var a : <error>A</error>;
+                                      var b : foo.<error>A</error>;
+                                    </mx:Script>
+                                </mx:VBox>
+                            </mx:Component>
+                        </mx:itemRenderer>
+                    </mx:DataGrid>
+</qqq:MyClass>

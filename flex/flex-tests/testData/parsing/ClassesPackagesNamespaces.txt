@@ -1,0 +1,687 @@
+JSFile:ClassesPackagesNamespaces.js2
+  JSVarStatement
+    JSAttributeList
+      PsiElement(JS:NATIVE_KEYWORD)('native')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PUBLIC_KEYWORD)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CONST_KEYWORD)('const')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('mx')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('core')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('mx_internal')
+      PsiElement(JS:COLON)(':')
+      PsiElement(JS:ANY_IDENTIFIER)('*')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"http://www.adobe.com/2006/flex/mx/internal"')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('MyPackage')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n   ')
+    JSImportStatement
+      PsiElement(JS:IMPORT_KEYWORD)('import')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('flash')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('display')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('Sprite')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n\n   ')
+    JSClass
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('HelloWorld2')
+      PsiWhiteSpace(' ')
+      JSReferenceList
+        PsiElement(JS:EXTENDS_KEYWORD)('extends')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Sprite')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n      ')
+      ActionScriptFunction
+        JSAttributeList
+          PsiElement(JS:PUBLIC_KEYWORD)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('HelloWorld2')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n      ')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n   ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n  ')
+    JSClass
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace(' ')
+        JSDocTag
+          PsiElement(JS:DOC_TAG_NAME)('@MyDoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n  ')
+      JSAttributeList
+        JSAttribute
+          PsiElement(JS:LBRACKET)('[')
+          PsiElement(JS:IDENTIFIER)('AccessibilityClass')
+          PsiElement(JS:LPAR)('(')
+          JSAttributeNameValuePair
+            PsiElement(JS:IDENTIFIER)('implementation')
+            PsiElement(JS:EQ)('=')
+            PsiElement(JS:STRING_LITERAL)('"mx.accessibility.LinkButtonAccImpl"')
+          PsiElement(JS:RPAR)(')')
+          PsiElement(JS:RBRACKET)(']')
+        PsiWhiteSpace('\n  ')
+        JSDocComment
+          PsiElement(JS:DOC_COMMENT_START)('/**')
+          PsiWhiteSpace(' ')
+          JSDocTag
+            PsiElement(JS:DOC_TAG_NAME)('@MyDoc')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DOC_COMMENT_END)('*/')
+        PsiWhiteSpace('\n  ')
+        JSAttribute
+          PsiElement(JS:LBRACKET)('[')
+          PsiElement(JS:IDENTIFIER)('IconFile')
+          PsiElement(JS:LPAR)('(')
+          JSAttributeNameValuePair
+            PsiElement(JS:STRING_LITERAL)('"LinkButton.png"')
+          PsiElement(JS:RPAR)(')')
+          PsiElement(JS:RBRACKET)(']')
+      PsiWhiteSpace('\n  ')
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace(' ')
+        JSDocTag
+          PsiElement(JS:DOC_TAG_NAME)('@MyDoc')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n  ')
+      PsiElement(JS:INTERFACE_KEYWORD)('interface')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('I')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('f')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('f2')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:VOID_KEYWORD)('void')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('f3')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:VOID_KEYWORD)('void')
+        PsiErrorElement:Interface functions declaration should have no body
+          <empty list>
+      PsiWhiteSpace(' ')
+      JSBlockStatement
+        PsiElement(JS:LBRACE)('{')
+        PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiErrorElement:Interface should have no variable declarations
+          <empty list>
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiErrorElement:Interface should have no variable declarations
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('b')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n  ')
+    JSClass
+      JSAttributeList
+        <empty list>
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('A')
+      PsiWhiteSpace(' ')
+      JSReferenceList
+        PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('I')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('I')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        JSAttributeList
+          PsiElement(JS:STATIC_KEYWORD)('static')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('X')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      JSVarStatement
+        JSAttributeList
+          PsiElement(JS:INTERNAL_KEYWORD)('internal')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:DYNAMIC_KEYWORD)('dynamic')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:FINAL_KEYWORD)('final')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('X2')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('N1')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OVERRIDE_KEYWORD)('override')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:GET_KEYWORD)('get')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('eventsToHandle')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+        PsiElement(JS:COLON)(':')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Object')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          PsiElement(JS:OVERRIDE_KEYWORD)('override')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('N1')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:SET_KEYWORD)('set')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('eventsToHandle')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          JSParameter
+            PsiElement(JS:IDENTIFIER)('o')
+            PsiElement(JS:COLON)(':')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Object')
+          PsiElement(JS:RPAR)(')')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:VOID_KEYWORD)('void')
+        PsiWhiteSpace(' ')
+        JSBlockStatement
+          PsiElement(JS:LBRACE)('{')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      ActionScriptFunction
+        JSAttributeList
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('N2')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:NATIVE_KEYWORD)('native')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:FUNCTION_KEYWORD)('function')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('mynative')
+        JSParameterList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace('\n  ')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('    ')
+    PsiComment(JS:END_OF_LINE_COMMENT)('// I refers to type I')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSImportStatement
+    PsiElement(JS:IMPORT_KEYWORD)('import')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('MyPackage')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:ANY_IDENTIFIER)('*')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSNamespaceDeclaration
+    JSDocComment
+      PsiElement(JS:DOC_COMMENT_START)('/**')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:DOC_COMMENT_DATA)('comment')
+      PsiElement(JS:DOC_COMMENT_END)('*/')
+    PsiWhiteSpace('\n')
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('N1')
+  PsiWhiteSpace('\n')
+  JSNamespaceDeclaration
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('N2')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('N1')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:INT_KEYWORD)('int')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('10')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('N2')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:COLON)(':')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('String')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"hello"')
+  PsiWhiteSpace('\n')
+  JSUseNamespaceDirective
+    PsiElement(JS:USE_KEYWORD)('use')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('N1')
+  PsiWhiteSpace('\n')
+  JSUseNamespaceDirective
+    PsiElement(JS:USE_KEYWORD)('use')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('N1')
+    PsiElement(JS:COMMA)(',')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('N2')
+  PsiWhiteSpace('\n\n')
+  JSImportStatement
+    PsiElement(JS:IMPORT_KEYWORD)('import')
+    PsiWhiteSpace(' ')
+    JSAssignmentExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('y')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('b')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('x')
+  PsiWhiteSpace('\n\n')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('o')
+        PsiElement(JS:DOT)('.')
+        JSE4XNamespaceReference
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('ns')
+          PsiElement(JS:COLON_COLON)('::')
+        PsiElement(JS:IDENTIFIER)('id')
+  PsiWhiteSpace('\n\n')
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('col')
+        PsiElement(JS:DOT)('.')
+        JSE4XNamespaceReference
+          JSReferenceExpression
+            PsiElement(JS:PUBLIC_KEYWORD)('public')
+          PsiElement(JS:COLON_COLON)('::')
+        PsiElement(JS:IDENTIFIER)('setStyle')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSVarStatement
+    JSAttributeList
+      PsiElement(JS:PRIVATE_KEYWORD)('private')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OVERRIDE_KEYWORD)('override')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PROTECTED_KEYWORD)('protected')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:CONST_KEYWORD)('const')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('i')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  JSIncludeDirective
+    PsiElement(JS:INCLUDE_KEYWORD)('#include')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:STRING_LITERAL)('"aaa"')
+  PsiWhiteSpace('\n')
+  JSIncludeDirective
+    PsiElement(JS:INCLUDE_KEYWORD)('include')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:STRING_LITERAL)('"aaa"')
+  PsiWhiteSpace('\n\n')
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('m_x')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n  ')
+    JSNamespaceDeclaration
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('internal2')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"internal"')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSClass
+    JSDocComment
+      PsiElement(JS:DOC_COMMENT_START)('/**')
+      PsiWhiteSpace('\n ')
+      PsiElement(JS:DOC_COMMENT_LEADING_ASTERISK)('*')
+      PsiWhiteSpace('  ')
+      JSDocTag
+        PsiElement(JS:DOC_TAG_NAME)('@e')
+      PsiWhiteSpace('\n ')
+      PsiElement(JS:DOC_COMMENT_END)('*/')
+    PsiWhiteSpace('\n')
+    JSAttributeList
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('Event')
+        PsiElement(JS:LPAR)('(')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('name')
+          PsiElement(JS:EQ)('=')
+          PsiElement(JS:STRING_LITERAL)('"error"')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('type')
+          PsiElement(JS:EQ)('=')
+          PsiElement(JS:STRING_LITERAL)('"flash.events.ErrorEvent"')
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+      PsiWhiteSpace('\n\n')
+      PsiComment(JS:END_OF_LINE_COMMENT)('//--------------------------------------')
+      PsiWhiteSpace('\n\n')
+      JSIncludeDirective
+        PsiElement(JS:INCLUDE_KEYWORD)('include')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:STRING_LITERAL)('"Z.as"')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n\n')
+      JSDocComment
+        PsiElement(JS:DOC_COMMENT_START)('/**')
+        PsiWhiteSpace('\n ')
+        PsiElement(JS:DOC_COMMENT_END)('*/')
+      PsiWhiteSpace('\n')
+      JSAttribute
+        PsiElement(JS:LBRACKET)('[')
+        PsiElement(JS:IDENTIFIER)('Style')
+        PsiElement(JS:LPAR)('(')
+        JSAttributeNameValuePair
+          PsiElement(JS:IDENTIFIER)('name')
+          PsiElement(JS:EQ)('=')
+          PsiElement(JS:STRING_LITERAL)('"back"')
+        PsiElement(JS:RPAR)(')')
+        PsiElement(JS:RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('A')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n  \n')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    JSReferenceList
+      PsiElement(JS:EXTENDS_KEYWORD)('extends')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Bar')
+      PsiElement(JS:COMMA)(',')
+      PsiErrorElement:type name expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    JSReferenceList
+      PsiElement(JS:EXTENDS_KEYWORD)('extends')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Bar')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Zzz')
+      PsiElement(JS:COMMA)(',')
+      PsiErrorElement:type name expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    JSReferenceList
+      PsiElement(JS:EXTENDS_KEYWORD)('extends')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Bar')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Zzz')
+    PsiWhiteSpace(' ')
+    JSReferenceList
+      PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('I1')
+      PsiElement(JS:COMMA)(',')
+      PsiErrorElement:type name expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n')
+  JSClass
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CLASS_KEYWORD)('class')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    JSReferenceList
+      PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('I1')
+      PsiElement(JS:COMMA)(',')
+      PsiErrorElement:type name expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LBRACE)('{')
+    PsiElement(JS:RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  JSImportStatement
+    PsiElement(JS:IMPORT_KEYWORD)('import')
+    PsiErrorElement:* or type name expected
+      <empty list>

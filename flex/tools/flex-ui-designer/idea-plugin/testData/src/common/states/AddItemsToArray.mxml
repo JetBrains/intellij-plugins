@@ -1,0 +1,33 @@
+<SparkButtonSkin xmlns:fx="http://ns.adobe.com/mxml/2009"
+                 xmlns="library://ns.adobe.com/flex/spark"
+                 minWidth="120" minHeight="30">
+
+  <fx:Metadata>
+    [HostComponent("spark.components.Button")]
+  </fx:Metadata>
+
+  <states>
+    <State name="up"/>
+    <State name="over"/>
+    <State name="down"/>
+    <State name="disabled"/>
+  </states>
+  <Rect id="fill" left="0" right="0" top="0" bottom="0" radiusX="3">
+    <filters>
+      <DropShadowFilter includeIn="down" inner="true" blurX="10"
+                        blurY="10" alpha="1" distance="4" angle="90"/>
+      <DropShadowFilter includeIn="disabled" inner="true" blurX="8"
+                        blurY="8" alpha="1" distance="2" angle="90"/>
+    </filters>
+    <fill>
+      <LinearGradient rotation="90">
+        <GradientEntry color="0xE8E8E8"
+                       color.over="0xC2C2C2"
+                       color.down="0xAEB0B1"/>
+        <GradientEntry color="0xDFDFDF"
+                       color.over="0xADAEAF"
+                       color.down="0xA1A3A5"/>
+      </LinearGradient>
+    </fill>
+  </Rect>
+</SparkButtonSkin>

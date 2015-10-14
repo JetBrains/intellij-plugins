@@ -1,0 +1,314 @@
+
+public final class String extends Object
+{
+  native public function String(a:* = ""):*;
+  native AS3 function match(a:* = null):Array;
+  native private function _charAt(a:int = 0):String;
+  native AS3 function indexOf(a:String = undefined,a2:Number = 0):int;
+
+  native private function _indexOf(a:String,a2:int = 0):int;
+  native private function _substr(a:int = 0,a2:int = 2147483647):String;
+  native AS3 function substring(a:Number = 0,a2:Number = 2147483647):String;
+  native AS3 function slice(a:Number = 0,a2:Number = 2147483647):String;
+  native AS3 function lastIndexOf(a:String = undefined,a2:Number = 2147483647):int;
+
+  native private function _lastIndexOf(a:String,a2:int = 2147483647):int;
+  native private function _charCodeAt(a:int = 0):Number;
+  native AS3 function toLowerCase():String;
+  native private function _substring(a:int = 0,a2:int = 2147483647):String;
+  native AS3 function split(a:* = null,a2:* = NaN):Array;
+
+  native AS3 function concat(... a):String;
+  native AS3 function toLocaleLowerCase():String;
+  native private function _slice(a:int = 0,a2:int = 2147483647):String;
+  native public function get length():int;
+  native AS3 function search(a:* = null):int;
+
+  native AS3 function charAt(a:Number = 0):String;
+  native AS3 function localeCompare(a:String = ""):int;
+  native AS3 function toString():String;
+  native AS3 function valueOf():String;
+  native AS3 function substr(a:Number = 0,a2:Number = 2147483647):String;
+
+  native AS3 function replace(a:* = null,a2:* = null):String;
+  native AS3 function charCodeAt(a:Number = 0):Number;
+  native AS3 function toUpperCase():String;
+  native AS3 function toLocaleUpperCase():String;
+  static native private final function _replace(a:String,a2:*,a3:*):String;
+
+  static native public const length:int = 1;
+  static native private final function _match(a:String,a2:*):Array;
+  static native private final function _search(a:String,a2:*):int;
+  static native private final function _split(a:String,a2:*,a3:uint):Array;
+  static native AS3 final function fromCharCode(... a):String;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public const AS3:* = "http://adobe.com/AS3/2006/builtin";
+
+public final class Boolean extends Object
+{
+  native public function Boolean(a:* = null):*;
+  native AS3 function valueOf():Boolean;
+  native AS3 function toString():String;
+
+  static native public const length:int = 1;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public function isNaN(a:Number = 0):Boolean;
+
+public final class Namespace extends Object
+{
+  native public function Namespace(a:* = null,a2:* = null):*;
+  native AS3 function valueOf():String;
+
+  native public function get prefix():*;
+  native AS3 function toString():String;
+  native public function get uri():String;
+  static native public const length:* = 2;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+native public function parseFloat(a:String = NaN):Number;
+native public const Infinity:Number = Infinity;
+
+public final class decimal extends Object
+{
+  native public function decimal(a:* = 0):*;
+  native AS3 function toPrecision(a:* = 0):String;
+  native AS3 function valueOf():decimal;
+
+  native AS3 function toFixed(a:* = 0):String;
+  native AS3 function toExponential(a:* = 0):String;
+  native AS3 function toString(a:* = 10):String;
+  static native public final function log(a:decimal):decimal;
+  static native public final function ceil(a:decimal):decimal;
+
+  static native private const DTOSTR_FIXED:int = 1;
+  static native private final function _toString(a:decimal,a2:int):String;
+  static native private const DTOSTR_PRECISION:int = 2;
+  static native public final function min(a:decimal = 0,a2:decimal = 0,... a3):decimal;
+  static native public const ROUND_DOWN:int = 5;
+
+  static native public const ROUND_HALF_EVEN:int = 3;
+  static native public const ROUND_HALF_UP:int = 2;
+  static native private const DTOSTR_EXPONENTIAL:int = 3;
+  static native private final function _min(a:decimal,a2:decimal):decimal;
+  static native public const ROUND_FLOOR:int = 6;
+
+  static native public const ROUND_HALF_DOWN:int = 4;
+  static native public final function pow(a:decimal,a2:decimal):decimal;
+  static native public final function sqrt(a:decimal):decimal;
+  static native public final function log10(a:decimal):decimal;
+  static native public const ROUND_UP:int = 1;
+
+  static native private final function _max(a:decimal,a2:decimal):decimal;
+  static native public final function max(a:decimal = 0,a2:decimal = 0,... a3):decimal;
+  static native public const length:int = 1;
+  static native public const ROUND_CEILING:int = 0;
+  static native public final function abs(a:decimal):decimal;
+
+  static native private final function _convert(a:decimal,a2:int,a3:int):String;
+  static native public final function exp(a:decimal):decimal;
+  static native public final function floor(a:decimal):decimal;
+  static native public final function round(a:decimal,a2:int):decimal;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+public final class double extends Object
+{
+
+  native public function double(a:* = 0):*;
+  native AS3 function toPrecision(a:* = 0):String;
+  native AS3 function valueOf():double;
+  native AS3 function toFixed(a:* = 0):String;
+  native AS3 function toExponential(a:* = 0):String;
+
+  native AS3 function toString(a:* = 10):String;
+  static native public const MIN_VALUE:double = 4.9E-324;
+  static native public const length:int = 1;
+  static native public const POSITIVE_INFINITY:double = Infinity;
+  static native public const NEGATIVE_INFINITY:double = -Infinity;
+
+  static native public const MAX_VALUE:double = NaN;
+  static native private final function _toString(a:double,a2:int):String;
+  static native public const NaN:double = NaN;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+public final class uint extends Object
+{
+  native public function uint(a:* = 0):*;
+
+  native AS3 function toPrecision(a:* = 0):String;
+  native AS3 function valueOf():uint;
+  native AS3 function toFixed(a:* = 0):String;
+  native AS3 function toExponential(a:* = 0):String;
+  native AS3 function toString(a:* = 10):String;
+
+  static native public const MIN_VALUE:uint = 0;
+  static native public const length:int = 1;
+  static native public const MAX_VALUE:uint = NaN;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public function isFinite(a:Number = 0):Boolean;
+
+public dynamic class Object
+{
+
+  native public function Object():*;
+  native AS3 function hasOwnProperty(a:* = null):Boolean;
+  native AS3 function propertyIsEnumerable(a:* = null):Boolean;
+  native AS3 function isPrototypeOf(a:* = null):Boolean;
+  static native private final function _hasOwnProperty(a:*,a2:String):Boolean;
+
+  static native protected final function _dontEnumPrototype(a:Object):void;
+  static native private final function _propertyIsEnumerable(a:*,a2:String):Boolean;
+  static native private final function _isPrototypeOf(a:*,a2:*):Boolean;
+  static native protected final function _setPropertyIsEnumerable(a:*,a2:String,a3:Boolean):void;
+  static native private final function _toString(a:*):String;
+
+  static native public const length:int = 1;
+  static native public final function init():*;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public function unescape(a:String = undefined):String;
+native public function escape(a:String = undefined):String;
+
+native public function decodeURI(a:String = undefined):String;
+
+public dynamic class Class extends Object
+{
+  native public function Class():*;
+  native public final function get prototype():*;
+  static native public const length:int = 1;
+}
+native public const undefined:*;
+
+public final class Number extends Object
+{
+
+  native public function Number(a:* = 0):*;
+  native AS3 function toPrecision(a:* = 0):String;
+  native AS3 function valueOf():Number;
+  native AS3 function toFixed(a:* = 0):String;
+  native AS3 function toExponential(a:* = 0):String;
+
+  native AS3 function toString(a:* = 10):String;
+  static native public const MIN_VALUE:Number = 4.9E-324;
+  static native public const length:int = 1;
+  static native private const DTOSTR_FIXED:int = 1;
+  static native public const POSITIVE_INFINITY:Number = Infinity;
+
+  static native private const DTOSTR_PRECISION:int = 2;
+  static native public const NEGATIVE_INFINITY:Number = -Infinity;
+  static native private final function _convert(a:Number,a2:int,a3:int):String;
+  static native public const MAX_VALUE:Number = NaN;
+  static native private const DTOSTR_EXPONENTIAL:int = 3;
+
+  static native private final function _toString(a:Number,a2:int):String;
+  static native public const NaN:Number = NaN;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public const NaN:Number = NaN;
+native public function encodeURIComponent(a:String = undefined):String;
+
+public final class int extends Object
+{
+
+  native public function int(a:* = 0):*;
+  native AS3 function toPrecision(a:* = 0):String;
+  native AS3 function valueOf():int;
+  native AS3 function toFixed(a:* = 0):String;
+  native AS3 function toExponential(a:* = 0):String;
+
+  native AS3 function toString(a:* = 10):String;
+  static native public const MIN_VALUE:int = -2.147483648E9;
+  static native public const length:int = 1;
+  static native public const MAX_VALUE:int = 2147483647;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+public dynamic class Function extends Object
+{
+
+  native public function Function():*;
+  native public function get prototype():*;
+  native public function set prototype(a:*):*;
+  native AS3 function call(a:* = null,... a2):*;
+  native public function get length():int;
+
+  native AS3 function apply(a:* = null,a2:* = null):*;
+  static native private final function emptyCtor():*;
+  static native public const length:int = 1;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+public dynamic class Array extends Object
+{
+  native public function Array(... a):*;
+
+  native AS3 function reverse():Array;
+  native AS3 function map(a:Function,a2:* = null):Array;
+  native AS3 function shift():*;
+  native public function get length():uint;
+  native AS3 function unshift(... a):uint;
+
+  native AS3 function join(a:* = null):String;
+  native AS3 function lastIndexOf(a:*,a2:* = 2147483647):int;
+  native public function set length(a:uint):*;
+  native AS3 function indexOf(a:*,a2:* = 0):int;
+  native AS3 function pop():*;
+
+  native AS3 function slice(a:* = 0,a2:* = NaN):Array;
+  native AS3 function concat(... a):Array;
+  native AS3 function some(a:Function,a2:* = null):Boolean;
+  native AS3 function filter(a:Function,a2:* = null):Array;
+  native AS3 function forEach(a:Function,a2:* = null):void;
+
+  native AS3 function push(... a):uint;
+  native AS3 function every(a:Function,a2:* = null):Boolean;
+  native AS3 function splice(... a):*;
+  native AS3 function sortOn(a:*,a2:* = 0,... a3):*;
+  native AS3 function sort(... a):*;
+
+  static native public const CASEINSENSITIVE:uint = 1;
+  static native private final function _shift(a:*):*;
+  static native private final function _join(a:*,a2:*):String;
+  static native private final function _indexOf(a:*,a2:*,a3:int):int;
+  static native private final function _pop(a:*):*;
+
+  static native private final function _slice(a:*,a2:Number,a3:Number):Array;
+  static native private final function _lastIndexOf(a:*,a2:*,a3:int = 0):int;
+  static native private final function _filter(a:*,a2:Function,a3:*):Array;
+  static native private final function _splice(a:*,a2:Array):Array;
+  static native private final function _every(a:*,a2:Function,a3:*):Boolean;
+
+  static native private final function _map(a:*,a2:Function,a3:*):Array;
+  static native private final function _reverse(a:*):*;
+  static native public const length:int = 1;
+  static native private final function _forEach(a:*,a2:Function,a3:*):void;
+  static native public const NUMERIC:uint = 16;
+
+  static native public const UNIQUESORT:uint = 4;
+  static native private final function _concat(a:*,a2:Array):Array;
+  static native private final function _some(a:*,a2:Function,a3:*):Boolean;
+  static native public const RETURNINDEXEDARRAY:uint = 8;
+  static native private final function _sortOn(a:*,a2:*,a3:*):*;
+
+  static native private final function _sort(a:*,a2:Array):*;
+  static native public const DESCENDING:uint = 2;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+private final class MethodClosure extends Function
+{
+  native private function MethodClosure():*;
+  native public override function get prototype():*;
+
+  native public override function set prototype(a:*):*;
+  native public override function get length():int;
+}
+native public function parseInt(a:String = NaN,a2:int = 0):Number;
+native public function encodeURI(a:String = undefined):String;
+native public function decodeURIComponent(a:String = undefined):String;

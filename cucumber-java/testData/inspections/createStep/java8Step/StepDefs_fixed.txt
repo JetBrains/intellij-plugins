@@ -1,0 +1,17 @@
+package cucumber.examples.java.calculator;
+
+import cucumber.api.PendingException;
+import cucumber.api.java.en.Given;
+import cucumber.api.java8.En;
+
+public class CreateAllStepDefs implements En {
+    public CreateAllStepDefs() {
+        Given("I have (\\d+) cukes in my belly", (Integer cukes) -> {
+
+        });
+        Given("^test$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+    }
+}

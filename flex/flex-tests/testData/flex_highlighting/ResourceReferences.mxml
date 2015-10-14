@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+      <mx:Metadata>
+        [ResourceBundle("mybundle")]
+        [ResourceBundle(<error>a</error>="")]
+        [ResourceBundle("<error>mybundle2</error>")]
+      </mx:Metadata>
+      <mx:Label text="@Resource(key='<error>prompt</error>', bundle='mybundle')"/>
+      <mx:Label text="@Resource(key='prompt2', bundle='mybundle')"/>
+      <mx:Label text="@Resource(key='<error>prompt2</error>', bundle='mybundle3')"/>
+      <mx:Label text="@Resource(key='prompt3')"/>
+      <mx:Label text="@Resource(key='<error>prompt3</error>', bundle='<error>mybundle2</error>')"/>
+</mx:Application>

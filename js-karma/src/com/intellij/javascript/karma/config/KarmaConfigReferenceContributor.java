@@ -27,9 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
 
   private static final String FILES_VAR_NAME = "files";
@@ -39,7 +36,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     .and(new FilterPattern(new ElementFilter() {
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiFile psiFile = context.getContainingFile();
-        return KarmaUtil.isKarmaConfigFile(psiFile.getName());
+        return KarmaUtil.isKarmaConfigFile(psiFile.getName(), false);
       }
 
       public boolean isClassAcceptable(Class hintClass) {
@@ -98,7 +95,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
 
     private static String getString(@NotNull JSLiteralExpression expression) {
       // empty string resolves to a configuration file, but its parent directory is needed
-      String value = StringUtil.stripQuotesAroundValue(expression.getText());
+      String value = StringUtil.unquoteString(expression.getText());
       return value.isEmpty() ? "." : value;
     }
 
@@ -132,7 +129,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     private boolean myPatternUsed = false;
 
     public FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
-      super(StringUtil.stripQuotesAroundValue(literalExpression.getText()),
+      super(StringUtil.unquoteString(literalExpression.getText()),
             literalExpression,
             1,
             psiReferenceProvider,

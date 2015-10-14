@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<my:Application xmlns:mx="http://www.adobe.com/2006/mxml" implements="INonImplementedInterface3" xmlns:my="foo.*">
+    <mx:Script><![CDATA[
+        import test.MyClass;
+        import test.MyClass2;
+
+        public function foo(param:MyClass2):void {
+        }
+
+        public function bar():MyClass {
+            return null;
+        }
+        ]]></mx:Script>
+</my:Application>

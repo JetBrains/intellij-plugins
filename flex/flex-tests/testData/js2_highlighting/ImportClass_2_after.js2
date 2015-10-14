@@ -1,0 +1,3 @@
+import mypackage.Alert;
+
+Alert.show("Hi");

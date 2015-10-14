@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:one="one.*" xmlns:two="one.two.*" xmlns:three="one.two.three.*"
+                xmlns:incorrect="one.two.<error>incorrect</error>.*">
+  <three:MyComponent/>
+  <mx:DataGrid itemRenderer="one.two.three.MyCompo<caret>nent"/>
+</mx:Application>

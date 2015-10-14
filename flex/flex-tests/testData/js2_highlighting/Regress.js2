@@ -1,0 +1,93 @@
+class Foo {
+    var _x;
+
+    function foo(event:int):
+
+    <error>event</error>
+    {
+        _x = <error>val</error>;
+    }
+    function bar():void {
+        var x:Array = [];
+        var y:Array = [];
+        x[y[1]].val = 1;
+        x[1].val = 1;
+        var z:BitString = new BitString()
+        z.val = 1;
+        var t:Number = x[0];
+        var t2:Foo = x[1];
+
+        var y2:/*Object*/ Array = [];
+        var t3:Number = <error>y2[0]</error>;
+        var args:Array = arguments;
+    }
+}
+
+class BitString {
+    public var len:int = 0;
+    public var val:int = 0;
+}
+
+var x:BitString = new BitString();
+(BitString(x)).len = 1;
+(BitString)(x).len = 1;
+
+class Base {
+    function f():void {
+    }
+}
+
+class Derived extends Base {
+override
+    <error>static</error>
+    function f():void {
+    }
+}
+
+var x66:String = <error>new Object()</error>
+switch(1) {
+    default:
+    <error>default:</error>
+}
+
+namespace foo = <error>x66.length</error>;
+namespace bar = foo;
+
+for (<error>i</error> = 0; <error>i</error> < 10; <error>i</error>++) {
+}
+
+function getStyle(x:String):String { return ""; }
+var test:String = (int(getStyle("left")) - 1).toString();
+var v:Vector.<int> = new <int>[0,1,2<warning>,</warning>];
+var v2 = [0,1,2<warning>,</warning>];
+
+package {
+  public class <error>Vector$object</error> {}
+}
+
+var x2:RegExp = /(\w*)=(.*?)(\s+|>)/gimxs;
+
+<warning>protected</warning> function foo78() {}
+<warning>protected</warning> function bar78() {
+  var f:Function = foo78;
+}
+
+interface IFoo {}
+class Bar {
+  function foo():IFoo { return null; }
+  function bar() {
+    if (foo() == this) {}
+  }
+}
+
+class Baz extends Bar implements IFoo {
+  private var clazz:Class;
+  override function foo():IFoo { return this; }
+
+  public static function foo() {
+    var fo = new <error descr="Instance member is not accessible">clazz</error>();
+    var fo2 = prototype == Baz.prototype;
+  }
+}
+
+<error>debugger</error>;

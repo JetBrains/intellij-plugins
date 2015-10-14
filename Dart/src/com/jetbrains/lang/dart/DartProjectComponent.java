@@ -1,25 +1,25 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.ProjectTopics;
-import com.intellij.ide.browsers.BrowserSpecificSettings;
-import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.chrome.ChromeSettings;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.openapi.util.SimpleModificationTracker;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,6 +29,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PairConsumer;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XSourcePosition;
@@ -37,22 +38,23 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
-import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashSet;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent extends AbstractProjectComponent {
+
+  private SimpleModificationTracker myProjectRootsModificationTracker = new SimpleModificationTracker();
 
   protected DartProjectComponent(@NotNull final Project project) {
     super(project);
@@ -62,20 +64,36 @@ public class DartProjectComponent extends AbstractProjectComponent {
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
       @Override
       public void rootsChanged(ModuleRootEvent event) {
-        DartFileListener.scheduleDartPackageRootsUpdate(myProject);
+        myProjectRootsModificationTracker.incModificationCount();
+
+        if (!Registry.is("dart.projects.without.pubspec", false)) {
+          DartFileListener.scheduleDartPackageRootsUpdate(myProject);
+        }
       }
     });
+  }
+
+  @NotNull
+  public static ModificationTracker getProjectRootsModificationTracker(@NotNull final Project project) {
+    if (project.isDefault()) {
+      return ModificationTracker.NEVER_CHANGED;
+    }
+
+    // standard ProjectRootManager (that is a ModificationTracker itself) doesn't work as its modificationCount is not incremented when library root is deleted
+    final DartProjectComponent component = project.getComponent(DartProjectComponent.class);
+    assert component != null;
+    return component.myProjectRootsModificationTracker;
   }
 
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
+        deleteDartSdkGlobalLibConfiguredInVeryOldIde();
+
+        ensureCorrectDartSdkLibName();
+        updateDependenciesOnDartSdkLib();
+
         removeJSBreakpointsInDartFiles(myProject);
-
-        final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
-        deleteDartSdkGlobalLibConfiguredInOldIde();
-
-        final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
         DartiumUtil.removeUnsupportedAsyncFlag();
 
@@ -86,21 +104,166 @@ public class DartProjectComponent extends AbstractProjectComponent {
           final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, myProject);
           if (module != null && FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope())) {
             excludeBuildAndPackagesFolders(module, pubspecYamlFile);
-
-            if (dartSdkGlobalLibName != null &&
-                dartSdkWasEnabledInOldModel &&
-                ModuleType.get(module) instanceof WebModuleTypeBase &&
-                !DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, dartSdkGlobalLibName)) {
-              ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                public void run() {
-                  DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkGlobalLibName);
-                }
-              });
-            }
           }
         }
       }
     });
+  }
+
+  private static void ensureCorrectDartSdkLibName() {
+    // Make sure "Dart SDK" global lib has correct roots (if possible); delete global libs like "Dart SDK (2)".
+
+    Library correctlyNamedSdkLib = null;
+    boolean mainDartSdkLibIsCorrect = false;
+    Library incorrectSdkLibWithCorrectRoots = null;
+    final List<Library> libsToDelete = new SmartList<Library>();
+
+    for (final Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
+      final String libraryName = library.getName();
+      if (libraryName != null && isDartSdkLibName(libraryName)) {
+        if (libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+          correctlyNamedSdkLib = library;
+        }
+        else {
+          libsToDelete.add(library);
+        }
+
+        if (mainDartSdkLibIsCorrect) {
+          continue;
+        }
+
+        final VirtualFile[] roots = library.getFiles(OrderRootType.CLASSES);
+        if (roots.length == 1 && DartSdkLibraryPresentationProvider.isDartSdkLibRoot(roots[0])) {
+          if (libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+            mainDartSdkLibIsCorrect = true;
+          }
+          else {
+            incorrectSdkLibWithCorrectRoots = library;
+          }
+        }
+      }
+    }
+
+    if (!mainDartSdkLibIsCorrect && incorrectSdkLibWithCorrectRoots != null || !libsToDelete.isEmpty()) {
+      final Library finalCorrectlyNamedSdkLib = correctlyNamedSdkLib;
+      final boolean finalCorrectSdkLibExists = mainDartSdkLibIsCorrect;
+      final Library finalIncorrectSdkLibWithCorrectRoots = incorrectSdkLibWithCorrectRoots;
+
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          if (!finalCorrectSdkLibExists && finalIncorrectSdkLibWithCorrectRoots != null) {
+            if (finalCorrectlyNamedSdkLib != null) {
+              ApplicationLibraryTable.getApplicationTable().removeLibrary(finalCorrectlyNamedSdkLib);
+            }
+
+            libsToDelete.remove(finalIncorrectSdkLibWithCorrectRoots);
+            final Library.ModifiableModel libModel = finalIncorrectSdkLibWithCorrectRoots.getModifiableModel();
+            libModel.setName(DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+            libModel.commit();
+          }
+
+          if (!libsToDelete.isEmpty()) {
+            final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+            for (Library library : libsToDelete) {
+              model.removeLibrary(library);
+            }
+            model.commit();
+          }
+        }
+      });
+    }
+  }
+
+  private static boolean isDartSdkLibName(@NotNull final String libraryName) {
+    return libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME) ||
+           (libraryName.startsWith(DartSdk.DART_SDK_GLOBAL_LIB_NAME + " (") &&
+            libraryName.length() == (DartSdk.DART_SDK_GLOBAL_LIB_NAME + " (2)").length() &&
+            libraryName.endsWith(")"));
+  }
+
+  private void updateDependenciesOnDartSdkLib() {
+    // for performance reasons avoid taking write action and modifiable models if not needed
+    if (!haveIncorrectModuleDependencies()) return;
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final Collection<ModifiableRootModel> modelsToCommit = new SmartList<ModifiableRootModel>();
+
+        for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
+          boolean hasCorrectDependency = false;
+          boolean needsCorrectDependency = false;
+          final List<OrderEntry> orderEntriesToRemove = new SmartList<OrderEntry>();
+
+          final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+
+          for (final OrderEntry orderEntry : model.getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry &&
+                LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
+              final String libraryName = ((LibraryOrderEntry)orderEntry).getLibraryName();
+              if (libraryName == null) continue;
+
+              if (libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+                hasCorrectDependency = true;
+              }
+              else if (isDartSdkLibName(libraryName)) {
+                needsCorrectDependency = true;
+                orderEntriesToRemove.add(orderEntry);
+              }
+            }
+          }
+
+          if (needsCorrectDependency && !hasCorrectDependency || !orderEntriesToRemove.isEmpty()) {
+            if (needsCorrectDependency && !hasCorrectDependency) {
+              model.addInvalidLibrary(DartSdk.DART_SDK_GLOBAL_LIB_NAME, LibraryTablesRegistrar.APPLICATION_LEVEL);
+            }
+
+            for (OrderEntry entry : orderEntriesToRemove) {
+              model.removeOrderEntry(entry);
+            }
+
+            modelsToCommit.add(model);
+          }
+          else {
+            model.dispose();
+          }
+        }
+
+        commitModifiableModels(myProject, modelsToCommit);
+      }
+    });
+  }
+
+  public static void commitModifiableModels(@NotNull final Project project, @NotNull final Collection<ModifiableRootModel> modelsToCommit) {
+    if (!modelsToCommit.isEmpty()) {
+      try {
+        ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(project).getModifiableModel());
+      }
+      finally {
+        for (ModifiableRootModel model : modelsToCommit) {
+          if (!model.isDisposed()) {
+            model.dispose();
+          }
+        }
+      }
+    }
+  }
+
+  private boolean haveIncorrectModuleDependencies() {
+    for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
+      for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+        if (orderEntry instanceof LibraryOrderEntry &&
+            LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel())) {
+          final String libraryName = ((LibraryOrderEntry)orderEntry).getLibraryName();
+          if (libraryName != null && !libraryName.equals(DartSdk.DART_SDK_GLOBAL_LIB_NAME) && isDartSdkLibName(libraryName)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   private static void removeJSBreakpointsInDartFiles(final Project project) {
@@ -127,37 +290,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     }
   }
 
-  @Nullable
-  private static String importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(final @NotNull Project project) {
-    final String oldDartSdkPath = PropertiesComponent.getInstance().getValue("dart_sdk_path");
-    PropertiesComponent.getInstance().unsetValue("dart_sdk_path");
-
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-
-    if (sdk != null) {
-      return sdk.getGlobalLibName();
-    }
-    else if (DartSdkUtil.isDartSdkHome(oldDartSdkPath)) {
-      if (DartiumUtil.getDartiumBrowser() == null) {
-        // configure even if getDartiumPathForSdk() returns null
-        final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
-        final BrowserSpecificSettings browserSpecificSettings = browser.getSpecificSettings();
-        if (browserSpecificSettings instanceof ChromeSettings) {
-          DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
-        }
-      }
-
-      return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
-        public String compute() {
-          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(project, oldDartSdkPath);
-        }
-      });
-    }
-
-    return null;
-  }
-
-  private static void deleteDartSdkGlobalLibConfiguredInOldIde() {
+  private static void deleteDartSdkGlobalLibConfiguredInVeryOldIde() {
     final LibraryEx library = (LibraryEx)ApplicationLibraryTable.getApplicationTable().getLibraryByName("Dart SDK");
     final PersistentLibraryKind<?> kind = library == null ? null : library.getKind();
     if (library != null && kind != null && "javaScript".equals(kind.getKindId())) {
@@ -167,40 +300,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       });
     }
-  }
-
-  private static boolean hasJSLibraryMappingToOldDartSdkGlobalLib(final @NotNull Project project) {
-/*
-    Mapping to old 'Dart SDK' global lib is removed when ScriptingLibraryManager is loaded if 'Dart SDK' lib does not exist. That's why we use hacky way.
-    One more bonus is that it works even if JavaScript plugin is disabled and in IntelliJ IDEA Community Edition
-
-    <?xml version="1.0" encoding="UTF-8"?>
-    <project version="4">
-      <component name="JavaScriptLibraryMappings">
-        <file url="PROJECT" libraries="{Dart SDK}" />
-        <excludedPredefinedLibrary name="HTML5 / EcmaScript 5" />
-      </component>
-    </project>
-*/
-    final File jsLibraryMappingsFile = new File(project.getBasePath() + "/.idea/jsLibraryMappings.xml");
-    if (jsLibraryMappingsFile.isFile()) {
-      try {
-        final Element rootElement = JDOMUtil.load(jsLibraryMappingsFile);
-        for (final Element componentElement : rootElement.getChildren("component")) {
-          if ("JavaScriptLibraryMappings".equals(componentElement.getAttributeValue("name"))) {
-            for (final Element fileElement : componentElement.getChildren("file")) {
-              if ("PROJECT".equals(fileElement.getAttributeValue("url")) &&
-                  "{Dart SDK}".equals(fileElement.getAttributeValue("libraries"))) {
-                return true;
-              }
-            }
-          }
-        }
-      }
-      catch (Throwable ignore) {/* unlucky */}
-    }
-
-    return false;
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
@@ -278,6 +377,16 @@ public class DartProjectComponent extends AbstractProjectComponent {
     if (withRootPackagesFolder) {
       newExcludedPackagesUrls.add(root.getUrl() + "/packages");
     }
+    else {
+      // Folders like packages/PathPackage and packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) are symlinks to local 'lib' folders. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
+      // Empty nodes like 'ThisProject (ThisProject/lib)' are added to Project Structure by DartTreeStructureProvider
+      final DartUrlResolver resolver = DartUrlResolver.getInstance(module.getProject(), pubspecYamlFile);
+      resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
+        public void consume(final String packageName, final VirtualFile packageDir) {
+          newExcludedPackagesUrls.add(root.getUrl() + "/packages/" + packageName);
+        }
+      });
+    }
 
     final VirtualFile binFolder = root.findChild("bin");
     if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
@@ -289,15 +398,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
     appendPackagesFolders(newExcludedPackagesUrls, root.findChild("test"), fileIndex, withRootPackagesFolder);
     appendPackagesFolders(newExcludedPackagesUrls, root.findChild("tool"), fileIndex, withRootPackagesFolder);
     appendPackagesFolders(newExcludedPackagesUrls, root.findChild("web"), fileIndex, withRootPackagesFolder);
-
-    // Folders like packages/PathPackage and packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) are symlinks to local 'lib' folders. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
-    // Empty nodes like 'ThisProject (ThisProject/lib)' are added to Project Structure by DartTreeStructureProvider
-    final DartUrlResolver resolver = DartUrlResolver.getInstance(module.getProject(), pubspecYamlFile);
-    resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
-      public void consume(final String packageName, final VirtualFile packageDir) {
-        newExcludedPackagesUrls.add(root.getUrl() + "/packages/" + packageName);
-      }
-    });
 
     return newExcludedPackagesUrls;
   }

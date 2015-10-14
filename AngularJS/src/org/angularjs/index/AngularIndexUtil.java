@@ -1,27 +1,34 @@
 package org.angularjs.index;
 
+import com.intellij.ProjectTopics;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.roots.ModuleRootAdapter;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileAdapter;
+import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.*;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.ParameterizedCachedValue;
+import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -31,7 +38,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 20;
+  public static final int BASE_VERSION = 26;
+  private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -79,22 +87,40 @@ public class AngularIndexUtil {
     return getAngularJSVersion(project) > 0;
   }
 
+  public static boolean hasAngularJS2(final Project project) {
+    if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
+    return getAngularJSVersion(project) >= 20;
+  }
+
   private static int getAngularJSVersion(final Project project) {
     if (DumbService.isDumb(project)) return -1;
+    NotNullLazyValue<ModificationTracker> tracker = project.getUserData(TRACKER);
+    if (tracker == null) {
+      tracker = new AtomicNotNullLazyValue<ModificationTracker>() {
+        @NotNull
+        @Override
+        protected ModificationTracker compute() {
+          return new AngularModificationTracker(project);
+        }
+      };
+      tracker = ((UserDataHolderEx)project).putUserDataIfAbsent(TRACKER, tracker);
+    }
+
+    final NotNullLazyValue<ModificationTracker> finalTracker = tracker;
     return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Integer>() {
       @Nullable
       @Override
       public Result<Integer> compute() {
         int version = -1;
         PsiElement resolve;
-        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "non-bindable")) != null) {
+        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ng-for]")) != null) {
           version = 20;
         } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
           version = 13;
         } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
           version = 12;
         }
-        return Result.create(version, resolve != null ? resolve.getContainingFile() : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+        return Result.create(version, resolve != null ? resolve.getContainingFile() : finalTracker.getValue());
       }
     });
   }
@@ -138,6 +164,23 @@ public class AngularIndexUtil {
                  }, scope);
         }
       }), PsiManager.getInstance(project).getModificationTracker());
+    }
+  }
+
+  private static class AngularModificationTracker extends SimpleModificationTracker {
+    public AngularModificationTracker(final Project project) {
+      VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
+        @Override
+        public void fileCreated(@NotNull VirtualFileEvent event) {
+          incModificationCount();
+        }
+      }, project);
+      project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+        @Override
+        public void rootsChanged(ModuleRootEvent event) {
+          incModificationCount();
+        }
+      });
     }
   }
 }

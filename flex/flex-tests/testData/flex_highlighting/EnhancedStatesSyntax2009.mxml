@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
+    <s:states>
+        <s:State name="default"/>
+        <s:State name="newTextInput"/>
+        <s:State name="_newTextInput" stateGroups="rulers"/>
+        <s:State name="_newTextInput2" stateGroups="rulers, rulers2"/>
+        <s:State name="_newTextInput3" stateGroups="rulers, rulers2"/>
+    </s:states>
+    <mx:VBox id="vbox">
+        <s:CheckBox includeIn="<error descr="Invalid state reference">newTextInput2</error>" label="One" />
+        <s:CheckBox includeIn="rulers" label="One 2" />
+        <s:CheckBox includeIn="rulers2" label="One 3" itemCreationPolicy="<error descr="Wrong attribute value">deferred </error>" itemDestructionPolicy="<error descr="Wrong attribute value">Auto</error>"/>
+        <s:TextInput includeIn="newTextInput" itemCreationPolicy="deferred" itemDestructionPolicy="auto"/>
+        <mx:CheckBox excludeFrom="<error descr="Invalid state reference">default2</error>, newTextInput" label="Two" itemCreationPolicy="immediate" itemDestructionPolicy="never"/>
+        <mx:CheckBox <error descr="itemCreationPolicy must accompany either the includeIn or excludeFrom attribute.">itemCreationPolicy</error>="immediate" <error descr="itemDestructionPolicy must accompany either the includeIn or excludeFrom attribute.">itemDestructionPolicy</error>="never"/>
+        <mx:Button id="button" label="Click" click="currentState='newTextInput'" />
+    </mx:VBox>
+  <local:EnhancedStatesSyntax2009_other xmlns:local="*" includeIn="default, <error descr="Invalid state reference">incorrect</error>" itemCreationPolicy="immediate"/>
+  <my:CustomComponent xmlns:my="http://MyNamespace" excludeFrom="newTextInput,   <error descr="Invalid state reference">incorrect</error>   ,default " itemDestructionPolicy="auto"/>
+</s:Application>

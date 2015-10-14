@@ -1,0 +1,10 @@
+<mx:Smth xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Script>
+    abc<caret>
+
+    function foo() {}
+
+    <mx:Box id="abcde"/>
+
+  </mx:Script>
+</mx:Smth>

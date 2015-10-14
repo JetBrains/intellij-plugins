@@ -1,0 +1,5 @@
+package {
+  class <error descr="Missed superclass's constructor invocation">NoSuperConstructorCall4</error> extends A {
+
+  }
+}

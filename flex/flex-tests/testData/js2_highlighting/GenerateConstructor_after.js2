@@ -1,0 +1,14 @@
+class A {
+  var _i:int;
+  var _i2:int;
+  var i3:int;
+  static var i4:int;
+
+ <caret>   public function A(i:int, i2:int, i3:int) {
+        _i = i;
+        _i2 = i2;
+        this.i3 = i3;
+    }
+
+    function xxx() {}
+}

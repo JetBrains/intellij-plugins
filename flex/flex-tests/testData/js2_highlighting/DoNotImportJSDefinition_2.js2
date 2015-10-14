@@ -1,0 +1,9 @@
+package foo {
+public class A {
+    public var Bar : String;
+
+    public function A(a : String) {
+        this.Bar = a;
+    }
+}
+}

@@ -1,0 +1,10 @@
+class com.<TYPO>xmxmxm</TYPO>.manager.clazz {
+  var <TYPO>ty<caret>ppo</TYPO>:uint;
+  var x:String = "A string with spelling <TYPO>errrror</TYPO>";
+  function foo():void {
+    typpo = 1;
+
+    var v:String = "foo\bline\fline\nline\rline\t<TYPO>line\u12abline</TYPO>\xabline" +
+        "<TYPO>typoo</TYPO>\b<TYPO>typoo</TYPO>\f<TYPO>typoo</TYPO>\n<TYPO>typoo</TYPO>\r<TYPO>typoo</TYPO>\t<TYPO>typoo\u12abtypoo</TYPO>\xab<TYPO>typoo</TYPO>";
+  }
+}

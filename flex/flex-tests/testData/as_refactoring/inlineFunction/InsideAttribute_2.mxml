@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        <![CDATA[
+        private function onClick(event:MouseEvent):void {
+            trace('1"2\"3\'')
+        }
+        ]]>
+    </mx:Script>
+
+    <mx:Button click="on<caret>Click(event);"/>
+</mx:Application>

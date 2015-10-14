@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+    <s:Panel id="visualElement">
+        <s:Button id="visualElement2"/>
+    </s:Panel>
+
+    <fx:Declarations>
+        <s:HTTPService id='<caret expected="httpService,service">'/>
+        <s:SpriteVisualElement id="vi<caret expected="visualElement6,viElement,viSpriteVisualElement">"/>
+    </fx:Declarations>
+
+    <fx:Script><![CDATA[
+        protected var visualElement3;
+
+        public function visualElement4():void {}
+
+        private function get visualElement5():String {
+            return null;
+        }
+        ]]></fx:Script>
+</s:Application>

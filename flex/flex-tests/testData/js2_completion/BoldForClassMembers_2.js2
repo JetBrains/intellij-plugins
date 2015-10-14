@@ -1,0 +1,11 @@
+package {
+public class BoldForClassMembers_2 extends Foo {
+    function ____() {
+        super.<caret>
+    }
+}
+}
+
+class Foo {
+    var ____;
+}

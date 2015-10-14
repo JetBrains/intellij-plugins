@@ -1,0 +1,24 @@
+package {
+public class UnusedGlobalSymbols_2
+{
+  function foo() {
+      var x:UnusedGlobalSymbols = new UnusedGlobalSymbols();
+      x.usedFoo();
+      var y:ICallable = new XXX3();
+      y.call();
+  }
+  function bar() {}
+}
+}
+
+package {
+public interface ICallable {
+    function call():*;
+}
+}
+
+package {
+public class XXX3_2 implements ICallable {
+    public function call():* {}
+}
+}

@@ -1,0 +1,7 @@
+var a:XmlList;
+with(a) {
+  alert(@id);
+  alert(@*);
+  alert(@["id"]);
+  alert(@[]);
+}

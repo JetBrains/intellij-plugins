@@ -1,0 +1,8 @@
+// "Create Method '_bbb2'" "true"
+interface D2 {}
+class C {
+  var aaa:D2
+  function C() {
+    aaa._b<caret>bb2("1","2");
+  }
+}

@@ -1,0 +1,7 @@
+class A {
+  function foo() {
+      var zzz = 1;
+      log(<caret>)
+  }
+  function log(t) {}
+}

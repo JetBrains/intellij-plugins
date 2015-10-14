@@ -1,0 +1,4 @@
+package {
+public class PropertySpecifiedByMxmlIdAttributeInParent_otherSuper extends PropertySpecifiedByMxmlIdAttributeInParent_otherSuperSuper {
+}
+}

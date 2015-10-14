@@ -1,0 +1,26 @@
+package xxx {
+import yyy.Foo2;
+
+import zzz.Foo3;
+
+class Foo {
+    function xxx():Foo2 {
+        return created();
+    }
+
+    public function created():Foo3 {
+        return xxx().bar();
+    }
+}
+}
+
+package yyy {
+  import zzz.Foo3;
+  public class Foo2 {
+    public function bar():Foo3 {}
+  }
+}
+
+package zzz {
+  public class Foo3 {}
+}

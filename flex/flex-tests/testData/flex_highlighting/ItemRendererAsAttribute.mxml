@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" >
+  <mx:Script>
+    import mypackage.*;
+  </mx:Script>
+  <mx:Metadata>
+    [Event(name="collectionChange", type="<error>Label</error>")]
+    [Event(name="collectionChange2", type="flash.events.Event")]
+  </mx:Metadata>
+  <mx:List itemRenderer="mypackage.Label" />
+  <mx:List itemRenderer="ItemRendererAsAttribute" />
+  <mx:List itemRenderer="ItemRendererAsAttribute_other" />
+  <mx:List itemRenderer="<error>ItemRendererAsAttribute2</error>" />
+  <mx:List>
+    <mx:itemRenderer>mypackage.Label</mx:itemRenderer>
+  </mx:List>
+  <mx:List>
+    <mx:itemRenderer>
+      mypackage.Label
+    </mx:itemRenderer>
+  </mx:List>
+  <mx:List>
+    <mx:itemRenderer>
+      <error>Label</error>
+    </mx:itemRenderer>
+  </mx:List>
+  <mx:List>
+    <mx:itemRenderer>
+      <error>foo</error>.<error>Label</error>
+    </mx:itemRenderer>
+  </mx:List>
+  <mx:List>
+    <mx:itemRenderer>ItemRendererAsAttribute_other</mx:itemRenderer>
+  </mx:List>
+  <mx:Accordition headerRenderer="  mypackage.Label  " />
+  <mx:Accordition headerRenderer="  <error>Label</error>  " />
+  <mx:Accordition>
+    <mx:headerRenderer>mypackage.Label</mx:headerRenderer>
+  </mx:Accordition>
+  <mx:Accordition>
+    <mx:headerRenderer>mypackage.<error>Unknown</error></mx:headerRenderer>
+  </mx:Accordition>
+  <mx:DataGrid>
+    <mx:columns>
+      <mx:DataGridColumn itemEditor="
+      mypackage.Label
+      "/>
+      <mx:DataGridColumn>
+        <mx:itemEditor>
+          mypackage.Label
+        </mx:itemEditor>
+      </mx:DataGridColumn>
+      <mx:DataGridColumn>
+        <mx:itemEditor>
+          mypackage.<error>Unknown</error>
+        </mx:itemEditor>
+      </mx:DataGridColumn>
+      <mx:DataGridColumn itemEditor="<error>ItemRendererAsAttribute2</error>"/>
+    </mx:columns>
+  </mx:DataGrid>
+</mx:Application>

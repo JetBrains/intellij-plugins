@@ -1,0 +1,8 @@
+package <error>aaa</error> {
+  public class ImportWithStar {}
+}
+
+package <error>bbb</error> {
+  import aaa.*;
+  function <error>xxx</error>():ImportWithStar {}
+}

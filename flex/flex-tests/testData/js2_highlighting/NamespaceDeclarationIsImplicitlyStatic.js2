@@ -1,0 +1,11 @@
+class OtherClass {
+    public function f():void {
+        var ns = SomeClass.someNamespace;
+    }
+}
+
+class SomeClass {
+    public namespace someNamespace = "http://www.someuri.com";
+    public <error>static</error> namespace <error>someNamespace2</error> = "http://www.someuri.com";
+    public namespace <error>someNamespace2</error> = "http://www.someuri.com";
+}

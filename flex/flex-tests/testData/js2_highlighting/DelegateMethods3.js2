@@ -1,0 +1,10 @@
+package {
+import com.foo.MyClass;
+
+ class DelegateMethods2 {
+     var f<caret>oobar : MyClass;
+
+
+
+ }
+}

@@ -1,0 +1,129 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<class name='NSObject'>
+<method selector='numberOfPreviewItemsInPreviewController:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='previewController:frameForPreviewItem:inSourceView:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='@' name='item' declared_type='id'/>
+<arg index='2' type='^@' name='view' declared_type='UIView**'/>
+<retval type='{CGRect={CGPoint=ff}{CGSize=ff}}' declared_type='CGRect'/>
+</method>
+<method selector='previewController:previewItemAtIndex:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='i' name='index' declared_type='NSInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='previewController:shouldOpenURL:forPreviewItem:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='@' name='url' declared_type='NSURL*'/>
+<arg index='2' type='@' name='item' declared_type='id'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='previewController:transitionImageForPreviewItem:contentRect:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='@' name='item' declared_type='id'/>
+<arg index='2' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='contentRect' declared_type='CGRect*'/>
+<retval type='@' declared_type='UIImage*'/>
+</method>
+<method selector='previewControllerDidDismiss:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='previewControllerWillDismiss:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='previewItemTitle'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method selector='previewItemURL'>
+<retval type='@' declared_type='NSURL*'/>
+</method>
+</class>
+<class name='QLPreviewController'>
+<method class_method='true' selector='canPreviewItem:'>
+<arg index='0' type='@' name='item' declared_type='id'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method selector='currentPreviewItem'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='currentPreviewItemIndex'>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method selector='dataSource'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='delegate'>
+<retval type='@' declared_type='id'/>
+</method>
+<method selector='refreshCurrentPreviewItem'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='reloadData'>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setCurrentPreviewItemIndex:'>
+<arg index='0' type='i' name='currentPreviewItemIndex' declared_type='NSInteger'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setDataSource:'>
+<arg index='0' type='@' name='dataSource' declared_type='id'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method selector='setDelegate:'>
+<arg index='0' type='@' name='delegate' declared_type='id'/>
+<retval type='v' declared_type='void'/>
+</method>
+</class>
+<informal_protocol name='QLPreviewControllerDataSource'>
+<method type='i12@0:4@8' selector='numberOfPreviewItemsInPreviewController:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<retval type='i' declared_type='NSInteger'/>
+</method>
+<method type='@16@0:4@8i12' selector='previewController:previewItemAtIndex:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='i' name='index' declared_type='NSInteger'/>
+<retval type='@' declared_type='id'/>
+</method>
+</informal_protocol>
+<informal_protocol name='QLPreviewControllerDelegate'>
+<method type='{CGRect={CGPoint=ff}{CGSize=ff}}20@0:4@8@12^@16' selector='previewController:frameForPreviewItem:inSourceView:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='@' name='item' declared_type='id'/>
+<arg index='2' type='^@' name='view' declared_type='UIView**'/>
+<retval type='{CGRect={CGPoint=ff}{CGSize=ff}}' declared_type='CGRect'/>
+</method>
+<method type='B20@0:4@8@12@16' selector='previewController:shouldOpenURL:forPreviewItem:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='@' name='url' declared_type='NSURL*'/>
+<arg index='2' type='@' name='item' declared_type='id'/>
+<retval type='B' declared_type='BOOL'/>
+</method>
+<method type='@20@0:4@8@12^{CGRect={CGPoint=ff}{CGSize=ff}}16' selector='previewController:transitionImageForPreviewItem:contentRect:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<arg index='1' type='@' name='item' declared_type='id'/>
+<arg index='2' type='^{CGRect={CGPoint=ff}{CGSize=ff}}' name='contentRect' declared_type='CGRect*'/>
+<retval type='@' declared_type='UIImage*'/>
+</method>
+<method type='v12@0:4@8' selector='previewControllerDidDismiss:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<retval type='v' declared_type='void'/>
+</method>
+<method type='v12@0:4@8' selector='previewControllerWillDismiss:'>
+<arg index='0' type='@' name='controller' declared_type='QLPreviewController*'/>
+<retval type='v' declared_type='void'/>
+</method>
+</informal_protocol>
+<informal_protocol name='QLPreviewItem'>
+<method type='@8@0:4' selector='previewItemTitle'>
+<retval type='@' declared_type='NSString*'/>
+</method>
+<method type='@8@0:4' selector='previewItemURL'>
+<retval type='@' declared_type='NSURL*'/>
+</method>
+</informal_protocol>
+</signatures>

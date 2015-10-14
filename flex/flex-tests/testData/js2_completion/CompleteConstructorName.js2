@@ -1,0 +1,5 @@
+package {
+  class Foo {
+      function F<caret>
+  }
+}

@@ -1,0 +1,13 @@
+package {
+
+public class CreateExtendsFix2 {
+  public function foo() {
+    var v : C = <error>this</error>;
+  }
+}
+}
+
+package {
+  public class <error>C</error> {}
+
+}

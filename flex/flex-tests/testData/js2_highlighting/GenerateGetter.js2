@@ -1,0 +1,16 @@
+class A {
+  const X:int = 1;
+  var _i:int;
+  var i2:int;
+  var _i3:int;
+  static var _i4:int;
+  function A() {
+      this.i2 = 10;
+  }
+  function xxx():void {
+      i2 = i2 + 1;
+  }
+  function get i3():int {
+    return _i3;
+  }
+}

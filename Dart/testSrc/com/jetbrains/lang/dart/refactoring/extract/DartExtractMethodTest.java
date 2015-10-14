@@ -4,7 +4,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
 
-public class DartExtractMethodTest extends DartCodeInsightFixtureTestCase {
+abstract public class DartExtractMethodTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
     return FileUtil.toSystemDependentName("/refactoring/extractMethod/");

@@ -1,0 +1,11 @@
+// "Create class 'Foo2'" "true"
+class C {
+  static function foo() {
+    new com.Fo<caret>o2("1","2");
+  }
+}
+package com {
+  public class Bar {}
+}
+
+import com.Foo2;

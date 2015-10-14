@@ -533,6 +533,10 @@ public class CfmlExpressionParser {
       else {
         lValueMarker.drop();
       }
+
+      if (getTokenType() == OPENSHARP) {
+        parseSharpExpr();
+      }
       if (getTokenType() != CfmlTokenTypes.DOUBLE_QUOTE_CLOSER && getTokenType() != CfmlTokenTypes.SINGLE_QUOTE_CLOSER) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.quote.expected"));
         // doneBefore(lValueMarker, "Quote expected");

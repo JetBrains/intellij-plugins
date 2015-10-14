@@ -1,0 +1,83 @@
+native public const mx.core.mx_internal:* = "http://www.adobe.com/2006/flex/mx/internal";
+
+package MyPackage {
+   import flash.display.Sprite;
+
+   public class HelloWorld2 extends Sprite {
+      public function HelloWorld2() {
+      }
+   }
+}
+
+package {
+  /** @MyDoc */
+  [AccessibilityClass(implementation="mx.accessibility.LinkButtonAccImpl")]
+  /** @MyDoc */
+  [IconFile("LinkButton.png")]
+  /** @MyDoc */
+  interface I {
+    function f()
+    function f2():void;
+    function f3():void {}
+    var a;
+    const b;
+  }
+  class A implements I, I {
+    static var X;
+    internal dynamic final var X2;
+
+    N1 override function get eventsToHandle():Object {}
+    override N1 function set eventsToHandle(o:Object):void {}
+    N2 native function mynative()
+  }    // I refers to type I
+}
+
+import MyPackage.*;
+
+/** comment*/
+namespace N1
+namespace N2
+N1 var x : int = 10
+N2 var x : String = "hello"
+use namespace N1
+use namespace N1,N2
+
+import y = a.b.x
+
+x = o.ns::id
+
+col.public::setStyle();
+
+private override protected const i;
+
+#include "aaa"
+include "aaa"
+
+package m_x
+{
+  public namespace internal2 = "internal";
+}
+
+/**
+ *  @e
+ */
+[Event(name="error", type="flash.events.ErrorEvent")]
+
+//--------------------------------------
+
+include "Z.as";
+
+/**
+ */
+[Style(name="back")]
+class A
+{
+  
+}
+
+class Foo extends Bar, {}
+class Foo extends Bar, Zzz, {}
+class Foo extends Bar, Zzz implements I1, {}
+class Foo implements I1, {}
+
+import

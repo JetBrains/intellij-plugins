@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:DataGrid id="myDataGrid">
+        <mx:columns>
+            <mx:DataGridColumn id="deleteCol">
+                <mx:itemRenderer>
+                    <mx:Component>
+                        <mx:HBox click="deleteItem(event)">
+                            <mx:Image id="deleteImage" source="{Icons.DELETE}" />
+                            <mx:Script><![CDATA[
+                                import com.example.flex.ui.utils.Icons;
+
+                                import mx.collections.ListCollectionView;
+                                import mx.controls.DataGrid;
+
+                                private function deleteItem(event:MouseEvent):void {
+                                    var target:Image = Image(event.target);
+                                    var theDataGrid:DataGrid = DataGrid(target.parent.parent.parent);
+                                    var index:int = theDataGrid.selectedIndex;
+                                    var theArrayCollection:ListCollectionView = theDataGrid.dataProvider as ListCollectionView;
+                                    theArrayCollection.removeItemAt(index);
+                                    theArrayCollection.refresh();
+                                }
+                                ]]></mx:Script>
+                        </mx:HBox>
+                    </mx:Component>
+                </mx:itemRenderer>
+            </mx:DataGridColumn>
+        </mx:columns>
+    </mx:DataGrid>
+</mx:VBox>

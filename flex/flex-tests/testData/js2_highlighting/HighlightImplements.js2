@@ -1,0 +1,17 @@
+interface IFoo {
+    function foo();
+}
+
+interface IBar {
+    function baz();
+}
+
+class Bar implement<caret>s IFoo, IBar {
+    function bar() {}
+
+    public function foo() {
+    }
+
+    public function baz() {
+    }
+}

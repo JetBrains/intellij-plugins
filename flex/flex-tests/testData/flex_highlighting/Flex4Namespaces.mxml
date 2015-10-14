@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<s:Application
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        xmlns:some="SomeNamespace"
+    xmlns:local="*">
+    <fx:Script s:privateAttr1="any" some:privateAttr2="any" <error>fx:incorrect</error>="a"><![CDATA[
+        import mx.controls.Alert;
+        ]]></fx:Script>
+    <fx:Declarations>
+        <local:Flex4Namespaces2/>
+        <local:Flex4Namespaces3/>
+        <local:Flex4Namespaces4/>
+        <<error>local:Flex4Namespaces5</error>/>
+        <local:Flex4Namespaces6/>
+        <fx:Array/>
+        <fx:Boolean/>
+        <fx:Class/>
+        <fx:Date/>
+        <fx:Function/>
+        <fx:Model id="model1" source="<error>some_file.xml</error>"/>
+        <fx:Model id="model2" source="Flex4Namespaces.mxml"/>
+        <fx:Number/>
+        <fx:Object/>
+        <fx:RegExp/>
+        <fx:String/>
+        <fx:Vector type='String'/>
+        <fx:XML/>
+        <fx:XMLList/>
+    </fx:Declarations>
+    <fx:Script/>
+    <fx:Style/>
+    <fx:Metadata/>
+    
+    <s:Button label="Press me" click="Alert.show()" <error>s:privateAttr1</error>="any" some:privateAttr2="any" <error>fx:incorrect</error>="a"/>
+    <mx:Button xmlns:mx="library://ns.adobe.com/flex/mx"/>
+
+</s:Application>

@@ -1,0 +1,15 @@
+package {
+
+class Conflicts5 {
+    private var p;
+
+    public function inlineMe():int {
+        return p;
+    }
+
+}
+
+}
+
+var a : Conflicts5;
+a.inlin<caret>eMe();

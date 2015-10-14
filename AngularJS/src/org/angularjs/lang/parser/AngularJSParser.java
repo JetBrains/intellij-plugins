@@ -2,17 +2,16 @@ package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.parsing.ExpressionParser;
-import com.intellij.lang.javascript.parsing.FunctionParser;
-import com.intellij.lang.javascript.parsing.JavaScriptParser;
-import com.intellij.lang.javascript.parsing.StatementParser;
+import com.intellij.lang.javascript.parsing.*;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.lang.lexer.AngularJSTokenTypes;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser> {
+public class AngularJSParser
+  extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
+
   public AngularJSParser(PsiBuilder builder) {
     super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
     myExpressionParser = new AngularJSExpressionParser();

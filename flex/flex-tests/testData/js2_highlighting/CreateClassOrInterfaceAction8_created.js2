@@ -1,0 +1,13 @@
+package foo {
+import bar.CreateClassOrInterfaceAction8;
+
+public class Abc {
+
+    /**
+     * constr
+     */
+    public function Abc(createClassOrInterfaceAction8:CreateClassOrInterfaceAction8) {
+        // body
+    }
+}
+}

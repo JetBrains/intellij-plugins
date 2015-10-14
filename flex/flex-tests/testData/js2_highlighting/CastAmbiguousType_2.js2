@@ -1,0 +1,14 @@
+package foo {
+public class A {}
+}
+package bar {
+public class A {}
+}
+package {
+public class Test {
+
+    public static function func1() : foo.A {}
+    public static function func2(p:bar.A) {}
+
+}
+}

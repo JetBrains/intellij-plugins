@@ -9,6 +9,7 @@ import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
@@ -70,7 +71,9 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   public DartGeneratorPeer() {
     // set initial values before initDartSdkAndDartiumControls() because listeners should not be triggered on initialization
 
-    final Library[] libraries = ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel().getLibraries();
+    LibraryTable.ModifiableModel modifiableModel = ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel();
+    final Library[] libraries = modifiableModel.getLibraries();
+    ModifiableModelsProvider.SERVICE.getInstance().disposeLibraryTableModifiableModel(modifiableModel);
     final DartSdk sdkInitial = DartSdk.findDartSdkAmongGlobalLibs(libraries);
     mySdkPathTextWithBrowse.setText(sdkInitial == null ? "" : FileUtil.toSystemDependentName(sdkInitial.getHomePath()));
 
@@ -226,12 +229,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     final DartProjectTemplate template = myCreateSampleProjectCheckBox.isSelected()
                                          ? (DartProjectTemplate)myTemplatesList.getSelectedValue() : null;
-    if (template == null) {
-      PropertiesComponent.getInstance().unsetValue(DART_PROJECT_TEMPLATE);
-    }
-    else {
-      PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template.getName());
-    }
+    PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template == null ? null : template.getName());
 
     return new DartProjectWizardData(sdkPath, dartiumPath, myDartiumSettingsCurrent, template);
   }

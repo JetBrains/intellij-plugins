@@ -1,0 +1,10 @@
+/**
+ * @see #f<caret>
+ */
+class C {
+  function foofoo() {}
+}
+
+class C2 {
+  function foobar() {}
+}

@@ -225,6 +225,23 @@ public class DartIndentProcessor {
       return Indent.getContinuationIndent();
     }
 
+    if (parentType == TYPE_LIST && elementType == TYPE) {
+      return Indent.getContinuationIndent();
+    }
+
+    if (elementType == OPEN_QUOTE && parentType == STRING_LITERAL_EXPRESSION && superParentType == VAR_INIT) {
+      if (node.getText().length() < 3) {
+        return Indent.getContinuationIndent();
+      }
+    }
+
+    if (elementType == RAW_SINGLE_QUOTED_STRING && parentType == STRING_LITERAL_EXPRESSION && superParentType == VAR_INIT) {
+      return Indent.getContinuationIndent();
+    }
+
+    if (parentType == LONG_TEMPLATE_ENTRY && EXPRESSIONS.contains(elementType)) {
+      return Indent.getContinuationIndent();
+    }
     return Indent.getNoneIndent();
   }
 

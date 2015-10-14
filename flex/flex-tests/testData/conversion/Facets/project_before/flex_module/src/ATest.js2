@@ -1,0 +1,20 @@
+/**
+ * Created by IntelliJ IDEA.
+ * User: Kirill.Safonov
+ * Date: 17.10.11
+ * Time: 20:39
+ * To change this template use File | Settings | File Templates.
+ */
+package {
+import flexunit.framework.TestCase;
+
+class ATest extends TestCase {
+    public function ATest() {
+//        testA();
+    }
+
+    public function testA():void {
+
+    }
+}
+}

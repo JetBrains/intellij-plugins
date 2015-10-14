@@ -11,6 +11,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.text.CharArrayUtil;
+import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.documentation.DartDocUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,8 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
                                 @NotNull final Ref<Integer> caretAdvance,
                                 @NotNull final DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
+    if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;
+
     final int caretOffset = caretOffsetRef.get().intValue();
     final Document document = editor.getDocument();
     final PsiElement psiAtOffset = file.findElementAt(caretOffset);

@@ -1,0 +1,10 @@
+package {
+public class Example {
+
+    internal function f():void {
+        var s<caret>:String = "def";
+        trace(s);
+    }
+
+}
+}

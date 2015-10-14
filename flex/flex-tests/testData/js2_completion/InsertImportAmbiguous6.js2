@@ -1,0 +1,16 @@
+package {
+
+import bar.ClassA;
+
+public class Test {
+     var f : ClassA<caret>
+ }
+}
+
+package {
+  public class ClassA {}
+}
+
+package bar {
+  public class ClassA {}
+}

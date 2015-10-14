@@ -1,0 +1,7 @@
+package {
+public class Abc {
+    [Test(expects=Foo"")]
+    public function foo():void {
+    }
+}
+}

@@ -1,0 +1,6 @@
+class C {
+    function C() {
+        var a = <selection>1 + 1</selection>;
+        alert(a);
+    }
+}

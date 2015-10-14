@@ -1,0 +1,9 @@
+package {
+public class Car {
+    <spot>private</spot> var <spot>_color</spot>:String;
+
+<spot>    public function set color(value:String):void {
+        _color = value;
+    }                                             </spot>
+}
+}

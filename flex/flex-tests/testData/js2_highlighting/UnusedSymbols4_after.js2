@@ -1,0 +1,24 @@
+package {
+public class UnusedSymbols4
+{
+  var x:Bar;
+  var y:Object = new Foo2();
+}
+}
+
+class Bar {}
+class Foo2 {
+    function Foo2() {}
+}
+
+class Base {
+    public function foo(s:String, n:int):void {}
+}
+
+class Derived extends Base {
+    public override function foo(s:String, n:int):void {
+        var x:Derived = new Derived();
+        x = null;
+        n = -1;
+    }
+}

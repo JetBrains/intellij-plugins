@@ -1,0 +1,5 @@
+class Foo {
+    public function Foo(abcde:int) {
+        new Conflicts3_2().inl<caret>ineMe();
+    }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" >
+    <mx:Script>
+      include "Included.as"
+    </mx:Script>
+
+    <mx:Script><![CDATA[
+        import mx.rpc.AbstractService;
+        ]]></mx:Script>
+
+
+</mx:Panel>
+

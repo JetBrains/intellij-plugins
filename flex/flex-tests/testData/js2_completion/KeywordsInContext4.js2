@@ -1,0 +1,5 @@
+package com.foo {
+public class Test {
+public fu<caret>
+}
+}

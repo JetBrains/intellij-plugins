@@ -1,0 +1,58 @@
+JSFile:Complex.js2
+  JSPackageStatement
+    PsiElement(JS:PACKAGE_KEYWORD)('package')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('flashx')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('textLayout')
+      PsiElement(JS:DOT)('.')
+      PsiElement(JS:IDENTIFIER)('compose')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:LBRACE)('{')
+    PsiWhiteSpace('\n\n')
+    JSClass
+      JSAttributeList
+        PsiElement(JS:PUBLIC_KEYWORD)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('Foo')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      JSVarStatement
+        JSAttributeList
+          JSConditionalCompileVariableReference
+            JSReferenceExpression
+              JSE4XNamespaceReference
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('CONFIG')
+                PsiElement(JS:COLON_COLON)('::')
+              PsiElement(JS:IDENTIFIER)('debug')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:STATIC_KEYWORD)('static')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('tlf_internal')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:VAR_KEYWORD)('var')
+        PsiWhiteSpace(' ')
+        ActionScriptVariable
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('numCreateTextLine')
+          PsiElement(JS:COLON)(':')
+          PsiElement(JS:INT_KEYWORD)('int')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(JS:RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiElement(JS:RBRACE)('}')

@@ -1,0 +1,7 @@
+package {
+ class DelegateMethods {
+     var foobar : MyClass;
+
+     <caret>
+ }
+}

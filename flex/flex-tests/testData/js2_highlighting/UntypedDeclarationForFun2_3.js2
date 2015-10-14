@@ -1,0 +1,6 @@
+class Foo {}
+
+function <warning>foo</warning>() {
+    if (arguments.length == 0) return new Foo();
+    return;
+}

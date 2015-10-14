@@ -1,0 +1,10 @@
+class C {
+  var myvar;
+}
+
+class D {
+  var myDvar;
+}
+
+var a:C;
+a.myvar<caret>

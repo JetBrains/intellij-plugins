@@ -1,0 +1,11 @@
+package mypackage
+{
+
+use namespace _internal_;
+
+class ZZZ {
+  _internal_ var aaa;
+  private var ttt;
+  internal var c2;
+}
+}

@@ -1,0 +1,35 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <compiler>
+    <fonts>
+      <managers>
+        <manager-class>flash.fonts.AFEFontManager</manager-class>
+      </managers>
+    </fonts>
+    <source-path>
+      <path-element>$MODULE_DIR$/src</path-element>
+      <path-element>$MODULE_DIR$/src</path-element>
+    </source-path>
+    <locale>
+      <locale-element>en_US</locale-element>
+    </locale>
+    <library-path>
+      <path-element>$FLEX_SDK$/frameworks/libs\framework.swc</path-element>
+    </library-path>
+    <external-library-path>
+      <path-element>path/to/playerglobal.swc</path-element>
+      <path-element>path/to/external_lib.swc</path-element>
+    </external-library-path>
+  </compiler>
+  <file-specs>
+    <path-element>path/InConfigFile.mxml</path-element>
+  </file-specs>
+  <output>path/in/config/ConfigFile.swf</output>
+  <debug-password>z</debug-password>
+  <runtime-shared-library-path>
+    <path-element>$FLEX_SDK$/frameworks/libs/advancedgrids.swc</path-element>
+    <rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.6/advancedgrids_4.6.swz</rsl-url>
+    <policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+    <rsl-url>advancedgrids_4.6.swz</rsl-url>
+    <policy-file-url />
+  </runtime-shared-library-path>
+</flex-config>

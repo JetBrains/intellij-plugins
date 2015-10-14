@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.util.JsErrorMessage;
+import com.google.jstestdriver.idea.common.JsErrorMessage;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class JsErrorFilter implements Filter {
 
   private static final Logger LOG = Logger.getInstance(JsErrorFilter.class);

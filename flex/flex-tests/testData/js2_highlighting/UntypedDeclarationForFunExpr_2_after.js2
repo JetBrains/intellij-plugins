@@ -1,0 +1,3 @@
+dynamic class Test {}
+var test: Test = new Test();
+test.doSmth = function():void {};

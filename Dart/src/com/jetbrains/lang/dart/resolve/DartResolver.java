@@ -15,8 +15,9 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationRegion;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.PluginNavigationTarget;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
+import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationRegion;
+import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationTarget;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -40,13 +41,24 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (isServerDrivenResolution()) {
       reference = replaceQualifiedReferenceWithLast(reference);
       final PsiFile refPsiFile = reference.getContainingFile();
-      final int refOffset = reference.getTextOffset();
-      final int refLength = reference.getTextLength();
-      final PluginNavigationRegion region = findRegion(refPsiFile, refOffset, refLength);
+      int refOffset = reference.getTextOffset();
+      int refLength = reference.getTextLength();
+      DartServerData.DartNavigationRegion region = findRegion(refPsiFile, refOffset, refLength);
+
+      if (region == null && reference instanceof DartLibraryId) {
+        // DAS returns the whole "part of foo" as a region, but we have only "foo" as a reference
+        final PsiElement parent = reference.getParent();
+        if (parent instanceof DartPartOfStatement) {
+          refOffset = parent.getTextOffset();
+          refLength = reference.getTextOffset() + reference.getTextLength() - refOffset;
+          region = findRegion(refPsiFile, refOffset, refLength);
+        }
+      }
+
       if (region != null) {
         final Project project = reference.getProject();
         final List<PsiElement> result = new SmartList<PsiElement>();
-        for (PluginNavigationTarget target : region.getTargets()) {
+        for (DartNavigationTarget target : region.getTargets()) {
           final PsiElement targetElement = getElementForNavigationTarget(project, target);
           if (targetElement != null) {
             result.add(targetElement);
@@ -137,32 +149,28 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   @Nullable
-  public static PluginNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
+  public static DartNavigationRegion findRegion(final PsiFile refPsiFile, final int refOffset, final int refLength) {
     final VirtualFile refVirtualFile = DartResolveUtil.getRealVirtualFile(refPsiFile);
     if (refVirtualFile != null) {
-      final List<PluginNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
+      final List<DartServerData.DartNavigationRegion> regions = DartAnalysisServerService.getInstance().getNavigation(refVirtualFile);
       return findRegion(regions, refOffset, refLength);
     }
     return null;
   }
 
   @Nullable
-  private static PsiElement getElementForNavigationTarget(Project project, PluginNavigationTarget target) {
+  private static PsiElement getElementForNavigationTarget(Project project, DartNavigationTarget target) {
     String targetPath = target.getFile();
     PsiFile file = findPsiFile(project, targetPath);
     if (file != null) {
       int targetOffset = target.getOffset();
-      for (int i = 0; i < 2; i++) {
-        Class<? extends PsiElement> clazz = DartComponentName.class;
-        if (i == 1) {
-          clazz = DartReferenceExpression.class;
-        }
-        PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, clazz, false);
-        if (elementAt != null) {
-          return elementAt;
-        }
-      }
+
+      PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartComponentName.class, false);
+      if (elementAt == null) elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartLibraryNameElement.class, false);
+
+      return elementAt;
     }
+
     return null;
   }
 
@@ -206,13 +214,13 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
    * Returns the found region or null.
    */
   @Nullable
-  private static PluginNavigationRegion findRegion(List<PluginNavigationRegion> regions, int offset, int length) {
+  private static DartNavigationRegion findRegion(List<DartServerData.DartNavigationRegion> regions, int offset, int length) {
     int low = 0;
     int high = regions.size() - 1;
 
     while (low <= high) {
       int mid = (low + high) >>> 1;
-      PluginNavigationRegion midVal = regions.get(mid);
+      DartServerData.DartNavigationRegion midVal = regions.get(mid);
       int cmp = midVal.getOffset() - offset;
 
       if (cmp < 0) {

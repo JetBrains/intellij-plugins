@@ -1,0 +1,18 @@
+package xxx {
+  class YYY extends yyy.XXX {
+    function tes<caret>t2() {
+      if (false) test2();
+      var a:yyy.XXX
+      a.test()
+      this.test2()
+    }
+  }
+}
+
+package yyy {
+  class XXX {
+    function test() {
+      if (true) test()
+    }
+  }
+}

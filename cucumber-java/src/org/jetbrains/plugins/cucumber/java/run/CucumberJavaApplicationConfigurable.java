@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
+import com.intellij.application.options.ModulesComboBox;
 import com.intellij.execution.configurations.ConfigurationUtil;
 import com.intellij.execution.ui.ClassBrowser;
 import com.intellij.execution.ui.CommonJavaParametersPanel;
@@ -42,7 +43,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
   private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
   private JPanel myWholePanel;
-  private LabeledComponent<JComboBox> myModule;
+  private LabeledComponent<ModulesComboBox> myModule;
   private LabeledComponent<RawCommandLineEditor> myGlue;
   private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
   private CommonJavaParametersPanel myCommonProgramParameters;

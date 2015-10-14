@@ -15,12 +15,15 @@
  */
 package com.jetbrains.lang.dart.assists;
 
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
@@ -28,12 +31,29 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * This intention is registered in plugin.xml to make sure that it appears in Preferences (Settings) UI and can be switched on/off.
+ * But the instance created this way (using default constructor) always says that it is not available.
+ * Real intentions are added dynamically in {@link DartAnalysisServerService#registerQuickAssistIntentions()}.
+ * We need to register them not via plugin.xml for 2 reasons:
+ * <ul>
+ * <li>intentions amount, text and behavior are loaded dynamically</li>
+ * <li>intentions registered via plugin.xml are wrapped in IntentionActionWrapper that doesn't implement Comparable, but order is important for us</li>
+ * </ul>
+ */
 public class DartQuickAssistIntention implements IntentionAction, Comparable<IntentionAction> {
-  private final QuickAssistSet quickAssistSet;
+  @Nullable private final QuickAssistSet quickAssistSet;
   private final int index;
   @Nullable private SourceChange sourceChange;
 
-  public DartQuickAssistIntention(final QuickAssistSet quickAssistSet, final int index) {
+  // invoked by Platform because registered in plugin.xml
+  @SuppressWarnings("unused")
+  public DartQuickAssistIntention() {
+    quickAssistSet = null;
+    index = -1;
+  }
+
+  public DartQuickAssistIntention(@NotNull final QuickAssistSet quickAssistSet, final int index) {
     this.quickAssistSet = quickAssistSet;
     this.index = index;
   }
@@ -50,8 +70,9 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @NotNull
   @Override
   public String getFamilyName() {
-    //noinspection DialogTitleCapitalization
-    return DartBundle.message("dart.quick.assist.family.name");
+    final String message = DartBundle.message("dart.quick.assist.family.name");
+    // a bit hacky way to make inspections enabling/disabling work, see IntentionActionWrapper.getFullFamilyName()
+    return quickAssistSet == null ? message : "Dart/" + message;
   }
 
   @NotNull
@@ -63,15 +84,19 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     if (sourceChange != null) {
-      AssistUtils.applySourceChange(project, sourceChange);
+      try {
+        AssistUtils.applySourceChange(project, sourceChange);
+      }
+      catch (DartSourceEditException e) {
+        CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
+      }
     }
   }
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (!(file instanceof DartFile)) {
-      return false;
-    }
+    if (quickAssistSet == null || !(file instanceof DartFile)) return false;
+
     final List<SourceChange> sourceChanges = quickAssistSet.getQuickAssists(editor, file);
     if (sourceChanges.size() <= index) {
       sourceChange = null;

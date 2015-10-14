@@ -1,0 +1,87 @@
+JSFile:KeywordsInE4X.js2
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('someXML')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XML')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      XmlTag:name
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_TAG_NAME('name')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('fff')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('0')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('default')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('1')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('K')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_TAG_NAME('name')
+        XmlToken:XML_TAG_END('>')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:VAR_KEYWORD)('var')
+    PsiWhiteSpace(' ')
+    ActionScriptVariable
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('attribute')
+      PsiElement(JS:COLON)(':')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('XMLList')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('someXML')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:AT)('@')
+        PsiElement(JS:DEFAULT_KEYWORD)('default')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  ActionScriptFunction
+    JSAttributeList
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('err')
+        PsiElement(JS:DOT)('.')
+      PsiErrorElement:name expected
+        <empty list>
+    PsiElement(JS:FUNCTION_KEYWORD)('function')
+    PsiErrorElement:function name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSParameterList
+      <empty list>
+    PsiErrorElement:{ expected
+      <empty list>
+  JSExpressionStatement
+    JSAssignmentExpression
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('2')
+    PsiElement(JS:SEMICOLON)(';')

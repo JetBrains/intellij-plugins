@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:mx="library://ns.adobe.com/flex/mx">
+    <mx:Button id="but1" includeIn="Parent2"/>
+    <s:Button id="but2" includeIn="Parent2"/>
+
+    <fx:Reparent target="but1" includeIn="Parent1"/>
+    <mx:Panel>
+      <fx:Reparent target="but2" excludeFrom="Parent2"/>
+      <fx:Reparent target="<error descr="Cannot resolve symbol 'but3_'">but3_</error>" excludeFrom="<error descr="Invalid state reference">Parent2_</error>" includeIn="<error descr="Invalid state reference">Parent1_</error>"/>
+      <<error descr="Element fx:Reparent doesn't have required attribute target">fx:Reparent</error> excludeFrom="Parent2"/>
+      <<error descr="The <fx:Reparent> tag must have attribute 'includeIn' or 'excludeFrom'">fx:Reparent</error> target="but3"/>
+      <fx:Reparent target="but3" excludeFrom="Parent2" <error descr="Attribute label is not allowed here">label</error>="not_allowed" <error descr="Attribute id is not allowed here">id</error>="not_allowed">
+          <<error descr="Element s:Button is not allowed here">s:Button</error>/>
+      </fx:Reparent>
+    </mx:Panel>
+
+    <mx:Panel>
+        <mx:Button id="but3" includeIn="Parent2"/>
+    </mx:Panel>
+
+    <s:states>
+        <s:State name="Parent1"/>
+        <s:State name="Parent2"/>
+    </s:states>
+</s:Application>

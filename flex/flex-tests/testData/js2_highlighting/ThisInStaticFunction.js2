@@ -1,0 +1,31 @@
+class B {
+  var xxx;
+}
+
+class A extends B {
+  var xxx2;
+
+  static function aaa() {
+    <error>this</error>.xxx = 1;
+    <error>super</error>.xxx = 1;
+  }
+
+  function bbb() {
+    this.xxx = 1;
+    super.xxx = 2;
+  }
+}
+
+function ccc() {
+  <error>super</error>.xxx = 2;
+}
+
+class Foo {
+    var instanceField;
+
+    static var staticField = <error>instanceField</error>;
+    static var staticField2 = <error>instanceMethod</error>();
+
+    function instanceMethod() {
+    }
+}

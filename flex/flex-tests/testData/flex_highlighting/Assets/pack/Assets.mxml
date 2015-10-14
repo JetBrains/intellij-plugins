@@ -1,0 +1,92 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Image source="<error>Assets.mxml</error>"/>
+  <mx:Image source="/<error>Assets.mxml</error>"/>
+
+  <mx:Image source="/<error>pack</error>/<error>Assets.mxml</error>"/>
+  <mx:Image source="pack/Assets.mxml"/>
+
+  <mx:Image source="${SOME_ABSOLUTE_PATH}"/>
+
+  <mx:Image source="<error>dir</error>/<error>image.png</error>"/>
+  <mx:Image source="/<error>dir</error>/<error>image.png</error>"/>
+
+  <mx:Image source="<error>pack2</error>/<error>asset2.txt</error>"/>
+  <mx:Image source="/<error>pack2</error>/<error>asset2.txt</error>"/>
+
+
+  <mx:Image source="@Embed(source='<error>incorrect</error>')"/>
+  <mx:Image source="@Embed('<error>incorrect</error>')"/>
+
+  <mx:Image source="@Embed(source='/<error>incorrect</error>')"/>
+  <mx:Image source="@Embed('/<error>incorrect</error>')"/>
+
+  <mx:Image source="@Embed(source='Assets.mxml')"/>
+  <mx:Image source="@Embed('Assets.mxml')"/>
+
+  <mx:Image source="@Embed('/pack/Assets.mxml')"/>
+  <mx:Image source="@Embed(source='/pack/Assets.mxml')"/>
+
+  <mx:Image source="@Embed('<error>pack</error>/<error>Assets.mxml</error>')"/>
+  <mx:Image source="@Embed(source='<error>pack</error>/<error>Assets.mxml</error>')"/>
+
+  <mx:Image source="@Embed('${SOME_ABSOLUTE_PATH}')"/>
+  <mx:Image source="@Embed(source='${SOME_ABSOLUTE_PATH}')"/>
+
+  <mx:Image source="@Embed('dir/image.png')"/>
+  <mx:Image source="@Embed(source='dir/image.png')"/>
+
+  <mx:Image source="@Embed('/dir/image.png')"/>
+  <mx:Image source="@Embed(source='/dir/image.png')"/>
+
+  <mx:Image source="@Embed('pack2/asset2.txt')"/>
+  <mx:Image source="@Embed('/pack2/asset2.txt')"/>
+
+  <mx:Script><![CDATA[
+    [Embed(source='<error>incorrect</error>')]
+    private var a1:String;
+    [Embed('<error>incorrect</error>')]
+    private var a2:String;
+
+    [Embed(source='/<error>incorrect</error>')]
+    private var a3:String;
+    [Embed('/<error>incorrect</error>')]
+    private var a4:String;
+
+    [Embed(source='Assets.mxml')]
+    private var a5:String;
+    [Embed('Assets.mxml')]
+    private var a6:String;
+
+    [Embed('/pack/Assets.mxml')]
+    private var a7:String;
+    [Embed(source='/pack/Assets.mxml')]
+    private var a8:String;
+
+    [Embed('<error>pack</error>/<error>Assets.mxml</error>')]
+    private var a9:String;
+    [Embed(source='<error>pack</error>/<error>Assets.mxml</error>')]
+    private var a10:String;
+
+    [Embed('${SOME_ABSOLUTE_PATH}')]
+    private var a11:String;
+    [Embed(source='${SOME_ABSOLUTE_PATH}')]
+    private var a12:String;
+
+    [Embed("dir/image.png")]
+    private var a13:String;
+    [Embed(source="dir/image.png")]
+    private var a14:String;
+
+    [Embed('/dir/image.png')]
+    private var a15:String;
+    [Embed(source='/dir/image.png')]
+    private var a16:String;
+
+    [Embed('pack2/asset2.txt')]
+    private var a17:String;
+    [Embed('/pack2/asset2.txt')]
+    private var a18:String;
+    ]]></mx:Script>
+  
+</mx:Application>

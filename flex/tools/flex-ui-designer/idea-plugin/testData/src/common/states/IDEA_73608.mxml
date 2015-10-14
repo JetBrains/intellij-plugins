@@ -1,0 +1,16 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="Login"/>
+    <State name="Register"/>
+  </states>
+  <Panel title="Login" title.Register="Register" id="loginPanel" width="75%" horizontalCenter="0" verticalCenter="0">
+    <layout>
+      <VerticalLayout paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10"/>
+    </layout>
+    <Form id="loginForm">
+      <FormItem id="confirm" label="Confirm:" includeIn="Register" includeInLayout="false" includeInLayout.Register="true">
+        <TextInput/>
+      </FormItem>
+    </Form>
+  </Panel>
+</Group>

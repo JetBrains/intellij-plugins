@@ -8,7 +8,7 @@ import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.javascript.karma.util.NodeInstalledPackage;
 import com.intellij.javascript.karma.util.NodeInstalledPackagesLocator;
-import com.intellij.javascript.nodejs.NodePathSettings;
+import com.intellij.javascript.nodejs.NodeSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -139,7 +139,7 @@ public class KarmaCoveragePeer {
 
   private void checkCoveragePlugin(@NotNull KarmaServer server) {
     NodeInstalledPackagesLocator locator = NodeInstalledPackagesLocator.getInstance();
-    NodePathSettings nodeSettings = new NodePathSettings(server.getNodeInterpreterPath());
+    NodeSettings nodeSettings = new NodeSettings(server.getNodeInterpreterPath());
     NodeInstalledPackage pkg = locator.findInstalledPackages("karma-coverage", server.getKarmaPackageDir(), nodeSettings);
     fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, pkg != null));
   }

@@ -1,0 +1,4 @@
+impo<caret>
+package xxx {
+    function yyy() {}
+}

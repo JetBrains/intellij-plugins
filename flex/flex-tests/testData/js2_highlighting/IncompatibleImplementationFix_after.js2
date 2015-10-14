@@ -1,0 +1,9 @@
+interface IFoo {
+    function foo():void;
+}
+
+class Foo implements IFoo {
+    public function foo():void {
+        return 1;
+    }
+}

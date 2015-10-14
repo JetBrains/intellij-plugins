@@ -1,0 +1,15 @@
+package {
+public class UnusedGlobalSymbols3_2
+{
+  function foo() {
+      var classes:Array = [UnusedGlobalSymbols3];
+      IX(new classes[0]).doIt();
+      UnusedGlobalSymbols3(new classes[0]).doIt2();
+  }
+}
+public interface IX {
+    function doIt();
+    function doIt2();
+}
+}
+

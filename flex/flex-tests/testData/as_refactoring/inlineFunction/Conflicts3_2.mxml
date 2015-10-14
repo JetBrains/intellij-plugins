@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        private var t = 0;
+
+        public function inlineMe() {
+            t = 0;
+            fff();
+        }
+
+        private function fff():void {
+        }
+]]></mx:Script>
+</mx:Box>

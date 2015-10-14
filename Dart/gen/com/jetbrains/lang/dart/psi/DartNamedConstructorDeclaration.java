@@ -8,10 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface DartNamedConstructorDeclaration extends DartComponent {
 
   @NotNull
-  DartComponentName getComponentName();
-
-  @NotNull
-  List<DartExpression> getExpressionList();
+  List<DartComponentName> getComponentNameList();
 
   @NotNull
   DartFormalParameterList getFormalParameterList();
@@ -27,5 +24,11 @@ public interface DartNamedConstructorDeclaration extends DartComponent {
 
   @Nullable
   DartRedirection getRedirection();
+
+  @Nullable
+  DartStringLiteralExpression getStringLiteralExpression();
+
+  @Nullable
+  DartComponentName getComponentName();
 
 }

@@ -1,0 +1,12 @@
+class Snippet {
+    private var c:int = 0;
+
+    public function a():int {
+        return b(function ():int {
+            return c;
+        });
+    }
+    private static function b(callback:Function):int {
+        return callback();
+    }
+}

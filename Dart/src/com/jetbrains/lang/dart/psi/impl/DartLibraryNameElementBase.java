@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -10,6 +9,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.psi.DartId;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
+import icons.DartIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,17 +48,28 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
 
   @Nullable
   public ItemPresentation getPresentation() {
-    final PsiElement parent = getParent();
-    if (parent instanceof NavigationItem) {
-      return ((NavigationItem)parent).getPresentation();
-    }
-    return null;
+    return new ItemPresentation() {
+      @Override
+      public String getPresentableText() {
+        return getName();
+      }
+
+      @Override
+      @Nullable
+      public String getLocationString() {
+        return null;
+      }
+
+      @Override
+      public Icon getIcon(boolean open) {
+        return DartLibraryNameElementBase.this.getIcon(0);
+      }
+    };
   }
 
   @Override
   public Icon getIcon(int flags) {
-    final ItemPresentation presentation = getPresentation();
-    return presentation == null ? super.getIcon(flags) : presentation.getIcon(true);
+    return DartIcons.Dart_file; // todo better icon?
   }
 
   @Override

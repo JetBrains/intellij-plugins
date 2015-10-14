@@ -1,0 +1,6 @@
+/**
+ * <caret>
+ * @param p
+ * @return
+ */
+native function a(p:int):int

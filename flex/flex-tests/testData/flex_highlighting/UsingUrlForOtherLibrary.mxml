@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*" xmlns:flexlib="flexlib.controls.*" xmlns:flexlib2="http://code.google.com/p/flexlib/">
+    <mx:Script><![CDATA[
+        function filter() {}
+        ]]></mx:Script>
+
+    <flexlib:PromptingTextInput id="filterExpression" promptFormat="filter()"/>
+    <flexlib2:PromptingTextInput id="filterExpression2" promptFormat="filter()"/>
+</mx:Application>

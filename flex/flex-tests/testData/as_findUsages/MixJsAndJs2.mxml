@@ -1,0 +1,14 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+   <mx:Script>
+     function foo():* {
+       return null;
+     }
+      function bar():* {
+          foo().value = 1;
+          return <div><value /></div>.value;
+      }
+   </mx:Script>
+    <mx:Button>
+       <mx:name>{foo().value}</mx:name>
+   </mx:Button>
+</mx:Application>

@@ -1,0 +1,21 @@
+CfmlFile:unaryInc.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('bar')
+      PsiElement(ASSIGN)('=')
+      BinaryExpression
+        UnaryExpression
+          PsiElement(INC)('++')
+          ReferenceExpression
+            PsiElement(IDENTIFIER)('rowNr')
+        PsiElement(EQ_L)('eq')
+        IntegerLiteral
+          PsiElement(INTEGER)('1')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

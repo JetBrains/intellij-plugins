@@ -1,0 +1,7 @@
+package xxx {
+  public class AAA extends xxx.ZZZ implements yyy.XXX {}
+  class ZZZ {}
+}
+
+import xxx.AAA;
+var z:A<caret>AA;

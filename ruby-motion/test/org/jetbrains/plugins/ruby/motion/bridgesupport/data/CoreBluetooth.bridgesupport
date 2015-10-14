@@ -1,0 +1,433 @@
+<?xml version='1.0'?>
+<signatures version='1.0'>
+<constant const='true' name='CBATTErrorDomain' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBAdvertisementDataLocalNameKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBAdvertisementDataManufacturerDataKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBAdvertisementDataServiceDataKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBAdvertisementDataServiceUUIDsKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBAdvertisementDataTxPowerLevelKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBCentralManagerScanOptionAllowDuplicatesKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBConnectPeripheralOptionNotifyOnDisconnectionKey' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBErrorDomain' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDAppearanceString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDCharacteristicAggregateFormatString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDCharacteristicExtendedPropertiesString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDCharacteristicFormatString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDCharacteristicUserDescriptionString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDClientCharacteristicConfigurationString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDDeviceNameString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDGenericAccessProfileString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDGenericAttributeProfileString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDPeripheralPreferredConnectionParametersString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDPeripheralPrivacyFlagString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDReconnectionAddressString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDServerCharacteristicConfigurationString' declared_type='NSString*' type='@'/>
+<constant const='true' name='CBUUIDServiceChangedString' declared_type='NSString*' type='@'/>
+<enum value='10' name='CBATTErrorAttributeNotFound'/>
+<enum value='11' name='CBATTErrorAttributeNotLong'/>
+<enum value='5' name='CBATTErrorInsufficientAuthentication'/>
+<enum value='8' name='CBATTErrorInsufficientAuthorization'/>
+<enum value='15' name='CBATTErrorInsufficientEncryption'/>
+<enum value='12' name='CBATTErrorInsufficientEncryptionKeySize'/>
+<enum value='17' name='CBATTErrorInsufficientResources'/>
+<enum value='13' name='CBATTErrorInvalidAttributeValueLength'/>
+<enum value='1' name='CBATTErrorInvalidHandle'/>
+<enum value='7' name='CBATTErrorInvalidOffset'/>
+<enum value='4' name='CBATTErrorInvalidPdu'/>
+<enum value='9' name='CBATTErrorPrepareQueueFull'/>
+<enum value='2' name='CBATTErrorReadNotPermitted'/>
+<enum value='6' name='CBATTErrorRequestNotSupported'/>
+<enum value='14' name='CBATTErrorUnlikelyError'/>
+<enum value='16' name='CBATTErrorUnsupportedGroupType'/>
+<enum value='3' name='CBATTErrorWriteNotPermitted'/>
+<enum value='4' name='CBCentralManagerStatePoweredOff'/>
+<enum value='5' name='CBCentralManagerStatePoweredOn'/>
+<enum value='1' name='CBCentralManagerStateResetting'/>
+<enum value='3' name='CBCentralManagerStateUnauthorized'/>
+<enum value='0' name='CBCentralManagerStateUnknown'/>
+<enum value='2' name='CBCentralManagerStateUnsupported'/>
+<enum value='64' name='CBCharacteristicPropertyAuthenticatedSignedWrites'/>
+<enum value='1' name='CBCharacteristicPropertyBroadcast'/>
+<enum value='128' name='CBCharacteristicPropertyExtendedProperties'/>
+<enum value='32' name='CBCharacteristicPropertyIndicate'/>
+<enum value='16' name='CBCharacteristicPropertyNotify'/>
+<enum value='2' name='CBCharacteristicPropertyRead'/>
+<enum value='8' name='CBCharacteristicPropertyWrite'/>
+<enum value='4' name='CBCharacteristicPropertyWriteWithoutResponse'/>
+<enum value='0' name='CBCharacteristicWriteWithResponse'/>
+<enum value='1' name='CBCharacteristicWriteWithoutResponse'/>
+<enum value='0' name='CBErrorUnknown'/>
+<class name='CBCentralManager'>
+<method selector='cancelPeripheralConnection:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='connectPeripheral:options:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='options' declared_type='NSDictionary*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='initWithDelegate:queue:'>
+<arg name='delegate' declared_type='id' type='@' index='0'/>
+<arg name='queue' declared_type='dispatch_queue_t' type='^{dispatch_queue_s=}' index='1'/>
+<retval declared_type='CBCentralManager*' type='@'/>
+</method>
+<method selector='retrieveConnectedPeripherals'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='retrievePeripherals:'>
+<arg name='peripheralUUIDs' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='scanForPeripheralsWithServices:options:'>
+<arg name='serviceUUIDs' declared_type='NSArray*' type='@' index='0'/>
+<arg name='options' declared_type='NSDictionary*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setDelegate:'>
+<arg name='delegate' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='state'>
+<retval declared_type='CBCentralManagerState' type='i'/>
+</method>
+<method selector='stopScan'>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='CBCharacteristic'>
+<method selector='UUID'>
+<retval declared_type='CBUUID*' type='@'/>
+</method>
+<method selector='descriptors'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='isBroadcasted'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='isNotifying'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='properties'>
+<retval declared_type='CBCharacteristicProperties' type='I'/>
+</method>
+<method selector='service'>
+<retval declared_type='CBService*' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+</class>
+<class name='CBDescriptor'>
+<method selector='UUID'>
+<retval declared_type='CBUUID*' type='@'/>
+</method>
+<method selector='characteristic'>
+<retval declared_type='CBCharacteristic*' type='@'/>
+</method>
+<method selector='value'>
+<retval declared_type='id' type='@'/>
+</method>
+</class>
+<class name='CBPeripheral'>
+<method selector='RSSI'>
+<retval declared_type='NSNumber*' type='@'/>
+</method>
+<method selector='UUID'>
+<retval declared_type='CFUUIDRef' type='^{__CFUUID=}'/>
+</method>
+<method selector='delegate'>
+<retval declared_type='id' type='@'/>
+</method>
+<method selector='discoverCharacteristics:forService:'>
+<arg name='characteristicUUIDs' declared_type='NSArray*' type='@' index='0'/>
+<arg name='service' declared_type='CBService*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='discoverDescriptorsForCharacteristic:'>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='discoverIncludedServices:forService:'>
+<arg name='includedServiceUUIDs' declared_type='NSArray*' type='@' index='0'/>
+<arg name='service' declared_type='CBService*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='discoverServices:'>
+<arg name='serviceUUIDs' declared_type='NSArray*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='isConnected'>
+<retval declared_type='BOOL' type='B'/>
+</method>
+<method selector='name'>
+<retval declared_type='NSString*' type='@'/>
+</method>
+<method selector='readRSSI'>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='readValueForCharacteristic:'>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='readValueForDescriptor:'>
+<arg name='descriptor' declared_type='CBDescriptor*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='services'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='setDelegate:'>
+<arg name='delegate' declared_type='id' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='setNotifyValue:forCharacteristic:'>
+<arg name='notifyValue' declared_type='BOOL' type='B' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='writeValue:forCharacteristic:type:'>
+<arg name='data' declared_type='NSData*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='type' declared_type='CBCharacteristicWriteType' type='i' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='writeValue:forDescriptor:'>
+<arg name='data' declared_type='NSData*' type='@' index='0'/>
+<arg name='descriptor' declared_type='CBDescriptor*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<class name='CBService'>
+<method selector='UUID'>
+<retval declared_type='CBUUID*' type='@'/>
+</method>
+<method selector='characteristics'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='includedServices'>
+<retval declared_type='NSArray*' type='@'/>
+</method>
+<method selector='peripheral'>
+<retval declared_type='CBPeripheral*' type='@'/>
+</method>
+</class>
+<class name='CBUUID'>
+<method selector='UUIDWithCFUUID:' class_method='true'>
+<arg name='theUUID' declared_type='CFUUIDRef' type='^{__CFUUID=}' index='0'/>
+<retval declared_type='CBUUID*' type='@'/>
+</method>
+<method selector='UUIDWithData:' class_method='true'>
+<arg name='theData' declared_type='NSData*' type='@' index='0'/>
+<retval declared_type='CBUUID*' type='@'/>
+</method>
+<method selector='UUIDWithString:' class_method='true'>
+<arg name='theString' declared_type='NSString*' type='@' index='0'/>
+<retval declared_type='CBUUID*' type='@'/>
+</method>
+<method selector='data'>
+<retval declared_type='NSData*' type='@'/>
+</method>
+</class>
+<class name='NSObject'>
+<method selector='centralManager:didConnectPeripheral:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didDisconnectPeripheral:error:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didDiscoverPeripheral:advertisementData:RSSI:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<arg name='advertisementData' declared_type='NSDictionary*' type='@' index='2'/>
+<arg name='RSSI' declared_type='NSNumber*' type='@' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didFailToConnectPeripheral:error:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didRetrieveConnectedPeripherals:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripherals' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didRetrievePeripherals:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripherals' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManagerDidUpdateState:'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverCharacteristicsForService:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='service' declared_type='CBService*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverDescriptorsForCharacteristic:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverIncludedServicesForService:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='service' declared_type='CBService*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverServices:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didUpdateNotificationStateForCharacteristic:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didUpdateValueForCharacteristic:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didUpdateValueForDescriptor:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='descriptor' declared_type='CBDescriptor*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didWriteValueForCharacteristic:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didWriteValueForDescriptor:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='descriptor' declared_type='CBDescriptor*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheralDidUpdateRSSI:error:'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</class>
+<informal_protocol name='CBCentralManagerDelegate'>
+<method selector='centralManager:didConnectPeripheral:' type='v16@0:4@8@12'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didDisconnectPeripheral:error:' type='v20@0:4@8@12@16'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didDiscoverPeripheral:advertisementData:RSSI:' type='v24@0:4@8@12@16@20'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<arg name='advertisementData' declared_type='NSDictionary*' type='@' index='2'/>
+<arg name='RSSI' declared_type='NSNumber*' type='@' index='3'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didFailToConnectPeripheral:error:' type='v20@0:4@8@12@16'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didRetrieveConnectedPeripherals:' type='v16@0:4@8@12'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripherals' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManager:didRetrievePeripherals:' type='v16@0:4@8@12'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<arg name='peripherals' declared_type='NSArray*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='centralManagerDidUpdateState:' type='v12@0:4@8'>
+<arg name='central' declared_type='CBCentralManager*' type='@' index='0'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+<informal_protocol name='CBPeripheralDelegate'>
+<method selector='peripheral:didDiscoverCharacteristicsForService:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='service' declared_type='CBService*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverDescriptorsForCharacteristic:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverIncludedServicesForService:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='service' declared_type='CBService*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didDiscoverServices:' type='v16@0:4@8@12'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didUpdateNotificationStateForCharacteristic:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didUpdateValueForCharacteristic:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didUpdateValueForDescriptor:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='descriptor' declared_type='CBDescriptor*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didWriteValueForCharacteristic:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='characteristic' declared_type='CBCharacteristic*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheral:didWriteValueForDescriptor:error:' type='v20@0:4@8@12@16'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='descriptor' declared_type='CBDescriptor*' type='@' index='1'/>
+<arg name='error' declared_type='NSError*' type='@' index='2'/>
+<retval declared_type='void' type='v'/>
+</method>
+<method selector='peripheralDidUpdateRSSI:error:' type='v16@0:4@8@12'>
+<arg name='peripheral' declared_type='CBPeripheral*' type='@' index='0'/>
+<arg name='error' declared_type='NSError*' type='@' index='1'/>
+<retval declared_type='void' type='v'/>
+</method>
+</informal_protocol>
+</signatures>

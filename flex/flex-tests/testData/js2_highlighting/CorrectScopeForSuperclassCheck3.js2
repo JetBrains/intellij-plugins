@@ -1,0 +1,12 @@
+package
+{
+    import mx.managers.PopUpManager;
+
+    public class CorrectScopeForSuperclassCheck3 extends CorrectScopeForSuperclassCheck3_2
+    {
+        public function PopFoo()
+        {
+            PopUpManager.addPopUp(null, this);
+        }
+    }
+}

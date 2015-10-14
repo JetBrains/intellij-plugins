@@ -1,0 +1,10 @@
+class Test {
+    public static var v:int = 123;
+
+}
+
+class Some {
+    function bar() {
+        trace(Test.v);
+    }
+}

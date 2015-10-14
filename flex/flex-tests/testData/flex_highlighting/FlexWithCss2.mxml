@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Style>
+    <warning>.bbb</warning> {}
+    .sizeColumnHeader {
+      text-align: left;
+    }
+    .errorStyle {
+      color:red;
+    }
+
+  </mx:Style>
+  <mx:DataGrid>
+    <mx:DataGridColumn width="100" headerStyleName="sizeColumnHeader" />
+  </mx:DataGrid>
+  <mx:Panel title="My Panel" width="400" statusStyleName="errorStyle" />
+  <mx:Panel title="My Panel 1" width="400" statusStyleName="<warning>someStyle</warning>" />
+</mx:Application>

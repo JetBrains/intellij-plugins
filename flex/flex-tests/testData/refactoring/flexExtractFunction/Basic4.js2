@@ -1,0 +1,8 @@
+class Foo {
+    function xxx() {
+        var x:int = 1;
+        var y:int = 1;
+        <selection>x = 2;</selection>
+        alert(y);
+    }
+}

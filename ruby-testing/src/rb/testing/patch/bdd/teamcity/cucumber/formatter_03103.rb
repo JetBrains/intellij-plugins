@@ -19,9 +19,9 @@ module Teamcity
     class Formatter
       include ::Teamcity::Cucumber::FormatterCommons
 
-      def initialize(step_mother, path_or_io, options, delim='|')
+      def initialize(step_mother, path_or_io, options)
         @step_mother = step_mother
-        tc_initialize(options, delim, path_or_io)
+        tc_initialize(options, '|', path_or_io)
       end
 
 ##################################################

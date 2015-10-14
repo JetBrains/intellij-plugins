@@ -1,0 +1,24 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:x="aaa.*" xmlns:filters="flash.filters.*">
+    <mx:Metadata>[Event(name="select",type="flash.events.Event")][Event(name="unselect",type="flash.events.Event")]
+    </mx:Metadata>
+    <mx:Script><![CDATA[ import mx.events.EffectEvent; var a:EffectEvent
+            ]]></mx:Script>
+    <mx:Script>
+        <![CDATA[import mx.core.UIComponent;import mx.controls.Alert;
+
+        function aaa(a:UIComponent) { Alert.show("Hi","Title2"); a111.zzz3 = 1; trace("Hi"); Alert.show("Hi","Title2"); }
+// TODO:
+        var xxx2; var s = <zzz> {xxx2} </zzz>
+    ]]></mx:Script>
+
+    <mx:RemoteObject id="authServ" destination="authenticationService">
+        <mx:method name="resetUser"/>
+    </mx:RemoteObject><mx:Image id="helpIcon" source="@Embed('/src/A.mxml')"/><mx:Image id="helpIcon" source="@Embed('../src/A.mxml')"/><mx:Image id="helpIcon" source="/src/A.mxml"/>
+
+    <x:CCC myzzz="1" zzz2="2" id="a111" zzz3="true"/>
+    <x:B2 direction="vertical" me="aaa(event)" id="xxx"/>
+    <x:CCC/>
+    <mx:HBox verticalAlign="bottom" backgroundColor="blue" enabled="true" id="aa111" width="100%"/>
+    <mx:Button id="alertButton" click="mx.controls.Alert.show('Example')"/>
+    <mx:Button label="Show Alert2" click="aaa(111);" id="a1"/>
+</mx:Application>
