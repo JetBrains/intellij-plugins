@@ -23,7 +23,6 @@ import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +87,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
 
   @NotNull
   public static List<DartComponent> getSubClasses(@NotNull final Project project,
-                                                  @Nullable final SearchScope scope,
+                                                  @NotNull final SearchScope scope,
                                                   @NotNull final List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptyList();
 
@@ -99,7 +98,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
 
   @NotNull
   public static List<DartComponent> getSubMembers(@NotNull final Project project,
-                                                  @Nullable final SearchScope scope,
+                                                  @NotNull final SearchScope scope,
                                                   @NotNull final List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptyList();
 
@@ -109,7 +108,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
   }
 
   private static void addSubClasses(@NotNull final Project project,
-                                    @Nullable final SearchScope scope,
+                                    @NotNull final SearchScope scope,
                                     @NotNull final Set<TypeHierarchyItem> visited,
                                     @NotNull final List<TypeHierarchyItem> hierarchyItems,
                                     @NotNull final List<DartComponent> components,
@@ -122,7 +121,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
       final Element element = currentItem.getClassElement();
       final Location location = element.getLocation();
       final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
-      if (component != null && (scope == null || isInScope(scope, component))) {
+      if (component != null && isInScope(scope, component)) {
         components.add(component);
       }
     }
@@ -133,7 +132,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
   }
 
   private static void addSubMembers(@NotNull final Project project,
-                                    @Nullable final SearchScope scope,
+                                    @NotNull final SearchScope scope,
                                     @NotNull final Set<TypeHierarchyItem> visited,
                                     @NotNull final List<TypeHierarchyItem> hierarchyItems,
                                     @NotNull final List<DartComponent> components,
@@ -147,7 +146,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
       if (element != null) {
         final Location location = element.getLocation();
         final DartComponent component = DartServerOverrideMarkerProvider.findDartComponent(project, location);
-        if (component != null && (scope == null || isInScope(scope, component))) {
+        if (component != null && isInScope(scope, component)) {
           components.add(component);
         }
       }
