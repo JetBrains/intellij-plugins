@@ -11,8 +11,8 @@ import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.ide.script.IdeScriptException;
 
-import javax.script.ScriptException;
 import java.io.File;
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class Reveal {
                        true
       );
     }
-    catch (ScriptException e) {
+    catch (IdeScriptException e) {
       LOG.info("Reveal script failed:\n" + script);
       throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
     }
