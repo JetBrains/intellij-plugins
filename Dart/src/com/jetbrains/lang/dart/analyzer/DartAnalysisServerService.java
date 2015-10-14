@@ -95,7 +95,8 @@ public class DartAnalysisServerService {
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
-  private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
+  // Do not wait for server response under lock. Do not take read/write action under lock.
+  private final Object myLock = new Object();
   @Nullable private AnalysisServer myServer;
   @Nullable private StdioServerSocket myServerSocket;
 
@@ -479,6 +480,7 @@ public class DartAnalysisServerService {
 
   @SuppressWarnings("NestedSynchronizedStatement")
   void updateVisibleFiles() {
+    ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
       final List<String> newVisibleFiles = new ArrayList<String>();
 
@@ -505,6 +507,17 @@ public class DartAnalysisServerService {
   }
 
   public void updateFilesContent() {
+    if (myServer != null) {
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          doUpdateFilesContent();
+        }
+      });
+    }
+  }
+
+  private void doUpdateFilesContent() {
     // may be use DocumentListener to collect deltas instead of sending the whole Document.getText() each time?
 
     AnalysisServer server = myServer;
@@ -513,6 +526,7 @@ public class DartAnalysisServerService {
     }
 
     final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
+    ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
       final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
@@ -1133,6 +1147,7 @@ public class DartAnalysisServerService {
       return false;
     }
 
+    ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
       if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
         stopServer();
@@ -1182,18 +1197,19 @@ public class DartAnalysisServerService {
       myChangedDocuments.clear();
       myServerData.clearData();
 
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
+      final Set<Project> projects = myRootsHandler.getTrackedProjects();
+      myRootsHandler.reset();
+
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
         public void run() {
-          for (final Project project : myRootsHandler.getTrackedProjects()) {
+          for (final Project project : projects) {
             if (!project.isDisposed()) {
               DartProblemsViewImpl.getInstance(project).clearAll();
             }
           }
         }
-      });
-
-      myRootsHandler.reset();
+      }, ModalityState.NON_MODAL);
     }
   }
 
