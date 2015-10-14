@@ -1,6 +1,7 @@
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.util.ExecUtil;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Version;
@@ -14,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.script.ScriptException;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class Reveal {
@@ -91,23 +91,21 @@ public class Reveal {
     // Reveal 1.6 bundles the refresh script with the application — execute it using osascript
     File inspectionScript = getRevealInspectionScript();
     if (inspectionScript == null) {
-      throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found at path: " + inspectionScript.toString());
+      throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
     }
 
     try {
       ProcessBuilder pb = new ProcessBuilder(
-              "/usr/bin/osascript",
-              inspectionScript.toString(),
-              bundleID,
-              deviceName
+        ExecUtil.getOsascriptPath(),
+        inspectionScript.toString(),
+        bundleID,
+        deviceName
       );
 
       Process p = pb.start();
       p.waitFor();
     }
-    catch (IOException e) {
-      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
-    } catch (InterruptedException e) {
+    catch (Exception e) {
       throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
     }
   }
