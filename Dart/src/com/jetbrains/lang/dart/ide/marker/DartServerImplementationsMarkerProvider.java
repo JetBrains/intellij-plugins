@@ -26,6 +26,7 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
@@ -103,7 +104,8 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
           return;
         }
         // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
-        final List<DartComponent> components = DartInheritorsSearcher.getSubClasses(name.getProject(), null, items);
+        final List<DartComponent> components =
+          DartInheritorsSearcher.getSubClasses(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
         PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
                                             DaemonBundle.message("navigation.title.subclass", name.getName(), components.size()),
                                             "Subclasses of " + name.getName(), new DefaultPsiElementCellRenderer());
@@ -129,7 +131,8 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
           return;
         }
         // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
-        final List<DartComponent> components = DartInheritorsSearcher.getSubMembers(name.getProject(), null, items);
+        final List<DartComponent> components =
+          DartInheritorsSearcher.getSubMembers(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
         PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
                                             DaemonBundle.message("navigation.title.overrider.method", name.getName(), components.size()),
                                             "Overriding methods of " + name.getName(),
