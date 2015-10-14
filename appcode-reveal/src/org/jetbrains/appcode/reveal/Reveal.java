@@ -1,6 +1,7 @@
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.util.ExecUtil;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Version;
@@ -21,10 +22,20 @@ public class Reveal {
 
   @Nullable
   private static File getRevealBundle() {
+
     String path = NSWorkspace.absolutePathForAppBundleWithIdentifier("com.ittybittyapps.Reveal");
     if (path == null) return null;
     
     File result = new File(path);
+    return result.exists() ? result : null;
+  }
+
+  @Nullable
+  private static File getRevealInspectionScript() {
+    File bundle = getRevealBundle();
+    if (bundle == null) return null;
+
+    File result = new File(bundle, "/Contents/Resources/InspectApplication.scpt");
     return result.exists() ? result : null;
   }
 
@@ -40,6 +51,11 @@ public class Reveal {
   public static boolean isCompatible() {
     Version version = getRevealVersion();
     return version != null && version.isOrGreaterThan(2299);
+  }
+
+  public static boolean isCompatibleWithRevealOnePointSixOrHigher() {
+    Version version = getRevealVersion();
+    return version != null && version.isOrGreaterThan(5589);
   }
 
   @Nullable
@@ -64,19 +80,51 @@ public class Reveal {
   public static void refreshReveal(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
     UsageTrigger.trigger("appcode.reveal.showInReveal");
 
+    if (isCompatibleWithRevealOnePointSixOrHigher()) {
+      refreshRevealPostOnePointSix(bundleID, deviceName);
+    } else {
+      refreshRevealPreOnePointSix(bundleID, deviceName);
+    }
+  }
+
+  private static void refreshRevealPostOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+    // Reveal 1.6 bundles the refresh script with the application — execute it using osascript
+    File inspectionScript = getRevealInspectionScript();
+    if (inspectionScript == null) {
+      throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
+    }
+
+    try {
+      ProcessBuilder pb = new ProcessBuilder(
+        ExecUtil.getOsascriptPath(),
+        inspectionScript.toString(),
+        bundleID,
+        deviceName
+      );
+
+      Process p = pb.start();
+      p.waitFor();
+    }
+    catch (Exception e) {
+      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+    }
+  }
+
+  private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+    // Pre Reveal 1.6, the refresh script was not bundled with the application
     String script = "activate\n" +
-                    "repeat with doc in documents\n" +
-                    " refresh doc " +
-                    "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
-                    "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
-                    "   when available\n" +
-                    "end repeat\n" +
-                    "activate\n";
+            "repeat with doc in documents\n" +
+            " refresh doc " +
+            "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"" +
+            "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"" +
+            "   when available\n" +
+            "end repeat\n" +
+            "activate\n";
 
     try {
       AppleScript.tell("Reveal",
-                       script,
-                       true
+              script,
+              true
       );
     }
     catch (IdeScriptException e) {
