@@ -64,8 +64,6 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
             breakString(quote, quote, caretOffsetRef, caretAdvanceRef, document);
             return Result.Default;
           }
-          breakString("", "", caretOffsetRef, caretAdvanceRef, document);
-          //caretAdvanceRef.set(0);
           return Result.DefaultSkipIndent; // Multiline string gets no indent
         }
       }
