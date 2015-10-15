@@ -74,7 +74,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 
     final PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     if (psiElement != null) {
-      return psiElement.getLanguage() == DartLanguage.INSTANCE;
+      return psiElement.getLanguage() == DartLanguage.INSTANCE && !(psiElement instanceof PsiFile);
     }
 
     // in case of comment (that also may contain reference that is valid to rename) psiElement is null
