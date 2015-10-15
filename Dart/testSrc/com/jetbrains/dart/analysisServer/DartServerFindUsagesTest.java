@@ -1,9 +1,14 @@
 package com.jetbrains.dart.analysisServer;
 
+import com.intellij.find.FindManager;
+import com.intellij.find.findUsages.FindUsagesHandler;
+import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -14,6 +19,7 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
+import com.jetbrains.lang.dart.psi.impl.DartFileReference;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,8 +41,10 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     final PsiElement elementToSearch = getFile().findElementAt(getEditor().getCaretModel().getOffset());
     assertNotNull(elementToSearch);
 
-    final DartServerFindUsagesHandler handler = new DartServerFindUsagesHandler(elementToSearch);
-    CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<UsageInfo>();
+    final FindUsagesManager manager = ((FindManagerImpl)FindManager.getInstance(getProject())).getFindUsagesManager();
+    final FindUsagesHandler handler = manager.getFindUsagesHandler(elementToSearch, false);
+    assertInstanceOf(handler, DartServerFindUsagesHandler.class);
+    final CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<UsageInfo>();
     handler.processElementUsages(elementToSearch, processor, new FindUsagesOptions(scope));
 
     return processor.getResults();
@@ -111,5 +119,24 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
                 "LeafPsiElement in file0.dart@24:27 (non-code usage)",
                 "DartReferenceExpressionImpl in file0.dart@93:96",
                 "DartReferenceExpressionImpl in file0.dart@122:125 (dynamic usage)");
+  }
+
+  public void testFileUsage() {
+    final PsiFile barFile = myFixture.configureByText("bar.dart", "");
+    // it is important that foo.dart is not open in the editor
+    myFixture.addFileToProject("foo.dart", "import '" + barFile.getName() + "';");
+    myFixture.doHighlighting(); // warm up
+
+    final FindUsagesManager manager = ((FindManagerImpl)FindManager.getInstance(getProject())).getFindUsagesManager();
+    final FindUsagesHandler handler = manager.getFindUsagesHandler(getFile(), false);
+    assertNotNull(handler);
+    assertFalse(handler instanceof DartServerFindUsagesHandler);
+    final Collection<PsiReference> usages = handler.findReferencesToHighlight(getFile(), GlobalSearchScope.allScope(getProject()));
+
+    assertSize(1, usages);
+    final PsiReference reference = usages.iterator().next();
+    assertInstanceOf(reference, DartFileReference.class);
+    assertEquals("foo.dart", reference.getElement().getContainingFile().getName());
+    assertEquals("import '" + barFile.getName() + "';", reference.getElement().getParent().getText());
   }
 }

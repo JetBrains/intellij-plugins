@@ -86,6 +86,7 @@ public class DartAnalysisServerService {
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
@@ -618,6 +619,65 @@ public class DartAnalysisServerService {
         }
       }
     });
+  }
+
+  @Nullable
+  public List<DartServerData.DartNavigationRegion> analysis_getNavigation(@NotNull final VirtualFile file,
+                                                                          final int offset,
+                                                                          final int length) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+
+    final Ref<List<DartServerData.DartNavigationRegion>> resultRef = Ref.create();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      LOG.debug("analysis_getNavigation(" + filePath + ")");
+
+      final GetNavigationConsumer consumer = new GetNavigationConsumer() {
+        @Override
+        public void computedNavigation(final List<NavigationRegion> regions) {
+          final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<DartServerData.DartNavigationRegion>(regions.size());
+          for (NavigationRegion region : regions) {
+            if (region.getLength() > 0) {
+              dartRegions.add(new DartServerData.DartNavigationRegion(region));
+            }
+          }
+
+          resultRef.set(dartRegions);
+
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          if (RequestErrorCode.GET_NAVIGATION_INVALID_FILE.equals(error.getCode())) {
+            LOG.info(getShortErrorMessage("analysis_getNavigation()", filePath, error));
+          }
+          else {
+            logError("analysis_getNavigation()", filePath, error);
+          }
+
+          semaphore.up();
+        }
+      };
+
+      myServer.analysis_getNavigation(filePath, offset, length, consumer);
+    }
+
+    final long t0 = System.currentTimeMillis();
+
+    semaphore.waitFor(GET_NAVIGATION_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("analysis_getNavigation() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
+    }
+
+    return resultRef.get();
   }
 
   @Nullable
