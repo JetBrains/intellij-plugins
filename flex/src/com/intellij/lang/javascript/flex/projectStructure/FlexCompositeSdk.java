@@ -285,7 +285,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
 
     @Nullable
-    public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator) {
+    public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
       return null;
     }
 
