@@ -34,6 +34,7 @@ public class FlexmojosSdkType extends SdkType {
     return path.matches(COMPILER_POM_PATTERN_1) || path.matches(COMPILER_POM_PATTERN_2);
   }
 
+  @NotNull
   public FileChooserDescriptor getHomeChooserDescriptor() {
     final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, false, false, false, false, false) {
       public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
@@ -48,7 +49,7 @@ public class FlexmojosSdkType extends SdkType {
     return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 
-  public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator) {
+  public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
     return new FlexmojosSdkDataConfigurable();
   }
 
@@ -62,15 +63,17 @@ public class FlexmojosSdkType extends SdkType {
     ((FlexmojosSdkAdditionalData)additionalData).save(element);
   }
 
+  @NotNull
   public String getPresentableName() {
     return "Flexmojos SDK";
   }
 
+  @NotNull
   public String getHomeFieldLabel() {
     return "Flex Compiler POM:";
   }
 
-  public boolean isRootTypeApplicable(final OrderRootType type) {
+  public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
     return false;
   }
 
@@ -84,6 +87,7 @@ public class FlexmojosSdkType extends SdkType {
     return "reference.project.structure.sdk.flexmojos";
   }
 
+  @NotNull
   public Icon getIconForAddAction() {
     return getIcon();
   }

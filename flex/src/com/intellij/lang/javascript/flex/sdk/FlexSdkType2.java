@@ -57,7 +57,7 @@ public class FlexSdkType2 extends SdkType {
     return PathUtil.getFileName(sdkHome);
   }
 
-  public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator) {
+  public AdditionalDataConfigurable createAdditionalDataConfigurable(@NotNull final SdkModel sdkModel, @NotNull final SdkModificator sdkModificator) {
     return null;
   }
 
@@ -65,10 +65,12 @@ public class FlexSdkType2 extends SdkType {
 
   }
 
+  @NotNull
   public String getPresentableName() {
     return FlexBundle.message("flex.sdk.presentable.name");
   }
 
+  @NotNull
   public Icon getIconForAddAction() {
     return getIcon();
   }
@@ -84,6 +86,7 @@ public class FlexSdkType2 extends SdkType {
     modificator.commitChanges();
   }
 
+  @NotNull
   public Icon getIcon() {
     return FlexIcons.Flex.Sdk.Flex_sdk;
   }
@@ -94,7 +97,7 @@ public class FlexSdkType2 extends SdkType {
     return "reference.project.structure.sdk.flex";
   }
 
-  public boolean isRootTypeApplicable(final OrderRootType type) {
+  public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
     return type == OrderRootType.CLASSES || type == OrderRootType.SOURCES || type == JavadocOrderRootType.getInstance();
   }
 

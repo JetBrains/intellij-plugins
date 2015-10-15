@@ -24,7 +24,7 @@
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="built-in-server" />
     <orderEntry type="module" module-name="script-debugger-ui" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/JavaScriptDebugger.jar!/" />
@@ -33,7 +33,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/ChromeConnector.jar!/" />
@@ -42,7 +42,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/FirefoxConnector.jar!/" />
@@ -51,7 +51,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$IDEA_ULTIMATE_PLUGINS$/JavaScriptDebugger/lib/resources_en.jar!/" />
@@ -60,7 +60,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/JavaScriptPluginStub.jar!/" />
@@ -91,7 +91,7 @@
     <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="module" module-name="external-system-impl" scope="TEST" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$ADDITIONAL_PLUGINS$/WebComponents/lib/WebComponents.jar!/" />
@@ -100,7 +100,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/CSSPluginStub.jar!/" />

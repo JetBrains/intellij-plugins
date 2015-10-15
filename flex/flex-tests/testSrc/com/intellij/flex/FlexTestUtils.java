@@ -55,6 +55,7 @@ public class FlexTestUtils {
     return FileUtil.toSystemIndependentName(PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/" + relativePath);
   }
 
+  @NotNull
   public static String getPathToCompleteFlexSdk(final String version) {
     final File dir = new File("../tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk");
     if (dir.isDirectory()) {

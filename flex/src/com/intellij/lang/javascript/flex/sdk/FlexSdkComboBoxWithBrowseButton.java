@@ -25,6 +25,7 @@ import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -356,14 +357,14 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       myOriginal.removeSdk(editableObject);
     }
 
-    public void createAddActions(final DefaultActionGroup group,
-                                 final JComponent parent,
-                                 final Consumer<Sdk> updateTree,
+    public void createAddActions(@NotNull final DefaultActionGroup group,
+                                 @NotNull final JComponent parent,
+                                 @NotNull final Consumer<Sdk> updateTree,
                                  @Nullable final Condition<SdkTypeId> filter) {
       myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
-    public void doAdd(JComponent parent, final SdkType type, final Consumer<Sdk> updateTree) {
+    public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<Sdk> updateTree) {
       myOriginal.doAdd(parent, type, updateTree);
     }
 
