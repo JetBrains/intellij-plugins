@@ -48,7 +48,7 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     while ((slashIndex = path.indexOf('/', slashIndex + 1)) != -1) {
       final String pathPart = path.substring(0, slashIndex);
       PathInfo dirInfo = WebServerPathToFileManager.getInstance(project).getPathInfo(pathPart);
-      if (dirInfo == null || !dirInfo.getIsDirectory()) {
+      if (dirInfo == null || !dirInfo.isDirectory()) {
         continue;
       }
 
