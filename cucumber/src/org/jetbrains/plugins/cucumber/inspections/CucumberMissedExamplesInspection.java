@@ -43,13 +43,8 @@ public class CucumberMissedExamplesInspection extends GherkinInspection {
 
         final GherkinExamplesBlockImpl block = PsiTreeUtil.getChildOfType(outline, GherkinExamplesBlockImpl.class);
         if (block == null) {
-          final PsiElement descriptionLine = outline.getShortDescriptionText();
-          if (descriptionLine != null) {
-            holder.registerProblem(outline,
-                                   new TextRange(0, descriptionLine.getTextRange().getEndOffset() - outline.getTextOffset()),
-                                   CucumberBundle.message("inspection.missed.example.msg.name"),
-                                   new CucumberCreateExamplesSectionFix());
-          }
+          holder.registerProblem(outline, new TextRange(0, outline.getTextOffset()),
+                                 CucumberBundle.message("inspection.missed.example.msg.name"), new CucumberCreateExamplesSectionFix());
         }
       }
     };
