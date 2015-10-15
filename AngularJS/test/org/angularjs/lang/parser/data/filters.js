@@ -3,3 +3,4 @@
 'abcd' | substring:1:3 | uppercase
 n = (name | lowercase)
 name | uppercase:
+book.title || 'No Title' | translate

@@ -92,3 +92,24 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:COLON)(':')
           PsiErrorElement:expression expected
             <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('book')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('title')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OROR)('||')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''No Title'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        AngularJSFilterExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('translate')
