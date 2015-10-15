@@ -19,7 +19,15 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
   private State myState = new State();
 
   public MarkdownApplicationSettings() {
-    LafManager.getInstance().addLafManagerListener(new MarkdownLAFListener());
+    final MarkdownLAFListener lafListener = new MarkdownLAFListener();
+    LafManager.getInstance().addLafManagerListener(lafListener);
+    // Let's init proper CSS scheme
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        lafListener.updateCssSettingsForced(MarkdownLAFListener.isDarcula(LafManager.getInstance().getCurrentLookAndFeel()));
+      }
+    });
   }
 
   @NotNull
