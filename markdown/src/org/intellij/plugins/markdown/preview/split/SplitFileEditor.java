@@ -7,13 +7,17 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class SplitFileEditor extends UserDataHolderBase implements FileEditor {
   private static final String MY_PROPORTION_KEY = "SplitFileEditor.Proportion";
@@ -24,6 +28,8 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   protected final FileEditor mySecondEditor;
   @NotNull
   private final JBSplitter myComponent;
+  @NotNull
+  private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
   public SplitFileEditor(@NotNull FileEditor mainEditor, @NotNull FileEditor secondEditor) {
     myMainEditor = mainEditor;
@@ -92,12 +98,22 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
     myMainEditor.addPropertyChangeListener(listener);
     mySecondEditor.addPropertyChangeListener(listener);
+
+    final DoublingEventListenerDelegate delegate = myListenersGenerator.addListenerAndGetDelegate(listener);
+    myMainEditor.addPropertyChangeListener(delegate);
+    mySecondEditor.addPropertyChangeListener(delegate);
   }
 
   @Override
   public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
     myMainEditor.removePropertyChangeListener(listener);
     mySecondEditor.removePropertyChangeListener(listener);
+
+    final DoublingEventListenerDelegate delegate = myListenersGenerator.removeListenerAndGetDelegate(listener);
+    if (delegate != null) {
+      myMainEditor.removePropertyChangeListener(delegate);
+      mySecondEditor.removePropertyChangeListener(delegate);
+    }
   }
 
   @Nullable
@@ -150,6 +166,54 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
       return otherState instanceof MyFileEditorState
              && (myFirstState == null || myFirstState.canBeMergedWith(((MyFileEditorState)otherState).myFirstState, level))
              && (mySecondState == null || mySecondState.canBeMergedWith(((MyFileEditorState)otherState).mySecondState, level));
+    }
+  }
+
+  private class DoublingEventListenerDelegate implements PropertyChangeListener {
+    @NotNull
+    private final PropertyChangeListener myDelegate;
+
+    private DoublingEventListenerDelegate(@NotNull PropertyChangeListener delegate) {
+      myDelegate = delegate;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+      myDelegate.propertyChange(new PropertyChangeEvent(SplitFileEditor.this, evt.getPropertyName(), evt.getOldValue(), evt.getNewValue()));
+    }
+  }
+
+  private class MyListenersMultimap {
+    private final Map<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>> myMap =
+      new HashMap<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>>();
+
+    @NotNull
+    public DoublingEventListenerDelegate addListenerAndGetDelegate(@NotNull PropertyChangeListener listener) {
+      if (!myMap.containsKey(listener)) {
+        myMap.put(listener, Pair.create(1, new DoublingEventListenerDelegate(listener)));
+      }
+      else {
+        final Pair<Integer, DoublingEventListenerDelegate> oldPair = myMap.get(listener);
+        myMap.put(listener, Pair.create(oldPair.getFirst() + 1, oldPair.getSecond()));
+      }
+
+      return myMap.get(listener).getSecond();
+    }
+
+    @Nullable
+    public DoublingEventListenerDelegate removeListenerAndGetDelegate(@NotNull PropertyChangeListener listener) {
+      final Pair<Integer, DoublingEventListenerDelegate> oldPair = myMap.get(listener);
+      if (oldPair == null) {
+        return null;
+      }
+
+      if (oldPair.getFirst() == 1) {
+        myMap.remove(listener);
+      }
+      else {
+        myMap.put(listener, Pair.create(oldPair.getFirst() - 1, oldPair.getSecond()));
+      }
+      return oldPair.getSecond();
     }
   }
 }
