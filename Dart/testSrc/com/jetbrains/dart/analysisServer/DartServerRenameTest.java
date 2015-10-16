@@ -195,8 +195,8 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
 
   public void testFileRename() {
     final PsiFile barFile = myFixture.addFileToProject("src/bar.dart", "");
-    final PsiFile fooFile = myFixture.addFileToProject("foo.dart", "import  r'''src/" + barFile.getName() + " ''' ;");
-    final PsiFile bazFile = myFixture.addFileToProject("src/baz.dart", "export  '" + barFile.getName() + "';");
+    final PsiFile fooFile = myFixture.addFileToProject("foo.dart", "import  r'''src/bar.dart ''' ;");
+    final PsiFile bazFile = myFixture.addFileToProject("src/baz.dart", "export  'bar.dart';");
     myFixture.openFileInEditor(barFile.getVirtualFile());
     myFixture.doHighlighting(); // warm up
     myFixture.renameElement(barFile, "renamed.dart");
@@ -204,5 +204,17 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     myFixture.checkResult("import r'''src/renamed.dart''';");
     myFixture.openFileInEditor(bazFile.getVirtualFile());
     myFixture.checkResult("export 'renamed.dart';");
+  }
+
+  public void testTargetFileMove() {
+    final PsiFile fooFile = myFixture.addFileToProject("web/src/foo.dart", "import \"bar.dart\";");
+    myFixture.addFileToProject("web/src/bar.dart", "");
+    myFixture.openFileInEditor(fooFile.getVirtualFile());
+    myFixture.doHighlighting(); // warm up
+
+    myFixture.moveFile("web/src/bar.dart", "web");
+
+    myFixture.openFileInEditor(fooFile.getVirtualFile());
+    myFixture.checkResult("import \"../bar.dart\";");
   }
 }

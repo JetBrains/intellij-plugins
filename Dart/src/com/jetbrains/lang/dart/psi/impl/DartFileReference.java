@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -31,6 +32,7 @@ import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,15 +93,31 @@ public class DartFileReference implements PsiPolyVariantReference {
   public PsiElement handleElementRename(final String newFileName) throws IncorrectOperationException {
     final int index = Math.max(myUri.lastIndexOf('/'), myUri.lastIndexOf("\\\\"));
     final String newUri = index < 0 ? newFileName : myUri.substring(0, index) + "/" + newFileName;
-    return doHandleRename(newUri);
+    return updateUri(newUri);
   }
 
   @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
-    return element;
+    if (element instanceof PsiFile) {
+      final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(myUriElement.getContainingFile());
+      final VirtualFile targetFile = DartResolveUtil.getRealVirtualFile(((PsiFile)element));
+      if (contextFile != null && targetFile != null) {
+        final String newUri = DartUrlResolver.getInstance(myUriElement.getProject(), contextFile).getDartUrlForFile(targetFile);
+        if (newUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+          return updateUri(newUri);
+        }
+        else if (newUri.startsWith(DartUrlResolver.FILE_PREFIX)) {
+          final String relativePath = FileUtil.getRelativePath(contextFile.getParent().getPath(), targetFile.getPath(), '/');
+          if (relativePath != null) {
+            return updateUri(relativePath);
+          }
+        }
+      }
+    }
+    return myUriElement;
   }
 
-  private PsiElement doHandleRename(@NotNull final String newUri) {
+  private PsiElement updateUri(@NotNull final String newUri) {
     final String uriElementText = myUriElement.getText();
     final String startQuote = uriElementText.substring(0, myRange.getStartOffset());
     final String endQuote = uriElementText.substring(myRange.getEndOffset(), uriElementText.length());
@@ -169,7 +187,6 @@ public class DartFileReference implements PsiPolyVariantReference {
           }
         }
       }
-
 
       return ResolveResult.EMPTY_ARRAY;
     }
