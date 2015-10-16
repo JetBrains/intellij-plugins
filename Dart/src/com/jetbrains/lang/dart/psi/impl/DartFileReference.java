@@ -20,11 +20,15 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationRegion;
 import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationTarget;
 import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.psi.DartImportStatement;
+import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -38,15 +42,15 @@ import java.util.List;
 public class DartFileReference implements PsiPolyVariantReference {
   private static final Resolver RESOLVER = new Resolver();
 
-  @NotNull private final PsiElement myElement;
+  @NotNull private final DartUriElement myUriElement;
   @NotNull private final String myUri;
   @NotNull private final TextRange myRange;
 
-  public DartFileReference(@NotNull final DartUriElementBase uriRefExpr, @NotNull final String uri) {
-    final int offset = uriRefExpr.getText().indexOf(uri);
-    assert offset >= 0 : uriRefExpr.getText() + " doesn't contain " + uri;
+  public DartFileReference(@NotNull final DartUriElement uriElement, @NotNull final String uri) {
+    final int offset = uriElement.getText().indexOf(uri);
+    assert offset >= 0 : uriElement.getText() + " doesn't contain " + uri;
 
-    myElement = uriRefExpr;
+    myUriElement = uriElement;
     myUri = uri;
     myRange = TextRange.create(offset, offset + uri.length());
   }
@@ -54,7 +58,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   @NotNull
   @Override
   public PsiElement getElement() {
-    return myElement;
+    return myUriElement;
   }
 
   @Override
@@ -65,7 +69,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, true, incompleteCode);
+    return ResolveCache.getInstance(myUriElement.getProject()).resolveWithCaching(this, RESOLVER, true, incompleteCode);
   }
 
   @Nullable
@@ -84,13 +88,28 @@ public class DartFileReference implements PsiPolyVariantReference {
   }
 
   @Override
-  public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
-    return myElement;
+  public PsiElement handleElementRename(final String newFileName) throws IncorrectOperationException {
+    final int index = Math.max(myUri.lastIndexOf('/'), myUri.lastIndexOf("\\\\"));
+    final String newUri = index < 0 ? newFileName : myUri.substring(0, index) + "/" + newFileName;
+    return doHandleRename(newUri);
   }
 
   @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     return element;
+  }
+
+  private PsiElement doHandleRename(@NotNull final String newUri) {
+    final String uriElementText = myUriElement.getText();
+    final String startQuote = uriElementText.substring(0, myRange.getStartOffset());
+    final String endQuote = uriElementText.substring(myRange.getEndOffset(), uriElementText.length());
+    final String text = "import " + startQuote + newUri + endQuote + ";";
+    final PsiFile fileFromText = PsiFileFactory.getInstance(myUriElement.getProject()).createFileFromText(DartLanguage.INSTANCE, text);
+
+    final DartImportStatement importStatement = PsiTreeUtil.findChildOfType(fileFromText, DartImportStatement.class);
+    assert importStatement != null : fileFromText.getText();
+
+    return myUriElement.replace(importStatement.getUriElement());
   }
 
   @Override
