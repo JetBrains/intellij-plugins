@@ -3,8 +3,14 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
@@ -52,5 +58,25 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
 
   public void testMixin1() throws Throwable {
     doTest(1);
+  }
+
+  public void testIterableSubclasses() throws Throwable {
+    myFixture.configureByText("foo.dart", "");
+    myFixture.doHighlighting();
+    final DartSdk sdk = DartSdk.getDartSdk(getProject());
+    assertNotNull(sdk);
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/iterable.dart");
+    assertNotNull(file);
+    myFixture.openFileInEditor(file);
+    final DartClass iterableClass = PsiTreeUtil.findChildOfType(getFile(), DartClass.class);
+    assertNotNull(iterableClass);
+    assertEquals("Iterable", iterableClass.getName());
+    final PsiElement nameIdentifier = iterableClass.getNameIdentifier();
+    assertNotNull(nameIdentifier);
+    getEditor().getCaretModel().moveToOffset(nameIdentifier.getTextOffset());
+    final GotoTargetHandler.GotoData data =
+      new GotoImplementationHandler().getSourceAndTargetElements(myFixture.getEditor(), myFixture.getFile());
+    assertNotNull(data);
+    assertTrue(String.valueOf(data.targets.length), data.targets.length > 50);
   }
 }
