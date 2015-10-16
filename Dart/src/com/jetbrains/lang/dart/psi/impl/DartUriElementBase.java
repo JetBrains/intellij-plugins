@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class DartUriElementBase extends DartPsiCompositeElementImpl {
+public abstract class DartUriElementBase extends DartPsiCompositeElementImpl implements DartUriElement {
 
   private static final Condition<PsiFileSystemItem> DART_FILE_OR_DIR_FILTER = new Condition<PsiFileSystemItem>() {
     @Override
