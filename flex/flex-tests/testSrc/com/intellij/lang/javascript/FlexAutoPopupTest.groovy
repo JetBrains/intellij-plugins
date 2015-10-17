@@ -105,15 +105,6 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup == null
   }
 
-  public void testNoFocusForKeyword() {
-    myFixture.configureByText("a.js2", """
-        interface IFoo {}
-        i<caret>
-    """)
-    type 'f'
-    assert !lookup.focused
-  }
-
   public void testTypingGet() {
     myFixture.configureByText("a.js2", """
          function getFoo() {}
