@@ -6,6 +6,7 @@ import com.intellij.openapi.components.*;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
+import org.intellij.plugins.markdown.preview.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,10 +60,18 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
     return myState.myCssSettings;
   }
 
+  @NotNull
+  public SplitFileEditor.SplitEditorLayout getSplitEditorLayout() {
+    return myState.mySplitEditorLayout;
+  }
+
   public static class State {
     @Property(surroundWithTag = false)
     @NotNull
     private MarkdownCssSettings myCssSettings = MarkdownCssSettings.DEFAULT;
+
+    @NotNull
+    private SplitFileEditor.SplitEditorLayout mySplitEditorLayout = SplitFileEditor.SplitEditorLayout.SPLIT;
   }
 
   public interface SettingsChangedListener {

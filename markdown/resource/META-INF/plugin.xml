@@ -41,4 +41,13 @@
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>
   </extensions>
 
+  <actions>
+    <action class="org.intellij.plugins.markdown.preview.split.ExpandSplitAction"
+            id="org.intellij.plugins.markdown.preview.split.ExpandSplitAction"
+            text="Change split layout"
+            description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)">
+      <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
+    </action>
+  </actions>
+
 </idea-plugin>

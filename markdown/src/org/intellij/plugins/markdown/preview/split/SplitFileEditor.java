@@ -2,14 +2,14 @@ package org.intellij.plugins.markdown.preview.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorLocation;
-import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
+import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class SplitFileEditor extends UserDataHolderBase implements FileEditor {
+  public static final Key<SplitFileEditor> PARENT_SPLIT_KEY = Key.create("parentSplit");
+
   private static final String MY_PROPORTION_KEY = "SplitFileEditor.Proportion";
 
   @NotNull
@@ -28,6 +30,8 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   protected final FileEditor mySecondEditor;
   @NotNull
   private final JBSplitter myComponent;
+  @NotNull
+  private SplitEditorLayout mySplitEditorLayout = MarkdownApplicationSettings.getInstance().getSplitEditorLayout();
   @NotNull
   private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
@@ -39,6 +43,30 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     myComponent.setSplitterProportionKey(MY_PROPORTION_KEY);
     myComponent.setFirstComponent(myMainEditor.getComponent());
     myComponent.setSecondComponent(mySecondEditor.getComponent());
+
+    if (myMainEditor instanceof TextEditor) {
+      myMainEditor.putUserData(PARENT_SPLIT_KEY, this);
+    }
+    if (mySecondEditor instanceof TextEditor) {
+      mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
+    }
+  }
+
+  public void triggerLayoutChange() {
+    final int oldValue = mySplitEditorLayout.ordinal();
+    final int newValue = (oldValue + 1) % SplitEditorLayout.values().length;
+
+    mySplitEditorLayout = SplitEditorLayout.values()[newValue];
+
+    invalidateLayout();
+  }
+
+  private void invalidateLayout() {
+    myMainEditor.getComponent().setVisible(mySplitEditorLayout.showFirst);
+    mySecondEditor.getComponent().setVisible(mySplitEditorLayout.showSecond);
+    myComponent.repaint();
+
+    IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
   }
 
   @NotNull
@@ -56,7 +84,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   @NotNull
   @Override
   public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-    return new MyFileEditorState(myMainEditor.getState(level), mySecondEditor.getState(level));
+    return new MyFileEditorState(mySplitEditorLayout.name(), myMainEditor.getState(level), mySecondEditor.getState(level));
   }
 
   @Override
@@ -68,6 +96,10 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
       }
       if (compositeState.getSecondState() != null) {
         mySecondEditor.setState(compositeState.getSecondState());
+      }
+      if (compositeState.getSplitLayout() != null) {
+        mySplitEditorLayout = SplitEditorLayout.valueOf(compositeState.getSplitLayout());
+        invalidateLayout();
       }
     }
   }
@@ -142,13 +174,21 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
 
   static class MyFileEditorState implements FileEditorState {
     @Nullable
+    private final String mySplitLayout;
+    @Nullable
     private final FileEditorState myFirstState;
     @Nullable
     private final FileEditorState mySecondState;
 
-    public MyFileEditorState(@Nullable FileEditorState firstState, @Nullable FileEditorState secondState) {
+    public MyFileEditorState(@Nullable String splitLayout, @Nullable FileEditorState firstState, @Nullable FileEditorState secondState) {
+      mySplitLayout = splitLayout;
       myFirstState = firstState;
       mySecondState = secondState;
+    }
+
+    @Nullable
+    public String getSplitLayout() {
+      return mySplitLayout;
     }
 
     @Nullable
@@ -214,6 +254,20 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
         myMap.put(listener, Pair.create(oldPair.getFirst() - 1, oldPair.getSecond()));
       }
       return oldPair.getSecond();
+    }
+  }
+
+  public enum SplitEditorLayout {
+    FIRST(true, false),
+    SECOND(false, true),
+    SPLIT(true, true);
+
+    public final boolean showFirst;
+    public final boolean showSecond;
+
+    SplitEditorLayout(boolean showFirst, boolean showSecond) {
+      this.showFirst = showFirst;
+      this.showSecond = showSecond;
     }
   }
 }

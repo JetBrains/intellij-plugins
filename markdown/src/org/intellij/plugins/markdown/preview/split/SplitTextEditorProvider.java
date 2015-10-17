@@ -5,6 +5,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,7 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
 
   private static final String FIRST_EDITOR = "first_editor";
   private static final String SECOND_EDITOR = "second_editor";
+  private static final String SPLIT_LAYOUT = "split_layout";
 
   @NotNull
   protected final FileEditorProvider myFirstProvider;
@@ -78,7 +80,17 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
       secondState = mySecondProvider.readState(child, project, file);
     }
 
-    return new SplitFileEditor.MyFileEditorState(firstState, secondState);
+    final Attribute attribute = sourceElement.getAttribute(SPLIT_LAYOUT);
+
+    final String layoutName;
+    if (attribute != null) {
+      layoutName = attribute.getValue();
+    }
+    else {
+      layoutName = null;
+    }
+
+    return new SplitFileEditor.MyFileEditorState(layoutName, firstState, secondState);
   }
 
   @Override
@@ -98,6 +110,10 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
     if (compositeState.getSecondState() != null) {
       mySecondProvider.writeState(compositeState.getSecondState(), project, child);
       targetElement.addContent(child);
+    }
+
+    if (compositeState.getSplitLayout() != null) {
+      targetElement.setAttribute(SPLIT_LAYOUT, compositeState.getSplitLayout());
     }
   }
 
