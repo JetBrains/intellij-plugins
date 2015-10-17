@@ -15,9 +15,7 @@ import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
-import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.*;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -322,7 +320,10 @@ public class GeneratorServer {
   }
 
   private static DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {
-    final DefaultPlexusContainer container = new DefaultPlexusContainer(new DefaultContainerConfiguration().setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())).setName("maven").setAutoWiring(true));
+    ContainerConfiguration containerConfiguration = new DefaultContainerConfiguration()
+            .setClassPathScanning(PlexusConstants.SCANNING_ON).setAutoWiring(true)
+            .setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())).setName("maven");
+    final DefaultPlexusContainer container = new DefaultPlexusContainer(containerConfiguration);
 
     final List<LocalRepositoryManagerFactory> factoryList = Collections.singletonList(container.lookup(LocalRepositoryManagerFactory.class, "simple"));
     final String mavenVersion = container.lookup(RuntimeInformation.class).getMavenVersion();
