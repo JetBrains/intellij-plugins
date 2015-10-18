@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
@@ -56,10 +57,13 @@ class MarkdownActionUtil {
   }
 
   @Nullable
-  public static PsiElement getCommonParentOfType(@NotNull PsiFile file, @NotNull Caret caret, @NotNull final IElementType elementType) {
-    final PsiElement base;
+  public static Couple<PsiElement> getElementsUnderCaretOrSelection(@NotNull PsiFile file, @NotNull Caret caret) {
     if (caret.getSelectionStart() == caret.getSelectionEnd()) {
-      base = file.findElementAt(caret.getOffset());
+      final PsiElement element = file.findElementAt(caret.getSelectionStart());
+      if (element == null) {
+        return null;
+      }
+      return Couple.of(element, element);
     }
     else {
       final PsiElement startElement = file.findElementAt(caret.getSelectionStart());
@@ -67,10 +71,15 @@ class MarkdownActionUtil {
       if (startElement == null || endElement == null) {
         return null;
       }
-
-      base = PsiTreeUtil.findCommonParent(startElement, endElement);
+      return Couple.of(startElement, endElement);
     }
+  }
 
+  @Nullable
+  public static PsiElement getCommonParentOfType(@NotNull PsiElement element1,
+                                                 @NotNull PsiElement element2,
+                                                 @NotNull final IElementType elementType) {
+    final PsiElement base = PsiTreeUtil.findCommonParent(element1, element2);
     return PsiTreeUtil.findFirstParent(base, false, new Condition<PsiElement>() {
       @Override
       public boolean value(PsiElement element) {
@@ -80,14 +89,4 @@ class MarkdownActionUtil {
     });
   }
 
-  @NotNull
-  public static SelectionState getCommonState(@NotNull PsiFile file, @NotNull Caret caret, @NotNull final IElementType stateInQuestion) {
-    return getCommonParentOfType(file, caret, stateInQuestion) == null ? SelectionState.NO : SelectionState.YES;
-  }
-
-  public enum SelectionState {
-    YES,
-    NO,
-    INCONSISTENT
-  }
 }
