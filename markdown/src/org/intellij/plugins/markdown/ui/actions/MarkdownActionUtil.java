@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.ui.actions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -12,6 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +34,14 @@ class MarkdownActionUtil {
   public static Editor findMarkdownTextEditor(AnActionEvent e) {
     final SplitFileEditor splitEditor = findSplitEditor(e);
     if (splitEditor == null) {
-      return null;
+      // This fallback is used primarily for testing
+      final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
+      if (psiFile != null && psiFile.getLanguage() == MarkdownLanguage.INSTANCE) {
+        return e.getData(CommonDataKeys.EDITOR);
+      }
+      else {
+        return null;
+      }
     }
 
     if (!(splitEditor.getMainEditor() instanceof TextEditor)) {
