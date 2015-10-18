@@ -18,7 +18,6 @@ package org.intellij.plugins.markdown.highlighting;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 import static com.intellij.openapi.editor.DefaultLanguageHighlighterColors.*;
-import static com.intellij.openapi.editor.HighlighterColors.NO_HIGHLIGHTING;
 import static com.intellij.openapi.editor.HighlighterColors.TEXT;
 import static com.intellij.openapi.editor.colors.CodeInsightColors.DEPRECATED_ATTRIBUTES;
 import static com.intellij.openapi.editor.colors.CodeInsightColors.HYPERLINK_ATTRIBUTES;
@@ -37,7 +36,7 @@ public class MarkdownHighlighterColors {
   public static final TextAttributesKey LINK_DEFINITION_ATTR_KEY = createTextAttributesKey("MARKDOWN_LINK_DEFINITION", TEXT);
   public static final TextAttributesKey HTML_BLOCK_ATTR_KEY = createTextAttributesKey("MARKDOWN_HTML_BLOCK", TEXT);
   public static final TextAttributesKey INLINE_HTML_ATTR_KEY = createTextAttributesKey("MARKDOWN_INLINE_HTML", TEXT);
-  public static final TextAttributesKey TEXT_ATTR_KEY = createTextAttributesKey("MARKDOWN_TEXT", NO_HIGHLIGHTING);
+  public static final TextAttributesKey TEXT_ATTR_KEY = createTextAttributesKey("MARKDOWN_TEXT");
   public static final TextAttributesKey BOLD_ATTR_KEY = createTextAttributesKey("MARKDOWN_BOLD", STRING);
   public static final TextAttributesKey ITALIC_ATTR_KEY = createTextAttributesKey("MARKDOWN_ITALIC", STRING);
   public static final TextAttributesKey STRIKE_THROUGH_ATTR_KEY = createTextAttributesKey("MARKDOWN_STRIKE_THROUGH", DEPRECATED_ATTRIBUTES);
