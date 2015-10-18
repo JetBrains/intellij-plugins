@@ -1,10 +1,9 @@
-package org.intellij.plugins.markdown.preview;
+package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorProvider;
-import org.intellij.plugins.markdown.preview.split.SplitFileEditor;
-import org.intellij.plugins.markdown.preview.split.SplitTextEditorProvider;
+import org.intellij.plugins.markdown.ui.split.SplitTextEditorProvider;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownSplitEditorProvider extends SplitTextEditorProvider {

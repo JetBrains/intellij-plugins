@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.preview.split;
+package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.DumbAware;

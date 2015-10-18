@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.preview.split;
+package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -59,7 +59,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     splitter.setSecondComponent(mySecondEditor.getComponent());
 
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.add(ActionManager.getInstance().getAction("org.intellij.plugins.markdown.preview.split.ExpandSplitAction"));
+    actionGroup.add(ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"));
     actionGroup.addSeparator();
     actionGroup.addAll(createToolbarActions());
 

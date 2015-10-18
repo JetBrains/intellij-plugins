@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.preview;
+package org.intellij.plugins.markdown.ui.preview;
 
 import org.lobobrowser.context.NetworkRequestImpl;
 import org.lobobrowser.html.HttpRequest;

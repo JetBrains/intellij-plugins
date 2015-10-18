@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.preview;
+package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -8,7 +8,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.Range;
 import org.intellij.markdown.html.HtmlGenerator;
-import org.intellij.plugins.markdown.preview.lobo.ScrollPreservingHtmlBlockPanel;
+import org.intellij.plugins.markdown.ui.preview.lobo.ScrollPreservingHtmlBlockPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lobobrowser.html.HtmlRendererContext;

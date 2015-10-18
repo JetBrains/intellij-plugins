@@ -6,7 +6,7 @@ import com.intellij.openapi.components.*;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
-import org.intellij.plugins.markdown.preview.split.SplitFileEditor;
+import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

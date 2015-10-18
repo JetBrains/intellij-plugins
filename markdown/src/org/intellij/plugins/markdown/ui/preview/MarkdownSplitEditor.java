@@ -1,12 +1,10 @@
-package org.intellij.plugins.markdown.preview;
+package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.CaretAdapter;
 import com.intellij.openapi.editor.event.CaretEvent;
-import com.intellij.openapi.editor.event.CaretListener;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
-import org.intellij.plugins.markdown.preview.split.SplitFileEditor;
+import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownSplitEditor extends SplitFileEditor {

@@ -1,10 +1,11 @@
-package org.intellij.plugins.markdown.preview.split;
+package org.intellij.plugins.markdown.ui.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
+import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 
 public class ExpandSplitAction extends AnAction implements DumbAware {
   @Override

@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.preview.lobo;
+package org.intellij.plugins.markdown.ui.preview.lobo;
 
 import org.lobobrowser.html.HtmlRendererContext;
 import org.lobobrowser.html.UserAgentContext;

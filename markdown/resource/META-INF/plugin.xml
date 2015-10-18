@@ -27,7 +27,7 @@
 
     <annotator language="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
 
-    <fileEditorProvider implementation="org.intellij.plugins.markdown.preview.MarkdownSplitEditorProvider"/>
+    <fileEditorProvider implementation="org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider"/>
 
     <spellchecker.support language="Markdown"
                           implementationClass="org.intellij.plugins.markdown.spellchecking.MarkdownSpellcheckingStrategy"/>
@@ -42,8 +42,8 @@
   </extensions>
 
   <actions>
-    <action class="org.intellij.plugins.markdown.preview.split.ExpandSplitAction"
-            id="org.intellij.plugins.markdown.preview.split.ExpandSplitAction"
+    <action class="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
+            id="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
             text="Change split layout"
             description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
             icon="AllIcons.Actions.PreviewDetails">
