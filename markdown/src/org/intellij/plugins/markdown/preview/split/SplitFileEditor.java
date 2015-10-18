@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.preview.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -29,7 +31,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   @NotNull
   protected final FileEditor mySecondEditor;
   @NotNull
-  private final JBSplitter myComponent;
+  private final JComponent myComponent;
   @NotNull
   private SplitEditorLayout mySplitEditorLayout = MarkdownApplicationSettings.getInstance().getSplitEditorLayout();
   @NotNull
@@ -39,10 +41,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     myMainEditor = mainEditor;
     mySecondEditor = secondEditor;
 
-    myComponent = new JBSplitter(false, 0.5f, 0.15f, 0.85f);
-    myComponent.setSplitterProportionKey(MY_PROPORTION_KEY);
-    myComponent.setFirstComponent(myMainEditor.getComponent());
-    myComponent.setSecondComponent(mySecondEditor.getComponent());
+    myComponent = createComponent();
 
     if (myMainEditor instanceof TextEditor) {
       myMainEditor.putUserData(PARENT_SPLIT_KEY, this);
@@ -50,6 +49,34 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     if (mySecondEditor instanceof TextEditor) {
       mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
     }
+  }
+
+  @NotNull
+  private JComponent createComponent() {
+    final JBSplitter splitter = new JBSplitter(false, 0.5f, 0.15f, 0.85f);
+    splitter.setSplitterProportionKey(MY_PROPORTION_KEY);
+    splitter.setFirstComponent(myMainEditor.getComponent());
+    splitter.setSecondComponent(mySecondEditor.getComponent());
+
+    final DefaultActionGroup actionGroup = new DefaultActionGroup();
+    actionGroup.add(ActionManager.getInstance().getAction("org.intellij.plugins.markdown.preview.split.ExpandSplitAction"));
+    actionGroup.addSeparator();
+    actionGroup.addAll(createToolbarActions());
+
+    final ActionToolbar editorToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, actionGroup, true);
+
+    final JPanel result = new JPanel(new BorderLayout());
+    result.add(editorToolbar.getComponent(), BorderLayout.SOUTH);
+    result.add(splitter, BorderLayout.CENTER);
+
+    editorToolbar.setTargetComponent(splitter);
+
+    return result;
+  }
+
+  @NotNull
+  protected AnAction[] createToolbarActions() {
+    return AnAction.EMPTY_ARRAY;
   }
 
   public void triggerLayoutChange() {
@@ -78,7 +105,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   @Nullable
   @Override
   public JComponent getPreferredFocusedComponent() {
-    return myComponent.getFirstComponent();
+    return myMainEditor.getPreferredFocusedComponent();
   }
 
   @NotNull

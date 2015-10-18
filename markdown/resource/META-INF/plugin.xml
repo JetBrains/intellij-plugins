@@ -45,7 +45,8 @@
     <action class="org.intellij.plugins.markdown.preview.split.ExpandSplitAction"
             id="org.intellij.plugins.markdown.preview.split.ExpandSplitAction"
             text="Change split layout"
-            description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)">
+            description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
+            icon="AllIcons.Actions.PreviewDetails">
       <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
     </action>
   </actions>

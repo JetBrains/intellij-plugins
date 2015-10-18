@@ -15,6 +15,11 @@ public class ExpandSplitAction extends AnAction implements DumbAware {
   }
 
   @Override
+  public boolean displayTextInToolbar() {
+    return true;
+  }
+
+  @Override
   public void actionPerformed(AnActionEvent e) {
     final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);
     final SplitFileEditor splitFileEditor;
