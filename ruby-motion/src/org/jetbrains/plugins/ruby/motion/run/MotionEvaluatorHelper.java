@@ -2,6 +2,7 @@ package org.jetbrains.plugins.ruby.motion.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.util.Pair;
+import com.intellij.xdebugger.XExpression;
 import com.intellij.xdebugger.XSourcePosition;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
 import com.jetbrains.cidr.execution.debugger.CidrEvaluatorHelper;
@@ -23,11 +24,12 @@ public class MotionEvaluatorHelper extends CidrEvaluatorHelper {
   @Override
   public Pair<LLValue, String> convertAndEvaluate(@NotNull CidrDebugProcess process,
                                                   @NotNull DebuggerDriver driver,
-                                                  @NotNull String expression,
+                                                  @NotNull XExpression expression,
                                                   XSourcePosition sourcePosition,
                                                   int frameNumber,
                                                   int threadId) throws ExecutionException, DBCannotEvaluateException {
-    final LLValue result = driver.evaluate(threadId, frameNumber, expression);
-    return Pair.create(result, expression);
+    final String stringExpression = expression.getExpression();
+    final LLValue result = driver.evaluate(threadId, frameNumber, stringExpression);
+    return Pair.create(result, stringExpression);
   }
 }

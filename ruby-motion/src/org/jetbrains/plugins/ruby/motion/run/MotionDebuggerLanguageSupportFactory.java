@@ -12,6 +12,7 @@ import com.jetbrains.cidr.execution.debugger.CidrDebuggerLanguageSupportFactory;
 import com.jetbrains.cidr.execution.debugger.CidrEvaluator;
 import com.jetbrains.cidr.execution.debugger.CidrStackFrame;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrDebuggerTypesHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.ruby.debugger.impl.RubyDebuggerEditorsProvider;
 import org.jetbrains.plugins.ruby.ruby.lang.RubyFileType;
@@ -49,7 +50,7 @@ public class MotionDebuggerLanguageSupportFactory extends CidrDebuggerLanguageSu
 
   @Nullable
   @Override
-  public CidrEvaluator createEvaluator(CidrStackFrame frame, int threadId, int frameNumber) {
+  public CidrEvaluator createEvaluator(@NotNull CidrStackFrame frame) {
     return null;
   }
 }
