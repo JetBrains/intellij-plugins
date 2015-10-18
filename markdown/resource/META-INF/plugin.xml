@@ -49,6 +49,15 @@
             icon="AllIcons.Actions.PreviewDetails">
       <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
     </action>
+
+    <action class="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
+            id="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
+            text="Toggle italic mode"
+            description="Toggles italic mode on caret/selection"
+            icon="MarkdownIcons.Italic">
+      <keyboard-shortcut first-keystroke="ctrl u" keymap="$default"/>
+    </action>
+
   </actions>
 
 </idea-plugin>

@@ -97,6 +97,16 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   }
 
   @NotNull
+  public FileEditor getMainEditor() {
+    return myMainEditor;
+  }
+
+  @NotNull
+  public FileEditor getSecondEditor() {
+    return mySecondEditor;
+  }
+
+  @NotNull
   @Override
   public JComponent getComponent() {
     return myComponent;
