@@ -216,6 +216,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
         } catch (OldJdkException oldJdkException) {
             oldJdkException.printStackTrace();
+        } catch (NoSdkException noSdkException){
+            showSdkProblemDialog(project, noSdkException.getMessage());
         } catch (InvalidSdkException e) {
             showSdkProblemDialog(project, e.getMessage());
         } catch (BadCommandException e) {
@@ -360,12 +362,13 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
      * @throws OldJdkException     - if project JDK version is not enough for this course
      * @throws InvalidSdkException - if project SDK is not suitable for course
      */
-    public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException {
+    public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException, NoSdkException {
 
         if (course == null) return;
 
         final Sdk projectJdk = ProjectRootManager.getInstance(project).getProjectSdk();
-        assert projectJdk != null;
+        if (projectJdk == null) throw new NoSdkException();
+
         final SdkTypeId sdkType = projectJdk.getSdkType();
         if (course.getSdkType() == Course.CourseSdkType.JAVA) {
             if (sdkType instanceof JavaSdk) {
