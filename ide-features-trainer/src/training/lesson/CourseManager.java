@@ -349,7 +349,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     }
 
     @Nullable
-    private EduEditor getEduEditor(Project project, VirtualFile vf) {
+    public EduEditor getEduEditor(Project project, VirtualFile vf) {
         OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
         final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
         if (allEditors.length == 0) {
