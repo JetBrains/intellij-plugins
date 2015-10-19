@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.completion.PrefixMatcher;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,8 +40,8 @@ public class CucumberPrefixMatcher extends PrefixMatcher {
     return new CucumberPrefixMatcher(prefix);
   }
 
-  private static boolean isWordToCount(String word) {
-    return word.matches(".*[()\\\\#0-9].*");
+  private static boolean containsSpecialChars(String word) {
+    return StringUtil.containsAnyChar(word, "()\\#0123456789");
   }
 
   private static List<String> getSignificantWords(String source) {
@@ -48,7 +49,7 @@ public class CucumberPrefixMatcher extends PrefixMatcher {
 
     final String[] words = source.split(" ");
     for (String word : words) {
-      if (isWordToCount(word)) {
+      if (containsSpecialChars(word)) {
         continue;
       }
       result.add(word.toLowerCase());
