@@ -211,7 +211,14 @@ public class DartAnalysisServerService {
                   new Task.Backgroundable(project, DartBundle.message("dart.analysis.progress.title"), false) {
                     @Override
                     public void run(@NotNull ProgressIndicator indicator) {
-                      waitWhileServerBusy();
+                      if (ApplicationManager.getApplication().isDispatchThread()) {
+                        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                          LOG.error("wait() in EDT");
+                        }
+                      }
+                      else {
+                        waitWhileServerBusy();
+                      }
                     }
                   };
 
