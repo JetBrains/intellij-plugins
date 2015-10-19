@@ -116,7 +116,7 @@ public class ActionsRecorder implements Disposable {
 
         if (target == null){
             if (triggerQueue !=null) {
-                return (triggerQueue.size() == 0 && (check == null ? true : check.check()));
+                return (triggerQueue.size() == 1 && (check == null ? true : check.check()));
             } else return (triggerActivated && (check == null ? true : check.check()));
         } else {
 
@@ -171,11 +171,12 @@ public class ActionsRecorder implements Disposable {
                 final String actionId = extendActionId(action);
 
                 if(actionId == null) return;
+                //trigger queue can't be empty. Last action should lead to pass task in other case polled element should be returned back.
                 if(triggerQueue.size() == 0) return;
                 if (actionId.toUpperCase().equals(triggerQueue.peek().toUpperCase())) {
 //                    System.out.println("Action trigger has been activated.");
-                    triggerQueue.poll();
-                    if (triggerQueue.size() == 0) {
+                    if (triggerQueue.size() > 1) triggerQueue.poll();
+                    if (triggerQueue.size() == 1) {
                         if (isTaskSolved(document, target)) {
                             actionManager.removeAnActionListener(this);
                             if (doWhenDone != null)
