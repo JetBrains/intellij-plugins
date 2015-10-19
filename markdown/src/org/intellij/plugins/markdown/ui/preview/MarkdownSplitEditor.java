@@ -27,7 +27,9 @@ public class MarkdownSplitEditor extends SplitFileEditor {
   @Override
   protected AnAction[] createToolbarActions() {
     return new AnAction[]{
-      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleItalicAction")
+      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"),
+      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"),
+      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction")
     };
   }
 

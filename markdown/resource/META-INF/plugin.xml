@@ -55,7 +55,23 @@
             text="Toggle italic mode"
             description="Toggles italic mode on caret/selection"
             icon="MarkdownIcons.Italic">
+      <keyboard-shortcut first-keystroke="ctrl i" keymap="$default"/>
+    </action>
+
+    <action class="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
+            id="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
+            text="Toggle bold mode"
+            description="Toggles bold mode on caret/selection"
+            icon="MarkdownIcons.Bold">
       <keyboard-shortcut first-keystroke="ctrl u" keymap="$default"/>
+    </action>
+
+    <action class="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
+            id="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
+            text="Toggle bold mode"
+            description="Toggles bold mode on caret/selection"
+            icon="MarkdownIcons.Code">
+      <keyboard-shortcut first-keystroke="ctrl o" keymap="$default"/>
     </action>
 
   </actions>

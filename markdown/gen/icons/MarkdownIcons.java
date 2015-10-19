@@ -13,6 +13,8 @@ public class MarkdownIcons {
     return IconLoader.getIcon(path, MarkdownIcons.class);
   }
 
+  public static final Icon Bold = load("/icons/Bold.png"); // 16x16
+  public static final Icon Code = load("/icons/Code.png"); // 16x16
   public static final Icon Italic = load("/icons/Italic.png"); // 16x16
   public static final Icon MarkdownPlugin = load("/icons/MarkdownPlugin.png"); // 16x16
 }
