@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public class ToggleBoldAction extends BaseToggleStateAction {
   @NotNull
   @Override
-  protected String getBoundString(boolean isWord) {
+  protected String getBoundString(@NotNull CharSequence text, int selectionStart, int selectionEnd) {
     return "**";
   }
 

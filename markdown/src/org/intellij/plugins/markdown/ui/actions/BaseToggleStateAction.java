@@ -23,7 +23,7 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
   private static final Logger LOG = Logger.getInstance(BaseToggleStateAction.class);
 
   @NotNull
-  protected abstract String getBoundString(boolean isWord);
+  protected abstract String getBoundString(@NotNull CharSequence text, int selectionStart, int selectionEnd);
 
   @Nullable
   protected String getExistingBoundString(@NotNull CharSequence text, int startOffset) {
@@ -187,25 +187,20 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
       while (to > from && Character.isWhitespace(text.charAt(to - 1))) {
         to--;
       }
+
+      if (from == to) {
+        from = caret.getSelectionStart();
+        to = caret.getSelectionEnd();
+      }
     }
 
-    if (from == to) {
-      from = caret.getSelectionStart();
-      to = caret.getSelectionEnd();
-    }
-
-    final String boundString = getBoundString(isWord(text, from, to));
+    final String boundString = getBoundString(text, from, to);
     document.insertString(to, boundString);
     document.insertString(from, boundString);
 
     if (caret.getSelectionStart() == caret.getSelectionEnd()) {
       caret.moveCaretRelatively(boundString.length(), 0, false, false);
     }
-  }
-
-  private static boolean isWord(@NotNull CharSequence text, int from, int to) {
-    return (from == 0 || !Character.isLetterOrDigit(text.charAt(from - 1)))
-           && (to == text.length() || !Character.isLetterOrDigit(text.charAt(to)));
   }
 
   protected enum SelectionState {
