@@ -43,7 +43,7 @@ public class SmallLog extends JFrame{
     }
 
     public ArrayList<ClickLabel> getClickLabels(){
-        return (ArrayList<ClickLabel>) semiTransparentPanel.clickLabels;
+        return semiTransparentPanel.clickLabels;
     }
 
     public Pivot getPivot(){
