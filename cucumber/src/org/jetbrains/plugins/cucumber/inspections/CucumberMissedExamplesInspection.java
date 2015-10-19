@@ -2,8 +2,7 @@ package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 
 /**
@@ -43,8 +43,12 @@ public class CucumberMissedExamplesInspection extends GherkinInspection {
 
         final GherkinExamplesBlockImpl block = PsiTreeUtil.getChildOfType(outline, GherkinExamplesBlockImpl.class);
         if (block == null) {
-          holder.registerProblem(outline, new TextRange(0, outline.getTextOffset()),
-                                 CucumberBundle.message("inspection.missed.example.msg.name"), new CucumberCreateExamplesSectionFix());
+          ASTNode[] keyword = outline.getNode().getChildren(GherkinTokenTypes.KEYWORDS);
+          if (keyword.length > 0) {
+
+            holder.registerProblem(outline, keyword[0].getTextRange().shiftRight(-outline.getTextOffset()),
+                                   CucumberBundle.message("inspection.missed.example.msg.name"), new CucumberCreateExamplesSectionFix());
+          }
         }
       }
     };
