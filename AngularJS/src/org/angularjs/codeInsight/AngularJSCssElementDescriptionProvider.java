@@ -25,7 +25,7 @@ import java.util.List;
 public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
   @Override
   public boolean isMyContext(@Nullable PsiElement context) {
-    if (context == null) return false;
+    if (context == null || !context.isValid()) return false;
     final PsiFile file = context.getContainingFile();
     if (file == null) return false;
     final Project project = context.getProject();
