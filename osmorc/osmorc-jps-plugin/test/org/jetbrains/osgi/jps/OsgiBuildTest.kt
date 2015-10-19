@@ -147,7 +147,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0",
-        "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\""))
+        "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\"", "Import-Package=util"))
   }
 
   fun testMavenResources() {
