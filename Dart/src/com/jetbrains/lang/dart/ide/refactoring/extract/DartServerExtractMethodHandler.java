@@ -19,11 +19,13 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.refactoring.ServerExtractMethodRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRefactoringDialog;
@@ -32,10 +34,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class DartServerExtractMethodHandler implements RefactoringActionHandler {
   @Override
@@ -85,6 +87,10 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     setTitle("Extract Method");
     init();
 
+    final String name = StringUtil.notNullize(ArrayUtil.getFirstElement(refactoring.getNames()), "name");
+    myRefactoring.setName(name);
+    myMethodNameField.setText(name);
+    myMethodNameField.selectAll();
     myMethodNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(DocumentEvent e) {
@@ -96,9 +102,10 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
 
     if (myRefactoring.getOccurrences() != 1) {
       myAllCheckBox.setSelected(true);
-      myAllCheckBox.addChangeListener(new ChangeListener() {
+      myAllCheckBox.setText("Extract all " + myRefactoring.getOccurrences() + " occurrences");
+      myAllCheckBox.addActionListener(new ActionListener() {
         @Override
-        public void stateChanged(ChangeEvent e) {
+        public void actionPerformed(ActionEvent e) {
           myRefactoring.setExtractAll(myAllCheckBox.isSelected());
         }
       });
@@ -108,16 +115,20 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     }
 
     if (myRefactoring.canExtractGetter()) {
-      myGetterCheckBox.addChangeListener(new ChangeListener() {
+      myGetterCheckBox.setSelected(true);
+      myGetterCheckBox.addActionListener(new ActionListener() {
         @Override
-        public void stateChanged(ChangeEvent e) {
+        public void actionPerformed(ActionEvent e) {
           myRefactoring.setCreateGetter(myGetterCheckBox.isSelected());
+          mySignatureLabel.setText(myRefactoring.getSignature());
         }
       });
     }
     else {
       myGetterCheckBox.setEnabled(false);
     }
+
+    mySignatureLabel.setText(myRefactoring.getSignature());
   }
 
   @Override
@@ -161,7 +172,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     gbConstraints.weighty = 0;
     gbConstraints.fill = GridBagConstraints.HORIZONTAL;
     gbConstraints.anchor = GridBagConstraints.WEST;
-    panel.add(myAllCheckBox, gbConstraints);
+    panel.add(myGetterCheckBox, gbConstraints);
 
     gbConstraints.insets = new Insets(0, 0, 4, 0);
     gbConstraints.gridx = 0;
@@ -171,7 +182,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog {
     gbConstraints.weighty = 0;
     gbConstraints.fill = GridBagConstraints.HORIZONTAL;
     gbConstraints.anchor = GridBagConstraints.WEST;
-    panel.add(myGetterCheckBox, gbConstraints);
+    panel.add(myAllCheckBox, gbConstraints);
 
     gbConstraints.insets = new Insets(0, 0, 4, 0);
     gbConstraints.gridx = 0;
