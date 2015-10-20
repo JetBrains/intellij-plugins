@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRoo
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -37,17 +36,12 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   public static class FactoryImpl extends Factory {
     @Override
-    public boolean isApplicable(@NotNull Project project) {
-      return true;
-    }
-
-    @Override
     public boolean isApplicable(@NotNull Module module) {
       return ModuleType.get(module) == FlexModuleType.getInstance();
     }
 
     @Override
-    public OrderEnumerationHandler createHandler(@Nullable Module module) {
+    public OrderEnumerationHandler createHandler(@NotNull Module module) {
       return new FlexOrderEnumerationHandler(module);
     }
   }
@@ -66,15 +60,11 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
   @Nullable
   private final Map<Module, ModuleData> myActiveConfigurations;
-  @Nullable private final Module myRootModule;
+  private final Module myRootModule;
 
 
-  public FlexOrderEnumerationHandler(@Nullable Module module) {
+  public FlexOrderEnumerationHandler(@NotNull Module module) {
     myRootModule = module;
-    if (module == null) {
-      myActiveConfigurations = null;
-      return;
-    }
 
     myActiveConfigurations = new HashMap<Module, ModuleData>();
     // last argument can be whatever
