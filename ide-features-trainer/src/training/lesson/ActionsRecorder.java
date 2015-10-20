@@ -18,10 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import training.check.Check;
 import training.editor.EduEditor;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Created by karashevich on 18/12/14.
@@ -102,9 +99,7 @@ public class ActionsRecorder implements Disposable {
 //        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
         triggerQueue = new LinkedList<String>();
         //set triggerMap
-        for (String actionString : actionIdArray) {
-            triggerQueue.add(actionString);
-        }
+        Collections.addAll(triggerQueue, actionIdArray);
         checkAction();
 
     }
