@@ -121,6 +121,9 @@ public class DartIndentProcessor {
       }
       return Indent.getNormalIndent();
     }
+    if (elementType == LPAREN && superParentType == METADATA) {
+      return Indent.getContinuationIndent();
+    }
     if (parentType == ARGUMENT_LIST) {
       // TODO In order to handle some dart_style examples we need to set indent for each arg.
       // The formatter does not appear to honor indent on individual argument expressions
