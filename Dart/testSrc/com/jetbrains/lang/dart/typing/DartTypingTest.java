@@ -623,7 +623,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  ")");
   }
 
-  public void testEnterInBeforeMetadataNamedArg() {
+  public void testEnterBeforeMetadataNamedArg() {
     doTypingTest('\n',
                  "@Component(<caret>selector: 'something')",
                  "@Component(\n" +
