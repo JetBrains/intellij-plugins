@@ -55,19 +55,13 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
 
 
   public PsiElement getContext() {
-    return myContext;
+    return myContext != null && myContext.isValid() ? myContext : super.getContext();
   }
 
   @NotNull
   public FileViewProvider getViewProvider() {
     if (myViewProvider != null) return myViewProvider;
     return super.getViewProvider();
-  }
-
-  public boolean isValid() {
-    if (!super.isValid()) return false;
-    if (myContext != null && !myContext.isValid()) return false;
-    return true;
   }
 
   protected DartExpressionCodeFragmentImpl clone() {
