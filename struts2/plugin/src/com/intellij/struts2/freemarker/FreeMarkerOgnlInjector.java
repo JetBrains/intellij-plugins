@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +66,7 @@ public class FreeMarkerOgnlInjector implements MultiHostInjector {
                                  final ProcessingContext processingContext) {
             final PsiElement valueElement = ftlNameValuePair.getValueElement();
             return valueElement != null &&
-                valueTextCondition.value(StringUtil.stripQuotesAroundValue(valueElement.getText()));
+                valueTextCondition.value(StringUtil.unquoteString(valueElement.getText()));
           }
         }))
         .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
