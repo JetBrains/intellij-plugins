@@ -2,7 +2,12 @@ package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -10,6 +15,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
+import com.intellij.util.ui.JBEmptyBorder;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +43,8 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   @NotNull
   private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
+  private SplitEditorToolbar myToolbarWrapper;
+
   public SplitFileEditor(@NotNull FileEditor mainEditor, @NotNull FileEditor secondEditor) {
     myMainEditor = mainEditor;
     mySecondEditor = secondEditor;
@@ -63,10 +71,21 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     actionGroup.addSeparator();
     actionGroup.addAll(createToolbarActions());
 
-    final ActionToolbar editorToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, actionGroup, true);
+    final ActionToolbarImpl editorToolbar =
+      ((ActionToolbarImpl)ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, actionGroup, true));
+    editorToolbar.setOpaque(false);
+    editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
+
+    myToolbarWrapper = new SplitEditorToolbar(editorToolbar.getComponent());
+    if (myMainEditor instanceof TextEditor) {
+      myToolbarWrapper.addGutterToTrack(((EditorGutterComponentEx)((TextEditor)myMainEditor).getEditor().getGutter()));
+    }
+    if (mySecondEditor instanceof TextEditor) {
+      myToolbarWrapper.addGutterToTrack(((EditorGutterComponentEx)((TextEditor)mySecondEditor).getEditor().getGutter()));
+    }
 
     final JPanel result = new JPanel(new BorderLayout());
-    result.add(editorToolbar.getComponent(), BorderLayout.SOUTH);
+    result.add(myToolbarWrapper, BorderLayout.NORTH);
     result.add(splitter, BorderLayout.CENTER);
 
     editorToolbar.setTargetComponent(splitter);
@@ -91,6 +110,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   private void invalidateLayout() {
     myMainEditor.getComponent().setVisible(mySplitEditorLayout.showFirst);
     mySecondEditor.getComponent().setVisible(mySplitEditorLayout.showSecond);
+    myToolbarWrapper.adjustSpacing();
     myComponent.repaint();
 
     IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
