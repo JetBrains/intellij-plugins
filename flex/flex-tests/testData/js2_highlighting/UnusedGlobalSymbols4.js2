@@ -33,6 +33,6 @@ interface XXX {
     function <warning>unused11</warning>():void;
 }
 
-class TTT implements XXX {
+class <warning>TTT</warning> implements XXX {
     public function unused11():void {}
 }
