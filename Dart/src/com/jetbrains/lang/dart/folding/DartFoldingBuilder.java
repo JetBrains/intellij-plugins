@@ -1,13 +1,11 @@
 package com.jetbrains.lang.dart.folding;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.PsiComment;
@@ -15,13 +13,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,13 +39,13 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
     foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
     final Collection<PsiElement> psiElements = PsiTreeUtil.<PsiElement>collectElementsOfType(
-        root,
-        new Class[]{
-            DartComponent.class,
-            DartOperatorDeclaration.class,
-            DartTypeArguments.class,
-            PsiComment.class,
-            DartStringLiteralExpression.class});
+      root,
+      new Class[]{
+        DartComponent.class,
+        DartOperatorDeclaration.class,
+        DartTypeArguments.class,
+        PsiComment.class,
+        DartStringLiteralExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
