@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -36,8 +37,9 @@ class MarkdownActionUtil {
     final SplitFileEditor splitEditor = findSplitEditor(e);
     if (splitEditor == null) {
       // This fallback is used primarily for testing
+
       final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-      if (psiFile != null && psiFile.getLanguage() == MarkdownLanguage.INSTANCE) {
+      if (psiFile != null && psiFile.getLanguage() == MarkdownLanguage.INSTANCE && ApplicationManager.getApplication().isUnitTestMode()) {
         return e.getData(CommonDataKeys.EDITOR);
       }
       else {
