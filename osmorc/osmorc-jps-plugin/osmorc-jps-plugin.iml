@@ -16,10 +16,12 @@
       <library name="bndlib">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/bndlib-3.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/bndlib-plugins-3.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/../lib/bndlib-3.0.0.jar!/OSGI-OPT/src" />
+          <root url="jar://$MODULE_DIR$/../lib/bndlib-plugins-3.0.0.jar!/OSGI-OPT/src" />
         </SOURCES>
       </library>
     </orderEntry>
