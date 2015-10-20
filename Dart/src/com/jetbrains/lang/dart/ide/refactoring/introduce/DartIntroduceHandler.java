@@ -13,7 +13,9 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Pass;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.IntroduceTargetChooser;
@@ -459,6 +461,14 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     @Override
     protected PsiElement checkLocalScope() {
       return myTarget.getContainingFile();
+    }
+
+    @Override
+    protected void collectAdditionalElementsToRename(List<Pair<PsiElement, TextRange>> stringUsages) {
+      for (PsiElement expression : getOccurrences()) {
+        LOG.assertTrue(expression.isValid(), expression.getText());
+        stringUsages.add(Pair.<PsiElement, TextRange>create(expression, new TextRange(0, expression.getTextLength())));
+      }
     }
   }
 
