@@ -41,8 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.io.*;
-import org.jetbrains.util.concurrency.AsyncPromise;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -325,9 +325,9 @@ final class PubServerService extends NetService {
     // duplicate - content will be shared (opposite to copy), so, we use duplicate. see ByteBuf javadoc.
     FullHttpRequest request = clientRequest.duplicate().setUri(pathToPubServe);
     // regardless of client, we always keep connection to server
-    HttpHeaders.setKeepAlive(request, true);
+    HttpUtil.setKeepAlive(request, true);
     InetSocketAddress serverAddress = (InetSocketAddress)serverChannel.remoteAddress();
-    HttpHeaders.setHost(request, serverAddress.getAddress().getHostAddress() + ':' + serverAddress.getPort());
+    request.headers().set(HttpHeaderNames.HOST, serverAddress.getAddress().getHostAddress() + ':' + serverAddress.getPort());
     serverChannel.writeAndFlush(request);
   }
 
