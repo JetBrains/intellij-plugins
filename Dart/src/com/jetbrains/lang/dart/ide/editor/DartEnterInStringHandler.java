@@ -28,12 +28,16 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
 
     int caretOffset = caretOffsetRef.get().intValue();
     PsiElement psiAtOffset = file.findElementAt(caretOffset);
-    if (psiAtOffset == null || psiAtOffset.getTextOffset() > caretOffset) {
+    int psiOffset;
+    if (psiAtOffset == null || (psiOffset = psiAtOffset.getTextOffset()) > caretOffset) {
       return Result.Continue;
     }
     Document document = editor.getDocument();
     ASTNode token = psiAtOffset.getNode();
     IElementType type = token.getElementType();
+    if (type == DartTokenTypes.OPEN_QUOTE && psiOffset == caretOffset) {
+      return Result.Continue;
+    }
     if (type == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
       return Result.DefaultSkipIndent; // Multiline string gets no indent
     }

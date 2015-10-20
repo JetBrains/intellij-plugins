@@ -2,7 +2,7 @@ import 'dart:html';
 
 main() {
   var element = querySelector("foo");
-  element.onClick.listen(cli<caret>);
+  element.onClick.listen(clih<caret>);
 }
 
 clickHandler() {}

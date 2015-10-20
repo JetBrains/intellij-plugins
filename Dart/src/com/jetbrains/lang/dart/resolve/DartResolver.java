@@ -214,7 +214,9 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
    * Returns the found region or null.
    */
   @Nullable
-  private static DartNavigationRegion findRegion(List<DartServerData.DartNavigationRegion> regions, int offset, int length) {
+  public static DartNavigationRegion findRegion(@NotNull final List<DartServerData.DartNavigationRegion> regions,
+                                                final int offset,
+                                                final int length) {
     int low = 0;
     int high = regions.size() - 1;
 

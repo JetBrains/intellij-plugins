@@ -607,4 +607,11 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "o.x =\n" +
                  "    <caret>");
   }
+
+  public void testEnterBeforeStringParam() {
+    doTypingTest('\n',
+                 "foo() {return comment.replaceAll(<caret>'foo', 'bar');}",
+                 "foo() {return comment.replaceAll(\n" +
+                 "    <caret>'foo', 'bar');}");
+  }
 }

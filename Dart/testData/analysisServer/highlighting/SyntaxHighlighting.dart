@@ -1,4 +1,4 @@
-<info textAttributesKey="DART_KEYWORD">library</info> <info textAttributesKey="DART_IDENTIFIER">foo</info>.<info textAttributesKey="DART_IDENTIFIER">bar</info>;
+<info textAttributesKey="DART_KEYWORD">library</info> <info textAttributesKey="DART_LIBRARY_NAME">foo.bar</info>;
 
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:core";
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:html"

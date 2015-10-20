@@ -346,7 +346,7 @@ public class DartServerData {
   public static class DartNavigationRegion extends DartRegion {
     private final List<DartNavigationTarget> targets = Lists.newArrayList();
 
-    private DartNavigationRegion(@NotNull final NavigationRegion region) {
+    DartNavigationRegion(@NotNull final NavigationRegion region) {
       super(region.getOffset(), region.getLength());
 
       for (NavigationTarget target : region.getTargetObjects()) {
