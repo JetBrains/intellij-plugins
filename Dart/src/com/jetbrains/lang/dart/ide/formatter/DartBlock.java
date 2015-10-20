@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.formatter;
 import com.intellij.formatting.*;
 import com.intellij.formatting.templateLanguages.BlockWithParent;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
@@ -128,6 +129,9 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
       return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
+    if (!previousBlock.isIncomplete() && newIndex < getSubDartBlocks().size() && previousType != TokenType.ERROR_ELEMENT) {
+      return new ChildAttributes(previousBlock.getIndent(), previousBlock.getAlignment());
+    }
     if (myParent instanceof DartBlock && ((DartBlock)myParent).isIncomplete()) {
       ASTNode child = myNode.getFirstChildNode();
       if (child == null || !(child.getElementType() == OPEN_QUOTE && child.getText().length() == 3)) {

@@ -410,6 +410,19 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}");
   }
 
+  public void testEnterBeforeIncompleteStatement() {
+    doTypingTest('\n',
+                 "void _advanceParagraph(_currentParagraph, _currentIndentation, _currentListId) {\n" +
+                 "  _currentIndentation = null;<caret>\n" +
+                 "  _currentListId = _currentParagraph is bool ?\n" +
+                 "}",
+                 "void _advanceParagraph(_currentParagraph, _currentIndentation, _currentListId) {\n" +
+                 "  _currentIndentation = null;\n" +
+                 "  <caret>\n" +
+                 "  _currentListId = _currentParagraph is bool ?\n" +
+                 "}");
+  }
+
   public void testEnterAfterCompleteStatement() {
     doTypingTest('\n',
                  "class T {\n" +
