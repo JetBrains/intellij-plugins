@@ -55,7 +55,7 @@ public class LessonLog {
     public String exportToString(){
         StringBuilder sb = new StringBuilder();
         for (MyPair dateStringPair : logData) {
-            sb.append(dateStringPair.first).append(": ").append(dateStringPair.first).append("; ");
+            sb.append(dateStringPair.first).append(": ").append(dateStringPair.first).append(";\n");
         }
         return sb.toString();
     }

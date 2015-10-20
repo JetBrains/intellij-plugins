@@ -13,7 +13,7 @@ import java.util.HashMap;
 @Tag("GlobalLessonLog")
 public class GlobalLessonLog {
 
-    public HashMap<String, SmartList<LessonLog>> globalLessonLogMap;
+    public HashMap<String, SmartList<LessonLog>> globalLessonLogMap; //map lesson -> lessonLog
 
     public GlobalLessonLog() {
         globalLessonLogMap = new HashMap<String, SmartList<LessonLog>>();
