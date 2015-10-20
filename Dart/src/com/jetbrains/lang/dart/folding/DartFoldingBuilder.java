@@ -1,11 +1,13 @@
 package com.jetbrains.lang.dart.folding;
 
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.PsiComment;
@@ -13,6 +15,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
@@ -39,11 +43,17 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final TextRange fileHeaderRange = foldFileHeader(descriptors, dartFile, document); // 1. File header
     foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
     foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
-    final Collection<PsiElement> psiElements =
-      PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class, DartStringLiteralExpression.class});
+    final Collection<PsiElement> psiElements = PsiTreeUtil.<PsiElement>collectElementsOfType(
+        root,
+        new Class[]{
+            DartComponent.class,
+            DartOperatorDeclaration.class,
+            DartTypeArguments.class,
+            PsiComment.class,
+            DartStringLiteralExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
-    foldFunctionBodies(descriptors, root);                                             // 6. Function body
+    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
   }
@@ -133,7 +143,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static <T extends PsiElement> void foldConsequentStatements(@NotNull final List<FoldingDescriptor> descriptors,
                                                                       @NotNull final DartFile dartFile,
                                                                       @NotNull final Class<T> aClass) {
-    final T firstStatement = PsiTreeUtil.findChildOfType(dartFile, aClass);
+    final T firstStatement = PsiTreeUtil.getChildOfType(dartFile, aClass);
     if (firstStatement == null) return;
 
     PsiElement lastStatement = firstStatement;
@@ -215,20 +225,13 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldFunctionBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final PsiElement root) {
-    for (PsiElement dartComponent : PsiTreeUtil.findChildrenOfAnyType(root, DartComponent.class, DartOperatorDeclaration.class)) {
+  private static void foldFunctionBodies(@NotNull final List<FoldingDescriptor> descriptors,
+                                         @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement dartComponent : psiElements) {
       final DartComponentType componentType = DartComponentType.typeOf(dartComponent);
       if (componentType == null) continue;
 
       switch (componentType) {
-        case CLASS:
-          final DartClassMembers classMembers = DartResolveUtil.getBody((DartClass)dartComponent);
-          if (classMembers != null) {
-            for (DartComponent childComponent : PsiTreeUtil.findChildrenOfType(classMembers, DartComponent.class)) {
-              foldFunctionBody(descriptors, childComponent);
-            }
-          }
-          break;
         case CONSTRUCTOR:
         case FUNCTION:
         case METHOD:
