@@ -2,11 +2,7 @@ package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
@@ -15,7 +11,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
-import com.intellij.util.ui.JBEmptyBorder;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,17 +61,9 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     splitter.setFirstComponent(myMainEditor.getComponent());
     splitter.setSecondComponent(mySecondEditor.getComponent());
 
-    final DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.add(ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"));
-    actionGroup.addSeparator();
-    actionGroup.addAll(createToolbarActions());
 
-    final ActionToolbarImpl editorToolbar =
-      ((ActionToolbarImpl)ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, actionGroup, true));
-    editorToolbar.setOpaque(false);
-    editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
 
-    myToolbarWrapper = new SplitEditorToolbar(editorToolbar.getComponent());
+    myToolbarWrapper = new SplitEditorToolbar(splitter);
     if (myMainEditor instanceof TextEditor) {
       myToolbarWrapper.addGutterToTrack(((EditorGutterComponentEx)((TextEditor)myMainEditor).getEditor().getGutter()));
     }
@@ -88,7 +75,6 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     result.add(myToolbarWrapper, BorderLayout.NORTH);
     result.add(splitter, BorderLayout.CENTER);
 
-    editorToolbar.setTargetComponent(splitter);
 
     return result;
   }

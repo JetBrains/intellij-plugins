@@ -1,8 +1,15 @@
 package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
+import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.UIUtil;
+import org.intellij.plugins.markdown.MarkdownBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -13,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SplitEditorToolbar extends JPanel implements Disposable {
+  private static final String LEFT_TOOLBAR_GROUP_ID = "Markdown.Toolbar.Left";
+  private static final String RIGHT_TOOLBAR_GROUP_ID = "Markdown.Toolbar.Right";
+
   private final MySpacingPanel mySpacingPanel;
 
   private final List<EditorGutterComponentEx> myGutters = new ArrayList<EditorGutterComponentEx>();
@@ -34,13 +44,22 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
     }
   };
 
-  public SplitEditorToolbar(@NotNull final JComponent toolbarComponent) {
-    super(new BorderLayout());
+  public SplitEditorToolbar(@NotNull final JComponent targetComponentForActions) {
+    super(new GridBagLayout());
 
-    mySpacingPanel = new MySpacingPanel((int)toolbarComponent.getPreferredSize().getHeight());
+    final ActionToolbar leftToolbar = createToolbarFromGroupId(LEFT_TOOLBAR_GROUP_ID);
+    leftToolbar.setTargetComponent(targetComponentForActions);
+    final ActionToolbar rightToolbar = createToolbarFromGroupId(RIGHT_TOOLBAR_GROUP_ID);
+    rightToolbar.setTargetComponent(targetComponentForActions);
 
-    add(mySpacingPanel, BorderLayout.WEST);
-    add(toolbarComponent, BorderLayout.CENTER);
+    mySpacingPanel = new MySpacingPanel((int)leftToolbar.getComponent().getPreferredSize().getHeight());
+    final JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.add(new JLabel(MarkdownBundle.message("markdown.toolbar.view.label"), SwingConstants.RIGHT), BorderLayout.EAST);
+
+    add(mySpacingPanel);
+    add(leftToolbar.getComponent());
+    add(centerPanel, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    add(rightToolbar.getComponent());
 
     setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtil.CONTRAST_BORDER_COLOR));
 
@@ -85,6 +104,22 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
     }
   }
 
+  @NotNull
+  private static ActionToolbar createToolbarFromGroupId(@NotNull String groupId) {
+    final ActionManager actionManager = ActionManager.getInstance();
+
+    if (!actionManager.isGroup(groupId)) {
+      throw new IllegalStateException(groupId + " should have been a group");
+    }
+    final ActionGroup group = ((ActionGroup)actionManager.getAction(groupId));
+
+    final ActionToolbarImpl editorToolbar =
+      ((ActionToolbarImpl)actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
+    editorToolbar.setOpaque(false);
+    editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
+
+    return editorToolbar;
+  }
 
   private static class MySpacingPanel extends JPanel {
     private final int myHeight;

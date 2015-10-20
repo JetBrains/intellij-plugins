@@ -42,37 +42,44 @@
   </extensions>
 
   <actions>
-    <action class="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
-            id="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
-            text="Change split layout"
-            description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
-            icon="AllIcons.Actions.PreviewDetails">
-      <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
-    </action>
+    <group id="Markdown.Toolbar.Left" class="com.intellij.openapi.actionSystem.DefaultActionGroup" text="Markdown editor actions">
+      <action class="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
+              id="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
+              text="Toggle italic mode"
+              description="Toggles italic mode on caret/selection"
+              icon="MarkdownIcons.Italic">
+        <keyboard-shortcut first-keystroke="ctrl i" keymap="$default"/>
+      </action>
 
-    <action class="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
-            id="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
-            text="Toggle italic mode"
-            description="Toggles italic mode on caret/selection"
-            icon="MarkdownIcons.Italic">
-      <keyboard-shortcut first-keystroke="ctrl i" keymap="$default"/>
-    </action>
+      <action class="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
+              id="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
+              text="Toggle bold mode"
+              description="Toggles bold mode on caret/selection"
+              icon="MarkdownIcons.Bold">
+        <keyboard-shortcut first-keystroke="ctrl u" keymap="$default"/>
+      </action>
 
-    <action class="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
-            id="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
-            text="Toggle bold mode"
-            description="Toggles bold mode on caret/selection"
-            icon="MarkdownIcons.Bold">
-      <keyboard-shortcut first-keystroke="ctrl u" keymap="$default"/>
-    </action>
+      <action class="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
+              id="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
+              text="Toggle bold mode"
+              description="Toggles bold mode on caret/selection"
+              icon="MarkdownIcons.Code">
+        <keyboard-shortcut first-keystroke="ctrl o" keymap="$default"/>
+      </action>
+    </group>
 
-    <action class="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
-            id="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
-            text="Toggle bold mode"
-            description="Toggles bold mode on caret/selection"
-            icon="MarkdownIcons.Code">
-      <keyboard-shortcut first-keystroke="ctrl o" keymap="$default"/>
-    </action>
+
+    <group id="Markdown.Toolbar.Right" class="com.intellij.openapi.actionSystem.DefaultActionGroup" text="Markdown editor layout actions">
+      <action class="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
+              id="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
+              text="Change split layout"
+              description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
+              icon="AllIcons.Actions.PreviewDetails">
+        <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
+      </action>
+    </group>
+
+
 
   </actions>
 
