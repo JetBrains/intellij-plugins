@@ -614,4 +614,19 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "foo() {return comment.replaceAll(\n" +
                  "    <caret>'foo', 'bar');}");
   }
+
+  public void testEnterInEmptyMetadataArgList() {
+    doTypingTest('\n',
+                 "@Component(<caret>)",
+                 "@Component(\n" +
+                 "    <caret>\n" +
+                 ")");
+  }
+
+  public void testEnterInBeforeMetadataNamedArg() {
+    doTypingTest('\n',
+                 "@Component(<caret>selector: 'something')",
+                 "@Component(\n" +
+                 "    <caret>selector: 'something')");
+  }
 }
