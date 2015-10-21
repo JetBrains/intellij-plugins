@@ -190,7 +190,7 @@ public class DartIndentProcessor {
       }
     }
     if ((elementType == REFERENCE_EXPRESSION || BINARY_EXPRESSIONS.contains(elementType)) &&
-        FormatterUtil.isPrecededBy(node, ASSIGNMENT_OPERATOR)) {
+        (FormatterUtil.isPrecededBy(node, ASSIGNMENT_OPERATOR) || FormatterUtil.isPrecededBy(node, EQ))) {
       return Indent.getContinuationIndent();
     }
     if (elementType == VAR_DECLARATION_LIST_PART) {
