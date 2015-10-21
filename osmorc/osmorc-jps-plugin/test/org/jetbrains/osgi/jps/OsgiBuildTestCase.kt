@@ -32,8 +32,6 @@ import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
 import java.io.File
 import java.util.jar.JarFile
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun module(name: String, osgi: Boolean = true): JpsModule {
@@ -110,7 +108,7 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
             else if (it.first in required) { assertNotNull(it.second); false }
             else true
           }
-          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sorted().join(",") else it.second}" }
+          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
           .toSet()
       assertEquals(expected, actual)
     }

@@ -29,7 +29,6 @@ import com.intellij.testFramework.IdeaTestCase
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.facet.OsmorcFacet
 import java.io.File
-import kotlin.test.*
 
 class BndProjectImporterTest : IdeaTestCase() {
   private lateinit var myWorkspace: Workspace
@@ -79,8 +78,8 @@ class BndProjectImporterTest : IdeaTestCase() {
     }
 
     val rootManager = ModuleRootManager.getInstance(rootModule)
-    assertEquals(1, rootManager.contentRootUrls.size())
-    assertEquals(0, rootManager.sourceRootUrls.size())
+    assertEquals(1, rootManager.contentRootUrls.size)
+    assertEquals(0, rootManager.sourceRootUrls.size)
     assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
@@ -102,14 +101,14 @@ class BndProjectImporterTest : IdeaTestCase() {
     myImporter.resolve()
 
     val modules = ModuleManager.getInstance(myProject).modules
-    assertEquals(3, modules.size())
+    assertEquals(3, modules.size)
     assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.name }.toSet())
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
-      assertEquals(1, rootManager.contentRootUrls.size(), it.name)
-      assertEquals(2, rootManager.sourceRootUrls.size(), it.name)
-      assertEquals(3, rootManager.excludeRootUrls.size(), it.name)
+      assertEquals(it.name, 1, rootManager.contentRootUrls.size)
+      assertEquals(it.name, 2, rootManager.sourceRootUrls.size)
+      assertEquals(it.name, 3, rootManager.excludeRootUrls.size)
 
       val dependencies = getDependencies(it)
       when (it.name) {
@@ -128,12 +127,11 @@ class BndProjectImporterTest : IdeaTestCase() {
 
       val facet = OsmorcFacet.getInstance(it)
       if (it.name != "hello.tests") {
-        assertNotNull(facet, it.name)
-
-        val config = facet?.configuration
-        assertEquals(ManifestGenerationMode.Bnd, config?.manifestGenerationMode)
-        assertEquals("bnd.bnd", config?.bndFileLocation, it.name)
-        assertEquals("${VfsUtilCore.urlToPath(rootManager.contentRootUrls[0])}/generated/${it.name}.jar", config?.jarFileLocation)
+        assertNotNull(it.name, facet)
+        val config = facet!!.configuration
+        assertEquals(it.name, ManifestGenerationMode.Bnd, config.manifestGenerationMode)
+        assertEquals(it.name, "bnd.bnd", config.bndFileLocation)
+        assertEquals(it.name, "${VfsUtilCore.urlToPath(rootManager.contentRootUrls[0])}/generated/${it.name}.jar", config.jarFileLocation)
       }
       else {
         assertNull(facet)

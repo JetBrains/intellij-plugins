@@ -23,7 +23,6 @@ import org.osmorc.facet.OsmorcFacet
 import org.osmorc.facet.OsmorcFacetConfiguration
 import org.osmorc.facet.OsmorcFacetType
 import java.io.File
-import kotlin.test.*
 
 class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
   override fun getFacetTypeId(): FacetTypeId<OsmorcFacet> = OsmorcFacetType.ID
@@ -171,7 +170,7 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
     val facet = getFacet(moduleName)
     val configuration = facet.configuration
     assertNotNull(configuration)
-    assertEquals(bundleName, configuration.additionalPropertiesAsMap.get(Constants.BUNDLE_NAME))
+    assertEquals(bundleName, configuration.additionalPropertiesAsMap[Constants.BUNDLE_NAME])
     assertEquals("org.osmorc.simple", configuration.bundleSymbolicName)
     return configuration
   }

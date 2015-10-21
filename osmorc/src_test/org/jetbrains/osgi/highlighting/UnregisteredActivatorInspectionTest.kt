@@ -19,7 +19,6 @@ import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.LightOsgiFixtureTestCase
 import org.osmorc.i18n.OsmorcBundle
 import org.osmorc.inspection.UnregisteredActivatorInspection
-import kotlin.test.assertEquals
 
 class UnregisteredActivatorInspectionTest : LightOsgiFixtureTestCase() {
   fun testUnregistered() {

@@ -20,10 +20,6 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.LightOsgiFixtureTestCase
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
   private lateinit var myCache: BundleManifestCache
