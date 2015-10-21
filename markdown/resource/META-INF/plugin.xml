@@ -69,14 +69,34 @@
     </group>
 
 
+    <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.CyclicSplitLayoutChangeAction"
+            id="org.intellij.plugins.markdown.ui.actions.editorLayout.CyclicSplitLayoutChangeAction"
+            text="Change split layout"
+            description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
+            icon="AllIcons.Actions.PreviewDetails">
+      <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
+    </action>
+
     <group id="Markdown.Toolbar.Right" class="com.intellij.openapi.actionSystem.DefaultActionGroup" text="Markdown editor layout actions">
-      <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.ExpandSplitAction"
-              id="org.intellij.plugins.markdown.ui.actions.editorLayout.ExpandSplitAction"
-              text="Change split layout"
-              description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
-              icon="AllIcons.Actions.PreviewDetails">
-        <keyboard-shortcut first-keystroke="ctrl p" keymap="$default"/>
+      <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorOnlyLayoutChangeAction"
+              id="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorOnlyLayoutChangeAction"
+              text="Show editor only"
+              description="Sets markdown editor layout to show editor only"
+              icon="MarkdownIcons.Layout.Editor_only">
       </action>
+      <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
+              id="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
+              text="Show editor and preview"
+              description="Sets markdown editor layout to show editor and preview in split"
+              icon="MarkdownIcons.Layout.Editor_preview">
+      </action>
+      <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
+              id="org.intellij.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
+              text="Show preview only"
+              description="Sets markdown editor layout to show preview only"
+              icon="MarkdownIcons.Layout.Preview_only">
+      </action>
+
     </group>
 
 

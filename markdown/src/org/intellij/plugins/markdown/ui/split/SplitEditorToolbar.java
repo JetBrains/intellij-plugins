@@ -25,6 +25,8 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
 
   private final MySpacingPanel mySpacingPanel;
 
+  private final ActionToolbar myRightToolbar;
+
   private final List<EditorGutterComponentEx> myGutters = new ArrayList<EditorGutterComponentEx>();
 
   private final ComponentAdapter myAdjustToGutterListener = new ComponentAdapter() {
@@ -49,8 +51,8 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
 
     final ActionToolbar leftToolbar = createToolbarFromGroupId(LEFT_TOOLBAR_GROUP_ID);
     leftToolbar.setTargetComponent(targetComponentForActions);
-    final ActionToolbar rightToolbar = createToolbarFromGroupId(RIGHT_TOOLBAR_GROUP_ID);
-    rightToolbar.setTargetComponent(targetComponentForActions);
+    myRightToolbar = createToolbarFromGroupId(RIGHT_TOOLBAR_GROUP_ID);
+    myRightToolbar.setTargetComponent(targetComponentForActions);
 
     mySpacingPanel = new MySpacingPanel((int)leftToolbar.getComponent().getPreferredSize().getHeight());
     final JPanel centerPanel = new JPanel(new BorderLayout());
@@ -59,7 +61,7 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
     add(mySpacingPanel);
     add(leftToolbar.getComponent());
     add(centerPanel, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-    add(rightToolbar.getComponent());
+    add(myRightToolbar.getComponent());
 
     setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtil.CONTRAST_BORDER_COLOR));
 
@@ -72,7 +74,12 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
     gutterComponentEx.addComponentListener(myAdjustToGutterListener);
   }
 
-  public void adjustSpacing() {
+  public void refresh() {
+    adjustSpacing();
+    myRightToolbar.updateActionsImmediately();
+  }
+
+  private void adjustSpacing() {
     EditorGutterComponentEx leftMostGutter = null;
     for (EditorGutterComponentEx gutter : myGutters) {
       if (!gutter.isShowing()) {
@@ -112,7 +119,6 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
       throw new IllegalStateException(groupId + " should have been a group");
     }
     final ActionGroup group = ((ActionGroup)actionManager.getAction(groupId));
-
     final ActionToolbarImpl editorToolbar =
       ((ActionToolbarImpl)actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
     editorToolbar.setOpaque(false);

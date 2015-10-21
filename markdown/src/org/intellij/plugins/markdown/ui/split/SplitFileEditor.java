@@ -82,15 +82,27 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     final int oldValue = mySplitEditorLayout.ordinal();
     final int newValue = (oldValue + 1) % SplitEditorLayout.values().length;
 
-    mySplitEditorLayout = SplitEditorLayout.values()[newValue];
+    triggerLayoutChange(SplitEditorLayout.values()[newValue]);
+  }
 
+  public void triggerLayoutChange(@NotNull SplitFileEditor.SplitEditorLayout newLayout) {
+    if (mySplitEditorLayout == newLayout) {
+      return;
+    }
+
+    mySplitEditorLayout = newLayout;
     invalidateLayout();
+  }
+
+  @NotNull
+  public SplitEditorLayout getCurrentEditorLayout() {
+    return mySplitEditorLayout;
   }
 
   private void invalidateLayout() {
     myMainEditor.getComponent().setVisible(mySplitEditorLayout.showFirst);
     mySecondEditor.getComponent().setVisible(mySplitEditorLayout.showSecond);
-    myToolbarWrapper.adjustSpacing();
+    myToolbarWrapper.refresh();
     myComponent.repaint();
 
     IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
