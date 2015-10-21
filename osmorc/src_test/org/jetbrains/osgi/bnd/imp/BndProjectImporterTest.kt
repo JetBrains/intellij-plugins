@@ -32,7 +32,6 @@ import org.osmorc.facet.OsmorcFacet
 import java.io.File
 
 import kotlin.properties.Delegates
-import kotlin.test.*
 
 class BndProjectImporterTest : IdeaTestCase() {
   var myWorkspace: Workspace by Delegates.notNull()
@@ -110,9 +109,9 @@ class BndProjectImporterTest : IdeaTestCase() {
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
-      assertEquals(1, rootManager.getContentRootUrls().size(), it.getName())
-      assertEquals(2, rootManager.getSourceRootUrls().size(), it.getName())
-      assertEquals(3, rootManager.getExcludeRootUrls().size(), it.getName())
+      assertEquals(it.getName(), 1, rootManager.getContentRootUrls().size())
+      assertEquals(it.getName(), 2, rootManager.getSourceRootUrls().size())
+      assertEquals(it.getName(), 3, rootManager.getExcludeRootUrls().size())
 
       val dependencies = getDependencies(it)
       when (it.getName()) {
@@ -131,12 +130,11 @@ class BndProjectImporterTest : IdeaTestCase() {
 
       val facet = OsmorcFacet.getInstance(it)
       if (it.getName() != "hello.tests") {
-        assertNotNull(facet, it.getName())
-
-        val config = facet?.getConfiguration()
-        assertEquals(ManifestGenerationMode.Bnd, config?.getManifestGenerationMode())
-        assertEquals("bnd.bnd", config?.getBndFileLocation(), it.getName())
-        assertEquals("${VfsUtilCore.urlToPath(rootManager.getContentRootUrls()[0])}/generated/${it.getName()}.jar", config?.getJarFileLocation())
+        assertNotNull(it.name, facet)
+        val config = facet!!.getConfiguration()
+        assertEquals(it.getName(), ManifestGenerationMode.Bnd, config.getManifestGenerationMode())
+        assertEquals(it.getName(), "bnd.bnd", config.getBndFileLocation())
+        assertEquals(it.getName(), "${VfsUtilCore.urlToPath(rootManager.getContentRootUrls()[0])}/generated/${it.getName()}.jar", config.getJarFileLocation())
       }
       else {
         assertNull(facet)
