@@ -1,7 +1,5 @@
 package training.lesson;
 
-import com.intellij.find.editorHeaderActions.CloseOnESCAction;
-import com.intellij.ide.actions.NextOccurenceAction;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
@@ -163,7 +161,8 @@ public class ActionsRecorder implements Disposable {
                 if (!editorFlag) return;
 
 
-                final String actionId = extendActionId(action);
+//                final String actionId = extendActionId(action);
+                String actionId = ActionManager.getInstance().getId(action);
 
                 if(actionId == null) return;
                 //trigger queue can't be empty. Last action should lead to pass task in other case polled element should be returned back.
@@ -229,6 +228,7 @@ public class ActionsRecorder implements Disposable {
     }
 
     @Nullable
+    @Deprecated
     private String extendActionId(AnAction action) {
 
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
@@ -236,10 +236,10 @@ public class ActionsRecorder implements Disposable {
 
         if (actionId != null) return actionId;
 
-        if (action instanceof CloseOnESCAction)
+//        if (action instanceof CloseOnESCAction)
             return IdeActions.ACTION_EDITOR_ESCAPE;
-        else
-            return null;
+//        else
+//            return null;
     }
 
     private void removeListeners(Document document, ActionManager actionManager){
