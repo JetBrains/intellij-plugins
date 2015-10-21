@@ -14,12 +14,12 @@
 package com.google.dart.server.internal.remote;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerSocket;
-import com.google.dart.server.utilities.general.StringUtilities;
 import com.google.dart.server.utilities.logging.Logging;
 
-import java.io.IOException;
-import java.net.ServerSocket;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,51 +29,17 @@ import java.util.List;
  * @coverage dart.server.remote
  */
 public class StdioServerSocket implements AnalysisServerSocket {
-  /**
-   * Find and return an unused server socket port.
-   */
-  public static int findUnusedPort() {
-    try {
-      ServerSocket ss = new ServerSocket(0);
-      int port = ss.getLocalPort();
-      ss.close();
-      return port;
-    } catch (IOException ioe) {
-      //$FALL-THROUGH$
-    }
-    return -1;
-  }
-
   private final String runtimePath;
+  private final List<String> vmArguments;
+
   private final String analysisServerPath;
+  private final List<String> serverArguments;
   private final DebugPrintStream debugStream;
-  private final boolean debugRemoteProcess;
-  private final boolean profileRemoteProcess;
-  private int httpPort;
+
   private RequestSink requestSink;
   private ResponseStream responseStream;
   private ByteLineReaderStream errorStream;
   private Process process;
-  private final String[] additionalProgramArguments;
-
-  /**
-   * If non-null, the package root that should be provided to Dart when running the analysis server.
-   */
-  private final String packageRoot;
-
-  /**
-   * Boolean used to have the {@code --no-error-notification} which disables all error notifications
-   * from the server.
-   * <p>
-   * This should be {@code null} if the snapshot path is passed as the server path.
-   */
-  private final boolean noErrorNotification;
-
-  /**
-   * An option of the ways files can be read from disk, some clients normalize end of line
-   * characters which would make the file offset and range information incorrect.
-   */
-  private final FileReadMode fileReadMode;
 
   /**
    * The identifier used to identify this client to the server, or {@code null} if the client does
@@ -87,36 +53,14 @@ public class StdioServerSocket implements AnalysisServerSocket {
    */
   private String clientVersion;
 
-  public StdioServerSocket(String runtimePath, String analysisServerPath,
-      DebugPrintStream debugStream, boolean debugRemoteProcess, boolean profileRemoteProcess,
-      int httpPort) {
-    this(
-        runtimePath,
-        analysisServerPath,
-        StringUtilities.EMPTY,
-        debugStream,
-        StringUtilities.EMPTY_ARRAY,
-        debugRemoteProcess,
-        profileRemoteProcess,
-        httpPort,
-        false,
-        FileReadMode.AS_IS);
-  }
-
-  public StdioServerSocket(String runtimePath, String analysisServerPath, String packageRoot,
-      DebugPrintStream debugStream, String[] additionalProgramArguments,
-      boolean debugRemoteProcess, boolean profileRemoteProcess, int httpPort,
-      boolean noErrorNotification, FileReadMode fileReadMode) {
+  public StdioServerSocket(String runtimePath, List<String> additionalVmArguments,
+      String analysisServerPath, List<String> additionalServerArguments,
+      DebugPrintStream debugStream) {
     this.runtimePath = runtimePath;
+    this.vmArguments = defaultIfNull(additionalVmArguments, Lists.<String> newArrayList());
     this.analysisServerPath = analysisServerPath;
-    this.packageRoot = packageRoot;
+    this.serverArguments = defaultIfNull(additionalServerArguments, Lists.<String> newArrayList());
     this.debugStream = debugStream;
-    this.additionalProgramArguments = additionalProgramArguments;
-    this.debugRemoteProcess = debugRemoteProcess;
-    this.profileRemoteProcess = profileRemoteProcess;
-    this.httpPort = httpPort;
-    this.noErrorNotification = noErrorNotification;
-    this.fileReadMode = fileReadMode;
   }
 
   @Override
@@ -167,8 +111,7 @@ public class StdioServerSocket implements AnalysisServerSocket {
 
   @Override
   public void start() throws Exception {
-    int debugPort = findUnusedPort();
-    String[] arguments = computeProcessArguments(debugPort);
+    String[] arguments = computeProcessArguments();
     if (debugStream != null) {
       StringBuilder builder = new StringBuilder();
       builder.append("  ");
@@ -187,12 +130,6 @@ public class StdioServerSocket implements AnalysisServerSocket {
     requestSink = new ByteRequestSink(process.getOutputStream(), debugStream);
     responseStream = new ByteResponseStream(process.getInputStream(), debugStream);
     errorStream = new ByteLineReaderStream(process.getErrorStream());
-    if (debugRemoteProcess) {
-      Logging.getLogger().logInformation("Analysis server debug port " + debugPort);
-    }
-    if (httpPort != 0) {
-      Logging.getLogger().logInformation("Analysis server http port " + httpPort);
-    }
   }
 
   /**
@@ -231,10 +168,9 @@ public class StdioServerSocket implements AnalysisServerSocket {
   /**
    * Compute and return the command-line arguments used to start the analysis server process.
    * 
-   * @param debugPort the port that the VM should use for debug connections
    * @return the command-line arguments that were computed
    */
-  private String[] computeProcessArguments(int debugPort) {
+  private String[] computeProcessArguments() {
     List<String> args = new ArrayList<String>();
     //
     // The path to the VM.
@@ -243,18 +179,7 @@ public class StdioServerSocket implements AnalysisServerSocket {
     //
     // VM arguments.
     //
-    if (packageRoot != null) {
-      args.add("--package-root=" + packageRoot);
-    }
-    if (debugRemoteProcess) {
-      args.add("--debug:" + debugPort);
-    }
-    if (profileRemoteProcess) {
-      args.add("--observe");
-      args.add("--pause-isolates-on-exit");
-      args.add("--code_comments");
-      args.add("--collect-code=false");
-    }
+    args.addAll(vmArguments);
     //
     // The analysis server path.
     //
@@ -268,18 +193,8 @@ public class StdioServerSocket implements AnalysisServerSocket {
     if (clientVersion != null) {
       args.add("--client-version=" + clientVersion);
     }
-    if (httpPort != 0) {
-      args.add("--port=" + httpPort);
-    }
-    if (noErrorNotification) {
-      args.add("--no-error-notification");
-    }
-    if (fileReadMode == FileReadMode.NORMALIZE_EOL_ALWAYS) {
-      args.add("--file-read-mode=normalize-eol-always");
-    }
-    for (String arg : additionalProgramArguments) {
-      args.add(arg);
-    }
+    args.addAll(serverArguments);
+    // Done.
     return args.toArray(new String[args.size()]);
   }
 }
