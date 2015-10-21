@@ -642,4 +642,17 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "@Component(\n" +
                  "    <caret>selector: 'something')");
   }
+
+  public void testEnterAfterEQ() {
+    doTypingTest('\n',
+                 "ms(toto)\n" +
+                 "  bool x =<caret> toto;\n" +
+                 "  return;\n" +
+                 "}",
+                 "ms(toto)\n" +
+                 "  bool x =\n" +
+                 "      <caret>toto;\n" +
+                 "  return;\n" +
+                 "}");
+  }
 }
