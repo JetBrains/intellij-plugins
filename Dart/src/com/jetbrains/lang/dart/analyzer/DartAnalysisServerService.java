@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.internal.remote.DebugPrintStream;
-import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
@@ -48,8 +47,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.util.*;
+import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
+import com.intellij.util.PathUtil;
+import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetUtils;
@@ -1171,18 +1172,28 @@ public class DartAnalysisServerService {
 
       final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
-      String argsRaw;
+      String vmArgsRaw;
       try {
-        argsRaw = Registry.stringValue("dart.server.additional.arguments");
+        vmArgsRaw = System.getProperty("dart.server.vm.arguments", "");
       }
       catch (MissingResourceException e) {
-        argsRaw = "";
+        vmArgsRaw = "";
       }
-      argsRaw += " --useAnalysisHighlight2";
+
+      String serverArgsRaw;
+      try {
+        serverArgsRaw = Registry.stringValue("dart.server.additional.arguments");
+      }
+      catch (MissingResourceException e) {
+        serverArgsRaw = "";
+      }
+      serverArgsRaw += " --port=" + port;
+      serverArgsRaw += " --useAnalysisHighlight2";
+      serverArgsRaw += " --file-read-mode=normalize-eol-always";
 
       myServerSocket =
-        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, ArrayUtil.toStringArray(StringUtil.split(argsRaw, " ")),
-                              false, false, port, false, FileReadMode.NORMALIZE_EOL_ALWAYS);
+        new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, StringUtil.split(serverArgsRaw, " "),
+                              debugStream);
       myServerSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
       myServerSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
       myServer = new RemoteAnalysisServerImpl(myServerSocket);
