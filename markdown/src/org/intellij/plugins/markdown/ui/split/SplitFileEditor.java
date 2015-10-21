@@ -2,7 +2,6 @@ package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
@@ -77,11 +76,6 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
 
 
     return result;
-  }
-
-  @NotNull
-  protected AnAction[] createToolbarActions() {
-    return AnAction.EMPTY_ARRAY;
   }
 
   public void triggerLayoutChange() {

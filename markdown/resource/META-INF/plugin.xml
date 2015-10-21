@@ -43,24 +43,24 @@
 
   <actions>
     <group id="Markdown.Toolbar.Left" class="com.intellij.openapi.actionSystem.DefaultActionGroup" text="Markdown editor actions">
-      <action class="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
-              id="org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleBoldAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.ToggleBoldAction"
               text="Toggle bold mode"
               description="Toggles bold mode on caret/selection"
               icon="MarkdownIcons.EditorActions.Bold">
         <keyboard-shortcut first-keystroke="ctrl u" keymap="$default"/>
       </action>
 
-      <action class="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
-              id="org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
               text="Toggle italic mode"
               description="Toggles italic mode on caret/selection"
               icon="MarkdownIcons.EditorActions.Italic">
         <keyboard-shortcut first-keystroke="ctrl i" keymap="$default"/>
       </action>
 
-      <action class="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
-              id="org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction"
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
               text="Toggle bold mode"
               description="Toggles bold mode on caret/selection"
               icon="MarkdownIcons.EditorActions.Code_span">
@@ -70,8 +70,8 @@
 
 
     <group id="Markdown.Toolbar.Right" class="com.intellij.openapi.actionSystem.DefaultActionGroup" text="Markdown editor layout actions">
-      <action class="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
-              id="org.intellij.plugins.markdown.ui.actions.ExpandSplitAction"
+      <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.ExpandSplitAction"
+              id="org.intellij.plugins.markdown.ui.actions.editorLayout.ExpandSplitAction"
               text="Change split layout"
               description="Toggle markdown editor layout through different values (editor only, preview only, wysiwyg split)"
               icon="AllIcons.Actions.PreviewDetails">

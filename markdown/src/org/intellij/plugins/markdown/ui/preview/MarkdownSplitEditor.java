@@ -1,7 +1,5 @@
 package org.intellij.plugins.markdown.ui.preview;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.CaretAdapter;
 import com.intellij.openapi.editor.event.CaretEvent;
@@ -21,16 +19,6 @@ public class MarkdownSplitEditor extends SplitFileEditor {
   @Override
   public String getName() {
     return "Markdown split editor";
-  }
-
-  @NotNull
-  @Override
-  protected AnAction[] createToolbarActions() {
-    return new AnAction[]{
-      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleItalicAction"),
-      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleBoldAction"),
-      ActionManager.getInstance().getAction("org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction")
-    };
   }
 
   private static class MyCaretListener extends CaretAdapter {

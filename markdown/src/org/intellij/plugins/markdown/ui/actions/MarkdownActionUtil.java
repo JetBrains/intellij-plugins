@@ -20,7 +20,7 @@ import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class MarkdownActionUtil {
+public class MarkdownActionUtil {
   @Nullable
   public static SplitFileEditor findSplitEditor(AnActionEvent e) {
     final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);

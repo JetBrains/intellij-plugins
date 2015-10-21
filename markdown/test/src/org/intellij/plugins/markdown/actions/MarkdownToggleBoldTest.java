@@ -12,7 +12,7 @@ public class MarkdownToggleBoldTest extends LightPlatformCodeInsightTestCase {
 
   private void doTest() {
     configureByFile(getTestName(true) + "_before.md");
-    executeAction("org.intellij.plugins.markdown.ui.actions.ToggleBoldAction");
+    executeAction("org.intellij.plugins.markdown.ui.actions.styling.ToggleBoldAction");
     checkResultByFile(getTestName(true) + "_after.md");
   }
 

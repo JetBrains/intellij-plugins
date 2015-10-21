@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.ui.actions;
+package org.intellij.plugins.markdown.ui.actions.styling;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;

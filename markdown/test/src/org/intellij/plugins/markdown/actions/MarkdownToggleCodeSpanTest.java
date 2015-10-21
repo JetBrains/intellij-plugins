@@ -20,7 +20,7 @@ public class MarkdownToggleCodeSpanTest extends LightPlatformCodeInsightTestCase
 
   private void doTest() {
     configureByFile(getTestName(true) + "_before.md");
-    executeAction("org.intellij.plugins.markdown.ui.actions.ToggleCodeSpanAction");
+    executeAction("org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction");
     checkResultByFile(getTestName(true) + "_after.md");
   }
 

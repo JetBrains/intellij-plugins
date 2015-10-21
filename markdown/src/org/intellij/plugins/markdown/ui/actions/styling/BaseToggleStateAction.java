@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.ui.actions;
+package org.intellij.plugins.markdown.ui.actions.styling;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
+import org.intellij.plugins.markdown.ui.actions.MarkdownActionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
