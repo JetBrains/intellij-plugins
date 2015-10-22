@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Gregory.Shrago
  * @author Yann C&eacute;bron
- * @see com.intellij.struts2.dom.struts.Include#getFile()
+ * @see Include#getFile()
  */
 public abstract class IncludeFileResolvingConverter extends ResolvingConverter<PsiFile> implements CustomReferenceConverter {
 

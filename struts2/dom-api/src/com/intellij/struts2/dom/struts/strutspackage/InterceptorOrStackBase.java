@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.NameValue;
 
 /**
- * Common base interface for {@link com.intellij.struts2.dom.struts.strutspackage.Interceptor} and
+ * Common base interface for {@link Interceptor} and
  * {@link InterceptorStack}.
  *
  * @author Yann C&eacute;bron

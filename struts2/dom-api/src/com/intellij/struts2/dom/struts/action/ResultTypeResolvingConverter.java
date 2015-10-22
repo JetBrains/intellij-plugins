@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * <code>result</code> "type"-attribute.
  *
  * @author Yann C&eacute;bron
- * @see com.intellij.struts2.dom.struts.action.Result#getType()
+ * @see Result#getType()
  */
 public abstract class ResultTypeResolvingConverter extends ResolvingConverter<ResultType> {
 

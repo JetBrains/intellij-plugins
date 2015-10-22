@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ import com.intellij.util.xml.ExtendClass;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Converter for "class" attribute. Must be used in conjunction with {@link com.intellij.util.xml.ExtendClass} to
+ * Converter for "class" attribute. Must be used in conjunction with {@link ExtendClass} to
  * determine valid references (interface allowed, non-public class allowed, ..).
  *
  * @author Yann C&eacute;bron

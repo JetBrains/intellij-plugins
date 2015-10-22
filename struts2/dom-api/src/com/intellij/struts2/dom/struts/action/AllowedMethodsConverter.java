@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Converter for {@link com.intellij.struts2.dom.struts.action.Action#getActionMethods()}.
+ * Converter for {@link Action#getActionMethods()}.
  *
  * @author Yann C&eacute;bron
  */
