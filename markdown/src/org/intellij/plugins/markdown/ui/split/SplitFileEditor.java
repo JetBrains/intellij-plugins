@@ -80,7 +80,8 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
 
   public void triggerLayoutChange() {
     final int oldValue = mySplitEditorLayout.ordinal();
-    final int newValue = (oldValue + 1) % SplitEditorLayout.values().length;
+    final int N = SplitEditorLayout.values().length;
+    final int newValue = (oldValue + N - 1) % N;
 
     triggerLayoutChange(SplitEditorLayout.values()[newValue]);
   }
