@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,8 +77,8 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
-  private boolean handleExpressionPrefix(final Editor editor,
-                                         int offset) {
+  private static boolean handleExpressionPrefix(final Editor editor,
+                                                int offset) {
     final CharSequence sequence = editor.getDocument().getCharsSequence();
     final CharSequence before = sequence.subSequence(offset - OgnlLanguage.EXPRESSION_PREFIX.length(),
                                                      offset);
@@ -96,8 +96,8 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
-  private boolean handleOpeningBrace(final Editor editor,
-                                     int offset) {
+  private static boolean handleOpeningBrace(final Editor editor,
+                                            int offset) {
     if (offset < OgnlLanguage.EXPRESSION_PREFIX.length()) return false;
     editor.getDocument().insertString(editor.getCaretModel().getOffset(), "}");
     return true;
