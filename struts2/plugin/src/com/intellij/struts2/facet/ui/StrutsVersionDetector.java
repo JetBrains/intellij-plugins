@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,21 +35,22 @@ import java.util.Properties;
  * @author Yann C&eacute;bron
  */
 public class StrutsVersionDetector {
-  private StrutsVersionDetector() { }
+  private StrutsVersionDetector() {
+  }
 
   @Nullable
   public static String detectStrutsVersion(@NotNull final Module module) {
+    final VirtualFile jarRoot = getStrutsJarRoot(module);
+    if (jarRoot == null) {
+      return null;
+    }
+
+    final VirtualFile entry = jarRoot.findFileByRelativePath("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
+    if (entry == null) {
+      return null;
+    }
+
     try {
-      final VirtualFile jarRoot = getStrutsJarRoot(module);
-      if (jarRoot == null) {
-        return null;
-      }
-
-      final VirtualFile entry = jarRoot.findFileByRelativePath("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
-      if (entry == null) {
-        return null;
-      }
-
       final InputStream stream = entry.getInputStream();
       try {
         final Properties properties = new Properties();
@@ -66,7 +67,7 @@ public class StrutsVersionDetector {
   }
 
   @Nullable
-  private static VirtualFile getStrutsJarRoot(final Module module) throws IOException {
+  private static VirtualFile getStrutsJarRoot(final Module module) {
     final GlobalSearchScope scope = GlobalSearchScope.moduleRuntimeScope(module, false);
     final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
 
@@ -97,5 +98,4 @@ public class StrutsVersionDetector {
 
     return psiFile.getVirtualFile();
   }
-
 }

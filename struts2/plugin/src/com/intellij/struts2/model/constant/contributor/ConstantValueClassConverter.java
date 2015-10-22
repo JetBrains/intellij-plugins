@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Resolves to Shortcut-name, JAVA-Class or result from {@link com.intellij.struts2.model.constant.ConstantValueConverterClassContributor}.
+ * Resolves to Shortcut-name, JAVA-Class or result from {@link ConstantValueConverterClassContributor}.
  */
 class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implements CustomReferenceConverter {
 
@@ -109,6 +109,7 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
   @Override
   public PsiReference[] createReferences(GenericDomValue value, PsiElement element, ConvertContext context) {
     final PsiReference[] references = javaClassReferenceProvider.getReferencesByElement(element);
+    //noinspection unchecked
     return ArrayUtil.append(references, new GenericDomValueReference(value), PsiReference.ARRAY_FACTORY);
   }
 

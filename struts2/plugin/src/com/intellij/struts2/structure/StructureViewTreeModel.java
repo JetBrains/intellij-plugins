@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,7 +62,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
   @NotNull
   @Override
   public StructureViewTreeElement getRoot() {
-    final XmlFile xmlFile = (XmlFile)getPsiFile();
+    final XmlFile xmlFile = getPsiFile();
     final DomFileElement<DomElement> fileElement = DomManager.getDomManager(xmlFile.getProject()).getFileElement(xmlFile, DomElement.class);
     if (fileElement == null) {
       return new XmlFileTreeElement(xmlFile);

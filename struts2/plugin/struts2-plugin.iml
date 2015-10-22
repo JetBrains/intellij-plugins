@@ -22,7 +22,6 @@
     <orderEntry type="module" module-name="web-impl" />
     <orderEntry type="module" module-name="graph-openapi" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="jetgroovy" />
     <orderEntry type="module" module-name="struts-api" />
     <orderEntry type="module" module-name="StrutsAssistant" />
     <orderEntry type="module" module-name="properties" />
@@ -41,6 +40,6 @@
     <orderEntry type="module" module-name="spring-api" />
     <orderEntry type="module" module-name="properties-psi-api" />
     <orderEntry type="module" module-name="properties-psi-impl" />
+    <orderEntry type="module" module-name="groovy-psi" />
   </component>
 </module>
-

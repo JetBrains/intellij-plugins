@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,7 +54,7 @@ public abstract class StrutsManager {
    *
    * @param file File to resolve context.
    * @return <code>null</code> if no model available.
-   * @see com.intellij.util.xml.model.impl.DomModelFactory#getModelByConfigFile(com.intellij.psi.xml.XmlFile)
+   * @see com.intellij.util.xml.model.impl.DomModelFactory#getModelByConfigFile(XmlFile)
    */
   @Nullable
   public abstract StrutsModel getModelByFile(@NotNull final XmlFile file);
@@ -82,7 +82,7 @@ public abstract class StrutsManager {
   /**
    * @param psiElement To determine module.
    * @return Combined model
-   * @see #getCombinedModel(com.intellij.openapi.module.Module)
+   * @see #getCombinedModel(Module)
    */
   @Nullable
   public abstract StrutsModel getCombinedModel(@NotNull final PsiElement psiElement);
