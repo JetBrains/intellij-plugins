@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.formatter;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
@@ -121,8 +122,17 @@ public class DartIndentProcessor {
       }
       return Indent.getNormalIndent();
     }
-    if (elementType == LPAREN && superParentType == METADATA) {
+    if (elementType == LPAREN && (superParentType == METADATA || parentType == ARGUMENTS)) {
       return Indent.getContinuationIndent();
+    }
+    if (elementType == RPAREN && parentType == ARGUMENTS) {
+      if (prevSiblingType == ARGUMENT_LIST) {
+        ASTNode[] childs = prevSibling.getChildren(null);
+        int n = childs.length;
+        if (n > 2 && childs[n - 1] instanceof PsiErrorElement && childs[n - 2].getText().equals(COMMA.toString())) {
+          return Indent.getContinuationIndent();
+        }
+      }
     }
     if (parentType == ARGUMENT_LIST) {
       // TODO In order to handle some dart_style examples we need to set indent for each arg.
@@ -131,6 +141,9 @@ public class DartIndentProcessor {
       // have been changed since the recommended setting for Dart programming is
       // KEEP_LINE_BREAKS==false. The two tests are testAlignment() and testWrappingMeth().
       if (EXPRESSIONS.contains(elementType) && elementType != FUNCTION_EXPRESSION) {
+        return Indent.getContinuationIndent();
+      }
+      if (elementType == NAMED_ARGUMENT) {
         return Indent.getContinuationIndent();
       }
     }
