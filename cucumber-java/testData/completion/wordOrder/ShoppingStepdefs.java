@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 public class ShoppingStepdefs {
   private RpnCalculator calc = new RpnCalculator();
 
-  @When("^test test fake (\\d)$")
+  @When("^test test fake (\\d+)$")
   public void test_test_fake(int amount) {
     calc.push(amount);
     calc.push("-");
