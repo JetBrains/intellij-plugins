@@ -655,4 +655,27 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "  return;\n" +
                  "}");
   }
+
+  public void testEnterAfterLastArg() {
+    doTypingTest('\n',
+                 "m(l) {\n" +
+                 "  List p = new List(l,<caret>);\n" +
+                 "}",
+                 "m(l) {\n" +
+                 "  List p = new List(l,\n" +
+                 "      <caret>);\n" +
+                 "}");
+  }
+
+  public void testEnterInEmptyArg() {
+    doTypingTest('\n',
+                 "m(l) {\n" +
+                 "  List p = new List(<caret>);\n" +
+                 "}",
+                 "m(l) {\n" +
+                 "  List p = new List(\n" +
+                 "      <caret>\n" +
+                 "  );\n" +
+                 "}");
+  }
 }
