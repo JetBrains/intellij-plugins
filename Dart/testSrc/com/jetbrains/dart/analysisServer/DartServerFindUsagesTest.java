@@ -78,19 +78,19 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
 
     myFixture.doHighlighting(); // warm up
 
-    final String[] allProjectUsages = {"PsiCommentImpl in file0.dart@5:9 (non-code usage)",
-      "DartReferenceExpressionImpl in file0.dart@11:15",
+    final String[] allProjectUsages = {"PsiCommentImpl in " + psiFile1.getName() + "@5:9 (non-code usage)",
+      "DartReferenceExpressionImpl in " + psiFile1.getName() + "@11:15",
       "DartReferenceExpressionImpl in file1.dart@0:4"};
 
     checkUsages(new LocalSearchScope(psiFile1),
-                "PsiCommentImpl in file0.dart@5:9 (non-code usage)",
-                "DartReferenceExpressionImpl in file0.dart@11:15");
+                "PsiCommentImpl in " + psiFile1.getName() + "@5:9 (non-code usage)",
+                "DartReferenceExpressionImpl in " + psiFile1.getName() + "@11:15");
     checkUsages(new LocalSearchScope(psiFile2),
                 "DartReferenceExpressionImpl in file1.dart@0:4");
     checkUsages(new LocalSearchScope(new PsiFile[]{psiFile1, psiFile2}), allProjectUsages);
     checkUsages(new GlobalSearchScope.FilesScope(getProject(), Collections.singletonList(psiFile1.getVirtualFile())),
-                "PsiCommentImpl in file0.dart@5:9 (non-code usage)",
-                "DartReferenceExpressionImpl in file0.dart@11:15");
+                "PsiCommentImpl in " + psiFile1.getName() + "@5:9 (non-code usage)",
+                "DartReferenceExpressionImpl in " + psiFile1.getName() + "@11:15");
     checkUsages(new GlobalSearchScope.FilesScope(getProject(), Collections.singletonList(psiFile2.getVirtualFile())),
                 "DartReferenceExpressionImpl in file1.dart@0:4");
     checkUsages(new GlobalSearchScope.FilesScope(getProject(), Arrays.asList(psiFile1.getVirtualFile(), psiFile2.getVirtualFile())),
@@ -116,9 +116,9 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
                                            "}\n");
     myFixture.doHighlighting(); // warm up
     checkUsages(GlobalSearchScope.projectScope(getProject()),
-                "LeafPsiElement in file0.dart@24:27 (non-code usage)",
-                "DartReferenceExpressionImpl in file0.dart@93:96",
-                "DartReferenceExpressionImpl in file0.dart@122:125 (dynamic usage)");
+                "LeafPsiElement in " + getFile().getName() + "@24:27 (non-code usage)",
+                "DartReferenceExpressionImpl in " + getFile().getName() + "@93:96",
+                "DartReferenceExpressionImpl in " + getFile().getName() + "@122:125 (dynamic usage)");
   }
 
   public void testFileUsage() {
