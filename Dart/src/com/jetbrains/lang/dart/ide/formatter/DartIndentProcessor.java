@@ -129,7 +129,7 @@ public class DartIndentProcessor {
       if (prevSiblingType == ARGUMENT_LIST) {
         ASTNode[] childs = prevSibling.getChildren(null);
         int n = childs.length;
-        if (n > 2 && childs[n - 1] instanceof PsiErrorElement && childs[n - 2].getText().equals(COMMA.toString())) {
+        if (n > 2 && childs[n - 1] instanceof PsiErrorElement && childs[n-2].getElementType() == COMMA) {
           return Indent.getContinuationIndent();
         }
       }
