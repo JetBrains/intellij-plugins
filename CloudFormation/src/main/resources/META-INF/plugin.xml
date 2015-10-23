@@ -27,7 +27,7 @@
   ]]></description>
 
   <!-- IDEA 14.0.3 to 15.x -->
-  <idea-version since-build="139.661" until-build="142.99999"/>
+  <idea-version since-build="139.661" until-build="143.99999"/>
 
   <depends>com.intellij.modules.lang</depends>
 
