@@ -58,7 +58,6 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private Project eduProject;
 
     final public static String EDU_PROJECT_NAME = "EduProject";
-    private static boolean TEST_MODE_FLAG = false;
 
     CourseManager() {
         if (myState.courses == null || myState.courses.size() == 0) try {
@@ -259,7 +258,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
         if (myEduProject == null || myEduProject.getProjectFile() == null) {
 
-            if(!TEST_MODE_FLAG) if (!NewEduProjectUtil.showDialogOpenEduProject(projectToClose)) return false; //if user abort to open lesson in a new Project
+            if(!ApplicationManager.getApplication().isUnitTestMode()) if (!NewEduProjectUtil.showDialogOpenEduProject(projectToClose)) return false; //if user abort to open lesson in a new Project
             if(myState.eduProjectPath != null) {
                 try {
                     myEduProject = ProjectManager.getInstance().loadAndOpenProject(myState.eduProjectPath);
@@ -504,8 +503,5 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
     }
 
-    public void setTestModeFlag(boolean flag){
-        TEST_MODE_FLAG = flag;
-    }
 
 }
