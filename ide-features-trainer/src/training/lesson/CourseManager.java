@@ -17,6 +17,8 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.vcs.log.Hash;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +38,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -55,6 +58,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
     private Project eduProject;
 
     final public static String EDU_PROJECT_NAME = "EduProject";
+    private static boolean TEST_MODE_FLAG = false;
 
     CourseManager() {
         if (myState.courses == null || myState.courses.size() == 0) try {
@@ -253,8 +257,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 myEduProject = openProject;
             }
         }
-        if (myEduProject == null) {
-            if (!NewEduProjectUtil.showDialogOpenEduProject(projectToClose)) return false; //if user abort to open lesson in a new Project
+        if (myEduProject == null || myEduProject.getProjectFile() == null) {
+
+            if(!TEST_MODE_FLAG) if (!NewEduProjectUtil.showDialogOpenEduProject(projectToClose)) return false; //if user abort to open lesson in a new Project
             if(myState.eduProjectPath != null) {
                 try {
                     myEduProject = ProjectManager.getInstance().loadAndOpenProject(myState.eduProjectPath);
@@ -268,8 +273,15 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             } else {
 
                 try {
-                    JavaSdk jSdk = JavaSdk.getInstance();
-                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, projectToClose, SdkConfigurationUtil.findOrCreateSdk(null, jSdk));
+
+                    JavaSdk javaSdk = JavaSdk.getInstance();
+                    final String suggestedHomePath = javaSdk.suggestHomePath();
+                    final String versionString = javaSdk.getVersionString(suggestedHomePath);
+                    final Sdk jdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
+
+                    if (ProjectJdkTable.getInstance().findJdk(jdk.getName()) == null) SdkConfigurationUtil.addSdk(jdk);
+//                    final Sdk sdk = SdkConfigurationUtil.findOrCreateSdk(null, javaSdk);
+                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, projectToClose, jdk);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -283,7 +295,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         assert eduProject.getProjectFile().getParent() != null;
         assert eduProject.getProjectFile().getParent().getParent() != null;
 
-        myState.eduProjectPath = eduProject.getProjectFile().getParent().getParent().getPath();
+        myState.eduProjectPath = eduProject.getBasePath();
         //Hide EduProject from Recent projects
         RecentProjectsManager.getInstance().removePath(eduProject.getPresentableUrl());
         return true;
@@ -490,6 +502,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 }
             }
         }
+    }
+
+    public void setTestModeFlag(boolean flag){
+        TEST_MODE_FLAG = flag;
     }
 
 }
