@@ -61,8 +61,8 @@
 
       <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
               id="org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction"
-              text="Toggle bold mode"
-              description="Toggles bold mode on caret/selection"
+              text="Toggle monospaced (code span) mode"
+              description="Toggles monospaced mode (rendered as code span) on caret/selection"
               icon="MarkdownIcons.EditorActions.Code_span">
         <keyboard-shortcut first-keystroke="ctrl o" keymap="$default"/>
       </action>
