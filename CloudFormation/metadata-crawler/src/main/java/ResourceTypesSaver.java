@@ -242,6 +242,7 @@ public class ResourceTypesSaver {
       } else {
         if (!name.equals("AWS::CloudFormation::WaitConditionHandle") &&
             !name.equals("AWS::SDB::Domain") &&
+            !name.equals("AWS::CodeDeploy::Application") &&
             !name.equals("AWS::ECS::Cluster")) {
           throw new RuntimeException("No properties found in " + url);
         }

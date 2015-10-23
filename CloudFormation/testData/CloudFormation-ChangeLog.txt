@@ -25,7 +25,7 @@ User Guide (API Version 2010-05-15)
                 + Logging In to the Console
                 + Creating a Stack
                       # Selecting a Stack Template
-                      # Specifying Stack Parameters
+                      # Specifying Stack Name and Parameters
                       # Setting Stack Options
                       # Reviewing Your Stack and Estimating Stack Cost
                 + Creating an EC2 Key Pair
@@ -61,13 +61,19 @@ User Guide (API Version 2010-05-15)
                 + Conditions
                 + Resources
                 + Outputs
-          o Example Templates
-                + Auto Scaling Group with LoadBalancer, Auto Scaling
-                  Policies, and CloudWatch Alarms
-                + Amazon EC2 Running an Amazon Linux AMI
-                + Create a Load-Balanced Apache Website
-                + Auto-Scaled Worker that uses Spot Instances to Monitor
-                  Work in an SQS Queue
+          o What is AWS CloudFormation Designer?
+                + Overview
+                + Canvas Pane
+                + JSON Editor
+                + Additional Information
+          o Walkthroughs
+                + Walkthrough: Use AWS CloudFormation Designer to Create a
+                  Basic Web Server
+                + Walkthrough: Use AWS CloudFormation Designer to Modify a
+                  Stack's Template
+                + Create a Scalable, Load-balancing Web Server
+                + Deploying Applications
+                + Creating Wait Conditions
           o Template Snippets
                 + General
                 + Auto Scaling
@@ -88,16 +94,6 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3
                 + Amazon SNS
                 + Amazon SQS
-          o Creating Templates
-                + Specifying Intrinsic Functions
-                + Adding Input Parameters
-                + Use Parameters and Mappings to Specify Values in Your
-                  Template
-                + Conditionally Creating Resources
-                + Tagging Your Resources
-                + Specifying Output Values
-                + Creating Wait Conditions
-                + Deploying Applications
           o Custom Resources
                 + Amazon Simple Notification Service-backed Custom
                   Resources
@@ -128,7 +124,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::CloudFront::Distribution
                 + AWS::CloudTrail::Trail
                 + AWS::CloudWatch::Alarm
+                + AWS::CodeDeploy::Application
+                + AWS::CodeDeploy::DeploymentConfig
+                + AWS::CodeDeploy::DeploymentGroup
                 + AWS::DataPipeline::Pipeline
+                + AWS::DirectoryService::SimpleAD
                 + AWS::DynamoDB::Table
                 + AWS::EC2::CustomerGateway
                 + AWS::EC2::DHCPOptions
@@ -140,11 +140,13 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::NetworkAclEntry
                 + AWS::EC2::NetworkInterface
                 + AWS::EC2::NetworkInterfaceAttachment
+                + AWS::EC2::PlacementGroup
                 + AWS::EC2::Route
                 + AWS::EC2::RouteTable
                 + AWS::EC2::SecurityGroup
                 + AWS::EC2::SecurityGroupEgress
                 + AWS::EC2::SecurityGroupIngress
+                + AWS::EC2::SpotFleet
                 + AWS::EC2::Subnet
                 + AWS::EC2::SubnetNetworkAclAssociation
                 + AWS::EC2::SubnetRouteTableAssociation
@@ -184,26 +186,31 @@ User Guide (API Version 2010-05-15)
                 + AWS::IAM::User
                 + AWS::IAM::UserToGroupAddition
                 + AWS::Kinesis::Stream
+                + AWS::Lambda::EventSourceMapping
                 + AWS::Lambda::Function
+                + AWS::Lambda::Permission
                 + AWS::Logs::LogGroup
                 + AWS::Logs::MetricFilter
+                + AWS::Logs::SubscriptionFilter
                 + AWS::OpsWorks::App
                 + AWS::OpsWorks::ElasticLoadBalancerAttachment
                 + AWS::OpsWorks::Instance
                 + AWS::OpsWorks::Layer
                 + AWS::OpsWorks::Stack
+                + AWS::RDS::DBCluster
+                + AWS::RDS::DBClusterParameterGroup
+                + AWS::RDS::DBInstance
+                + AWS::RDS::DBParameterGroup
+                + AWS::RDS::DBSecurityGroup
+                + AWS::RDS::DBSecurityGroupIngress
+                + AWS::RDS::DBSubnetGroup
+                + AWS::RDS::EventSubscription
+                + AWS::RDS::OptionGroup
                 + AWS::Redshift::Cluster
                 + AWS::Redshift::ClusterParameterGroup
                 + AWS::Redshift::ClusterSecurityGroup
                 + AWS::Redshift::ClusterSecurityGroupIngress
                 + AWS::Redshift::ClusterSubnetGroup
-                + AWS::RDS::DBInstance
-                + AWS::RDS::DBParameterGroup
-                + AWS::RDS::DBSubnetGroup
-                + AWS::RDS::DBSecurityGroup
-                + AWS::RDS::DBSecurityGroupIngress
-                + AWS::RDS::EventSubscription
-                + AWS::RDS::OptionGroup
                 + AWS::Route53::HealthCheck
                 + AWS::Route53::HostedZone
                 + AWS::Route53::RecordSet
@@ -215,6 +222,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::SNS::TopicPolicy
                 + AWS::SQS::Queue
                 + AWS::SQS::QueuePolicy
+                + AWS::WorkSpaces::Workspace
           o Resource Property Types
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
@@ -238,12 +246,23 @@ User Guide (API Version 2010-05-15)
                 + CloudWatch Metric Dimension
                 + CloudWatch Logs MetricFilter MetricTransformation
                   Property
+                + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
+                + AWS CodeDeploy DeploymentGroup Deployment
+                + AWS CodeDeploy DeploymentGroup Deployment Revision
+                + AWS CodeDeploy DeploymentGroup Deployment Revision
+                  GitHubLocation
+                + AWS CodeDeploy DeploymentGroup Deployment Revision
+                  S3Location
+                + AWS CodeDeploy DeploymentGroup Ec2TagFilters
+                + AWS CodeDeploy DeploymentGroup
+                  OnPremisesInstanceTagFilters
                 + AWS Data Pipeline Pipeline ParameterObjects
                 + AWS Data Pipeline Parameter Objects Attributes
                 + AWS Data Pipeline Pipeline ParameterValues
                 + AWS Data Pipeline PipelineObjects
                 + AWS Data Pipeline Data Pipeline Object Fields
                 + AWS Data Pipeline Pipeline PipelineTags
+                + AWS Directory Service SimpleAD VpcSettings
                 + DynamoDB Attribute Definitions
                 + DynamoDB Global Secondary Indexes
                 + DynamoDB Key Schema
@@ -261,6 +280,26 @@ User Guide (API Version 2010-05-15)
                 + EC2 Network Interface Private IP Specification
                 + EC2 PortRange
                 + EC2 Security Group Rule
+                + Amazon Elastic Compute Cloud SpotFleet
+                  SpotFleetRequestConfigData
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications BlockDeviceMappings
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications BlockDeviceMappings Ebs
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications IamInstanceProfile
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications Monitoring
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications NetworkInterfaces
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications NetworkInterfaces PrivateIpAddresses
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications Placement
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
+                  LaunchSpecifications SecurityGroups
                 + Amazon ECS Service LoadBalancers
                 + Amazon ECS TaskDefinition ContainerDefinitions
                 + Amazon ECS TaskDefinition ContainerDefinitions
@@ -298,6 +337,7 @@ User Guide (API Version 2010-05-15)
                 + AWS OpsWorks LoadBasedAutoScaling Type
                 + AWS OpsWorks Recipes Type
                 + AWS OpsWorks Source Type
+                + AWS OpsWorks App Environment
                 + AWS OpsWorks SslConfiguration Type
                 + AWS OpsWorks StackConfigurationManager Type
                 + AWS OpsWorks TimeBasedAutoScaling Type
@@ -322,8 +362,10 @@ User Guide (API Version 2010-05-15)
                 + Amazon S3 Lifecycle Rule NoncurrentVersionTransition
                 + Amazon S3 Lifecycle Rule Transition
                 + Amazon S3 Logging Configuration
-                + Amazon S3 Notification Configuration
-                + Amazon S3 Notification Topic Configurations
+                + Amazon S3 NotificationConfiguration
+                + Amazon S3 NotificationConfiguration LambdaConfigurations
+                + Amazon S3 NotificationConfiguration QueueConfigurations
+                + Amazon S3 NotificationConfiguration TopicConfigurations
                 + Amazon S3 Versioning Configuration
                 + Amazon S3 Website Configuration Property
                 + Amazon S3 Website Configuration Redirect All Requests To
@@ -399,6 +441,7 @@ User Guide (API Version 2010-05-15)
     * Logging API Calls
     * Troubleshooting
     * Release History
+          o Supported AWS Services
     * AWS Glossary
 AWS Documentation <http://aws.amazon.com/documentation/> » AWS 
 CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
@@ -412,6 +455,107 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+October 01, 2015
+
+AWS CloudFormation added the following resources:
+
+AWS::CodeDeploy::Application, AWS::CodeDeploy::DeploymentGroup, and 
+AWS::CodeDeploy::DeploymentConfig
+
+    Use the AWS CodeDeploy resources to create and apply deployments to
+    Amazon EC2 or on-premises instances.
+
+AWS::DirectoryService::SimpleAD
+
+    Use the Simple Active Directory resource to create an AWS Directory
+    Service Simple AD, which is a Microsoft Active Directory-compatible
+    directory.
+
+AWS::EC2::PlacementGroup
+
+    Use a placement group to create a cluster of instances in a low-latency
+    network.
+
+AWS::EC2::SpotFleet
+
+    Use a Spot fleet to launch a collection of Spot instances that run
+    interruptible tasks.
+
+AWS::Lambda::EventSourceMapping
+
+    Use the event source mapping to specify a stream as an event source for
+    a Lambda function.
+
+AWS::Lambda::Permission
+
+    Use a Lambda permission to add a statement to a Lambda function's
+    policy.
+
+AWS::Logs::SubscriptionFilter
+
+    Use the subscription filter to defines which log events are delivered
+    to your Amazon Kinesis stream.
+
+AWS::RDS::DBCluster and AWS::RDS::DBClusterParameterGroup
+
+    Use the cluster and cluster parameter group resources to create an
+    Amazon Aurora DB cluster.
+
+AWS::WorkSpaces::Workspace
+
+    Use Amazon WorkSpaces to create cloud-based desktop experiences.
+
+2010-05-15
+
+Resource updates
+
+October 01, 2015
+
+AWS CloudFormation updated the following resources:
+
+AWS::ElastiCache::ReplicationGroup
+
+    Use the Fn::GetAtt intrinsic function to get a list of read-only
+    replica addresses and ports.
+
+AWS::OpsWorks::Stack
+
+    Use the AgentVersion property to specify a particular AWS OpsWorks
+    agent.
+
+AWS::OpsWorks::App
+
+    Use the Environment property to specify environment variables for an
+    AWS OpsWorks app.
+
+AWS::S3::Bucket
+
+    For the NotificationConfiguration property, you can configure
+    notification settings for Lambda functions and Amazon SQS queues.
+
+2010-05-15
+
+IAM condition keys
+
+October 01, 2015
+
+For IAM policies, use AWS CloudFormation-specific condition keys to specify 
+when an IAM policy takes effect. For more information, see Controlling 
+Access with AWS Identity and Access Management.
+
+2010-05-15
+
+AWS CloudFormation Designer
+
+October 1, 2015
+
+Use AWS CloudFormation Designer to create and modify templates using a 
+drag-and-drop interface.
+
+2010-05-15
 
 New resource
 
