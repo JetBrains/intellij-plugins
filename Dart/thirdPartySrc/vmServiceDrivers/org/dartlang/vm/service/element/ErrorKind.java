@@ -18,9 +18,9 @@ package org.dartlang.vm.service.element;
 public enum ErrorKind {
 
   /**
-   * The isolate has encountered an unhandled Dart exception.
+   * The isolate has encounted an internal error. These errors should be reported as bugs.
    */
-  UnhandledException,
+  InternalError,
 
   /**
    * The isolate has encountered a Dart language error in the program.
@@ -28,12 +28,16 @@ public enum ErrorKind {
   LanguageError,
 
   /**
-   * The isolate has encounted an internal error. These errors should be reported as bugs.
-   */
-  InternalError,
-
-  /**
    * The isolate has been terminated by an external source.
    */
-  TerminationError;
-}
+  TerminationError,
+
+  /**
+   * The isolate has encountered an unhandled Dart exception.
+   */
+  UnhandledException,
+
+  /**
+   * Represents a value returned by the VM but unknown to this client
+   */
+  Unknown}

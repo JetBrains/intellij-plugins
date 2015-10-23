@@ -22,7 +22,11 @@ public enum StepOption {
 
   Into,
 
+  Out,
+
   Over,
 
-  Out;
-}
+  /**
+   * Represents a value returned by the VM but unknown to this client
+   */
+  Unknown}

@@ -37,7 +37,12 @@ public class ErrorObj extends Obj {
    * What kind of error is this?
    */
   public ErrorKind getKind() {
-    return ErrorKind.valueOf(json.get("kind").getAsString());
+    String name = json.get("kind").getAsString();
+    try {
+      return ErrorKind.valueOf(name);
+    } catch (IllegalArgumentException e) {
+      return ErrorKind.Unknown;
+    }
   }
 
   /**

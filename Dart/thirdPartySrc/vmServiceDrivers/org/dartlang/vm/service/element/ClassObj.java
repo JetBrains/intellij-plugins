@@ -59,7 +59,9 @@ public class ClassObj extends Obj {
   }
 
   /**
-   * A list of interface types for this class. The value will be of the kind: Type.
+   * A list of interface types for this class.
+   * 
+   * The value will be of the kind: Type.
    */
   public ElementList<InstanceRef> getInterfaces() {
     return new ElementList<InstanceRef>(json.get("interfaces").getAsJsonArray()) {

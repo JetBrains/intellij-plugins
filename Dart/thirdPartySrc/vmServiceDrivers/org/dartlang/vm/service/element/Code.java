@@ -30,7 +30,12 @@ public class Code extends ObjRef {
    * What kind of code object is this?
    */
   public CodeKind getKind() {
-    return CodeKind.valueOf(json.get("kind").getAsString());
+    String name = json.get("kind").getAsString();
+    try {
+      return CodeKind.valueOf(name);
+    } catch (IllegalArgumentException e) {
+      return CodeKind.Unknown;
+    }
   }
 
   /**

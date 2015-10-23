@@ -30,7 +30,12 @@ public class Sentinel extends Response {
    * What kind of sentinel is this?
    */
   public SentinelKind getKind() {
-    return SentinelKind.valueOf(json.get("kind").getAsString());
+    String name = json.get("kind").getAsString();
+    try {
+      return SentinelKind.valueOf(name);
+    } catch (IllegalArgumentException e) {
+      return SentinelKind.Unknown;
+    }
   }
 
   /**

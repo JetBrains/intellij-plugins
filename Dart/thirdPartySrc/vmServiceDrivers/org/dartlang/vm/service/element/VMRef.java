@@ -15,19 +15,21 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-public enum CodeKind {
+import com.google.gson.JsonObject;
 
-  Collected,
+/**
+ * {@link VMRef} is a reference to a {@link VM} object.
+ */
+public class VMRef extends Response {
 
-  Dart,
-
-  Native,
-
-  Stub,
-
-  Tag,
+  public VMRef(JsonObject json) {
+    super(json);
+  }
 
   /**
-   * Represents a value returned by the VM but unknown to this client
+   * A name identifying this vm. Not guaranteed to be unique.
    */
-  Unknown}
+  public String getName() {
+    return json.get("name").getAsString();
+  }
+}

@@ -22,9 +22,29 @@ package org.dartlang.vm.service.element;
 public enum EventKind {
 
   /**
-   * Notification that a new isolate has started.
+   * A breakpoint has been added for an isolate.
    */
-  IsolateStart,
+  BreakpointAdded,
+
+  /**
+   * A breakpoint has been removed.
+   */
+  BreakpointRemoved,
+
+  /**
+   * An unresolved breakpoint has been resolved for an isolate.
+   */
+  BreakpointResolved,
+
+  /**
+   * A garbage collection event.
+   */
+  GC,
+
+  /**
+   * Notification that an isolate has exited.
+   */
+  IsolateExit,
 
   /**
    * Notification that an isolate is ready to run.
@@ -32,9 +52,9 @@ public enum EventKind {
   IsolateRunnable,
 
   /**
-   * Notification that an isolate has exited.
+   * Notification that a new isolate has started.
    */
-  IsolateExit,
+  IsolateStart,
 
   /**
    * Notification that isolate identifying information has changed. Currently used to notify of
@@ -43,24 +63,9 @@ public enum EventKind {
   IsolateUpdate,
 
   /**
-   * An isolate has paused at start, before executing code.
-   */
-  PauseStart,
-
-  /**
-   * An isolate has paused at exit, before terminating.
-   */
-  PauseExit,
-
-  /**
    * An isolate has paused at a breakpoint or due to stepping.
    */
   PauseBreakpoint,
-
-  /**
-   * An isolate has paused due to interruption via pause.
-   */
-  PauseInterrupted,
 
   /**
    * An isolate has paused due to an exception.
@@ -68,32 +73,37 @@ public enum EventKind {
   PauseException,
 
   /**
+   * An isolate has paused at exit, before terminating.
+   */
+  PauseExit,
+
+  /**
+   * An isolate has paused due to interruption via pause.
+   */
+  PauseInterrupted,
+
+  /**
+   * An isolate has paused at start, before executing code.
+   */
+  PauseStart,
+
+  /**
    * An isolate has started or resumed execution.
    */
   Resume,
 
   /**
-   * A breakpoint has been added for an isolate.
+   * Notification that VM identifying information has changed. Currently used to notify of changes
+   * to the VM debugging name via setVMName.
    */
-  BreakpointAdded,
-
-  /**
-   * An unresolved breakpoint has been resolved for an isolate.
-   */
-  BreakpointResolved,
-
-  /**
-   * A breakpoint has been removed.
-   */
-  BreakpointRemoved,
-
-  /**
-   * A garbage collection event.
-   */
-  GC,
+  VMUpdate,
 
   /**
    * Notification of bytes written, for example, to stdout/stderr.
    */
-  WriteEvent;
-}
+  WriteEvent,
+
+  /**
+   * Represents a value returned by the VM but unknown to this client
+   */
+  Unknown}
