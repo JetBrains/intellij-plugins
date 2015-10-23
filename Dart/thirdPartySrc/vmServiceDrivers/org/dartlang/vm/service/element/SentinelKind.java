@@ -21,6 +21,11 @@ package org.dartlang.vm.service.element;
 public enum SentinelKind {
 
   /**
+   * Indicates that a variable or field is in the process of being initialized.
+   */
+  BeingInitialized,
+
+  /**
    * Indicates that the object referred to has been collected by the GC.
    */
   Collected,
@@ -31,14 +36,14 @@ public enum SentinelKind {
   Expired,
 
   /**
+   * Reserved for future use.
+   */
+  Free,
+
+  /**
    * Indicates that a variable or field has not been initialized.
    */
   NotInitialized,
-
-  /**
-   * Indicates that a variable or field is in the process of being initialized.
-   */
-  BeingInitialized,
 
   /**
    * Indicates that a variable has been eliminated by the optimizing compiler.
@@ -46,7 +51,6 @@ public enum SentinelKind {
   OptimizedOut,
 
   /**
-   * Reserved for future use.
+   * Represents a value returned by the VM but unknown to this client
    */
-  Free;
-}
+  Unknown}

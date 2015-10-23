@@ -15,17 +15,16 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-public enum CodeKind {
+/**
+ * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
+ */
+public enum ExceptionPauseMode {
 
-  Collected,
+  All,
 
-  Dart,
+  None,
 
-  Native,
-
-  Stub,
-
-  Tag,
+  Unhandled,
 
   /**
    * Represents a value returned by the VM but unknown to this client

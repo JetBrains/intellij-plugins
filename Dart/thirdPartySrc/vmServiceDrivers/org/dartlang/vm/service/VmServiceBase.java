@@ -205,17 +205,6 @@ abstract class VmServiceBase implements VmServiceConst {
   RequestSink requestSink;
 
   /**
-   * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script. This
-   * call works for protocol versions 2.1 and 3.0
-   */
-  public void addBreakpoint(String isolateId, String scriptId, int line, BreakpointConsumer consumer) {
-    addBreakpoint(isolateId, scriptId, line, 1, consumer);
-  }
-
-  public abstract void addBreakpoint(
-      String isolateId, String scriptId, int line, int column, BreakpointConsumer consumer);
-
-  /**
    * Add a listener to receive {@link Event}s from the VM.
    */
   public void addVmServiceListener(VmServiceListener listener) {
@@ -321,11 +310,11 @@ abstract class VmServiceBase implements VmServiceConst {
   void logUnknownResponse(Consumer consumer, JsonObject json) {
     Class<? extends Consumer> consumerClass = consumer.getClass();
     StringBuilder msg = new StringBuilder();
-    msg.append("Expected response for " + consumerClass + "\n");
+    msg.append("Expected response for ").append(consumerClass).append("\n");
     for (Class<?> interf : consumerClass.getInterfaces()) {
-      msg.append("  implementing " + interf + "\n");
+      msg.append("  implementing ").append(interf).append("\n");
     }
-    msg.append("  but received " + json);
+    msg.append("  but received ").append(json);
     Logging.getLogger().logError(msg.toString());
   }
 

@@ -56,6 +56,8 @@ public class VmService extends VmServiceBase {
 
   public static final String STDOUT_STREAM_ID = "Stdout";
 
+  public static final String VM_STREAM_ID = "VM";
+
   /**
    * The major version number of the protocol supported by this client.
    */
@@ -69,12 +71,25 @@ public class VmService extends VmServiceBase {
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
    */
-  public void addBreakpoint(String isolateId, String scriptId, int line, int column, BreakpointConsumer consumer) {
+  public void addBreakpoint(String isolateId, String scriptId, int line, BreakpointConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.addProperty("scriptId", scriptId);
     params.addProperty("line", line);
-    params.addProperty("column", column);
+    request("addBreakpoint", params, consumer);
+  }
+
+  /**
+   * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
+   * 
+   * @param column This parameter is optional and may be null.
+   */
+  public void addBreakpoint(String isolateId, String scriptId, int line, Integer column, BreakpointConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("scriptId", scriptId);
+    params.addProperty("line", line);
+    if (column != null) params.addProperty("column", column.intValue());
     request("addBreakpoint", params, consumer);
   }
 
@@ -93,12 +108,27 @@ public class VmService extends VmServiceBase {
    * RPC is useful when a script has not yet been assigned an id, for example, if a script is in a
    * deferred library which has not yet been loaded.
    */
-  public void addBreakpointWithScriptUri(String isolateId, String scriptUri, int line, int column, BreakpointConsumer consumer) {
+  public void addBreakpointWithScriptUri(String isolateId, String scriptUri, int line, BreakpointConsumer consumer) {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.addProperty("scriptUri", scriptUri);
     params.addProperty("line", line);
-    params.addProperty("column", column);
+    request("addBreakpointWithScriptUri", params, consumer);
+  }
+
+  /**
+   * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script. This
+   * RPC is useful when a script has not yet been assigned an id, for example, if a script is in a
+   * deferred library which has not yet been loaded.
+   * 
+   * @param column This parameter is optional and may be null.
+   */
+  public void addBreakpointWithScriptUri(String isolateId, String scriptUri, int line, Integer column, BreakpointConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("scriptUri", scriptUri);
+    params.addProperty("line", line);
+    if (column != null) params.addProperty("column", column.intValue());
     request("addBreakpointWithScriptUri", params, consumer);
   }
 
@@ -151,6 +181,21 @@ public class VmService extends VmServiceBase {
     JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.addProperty("objectId", objectId);
+    request("getObject", params, consumer);
+  }
+
+  /**
+   * The [getObject] RPC is used to lookup an [object] from some isolate by its [id].
+   * 
+   * @param offset This parameter is optional and may be null.
+   * @param count This parameter is optional and may be null.
+   */
+  public void getObject(String isolateId, String objectId, Integer offset, Integer count, GetObjectConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("objectId", objectId);
+    if (offset != null) params.addProperty("offset", offset.intValue());
+    if (count != null) params.addProperty("count", count.intValue());
     request("getObject", params, consumer);
   }
 
@@ -215,6 +260,29 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * The [resume] RPC is used to resume execution of a paused isolate.
+   */
+  public void resume(String isolateId, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("resume", params, consumer);
+  }
+
+  /**
+   * The [setExceptionPauseMode] RPC is used to control if an isolate pauses when an exception is
+   * thrown.
+   * 
+   * @param mode An [ExceptionPauseMode] indicates how the isolate pauses when an exception is
+   * thrown.
+   */
+  public void setExceptionPauseMode(String isolateId, ExceptionPauseMode mode, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("mode", mode.name());
+    request("setExceptionPauseMode", params, consumer);
+  }
+
+  /**
    * The [setLibraryDebuggable] RPC is used to enable or disable whether breakpoints and stepping
    * work for a given library.
    */
@@ -234,6 +302,15 @@ public class VmService extends VmServiceBase {
     params.addProperty("isolateId", isolateId);
     params.addProperty("name", name);
     request("setName", params, consumer);
+  }
+
+  /**
+   * The [setVMName] RPC is used to change the debugging name for the vm.
+   */
+  public void setVMName(String name, SuccessConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("name", name);
+    request("setVMName", params, consumer);
   }
 
   /**

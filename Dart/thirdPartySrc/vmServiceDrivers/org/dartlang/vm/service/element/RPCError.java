@@ -86,7 +86,10 @@ public class RPCError extends Element implements VmServiceConst {
   public String getDetails() {
     JsonElement data = json.get("data");
     if (data instanceof JsonObject) {
-      return ((JsonObject) data).get("details").getAsString();
+      JsonElement details = ((JsonObject) data).get("details");
+      if (details != null) {
+        return details.getAsString();
+      }
     }
     return null;
   }

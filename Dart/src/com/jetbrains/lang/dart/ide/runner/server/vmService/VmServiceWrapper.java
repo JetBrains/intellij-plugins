@@ -198,7 +198,7 @@ public class VmServiceWrapper implements Disposable {
       public void run() {
         final String uri = myDebugProcess.getUriForFile(position.getFile());
         final int line = position.getLine() + 1;
-        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, 1, consumer);
+        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
       }
     });
   }

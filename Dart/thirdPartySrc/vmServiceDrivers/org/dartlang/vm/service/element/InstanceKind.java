@@ -22,34 +22,57 @@ package org.dartlang.vm.service.element;
 public enum InstanceKind {
 
   /**
-   * A general instance of the Dart class Object.
-   */
-  PlainInstance,
-
-  /**
-   * null instance.
-   */
-  Null,
-
-  /**
    * true or false.
    */
   Bool,
+
+  /**
+   * An instance of the Dart class BoundedType.
+   */
+  BoundedType,
+
+  /**
+   * An instance of the built-in VM Closure implementation. User-defined Closures will be
+   * PlainInstance.
+   */
+  Closure,
 
   /**
    * An instance of the Dart class double.
    */
   Double,
 
+  Float32List,
+
+  /**
+   * Vector instance kinds.
+   */
+  Float32x4,
+
+  Float32x4List,
+
+  Float64List,
+
+  Float64x2,
+
+  Float64x2List,
+
   /**
    * An instance of the Dart class int.
    */
   Int,
 
-  /**
-   * An instance of the Dart class String.
-   */
-  String,
+  Int16List,
+
+  Int32List,
+
+  Int32x4,
+
+  Int32x4List,
+
+  Int64List,
+
+  Int8List,
 
   /**
    * An instance of the built-in VM List implementation. User-defined Lists will be PlainInstance.
@@ -62,13 +85,55 @@ public enum InstanceKind {
   Map,
 
   /**
-   * Vector instance kinds.
+   * An instance of the Dart class MirrorReference.
    */
-  Float32x4,
+  MirrorReference,
 
-  Float64x2,
+  /**
+   * null instance.
+   */
+  Null,
 
-  Int32x4,
+  /**
+   * A general instance of the Dart class Object.
+   */
+  PlainInstance,
+
+  /**
+   * An instance of the Dart class RegExp.
+   */
+  RegExp,
+
+  /**
+   * An instance of the Dart class StackTrace.
+   */
+  StackTrace,
+
+  /**
+   * An instance of the Dart class String.
+   */
+  String,
+
+  /**
+   * An instance of the Dart class Type.
+   */
+  Type,
+
+  /**
+   * An instance of the Dart class TypeParameter.
+   */
+  TypeParameter,
+
+  /**
+   * An instance of the Dart class TypeRef.
+   */
+  TypeRef,
+
+  Uint16List,
+
+  Uint32List,
+
+  Uint64List,
 
   /**
    * An instance of the built-in VM TypedData implementations. User-defined TypedDatas will be
@@ -78,73 +143,12 @@ public enum InstanceKind {
 
   Uint8List,
 
-  Uint16List,
-
-  Uint32List,
-
-  Uint64List,
-
-  Int8List,
-
-  Int16List,
-
-  Int32List,
-
-  Int64List,
-
-  Float32List,
-
-  Float64List,
-
-  Int32x4List,
-
-  Float32x4List,
-
-  Float64x2List,
-
-  /**
-   * An instance of the Dart class StackTrace.
-   */
-  StackTrace,
-
-  /**
-   * An instance of the built-in VM Closure implementation. User-defined Closures will be
-   * PlainInstance.
-   */
-  Closure,
-
-  /**
-   * An instance of the Dart class MirrorReference.
-   */
-  MirrorReference,
-
-  /**
-   * An instance of the Dart class RegExp.
-   */
-  RegExp,
-
   /**
    * An instance of the Dart class WeakProperty.
    */
   WeakProperty,
 
   /**
-   * An instance of the Dart class Type
+   * Represents a value returned by the VM but unknown to this client
    */
-  Type,
-
-  /**
-   * An instance of the Dart class TypeParamer
-   */
-  TypeParameter,
-
-  /**
-   * An instance of the Dart class TypeRef
-   */
-  TypeRef,
-
-  /**
-   * An instance of the Dart class BoundedType
-   */
-  BoundedType;
-}
+  Unknown}
