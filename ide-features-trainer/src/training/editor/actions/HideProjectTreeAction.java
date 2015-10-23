@@ -1,6 +1,7 @@
 package training.editor.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -18,7 +19,7 @@ public class HideProjectTreeAction extends DumbAwareAction implements EduActions
         final Project project = e.getProject();
         if (project == null) return;
         ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-        windowManager.getToolWindow(PROJECT_ID).hide(null);
+        if(!ApplicationManager.getApplication().isUnitTestMode()) windowManager.getToolWindow(PROJECT_ID).hide(null);
     }
 
     @Override
