@@ -2515,4 +2515,9 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     // IDEA-138900
     defaultTest();
   }
+
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public void testProtectedMembersWithImplicitInheritance() throws Exception {
+    defaultTest(); // IDEA-146722
+  }
 }

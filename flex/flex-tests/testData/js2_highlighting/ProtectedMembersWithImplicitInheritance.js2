@@ -1,0 +1,21 @@
+package {
+
+public class ProtectedMembersWithImplicitInheritance extends BaseClass {
+
+    [Bindable]
+    public var some:String;
+
+    override public function toString():String{
+        return localIndex.toString();
+    }
+}
+
+class <error descr="Class 'BaseClass' should be defined in file 'BaseClass.js2'">BaseClass</error> {
+    protected var localIndex;
+
+    public function toString():String {
+        return "";
+    }
+}
+
+}
