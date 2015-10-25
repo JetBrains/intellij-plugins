@@ -10,7 +10,7 @@ import org.lobobrowser.html.renderer.RBlockViewport;
 
 import java.awt.*;
 
-public class ScrollPreservingHtmlBlockPanel extends HtmlBlockPanel {
+class ScrollPreservingHtmlBlockPanel extends HtmlBlockPanel {
   public ScrollPreservingHtmlBlockPanel(Color background,
                                         boolean opaque,
                                         UserAgentContext pcontext,

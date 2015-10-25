@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.ui.preview;
+package org.intellij.plugins.markdown.ui.preview.lobo;
 
 import org.lobobrowser.html.AbstractHtmlRendererContext;
 import org.lobobrowser.html.UserAgentContext;
@@ -8,7 +8,7 @@ import org.lobobrowser.html.w3c.HTMLCollection;
 
 import java.awt.*;
 
-public class MarkdownHtmlRendererContext extends AbstractHtmlRendererContext {
+class MarkdownHtmlRendererContext extends AbstractHtmlRendererContext {
   private final HtmlPanel myHtmlPanel;
 
   private final UserAgentContext myUserAgentContext;

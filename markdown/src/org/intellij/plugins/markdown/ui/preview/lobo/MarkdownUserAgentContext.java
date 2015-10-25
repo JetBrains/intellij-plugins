@@ -1,4 +1,4 @@
-package org.intellij.plugins.markdown.ui.preview;
+package org.intellij.plugins.markdown.ui.preview.lobo;
 
 import org.lobobrowser.context.NetworkRequestImpl;
 import org.lobobrowser.html.HttpRequest;
@@ -8,7 +8,7 @@ import org.lobobrowser.primary.clientlets.html.HttpRequestImpl;
 import java.net.URL;
 import java.security.Policy;
 
-public class MarkdownUserAgentContext implements UserAgentContext {
+class MarkdownUserAgentContext implements UserAgentContext {
   @Override
   public HttpRequest createHttpRequest() {
     return new HttpRequestImpl(new NetworkRequestImpl());

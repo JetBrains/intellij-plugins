@@ -20,7 +20,7 @@ public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return new MarkdownPreviewFileEditor(project, file);
+    return new MarkdownPreviewFileEditor(file);
   }
 
   @Override
