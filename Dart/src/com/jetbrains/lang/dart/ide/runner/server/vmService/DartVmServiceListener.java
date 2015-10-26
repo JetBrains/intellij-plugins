@@ -6,7 +6,8 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.frame.XStackFrame;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendedContext;
+import com.intellij.xdebugger.frame.XSuspendContext;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
 import org.dartlang.vm.service.VmServiceListener;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
@@ -28,61 +29,70 @@ public class DartVmServiceListener implements VmServiceListener {
   @Override
   public void received(@NotNull final String streamId, @NotNull final Event event) {
     switch (event.getKind()) {
-      case IsolateStart:
+      case BreakpointAdded:
         break;
-      case IsolateRunnable:
+      case BreakpointRemoved:
+        break;
+      case BreakpointResolved:
+        myBreakpointHandler.breakpointResolved(event.getBreakpoint());
+        break;
+      case GC:
         break;
       case IsolateExit:
         myDebugProcess.isolateExit(event.getIsolate());
         break;
+      case IsolateRunnable:
+        break;
+      case IsolateStart:
+        break;
       case IsolateUpdate:
         break;
-      case PauseStart:
-        myDebugProcess.getVmServiceWrapper().handleIsolatePausedOnStart(event.getIsolate());
-        break;
-      case PauseExit:
-        break;
       case PauseBreakpoint:
+      case PauseException:
+      case PauseInterrupted:
         myDebugProcess.isolateSuspended(event.getIsolate());
 
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
           @Override
           public void run() {
-            onPauseBreakpoint(event.getIsolate(), event.getPauseBreakpoints(), event.getTopFrame());
+            final ElementList<Breakpoint> breakpoints = event.getKind() == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
+            final InstanceRef exception = event.getKind() == EventKind.PauseException ? event.getException() : null;
+            onIsolatePaused(event.getIsolate(), breakpoints, exception, event.getTopFrame());
           }
         });
         break;
-      case PauseInterrupted:
-        myDebugProcess.isolateSuspended(event.getIsolate());
+      case PauseExit:
         break;
-      case PauseException:
-        myDebugProcess.isolateSuspended(event.getIsolate());
+      case PauseStart:
+        myDebugProcess.getVmServiceWrapper().handleIsolatePausedOnStart(event.getIsolate());
         break;
       case Resume:
         myDebugProcess.isolateResumed(event.getIsolate());
         break;
-      case BreakpointAdded:
-        break;
-      case BreakpointResolved:
-        myBreakpointHandler.breakpointResolved(event.getBreakpoint());
-        break;
-      case BreakpointRemoved:
-        break;
-      case GC:
+      case VMUpdate:
         break;
       case WriteEvent:
+        break;
+      case Unknown:
         break;
     }
   }
 
-  private void onPauseBreakpoint(@NotNull final IsolateRef isolateRef,
-                                 @NotNull final ElementList<Breakpoint> vmBreakpoints,
-                                 @NotNull final Frame topFrame) {
-    final DartVmServiceSuspendedContext suspendContext = new DartVmServiceSuspendedContext(myDebugProcess, isolateRef, topFrame);
+  private void onIsolatePaused(@NotNull final IsolateRef isolateRef,
+                               @Nullable final ElementList<Breakpoint> vmBreakpoints,
+                               @Nullable final InstanceRef exception,
+                               @Nullable final Frame topFrame) {
+    if (topFrame == null) {
+      myDebugProcess.getSession().positionReached(new XSuspendContext() {
+      });
+      return;
+    }
+
+    final DartVmServiceSuspendContext suspendContext = new DartVmServiceSuspendContext(myDebugProcess, isolateRef, topFrame, exception);
     final XStackFrame xTopFrame = suspendContext.getActiveExecutionStack().getTopFrame();
     final XSourcePosition sourcePosition = xTopFrame == null ? null : xTopFrame.getSourcePosition();
 
-    if (vmBreakpoints.isEmpty()) {
+    if (vmBreakpoints == null || vmBreakpoints.isEmpty()) {
       final StepOption latestStep = myDebugProcess.getVmServiceWrapper().getLatestStep();
 
       if (latestStep != null && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {

@@ -13,21 +13,33 @@ import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+
 public class DartVmServiceValue extends XNamedValue {
   private static final int MAX_COLLECTION_ELEMENTS_TO_SHOW = 1000;
 
   private final DartVmServiceDebugProcess myDebugProcess;
   private String myIsolateId;
   private final InstanceRef myInstanceRef;
+  private final boolean myIsException;
 
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,
                             @NotNull final String name,
                             @NotNull final InstanceRef instanceRef) {
+    this(debugProcess, isolateId, name, instanceRef, false);
+  }
+
+  public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
+                            @NotNull final String isolateId,
+                            @NotNull final String name,
+                            @NotNull final InstanceRef instanceRef,
+                            boolean isException) {
     super(name);
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myInstanceRef = instanceRef;
+    myIsException = isException;
   }
 
   @Override
@@ -92,7 +104,7 @@ public class DartVmServiceValue extends XNamedValue {
     // Map kind only
     if (instanceRef.getKind() == InstanceKind.Map) {
       final String value = "size = " + instanceRef.getLength();
-      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, true);
+      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, instanceRef.getLength() > 0);
       return true;
     }
     return false;
@@ -101,13 +113,14 @@ public class DartVmServiceValue extends XNamedValue {
   private static boolean computeListPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
     if (isListKind(instanceRef.getKind())) {
       final String value = "size = " + instanceRef.getLength();
-      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, true);
+      node.setPresentation(AllIcons.Debugger.Db_array, instanceRef.getClassRef().getName(), value, instanceRef.getLength() > 0);
       return true;
     }
     return false;
   }
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
+    final Icon icon = myIsException ? AllIcons.Debugger.Db_exception_breakpoint : AllIcons.Debugger.Value;
     myDebugProcess.getVmServiceWrapper()
       .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toString()", new VmServiceConsumers.EvaluateConsumerWrapper() {
         @Override
@@ -119,7 +132,7 @@ public class DartVmServiceValue extends XNamedValue {
               noGoodResult();
             }
             else {
-              node.setPresentation(AllIcons.Debugger.Value, myInstanceRef.getClassRef().getName(), string, true);
+              node.setPresentation(icon, myInstanceRef.getClassRef().getName(), string, true);
             }
           }
           else {
@@ -129,13 +142,18 @@ public class DartVmServiceValue extends XNamedValue {
 
         @Override
         public void noGoodResult() {
-          node.setPresentation(AllIcons.Debugger.Value, myInstanceRef.getClassRef().getName(), "", true);
+          node.setPresentation(icon, myInstanceRef.getClassRef().getName(), "", true);
         }
       });
   }
 
   @Override
   public void computeChildren(@NotNull final XCompositeNode node) {
+    if (myInstanceRef.getKind() == InstanceKind.Null) {
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
+
     if ((isListKind(myInstanceRef.getKind()) || myInstanceRef.getKind() == InstanceKind.Map) &&
         myInstanceRef.getLength() > MAX_COLLECTION_ELEMENTS_TO_SHOW) {
       node.setErrorMessage("Too many items");
