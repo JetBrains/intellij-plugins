@@ -143,7 +143,19 @@ public class VmServiceWrapper implements Disposable {
   public void handleIsolatePausedOnStart(@NotNull final IsolateRef isolateRef) {
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (myIsolatesInfo.addIsolate(isolateRef)) {
-      setInitialBreakpointsAndResume(isolateRef.getId());
+      addRequest(new Runnable() {
+        @Override
+        public void run() {
+          myVmService.setExceptionPauseMode(isolateRef.getId(),
+                                            ExceptionPauseMode.Unhandled,
+                                            new VmServiceConsumers.SuccessConsumerWrapper() {
+                                              @Override
+                                              public void received(Success response) {
+                                                setInitialBreakpointsAndResume(isolateRef.getId());
+                                              }
+                                            });
+        }
+      });
     }
   }
 
@@ -244,7 +256,8 @@ public class VmServiceWrapper implements Disposable {
 
   public void computeStackFrames(@NotNull final String isolateId,
                                  final int firstFrameIndex,
-                                 @NotNull final XExecutionStack.XStackFrameContainer container) {
+                                 @NotNull final XExecutionStack.XStackFrameContainer container,
+                                 @Nullable final InstanceRef exception) {
     addRequest(new Runnable() {
       @Override
       public void run() {
@@ -254,9 +267,17 @@ public class VmServiceWrapper implements Disposable {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
               @Override
               public void run() {
+                InstanceRef exceptionToAddToFrame = exception;
                 final List<XStackFrame> result = new ArrayList<XStackFrame>(vmStack.getFrames().size());
-                for (Frame frame : vmStack.getFrames()) {
-                  result.add(new DartVmServiceStackFrame(myDebugProcess, isolateId, frame));
+                for (Frame vmFrame : vmStack.getFrames()) {
+                  final DartVmServiceStackFrame stackFrame =
+                    new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);
+                  result.add(stackFrame);
+
+                  if (!stackFrame.isInDartSdkPatchFile()) {
+                    // exception (if any) is added to the frame where debugger stops and to the upper frames
+                    exceptionToAddToFrame = null;
+                  }
                 }
                 container.addStackFrames(firstFrameIndex == 0 ? result : result.subList(firstFrameIndex, result.size()), true);
               }
