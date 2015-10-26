@@ -2,12 +2,19 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.concurrency.Semaphore;
+import com.intellij.xdebugger.XExpression;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
+import com.intellij.xdebugger.frame.XValue;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmServiceListener;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
@@ -81,14 +88,14 @@ public class DartVmServiceListener implements VmServiceListener {
   private void onIsolatePaused(@NotNull final IsolateRef isolateRef,
                                @Nullable final ElementList<Breakpoint> vmBreakpoints,
                                @Nullable final InstanceRef exception,
-                               @Nullable final Frame topFrame) {
-    if (topFrame == null) {
+                               @Nullable final Frame vmTopFrame) {
+    if (vmTopFrame == null) {
       myDebugProcess.getSession().positionReached(new XSuspendContext() {
       });
       return;
     }
 
-    final DartVmServiceSuspendContext suspendContext = new DartVmServiceSuspendContext(myDebugProcess, isolateRef, topFrame, exception);
+    final DartVmServiceSuspendContext suspendContext = new DartVmServiceSuspendContext(myDebugProcess, isolateRef, vmTopFrame, exception);
     final XStackFrame xTopFrame = suspendContext.getActiveExecutionStack().getTopFrame();
     final XSourcePosition sourcePosition = xTopFrame == null ? null : xTopFrame.getSourcePosition();
 
@@ -111,6 +118,12 @@ public class DartVmServiceListener implements VmServiceListener {
       }
 
       final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
+
+      if ("false".equals(evaluateExpression(isolateRef.getId(), vmTopFrame, xBreakpoint.getConditionExpression()))) {
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), null);
+        return;
+      }
+
       myLatestSourcePosition = sourcePosition;
       myDebugProcess.getSession().breakpointReached(xBreakpoint, null, suspendContext);
     }
@@ -121,5 +134,55 @@ public class DartVmServiceListener implements VmServiceListener {
            position2 != null &&
            position1.getFile().equals(position2.getFile()) &&
            position1.getLine() == position2.getLine();
+  }
+
+
+  @Nullable
+  private String evaluateExpression(final @NotNull String isolateId,
+                                    final @Nullable Frame vmTopFrame,
+                                    final @Nullable XExpression xExpression) {
+    final String evalText = xExpression == null ? null : xExpression.getExpression();
+    if (vmTopFrame == null || StringUtil.isEmptyOrSpaces(evalText)) return null;
+
+    final Ref<String> evalResult = new Ref<String>();
+    final Semaphore semaphore = new Semaphore();
+    semaphore.down();
+
+    myDebugProcess.getVmServiceWrapper().evaluateInFrame(isolateId, vmTopFrame, evalText, new XDebuggerEvaluator.XEvaluationCallback() {
+      @Override
+      public void evaluated(@NotNull XValue result) {
+        if (result instanceof DartVmServiceValue) {
+          evalResult.set(getSimpleStringPresentation(((DartVmServiceValue)result).getInstanceRef()));
+        }
+        semaphore.up();
+      }
+
+      @Override
+      public void errorOccurred(@NotNull String errorMessage) {
+        semaphore.up();
+      }
+    }, true);
+
+    semaphore.waitFor(1000);
+    return evalResult.get();
+  }
+
+  @NotNull
+  private static String getSimpleStringPresentation(@NotNull final InstanceRef instanceRef) {
+    // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
+    switch (instanceRef.getKind()) {
+      case Null:
+      case Bool:
+      case Double:
+      case Int:
+      case String:
+      case Float32x4:
+      case Float64x2:
+      case Int32x4:
+      case StackTrace:
+        return instanceRef.getValueAsString();
+      default:
+        return "Instance of " + instanceRef.getClassRef().getName();
+    }
   }
 }
