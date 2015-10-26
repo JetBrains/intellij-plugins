@@ -18,9 +18,9 @@ import javax.swing.*;
 public class DartVmServiceValue extends XNamedValue {
   private static final int MAX_COLLECTION_ELEMENTS_TO_SHOW = 1000;
 
-  private final DartVmServiceDebugProcess myDebugProcess;
-  private String myIsolateId;
-  private final InstanceRef myInstanceRef;
+  @NotNull private final DartVmServiceDebugProcess myDebugProcess;
+  @NotNull private String myIsolateId;
+  @NotNull private final InstanceRef myInstanceRef;
   private final boolean myIsException;
 
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
@@ -271,5 +271,10 @@ public class DartVmServiceValue extends XNamedValue {
            kind == InstanceKind.Int32x4List ||
            kind == InstanceKind.Float32x4List ||
            kind == InstanceKind.Float64x2List;
+  }
+
+  @NotNull
+  public InstanceRef getInstanceRef() {
+    return myInstanceRef;
   }
 }
