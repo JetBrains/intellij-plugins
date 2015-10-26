@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
 
@@ -88,12 +87,11 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     checkUsages(new LocalSearchScope(psiFile2),
                 "DartReferenceExpressionImpl in file1.dart@0:4");
     checkUsages(new LocalSearchScope(new PsiFile[]{psiFile1, psiFile2}), allProjectUsages);
-    checkUsages(new GlobalSearchScope.FilesScope(getProject(), Collections.singletonList(psiFile1.getVirtualFile())),
+    checkUsages(GlobalSearchScope.fileScope(getProject(), psiFile1.getVirtualFile()),
                 "PsiCommentImpl in " + psiFile1.getName() + "@5:9 (non-code usage)",
                 "DartReferenceExpressionImpl in " + psiFile1.getName() + "@11:15");
-    checkUsages(new GlobalSearchScope.FilesScope(getProject(), Collections.singletonList(psiFile2.getVirtualFile())),
-                "DartReferenceExpressionImpl in file1.dart@0:4");
-    checkUsages(new GlobalSearchScope.FilesScope(getProject(), Arrays.asList(psiFile1.getVirtualFile(), psiFile2.getVirtualFile())),
+    checkUsages(GlobalSearchScope.fileScope(getProject(), psiFile2.getVirtualFile()), "DartReferenceExpressionImpl in file1.dart@0:4");
+    checkUsages(GlobalSearchScope.filesScope(getProject(), Arrays.asList(psiFile1.getVirtualFile(), psiFile2.getVirtualFile())),
                 allProjectUsages);
     checkUsages(GlobalSearchScope.projectScope(getProject()), allProjectUsages);
     final Collection<UsageInfo> usages = findUsages(GlobalSearchScope.allScope(getProject()));
