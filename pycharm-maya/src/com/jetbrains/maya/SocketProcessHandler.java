@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.Future;
@@ -97,8 +96,9 @@ class SocketProcessHandler extends ProcessHandler {
       start();
     }
 
+    @NotNull
     @Override
-    protected Future<?> executeOnPooledThread(Runnable runnable) {
+    protected Future<?> executeOnPooledThread(@NotNull Runnable runnable) {
       return ApplicationManager.getApplication().executeOnPooledThread(runnable);
     }
 
