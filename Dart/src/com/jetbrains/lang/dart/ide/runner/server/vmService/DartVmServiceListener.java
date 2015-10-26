@@ -125,7 +125,12 @@ public class DartVmServiceListener implements VmServiceListener {
       }
 
       myLatestSourcePosition = sourcePosition;
-      myDebugProcess.getSession().breakpointReached(xBreakpoint, null, suspendContext);
+
+      final String logExpression = evaluateExpression(isolateRef.getId(), vmTopFrame, xBreakpoint.getLogExpressionObject());
+      final boolean suspend = myDebugProcess.getSession().breakpointReached(xBreakpoint, logExpression, suspendContext);
+      if (!suspend) {
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), null);
+      }
     }
   }
 
@@ -150,7 +155,7 @@ public class DartVmServiceListener implements VmServiceListener {
 
     myDebugProcess.getVmServiceWrapper().evaluateInFrame(isolateId, vmTopFrame, evalText, new XDebuggerEvaluator.XEvaluationCallback() {
       @Override
-      public void evaluated(@NotNull XValue result) {
+      public void evaluated(@NotNull final XValue result) {
         if (result instanceof DartVmServiceValue) {
           evalResult.set(getSimpleStringPresentation(((DartVmServiceValue)result).getInstanceRef()));
         }
@@ -158,7 +163,8 @@ public class DartVmServiceListener implements VmServiceListener {
       }
 
       @Override
-      public void errorOccurred(@NotNull String errorMessage) {
+      public void errorOccurred(@NotNull final String errorMessage) {
+        evalResult.set("Failed to evaluate log expression [" + evalText + "]: " + errorMessage);
         semaphore.up();
       }
     }, true);

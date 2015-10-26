@@ -60,7 +60,9 @@ public class VmServiceWrapper implements Disposable {
   }
 
   private void addRequest(@NotNull final Runnable runnable) {
-    myRequestsScheduler.addRequest(runnable, 0);
+    if (!myRequestsScheduler.isDisposed()) {
+      myRequestsScheduler.addRequest(runnable, 0);
+    }
   }
 
   @Nullable
