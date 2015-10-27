@@ -33,7 +33,8 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   @NotNull
   private final JComponent myComponent;
   @NotNull
-  private SplitEditorLayout mySplitEditorLayout = MarkdownApplicationSettings.getInstance().getSplitEditorLayout();
+  private SplitEditorLayout mySplitEditorLayout =
+    MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
   @NotNull
   private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
@@ -59,7 +60,6 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     splitter.setSplitterProportionKey(MY_PROPORTION_KEY);
     splitter.setFirstComponent(myMainEditor.getComponent());
     splitter.setSecondComponent(mySecondEditor.getComponent());
-
 
 
     myToolbarWrapper = new SplitEditorToolbar(splitter);

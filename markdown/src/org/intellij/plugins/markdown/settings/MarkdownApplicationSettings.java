@@ -6,7 +6,6 @@ import com.intellij.openapi.components.*;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
-import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
   storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/markdown.xml")
 )
 public class MarkdownApplicationSettings implements PersistentStateComponent<MarkdownApplicationSettings.State>,
-                                                    MarkdownCssSettings.Holder {
+                                                    MarkdownCssSettings.Holder,
+                                                    MarkdownPreviewSettings.Holder {
 
   private State myState = new State();
 
@@ -60,18 +60,28 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
     return myState.myCssSettings;
   }
 
-  @NotNull
-  public SplitFileEditor.SplitEditorLayout getSplitEditorLayout() {
-    return myState.mySplitEditorLayout;
+  @Override
+  public void setMarkdownPreviewSettings(@NotNull MarkdownPreviewSettings settings) {
+    myState.myPreviewSettings = settings;
+
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(SettingsChangedListener.TOPIC).onSettingsChange(this);
   }
+
+  @NotNull
+  @Override
+  public MarkdownPreviewSettings getMarkdownPreviewSettings() {
+    return myState.myPreviewSettings;
+  }
+
 
   public static class State {
     @Property(surroundWithTag = false)
     @NotNull
     private MarkdownCssSettings myCssSettings = MarkdownCssSettings.DEFAULT;
 
+    @Property(surroundWithTag = false)
     @NotNull
-    private SplitFileEditor.SplitEditorLayout mySplitEditorLayout = SplitFileEditor.SplitEditorLayout.SPLIT;
+    private MarkdownPreviewSettings myPreviewSettings = MarkdownPreviewSettings.DEFAULT;
   }
 
   public interface SettingsChangedListener {

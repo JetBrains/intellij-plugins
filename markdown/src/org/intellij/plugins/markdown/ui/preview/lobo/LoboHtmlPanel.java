@@ -24,7 +24,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-public final class LoboHtmlPanel extends MarkdownHtmlPanel {
+final class LoboHtmlPanel extends MarkdownHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
 
   @NotNull
