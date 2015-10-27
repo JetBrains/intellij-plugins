@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.css;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -18,6 +19,8 @@ import java.util.Set;
  */
 public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
 
+  private static final Logger LOG = Logger.getInstance(FlexStylesIndexableSetContributor.class);
+
   private static final Set<VirtualFile> FILES;
 
   static {
@@ -26,6 +29,9 @@ public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
       VfsRootAccess.allowRootAccess(VfsUtilCore.urlToPath(VfsUtilCore.convertFromUrl(libFileUrl)));
     }
     VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
+    if (file == null) {
+      LOG.error("Cannot find FlexStyles.as file by url " + VfsUtilCore.convertFromUrl(libFileUrl));
+    }
     FILES = ContainerUtil.createMaybeSingletonSet(file);
   }
 
