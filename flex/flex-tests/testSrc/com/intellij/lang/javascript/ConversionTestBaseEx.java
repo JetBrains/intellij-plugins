@@ -46,29 +46,33 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
 
   @Override
   protected void tearDown() throws Exception {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final Library[] libraries = ApplicationLibraryTable.getApplicationTable().getLibraries();
-        for (Library library : libraries) {
-          ApplicationLibraryTable.getApplicationTable().removeLibrary(library);
-        }
+    try {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          final Library[] libraries = ApplicationLibraryTable.getApplicationTable().getLibraries();
+          for (Library library : libraries) {
+            ApplicationLibraryTable.getApplicationTable().removeLibrary(library);
+          }
 
-        ApplicationLibraryTable.getApplicationTable().loadState(myOriginalGlobalLibraries);
-        if (checkJdk()) {
-          ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(myOriginalSkds);
+          ApplicationLibraryTable.getApplicationTable().loadState(myOriginalGlobalLibraries);
+          if (checkJdk()) {
+            ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).loadState(myOriginalSkds);
+          }
         }
+      });
+
+      if (checkJdk()) {
+        PathMacros.getInstance().removeMacro(SDK_HOME_VAR);
+        PathMacros.getInstance().removeMacro(SDK_HOME_VAR_2);
       }
-    });
-
-    if (checkJdk()) {
-      PathMacros.getInstance().removeMacro(SDK_HOME_VAR);
-      PathMacros.getInstance().removeMacro(SDK_HOME_VAR_2);
+      if (PathMacros.getInstance().getAllMacroNames().contains(PROJECT_VAR)) {
+        PathMacros.getInstance().removeMacro(PROJECT_VAR);
+      }
     }
-    if (PathMacros.getInstance().getAllMacroNames().contains(PROJECT_VAR)) {
-      PathMacros.getInstance().removeMacro(PROJECT_VAR);
+    finally {
+      super.tearDown();
     }
-    super.tearDown();
   }
 
   @Override
