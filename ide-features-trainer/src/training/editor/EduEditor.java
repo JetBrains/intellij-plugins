@@ -10,15 +10,18 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ex.WindowManagerEx;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.intellij.pom.Navigatable;
-import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.editor.eduUI.DemoModeUI;
+import training.editor.eduUI.EduBalloonBuilder;
 import training.lesson.ActionsRecorder;
 import training.editor.actions.BlockCaretAction;
 import training.editor.actions.EduActions;
@@ -28,6 +31,8 @@ import training.lesson.*;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
 import training.lesson.LessonIsOpenedException;
+import training.util.HighlightComponent;
+import training.util.LearnUiUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 public class EduEditor implements TextEditor {
 
     public final int balloonDelay = 3000;
+    private final EduBalloonBuilder eduBalloonBuilder;
 
     private Project myProject;
     private FileEditor myDefaultEditor;
@@ -57,6 +63,13 @@ public class EduEditor implements TextEditor {
 
     private boolean isDisposed = false;
     Course myCourse;
+
+    //Demo Mode infrastructure
+    private boolean demoMode = false;
+    HighlightComponent highlightedEditor;
+    DemoModeUI demoModeUI = null;
+
+    private boolean blockCaretBalloonIsShown = false;
 
     private MouseListener[] myMouseListeners;
     private MouseMotionListener[] myMouseMotionListeners;
@@ -104,6 +117,7 @@ public class EduEditor implements TextEditor {
         }
 
         mouseBlocked = false;
+        eduBalloonBuilder = new EduBalloonBuilder(this, balloonDelay, "Caret is blocked in this lesson");
     }
 
     private FileEditor getDefaultEditor() {
@@ -188,6 +202,17 @@ public class EduEditor implements TextEditor {
 
     @Override
     public void dispose() {
+        if(demoMode) {
+            if(highlightedEditor != null) {
+                final Container parent = highlightedEditor.getParent();
+                if (parent != null) {
+                    parent.remove(highlightedEditor);
+                    highlightedEditor = null;
+                    demoMode = false;
+                    parent.repaint();
+                }
+            }
+        }
         isDisposed = true;
         if (myCourse != null) CourseManager.getInstance().unregisterCourse(myCourse);
         Disposer.dispose(myDefaultEditor);
@@ -505,39 +530,9 @@ public class EduEditor implements TextEditor {
         setMouseBlocked(false);
     }
 
-    private static void showBalloon(Editor editor, String text, final int delay) throws InterruptedException {
-        if (editor == null) return;
-
-        int offset = editor.getCaretModel().getCurrentCaret().getOffset();
-        VisualPosition position = editor.offsetToVisualPosition(offset);
-        Point point = editor.visualPositionToXY(position);
-
-        BalloonBuilder builder =
-                JBPopupFactory.getInstance().
-                        createHtmlTextBalloonBuilder(text, null, UIUtil.getLabelBackground(), null)
-                        .setHideOnClickOutside(false)
-                        .setCloseButtonEnabled(true)
-                        .setHideOnKeyOutside(false);
-        final Balloon myBalloon = builder.createBalloon();
-
-        myBalloon.show(new RelativePoint(editor.getContentComponent(), point), Balloon.Position.above);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(delay);
-                    myBalloon.hide();
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-        }).start();
-
-    }
 
     private void showCaretBlockedBalloon() throws InterruptedException {
-        showBalloon(getEditor(), "Caret is blocked in this lesson", balloonDelay);
+        eduBalloonBuilder.showBalloon();
     }
 
     public void selectIt() {
@@ -547,5 +542,48 @@ public class EduEditor implements TextEditor {
             FileEditorManager.getInstance(myProject).openEditor(new OpenFileDescriptor(myProject, vf), true);
 
         }
+    }
+
+    public void activateDemoMode() throws Exception {
+        if(demoMode) return;
+        final JBColor demoCurtainColor = DemoModeUI.getDemoCurtainColor();
+
+        final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(myProject);
+        final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
+        final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
+
+        Component editorComponent = null;
+        for (Component component : eduPanel.getParent().getComponents()) {
+            if (!(component instanceof EduPanel)){
+               if (component instanceof JPanel){
+                   editorComponent = component;
+               }
+            }
+        }
+        if (editorComponent == null) throw new Exception("Unable to highlight editor component (editor component cannot be found).");
+
+        highlightedEditor = LearnUiUtil.highlightComponent(editorComponent, "Edu Editor", ideRootPane, glassPane, demoCurtainColor, false, false);
+
+        //add Demo mode to Status bar
+        if(demoModeUI == null) {
+            demoModeUI = new DemoModeUI();
+        }
+        demoMode = true;
+        demoModeUI.addDemoModeWidget(myProject, this);
+
+    }
+
+    public void deactivateDemoMode(){
+        if(!demoMode) return;
+        if (highlightedEditor == null) return;
+        final Container parent = highlightedEditor.getParent();
+        if(parent == null) return;
+        parent.remove(highlightedEditor);
+        parent.repaint();
+        demoMode = false;
+    }
+
+    public boolean isDemoModeOn(){
+        return demoMode;
     }
 }
