@@ -8,21 +8,24 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
-import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Dennis.Ushakov
@@ -41,52 +44,56 @@ public class AngularJSProcessor {
   public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     final PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
-    if (hostFile == null) return;
+    if (!(hostFile instanceof XmlFile)) return;
 
     final XmlFile file = (XmlFile)hostFile;
+
+    final Collection<JSNamedElement> cache = CachedValuesManager.getCachedValue(file, new CachedValueProvider<Collection<JSNamedElement>>() {
+      @Nullable
+      @Override
+      public Result<Collection<JSNamedElement>> compute() {
+        final Collection<JSNamedElement> result = new ArrayList<JSNamedElement>();
+        processDocument(file.getDocument(), result);
+
+        return Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
+      }
+    });
+    for (JSNamedElement namedElement : cache) {
+      if (scopeMatches(original, namedElement)){
+        consumer.consume(namedElement);
+      }
+    }
+  }
+
+  private static void processDocument(XmlDocument document, final Collection<JSNamedElement> result) {
+    if (document == null) return;
     final JSResolveUtil.JSInjectedFilesVisitor visitor = new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
         file.accept(new AngularJSRecursiveVisitor() {
           @Override
           public void visitJSDefinitionExpression(JSDefinitionExpression node) {
-            if (scopeMatches(original, node)) {
-              consumer.consume(node);
-            }
+            result.add(node);
             super.visitJSDefinitionExpression(node);
           }
 
           @Override
-          public void visitAngularJSAsExpression(AngularJSAsExpression asExpression) {
-            final JSDefinitionExpression def = asExpression.getDefinition();
-            if (def != null && scopeMatches(original, asExpression)) {
-              consumer.consume(def);
-            }
-          }
-
-          @Override
           public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
-            if (scopeMatches(original, repeatExpression)) {
-              for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
-                consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
-              }
+            for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
+              result.add(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
             }
             super.visitAngularJSRepeatExpression(repeatExpression);
           }
         });
       }
     };
-    processDocument(visitor, file.getDocument());
-  }
 
-  private static void processDocument(final JSResolveUtil.JSInjectedFilesVisitor visitor, XmlDocument document) {
-    if (document == null) return;
     for (XmlTag tag : PsiTreeUtil.getChildrenOfTypeAsList(document, XmlTag.class)) {
       new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true){
         @Override
         public boolean execute(@NotNull PsiElement element) {
           if (element instanceof HtmlEmbeddedContentImpl) {
-            processDocument(visitor, PsiTreeUtil.findChildOfType(element, XmlDocument.class));
+            processDocument(PsiTreeUtil.findChildOfType(element, XmlDocument.class), result);
           }
           return super.execute(element);
         }
@@ -95,6 +102,9 @@ public class AngularJSProcessor {
   }
 
   private static boolean scopeMatches(PsiElement element, PsiElement declaration) {
+    if (declaration instanceof JSImplicitElement) {
+      declaration = declaration.getParent();
+    }
     final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
     final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
     final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(elementContainer, XmlTag.class, XmlText.class);
