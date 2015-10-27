@@ -64,7 +64,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testInternalDefinitionCompletion() {
-    myFixture.testCompletion("ngRepeatExplicit.html", "ngRepeatExplicit.after.html", "angular.js");
+    myFixture.testCompletion("internalDefinition.html", "internalDefinition.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitCompletionInScript() {
