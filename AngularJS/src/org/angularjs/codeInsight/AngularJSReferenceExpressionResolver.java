@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
@@ -41,13 +42,16 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   @Override
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
+    if (myRef.getParent() instanceof JSDefinitionExpression) {
+      return ResolveResult.EMPTY_ARRAY;
+    }
 
     if (AngularJSAsExpression.isAsControllerRef(myRef, myRef.getParent())) {
       final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.KEY, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};
       }
-    } else {
+    } else if (myQualifier == null) {
       final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
         return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSNamedElement, JSResolveResult>() {
