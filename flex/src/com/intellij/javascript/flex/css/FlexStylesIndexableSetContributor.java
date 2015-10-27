@@ -6,11 +6,11 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.IndexableSetContributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -26,7 +26,7 @@ public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
       VfsRootAccess.allowRootAccess(VfsUtilCore.urlToPath(VfsUtilCore.convertFromUrl(libFileUrl)));
     }
     VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
-    FILES = Collections.singleton(file);
+    FILES = ContainerUtil.createMaybeSingletonSet(file);
   }
 
   @NotNull
