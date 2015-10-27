@@ -49,7 +49,7 @@ public class LearnUiUtil {
     public static LearnUiUtil getInstance(){
         return INSTANCE;
     }
-    
+
     public void drawIcon(Project project, Editor editor) throws IOException {
         final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
         final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
@@ -93,11 +93,18 @@ public class LearnUiUtil {
         jblp.repaint();
     }
 
+
     public void highlightIdeComponent(IdeComponent ic, Project project){
+
+        JBColor color = new JBColor(new Color(39, 52, 126), new Color(39, 52, 126));
+        highlightIdeComponent(ic, project, color);
+    }
+
+
+    public void highlightIdeComponent(IdeComponent ic, Project project, JBColor color){
 
         Component myComponent = null;
         String componentName = null;
-        JBColor color = new JBColor(new Color(39, 52, 126), new Color(39, 52, 126));
 
         final IdeFrameImpl frame = WindowManagerEx.getInstanceEx().getFrame(project);
         final IdeRootPane ideRootPane = (IdeRootPane)frame.getRootPane();
@@ -117,7 +124,7 @@ public class LearnUiUtil {
                 }
 
                 if (myComponent != null) {
-                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true);
+                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true, true);
                 }
                 break;
             case NAVIGATION_BAR:
@@ -142,7 +149,7 @@ public class LearnUiUtil {
                 }
 
                 if (myComponent != null){
-                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true);
+                    highlightComponent(myComponent, componentName, ideRootPane, glassPane, color, true, true);
                 }
                 break;
 
@@ -157,7 +164,7 @@ public class LearnUiUtil {
 
                 if (myComponent != null) {
                     final Component finalMyComponent = myComponent;
-                    HighlightComponent highlightComponent = highlightComponent(finalMyComponent, null, ideRootPane, glassPane, new JBColor(new Color(9, 103, 202, 123), new Color(9, 103, 202, 123)), false);
+                    HighlightComponent highlightComponent = highlightComponent(finalMyComponent, null, ideRootPane, glassPane, new JBColor(new Color(9, 103, 202, 123), new Color(9, 103, 202, 123)), false, true);
                     drawArrowFrom(glassPane, finalMyComponent, highlightComponent);
                 }
 
@@ -210,8 +217,8 @@ public class LearnUiUtil {
 //        });
     }
 
-    private HighlightComponent highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane, JBColor color, final boolean showCloseButton) {
-        final HighlightComponent hc = new HighlightComponent(color, componentName, null, myComponent.getWidth(), showCloseButton);
+    public static HighlightComponent highlightComponent(Component myComponent, String componentName, final IdeRootPane ideRootPane, final JComponent glassPane, JBColor color, final boolean showCloseButton, boolean showNameOfComponent) {
+        final HighlightComponent hc = new HighlightComponent(color, componentName, null, myComponent.getWidth(), showCloseButton, showNameOfComponent);
         hc.setCloseButtonAction(new Runnable() {
             @Override
             public void run() {
@@ -394,13 +401,13 @@ public class LearnUiUtil {
         final HighlightComponent myHighlightComponent = new HighlightComponent(new Color(19, 36, 75), "Editor Area", "Layout managers have different strengths and weaknesses. This section discusses some common layout scenarios and which layout managers might work for each scenario. However, once again, it is strongly recommended that you use a builder tool to create your layout managers, such as the NetBeans IDE Matisse GUI builder, rather than coding managers by hand. The scenarios listed below are given for information purposes, in case you are curious about which type of manager is used in different situations, or in case you absolutely must code your manager manually.\n" +
                 "\n" +
                 "If none of the layout managers we discuss is right for your situation and you cannot use a builder tool, feel free to use other layout managers that you may write or find. Also keep in mind that flexible layout managers such as GridBagLayout and SpringLayout can fulfill many layout needs.\n" +
-                "\n", null, false);
+                "\n", null, false, true);
 
 //        final JRootPane rootPane = SwingUtilities.getRootPane(component);
         final JComponent glassPane = (JComponent) ideRootPane.getGlassPane();
 
 
-        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component", null, false);
+        final HighlightComponent myHighlightComponent2 = new HighlightComponent(new Color(38, 66, 147), "Project Tree Area", "Here is the description of the component", null, false, true);
         JComponent componentProjectWindow = null;
 
         java.util.List<Component> allComponents = getAllComponents(ideRootPane);
@@ -540,83 +547,7 @@ public class LearnUiUtil {
 
     }
 
-    private static class HighlightComponent extends JComponent {
-        @NotNull
-        private Color myColor;
-        @Nullable
-        private String myName;
-        @Nullable
-        private JLabel myLabel;
-        @Nullable private JButton myCloseButton;
-        @Nullable private JLabel myDescriptionLabel;
 
-        final private int verticalSpace = 12;
-
-        private HighlightComponent(@NotNull final Color c, @Nullable String componentName, @Nullable String description, @Nullable Integer width, boolean showCloseButton) {
-            myColor = c;
-            myName = componentName;
-            BoxLayout layoutManager = new BoxLayout(this, BoxLayout.PAGE_AXIS);
-            setLayout(layoutManager);
-            if (componentName != null) {
-
-                myLabel = new JLabel();
-                myLabel.setText(myName);
-                myLabel.setFont(new Font(UIUtil.getLabelFont().getName(), Font.BOLD, 38));
-                myLabel.setForeground(Color.WHITE);
-                myLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                this.add(Box.createVerticalGlue());
-                this.add(myLabel);
-                this.add(Box.createRigidArea(new Dimension(0, verticalSpace)));
-            } else {
-                this.add(Box.createVerticalGlue());
-            }
-            if (description != null) {
-
-                myDescriptionLabel = new JLabel(XmlUtil.addHtmlTags(description));
-                myDescriptionLabel.setForeground(Color.WHITE);
-                if (width != null) {
-                    myDescriptionLabel.setBorder(new EmptyBorder(0, width / 3, 0, width / 3));
-                }
-                myDescriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                this.add(myDescriptionLabel);
-                this.add(Box.createRigidArea(new Dimension(0, verticalSpace)));
-
-            }
-            if (showCloseButton) {
-                myCloseButton = new JButton("Got it!");
-                myCloseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                this.add(myCloseButton);
-            }
-            this.add(Box.createVerticalGlue());
-        }
-
-        public void setCloseButtonAction(final Runnable runnable){
-            if (myCloseButton != null) {
-                myCloseButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        runnable.run();
-                    }
-                });
-            }
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2d = (Graphics2D)g;
-            Color oldColor = g2d.getColor();
-            g2d.setColor(myColor);
-            Composite old = g2d.getComposite();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-            Rectangle r = getBounds();
-            g2d.fillRect(0, 0, r.width, r.height);
-            g2d.setColor(myColor.darker());
-            g2d.drawRect(0, 0, r.width - 1, r.height - 1);
-            g2d.setComposite(old);
-            g2d.setColor(oldColor);
-
-        }
-    }
 
     public static java.util.List<Component> getAllComponents(final Container c) {
         Component[] comps = c.getComponents();
