@@ -10,6 +10,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
@@ -24,6 +25,7 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugParameters;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,9 +51,13 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   private PortField myPortField;
   private ComboboxWithBrowseButton myDartProjectCombo;
 
+  @Nullable private final DartSdk mySdk;
+
   private SortedSet<NameAndPath> myComboItems = new TreeSet<NameAndPath>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
+    mySdk = DartSdk.getDartSdk(project);
+
     myPortField.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(final ChangeEvent e) {
@@ -145,7 +151,12 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   }
 
   private void updateVmArgs() {
-    myVMArgsArea.setText("--debug:" + myPortField.getNumber() + " --break-at-isolate-spawn");
+    if (mySdk == null || StringUtil.compareVersionNumbers(mySdk.getVersion(), "1.14") >= 0) {
+      myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + " --pause_isolates_on_start");
+    }
+    else {
+      myVMArgsArea.setText("--debug:" + myPortField.getNumber() + " --break-at-isolate-spawn");
+    }
   }
 
   @Override

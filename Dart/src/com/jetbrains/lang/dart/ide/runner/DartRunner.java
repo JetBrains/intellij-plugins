@@ -71,6 +71,9 @@ public class DartRunner extends DefaultProgramRunner {
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
                                                   final @NotNull ExecutionEnvironment env) throws RuntimeConfigurationError,
                                                                                                   ExecutionException {
+    final DartSdk sdk = DartSdk.getDartSdk(env.getProject());
+    assert (sdk != null); // already checked
+
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
     final ExecutionResult executionResult;
@@ -100,8 +103,15 @@ public class DartRunner extends DefaultProgramRunner {
       executionResult = null;
 
       debuggingHost = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getHost();
-      debuggingPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
-      observatoryPort = -1;
+
+      if (StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
+        debuggingPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
+        observatoryPort = -1;
+      }
+      else {
+        debuggingPort = -1; // not used
+        observatoryPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
+      }
     }
     else {
       LOG.error("Unexpected run configuration: " + runConfiguration.getClass().getName());
@@ -116,11 +126,13 @@ public class DartRunner extends DefaultProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
-        final DartSdk sdk = DartSdk.getDartSdk(session.getProject());
-        assert (sdk != null); // already checked
         return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
                ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
-               : new DartVmServiceDebugProcess(session, debuggingHost, observatoryPort, executionResult, dartUrlResolver);
+               : new DartVmServiceDebugProcess(session,
+                                               StringUtil.notNullize(debuggingHost, "localhost"),
+                                               observatoryPort,
+                                               executionResult,
+                                               dartUrlResolver);
       }
     });
 

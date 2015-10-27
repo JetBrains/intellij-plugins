@@ -42,6 +42,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Nullable private final ExecutionResult myExecutionResult;
   @NotNull private final DartUrlResolver myDartUrlResolver;
+  @NotNull private final String myDebuggingHost;
   private final int myObservatoryPort;
 
   @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
@@ -55,20 +56,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final Map<String, TIntIntHashMap> myScriptIdToLinesMap = new THashMap<String, TIntIntHashMap>();
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
-                                   @Nullable final String debuggingHost,
+                                   @NotNull final String debuggingHost,
                                    final int observatoryPort,
                                    @Nullable final ExecutionResult executionResult,
                                    @NotNull final DartUrlResolver dartUrlResolver) {
     super(session);
+    myDebuggingHost = debuggingHost;
+    myObservatoryPort = observatoryPort;
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
-    myObservatoryPort = observatoryPort;
 
     myIsolatesInfo = new IsolatesInfo();
     final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
     myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
 
-    setLogger();
+    setLogger(getUrlForDebugger());
 
     session.addSessionListener(new XDebugSessionAdapter() {
       @Override
@@ -95,7 +97,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return myIsolatesInfo.getIsolateInfos();
   }
 
-  private void setLogger() {
+  private void setLogger(@NotNull final String url) {
     Logging.setLogger(new org.dartlang.vm.service.logging.Logger() {
       @Override
       public void logError(final String message) {
@@ -119,6 +121,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           message = message.substring(0, 300) + "..." + message.substring(message.length() - 200);
         }
         LOG.debug(message);
+
+        // myExecutionResult is null only in case of remote debug.
+        if (myExecutionResult == null && message.equals("VM connection closed: " + url)) {
+          getSession().stop();
+        }
       }
 
       @Override
@@ -170,11 +177,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   private void connect() throws IOException {
-    final VmService vmService = VmService.localConnect(myObservatoryPort);
+    final VmService vmService = VmService.connect(getUrlForDebugger());
     vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
 
     myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
     myVmServiceWrapper.handleDebuggerConnected();
+  }
+
+  @NotNull
+  private String getUrlForDebugger() {
+    return "ws://" + myDebuggingHost + ":" + myObservatoryPort + "/ws";
   }
 
   @Override

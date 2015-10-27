@@ -144,11 +144,24 @@ public class DartCommandLineRunningState extends CommandLineState {
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
     commandLine.addParameter("--ignore-unrecognized-flags");
 
+    int customObservatoryPort = -1;
+
     final String vmOptions = runnerParameters.getVMOptions();
     if (vmOptions != null) {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
-        commandLine.addParameter(vmOptionsTokenizer.nextToken());
+        final String vmOption = vmOptionsTokenizer.nextToken();
+        commandLine.addParameter(vmOption);
+
+        try {
+          if (vmOption.startsWith("--enable-vm-service:")) {
+            customObservatoryPort = Integer.parseInt(vmOption.substring("--enable-vm-service:".length()));
+          }
+          if (vmOption.startsWith("--observe:")) {
+            customObservatoryPort = Integer.parseInt(vmOption.substring("--observe:".length()));
+          }
+        }
+        catch (NumberFormatException ignore) {/**/}
       }
     }
 
@@ -181,8 +194,14 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
-    myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
-    commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+    if (customObservatoryPort > 0) {
+      myObservatoryPort = customObservatoryPort;
+    }
+    else {
+      myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
+      commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+    }
+
     commandLine.addParameter("--trace_service_pause_events");
 
     commandLine.addParameter(FileUtil.toSystemDependentName(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath));
