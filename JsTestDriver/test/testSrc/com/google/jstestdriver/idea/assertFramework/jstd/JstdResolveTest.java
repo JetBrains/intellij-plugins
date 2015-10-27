@@ -46,10 +46,14 @@ public class JstdResolveTest extends ResolveTestCase {
 
   @Override
   public void tearDown() throws Exception {
-    if (ADD_LIBRARY) {
-      removeLibrary(getProject());
+    try {
+      if (ADD_LIBRARY) {
+        removeLibrary(getProject());
+      }
     }
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
 
   private static void removeLibrary(@NotNull final Project project) {
