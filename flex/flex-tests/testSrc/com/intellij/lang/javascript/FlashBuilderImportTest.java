@@ -77,34 +77,37 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    if (myModule != null) {
-      final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
-      if (sdk != null) {
-        final AccessToken token = WriteAction.start();
+    try {
+      if (myModule != null) {
+        final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
+        if (sdk != null) {
+          final AccessToken token = WriteAction.start();
+          try {
+            ProjectJdkTable.getInstance().removeJdk(sdk);
+          }
+          finally {
+            token.finish();
+          }
+        }
+      }
+
+      if (myFlashBuilderProjectDir != null && myFlashBuilderProjectDir.exists()) {
+        AccessToken l = WriteAction.start();
         try {
-          ProjectJdkTable.getInstance().removeJdk(sdk);
+          myFlashBuilderProjectDir.delete(this);
+        }
+        catch (IOException ignore) {
         }
         finally {
-          token.finish();
+          l.finish();
         }
+
+        myFlashBuilderProjectDir = null;
       }
     }
-
-    if (myFlashBuilderProjectDir != null && myFlashBuilderProjectDir.exists()) {
-      AccessToken l = WriteAction.start();
-      try {
-        myFlashBuilderProjectDir.delete(this);
-      }
-      catch (IOException ignore) {
-      }
-      finally {
-        l.finish();
-      }
-
-      myFlashBuilderProjectDir = null;
+    finally {
+      super.tearDown();
     }
-
-    super.tearDown();
   }
 
   private String getStandardDotProjectFileContent() {
