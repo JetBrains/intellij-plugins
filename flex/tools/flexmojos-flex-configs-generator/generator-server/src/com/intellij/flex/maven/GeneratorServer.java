@@ -321,7 +321,7 @@ public class GeneratorServer {
 
   private static DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {
     ContainerConfiguration containerConfiguration = new DefaultContainerConfiguration()
-            .setClassPathScanning(PlexusConstants.SCANNING_ON).setAutoWiring(true)
+            .setClassPathScanning(PlexusConstants.SCANNING_INDEX).setAutoWiring(true)
             .setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader())).setName("maven");
     final DefaultPlexusContainer container = new DefaultPlexusContainer(containerConfiguration);
 
