@@ -24,9 +24,9 @@ import training.lesson.Lesson;
 import training.lesson.exceptons.NoSdkException;
 
 /**
- * Created by karashevich on 22/10/15.
+ * Created by karashevich on 28/10/15.
  */
-public class OpenLessonInEduEditorTest extends UsefulTestCase {
+public class EduPlatformTest extends UsefulTestCase {
 
     protected Project myProject;
     protected VirtualFile myProjectRoot;
@@ -76,18 +76,23 @@ public class OpenLessonInEduEditorTest extends UsefulTestCase {
         }
     }
 
-        @Override
-        public void tearDown ()throws Exception {
-            try {
-                disposeAllEduEditors();
-                if(myProjectFixture != null) {
-                    myProjectFixture.tearDown();
-                }
-            }
-            finally {
-                super.tearDown();
+    @Override
+    public void tearDown ()throws Exception {
+        try {
+            disposeAllEduEditors();
+            if(myProjectFixture != null) {
+                myProjectFixture.tearDown();
             }
         }
+        finally {
+            super.tearDown();
+        }
+    }
+
+    @Override
+    protected void defaultRunBare() throws Throwable {
+        super.defaultRunBare();
+    }
 
     private void disposeAllEduEditors() {
         final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
@@ -119,30 +124,5 @@ public class OpenLessonInEduEditorTest extends UsefulTestCase {
         return lesson;
     }
 
-    public void testOpenLessonInEduEditor() throws Exception{
-        ((VirtualFilePointerManagerImpl) VirtualFilePointerManager.getInstance()).storePointers();
 
-        EduEditor eduEditor = null;
-        boolean noSdkDetected = false;
-        try {
-            CourseManager.getInstance().checkEnvironment(myProject, getAnyLesson().getCourse());
-        } catch (NoSdkException e) {
-            noSdkDetected = true;
-        }
-        assertTrue(noSdkDetected);
-        noSdkDetected = false;
-        final Boolean result = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
-            @Override
-            public Boolean compute() {
-                ProjectRootManager.getInstance(myProject).setProjectSdk(getProjectJDK());
-                return true;
-            }
-        });
-        if (result) {
-            assertNotNull(ProjectJdkTable.getInstance().findJdk(getProjectJDK().getName(), getProjectJDK().getSdkType().getName()));
-            CourseManager.getInstance().openLesson(myProject, getAnyLesson());
-        } else {
-            assertTrue(result); //Unable to add new
-        }
-    }
 }

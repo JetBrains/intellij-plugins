@@ -12,6 +12,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import training.lesson.CourseManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -42,11 +43,13 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
                 return eduEditor;
             } else {
                 eduEditor = new EduEditor(project, file);
+                EduEditorManager.getInstance().registerEduEditor(eduEditor);
                 fileEduEditorMap.put(file, eduEditor);
                 return eduEditor;
             }
         } else {
             EduEditor eduEditor = new EduEditor(project, file);
+            EduEditorManager.getInstance().registerEduEditor(eduEditor);
             fileEduEditorMap.put(file, eduEditor);
             return eduEditor;
         }
@@ -79,5 +82,6 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
     }
+
 
 }
