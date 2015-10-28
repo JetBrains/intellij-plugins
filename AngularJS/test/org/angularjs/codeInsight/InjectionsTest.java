@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
@@ -121,16 +120,6 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgControllerAliasHighlighting() {
     myFixture.configureByFiles("ngControllerAlias.highlight.html", "angular.js", "custom.js");
     myFixture.checkHighlighting();
-  }
-
-  public void testManyInjectionsHighlighting() {
-    myFixture.configureByFiles("manyInjections.highlight.html", "angular.js", "custom.js");
-    PlatformTestUtil.startPerformanceTest(getTestName(false), 30000, new ThrowableRunnable() {
-      @Override
-      public void run() throws Throwable {
-        myFixture.checkHighlighting();
-      }
-    }).attempts(1).cpuBound().usesAllCPUCores().assertTiming();
   }
 
   public void testNgControllerAliasResolve() {
