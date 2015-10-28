@@ -16,9 +16,9 @@ public class HbMoverTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   private void doTest(@NotNull String ext) {
-    myFixture.configureByFile(getTestName(true) + "." + ext);
+    myFixture.configureByFile(getTestName(false) + "." + ext);
     myFixture.performEditorAction(IdeActions.ACTION_MOVE_STATEMENT_UP_ACTION);
-    myFixture.checkResultByFile(getTestName(true) + "_after." + ext);
+    myFixture.checkResultByFile(getTestName(false) + "_after." + ext);
   }
   
   @NotNull
