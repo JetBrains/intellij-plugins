@@ -1,14 +1,23 @@
 package training.editor.eduUI;
 
+import com.intellij.ide.IdeTooltipManager;
+import com.intellij.ide.ui.UISettings;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
+import com.intellij.ui.GotItMessage;
+import com.intellij.ui.UIBundle;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +36,8 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
     FileEditor currentEditor = null;
 
     final public static String DEMO_MODE_WIDGET_ID = "DemoMode";
+
+
 
     protected DemoModeWidget(@NotNull Project project) {
         super(project);
@@ -48,6 +59,23 @@ public class DemoModeWidget extends EditorBasedWidget implements StatusBarWidget
         multicaster.addCaretListener(this, this);
         multicaster.addSelectionListener(this, this);
         myStatusBar.updateWidget(ID());
+
+        final String key = "demoWidget.info.shown";
+        if (!PropertiesComponent.getInstance().isTrueValue(key)) {
+            PropertiesComponent.getInstance().setValue(key, String.valueOf(true));
+            final Alarm alarm = new Alarm();
+            alarm.addRequest(new Runnable() {
+                @Override
+                public void run() {
+                    GotItMessage.createMessage(EducationBundle.message("demoWidget.info.title"), EducationBundle.message(
+                            "demoWidget.info.message"))
+                            .setDisposable(DemoModeWidget.this)
+                            .show(new RelativePoint(myStatusBar.getComponent(), new Point(10, 0)), Balloon.Position.above);
+                    Disposer.dispose(alarm);
+                }
+            }, 20000);
+        }
+
     }
 
     @Override
