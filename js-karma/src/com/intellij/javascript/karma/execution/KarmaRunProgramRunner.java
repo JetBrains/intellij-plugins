@@ -52,7 +52,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     else {
       RerunTestsNotification.showRerunNotification(environment.getContentToReuse(), executionResult.getExecutionConsole());
     }
-    RerunTestsAction.register(environment);
+    RerunTestsAction.register(descriptor);
     return descriptor;
   }
 
