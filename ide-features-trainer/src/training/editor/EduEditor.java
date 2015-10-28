@@ -107,6 +107,7 @@ public class EduEditor implements TextEditor {
         myProject = project;
         vf = file;
         myDefaultEditor = TextEditorProvider.getInstance().createEditor(myProject, file);
+        Disposer.register(myDefaultEditor, this); //dispose EduEditor when default has been already disposed
         myComponent = myDefaultEditor.getComponent();
         eduPanel = new EduPanel(this, 275);
         myComponent.add(eduPanel, BorderLayout.WEST);
@@ -215,6 +216,7 @@ public class EduEditor implements TextEditor {
         }
         isDisposed = true;
         if (myCourse != null) CourseManager.getInstance().unregisterCourse(myCourse);
+        EduEditorManager.getInstance().disposeEduEditor(this);
         Disposer.dispose(myDefaultEditor);
     }
 
@@ -569,6 +571,11 @@ public class EduEditor implements TextEditor {
             demoModeUI = new DemoModeUI();
         }
         demoMode = true;
+
+
+
+
+
         demoModeUI.addDemoModeWidget(myProject, this);
 
     }
@@ -581,6 +588,7 @@ public class EduEditor implements TextEditor {
         parent.remove(highlightedEditor);
         parent.repaint();
         demoMode = false;
+        demoModeUI.updateDemoModeWidget();
     }
 
     public boolean isDemoModeOn(){
