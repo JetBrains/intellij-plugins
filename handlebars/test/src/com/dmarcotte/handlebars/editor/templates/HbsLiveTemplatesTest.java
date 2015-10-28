@@ -24,9 +24,9 @@ public class HbsLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCas
   }
 
   private void doTest() {
-    myFixture.configureByFiles(getTestName(false) + ".hbs");
+    myFixture.configureByFiles(getTestName(true) + ".hbs");
     expandTemplate();
-    myFixture.checkResultByFile(getTestName(false) + ".after.hbs");
+    myFixture.checkResultByFile(getTestName(true) + ".after.hbs");
   }
 
   public void testItar() {
