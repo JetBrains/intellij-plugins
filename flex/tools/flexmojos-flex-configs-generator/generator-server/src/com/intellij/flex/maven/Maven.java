@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 final class Maven {
   private final ConcurrentMap<File, AtomicNotNullLazyValue<MavenProject>> projectsCache = new ConcurrentHashMap<File, AtomicNotNullLazyValue<MavenProject>>();
