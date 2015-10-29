@@ -19,9 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author Dennis.Ushakov
- */
 public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
   @Override
   public boolean isMyContext(@Nullable PsiElement context) {
@@ -42,8 +39,7 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
 
   @NotNull
   @Override
-  public String[] getSimpleSelectors(@Nullable PsiElement context) {
-    if (context == null) return ArrayUtil.EMPTY_STRING_ARRAY;
+  public String[] getSimpleSelectors(@NotNull PsiElement context) {
     final List<String> result = new LinkedList<String>();
     DirectiveUtil.processTagDirectives(context.getProject(), new Processor<JSImplicitElement>() {
       @Override

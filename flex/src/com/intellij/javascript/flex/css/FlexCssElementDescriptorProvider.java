@@ -52,7 +52,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.HtmlUtil;
@@ -319,9 +318,10 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         if (FlexAnnotationNames.STYLE.equals(jsAttribute.getName())) {
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
           String styleName = pair != null ? pair.getSimpleValue() : null;
-          if (styleName != null) {
+          String qualifiedName = jsClass.getQualifiedName();
+          if (styleName != null && qualifiedName != null) {
             result.add(new FlexCssPropertyDescriptor(ContainerUtil.newLinkedHashSet(
-              FlexStyleIndexInfo.create(jsClass.getQualifiedName(), styleName, jsAttribute, true))));
+              FlexStyleIndexInfo.create(qualifiedName, styleName, jsAttribute, true))));
           }
         }
         return true;
@@ -410,10 +410,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  public String[] getSimpleSelectors(@Nullable PsiElement context) {
-    if (context == null) {
-      return ArrayUtil.EMPTY_STRING_ARRAY;
-    }
+  public String[] getSimpleSelectors(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
     if (module == null) {
       return ArrayUtil.EMPTY_STRING_ARRAY;
