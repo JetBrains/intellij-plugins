@@ -11,7 +11,9 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
+import com.intellij.execution.testframework.sm.SMCustomMessagesParsing;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
+import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.ui.ConsoleView;
@@ -111,7 +113,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     return SystemInfo.isWindows ? url.replace("file://", "file:///") : url;
   }
 
-  private static class DartConsoleProperties extends SMTRunnerConsoleProperties {
+  private static class DartConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
     public DartConsoleProperties(DartTestRunConfiguration runConfiguration, ExecutionEnvironment env) {
       super(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
       setUsePredefinedMessageFilter(false);
@@ -122,6 +124,12 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     @Override
     public SMTestLocator getTestLocator() {
       return DartTestLocationProvider.INSTANCE;
+    }
+
+    @Override
+    public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName,
+                                                                        @NotNull TestConsoleProperties consoleProperties) {
+      return new DartTestToGeneralTestEventsConverter(testFrameworkName, consoleProperties);
     }
   }
 }
