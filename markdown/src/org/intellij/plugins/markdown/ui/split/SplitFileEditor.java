@@ -74,7 +74,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
     result.add(splitter, BorderLayout.CENTER);
-
+    adjustEditorsVisibility();
 
     return result;
   }
@@ -102,12 +102,16 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   }
 
   private void invalidateLayout() {
-    myMainEditor.getComponent().setVisible(mySplitEditorLayout.showFirst);
-    mySecondEditor.getComponent().setVisible(mySplitEditorLayout.showSecond);
+    adjustEditorsVisibility();
     myToolbarWrapper.refresh();
     myComponent.repaint();
 
     IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
+  }
+
+  private void adjustEditorsVisibility() {
+    myMainEditor.getComponent().setVisible(mySplitEditorLayout.showFirst);
+    mySecondEditor.getComponent().setVisible(mySplitEditorLayout.showSecond);
   }
 
   @NotNull
