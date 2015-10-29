@@ -7,6 +7,7 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DartTestOutputParser {
@@ -14,25 +15,27 @@ public class DartTestOutputParser {
   private static final String OBSERVATORY_MSG = "Observatory listening on";
   private static final String SOME_FAILED = "Some tests failed";
   private static final String ALL_PASSED = "All tests passed";
+  private static final String EXPECTED = "Expected: ";
   private static final String NEWLINE = "\n";
   private static final String TEST_PREFIX = ": ";
+  private static final String CONTINUE_SPACES = "  ";
   private static final String PASS_CODE = "\u001B[32m";
   private static final String FAIL_CODE = "\u001B[0;31m";
   private static final Pattern TIME_FORMAT = Pattern.compile("\\d+:\\d\\d");
+  private static final Pattern EXPECTED_ACTUAL_RESULT = Pattern.compile("\\nExpected: (.*)\\n  Actual: (.*)\\n *\\^\\n Differ.*\\n");
+
 
   private DartTestToGeneralTestEventsConverter myProcessor;
-  private boolean isFirstTime = true;
   private boolean isActive = false;
-  private boolean didFail = false;
   private State myState = State.Init;
   private String myPassCount, myFailCount;
   private String myCurrentTestName = "";
   private String myFailureMessage = "", myStackTrace = "";
   private String myFailureActualText = "", myFailureExpectedText = "";
   private boolean myTestError = false;
-  private int myTestId = 1;
+  private int myTestId = 0;
 
-  private enum State {Init, Info, Timestamp, Pass, Fail, TestName, Message, Error, ErrorMessage, End}
+  private enum State {Init, Info, Timestamp, Pass, Fail, TestName, Error, ErrorMessage, End}
 
   public DartTestOutputParser(DartTestToGeneralTestEventsConverter processor) {
     myProcessor = processor;
@@ -42,10 +45,8 @@ public class DartTestOutputParser {
     if (text == null) {
       return false;
     }
-    if (isFirstTime) {
-      if (text.indexOf(TEST_RUN_COMMAND) > 0) {
-        isActive = true;
-      }
+    if (text.indexOf(TEST_RUN_COMMAND) > 0) {
+      isActive = true;
     }
     if (isActive) {
       return accumulate(text, contentType);
@@ -61,7 +62,7 @@ public class DartTestOutputParser {
       case Init:
         if (text.startsWith(OBSERVATORY_MSG) && text.endsWith(NEWLINE)) {
           nextState = State.Timestamp;
-          return false;
+          break;
         }
         break;
       case Info:
@@ -69,7 +70,6 @@ public class DartTestOutputParser {
       case Timestamp:
         if (TIME_FORMAT.matcher(text.trim()).matches()) {
           nextState = State.Pass;
-          // emit test-found string
         }
         break;
       case Pass:
@@ -77,35 +77,31 @@ public class DartTestOutputParser {
       case Fail:
         String contentCode = contentType.toString();
         if (PASS_CODE.equals(contentCode)) {
-          currentState = State.Pass;
           if (text.equals(myPassCount)) {
             nextState = State.Fail;
           }
           else {
             // trigger test-pass for previous test name
             testFinished();
-            nextState = State.TestName;
+            if (myFailCount == null) {
+              nextState = State.TestName;
+            }
+            else {
+              nextState = State.Fail;
+            }
             myPassCount = text;
           }
-          // emit test-pass string
         }
         else if (FAIL_CODE.equals(contentCode)) {
-          currentState = State.Fail;
           if (text.equals(myFailCount)) {
-            nextState = State.Message;
-            didFail = true;
+            nextState = State.TestName;
           }
           else {
-            testFailed();
             nextState = State.Error;
             myFailCount = text;
-            // emit test-fail string
           }
         }
-        if (text.startsWith(SOME_FAILED)) {
-          nextState = State.End;
-        }
-        else if (text.startsWith(ALL_PASSED)) {
+        if (text.startsWith(SOME_FAILED) || text.startsWith(ALL_PASSED)) {
           nextState = State.End;
         }
         break;
@@ -113,21 +109,19 @@ public class DartTestOutputParser {
         nextState = State.Timestamp;
         setTestName(text);
         break;
-      case Message:
-        nextState = State.Timestamp;
-        if (didFail) {
-          didFail = false;
-          return true; // EARLY EXIT
-        }
-        myFailureMessage += text;
-        break;
       case Error:
         setTestName(text);
         nextState = State.ErrorMessage;
         break;
       case ErrorMessage:
-        myFailureMessage = text;
-        nextState = State.Message; // wrong
+        if (text.startsWith(CONTINUE_SPACES)) {
+          myFailureMessage += text.substring(CONTINUE_SPACES.length());
+        }
+        else {
+          testFailed();
+          myState = State.Timestamp;
+          return accumulate(text, contentType); // goto Timestamp; simulate 1 token look-ahead
+        }
         break;
       case End:
         return true;
@@ -152,6 +146,7 @@ public class DartTestOutputParser {
   private void testFailed() {
     if (myCurrentTestName.isEmpty()) return;
     testStarted();
+    splitFailureMessage();
     myProcessor.fireOnTestFailure(
       new TestFailedEvent(myCurrentTestName, myTestId, myFailureMessage, myStackTrace, myTestError, myFailureActualText,
                           myFailureExpectedText, null, 0L));
@@ -165,9 +160,24 @@ public class DartTestOutputParser {
   private void resetTestState() {
     myCurrentTestName = "";
     myFailureMessage = "";
-    myStackTrace = "";
-    myFailureActualText = "";
-    myFailureExpectedText = "";
+    myStackTrace = null;
+    myFailureActualText = null;
+    myFailureExpectedText = null;
     myTestError = false;
+  }
+
+  private void splitFailureMessage() {
+    String message = myFailureMessage;
+    int firstExpectedIndex = message.indexOf(EXPECTED);
+    if (firstExpectedIndex >= 0) {
+      Matcher matcher = EXPECTED_ACTUAL_RESULT.matcher(message);
+      if (matcher.find(firstExpectedIndex + EXPECTED.length())) {
+        int matchEnd = matcher.end();
+        myFailureExpectedText = matcher.group(1);
+        myFailureActualText = matcher.group(2);
+        myFailureMessage = message.substring(0, firstExpectedIndex);
+        myStackTrace = message.substring(matchEnd + 1);
+      }
+    }
   }
 }
