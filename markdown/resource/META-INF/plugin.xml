@@ -13,6 +13,11 @@
     ]]>
   </change-notes>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.intellij.markdown.html.panel.provider"
+                    interface="org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider" />
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
@@ -37,8 +42,17 @@
                              groupId="language"
                              nonDefaultProject="true"
                              key="settings.markdown.css.name"
-                             instance="org.intellij.plugins.markdown.settings.MarkdownCssConfigurable"/>
+                             instance="org.intellij.plugins.markdown.settings.MarkdownCssConfigurable">
+      <configurable id="Settings.Markdown.Preview"
+                    bundle="org.intellij.plugins.markdown.bundle.MarkdownBundle"
+                    key="settings.markdown.preview.name"
+                    instance="org.intellij.plugins.markdown.settings.MarkdownPreviewConfigurable"/>
+    </applicationConfigurable>
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.intellij.markdown">
+    <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.lobo.LoboHtmlPanelProvider" />
   </extensions>
 
   <actions>

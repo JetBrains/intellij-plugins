@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
+import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -308,16 +309,23 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   }
 
   public enum SplitEditorLayout {
-    FIRST(true, false),
-    SECOND(false, true),
-    SPLIT(true, true);
+    FIRST(true, false, MarkdownBundle.message("markdown.layout.editor.only")),
+    SECOND(false, true, MarkdownBundle.message("markdown.layout.preview.only")),
+    SPLIT(true, true, MarkdownBundle.message("markdown.layout.editor.and.preview"));
 
     public final boolean showFirst;
     public final boolean showSecond;
+    public final String presentationName;
 
-    SplitEditorLayout(boolean showFirst, boolean showSecond) {
+    SplitEditorLayout(boolean showFirst, boolean showSecond, String presentationName) {
       this.showFirst = showFirst;
       this.showSecond = showSecond;
+      this.presentationName = presentationName;
+    }
+
+    @Override
+    public String toString() {
+      return presentationName;
     }
   }
 }

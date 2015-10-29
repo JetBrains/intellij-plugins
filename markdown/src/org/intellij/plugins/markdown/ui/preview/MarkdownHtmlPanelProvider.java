@@ -1,17 +1,36 @@
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.CommonBundle;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.ui.Messages;
-import org.intellij.plugins.markdown.ui.preview.lobo.LoboHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public abstract class MarkdownHtmlPanelProvider {
 
-  public static final MarkdownHtmlPanelProvider DEFAULT = new LoboHtmlPanelProvider();
+  public static final ExtensionPointName<MarkdownHtmlPanelProvider> EP_NAME =
+    ExtensionPointName.create("org.intellij.markdown.html.panel.provider");
 
+  private static MarkdownHtmlPanelProvider[] ourProviders = null;
+
+  @NotNull
   public abstract MarkdownHtmlPanel createHtmlPanel();
 
   public abstract boolean isAvailable();
+
+  @NotNull
+  public abstract ProviderInfo getProviderInfo();
+
+  @NotNull
+  public static MarkdownHtmlPanelProvider[] getProviders() {
+    if (ourProviders == null) {
+      ourProviders = EP_NAME.getExtensions();
+      Logger.getInstance(MarkdownHtmlPanelProvider.class).warn(Arrays.deepToString(ourProviders));
+    }
+    return ourProviders;
+  }
 
   @NotNull
   public static MarkdownHtmlPanelProvider createFromInfo(@NotNull ProviderInfo providerInfo) {
@@ -24,7 +43,7 @@ public abstract class MarkdownHtmlPanelProvider {
         CommonBundle.getErrorTitle(),
         Messages.getErrorIcon()
       );
-      return DEFAULT;
+      return getProviders()[0];
     }
   }
 
@@ -67,6 +86,11 @@ public abstract class MarkdownHtmlPanelProvider {
       int result = myName.hashCode();
       result = 31 * result + className.hashCode();
       return result;
+    }
+
+    @Override
+    public String toString() {
+      return myName;
     }
   }
 }

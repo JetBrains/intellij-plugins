@@ -189,7 +189,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       settings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(settings.getMarkdownPreviewSettings().getSplitEditorLayout(),
                                                                       MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
 
-      provider = MarkdownHtmlPanelProvider.DEFAULT;
+      provider = MarkdownHtmlPanelProvider.getProviders()[0];
     }
 
     myLastPanelProviderInfo = settings.getMarkdownPreviewSettings().getHtmlPanelProviderInfo();
