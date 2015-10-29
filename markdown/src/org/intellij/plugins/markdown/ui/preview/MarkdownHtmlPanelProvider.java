@@ -4,6 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -43,15 +44,24 @@ public abstract class MarkdownHtmlPanelProvider {
         CommonBundle.getErrorTitle(),
         Messages.getErrorIcon()
       );
+      Logger.getInstance(MarkdownHtmlPanelProvider.class).error(e);
       return getProviders()[0];
     }
   }
 
   public static class ProviderInfo {
     @NotNull
+    @Attribute("name")
     private String myName;
     @NotNull
+    @Attribute("className")
     private String className;
+
+    @SuppressWarnings("unused")
+    private ProviderInfo() {
+      myName = "";
+      className = "";
+    }
 
     public ProviderInfo(@NotNull String name, @NotNull String className) {
       myName = name;
