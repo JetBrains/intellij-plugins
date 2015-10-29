@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import training.commands.BadCommandException;
 import training.commands.Command;
 import training.commands.CommandFactory;
@@ -30,6 +31,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by karashevich on 30/01/15.
  */
 public class LessonProcessor {
+
+    @TestOnly
+    public static ExecutionList getCurrentExecutionList() {
+        return currentExecutionList;
+    }
+
+    private static ExecutionList currentExecutionList;
 
     public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws InterruptedException, ExecutionException, BadCommandException {
 
@@ -96,6 +104,7 @@ public class LessonProcessor {
         //Perform first action, all next perform like a chain reaction
         Command cmd = CommandFactory.buildCommand(elements.peek());
         ExecutionList executionList = new ExecutionList(elements, lesson, project, eduEditor, mouseListenerHolder, target);
+        currentExecutionList = executionList;
 
         cmd.execute(executionList);
 

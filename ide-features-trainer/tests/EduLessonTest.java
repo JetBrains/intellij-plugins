@@ -1,16 +1,11 @@
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -21,16 +16,17 @@ import training.editor.EduEditorManager;
 import training.lesson.Course;
 import training.lesson.CourseManager;
 import training.lesson.Lesson;
-import training.lesson.exceptons.NoSdkException;
 
 /**
  * Created by karashevich on 28/10/15.
  */
-public class EduPlatformTest extends UsefulTestCase {
+public abstract class EduLessonTest extends UsefulTestCase implements LessonSolution{
 
     protected Project myProject;
     protected VirtualFile myProjectRoot;
     protected String myProjectPath;
+
+    protected Lesson myLesson;
 
     private IdeaProjectTestFixture myProjectFixture;
 
@@ -53,6 +49,8 @@ public class EduPlatformTest extends UsefulTestCase {
         return StdModuleTypes.JAVA;
     }
 
+    protected abstract void setUpLesson();
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -70,6 +68,8 @@ public class EduPlatformTest extends UsefulTestCase {
             myProject = myProjectFixture.getProject();
             myProjectRoot = myProject.getBaseDir();
             myProjectPath = myProjectRoot.getPath();
+            setUpLesson();
+            prepareLesson();
         } catch (Exception e) {
             tearDown();
             throw e;
@@ -91,7 +91,27 @@ public class EduPlatformTest extends UsefulTestCase {
 
     @Override
     protected void defaultRunBare() throws Throwable {
-        super.defaultRunBare();
+        Throwable exception = null;
+        setUp();
+
+        try {
+            runTest();
+            while(!myLesson.getPassed()){
+                //pumpEvents
+                com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+                solveStep();
+            }
+
+        } catch (Throwable running) {
+            exception = running;
+        } finally {
+            try {
+                tearDown();
+            } catch (Throwable tearingDown) {
+                if (exception == null) exception = tearingDown;
+            }
+        }
+        if (exception != null) throw exception;
     }
 
     private void disposeAllEduEditors() {
@@ -122,6 +142,12 @@ public class EduPlatformTest extends UsefulTestCase {
             }
         }
         return lesson;
+    }
+
+    protected void prepareLesson(){
+        assertNotNull(myLesson);
+        myLesson.setPassed(false);
+        assertTrue(!myLesson.getPassed());
     }
 
 
