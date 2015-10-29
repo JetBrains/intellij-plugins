@@ -40,23 +40,23 @@ public class EditorBasics_Selection_Solution_Test extends EduLessonTest implemen
         int stepNumber = currentExecutionList.getElements().size() - 1;
         if (stepNumber == 5) {
             currentExecutionList.getElements().poll();
-            Command testcommand = new TestCommand();
-            testcommand.execute(currentExecutionList);
+            Command testCommand = new TestCommand();
+            testCommand.execute(currentExecutionList);
         }
         if (stepNumber == 4){
             currentExecutionList.getElements().poll();
-            Command testcommand = new TestCommand();
-            testcommand.execute(currentExecutionList);
+            Command testCommand = new TestCommand();
+            testCommand.execute(currentExecutionList);
         }
         if (stepNumber == 2){
             currentExecutionList.getElements().poll();
-            Command testcommand = new TestCommand();
-            testcommand.execute(currentExecutionList);
+            Command testCommand = new TestCommand();
+            testCommand.execute(currentExecutionList);
         }
         if (stepNumber == 1){
             currentExecutionList.getElements().poll();
-            Command testcommand = new TestCommand();
-            testcommand.execute(currentExecutionList);
+            Command testCommand = new TestCommand();
+            testCommand.execute(currentExecutionList);
         }
 
     }
