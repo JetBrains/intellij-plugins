@@ -992,13 +992,12 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // arguments
+  // <<argumentsWrapper>>
   public static boolean callExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callExpression")) return false;
-    if (!nextTokenIs(b, LPAREN)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _LEFT_, null);
-    r = arguments(b, l + 1);
+    Marker m = enter_section_(b, l, _LEFT_, "<call expression>");
+    r = argumentsWrapper(b, l + 1);
     exit_section_(b, l, m, CALL_EXPRESSION, r, false, null);
     return r;
   }
@@ -3821,7 +3820,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '@' simpleQualifiedReferenceExpression arguments?
+  // '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
   public static boolean metadata(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metadata")) return false;
     if (!nextTokenIs(b, AT)) return false;
@@ -3834,10 +3833,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // arguments?
+  // <<argumentsWrapper>>?
   private static boolean metadata_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metadata_2")) return false;
-    arguments(b, l + 1);
+    argumentsWrapper(b, l + 1);
     return true;
   }
 
@@ -4196,7 +4195,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('new' | 'const') type ('.' referenceExpression)? arguments
+  // ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>>
   public static boolean newExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "newExpression")) return false;
     if (!nextTokenIs(b, "<new expression>", CONST, NEW)) return false;
@@ -4206,7 +4205,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, type(b, l + 1));
     r = p && report_error_(b, newExpression_2(b, l + 1)) && r;
-    r = p && arguments(b, l + 1) && r;
+    r = p && argumentsWrapper(b, l + 1) && r;
     exit_section_(b, l, m, NEW_EXPRESSION, r, p, null);
     return r || p;
   }
@@ -4762,7 +4761,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ':' 'this' ('.' referenceExpression)? arguments
+  // ':' 'this' ('.' referenceExpression)? <<argumentsWrapper>>
   public static boolean redirection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "redirection")) return false;
     if (!nextTokenIs(b, COLON)) return false;
@@ -4772,7 +4771,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, THIS);
     p = r; // pin = 2
     r = r && report_error_(b, redirection_2(b, l + 1));
-    r = p && arguments(b, l + 1) && r;
+    r = p && argumentsWrapper(b, l + 1) && r;
     exit_section_(b, l, m, REDIRECTION, r, p, null);
     return r || p;
   }
@@ -5427,7 +5426,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('super' | 'this') ('.' referenceExpression)? arguments
+  // ('super' | 'this') ('.' referenceExpression)? <<argumentsWrapper>>
   //                               | fieldInitializer
   public static boolean superCallOrFieldInitializer(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer")) return false;
@@ -5439,14 +5438,14 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('super' | 'this') ('.' referenceExpression)? arguments
+  // ('super' | 'this') ('.' referenceExpression)? <<argumentsWrapper>>
   private static boolean superCallOrFieldInitializer_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = superCallOrFieldInitializer_0_0(b, l + 1);
     r = r && superCallOrFieldInitializer_0_1(b, l + 1);
-    r = r && arguments(b, l + 1);
+    r = r && argumentsWrapper(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

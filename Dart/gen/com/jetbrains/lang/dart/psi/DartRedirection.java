@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartRedirection extends DartPsiCompositeElement {
 
   @Nullable
-  DartArguments getArguments();
-
-  @Nullable
   DartReferenceExpression getReferenceExpression();
 
 }

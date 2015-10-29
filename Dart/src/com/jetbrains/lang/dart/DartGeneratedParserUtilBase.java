@@ -35,6 +35,14 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return result;
   }
 
+  public static boolean argumentsWrapper(PsiBuilder builder_, int level_) {
+    final Boolean cascadeData = builder_.getUserData(WITHOUT_CASCADE);
+    builder_.putUserData(WITHOUT_CASCADE, null);
+    final boolean result = DartParser.arguments(builder_, level_);
+    builder_.putUserData(WITHOUT_CASCADE, cascadeData);
+    return result;
+  }
+
   public static boolean mapLiteralExpressionWrapper(PsiBuilder builder_, int level_) {
     final Boolean cascadeData = builder_.getUserData(WITHOUT_CASCADE);
     builder_.putUserData(WITHOUT_CASCADE, null);

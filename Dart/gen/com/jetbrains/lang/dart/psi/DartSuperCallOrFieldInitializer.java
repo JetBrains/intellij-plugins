@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartSuperCallOrFieldInitializer extends DartPsiCompositeElement {
 
   @Nullable
-  DartArguments getArguments();
-
-  @Nullable
   DartFieldInitializer getFieldInitializer();
 
   @Nullable

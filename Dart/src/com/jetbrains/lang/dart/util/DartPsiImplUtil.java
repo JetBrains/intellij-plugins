@@ -110,13 +110,13 @@ public class DartPsiImplUtil {
   @Nullable
   public static DartComponentName getComponentName(@NotNull DartNamedConstructorDeclaration element) {
     final List<DartComponentName> list = element.getComponentNameList();
-    return  list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
+    return list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
   }
 
   @Nullable
   public static DartComponentName getComponentName(@NotNull DartFactoryConstructorDeclaration element) {
     final List<DartComponentName> list = element.getComponentNameList();
-    return  list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
+    return list.size() == 2 ? list.get(1) : null; // todo somehow remove this bogus code, it is here just to mimic old behavior
   }
 
   @Nullable
@@ -201,5 +201,15 @@ public class DartPsiImplUtil {
   public static boolean isConstantObjectExpression(@NotNull final DartNewExpression newExpression) {
     final PsiElement child = newExpression.getFirstChild();
     return child != null && child.getNode().getElementType() == DartTokenTypes.CONST;
+  }
+
+  @Nullable
+  public static DartArguments getArguments(@NotNull final DartNewExpression newExpression) {
+    return PsiTreeUtil.findChildOfType(newExpression, DartArguments.class);
+  }
+
+  @Nullable
+  public static DartArguments getArguments(@NotNull final DartCallExpression callExpression) {
+    return PsiTreeUtil.findChildOfType(callExpression, DartArguments.class);
   }
 }

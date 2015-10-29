@@ -24,12 +24,6 @@ public class DartRedirectionImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @Nullable
-  public DartArguments getArguments() {
-    return findChildByClass(DartArguments.class);
-  }
-
-  @Override
-  @Nullable
   public DartReferenceExpression getReferenceExpression() {
     return findChildByClass(DartReferenceExpression.class);
   }

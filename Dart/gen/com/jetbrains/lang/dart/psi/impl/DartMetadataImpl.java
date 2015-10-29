@@ -23,12 +23,6 @@ public class DartMetadataImpl extends DartPsiCompositeElementImpl implements Dar
   }
 
   @Override
-  @Nullable
-  public DartArguments getArguments() {
-    return findChildByClass(DartArguments.class);
-  }
-
-  @Override
   @NotNull
   public DartReferenceExpression getReferenceExpression() {
     return findNotNullChildByClass(DartReferenceExpression.class);

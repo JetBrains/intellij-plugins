@@ -24,12 +24,6 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
 
   @Override
   @Nullable
-  public DartArguments getArguments() {
-    return findChildByClass(DartArguments.class);
-  }
-
-  @Override
-  @Nullable
   public DartReferenceExpression getReferenceExpression() {
     return findChildByClass(DartReferenceExpression.class);
   }
@@ -42,6 +36,11 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
 
   public boolean isConstantObjectExpression() {
     return DartPsiImplUtil.isConstantObjectExpression(this);
+  }
+
+  @Nullable
+  public DartArguments getArguments() {
+    return DartPsiImplUtil.getArguments(this);
   }
 
 }

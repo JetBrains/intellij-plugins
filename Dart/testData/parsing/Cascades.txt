@@ -300,6 +300,35 @@ Dart File
             BLOCK
               PsiElement({)('{')
               STATEMENTS
+                VALUE_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('b')
+                    VAR_INIT
+                      PsiElement(=)('=')
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          ARGUMENT_LIST
+                            VALUE_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('c')
+                              CASCADE_REFERENCE_EXPRESSION
+                                PsiElement(..)('..')
+                                REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('d')
+                          PsiElement())(')')
+                PsiElement(;)(';')
                 VAR_DECLARATION_LIST
                   VAR_ACCESS_DECLARATION
                     TYPE

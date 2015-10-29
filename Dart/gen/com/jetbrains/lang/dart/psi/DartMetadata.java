@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface DartMetadata extends DartPsiCompositeElement {
 
-  @Nullable
-  DartArguments getArguments();
-
   @NotNull
   DartReferenceExpression getReferenceExpression();
 
