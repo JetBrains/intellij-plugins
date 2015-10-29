@@ -134,13 +134,15 @@ public class DartServerErrorsAnnotator
     final String severity = error.getSeverity();
     final String message = StringUtil.notNullize(error.getMessage());
 
+    final ProblemHighlightType specialHighlightType = getSpecialHighlightType(message);
     final Annotation annotation;
 
-    if (AnalysisErrorSeverity.INFO.equals(severity)) {
+    if (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType == null) {
       annotation = holder.createWeakWarningAnnotation(textRange, message);
       annotation.setTextAttributes(DartSyntaxHighlighterColors.HINT);
     }
-    else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
+    else if (AnalysisErrorSeverity.WARNING.equals(severity) ||
+             (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType != null)) {
       annotation = holder.createWarningAnnotation(textRange, message);
       annotation.setTextAttributes(DartSyntaxHighlighterColors.WARNING);
     }
@@ -152,8 +154,7 @@ public class DartServerErrorsAnnotator
       annotation = null;
     }
 
-    final ProblemHighlightType specialHighlightType = annotation == null ? null : getSpecialHighlightType(message);
-    if (specialHighlightType != null) {
+    if (annotation != null && specialHighlightType != null) {
       annotation.setTextAttributes(null);
       annotation.setHighlightType(specialHighlightType);
     }
