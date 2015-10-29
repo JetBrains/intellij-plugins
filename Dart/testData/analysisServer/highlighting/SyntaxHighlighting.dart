@@ -6,7 +6,7 @@
     <info textAttributesKey="DART_KEYWORD">show</info> <info textAttributesKey="DART_CLASS">HtmlElement</info>,
     <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info>,
     <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info>,
-    <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">convertNativeObjectToDartMap</info>,
+    <weak_warning descr="'convertNativeObjectToDartMap' is deprecated" textAttributesKey="DEPRECATED_ATTRIBUTES"><info descr="null" textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">convertNativeObjectToDartMap</info></weak_warning>,
     <info textAttributesKey="DART_IDENTIFIER">incorrect</info>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
