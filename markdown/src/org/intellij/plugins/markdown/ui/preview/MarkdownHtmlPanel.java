@@ -37,4 +37,20 @@ public abstract class MarkdownHtmlPanel {
     }
     return new Range<Integer>(Integer.parseInt(startEnd.get(0)), Integer.parseInt(startEnd.get(1)));
   }
+
+  @NotNull
+  protected static String getCssLines(@Nullable String inlineCss, @NotNull String... fileUris) {
+    StringBuilder result = new StringBuilder();
+
+    for (String uri : fileUris) {
+      if (uri == null) {
+        continue;
+      }
+      result.append("<link rel=\"stylesheet\" href=\"").append(uri).append("\" />\n");
+    }
+    if (inlineCss != null) {
+      result.append("<style>\n").append(inlineCss).append("\n</style>\n");
+    }
+    return result.toString();
+  }
 }

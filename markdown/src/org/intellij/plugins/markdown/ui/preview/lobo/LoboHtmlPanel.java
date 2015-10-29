@@ -73,25 +73,13 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void setHtml(@NotNull String html) {
     myLastRenderedHtml = html;
-    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines());
+    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myCssInlineText, myCssFileUri));
     myPanel.setHtml(htmlToRender, "file://a.html", myHtmlRendererContext);
   }
 
   @Override
   public void render() {
     setHtml(myLastRenderedHtml);
-  }
-
-  @NotNull
-  private String getCssLines() {
-    StringBuilder result = new StringBuilder();
-    if (myCssFileUri != null) {
-      result.append("<link rel=\"stylesheet\" href=\"").append(myCssFileUri).append("\" />\n");
-    }
-    if (myCssInlineText != null) {
-      result.append("<style>\n").append(myCssInlineText).append("\n</style>\n");
-    }
-    return result.toString();
   }
 
   private void adjustBrowserSize() {
