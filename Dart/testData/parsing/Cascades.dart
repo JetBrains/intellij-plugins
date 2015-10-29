@@ -22,6 +22,7 @@ class A {
   void setY(int y) { this.y = y; }
 
   Function swap() {
+    a..b = n(c..d);
     int tmp = x;
     x = y;
     y = tmp;

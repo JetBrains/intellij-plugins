@@ -214,7 +214,7 @@ partStatement ::= metadata* 'part' uriElement ';' {
   ]
 }
 
-metadata ::= '@' simpleQualifiedReferenceExpression arguments?
+metadata ::= '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
 
 uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"}
 
@@ -303,11 +303,11 @@ namedConstructorDeclaration ::= metadata* ('external' | 'const')* componentName 
 initializers ::= ':' superCallOrFieldInitializer (',' superCallOrFieldInitializer)*
 
 // If it were possible to edit Object or Null then we'd have to allow for ?.
-redirection ::= ':' 'this' ('.' referenceExpression)? arguments  {pin=2}
+redirection ::= ':' 'this' ('.' referenceExpression)? <<argumentsWrapper>>  {pin=2}
 
 fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
 
-superCallOrFieldInitializer ::= ('super' | 'this') ('.' referenceExpression)? arguments
+superCallOrFieldInitializer ::= ('super' | 'this') ('.' referenceExpression)? <<argumentsWrapper>>
                               | fieldInitializer
                               {recoverWhile="super_call_or_field_initializer_recover"}
 private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |
@@ -562,8 +562,8 @@ private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAcc
 
 private refOrThisOrSuperOrParenExpression ::= (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>)
 
-left callExpression ::= arguments
-{mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+left callExpression ::= <<argumentsWrapper>>
+{mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference" methods = [getArguments]}
 left arrayAccessExpression ::= arrayAccess
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
@@ -586,11 +586,11 @@ thisExpression ::= 'this'
 superExpression ::= 'super'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-newExpression ::= ('new' | 'const') type ('.' referenceExpression)? arguments {
+newExpression ::= ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>> {
   pin=1
   mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl"
   implements="com.jetbrains.lang.dart.psi.DartReference"
-  methods=[isConstantObjectExpression]
+  methods=[isConstantObjectExpression getArguments]
 }
 
 throwExpression ::= 'throw' expression

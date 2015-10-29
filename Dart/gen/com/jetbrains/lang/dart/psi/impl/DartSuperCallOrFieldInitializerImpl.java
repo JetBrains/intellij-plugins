@@ -24,12 +24,6 @@ public class DartSuperCallOrFieldInitializerImpl extends DartPsiCompositeElement
 
   @Override
   @Nullable
-  public DartArguments getArguments() {
-    return findChildByClass(DartArguments.class);
-  }
-
-  @Override
-  @Nullable
   public DartFieldInitializer getFieldInitializer() {
     return findChildByClass(DartFieldInitializer.class);
   }

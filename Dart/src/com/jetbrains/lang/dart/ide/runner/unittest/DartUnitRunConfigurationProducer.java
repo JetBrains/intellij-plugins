@@ -13,10 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer;
 import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
-import com.jetbrains.lang.dart.psi.DartArgumentList;
-import com.jetbrains.lang.dart.psi.DartCallExpression;
-import com.jetbrains.lang.dart.psi.DartExpression;
-import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -117,7 +114,8 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
   @Nullable
   private static String findTestName(@Nullable DartCallExpression expression) {
     String testName;
-    final DartArgumentList dartArgumentList = expression == null ? null : expression.getArguments().getArgumentList();
+    final DartArguments arguments = expression == null ? null : expression.getArguments();
+    final DartArgumentList dartArgumentList = arguments == null ? null : arguments.getArgumentList();
     if (dartArgumentList == null || dartArgumentList.getExpressionList().isEmpty()) {
       return null;
     }

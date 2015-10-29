@@ -24,14 +24,13 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
 
   @Override
   @NotNull
-  public DartArguments getArguments() {
-    return findNotNullChildByClass(DartArguments.class);
-  }
-
-  @Override
-  @NotNull
   public DartExpression getExpression() {
     return findNotNullChildByClass(DartExpression.class);
+  }
+
+  @Nullable
+  public DartArguments getArguments() {
+    return DartPsiImplUtil.getArguments(this);
   }
 
 }
