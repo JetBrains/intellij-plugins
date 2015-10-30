@@ -15,10 +15,8 @@
  */
 package org.jetbrains.osgi.jps
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.JpsBuildTestCase
-import org.jetbrains.jps.maven.model.impl.MavenProjectConfiguration
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -30,11 +28,7 @@ import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
-import java.io.File
-import java.util.*
 import java.util.jar.JarFile
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun module(name: String, osgi: Boolean = true): JpsModule {
@@ -42,13 +36,13 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
 
     val contentRoot = JpsPathUtil.pathToUrl(getAbsolutePath(name))
     module.contentRootsList.addUrl(contentRoot)
-    module.addSourceRoot("$contentRoot/src", JavaSourceRootType.SOURCE)
-    module.addSourceRoot("$contentRoot/res", JavaResourceRootType.RESOURCE)
-      JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(module).outputUrl = "$contentRoot/out"
+    module.addSourceRoot("${contentRoot}/src", JavaSourceRootType.SOURCE)
+    module.addSourceRoot("${contentRoot}/res", JavaResourceRootType.RESOURCE)
+    JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(module).outputUrl = "${contentRoot}/out"
 
     if (osgi) {
       val extension = JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties())
-      extension.properties.myJarFileLocation = "$name.jar"
+      extension.properties.myJarFileLocation = "${name}.jar"
       module.container.setChild(JpsOsmorcModuleExtension.ROLE, extension)
     }
 
@@ -68,22 +62,6 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     properties.myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled
     properties.myBundleSymbolicName = "main"
     properties.myBundleVersion = "1.0.0"
-    properties.myAdditionalProperties = hashMapOf("Export-Package" to "main")
-  }
-
-  fun createMavenConfig(module: JpsModule) {
-    val file = File(myDataStorageRoot, MavenProjectConfiguration.CONFIGURATION_FILE_RELATIVE_PATH)
-    FileUtil.writeToFile(file, """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <maven-project-configuration>
-          <resource-processing>
-            <maven-module name="${module.name}">
-              <MavenModuleResourceConfiguration>
-                <directory>${JpsPathUtil.urlToOsPath(module.contentRootsList.urls[0])}</directory>
-              </MavenModuleResourceConfiguration>
-            </maven-module>
-          </resource-processing>
-        </maven-project-configuration>""".trim())
   }
 
   fun BuildResult.assertBundleCompiled(module: JpsModule) {
@@ -105,23 +83,20 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
 
     JarFile(extension(module).jarFileLocation).use {
       val actual = it.manifest!!.mainAttributes!!
-          .map { Pair(it.key.toString(), it.value.toString()) }
-          .filter {
-            if (it.first in instrumental) false
-            else if (it.first in required) { assertNotNull(it.second); false }
-            else true
-          }
-          .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
-          .toSet()
+              .map { Pair(it.key.toString(), it.value.toString()) }
+              .filter {
+                if (it.first in instrumental) false
+                else if (it.first in required) { assertNotNull(it.second); false }
+                else true
+              }
+              .map { "${it.first}=${if (it.first in sorting) it.second.split(',').sorted().joinToString(",") else it.second}" }
+              .toSet()
       assertEquals(expected, actual)
     }
   }
 
+  // in Java 6, JarFile does not inherit Closeable, so stdlib extension is not applicable
   private fun JarFile.use(block: (JarFile) -> Unit) {
     try { block(this) } finally { close() }
-  }
-
-  private fun<T> Enumeration<T>.asSequence(): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> = this@asSequence.iterator()
   }
 }

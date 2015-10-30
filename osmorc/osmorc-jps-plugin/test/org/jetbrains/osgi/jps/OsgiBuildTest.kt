@@ -17,17 +17,16 @@ package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
-import kotlin.properties.Delegates
 
 class OsgiBuildTest : OsgiBuildTestCase() {
-  var myModule: JpsModule by Delegates.notNull()
+  private lateinit var myModule: JpsModule
 
   override fun setUp() {
     super.setUp()
     myModule = module("main")
   }
 
-  fun testPlainBndProject() {
+  fun testBndProjectSimple() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
@@ -38,7 +37,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
-  fun testBndProjectNotSpecified() {
+  fun testBndProjectWithoutPackages() {
     bndBuild(myModule)
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
@@ -60,42 +59,33 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
-  fun testPlainIdeaProject() {
+  fun testIdeaProjectSimple() {
     ideaBuild(myModule)
-    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    extension(myModule).properties.myAdditionalProperties = mapOf("Export-Package" to "main")
+    createFile("main/src/main/Main.java", "package main;\n\npublic class Main { public void main() { util.Util.util(); } }")
+    createFile("main/src/util/Util.java", "package util;\n\npublic class Util { public static void util() { } }")
     createFile("main/res/skipped.txt", "(empty)")
     makeAll().assertSuccessful()
 
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
   fun testIdeaProjectNotSpecified() {
     ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = emptyMap()
-    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/src/main/Main.java", "package main;\n\npublic class Main { public void main() { util.Util.util(); } }")
+    createFile("main/src/util/Util.java", "package util;\n\npublic class Util { public static void util() { } }")
     createFile("main/res/skipped.txt", "(empty)")
     makeAll().assertSuccessful()
 
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))
-  }
-
-  fun testIdeaProjectWithImpl() {
-    ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties.put("Private-Package", "impl")
-    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    createFile("main/src/impl/MainImpl.java", "package impl;\n\npublic class MainImpl implements main.Main { public String greeting() {return \"\";} }")
-    makeAll().assertSuccessful()
-
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "impl/MainImpl.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\"", "Import-Package=main"))
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0",
+            "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\"", "Import-Package=util"))
   }
 
   fun testAdditionalContent() {
     ideaBuild(myModule)
-    val entry = OsmorcJarContentEntry(getAbsolutePath("content/readme.txt"), "readme.txt")
-    extension(myModule).getProperties().myAdditionalJARContents.add(entry)
+    extension(myModule).properties.myAdditionalJARContents.add(OsmorcJarContentEntry(getAbsolutePath("content/readme.txt"), "readme.txt"))
     createFile("content/readme.txt", "Hiya there.")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     makeAll().assertSuccessful()
@@ -104,57 +94,9 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
-  fun testIdeaProjectPartiallySpecified() {
-    ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = mapOf("Private-Package" to "util")
-    createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
-    createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
-    createFile("main/res/skipped.txt", "(empty)")
-    makeAll().assertSuccessful()
-
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "util/Util.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0"))
-  }
-
-  fun testMavenProject() {
-    ideaBuild(myModule)
-    createMavenConfig(myModule)
-    createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
-    createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
-    makeAll().assertSuccessful()
-
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
-  }
-
-  fun testEmptyMavenProjectNotSpecified() {
-    ideaBuild(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = emptyMap()
-    createMavenConfig(myModule)
-    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
-    makeAll().assertSuccessful()
-
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
-  }
-
-  fun testMavenProjectPartiallySpecified() {
-    ideaBuild(myModule)
-    createMavenConfig(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = mapOf("Private-Package" to "util")
-    createFile("main/src/main/Main.java", "package main;\npublic class Main { public void main() { util.Util.util(); } }")
-    createFile("main/src/util/Util.java", "package util;\npublic class Util { public static void util() { } }")
-    makeAll().assertSuccessful()
-
-    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
-    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0",
-        "Export-Package=main;version=\"1.0.0\",util;version=\"1.0.0\"", "Import-Package=util"))
-  }
-
   fun testMavenResources() {
     ideaBuild(myModule)
-    createMavenConfig(myModule)
-    extension(myModule).getProperties().myAdditionalProperties = mapOf("Include-Resource" to "included.txt=${getAbsolutePath("main/res/included.txt")}")
+    extension(myModule).properties.myAdditionalProperties = mapOf("Include-Resource" to "included.txt=${getAbsolutePath("main/res/included.txt")}")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     createFile("main/res/included.txt", "")
     createFile("main/res/excluded.txt", "")
@@ -167,11 +109,11 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testCompositeBundle() {
     bndBuild(myModule)
     val subModule = module("util", false)
-    myModule.getDependenciesList().addModuleDependency(subModule)
+    myModule.dependenciesList.addModuleDependency(subModule)
 
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nPrivate-Package: main,util")
-    createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return util.Util.GREET; } }")
-    createFile("util/src/util/Util.java", "package util;\npublic interface Util { String GREET = \"Hello\"; }")
+    createFile("main/src/main/Main.java", "package main;\n\npublic class Main { String greeting() { return util.Util.GREET; } }")
+    createFile("util/src/util/Util.java", "package util;\n\npublic interface Util { String GREET = \"Hello\"; }")
     makeAll().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
@@ -197,7 +139,7 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     rebuildAll()
     makeAll().assertUpToDate()
 
-    extension(myModule).getProperties().myAlwaysRebuildBundleJar = true
+    extension(myModule).properties.myAlwaysRebuildBundleJar = true
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertBundleCompiled(myModule)
   }
@@ -205,15 +147,15 @@ class OsgiBuildTest : OsgiBuildTestCase() {
   fun testRebuildOnDependencyChange() {
     bndBuild(myModule)
     val subModule = module("sub", false)
-    myModule.getDependenciesList().addModuleDependency(subModule)
+    myModule.dependenciesList.addModuleDependency(subModule)
 
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main;-split-package:=merge-first")
-    createFile("main/src/main/Main.java", "package main;\npublic class Main { String greeting() { return Sub.GREET; } }")
-    createFile("sub/src/main/Sub.java", "package main;\npublic interface Sub { String GREET = \"Hello\"; }")
+    createFile("main/src/main/Main.java", "package main;\n\npublic class Main { String greeting() { return Sub.GREET; } }")
+    createFile("sub/src/main/Sub.java", "package main;\n\npublic interface Sub { String GREET = \"Hello\"; }")
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertUpToDate()
 
-    changeFile("sub/src/main/Sub.java", "package main;\npublic interface Sub { String GREET = \"Hi\"; }")
+    changeFile("sub/src/main/Sub.java", "package main;\n\npublic interface Sub { String GREET = \"Hi\"; }")
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertUpToDate()
   }
