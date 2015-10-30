@@ -53,6 +53,7 @@
 
   <extensions defaultExtensionNs="org.intellij.markdown">
     <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.lobo.LoboHtmlPanelProvider" />
+    <html.panel.provider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanelProvider" />
   </extensions>
 
   <actions>
