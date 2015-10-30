@@ -1,11 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.test;
 
-import com.intellij.execution.testframework.sm.runner.events.TestFailedEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestFinishedEvent;
-import com.intellij.execution.testframework.sm.runner.events.TestStartedEvent;
 import com.intellij.openapi.util.Key;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +20,7 @@ public class DartTestOutputParser {
   private static final Pattern EXPECTED_ACTUAL_RESULT = Pattern.compile("\\nExpected: (.*)\\n  Actual: (.*)\\n *\\^\\n Differ.*\\n");
 
 
-  private DartTestToGeneralTestEventsConverter myProcessor;
+  private DartTestSignaller myProcessor;
   private boolean isActive = false;
   private State myState = State.Init;
   private String myPassCount, myFailCount;
@@ -37,7 +32,7 @@ public class DartTestOutputParser {
 
   private enum State {Init, Info, Timestamp, Pass, Fail, TestName, Error, ErrorMessage, End}
 
-  public DartTestOutputParser(DartTestToGeneralTestEventsConverter processor) {
+  public DartTestOutputParser(DartTestSignaller processor) {
     myProcessor = processor;
   }
 
@@ -61,6 +56,7 @@ public class DartTestOutputParser {
     switch (currentState) {
       case Init:
         if (text.startsWith(OBSERVATORY_MSG) && text.endsWith(NEWLINE)) {
+          testFrameworkAttached();
           nextState = State.Timestamp;
           break;
         }
@@ -136,10 +132,14 @@ public class DartTestOutputParser {
     myCurrentTestName = text;
   }
 
+  private void testFrameworkAttached() {
+    myProcessor.signalTestFrameworkAttached();
+  }
+
   private void testFinished() {
     if (myCurrentTestName.isEmpty()) return;
     testStarted();
-    myProcessor.fireOnTestFinished(new TestFinishedEvent(myCurrentTestName, myTestId, 0L));
+    myProcessor.signalTestFinished(myCurrentTestName, myTestId, 0L);
     resetTestState();
   }
 
@@ -147,14 +147,13 @@ public class DartTestOutputParser {
     if (myCurrentTestName.isEmpty()) return;
     testStarted();
     splitFailureMessage();
-    myProcessor.fireOnTestFailure(
-      new TestFailedEvent(myCurrentTestName, myTestId, myFailureMessage, myStackTrace, myTestError, myFailureActualText,
-                          myFailureExpectedText, null, 0L));
+    myProcessor.signalTestFailure(myCurrentTestName, myTestId, myFailureMessage, myStackTrace, myTestError, myFailureActualText,
+                                  myFailureExpectedText, null, 0L);
     resetTestState();
   }
 
   private void testStarted() {
-    myProcessor.fireOnTestStarted(new TestStartedEvent(myCurrentTestName, ++myTestId, 0, null, null, null, true));
+    myProcessor.signalTestStarted(myCurrentTestName, ++myTestId, 0, null, null, null, true);
   }
 
   private void resetTestState() {
