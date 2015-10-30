@@ -32,10 +32,11 @@ THE SOFTWARE.
 body {
     background-color: #3c3f41;
     -webkit-text-size-adjust: 100%;
+    -fx-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
     color: #cccccc;
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+    font-family: Helvetica, Arial, freesans, sans-serif;
     font-size: 16px;
     line-height: 1.6;
     word-wrap: break-word;
