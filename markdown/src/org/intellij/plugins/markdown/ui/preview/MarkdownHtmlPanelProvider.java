@@ -7,8 +7,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
 public abstract class MarkdownHtmlPanelProvider {
 
   public static final ExtensionPointName<MarkdownHtmlPanelProvider> EP_NAME =
@@ -28,7 +26,6 @@ public abstract class MarkdownHtmlPanelProvider {
   public static MarkdownHtmlPanelProvider[] getProviders() {
     if (ourProviders == null) {
       ourProviders = EP_NAME.getExtensions();
-      Logger.getInstance(MarkdownHtmlPanelProvider.class).warn(Arrays.deepToString(ourProviders));
     }
     return ourProviders;
   }
