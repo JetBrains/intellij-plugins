@@ -15,6 +15,7 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.JBUI;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.markdown.parser.LinkMap;
@@ -272,7 +273,13 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     mySwingAlarm.addRequest(new Runnable() {
       @Override
       public void run() {
-        getPanelGuaranteed().setCSS(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null,
+        //noinspection StringBufferReplaceableByString
+        final String inlineCss = new StringBuilder()
+          .append(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() + "\n" : "")
+          .append("body {\n  font-size: ").append(JBUI.scale(100)).append("%;\n}")
+          .toString();
+
+        getPanelGuaranteed().setCSS(inlineCss,
                                     cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
         getPanelGuaranteed().render();
       }
