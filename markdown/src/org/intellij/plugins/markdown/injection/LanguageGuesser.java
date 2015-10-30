@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-enum LanguageGuesser {
+public enum LanguageGuesser {
   INSTANCE;
 
   private NotNullLazyValue<List<EmbeddedTokenTypesProvider>> embeddedTokenTypeProviders = new NotNullLazyValue<List<EmbeddedTokenTypesProvider>>() {
@@ -32,17 +32,24 @@ enum LanguageGuesser {
       for (Language language : Language.getRegisteredLanguages()) {
         result.put(language.getID().toLowerCase(Locale.US), language);
       }
+
+      result.put("js", result.get("javascript"));
       return result;
     }
   };
 
   @Nullable
   public Language guessLanguage(@NotNull String languageName) {
+    final Language languageFromMap = langIdToLanguage.getValue().get(languageName.toLowerCase(Locale.US));
+    if (languageFromMap != null) {
+      return languageFromMap;
+    }
+
     for (EmbeddedTokenTypesProvider provider : embeddedTokenTypeProviders.getValue()) {
       if (provider.getName().equalsIgnoreCase(languageName)) {
         return provider.getElementType().getLanguage();
       }
     }
-    return langIdToLanguage.getValue().get(languageName.toLowerCase(Locale.US));
+    return null;
   }
 }
