@@ -139,4 +139,8 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
 
   }
 
+  @Override
+  public void dispose() {
+
+  }
 }

@@ -1,5 +1,6 @@
 package org.intellij.plugins.markdown.ui.preview;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Range;
 import org.intellij.markdown.html.HtmlGenerator;
@@ -10,7 +11,7 @@ import org.w3c.dom.Node;
 import javax.swing.*;
 import java.util.List;
 
-public abstract class MarkdownHtmlPanel {
+public abstract class MarkdownHtmlPanel implements Disposable {
   @NotNull
   public abstract JComponent getComponent();
 

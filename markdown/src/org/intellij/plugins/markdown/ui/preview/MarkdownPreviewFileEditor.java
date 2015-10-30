@@ -4,11 +4,13 @@ import com.intellij.CommonBundle;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
@@ -30,6 +32,8 @@ import java.beans.PropertyChangeListener;
 
 public class MarkdownPreviewFileEditor extends UserDataHolderBase implements FileEditor {
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
+
+  private final static long RENDERING_DELAY_MS = 20L;
   @NotNull
   private final JPanel myHtmlPanelWrapper;
   @Nullable
@@ -41,12 +45,19 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Nullable
   private final Document myDocument;
   @NotNull
-  private final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
+  private final Alarm myPooledAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
+  @NotNull
+  private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
+  private final Object REQUESTS_LOCK = new Object();
   @Nullable
   private Runnable myLastScrollRequest = null;
+  @Nullable
+  private Runnable myLastHtmlOrRefreshRequest = null;
 
   private int myLastScrollOffset;
+  @NotNull
+  private String myLastRenderedHtml = "";
 
   public MarkdownPreviewFileEditor(@NotNull VirtualFile file) {
     myFile = file;
@@ -57,12 +68,12 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
         @Override
         public void beforeDocumentChange(DocumentEvent e) {
-          myAlarm.cancelAllRequests();
+          myPooledAlarm.cancelAllRequests();
         }
 
         @Override
         public void documentChanged(final DocumentEvent e) {
-          myAlarm.addRequest(new Runnable() {
+          myPooledAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
               //myLastScrollOffset = e.getOffset();
@@ -77,8 +88,6 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
     final MarkdownApplicationSettings settings = MarkdownApplicationSettings.getInstance();
     setUpPanel(settings);
-    getPanelGuaranteed().setHtml("<html></html>");
-    getPanelGuaranteed().render();
 
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
     MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
@@ -95,17 +104,22 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   public void scrollToSrcOffset(final int offset) {
 
-    if (myLastScrollRequest != null) {
-      myAlarm.cancelRequest(myLastScrollRequest);
-    }
-    myLastScrollRequest = new Runnable() {
-      @Override
-      public void run() {
-        myLastScrollOffset = offset;
-        getPanelGuaranteed().scrollToMarkdownSrcOffset(myLastScrollOffset);
+    synchronized (REQUESTS_LOCK) {
+      if (myLastScrollRequest != null) {
+        mySwingAlarm.cancelRequest(myLastScrollRequest);
       }
-    };
-    myAlarm.addRequest(myLastScrollRequest, PARSING_CALL_TIMEOUT_MS);
+      myLastScrollRequest = new Runnable() {
+        @Override
+        public void run() {
+          myLastScrollOffset = offset;
+          getPanelGuaranteed().scrollToMarkdownSrcOffset(myLastScrollOffset);
+          synchronized (REQUESTS_LOCK) {
+            myLastScrollRequest = null;
+          }
+        }
+      };
+      mySwingAlarm.addRequest(myLastScrollRequest, RENDERING_DELAY_MS, ModalityState.stateForComponent(getComponent()));
+    }
   }
 
   @NotNull
@@ -148,8 +162,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   @Override
   public void selectNotify() {
-    myAlarm.cancelAllRequests();
-    myAlarm.addRequest(new Runnable() {
+    myPooledAlarm.cancelAllRequests();
+    myPooledAlarm.addRequest(new Runnable() {
       @Override
       public void run() {
         updateHtml(true);
@@ -158,24 +172,33 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   }
 
   private void setUpPanel(@NotNull MarkdownApplicationSettings settings) {
-    final MarkdownHtmlPanel newPanel = retrievePanel(settings);
+    final MarkdownHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
 
-    if (newPanel == myPanel) {
+    if (newPanelProvider == null) {
       return;
     }
 
-    if (myPanel != null) {
-      myHtmlPanelWrapper.remove(myPanel.getComponent());
-    }
-    myPanel = newPanel;
-    myHtmlPanelWrapper.add(myPanel.getComponent(), BorderLayout.CENTER);
+    mySwingAlarm.addRequest(new Runnable() {
+      @Override
+      public void run() {
+        final MarkdownHtmlPanel newPanel = newPanelProvider.createHtmlPanel();
+        if (myPanel != null) {
+          myHtmlPanelWrapper.remove(myPanel.getComponent());
+          Disposer.dispose(myPanel);
+        }
+        myPanel = newPanel;
+        myHtmlPanelWrapper.add(myPanel.getComponent(), BorderLayout.CENTER);
+        myPanel.setHtml(myLastRenderedHtml);
+        myHtmlPanelWrapper.repaint();
+      }
+    }, 0, ModalityState.stateForComponent(myHtmlPanelWrapper));
   }
 
-  @NotNull
-  private MarkdownHtmlPanel retrievePanel(@NotNull MarkdownApplicationSettings settings) {
+  @Nullable("Null means leave current panel")
+  private MarkdownHtmlPanelProvider retrievePanelProvider(@NotNull MarkdownApplicationSettings settings) {
     final MarkdownHtmlPanelProvider.ProviderInfo providerInfo = settings.getMarkdownPreviewSettings().getHtmlPanelProviderInfo();
     if (providerInfo.equals(myLastPanelProviderInfo)) {
-      return getPanelGuaranteed();
+      return null;
     }
 
     MarkdownHtmlPanelProvider provider = MarkdownHtmlPanelProvider.createFromInfo(providerInfo);
@@ -193,7 +216,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     }
 
     myLastPanelProviderInfo = settings.getMarkdownPreviewSettings().getHtmlPanelProviderInfo();
-    return provider.createHtmlPanel();
+    return provider;
   }
 
   @NotNull
@@ -204,7 +227,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     return myPanel;
   }
 
-  private void updateHtml(boolean preserveScrollOffset) {
+  private void updateHtml(final boolean preserveScrollOffset) {
     if (!myFile.isValid() || myDocument == null) {
       return;
     }
@@ -218,17 +241,42 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
                                           true)
       .generateHtml();
 
-    getPanelGuaranteed().setHtml("<html><head></head>" + html + "</html>");
+    synchronized (REQUESTS_LOCK) {
+      if (myLastHtmlOrRefreshRequest != null) {
+        mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);
+      }
+      myLastHtmlOrRefreshRequest = new Runnable() {
+        @Override
+        public void run() {
+          final String currentHtml = "<html><head></head>" + html + "</html>";
+          if (!currentHtml.equals(myLastRenderedHtml)) {
+            myLastRenderedHtml = currentHtml;
+            getPanelGuaranteed().setHtml(myLastRenderedHtml);
 
-    if (preserveScrollOffset) {
-      getPanelGuaranteed().scrollToMarkdownSrcOffset(myLastScrollOffset);
+            if (preserveScrollOffset) {
+              getPanelGuaranteed().scrollToMarkdownSrcOffset(myLastScrollOffset);
+            }
+          }
+
+          getPanelGuaranteed().render();
+          synchronized (REQUESTS_LOCK) {
+            myLastHtmlOrRefreshRequest = null;
+          }
+        }
+      };
+      mySwingAlarm.addRequest(myLastHtmlOrRefreshRequest, RENDERING_DELAY_MS, ModalityState.stateForComponent(getComponent()));
     }
   }
 
-  private void updatePanelCssSettings(@NotNull MarkdownCssSettings cssSettings) {
-    getPanelGuaranteed().setCSS(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null,
-                                cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
-    getPanelGuaranteed().render();
+  private void updatePanelCssSettings(@NotNull final MarkdownCssSettings cssSettings) {
+    mySwingAlarm.addRequest(new Runnable() {
+      @Override
+      public void run() {
+        getPanelGuaranteed().setCSS(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null,
+                                    cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
+        getPanelGuaranteed().render();
+      }
+    }, RENDERING_DELAY_MS, ModalityState.stateForComponent(getComponent()));
   }
 
   @Override
@@ -263,5 +311,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   @Override
   public void dispose() {
+    if (myPanel != null) {
+      Disposer.dispose(myPanel);
+    }
   }
 }
