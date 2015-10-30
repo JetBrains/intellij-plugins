@@ -205,8 +205,6 @@ public class OsgiBuildSession implements Reporter {
   private Map<String, String> getBuildProperties() throws OsgiBuildException {
     Map<String, String> properties = ContainerUtil.newHashMap();
 
-    boolean isMaven = OsgiBuildUtil.getMavenProjectPath(myContext, myModule) != null;
-
     // defaults (similar to Maven)
 
     properties.put(Constants.IMPORT_PACKAGE, "*");
@@ -265,7 +263,7 @@ public class OsgiBuildSession implements Reporter {
       properties.put(Constants.DONOTCOPY, pattern);
     }
 
-    if (isMaven && myExtension.isOsmorcControlsManifest()) {
+    if (myExtension.isOsmorcControlsManifest()) {
       // support the {local-packages} instruction
       progress("Calculating local packages");
       LocalPackageCollector.addLocalPackages(myModuleOutputDir, properties);
