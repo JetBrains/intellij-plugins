@@ -125,7 +125,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   public boolean isMyContext(@Nullable PsiElement context) {
-    if (context == null) return false;
+    if (context == null || !context.isValid()) return false;
     PsiFile file = context.getContainingFile();
     if (file == null) return false;
     if (HtmlUtil.hasHtml(file)) return false;
