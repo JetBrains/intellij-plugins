@@ -204,4 +204,10 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
       }
     };
   }
+
+  @Override
+  public int getTextOffset() {
+    final DartComponentName name = getComponentName();
+    return name != null ? name.getTextOffset() : super.getTextOffset();
+  }
 }
