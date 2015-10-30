@@ -68,6 +68,7 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType FENCE_LANG = platformType(org.intellij.markdown.MarkdownTokenTypes.FENCE_LANG);
   IElementType CODE_FENCE_START = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE_FENCE_START);
   IElementType CODE_FENCE_END = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE_FENCE_END);
+  IElementType CODE_FENCE_CONTENT = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE_FENCE_CONTENT);
   IElementType LINK_TITLE = platformType(org.intellij.markdown.MarkdownTokenTypes.LINK_TITLE);
 
   IElementType GFM_AUTOLINK = platformType(GFMTokenTypes.GFM_AUTOLINK);

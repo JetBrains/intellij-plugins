@@ -23,6 +23,10 @@
 
     <fileTypeFactory implementation="org.intellij.plugins.markdown.lang.MarkdownFileTypeFactory"/>
     <lang.parserDefinition language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition"/>
+    <lang.ast.factory language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.psi.MarkdownASTFactory"/>
+
+    <lang.elementManipulator forClass="org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl"
+                             implementationClass="org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl$Manipulator"/>
 
     <colorSettingsPage implementation="org.intellij.plugins.markdown.highlighting.MarkdownColorSettingsPage"/>
     <syntaxHighlighter key="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownSyntaxHighlighter"/>
@@ -31,6 +35,9 @@
     <quoteHandler fileType="Markdown" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>
 
     <annotator language="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownHighlightingAnnotator"/>
+
+    <multiHostInjector implementation="org.intellij.plugins.markdown.injection.CodeFenceInjector"/>
+
 
     <fileEditorProvider implementation="org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider"/>
 
