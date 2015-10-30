@@ -204,14 +204,15 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
     MarkdownHtmlPanelProvider provider = MarkdownHtmlPanelProvider.createFromInfo(providerInfo);
     if (!provider.isAvailable()) {
+      settings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(settings.getMarkdownPreviewSettings().getSplitEditorLayout(),
+                                                                      MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
+
       Messages.showMessageDialog(
+        myHtmlPanelWrapper,
         "Tried to use preview panel provider (" + providerInfo.getName() + "), but it is unavailable. Reverting to default.",
         CommonBundle.getErrorTitle(),
         Messages.getErrorIcon()
       );
-
-      settings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(settings.getMarkdownPreviewSettings().getSplitEditorLayout(),
-                                                                      MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
 
       provider = MarkdownHtmlPanelProvider.getProviders()[0];
     }
