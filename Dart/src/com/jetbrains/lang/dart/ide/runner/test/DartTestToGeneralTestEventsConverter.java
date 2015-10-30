@@ -28,7 +28,7 @@ import static com.intellij.execution.testframework.sm.runner.GeneralTestEventsPr
  * myTestFrameworkName, myPendingLineBreakFlag.</code> Also, <code>processServiceMessages()</code> cannot be
  * called even though it is protected. Fortunately, <code>myProcessor</code> can be re-used.
  */
-class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConverter {
+class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConverter implements DartTestSignaller {
   private static final Logger LOG = Logger.getInstance(DartTestToGeneralTestEventsConverter.class.getName());
 
   private final OutputLineSplitter mySplitter;
@@ -108,7 +108,7 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
-  void fireOnTestStarted(@NotNull TestStartedEvent testStartedEvent) {
+  private void fireOnTestStarted(@NotNull TestStartedEvent testStartedEvent) {
     // local variable is used to prevent concurrent modification
     final GeneralTestEventsProcessor processor = getProcessor();
     if (processor != null) {
@@ -116,9 +116,8 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
-  void fireOnTestFailure(@NotNull TestFailedEvent testFailedEvent) {
+  private void fireOnTestFailure(@NotNull TestFailedEvent testFailedEvent) {
     assertNotNull(testFailedEvent.getLocalizedFailureMessage());
-
     // local variable is used to prevent concurrent modification
     final GeneralTestEventsProcessor processor = getProcessor();
     if (processor != null) {
@@ -126,16 +125,7 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
-  void fireOnTestIgnored(@NotNull TestIgnoredEvent testIgnoredEvent) {
-
-    // local variable is used to prevent concurrent modification
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onTestIgnored(testIgnoredEvent);
-    }
-  }
-
-  void fireOnTestFinished(@NotNull TestFinishedEvent testFinishedEvent) {
+  private void fireOnTestFinished(@NotNull TestFinishedEvent testFinishedEvent) {
     // local variable is used to prevent concurrent modification
     final GeneralTestEventsProcessor processor = getProcessor();
     if (processor != null) {
@@ -143,80 +133,18 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
-  void fireOnCustomProgressTestsCategory(final String categoryName,
-                                                 int testsCount) {
-    assertNotNull(categoryName);
-
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      final boolean disableCustomMode = StringUtil.isEmpty(categoryName);
-      processor.onCustomProgressTestsCategory(disableCustomMode ? null : categoryName,
-                                              disableCustomMode ? 0 : testsCount);
-    }
-  }
-
-  void fireOnCustomProgressTestStarted() {
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onCustomProgressTestStarted();
-    }
-  }
-
-  void fireOnCustomProgressTestFinished() {
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onCustomProgressTestFinished();
-    }
-  }
-
-  void fireOnCustomProgressTestFailed() {
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onCustomProgressTestFailed();
-    }
-  }
-
-  void fireOnTestFrameworkAttached() {
+  private void fireOnTestFrameworkAttached() {
     final GeneralTestEventsProcessor processor = getProcessor();
     if (processor != null) {
       processor.onTestsReporterAttached();
     }
   }
 
-  void fireOnSuiteTreeNodeAdded(String testName, String locationHint) {
+  void fireOnTestIgnored(@NotNull TestIgnoredEvent testIgnoredEvent) {
+    // local variable is used to prevent concurrent modification
     final GeneralTestEventsProcessor processor = getProcessor();
     if (processor != null) {
-      processor.onSuiteTreeNodeAdded(testName, locationHint);
-    }
-  }
-
-
-  void fireRootPresentationAdded(String rootName, @Nullable String comment, String rootLocation) {
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onRootPresentationAdded(rootName, comment, rootLocation);
-    }
-  }
-
-  void fireOnSuiteTreeStarted(String suiteName, String locationHint) {
-
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onSuiteTreeStarted(suiteName, locationHint);
-    }
-  }
-
-  void fireOnSuiteTreeEnded(String suiteName) {
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onSuiteTreeEnded(suiteName);
-    }
-  }
-
-  void fireOnBuildTreeEnded() {
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onBuildTreeEnded();
+      processor.onTestIgnored(testIgnoredEvent);
     }
   }
 
@@ -230,11 +158,9 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
 
   void fireOnUncapturedOutput(final String text, final Key outputType) {
     assertNotNull(text);
-
     if (StringUtil.isEmpty(text)) {
       return;
     }
-
     // local variable is used to prevent concurrent modification
     final GeneralTestEventsProcessor processor = getProcessor();
     if (processor != null) {
@@ -242,27 +168,34 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
-  void fireOnTestsCountInSuite(final int count) {
-    // local variable is used to prevent concurrent modification
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onTestsCountInSuite(count);
-    }
+  public void signalTestFrameworkAttached() {
+    fireOnTestFrameworkAttached();
   }
 
-  void fireOnSuiteStarted(@NotNull TestSuiteStartedEvent suiteStartedEvent) {
-    // local variable is used to prevent concurrent modification
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onSuiteStarted(suiteStartedEvent);
-    }
+  public void signalTestStarted(@NotNull String testName,
+                                int testId,
+                                int parentId,
+                                @Nullable String locationUrl,
+                                @Nullable String nodeType,
+                                @Nullable String nodeArgs,
+                                boolean running) {
+    fireOnTestStarted(new TestStartedEvent(testName, testId, parentId, locationUrl, nodeType, nodeArgs, running));
   }
 
-  void fireOnSuiteFinished(@NotNull TestSuiteFinishedEvent suiteFinishedEvent) {
-    // local variable is used to prevent concurrent modification
-    final GeneralTestEventsProcessor processor = getProcessor();
-    if (processor != null) {
-      processor.onSuiteFinished(suiteFinishedEvent);
-    }
+  public void signalTestFailure(@NotNull String testName,
+                                int testId,
+                                @NotNull String failureMessage,
+                                @Nullable String stackTrace,
+                                boolean testError,
+                                @Nullable String failureActualText,
+                                @Nullable String failureExpectedText,
+                                @Nullable String expectedTextFilePath,
+                                long durationMillis) {
+    fireOnTestFailure(new TestFailedEvent(testName, testId, failureMessage, stackTrace, testError, failureActualText, failureExpectedText,
+                                          expectedTextFilePath, durationMillis));
+  }
+
+  public void signalTestFinished(@NotNull String testName, int testId, long durationMillis) {
+    fireOnTestFinished(new TestFinishedEvent(testName, testId, durationMillis));
   }
 }
