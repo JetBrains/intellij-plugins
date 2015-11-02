@@ -13,7 +13,7 @@ public class MarkdownSpellcheckerTest extends LightCodeInsightFixtureTestCase {
   }
 
   public void testAll() {
-    myFixture.testHighlighting(false, false, true, getTestName(false) + ".md");
+    myFixture.testHighlighting(false, false, true, getTestName(true) + ".md");
   }
 
   @Override
