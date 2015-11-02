@@ -18,6 +18,7 @@ package org.intellij.plugins.markdown.lang;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.MarkdownTokenTypes;
+import org.intellij.markdown.flavours.gfm.GFMTokenTypes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,8 @@ public class MarkdownElementType extends IElementType {
     final IElementType result;
     if (markdownType == MarkdownElementTypes.PARAGRAPH
         || markdownType == MarkdownTokenTypes.ATX_CONTENT
-        || markdownType == MarkdownTokenTypes.SETEXT_CONTENT) {
+        || markdownType == MarkdownTokenTypes.SETEXT_CONTENT
+        || markdownType == GFMTokenTypes.CELL) {
       result = new MarkdownLazyElementType(markdownType.toString());
     }
     else {

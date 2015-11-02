@@ -62,6 +62,7 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType LIST_BULLET = platformType(org.intellij.markdown.MarkdownTokenTypes.LIST_BULLET);
   IElementType URL = platformType(org.intellij.markdown.MarkdownTokenTypes.URL);
   IElementType HORIZONTAL_RULE = platformType(org.intellij.markdown.MarkdownTokenTypes.HORIZONTAL_RULE);
+  IElementType TABLE_SEPARATOR = platformType(GFMTokenTypes.TABLE_SEPARATOR);
   IElementType SETEXT_1 = platformType(org.intellij.markdown.MarkdownTokenTypes.SETEXT_1);
   IElementType SETEXT_2 = platformType(org.intellij.markdown.MarkdownTokenTypes.SETEXT_2);
   IElementType LIST_NUMBER = platformType(org.intellij.markdown.MarkdownTokenTypes.LIST_NUMBER);

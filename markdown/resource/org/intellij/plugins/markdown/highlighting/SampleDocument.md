@@ -154,3 +154,9 @@ Mixed:
 	* Foe</ul>
 3. Third
 </ol>
+
+Tables:
+
+| Header 1 | Header 2 |
+| -------- | -------- |
+| Data 1   | Data 2   |

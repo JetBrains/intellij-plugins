@@ -131,6 +131,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
       put("markdown.editor.colors.code_fence", MarkdownHighlighterColors.CODE_FENCE_ATTR_KEY);
 
       put("markdown.editor.colors.hrule", MarkdownHighlighterColors.HRULE_ATTR_KEY);
+      put("markdown.editor.colors.table_separator", MarkdownHighlighterColors.TABLE_SEPARATOR_ATTR_KEY);
       put("markdown.editor.colors.blockquote_marker", MarkdownHighlighterColors.BLOCK_QUOTE_MARKER_ATTR_KEY);
       put("markdown.editor.colors.list_marker", MarkdownHighlighterColors.LIST_MARKER_ATTR_KEY);
       put("markdown.editor.colors.header_marker", MarkdownHighlighterColors.HEADER_MARKER_ATTR_KEY);
