@@ -5,8 +5,8 @@ import flash.events.EventDispatcher;
 class From extends FromBase {
 
     /**
-     * @param sss s_param
      * @param i2 i param
+     * @param sss s_param
      * @param o o param
      * @param rest2 rest params
      */
