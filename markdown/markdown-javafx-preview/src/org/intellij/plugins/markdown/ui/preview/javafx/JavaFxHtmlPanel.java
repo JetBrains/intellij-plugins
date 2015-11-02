@@ -23,6 +23,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private String myInlineCss;
   @NotNull
   private String[] myCssUris = ArrayUtil.EMPTY_STRING_ARRAY;
+  @NotNull
+  private String myLastRawHtml = "";
 
   public JavaFxHtmlPanel() {
     myPanel = new JFXPanel();
@@ -48,6 +50,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @Override
   public void setHtml(@NotNull String html) {
+    myLastRawHtml = html;
     final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris));
     Platform.runLater(new Runnable() {
       @Override
@@ -61,6 +64,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
     myInlineCss = inlineCss;
     myCssUris = fileUris;
+    setHtml(myLastRawHtml);
   }
 
   @Override
