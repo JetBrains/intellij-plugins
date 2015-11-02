@@ -10,9 +10,12 @@ import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
 public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Holder {
+  private Object myLastItem;
   private ComboBox myPreviewProvider;
   private ComboBox myDefaultSplitLayout;
   private JPanel myMainPanel;
@@ -25,19 +28,43 @@ public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Hold
 
   private void createUIComponents() {
     //noinspection unchecked
-    final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos = ContainerUtil.map(MarkdownHtmlPanelProvider.getProviders(),
-                                                                                         new Function<MarkdownHtmlPanelProvider, MarkdownHtmlPanelProvider.ProviderInfo>() {
-                                                                                           @Override
-                                                                                           public MarkdownHtmlPanelProvider.ProviderInfo fun(
-                                                                                             MarkdownHtmlPanelProvider provider) {
-                                                                                             return provider.getProviderInfo();
-                                                                                           }
-                                                                                         });
+    final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos =
+      ContainerUtil.mapNotNull(MarkdownHtmlPanelProvider.getProviders(),
+                               new Function<MarkdownHtmlPanelProvider, MarkdownHtmlPanelProvider.ProviderInfo>() {
+                                 @Override
+                                 public MarkdownHtmlPanelProvider.ProviderInfo fun(MarkdownHtmlPanelProvider provider) {
+                                   if (provider.isAvailable() == MarkdownHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE) {
+                                     return null;
+                                   }
+                                   return provider.getProviderInfo();
+                                 }
+                               });
     myPreviewPanelModel = new CollectionComboBoxModel<MarkdownHtmlPanelProvider.ProviderInfo>(providerInfos, providerInfos.get(0));
     myPreviewProvider = new ComboBox(myPreviewPanelModel);
 
     mySplitLayoutModel = new EnumComboBoxModel<SplitFileEditor.SplitEditorLayout>(SplitFileEditor.SplitEditorLayout.class);
     myDefaultSplitLayout = new ComboBox(mySplitLayoutModel);
+
+    myLastItem = myPreviewProvider.getSelectedItem();
+    myPreviewProvider.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        final Object item = e.getItem();
+        if (e.getStateChange() != ItemEvent.SELECTED || !(item instanceof MarkdownHtmlPanelProvider.ProviderInfo)) {
+          return;
+        }
+
+        final MarkdownHtmlPanelProvider provider = MarkdownHtmlPanelProvider.createFromInfo((MarkdownHtmlPanelProvider.ProviderInfo)item);
+        final MarkdownHtmlPanelProvider.AvailabilityInfo availability = provider.isAvailable();
+
+        if (!availability.checkAvailability(myMainPanel)) {
+          myPreviewProvider.setSelectedItem(myLastItem);
+        }
+        else {
+          myLastItem = item;
+        }
+      }
+    });
   }
 
   @Override

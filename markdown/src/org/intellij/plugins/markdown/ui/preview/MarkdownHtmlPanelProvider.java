@@ -7,6 +7,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
 public abstract class MarkdownHtmlPanelProvider {
 
   public static final ExtensionPointName<MarkdownHtmlPanelProvider> EP_NAME =
@@ -17,7 +19,8 @@ public abstract class MarkdownHtmlPanelProvider {
   @NotNull
   public abstract MarkdownHtmlPanel createHtmlPanel();
 
-  public abstract boolean isAvailable();
+  @NotNull
+  public abstract AvailabilityInfo isAvailable();
 
   @NotNull
   public abstract ProviderInfo getProviderInfo();
@@ -99,5 +102,23 @@ public abstract class MarkdownHtmlPanelProvider {
     public String toString() {
       return myName;
     }
+  }
+
+  public static abstract class AvailabilityInfo {
+    public static final AvailabilityInfo AVAILABLE = new AvailabilityInfo() {
+      @Override
+      public boolean checkAvailability(@NotNull JComponent parentComponent) {
+        return true;
+      }
+    };
+
+    public static final AvailabilityInfo UNAVAILABLE = new AvailabilityInfo() {
+      @Override
+      public boolean checkAvailability(@NotNull JComponent parentComponent) {
+        return false;
+      }
+    };
+
+    public abstract boolean checkAvailability(@NotNull JComponent parentComponent);
   }
 }

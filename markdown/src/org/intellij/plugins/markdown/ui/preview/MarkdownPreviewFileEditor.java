@@ -203,7 +203,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     }
 
     MarkdownHtmlPanelProvider provider = MarkdownHtmlPanelProvider.createFromInfo(providerInfo);
-    if (!provider.isAvailable()) {
+
+    if (provider.isAvailable() != MarkdownHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       settings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(settings.getMarkdownPreviewSettings().getSplitEditorLayout(),
                                                                       MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
 

@@ -13,9 +13,10 @@ public final class LoboHtmlPanelProvider extends MarkdownHtmlPanelProvider {
     return new LoboHtmlPanel();
   }
 
+  @NotNull
   @Override
-  public boolean isAvailable() {
-    return true;
+  public AvailabilityInfo isAvailable() {
+    return AvailabilityInfo.AVAILABLE;
   }
 
   @NotNull
