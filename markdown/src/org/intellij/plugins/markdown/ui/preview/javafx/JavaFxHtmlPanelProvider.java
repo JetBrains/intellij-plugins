@@ -25,7 +25,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
   public MarkdownHtmlPanel createHtmlPanel() {
     try {
       return (MarkdownHtmlPanel)MY_CLASS_LOADER
-              .loadClassSelfOnly("org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel", false)
+              .loadClassSelfFirst("org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel", false)
               .newInstance();
     }
     catch (ClassNotFoundException e) {
@@ -128,14 +128,21 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
       super(urls, classLoader);
     }
 
-    public Class<?> loadClassSelfOnly(String s, boolean b) throws ClassNotFoundException {
+    public Class<?> loadClassSelfFirst(String s, boolean b) throws ClassNotFoundException {
       if (s.startsWith("java.") || s.startsWith("javax.")) {
         return super.loadClass(s, b);
       }
 
       Class<?> loadedClass = findLoadedClass(s);
       if (loadedClass == null) {
-        loadedClass = findClass(s);
+        try {
+          loadedClass = findClass(s);
+        } catch (ClassNotFoundException ignore) {
+        }
+
+        if (loadedClass == null) {
+          loadedClass = getParent().loadClass(s);
+        }
       }
 
       if (b) {
