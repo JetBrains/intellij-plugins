@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ArrayUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -21,11 +22,13 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.util.regex.Pattern;
 
 // Instantiated by reflection
 @SuppressWarnings("unused")
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
+  public static final Pattern SVG_REPLACE_PATTERN = Pattern.compile("(<img[^>]+src=\"[^\"]+\\.)svg([^\"]*\"[^>]*>)");
   @NotNull
   private final JFXPanel myPanel;
   @Nullable
@@ -76,13 +79,26 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void setHtml(@NotNull String html) {
     myLastRawHtml = html;
-    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris)).replace("</body>", getScriptingLines() + "</body>");
+    final String htmlToRender = prepareHtml(html);
+
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
         getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
       }
     });
+  }
+
+  private String prepareHtml(@NotNull String html) {
+    String result = html
+      .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris))
+      .replace("</body>", getScriptingLines() + "</body>");
+
+    // temp workaround for RUBY-17329
+    if (SystemInfo.isJetbrainsJvm && SystemInfo.isMac) {
+      result = SVG_REPLACE_PATTERN.matcher(result).replaceAll("$1_svg_$2");
+    }
+    return result;
   }
 
   @Override
