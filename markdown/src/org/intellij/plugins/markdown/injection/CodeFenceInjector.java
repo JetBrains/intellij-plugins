@@ -6,8 +6,6 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.intellij.plugins.intelliLang.inject.InjectedLanguage;
-import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceContentImpl;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
@@ -51,13 +49,7 @@ public class CodeFenceInjector implements MultiHostInjector {
   }
 
   @Nullable
-  private static Language findLangForInjection(@NotNull MarkdownCodeFenceImpl element) {
-    final TemporaryPlacesRegistry registry = TemporaryPlacesRegistry.getInstance(element.getProject());
-    final InjectedLanguage language = registry.getLanguageFor(element, element.getContainingFile());
-    if (language != null) {
-      return language.getLanguage();
-    }
-
+  protected Language findLangForInjection(@NotNull MarkdownCodeFenceImpl element) {
     final PsiElement fenceLangElement = element.findPsiChildByType(MarkdownTokenTypes.FENCE_LANG);
     if (fenceLangElement == null) {
       return null;
