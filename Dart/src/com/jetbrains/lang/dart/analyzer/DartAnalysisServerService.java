@@ -1174,7 +1174,7 @@ public class DartAnalysisServerService {
 
       String vmArgsRaw;
       try {
-        vmArgsRaw = System.getProperty("dart.server.vm.arguments", "");
+        vmArgsRaw = Registry.stringValue("dart.server.vm.options");
       }
       catch (MissingResourceException e) {
         vmArgsRaw = "";
