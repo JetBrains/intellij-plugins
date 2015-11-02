@@ -151,8 +151,8 @@ public class DartFileReference implements PsiPolyVariantReference {
     @Override
     public ResolveResult[] resolve(@NotNull final DartFileReference reference, final boolean incompleteCode) {
       final PsiFile refPsiFile = reference.getElement().getContainingFile();
-      final int refOffset = reference.getElement().getTextOffset();
-      final int refLength = reference.getElement().getTextLength();
+      final int refOffset = reference.getElement().getTextRange().getStartOffset();
+      final int refLength = reference.getElement().getTextRange().getLength();
 
       DartNavigationRegion region = DartResolver.findRegion(refPsiFile, refOffset, refLength);
 
@@ -163,8 +163,8 @@ public class DartFileReference implements PsiPolyVariantReference {
             DartAnalysisServerService.getInstance().getNavigation(virtualFile).isEmpty() &&
             DartAnalysisServerService.getInstance().getHighlight(virtualFile).isEmpty()) {
           final PsiElement parent = reference.getElement().getParent();
-          final int parentOffset = parent.getTextOffset();
-          final int parentLength = parent.getTextLength();
+          final int parentOffset = parent.getTextRange().getStartOffset();
+          final int parentLength = parent.getTextRange().getLength();
           final List<DartNavigationRegion> regions =
             DartAnalysisServerService.getInstance().analysis_getNavigation(virtualFile, parentOffset, parentLength);
           if (regions != null) {

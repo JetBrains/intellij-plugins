@@ -64,7 +64,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
     if (file == null || !file.isInLocalFileSystem()) {
       return null;
     }
-    final int nameOffset = name.getTextOffset();
+    final int nameOffset = name.getTextRange().getStartOffset();
     final int nameLength = name.getTextLength();
     // ignore Object
     if ("Object".equals(name.getName())) {
@@ -89,7 +89,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   @NotNull
   private static LineMarkerInfo createMarkerClass(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
-    final int nameOffset = name.getTextOffset();
+    final int nameOffset = name.getTextRange().getStartOffset();
     return new LineMarkerInfo<PsiElement>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.UPDATE_ALL,
                                           new Function<PsiElement, String>() {
                                             @Override
@@ -116,7 +116,7 @@ public class DartServerImplementationsMarkerProvider implements LineMarkerProvid
   @NotNull
   private static LineMarkerInfo createMarkerMember(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
-    final int nameOffset = name.getTextOffset();
+    final int nameOffset = name.getTextRange().getStartOffset();
     return new LineMarkerInfo<PsiElement>(name, name.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.UPDATE_ALL,
                                           new Function<PsiElement, String>() {
                                             @Override

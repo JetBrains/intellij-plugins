@@ -122,7 +122,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         nextAfterComments instanceof DartImportOrExportStatement) {
       if (nextAfterComments.getPrevSibling() instanceof PsiWhiteSpace) nextAfterComments = nextAfterComments.getPrevSibling();
       if (nextAfterComments.equals(firstComment)) return null;
-      final TextRange fileHeaderCommentsRange = new UnfairTextRange(firstComment.getTextOffset(), nextAfterComments.getTextOffset());
+      final TextRange fileHeaderCommentsRange =
+        new UnfairTextRange(firstComment.getTextRange().getStartOffset(), nextAfterComments.getTextRange().getStartOffset());
       if (fileHeaderCommentsRange.getLength() > 1 &&
           document.getLineNumber(fileHeaderCommentsRange.getEndOffset()) >
           document.getLineNumber(fileHeaderCommentsRange.getStartOffset())) {
@@ -154,7 +155,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
     if (lastStatement != firstStatement) {
       // after "import " or "export " or "part "
-      final int startOffset = firstStatement.getTextOffset() + firstStatement.getFirstChild().getTextLength() + 1;
+      final int startOffset = firstStatement.getTextRange().getStartOffset() + firstStatement.getFirstChild().getTextLength() + 1;
       final int endOffset = lastStatement.getTextRange().getEndOffset();
       descriptors.add(new FoldingDescriptor(firstStatement, TextRange.create(startOffset, endOffset)));
     }
@@ -195,7 +196,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
         if (lastCommentInSequence != firstCommentInSequence && !containsCustomRegionMarker) {
           final TextRange range =
-            TextRange.create(firstCommentInSequence.getTextOffset(), lastCommentInSequence.getTextRange().getEndOffset());
+            TextRange.create(firstCommentInSequence.getTextRange().getStartOffset(), lastCommentInSequence.getTextRange().getEndOffset());
           descriptors.add(new FoldingDescriptor(firstCommentInSequence, range));
         }
       }
@@ -255,7 +256,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         DartTypeArguments dartTypeArguments = (DartTypeArguments)psiElement;
         if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class, DartTypeArguments.class) instanceof DartNewExpression) {
           descriptors.add(new FoldingDescriptor(dartTypeArguments, TextRange
-            .create(dartTypeArguments.getTextOffset(), dartTypeArguments.getTextRange().getEndOffset())));
+            .create(dartTypeArguments.getTextRange().getStartOffset(), dartTypeArguments.getTextRange().getEndOffset())));
         }
       }
     }

@@ -143,7 +143,7 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
     if (reference != null) {
       TextRange textRange = reference.getTextRange();
       // note<CURSOR>s.text - the whole reference expression is notes.txt, but we must return only notes
-      int endOffset = contextElement.getTextOffset() + contextElement.getTextLength();
+      int endOffset = contextElement.getTextRange().getEndOffset();
       if (textRange.getEndOffset() != endOffset) {
         textRange = new TextRange(textRange.getStartOffset(), endOffset);
       }

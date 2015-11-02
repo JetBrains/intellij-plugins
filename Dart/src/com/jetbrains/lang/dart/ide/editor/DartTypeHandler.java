@@ -105,7 +105,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     if (currElement != null) {
       PsiElement parent = currElement.getParent();
       if (parent != null && parent instanceof DartSwitchCase || parent instanceof DartDefaultCase) {
-        CodeStyleManager.getInstance(project).adjustLineIndent(file, parent.getTextOffset());
+        CodeStyleManager.getInstance(project).adjustLineIndent(file, parent.getTextRange().getStartOffset());
         return true;
       }
     }

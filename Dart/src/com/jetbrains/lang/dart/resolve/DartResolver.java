@@ -41,16 +41,16 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (isServerDrivenResolution()) {
       reference = replaceQualifiedReferenceWithLast(reference);
       final PsiFile refPsiFile = reference.getContainingFile();
-      int refOffset = reference.getTextOffset();
-      int refLength = reference.getTextLength();
+      int refOffset = reference.getTextRange().getStartOffset();
+      int refLength = reference.getTextRange().getLength();
       DartServerData.DartNavigationRegion region = findRegion(refPsiFile, refOffset, refLength);
 
       if (region == null && reference instanceof DartLibraryId) {
         // DAS returns the whole "part of foo" as a region, but we have only "foo" as a reference
         final PsiElement parent = reference.getParent();
         if (parent instanceof DartPartOfStatement) {
-          refOffset = parent.getTextOffset();
-          refLength = reference.getTextOffset() + reference.getTextLength() - refOffset;
+          refOffset = parent.getTextRange().getStartOffset();
+          refLength = reference.getTextRange().getEndOffset() - refOffset;
           region = findRegion(refPsiFile, refOffset, refLength);
         }
       }

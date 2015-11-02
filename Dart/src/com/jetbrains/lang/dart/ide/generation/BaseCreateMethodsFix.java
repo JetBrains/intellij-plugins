@@ -42,7 +42,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     final PsiElement body = DartResolveUtil.getBody(myDartClass);
     assert body != null;
     for (PsiElement child : body.getChildren()) {
-      if (child.getTextOffset() > caretOffset) break;
+      if (child.getTextRange().getStartOffset() > caretOffset) break;
       anchor = child;
     }
     PsiElement next = anchor == null ? null : anchor.getNextSibling();
@@ -132,7 +132,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[elementsToProcess.size()]);
     final Comparator<T> tComparator = new Comparator<T>() {
       public int compare(final T o1, final T o2) {
-        return o1.getTextOffset() - o2.getTextOffset();
+        return o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
       }
     };
 

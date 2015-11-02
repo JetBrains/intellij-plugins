@@ -73,7 +73,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
 
         int offset = location.getOffset();
         int length = location.getLength();
-        offset -= usageElement.getTextOffset();
+        offset -= usageElement.getTextRange().getStartOffset();
 
         boolean nonCodeUsage = usageElement instanceof PsiComment || usageElement.getParent() instanceof PsiComment;
 

@@ -6,9 +6,6 @@ import com.jetbrains.lang.dart.psi.DartBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public abstract class DartBlockStatementSurrounderBase extends DartStatementSurrounder {
   @Override
   protected PsiElement findElementToAdd(@NotNull PsiElement surrounder) {
@@ -19,7 +16,7 @@ public abstract class DartBlockStatementSurrounderBase extends DartStatementSurr
   @Override
   protected int cleanUpAndGetPlaceForCaret(@NotNull PsiElement surrounder) {
     final PsiElement childToDelete = findElementToDelete(surrounder); //true
-    final int result = childToDelete == null ? surrounder.getTextOffset() : childToDelete.getTextOffset();
+    final int result = childToDelete == null ? surrounder.getTextRange().getStartOffset() : childToDelete.getTextRange().getStartOffset();
     if (childToDelete != null) {
       childToDelete.delete();
     }

@@ -29,7 +29,7 @@ public class DartEnterInStringHandler extends EnterHandlerDelegateAdapter {
     int caretOffset = caretOffsetRef.get().intValue();
     PsiElement psiAtOffset = file.findElementAt(caretOffset);
     int psiOffset;
-    if (psiAtOffset == null || (psiOffset = psiAtOffset.getTextOffset()) > caretOffset) {
+    if (psiAtOffset == null || (psiOffset = psiAtOffset.getTextRange().getStartOffset()) > caretOffset) {
       return Result.Continue;
     }
     Document document = editor.getDocument();

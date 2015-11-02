@@ -32,7 +32,7 @@ public class DartElementLocation {
 
   public static DartElementLocation of(PsiElement element) {
     String file = readEnclosingFilePath(element);
-    int offset = element.getTextOffset();
+    int offset = element.getTextRange().getStartOffset();
     return new DartElementLocation(file, offset);
   }
 

@@ -124,7 +124,7 @@ public class DartExtractMethodHandler implements RefactoringActionHandler {
     functionBody.append(controlFlow.getSignature(functionName));
     functionBody.append("{\n");
 
-    final int startOffset = elements[0].getTextOffset();
+    final int startOffset = elements[0].getTextRange().getStartOffset();
     final int endOffset = elements[elements.length - 1].getTextRange().getEndOffset();
     functionBody.append(new TextRange(startOffset, endOffset).substring(elements[0].getContainingFile().getText()));
 

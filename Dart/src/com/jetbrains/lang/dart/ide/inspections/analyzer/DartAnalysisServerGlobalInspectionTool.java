@@ -68,7 +68,7 @@ public class DartAnalysisServerGlobalInspectionTool extends GlobalInspectionTool
     final int startOffset = location.getOffset();
     final TextRange textRange = new TextRange(startOffset, startOffset + location.getLength());
     PsiElement element = psiFile.findElementAt(startOffset + (location.getLength() / 2));
-    while (element != null && textRange.getStartOffset() < element.getTextOffset()) {
+    while (element != null && textRange.getStartOffset() < element.getTextRange().getStartOffset()) {
       element = element.getParent();
     }
 

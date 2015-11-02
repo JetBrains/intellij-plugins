@@ -104,7 +104,7 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
     }
     else {
       DartEmbeddedContent embeddedContent = PsiTreeUtil.getParentOfType(position, DartEmbeddedContent.class);
-      int startOffset = embeddedContent != null ? embeddedContent.getTextOffset() : 0;
+      int startOffset = embeddedContent != null ? embeddedContent.getTextRange().getStartOffset() : 0;
       text = posRange.getStartOffset() == 0 ? "" : posFile.getText().substring(startOffset, posRange.getStartOffset());
       offset = 0;
     }
