@@ -5,11 +5,15 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
+import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
+import org.intellij.plugins.markdown.util.MarkdownPluginUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 // Instantiated by reflection
 @SuppressWarnings("unused")
@@ -51,7 +55,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void setHtml(@NotNull String html) {
     myLastRawHtml = html;
-    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris));
+    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris) + getScriptingLines());
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
@@ -79,8 +83,17 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   }
 
   @Override
-  public void scrollToMarkdownSrcOffset(int offset) {
-    // TODO
+  public void scrollToMarkdownSrcOffset(final int offset) {
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        getWebViewGuaranteed().getEngine().executeScript(
+          "if ('__IntelliJTools' in window) " +
+          "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
+
+        );
+      }
+    });
   }
 
   @Override
@@ -93,5 +106,16 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       throw new IllegalStateException("WebView should be initialized by now. Check the caller thread");
     }
     return myWebView;
+  }
+
+  @NotNull
+  private static String getScriptingLines() {
+    try {
+      final String path = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib/scrollToElement.js";
+      return "<script src=\"" + new File(path).toURI().toString() + "\"></script>\n";
+    }
+    catch (FileNotFoundException e) {
+      return "";
+    }
   }
 }
