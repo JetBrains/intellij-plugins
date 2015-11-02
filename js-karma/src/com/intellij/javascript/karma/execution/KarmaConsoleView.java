@@ -51,7 +51,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   @Override
   public void buildUi(final RunnerLayoutUi ui) {
     registerConsoleContent(ui);
-    registerAdditionalContent(ui);
+    registerKarmaServerTab(ui);
   }
 
   @Nullable
@@ -145,9 +145,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     rootNode.addSystemOutput("Karma server finished with exit code " + exitCode + "\n");
   }
 
-  private void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myServer, this);
-    logComponent.installOn(ui, true);
+  private void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
+    KarmaServerLogComponent.register(getProperties().getProject(), myServer, ui, true);
   }
 
   @NotNull
@@ -250,8 +249,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     @Override
     public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
       super.registerAdditionalContent(ui);
-      KarmaConsoleView.this.registerAdditionalContent(ui);
+      KarmaConsoleView.this.registerKarmaServerTab(ui);
     }
   }
-
 }

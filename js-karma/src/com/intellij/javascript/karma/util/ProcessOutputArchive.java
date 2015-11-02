@@ -1,34 +1,40 @@
 package com.intellij.javascript.karma.util;
 
-import com.google.common.collect.Lists;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.*;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProcessOutputArchive {
 
-  public static final char NEW_LINE = '\n';
+  private static final int MAX_ARCHIVED_TEXTS_LENGTH = 1024 * 16;
+
+  private static final char NEW_LINE = '\n';
   private static final String PREFIX = "##intellij-event[";
   private static final String SUFFIX = "]\n";
 
   private final ProcessHandler myProcessHandler;
-  private final List<Pair<String, Key>> myTexts = Lists.newArrayList();
+  private final Deque<Pair<String, Key>> myArchivedTexts = new ArrayDeque<Pair<String, Key>>();
+  private int myArchivedTextsLength = 0;
+  private boolean myArchiveTextsTruncated = false;
   private final List<ArchivedOutputListener> myOutputListeners = new CopyOnWriteArrayList<ArchivedOutputListener>();
   private final List<StreamEventListener> myStdOutStreamEventListeners = new CopyOnWriteArrayList<StreamEventListener>();
-  private final StringBuilder myStdOutCurrentLineBuffer = new StringBuilder();
   private final List<Pair<String, Key>> myStdOutCurrentLineChunks = ContainerUtil.newArrayList();
+  private final Consumer<String> myStdOutLineConsumer;
 
-  public ProcessOutputArchive(@NotNull ProcessHandler processHandler) {
+  public ProcessOutputArchive(@NotNull ProcessHandler processHandler, @NotNull Consumer<String> stdOutLineConsumer) {
     myProcessHandler = processHandler;
+    myStdOutLineConsumer = stdOutLineConsumer;
   }
 
   public void startNotify() {
@@ -48,52 +54,64 @@ public class ProcessOutputArchive {
   }
 
   private void processStandardOutput(@NotNull String text, @NotNull Key type) {
-    int newLineInd = text.indexOf(NEW_LINE);
-    if (newLineInd == -1) {
-      myStdOutCurrentLineBuffer.append(text);
-      myStdOutCurrentLineChunks.add(Pair.create(text, type));
-      return;
-    }
-    String beforeNewLineText = text.substring(0, newLineInd + 1); // always not empty
-    myStdOutCurrentLineBuffer.append(beforeNewLineText);
-    myStdOutCurrentLineChunks.add(Pair.create(beforeNewLineText, type));
-    String line = myStdOutCurrentLineBuffer.toString();
-    if (!handleLineAsEvent(line)) {
-      onStandardOutputLineAvailable(line);
-      for (Pair<String, Key> chunk : myStdOutCurrentLineChunks) {
-        addText(chunk.getFirst(), chunk.getSecond());
-      }
-    }
-    myStdOutCurrentLineBuffer.setLength(0);
-    myStdOutCurrentLineChunks.clear();
-    int prevNewLineInd = newLineInd;
-    newLineInd = text.indexOf(NEW_LINE, prevNewLineInd + 1);
+    int lineStartInd = 0;
+    int newLineInd = text.indexOf(NEW_LINE, lineStartInd);
     while (newLineInd != -1) {
-      line = text.substring(prevNewLineInd + 1, newLineInd + 1);
+      String line = text.substring(lineStartInd, newLineInd + 1); // always not empty
+      if (!myStdOutCurrentLineChunks.isEmpty()) {
+        myStdOutCurrentLineChunks.add(Pair.create(line, type));
+        line = concatCurrentLineChunks();
+      }
       if (!handleLineAsEvent(line)) {
         onStandardOutputLineAvailable(line);
-        addText(line, type);
+        if (!myStdOutCurrentLineChunks.isEmpty()) {
+          for (Pair<String, Key> chunk : myStdOutCurrentLineChunks) {
+            addText(chunk.getFirst(), chunk.getSecond());
+          }
+        }
+        else {
+          addText(line, type);
+        }
       }
-      prevNewLineInd = newLineInd;
-      newLineInd = text.indexOf(NEW_LINE, prevNewLineInd + 1);
+      myStdOutCurrentLineChunks.clear();
+      lineStartInd = newLineInd + 1;
+      newLineInd = text.indexOf(NEW_LINE, lineStartInd);
     }
-    if (prevNewLineInd + 1 < text.length()) {
-      String rest = text.substring(prevNewLineInd + 1);
-      myStdOutCurrentLineBuffer.append(rest);
-      myStdOutCurrentLineChunks.add(Pair.create(rest, type));
+    if (lineStartInd < text.length()) {
+      myStdOutCurrentLineChunks.add(Pair.create(text.substring(lineStartInd), type));
     }
   }
 
+  @NotNull
+  private String concatCurrentLineChunks() {
+    int size = 0;
+    for (Pair<String, Key> chunk : myStdOutCurrentLineChunks) {
+      size += chunk.getFirst().length();
+    }
+    StringBuilder result = new StringBuilder(size);
+    for (Pair<String, Key> chunk : myStdOutCurrentLineChunks) {
+      result.append(chunk.getFirst());
+    }
+    return result.toString();
+  }
+
   private void addText(@NotNull String text, @NotNull Key outputType) {
-    synchronized (myTexts) {
-      myTexts.add(Pair.create(text, outputType));
+    synchronized (myArchivedTexts) {
+      myArchivedTexts.addLast(Pair.create(text, outputType));
+      myArchivedTextsLength += text.length();
+      while (myArchivedTextsLength > MAX_ARCHIVED_TEXTS_LENGTH) {
+        Pair<String, Key> pair = myArchivedTexts.removeFirst();
+        myArchivedTextsLength -= pair.getFirst().length();
+        myArchiveTextsTruncated = true;
+      }
       for (ArchivedOutputListener listener : myOutputListeners) {
         listener.onOutputAvailable(text, outputType, false);
       }
     }
   }
 
-  protected void onStandardOutputLineAvailable(@NotNull String line) {
+  private void onStandardOutputLineAvailable(@NotNull String line) {
+    myStdOutLineConsumer.consume(line);
   }
 
   private boolean handleLineAsEvent(@NotNull String line) {
@@ -117,15 +135,29 @@ public class ProcessOutputArchive {
     return myProcessHandler;
   }
 
-  public void addOutputListener(@NotNull final ArchivedOutputListener outputListener) {
+  public void addOutputListener(@NotNull final ArchivedOutputListener outputListener, @NotNull final Disposable parentDisposable) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
-        synchronized (myTexts) {
-          for (Pair<String, Key> text : myTexts) {
+        synchronized (myArchivedTexts) {
+          if (myArchiveTextsTruncated) {
+            outputListener.onOutputAvailable("... too much output to process, truncated\n", ProcessOutputTypes.SYSTEM, true);
+          }
+          for (Pair<String, Key> text : myArchivedTexts) {
             outputListener.onOutputAvailable(text.getFirst(), text.getSecond(), true);
           }
           myOutputListeners.add(outputListener);
+        }
+        if (Disposer.isDisposed(parentDisposable)) {
+          myOutputListeners.remove(outputListener);
+        }
+        else {
+          Disposer.register(parentDisposable, new Disposable() {
+            @Override
+            public void dispose() {
+              myOutputListeners.remove(outputListener);
+            }
+          });
         }
       }
     });

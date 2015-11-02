@@ -8,9 +8,7 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
-import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.nodejs.BaseNodeJSFilter;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -28,48 +26,15 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaServerLogComponent implements ComponentWithActions {
 
-  private final ProcessOutputArchive myProcessOutputArchive;
   private final ConsoleView myConsole;
   private final KarmaServer myServer;
   private ActionGroup myActionGroup;
 
-  public KarmaServerLogComponent(@NotNull Project project,
-                                 @NotNull KarmaServer server,
-                                 @Nullable Disposable parentDisposable) {
+  private KarmaServerLogComponent(@NotNull ConsoleView console, @NotNull KarmaServer server) {
+    myConsole = console;
     myServer = server;
-    myProcessOutputArchive = server.getProcessOutputArchive();
-    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-    TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
-    builder.setUsePredefinedMessageFilter(false);
-    builder.addFilter(new BaseNodeJSFilter(project));
-    myConsole = builder.getConsole();
-    if (parentDisposable != null) {
-      Disposer.register(parentDisposable, myConsole);
-    }
-  }
-
-  private void start(@NotNull final Content consoleContent) {
-    ArchivedOutputListener outputListener = new ArchivedOutputListener() {
-      @Override
-      public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
-        ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
-        myConsole.print(text, contentType);
-        if (!archived && text.startsWith("ERROR ")) {
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              consoleContent.fireAlert();
-            }
-          }, ModalityState.any());
-        }
-      }
-    };
-    myProcessOutputArchive.addOutputListener(outputListener);
   }
 
   @Nullable
@@ -79,7 +44,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       return myActionGroup;
     }
     DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new StopProcessAction("Stop Karma Server", null, myProcessOutputArchive.getProcessHandler()));
+    group.add(new StopProcessAction("Stop Karma Server", null, myServer.getProcessHandler()));
 
     final AnAction[] actions = myConsole.createConsoleActions();
     for (AnAction action : actions) {
@@ -108,8 +73,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   @Nullable
   @Override
   public JComponent getToolbarContextComponent() {
-    final ConsoleView console = myConsole;
-    return console == null ? null : console.getComponent();
+    return myConsole.getComponent();
   }
 
   @NotNull
@@ -123,24 +87,52 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     return false;
   }
 
-  public void installOn(@NotNull final RunnerLayoutUi ui, boolean requestFocus) {
+  @NotNull
+  private static ConsoleView createConsole(@NotNull Project project) {
+    GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
+    builder.setUsePredefinedMessageFilter(false);
+    builder.addFilter(new BaseNodeJSFilter(project));
+    return builder.getConsole();
+  }
+
+  public static void register(@NotNull Project project,
+                              @NotNull KarmaServer server,
+                              @NotNull final RunnerLayoutUi ui,
+                              boolean requestFocus) {
+    final ConsoleView console = createConsole(project);
+    KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
     final Content content = ui.createContent("KarmaServer",
-                                             this,
+                                             component,
                                              "Karma Server",
                                              null,
-                                             myConsole.getPreferredFocusableComponent());
+                                             console.getPreferredFocusableComponent());
     content.setCloseable(false);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
-    if (requestFocus && !myServer.isPortBound()) {
+    if (requestFocus && !server.isPortBound()) {
       ui.selectAndFocus(content, false, false);
     }
-    myServer.onTerminated(new KarmaServerTerminatedListener() {
+    server.onTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
       }
     });
-    start(content);
+    server.getProcessOutputArchive().addOutputListener(new ArchivedOutputListener() {
+      @Override
+      public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
+        ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
+        console.print(text, contentType);
+        if (!archived && text.startsWith("ERROR ")) {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              content.fireAlert();
+            }
+          }, ModalityState.any());
+        }
+      }
+    }, content);
+    Disposer.register(content, console);
   }
-
 }

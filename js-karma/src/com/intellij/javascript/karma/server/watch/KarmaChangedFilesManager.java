@@ -15,7 +15,7 @@ public class KarmaChangedFilesManager {
   private final PrintWriter myServerProcessInput;
 
   public KarmaChangedFilesManager(@NotNull KarmaServer server) {
-    OutputStream outputStream = server.getProcessOutputArchive().getProcessHandler().getProcessInput();
+    OutputStream outputStream = server.getProcessHandler().getProcessInput();
     //noinspection IOResourceOpenedButNotSafelyClosed
     myServerProcessInput = new PrintWriter(outputStream, false);
   }

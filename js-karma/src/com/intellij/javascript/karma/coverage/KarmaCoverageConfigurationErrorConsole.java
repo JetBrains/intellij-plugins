@@ -46,7 +46,8 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
   @Override
   public void buildUi(RunnerLayoutUi ui) {
     registerTestRunTab(ui);
-    registerKarmaServerTab(ui);
+    // select 'Karma Server' tab if karma server is starting
+    KarmaServerLogComponent.register(myProject, myServer, ui, myStatus == null);
   }
 
   private void registerTestRunTab(@NotNull RunnerLayoutUi ui) {
@@ -59,12 +60,6 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
     consoleContent.setCloseable(false);
     ui.selectAndFocus(consoleContent, false, false);
-  }
-
-  private void registerKarmaServerTab(RunnerLayoutUi ui) {
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(myProject, myServer, this);
-    // select 'Karma Server' tab if karma server is starting up
-    logComponent.installOn(ui, myStatus == null);
   }
 
   @Nullable

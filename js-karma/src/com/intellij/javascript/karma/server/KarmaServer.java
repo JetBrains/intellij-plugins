@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
@@ -22,6 +21,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -64,12 +64,12 @@ public class KarmaServer {
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
-    myProcessOutputArchive = new ProcessOutputArchive(processHandler) {
+    myProcessOutputArchive = new ProcessOutputArchive(processHandler, new Consumer<String>() {
       @Override
-      protected void onStandardOutputLineAvailable(@NotNull String line) {
+      public void consume(String line) {
         myState.onStandardOutputLineAvailable(line);
       }
-    };
+    });
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
     myProcessOutputArchive.startNotify();
@@ -153,9 +153,7 @@ public class KarmaServer {
   private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     KarmaRunSettings runSettings = serverSettings.getRunSettings();
-    commandLine.withParentEnvironmentType(runSettings.getEnvData().isPassParentEnvs() ? ParentEnvironmentType.CONSOLE
-                                                                                      : ParentEnvironmentType.NONE);
-    commandLine.withEnvironment(runSettings.getEnvData().getEnvs());
+    runSettings.getEnvData().configureCommandLine(commandLine, true);
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
@@ -363,6 +361,10 @@ public class KarmaServer {
     }
     LOG.error("Karma config isn't ready yet.");
     return "http://localhost:" + getServerPort() + path;
+  }
+
+  public ProcessHandler getProcessHandler() {
+    return myProcessOutputArchive.getProcessHandler();
   }
 
   private class MyDisposable implements Disposable {
