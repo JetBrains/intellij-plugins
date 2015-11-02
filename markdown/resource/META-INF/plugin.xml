@@ -57,6 +57,7 @@
                     instance="org.intellij.plugins.markdown.settings.MarkdownPreviewConfigurable"/>
     </applicationConfigurable>
     <applicationService serviceImplementation="org.intellij.plugins.markdown.settings.MarkdownApplicationSettings"/>
+    <editorNotificationProvider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.markdown">
