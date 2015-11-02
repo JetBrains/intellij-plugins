@@ -11,7 +11,6 @@ import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.server.watch.KarmaWatcher;
-import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -37,7 +36,7 @@ public class KarmaServer {
 
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
-  private final ProcessOutputArchive myProcessOutputArchive;
+  private final KarmaProcessOutputManager myProcessOutputManager;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
   private final KarmaCoveragePeer myCoveragePeer;
@@ -64,7 +63,7 @@ public class KarmaServer {
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
-    myProcessOutputArchive = new ProcessOutputArchive(processHandler, new Consumer<String>() {
+    myProcessOutputManager = new KarmaProcessOutputManager(processHandler, new Consumer<String>() {
       @Override
       public void consume(String line) {
         myState.onStandardOutputLineAvailable(line);
@@ -72,7 +71,7 @@ public class KarmaServer {
     });
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
-    myProcessOutputArchive.startNotify();
+    myProcessOutputManager.startNotify();
 
     myDisposable = new MyDisposable();
     Disposer.register(project, myDisposable);
@@ -86,7 +85,7 @@ public class KarmaServer {
 
     registerStreamEventHandler(myWatcher.getEventHandler());
 
-    myProcessOutputArchive.addStreamEventListener(new StreamEventListener() {
+    myProcessOutputManager.addStreamEventListener(new StreamEventListener() {
       @Override
       public void on(@NotNull String eventType, @NotNull String eventBody) {
         LOG.info("Processing Karma event " + eventType + " " + eventBody);
@@ -209,15 +208,15 @@ public class KarmaServer {
   }
 
   private void shutdown() {
-    ProcessHandler processHandler = myProcessOutputArchive.getProcessHandler();
+    ProcessHandler processHandler = myProcessOutputManager.getProcessHandler();
     if (!processHandler.isProcessTerminated()) {
       ScriptRunnerUtil.terminateProcessHandler(processHandler, 1000, null);
     }
   }
 
   @NotNull
-  public ProcessOutputArchive getProcessOutputArchive() {
-    return myProcessOutputArchive;
+  public KarmaProcessOutputManager getProcessOutputManager() {
+    return myProcessOutputManager;
   }
 
   public boolean isPortBound() {
@@ -363,8 +362,9 @@ public class KarmaServer {
     return "http://localhost:" + getServerPort() + path;
   }
 
+  @NotNull
   public ProcessHandler getProcessHandler() {
-    return myProcessOutputArchive.getProcessHandler();
+    return myProcessOutputManager.getProcessHandler();
   }
 
   private class MyDisposable implements Disposable {

@@ -1,6 +1,8 @@
-package com.intellij.javascript.karma.util;
+package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.process.*;
+import com.intellij.javascript.karma.util.ArchivedOutputListener;
+import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Disposer;
@@ -15,7 +17,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ProcessOutputArchive {
+public class KarmaProcessOutputManager {
 
   private static final int MAX_ARCHIVED_TEXTS_LENGTH = 1024 * 16;
 
@@ -32,7 +34,7 @@ public class ProcessOutputArchive {
   private final List<Pair<String, Key>> myStdOutCurrentLineChunks = ContainerUtil.newArrayList();
   private final Consumer<String> myStdOutLineConsumer;
 
-  public ProcessOutputArchive(@NotNull ProcessHandler processHandler, @NotNull Consumer<String> stdOutLineConsumer) {
+  public KarmaProcessOutputManager(@NotNull ProcessHandler processHandler, @NotNull Consumer<String> stdOutLineConsumer) {
     myProcessHandler = processHandler;
     myStdOutLineConsumer = stdOutLineConsumer;
   }
@@ -163,7 +165,7 @@ public class ProcessOutputArchive {
     });
   }
 
-  public void addStreamEventListener(@NotNull StreamEventListener listener) {
+  void addStreamEventListener(@NotNull StreamEventListener listener) {
     myStdOutStreamEventListeners.add(listener);
   }
 

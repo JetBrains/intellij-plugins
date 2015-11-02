@@ -118,7 +118,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
         KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
       }
     });
-    server.getProcessOutputArchive().addOutputListener(new ArchivedOutputListener() {
+    server.getProcessOutputManager().addOutputListener(new ArchivedOutputListener() {
       @Override
       public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
         ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
