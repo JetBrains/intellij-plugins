@@ -37,8 +37,8 @@ public class DartControlFlow {
   public static DartControlFlow analyze(PsiElement[] elements) {
     final PsiElement scope = PsiTreeUtil.getTopmostParentOfType(elements[0], DartExecutionScope.class);
     final PsiElement lastElement = elements[elements.length - 1];
-    final int lastElementEndOffset = lastElement.getTextOffset() + lastElement.getTextLength();
-    final int firstElementStartOffset = elements[0].getTextOffset();
+    final int lastElementEndOffset = lastElement.getTextRange().getEndOffset();
+    final int firstElementStartOffset = elements[0].getTextRange().getStartOffset();
 
     // find out params
     assert scope != null;
@@ -49,7 +49,7 @@ public class DartControlFlow {
         @Override
         public boolean value(DartComponentName componentName) {
           for (PsiReference usage : ReferencesSearch.search(componentName, localSearchScope, false).findAll()) {
-            if (usage.getElement().getTextOffset() > lastElementEndOffset) {
+            if (usage.getElement().getTextRange().getStartOffset() > lastElementEndOffset) {
               return true;
             }
           }
@@ -66,7 +66,7 @@ public class DartControlFlow {
       dartReferenceVisitor.getComponentNames(), new Condition<DartComponentName>() {
         @Override
         public boolean value(DartComponentName componentName) {
-          final int offset = componentName.getTextOffset();
+          final int offset = componentName.getTextRange().getStartOffset();
           final boolean declarationInElements = firstElementStartOffset <= offset && offset < lastElementEndOffset;
           return !declarationInElements;
         }

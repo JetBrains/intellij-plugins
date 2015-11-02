@@ -73,7 +73,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     assertEquals("Iterable", iterableClass.getName());
     final PsiElement nameIdentifier = iterableClass.getNameIdentifier();
     assertNotNull(nameIdentifier);
-    getEditor().getCaretModel().moveToOffset(nameIdentifier.getTextOffset());
+    getEditor().getCaretModel().moveToOffset(nameIdentifier.getTextRange().getStartOffset());
     final GotoTargetHandler.GotoData data =
       new GotoImplementationHandler().getSourceAndTargetElements(myFixture.getEditor(), myFixture.getFile());
     assertNotNull(data);

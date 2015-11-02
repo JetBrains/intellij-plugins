@@ -75,8 +75,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final PsiElement parentParentParent = parentParent instanceof DartUriElement ? parentParent.getParent() : null;
     if (parentParentParent instanceof DartUriBasedDirective) {
       final int uriStringOffset = ((DartUriBasedDirective)parentParentParent).getUriStringOffset();
-      if (parameters.getOffset() >= parentParent.getTextOffset() + uriStringOffset) {
-        return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextOffset());
+      if (parameters.getOffset() >= parentParent.getTextRange().getStartOffset() + uriStringOffset) {
+        return parentParent.getText().substring(uriStringOffset, parameters.getOffset() - parentParent.getTextRange().getStartOffset());
       }
     }
     return null;
@@ -91,7 +91,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     if (parentParentParent instanceof DartUriBasedDirective) {
       final String uri = ((DartUriBasedDirective)parentParentParent).getUriString();
       final int uriOffset = ((DartUriBasedDirective)parentParentParent).getUriStringOffset();
-      context.setReplacementOffset(parentParent.getTextOffset() + uriOffset + uri.length());
+      context.setReplacementOffset(parentParent.getTextRange().getStartOffset() + uriOffset + uri.length());
     }
   }
 

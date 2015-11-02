@@ -53,7 +53,7 @@ public class DartStructureViewElement extends PsiTreeElementBase<NavigatablePsiE
             o2 instanceof DartStructureViewElement &&
             (element1 = ((DartStructureViewElement)o1).getElement()) != null &&
             (element2 = ((DartStructureViewElement)o2).getElement()) != null) {
-          return element1.getTextOffset() - element2.getTextOffset();
+          return element1.getTextRange().getStartOffset() - element2.getTextRange().getStartOffset();
         }
         return 0;
       }

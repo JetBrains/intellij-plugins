@@ -937,7 +937,7 @@ public class DartResolveUtil {
     else if (argumentList != null) {
       for (DartExpression expression : argumentList.getExpressionList()) {
         ++parameterIndex;
-        if (expression.getTextRange().getEndOffset() >= place.getTextOffset()) {
+        if (expression.getTextRange().getEndOffset() >= place.getTextRange().getStartOffset()) {
           break;
         }
       }

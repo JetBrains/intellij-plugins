@@ -78,7 +78,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
         final VirtualFile file = componentName == null ? null : DartResolveUtil.getRealVirtualFile(componentName.getContainingFile());
         if (file != null) {
           fileRef.set(file);
-          offsetRef.set(componentName.getTextOffset());
+          offsetRef.set(componentName.getTextRange().getStartOffset());
           componentTypeRef.set(componentType);
         }
       }

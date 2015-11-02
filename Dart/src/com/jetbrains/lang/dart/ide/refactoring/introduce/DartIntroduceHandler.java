@@ -49,7 +49,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   protected static PsiElement findAnchor(List<PsiElement> occurrences) {
     int minOffset = Integer.MAX_VALUE;
     for (PsiElement element : occurrences) {
-      minOffset = Math.min(minOffset, element.getTextOffset());
+      minOffset = Math.min(minOffset, element.getTextRange().getStartOffset());
     }
 
     DartStatements statements = findContainingStatements(occurrences);

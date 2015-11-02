@@ -40,7 +40,7 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
                                             : psiAtOffset;
 
     if (probablyDocComment != null &&
-        probablyDocComment.getTextOffset() < caretOffset &&
+        probablyDocComment.getTextRange().getStartOffset() < caretOffset &&
         probablyDocComment.getNode().getElementType() == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {
       final CharSequence text = document.getCharsSequence();
       final int offset = CharArrayUtil.shiftForward(text, caretOffset, " \t");
