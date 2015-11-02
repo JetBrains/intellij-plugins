@@ -1,4 +1,4 @@
-if (!window.__IntelliJTools) {
+if (window.__IntelliJTools === undefined) {
   window.__IntelliJTools = {}
 }
 
