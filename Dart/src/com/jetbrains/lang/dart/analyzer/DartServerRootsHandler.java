@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.codeInspection.SmartHashMap;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.roots.ContentEntry;
@@ -69,9 +70,14 @@ public class DartServerRootsHandler {
       DartAnalysisServerService.getInstance().addDocumentListener();
     }
 
-    myTrackedProjects.add(project);
-    updateRoots();
-    DartAnalysisServerService.getInstance().updateVisibleFiles();
+    ProgressManager.getInstance().executeNonCancelableSection(new Runnable() {
+      @Override
+      public void run() {
+        myTrackedProjects.add(project);
+        updateRoots();
+        DartAnalysisServerService.getInstance().updateVisibleFiles();
+      }
+    });
 
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
       @Override
