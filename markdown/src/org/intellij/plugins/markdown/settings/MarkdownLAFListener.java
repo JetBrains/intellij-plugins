@@ -23,9 +23,12 @@ class MarkdownLAFListener implements LafManagerListener {
 
   public void updateCssSettingsForced(boolean isDarcula) {
     final MarkdownCssSettings currentCssSettings = MarkdownApplicationSettings.getInstance().getMarkdownCssSettings();
-    if (isDefaultCssSettings(currentCssSettings)) {
-      MarkdownApplicationSettings.getInstance().setMarkdownCssSettings(MarkdownCssSettings.getDefaultCssSettings(isDarcula));
-    }
+    MarkdownApplicationSettings.getInstance().setMarkdownCssSettings(new MarkdownCssSettings(
+      currentCssSettings.isUriEnabled(),
+      MarkdownCssSettings.getDefaultCssSettings(isDarcula).getStylesheetUri(),
+      currentCssSettings.isTextEnabled(),
+      currentCssSettings.getStylesheetText()
+    ));
     isLastLAFWasDarcula = isDarcula;
   }
 
