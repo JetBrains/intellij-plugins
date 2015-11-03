@@ -13,7 +13,7 @@ public class HbFoldingBuilderTest extends LightPlatformCodeInsightFixtureTestCas
     doTest();
   }
 
-  public void testMultiLineOpenStacheFolds() {
+  public void testMultiLineOpenStacheFold() {
     doTest();
   }
 
@@ -21,7 +21,7 @@ public class HbFoldingBuilderTest extends LightPlatformCodeInsightFixtureTestCas
     doTest();
   }
 
-  public void testSloppyEndBlockFolds() {
+  public void testSloppyEndBlockFold() {
     doTest();
   }
 
@@ -37,7 +37,7 @@ public class HbFoldingBuilderTest extends LightPlatformCodeInsightFixtureTestCas
     doTest();
   }
 
-  public void testEmptyCommentFolds() {
+  public void testEmptyCommentFold() {
     // regression test for https://github.com/dmarcotte/idea-handlebars/issues/80.  Expect no folds in this case.
     doTest();
   }
