@@ -146,12 +146,8 @@ public class DartColorAnnotator implements Annotator {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
 
-    // server can highlight files from Dart SDK, packages and from modules with enabled Dart support
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    if (fileIndex.isInLibraryClasses(file)) return true;
-
-    final Module module = fileIndex.getModuleForFile(file);
-    return module != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module);
+    // server can highlight any Dart files from projects with enabled Dart support
+    return true;
   }
 
   @Override
