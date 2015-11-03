@@ -3,6 +3,7 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -14,7 +15,7 @@ import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
+public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("Markdown JavaFX Preview Could Be Enabled");
 
   private static final String DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY = "markdown.do.not.ask.to.change.preview.provider";
