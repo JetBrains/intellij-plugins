@@ -19,7 +19,6 @@ import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.debugger.impl.JSDebugTabLayouter;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
-import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
@@ -82,49 +81,43 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         @Override
         public void run() {
           KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
-          scheduleBrowserCapturingSuggestion(consoleContent);
+          scheduleBrowserCapturingSuggestion();
         }
       });
     }
-    myServer.onTerminated(new KarmaServerTerminatedListener() {
-      @Override
-      public void onTerminated(int exitCode) {
-        rootFormatter.onServerProcessTerminated();
-        printServerFinishedInfo(exitCode);
-      }
-    });
-    myExecutionSession.getProcessHandler().addProcessListener(new ProcessAdapter() {
+    final ProcessAdapter listener = new ProcessAdapter() {
       @Override
       public void processTerminated(ProcessEvent event) {
+        if (myServer.getProcessHandler().isProcessTerminated()) {
+          rootFormatter.onServerProcessTerminated();
+          printServerFinishedInfo();
+        }
         rootFormatter.onTestRunProcessTerminated();
+      }
+    };
+    myExecutionSession.getProcessHandler().addProcessListener(listener);
+    Disposer.register(this, new Disposable() {
+      @Override
+      public void dispose() {
+        myExecutionSession.getProcessHandler().removeProcessListener(listener);
       }
     });
     return consoleContent;
   }
 
-  private void scheduleBrowserCapturingSuggestion(@Nullable Disposable parentDisposable) {
-    final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, parentDisposable);
+  private void scheduleBrowserCapturingSuggestion() {
+    final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
     alarm.addRequest(new Runnable() {
       @Override
       public void run() {
-        if (!myServer.areBrowsersReady()) {
+        if (!myServer.getProcessHandler().isProcessTerminated() &&
+            !myServer.areBrowsersReady() &&
+            !Disposer.isDisposed(KarmaConsoleView.this)) {
           printBrowserCapturingSuggestion();
         }
         Disposer.dispose(alarm);
       }
     }, 1000, ModalityState.any());
-    myServer.onBrowsersReady(new Runnable() {
-      @Override
-      public void run() {
-        alarm.cancelAllRequests();
-      }
-    });
-    myServer.onTerminated(new KarmaServerTerminatedListener() {
-      @Override
-      public void onTerminated(int exitCode) {
-        alarm.cancelAllRequests();
-      }
-    });
   }
 
   private void printBrowserCapturingSuggestion() {
@@ -140,9 +133,9 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     });
   }
 
-  private void printServerFinishedInfo(int exitCode) {
+  private void printServerFinishedInfo() {
     SMTestProxy.SMRootTestProxy rootNode = getResultsViewer().getTestsRootNode();
-    rootNode.addSystemOutput("Karma server finished with exit code " + exitCode + "\n");
+    rootNode.addSystemOutput("Karma server process terminated");
   }
 
   private void registerKarmaServerTab(@NotNull RunnerLayoutUi ui) {
