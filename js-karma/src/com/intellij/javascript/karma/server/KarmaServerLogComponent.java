@@ -9,6 +9,7 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.BaseNodeJSFilter;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -97,7 +98,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   public static void register(@NotNull Project project,
-                              @NotNull KarmaServer server,
+                              @NotNull final KarmaServer server,
                               @NotNull final RunnerLayoutUi ui,
                               boolean requestFocus) {
     final ConsoleView console = createConsole(project);
@@ -112,13 +113,14 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     if (requestFocus && !server.isPortBound()) {
       ui.selectAndFocus(content, false, false);
     }
-    server.onTerminated(new KarmaServerTerminatedListener() {
+    final KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
       }
-    });
-    server.getProcessOutputManager().addOutputListener(new ArchivedOutputListener() {
+    };
+    server.onTerminated(terminationCallback);
+    final ArchivedOutputListener outputListener = new ArchivedOutputListener() {
       @Override
       public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
         ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
@@ -132,7 +134,15 @@ public class KarmaServerLogComponent implements ComponentWithActions {
           }, ModalityState.any());
         }
       }
-    }, content);
+    };
+    server.getProcessOutputManager().addOutputListener(outputListener);
     Disposer.register(content, console);
+    Disposer.register(console, new Disposable() {
+      @Override
+      public void dispose() {
+        server.removeTerminatedListener(terminationCallback);
+        server.getProcessOutputManager().removeOutputListener(outputListener);
+      }
+    });
   }
 }

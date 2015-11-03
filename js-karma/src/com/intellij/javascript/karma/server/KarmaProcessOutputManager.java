@@ -1,11 +1,12 @@
 package com.intellij.javascript.karma.server;
 
-import com.intellij.execution.process.*;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.StreamEventListener;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
@@ -137,7 +138,7 @@ public class KarmaProcessOutputManager {
     return myProcessHandler;
   }
 
-  public void addOutputListener(@NotNull final ArchivedOutputListener outputListener, @NotNull final Disposable parentDisposable) {
+  public void addOutputListener(@NotNull final ArchivedOutputListener outputListener) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
@@ -150,19 +151,12 @@ public class KarmaProcessOutputManager {
           }
           myOutputListeners.add(outputListener);
         }
-        if (Disposer.isDisposed(parentDisposable)) {
-          myOutputListeners.remove(outputListener);
-        }
-        else {
-          Disposer.register(parentDisposable, new Disposable() {
-            @Override
-            public void dispose() {
-              myOutputListeners.remove(outputListener);
-            }
-          });
-        }
       }
     });
+  }
+
+  public void removeOutputListener(@NotNull ArchivedOutputListener outputListener) {
+    myOutputListeners.remove(outputListener);
   }
 
   void addStreamEventListener(@NotNull StreamEventListener listener) {

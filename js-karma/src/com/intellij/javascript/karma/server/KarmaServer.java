@@ -315,6 +315,15 @@ public class KarmaServer {
     });
   }
 
+  public void removeTerminatedListener(@NotNull final KarmaServerTerminatedListener listener) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        myTerminationCallbacks.remove(listener);
+      }
+    });
+  }
+
   private void fireOnTerminated(final int exitCode) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override

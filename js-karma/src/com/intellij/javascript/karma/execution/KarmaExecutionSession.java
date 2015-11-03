@@ -3,10 +3,7 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
+import com.intellij.execution.process.*;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
@@ -87,13 +84,24 @@ public class KarmaExecutionSession {
       }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    server.onTerminated(new KarmaServerTerminatedListener() {
+    terminateOnServerShutdown(server, nopProcessHandler);
+    return nopProcessHandler;
+  }
+
+  private static void terminateOnServerShutdown(@NotNull final KarmaServer server, @NotNull final ProcessHandler processHandler) {
+    final KarmaServerTerminatedListener terminationCallback = new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
-        nopProcessHandler.destroyProcess();
+        processHandler.destroyProcess();
+      }
+    };
+    server.onTerminated(terminationCallback);
+    processHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processTerminated(ProcessEvent event) {
+        server.removeTerminatedListener(terminationCallback);
       }
     });
-    return nopProcessHandler;
   }
 
   @NotNull
