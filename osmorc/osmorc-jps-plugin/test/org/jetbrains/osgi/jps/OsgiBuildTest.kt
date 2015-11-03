@@ -159,4 +159,14 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     makeAll().assertBundleCompiled(myModule)
     makeAll().assertUpToDate()
   }
+
+  fun testUnusedImport() {
+    ideaBuild(myModule)
+    extension(myModule).properties.myAdditionalProperties = mapOf("Import-Package" to "org.osgi.*")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+  }
 }
