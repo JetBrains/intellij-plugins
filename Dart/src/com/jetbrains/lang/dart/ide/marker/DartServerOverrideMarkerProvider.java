@@ -41,8 +41,10 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.OverriddenMember;
+import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
