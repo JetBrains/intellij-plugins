@@ -41,19 +41,19 @@ public class ReportingBuilder extends Builder {
   @Override
   public SetLocation error(String format, Object... args) {
     myReporter.error(formatArrays(format, args), null, null);
-    return null;
+    return MuteLocation.INSTANCE;
   }
 
   @Override
   public SetLocation error(String format, Throwable t, Object... args) {
     myReporter.error(formatArrays(format, args), t, null);
-    return null;
+    return MuteLocation.INSTANCE;
   }
 
   @Override
   public SetLocation warning(String format, Object... args) {
     myReporter.warning(formatArrays(format, args), null, null);
-    return null;
+    return MuteLocation.INSTANCE;
   }
 
   @Override
