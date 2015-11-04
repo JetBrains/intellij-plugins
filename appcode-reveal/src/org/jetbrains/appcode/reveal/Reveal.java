@@ -50,9 +50,9 @@ public class Reveal {
     String libraryPath = null;
 
     if (platform.isIOS()) {
-      libraryPath = new String("/Contents/SharedSupport/iOS-Libraries/libReveal.dylib");
+      libraryPath = "/Contents/SharedSupport/iOS-Libraries/libReveal.dylib";
     } else if (platform.isTv()) {
-      libraryPath = new String("/Contents/SharedSupport/tvOS-Libraries/libReveal-tvOS.dylib");
+      libraryPath = "/Contents/SharedSupport/tvOS-Libraries/libReveal-tvOS.dylib";
     }
 
     if (libraryPath == null) return null;
