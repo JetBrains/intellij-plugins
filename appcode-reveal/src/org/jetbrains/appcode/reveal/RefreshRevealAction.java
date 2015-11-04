@@ -10,8 +10,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
-import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
+import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +50,10 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
     String title = "Show in Reveal";
 
-    File lib = Reveal.getRevealLib();
+    XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
+
+    File lib = Reveal.getRevealLib(sdk);
     boolean compatible = Reveal.isCompatible();
 
     e.getPresentation().setEnabled(lib != null
@@ -98,7 +102,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
 
     try {
-      Reveal.refreshReveal(myBundleID, getDeviceName(myDestination));
+      Reveal.refreshReveal(myBundleID, myDestination.getDisplayName());
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);
@@ -106,23 +110,4 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
   }
 
-  @NotNull
-  private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (destination.isDevice()) {
-      return destination.getDeviceSafe().getName();
-    }
-    else if (destination.isSimulator()) {
-      SimulatedBuildDestination.Simulator simulator = destination.getSimulator();
-      if (simulator == null) throw new ExecutionException("Simulator not specified.");
-
-      switch (simulator.getDeviceFamilyID()) {
-        case SimulatorConfiguration.IPHONE_FAMILY:
-          return "iPhone Simulator";
-        case SimulatorConfiguration.IPAD_FAMILY:
-          return "iPad Simulator";
-      }
-      throw new ExecutionException("Unknown simulator type: " + simulator);
-    }
-    throw new ExecutionException("Unsupported destination: " + destination);
-  }
 }
