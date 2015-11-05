@@ -1,40 +1,35 @@
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.CollectingAsyncResult;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
-import org.apache.velocity.anakia.AnakiaElement;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import training.commands.*;
 import training.editor.EduEditor;
 import training.lesson.*;
-import training.lesson.exceptons.NoSdkException;
+import training.lesson.exceptons.*;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 29/10/15.
  */
-@RunWith(com.intellij.testFramework.Parameterized.class)
+@RunWith(Parameterized.class)
 public class AllLessonsTest extends EduLessonTest {
 
-    @Parameterized.Parameter(0)
-    private String lessonId;
 
-    @Parameterized.Parameters(name = "{0}")
-    public static List<Object> params() throws Throwable {
-        return Collections.emptyList();
-    }
+    private final String lessonId;
 
-    @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
-    public static List<Object> params(@NotNull Class<?> klass) throws Throwable{
+    @Parameterized.Parameters
+    public static List<Object> params(){
         List<Object> lessonsIds = new ArrayList<Object>();
         final Course[] courses = CourseManagerOffline.getInstance().getCourses();
         for (Course course : courses) {
@@ -46,13 +41,9 @@ public class AllLessonsTest extends EduLessonTest {
         return lessonsIds;
     }
 
-    public AllLessonsTest() {
+    public AllLessonsTest(String lessonId) {
         this.lessonId = lessonId;
     }
-
-//    public AllLessonsTest(String lessonId) {
-//        this.lessonId = lessonId;
-//    }
 
     @Override
     protected void setUpLesson() {
@@ -87,7 +78,40 @@ public class AllLessonsTest extends EduLessonTest {
     }
 
     @Test
-    public void testLesson() throws Exception{
+    public void testLesson() throws Throwable {
+        defaultRunBare();
+    }
+
+
+
+    @Override
+    protected void defaultRunBare() throws Throwable {
+        Throwable exception = null;
+        myLesson = CourseManagerOffline.getInstance().findLesson(lessonId);
+        super.setUp();
+
+        try {
+            process();
+            while(!myLesson.getPassed()){
+                //pumpEvents
+                com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+                solveStep();
+            }
+
+        } catch (Throwable running) {
+            exception = running;
+        } finally {
+            try {
+                super.tearDown();
+            } catch (Throwable tearingDown) {
+                if (exception == null) exception = tearingDown;
+            }
+        }
+        if (exception != null) throw exception;
+    }
+
+
+    private void process() throws OldJdkException, InvalidSdkException, BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
         ((VirtualFilePointerManagerImpl) VirtualFilePointerManager.getInstance()).storePointers();
 
         EduEditor eduEditor = null;

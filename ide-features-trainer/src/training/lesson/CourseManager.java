@@ -254,9 +254,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             final String name = openProject.getName();
             if (name.equals(EDU_PROJECT_NAME)) {
                 myEduProject = openProject;
+                if (ApplicationManager.getApplication().isUnitTestMode()) return true;
             }
         }
-        if (myEduProject == null || myEduProject.getProjectFile() == null) {
+         if (myEduProject == null || myEduProject.getProjectFile() == null) {
 
             if(!ApplicationManager.getApplication().isUnitTestMode()) if (!NewEduProjectUtil.showDialogOpenEduProject(projectToClose)) return false; //if user abort to open lesson in a new Project
             if(myState.eduProjectPath != null) {
@@ -272,15 +273,9 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             } else {
 
                 try {
-
-                    JavaSdk javaSdk = JavaSdk.getInstance();
-                    final String suggestedHomePath = javaSdk.suggestHomePath();
-                    final String versionString = javaSdk.getVersionString(suggestedHomePath);
-                    final Sdk jdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
-
-                    if (ProjectJdkTable.getInstance().findJdk(jdk.getName()) == null) SdkConfigurationUtil.addSdk(jdk);
+                    final Sdk newJdk = getJavaSdkInWA();
 //                    final Sdk sdk = SdkConfigurationUtil.findOrCreateSdk(null, javaSdk);
-                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, projectToClose, jdk);
+                    myEduProject = NewEduProjectUtil.createEduProject(EDU_PROJECT_NAME, projectToClose, newJdk);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -288,6 +283,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         }
 
         eduProject = myEduProject;
+        if (ApplicationManager.getApplication().isUnitTestMode()) return true;
 
         assert eduProject != null;
         assert eduProject.getProjectFile() != null;
@@ -298,6 +294,36 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         //Hide EduProject from Recent projects
         RecentProjectsManager.getInstance().removePath(eduProject.getPresentableUrl());
         return true;
+    }
+
+    @NotNull
+    public Sdk getJavaSdkInWA() {
+        final Sdk newJdk;
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            newJdk = ApplicationManager.getApplication().runWriteAction(new Computable<Sdk>() {
+                @Override
+                public Sdk compute() {
+                    return getJavaSdk();
+                };
+            });
+        } else {
+            newJdk = getJavaSdk();
+        }
+        return newJdk;
+    }
+
+    @NotNull
+    public Sdk getJavaSdk() {
+        JavaSdk javaSdk = JavaSdk.getInstance();
+        final String suggestedHomePath = javaSdk.suggestHomePath();
+        final String versionString = javaSdk.getVersionString(suggestedHomePath);
+        final Sdk newJdk = javaSdk.createJdk(javaSdk.getVersion(versionString).name(), suggestedHomePath);
+
+        final Sdk foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.getName(), newJdk.getSdkType().getName());
+        if (foundJdk == null) {
+            ProjectJdkTable.getInstance().addJdk(newJdk);
+        }
+        return newJdk;
     }
 
     @Nullable
