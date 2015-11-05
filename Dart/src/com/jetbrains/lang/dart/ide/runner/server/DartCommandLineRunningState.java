@@ -222,4 +222,9 @@ public class DartCommandLineRunningState extends CommandLineState {
   public int getObservatoryPort() {
     return myObservatoryPort;
   }
+
+  public String getFilePath() {
+    return myRunnerParameters.getFilePath();
+  }
+
 }
