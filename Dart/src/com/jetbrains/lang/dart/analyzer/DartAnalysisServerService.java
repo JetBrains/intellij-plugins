@@ -610,7 +610,7 @@ public class DartAnalysisServerService {
   }
 
   private void updateProblemsView(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
@@ -626,7 +626,7 @@ public class DartAnalysisServerService {
           }
         }
       }
-    });
+    }, ModalityState.NON_MODAL);
   }
 
   @Nullable
