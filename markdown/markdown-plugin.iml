@@ -43,7 +43,7 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/IntelliLang.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/IntelliLang/lib/IntelliLang.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -52,7 +52,7 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jfxrt.jar!/" />
+          <root url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre/lib/ext/jfxrt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

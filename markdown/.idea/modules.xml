@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/markdown.iml" filepath="$PROJECT_DIR$/markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-markdown/intellij-markdown.iml" filepath="$PROJECT_DIR$/intellij-markdown/intellij-markdown.iml" />
+      <module fileurl="file://$PROJECT_DIR$/markdown-plugin.iml" filepath="$PROJECT_DIR$/markdown-plugin.iml" />
     </modules>
   </component>
 </project>
