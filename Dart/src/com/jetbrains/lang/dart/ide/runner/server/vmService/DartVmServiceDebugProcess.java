@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
@@ -18,6 +19,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
@@ -55,11 +57,14 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<String, LightVirtualFile>();
   private final Map<String, TIntIntHashMap> myScriptIdToLinesMap = new THashMap<String, TIntIntHashMap>();
 
+  @Nullable private final String myDASExecutionContextId;
+
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
                                    final int observatoryPort,
                                    @Nullable final ExecutionResult executionResult,
-                                   @NotNull final DartUrlResolver dartUrlResolver) {
+                                   @NotNull final DartUrlResolver dartUrlResolver,
+                                   @Nullable final String dasExecutionContextId) {
     super(session);
     myDebuggingHost = debuggingHost;
     myObservatoryPort = observatoryPort;
@@ -85,6 +90,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           stackFrame instanceof DartVmServiceStackFrame ? ((DartVmServiceStackFrame)stackFrame).getIsolateId() : null;
       }
     });
+
+    myDASExecutionContextId = dasExecutionContextId;
 
     scheduleConnect();
   }
@@ -236,6 +243,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Override
   public void stop() {
     if (myVmServiceWrapper != null) {
+      final String dasExecutionContextId = getDASExecutionContextId();
+      if(dasExecutionContextId != null) {
+        DartAnalysisServerService.getInstance()
+          .execution_deleteContext(dasExecutionContextId);
+      }
       Disposer.dispose(myVmServiceWrapper);
     }
   }
@@ -295,6 +307,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
   }
 
+  @Nullable
+  public String getDASExecutionContextId() {
+    return myDASExecutionContextId;
+  }
+
   @NotNull
   public String getUriForFile(@NotNull final VirtualFile file) {
     return threeslashize(myDartUrlResolver.getDartUrlForFile(file));
@@ -305,6 +322,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     VirtualFile file = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
       @Override
       public VirtualFile compute() {
+        final String dasExecutionContextId = getDASExecutionContextId();
+        final String uri = scriptRef.getUri();
+        if(dasExecutionContextId != null && !uri.matches("dart:([a-zA-Z])+-patch/.*$")) {
+          final String path = DartAnalysisServerService.getInstance()
+            .execution_mapUri(dasExecutionContextId, null, scriptRef.getUri());
+          if(path != null) {
+            return LocalFileSystem.getInstance().findFileByPath(path);
+          }
+        }
         return myDartUrlResolver.findFileByDartUrl(scriptRef.getUri());
       }
     });

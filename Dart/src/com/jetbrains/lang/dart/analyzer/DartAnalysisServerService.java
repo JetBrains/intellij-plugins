@@ -94,6 +94,9 @@ public class DartAnalysisServerService {
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
+  private static final long EXECUTION_CREATE_CONTEXT = TimeUnit.SECONDS.toMillis(10);
+  private static final long EXECUTION_MAP_URI = TimeUnit.SECONDS.toMillis(10);
+
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
@@ -1154,6 +1157,114 @@ public class DartAnalysisServerService {
     }
   }
 
+  @Nullable
+  public String execution_createContext(@NotNull final String _filePath) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+
+    final Ref<String> resultRef = new Ref<String>();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      final CreateContextConsumer consumer = new CreateContextConsumer() {
+        @Override
+        public void computedExecutionContext(final String contextId) {
+          resultRef.set(contextId);
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          logError("execution_createContext()", filePath, error);
+          semaphore.up();
+        }
+      };
+
+      myServer.execution_createContext(filePath, consumer);
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(EXECUTION_CREATE_CONTEXT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("execution_createContext() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
+    }
+
+    return resultRef.get();
+  }
+
+  public void execution_deleteContext(@NotNull final String contextId) {
+    synchronized (myLock) {
+      if (myServer == null) return;
+
+      myServer.execution_deleteContext(contextId);
+    }
+  }
+
+  @Nullable
+  public String execution_mapUri(@NotNull final String _id, @Nullable final String _filePath, @Nullable final String _uri) {
+    // From the Dart Analysis Server Spec:
+    // Exactly one of the file and uri fields must be provided. If both fields are provided, then an error of type INVALID_PARAMETER will
+    // be generated. Similarly, if neither field is provided, then an error of type INVALID_PARAMETER will be generated.
+    if ((_filePath == null && _uri == null) || (_filePath != null && _uri != null)) {
+      logError("execution_createContext()", null, "One of _filePath and _uri must be non-null.");
+      return null;
+    }
+
+    final String filePath = _filePath != null ? FileUtil.toSystemDependentName(_filePath) : null;
+
+    final Ref<String> resultRef = new Ref<String>();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      final MapUriConsumer consumer = new MapUriConsumer() {
+        @Override
+        public void computedFileOrUri(final String file, final String uri) {
+          if (uri != null) {
+            resultRef.set(uri);
+          }
+          else {
+            resultRef.set(file);
+          }
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          logError("execution_mapUri()", filePath, error);
+
+          semaphore.up();
+        }
+      };
+
+      myServer.execution_mapUri(_id, filePath, _uri, consumer);
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(EXECUTION_MAP_URI);
+
+    if (semaphore.tryUp()) {
+      LOG.info("execution_mapUri() took too long for contextID " +
+               _id +
+               " and file or uri " +
+               (filePath != null ? filePath : _uri) +
+               ": " +
+               (System.currentTimeMillis() - t0) +
+               "ms");
+      return null;
+    }
+
+    return resultRef.get();
+  }
+
   private void startServer(@NotNull final DartSdk sdk) {
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
@@ -1317,6 +1428,15 @@ public class DartAnalysisServerService {
       myServerBusy.set(false);
       myServerBusy.notifyAll();
     }
+  }
+
+  private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final String _message) {
+    String message = "Error from " + methodName +
+                     (filePath == null ? "" : (", file = " + filePath)) +
+                     ", SDK version = " + mySdkVersion +
+                     ", server version = " + myServerVersion +
+                     ", message = " + _message;
+    LOG.error(message);
   }
 
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
