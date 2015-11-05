@@ -17,14 +17,14 @@ import java.util.ArrayList;
 public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
   private static final Logger LOG = Logger.getInstance(JavaFxHtmlPanelProvider.class);
 
-  private static MyClassLoader MY_CLASS_LOADER = null;
+  private static ClassLoader MY_CLASS_LOADER = null;
 
   @NotNull
   @Override
   public MarkdownHtmlPanel createHtmlPanel() {
     try {
       return (MarkdownHtmlPanel)MY_CLASS_LOADER
-              .loadClassSelfFirst("org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel", false)
+              .loadClass("org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel")
               .newInstance();
     }
     catch (ClassNotFoundException e) {
@@ -45,7 +45,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
       return AvailabilityInfo.AVAILABLE;
     }
 
-    if (SystemInfo.isJetbrainsJvm && SystemInfo.isMac) {
+    if (shouldUseCustomJFX()) {
       return new AvailabilityInfo() {
         @Override
         public boolean checkAvailability(@NotNull JComponent parentComponent) {
@@ -65,7 +65,12 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
     return new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
   }
 
-  private static MyClassLoader createClassLoader() {
+  @NotNull
+  private static ClassLoader createClassLoader() {
+    if (!shouldUseCustomJFX()) {
+      return JavaFxHtmlPanelProvider.class.getClassLoader();
+    }
+
     final ArrayList<URL> urls = new ArrayList<URL>();
     try {
       final String installationPathRoot = JavaFXInstallator.INSTANCE.getInstallationPath();
@@ -101,7 +106,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
           return MY_CLASS_LOADER.loadClass(name) != null;
         }
 
-        final MyClassLoader classLoader = createClassLoader();
+        final ClassLoader classLoader = createClassLoader();
         if (classLoader.loadClass(name) != null) {
           MY_CLASS_LOADER = classLoader;
           return true;
@@ -124,33 +129,13 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
     return JavaFXInstallator.INSTANCE.installOpenJFXAndReport(parentComponent);
   }
 
+  private static boolean shouldUseCustomJFX() {
+    return SystemInfo.isJetbrainsJvm && SystemInfo.isMac;
+  }
+
   private static class MyClassLoader extends URLClassLoader {
     public MyClassLoader(URL[] urls, ClassLoader classLoader) {
       super(urls, classLoader);
-    }
-
-    public Class<?> loadClassSelfFirst(String s, boolean b) throws ClassNotFoundException {
-      if (s.startsWith("java.") || s.startsWith("javax.")) {
-        return super.loadClass(s, b);
-      }
-
-      Class<?> loadedClass = findLoadedClass(s);
-      if (loadedClass == null) {
-        try {
-          loadedClass = findClass(s);
-        } catch (ClassNotFoundException ignore) {
-        }
-
-        if (loadedClass == null) {
-          loadedClass = getParent().loadClass(s);
-        }
-      }
-
-      if (b) {
-        resolveClass(loadedClass);
-      }
-
-      return loadedClass;
     }
 
     @Override
@@ -161,7 +146,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
 
       Class<?> loadedClass = findLoadedClass(s);
       if (loadedClass == null) {
-        if (!s.contains("JavaFxHtmlPanel$")) {
+        if (!s.contains("JavaFxHtmlPanel$") && !s.endsWith("JavaFxHtmlPanel")) {
           try {
             loadedClass = getParent().loadClass(s);
           } catch (ClassNotFoundException ignore) {
