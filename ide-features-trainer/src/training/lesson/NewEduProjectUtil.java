@@ -127,11 +127,15 @@ public class NewEduProjectUtil {
                     }
                 }
 
-                projectManager.openProject(newProject);
+//                if(ApplicationManager.getApplication().isUnitTestMode()) {
+//                    newProject.save();
+//                    return newProject;
+//                }
+                if (ApplicationManager.getApplication().isUnitTestMode()) return newProject;
+                else projectManager.openProject(newProject);
             }
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                newProject.save();
-            }
+
+            newProject.save();
             return newProject;
         } finally {
             projectBuilder.cleanup();
