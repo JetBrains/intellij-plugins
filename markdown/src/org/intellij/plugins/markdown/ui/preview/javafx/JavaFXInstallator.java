@@ -1,11 +1,11 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.download.DownloadableFileService;
 import com.intellij.util.download.FileDownloader;
@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class JavaFXInstallator {
+public enum JavaFXInstallator {
+  INSTANCE;
+
   private static final NotNullLazyValue<String> URL = new NotNullLazyValue<String>() {
     @NotNull
     @Override
@@ -48,7 +50,7 @@ public class JavaFXInstallator {
     final FileDownloader downloader = fileService.createDownloader(Collections.singletonList(fileDescription), "OpenJFX");
 
     final List<Pair<VirtualFile, DownloadableFileDescription>> progress =
-      downloader.downloadWithProgress(locateInstallationPath(), null, parentComponent);
+      downloader.downloadWithProgress(getInstallationPath(), null, parentComponent);
 
     if (progress == null) {
       return false;
@@ -67,7 +69,7 @@ public class JavaFXInstallator {
 
       final File archiveFile = VfsUtilCore.virtualToIoFile(file);
       try {
-        ZipUtil.extract(archiveFile, archiveFile.getParentFile(), null, true);
+        ZipUtil.extract(archiveFile, new File(getInstallationPath()), null, true);
         Logger.getInstance(JavaFXInstallator.class).info("Downloaded and installed OpenJFX in " + archiveFile.getParent());
         success = true;
       }
@@ -78,8 +80,7 @@ public class JavaFXInstallator {
     return success;
   }
 
-  private static String locateInstallationPath() {
-    //return PathManager.getHomePath() + "/jre/jdk/Contents/Home/";
-    return SystemProperties.getJavaHome() + "/..";
+  public String getInstallationPath() {
+    return PathManager.getConfigPath() + "/openjfx";
   }
 }

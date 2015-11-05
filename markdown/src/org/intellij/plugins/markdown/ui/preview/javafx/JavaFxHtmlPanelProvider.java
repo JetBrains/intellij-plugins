@@ -4,7 +4,6 @@ import com.intellij.ide.plugins.cl.PluginClassLoader;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.util.SystemProperties;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
@@ -69,9 +68,11 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
   private static MyClassLoader createClassLoader() {
     final ArrayList<URL> urls = new ArrayList<URL>();
     try {
-      urls.add(new URI("file", "", SystemProperties.getJavaHome() + "/lib/ext/jfxrt.jar", null).toURL());
-      urls.add(new URI("file", "", SystemProperties.getJavaHome() + "/lib/jfxswt.jar", null).toURL());
-      urls.add(new URI("file", "", SystemProperties.getJavaHome() + "/lib/*.dylib", null).toURL());
+      final String installationPathRoot = JavaFXInstallator.INSTANCE.getInstallationPath();
+
+      urls.add(new URI("file", "", installationPathRoot + "/jre/lib/ext/jfxrt.jar", null).toURL());
+      urls.add(new URI("file", "", installationPathRoot + "/jre/lib/jfxswt.jar", null).toURL());
+      urls.add(new URI("file", "", installationPathRoot + "/jre/lib/*.dylib", null).toURL());
       urls.add(JavaFxHtmlPanelProvider.class.getClassLoader()
               .getResource("/org/intellij/plugins/markdown/ui/preview/javafx/JavaFxHtmlPanel.class"));
     }
@@ -120,7 +121,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
     if (answer == Messages.NO) {
       return false;
     }
-    return new JavaFXInstallator().installOpenJFXAndReport(parentComponent);
+    return JavaFXInstallator.INSTANCE.installOpenJFXAndReport(parentComponent);
   }
 
   private static class MyClassLoader extends URLClassLoader {
