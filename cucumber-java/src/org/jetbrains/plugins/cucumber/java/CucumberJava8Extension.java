@@ -44,15 +44,18 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
       PsiSearchHelper.SERVICE.getInstance(module.getProject()).processElementsWithWord(new TextOccurenceProcessor() {
         @Override
         public boolean execute(@NotNull PsiElement element, int offsetInElement) {
-          final PsiReference[] references = element.getParent().getReferences();
-          for (PsiReference ref : references) {
-            PsiElement resolved = ref.resolve();
-            PsiClass psiClass = PsiTreeUtil.getParentOfType(resolved, PsiClass.class);
-            if (psiClass != null) {
-              final String fqn = psiClass.getQualifiedName();
-              if (fqn != null && fqn.startsWith("cucumber.api.java8")) {
-                final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
-                result.add(new JavaStepDefinition(methodCallExpression));
+          final PsiElement parent = element.getParent();
+          if (parent != null) {
+            final PsiReference[] references = parent.getReferences();
+            for (PsiReference ref : references) {
+              PsiElement resolved = ref.resolve();
+              PsiClass psiClass = PsiTreeUtil.getParentOfType(resolved, PsiClass.class);
+              if (psiClass != null) {
+                final String fqn = psiClass.getQualifiedName();
+                if (fqn != null && fqn.startsWith("cucumber.api.java8")) {
+                  final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
+                  result.add(new JavaStepDefinition(methodCallExpression));
+                }
               }
             }
           }
