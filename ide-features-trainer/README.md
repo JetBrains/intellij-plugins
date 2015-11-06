@@ -1,9 +1,9 @@
-# training-concept
+# Training Plugin
 This IntelliJ IDEA plugin helps use IDE productively
 
 **System requirements**: IntelliJ IDEA 14 
 
-**Prerequisites**: To run this plugin you need to download https://github.com/karashevich/training-concept/blob/master/training-concept.zip and add this file as a plugin from IntelliJ IDEA.
+**Prerequisites**: To run this plugin you need to download https://github.com/karashevich/training/blob/master/training.zip and add this file as a plugin from IntelliJ IDEA.
 
 **Run**: Run IDEA with this plugin than go to *Learn* menu and choose any lesson. 
 
