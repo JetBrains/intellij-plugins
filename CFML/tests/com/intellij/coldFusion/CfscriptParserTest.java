@@ -16,13 +16,7 @@
 package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.DebugUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
@@ -165,6 +159,10 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testParameterAttributes() throws Throwable {
+    doTest("/newSyntax");
+  }
+
   public void testDefineComponentWithoutTag() throws Throwable {
     doTest("/newSyntax");
   }
@@ -245,17 +243,7 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
    * @throws IOException
    */
   private void doTest(String relatedPath) throws IOException {
-    String fileName = getTestName(true) + ".cfml";
-
-    String testText = StringUtil.convertLineSeparators(loadFile(relatedPath + "/"+ getTestName(true) + ".test.cfml"));
-    final PsiFile psiFile = PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, testText);
-    final String tree = DebugUtil.psiTreeToString(psiFile, true);
-
-    assertSameLinesWithFile(getDataSubpath() + relatedPath + "/"+ getTestName(true) + ".test.expected", tree);
-  }
-
-  private String loadFile(String fileName) throws IOException {
-    return FileUtil.loadFile(new File(FileUtil.toSystemDependentName(getDataSubpath() + fileName)));
+    Util.doParserTest(getTestName(true), getProject(), getDataSubpath() + relatedPath + "/");
   }
 
   protected String getDataSubpath() {

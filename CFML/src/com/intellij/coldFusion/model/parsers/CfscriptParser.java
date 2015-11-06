@@ -451,6 +451,11 @@ public class CfscriptParser {
         }
         defaultValueMarker.done(CfmlElementTypes.VALUE);
       }
+
+      if (myBuilder.getTokenType() == IDENTIFIER) {
+        CfmlParser.parseAttributes(myBuilder, "cfparameter", IDENTIFIER, true);
+      }
+
       argumentMarker.done(CfmlElementTypes.FUNCTION_ARGUMENT);
       if (myBuilder.getTokenType() == COMMA) {
         myBuilder.advanceLexer();
