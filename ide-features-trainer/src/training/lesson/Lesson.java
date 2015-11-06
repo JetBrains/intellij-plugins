@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import training.editor.eduUI.EduIcons;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
+import training.lesson.exceptons.LessonIsOpenedException;
 import training.lesson.exceptons.NoProjectException;
 import training.lesson.log.LessonLog;
 

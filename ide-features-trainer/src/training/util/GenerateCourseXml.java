@@ -17,6 +17,7 @@ public class GenerateCourseXml {
 
     public final static String COURSE_ALLCOURSE_ATTR = "courses";
     public final static String COURSE_ALLCOURSE_FILENAME = "courses.xml";
+    public final static String COURSE_COURSES_PATH = "courses";
     public final static String COURSE_TYPE_ATTR = "course";
 
     public final static String COURSE_NAME_ATTR = "name";

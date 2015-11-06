@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <courses version="0.3">
-  <course name="EditorBasics.xml" />
-  <course name="Completions.xml" />
-  <course name="Refactorings.xml" />
-  <course name="Formatting.xml" />
-  <course name="Navigation.xml" />
-  <course name="Loops.xml" />
+    <course name="courses/EditorBasics.xml"/>
+    <course name="courses/Completions.xml"/>
+    <course name="courses/Refactorings.xml"/>
+    <course name="courses/Formatting.xml"/>
+    <course name="courses/Navigation.xml"/>
+    <course name="courses/Loops.xml"/>
 </courses>
 

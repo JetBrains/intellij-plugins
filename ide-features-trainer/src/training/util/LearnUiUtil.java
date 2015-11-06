@@ -13,16 +13,10 @@ import com.intellij.openapi.wm.impl.IdeRootPane;
 import com.intellij.openapi.wm.impl.status.IdeStatusBarImpl;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLayeredPane;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import training.ui.MiniCloseButton;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -165,7 +159,7 @@ public class LearnUiUtil {
                 if (myComponent != null) {
                     final Component finalMyComponent = myComponent;
                     HighlightComponent highlightComponent = highlightComponent(finalMyComponent, null, ideRootPane, glassPane, new JBColor(new Color(9, 103, 202, 123), new Color(9, 103, 202, 123)), false, true);
-                    drawArrowFrom(glassPane, finalMyComponent, highlightComponent);
+//                    drawArrowFrom(glassPane, finalMyComponent, highlightComponent);
                 }
 
                 break;
@@ -270,75 +264,75 @@ public class LearnUiUtil {
         return hc;
     }
 
-    private void drawArrowFrom(final JComponent glassPane, final Component finalMyComponent, @Nullable final HighlightComponent highlightComponent) {
-        final Point2D p1 = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY());
-        final Point2D pc = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY() - 30.0d);
-        final Point2D p0 = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
-
-        final MyArrow.LineArrow myArrow = new MyArrow.LineArrow(p0, pc, p1, Color.BLACK);
-        final Point2D.Double[] pointPath = myArrow.getPointPath();
-
-        final MyArrow.LineArrow growingArrow = new MyArrow.LineArrow(p0, pc, p1, Color.BLACK);
-        final JComponent jcomp = new JComponent() {
-            @Override
-            protected void paintComponent(Graphics graphics) {
-                growingArrow.setArrow(
-                        new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d),
-                        new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY() - 30.0d),
-                        new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY()));
-                growingArrow.draw((Graphics2D) graphics);
-            }
-        };
-        jcomp.setBounds(glassPane.getBounds());
-        glassPane.add(jcomp);
-
-        final JComponent labelComponent = new JComponent() {
-            @Override
-            protected void paintComponent(Graphics graphics) {
-                Graphics2D g2d = (Graphics2D) graphics;
-                g2d.setColor(JBColor.BLACK);
-                Font oldFont = g2d.getFont();
-                Font font = new Font(oldFont.getName(), Font.BOLD, 14);
-                g2d.setFont(font);
-
-                int stringWidth = g2d.getFontMetrics(font).stringWidth("Status Bar");
-                final Point2D p = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
-                g2d.drawString("Status Bar", (float) p.getX() - 15.0f, (float) p.getY() - 8.0f);
-            }
-        };
-
-        final MiniCloseButton closeButtonLabel = new MiniCloseButton(new Rectangle((int) p0.getX() + 65, (int) p0.getY() - 25, 12, 12));
-        glassPane.add(closeButtonLabel);
-        closeButtonLabel.setClickAction(new Runnable() {
-            @Override
-            public void run() {
-                if (highlightComponent != null) {
-                    glassPane.remove(highlightComponent);
-                }
-                glassPane.remove(closeButtonLabel);
-                glassPane.remove(labelComponent);
-                glassPane.remove(jcomp);
-                glassPane.revalidate();
-                glassPane.repaint();
-            }
-        });
-//        closeButtonLabel.setBounds(glassPane.getBounds());
-
-        labelComponent.setBounds(glassPane.getBounds());
-        glassPane.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent componentEvent) {
-                super.componentResized(componentEvent);
-                labelComponent.repaint();
-                labelComponent.setBounds(glassPane.getBounds());
-                jcomp.setBounds(glassPane.getBounds());
-                glassPane.revalidate();
-                glassPane.repaint();
-            }
-        });
-        glassPane.add(labelComponent);
-        glassPane.revalidate();
-        glassPane.repaint();
+//    private void drawArrowFrom(final JComponent glassPane, final Component finalMyComponent, @Nullable final HighlightComponent highlightComponent) {
+//        final Point2D p1 = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY());
+//        final Point2D pc = new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY() - 30.0d);
+//        final Point2D p0 = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
+//
+//        final MyArrow.LineArrow myArrow = new MyArrow.LineArrow(p0, pc, p1, Color.BLACK);
+//        final Point2D.Double[] pointPath = myArrow.getPointPath();
+//
+//        final MyArrow.LineArrow growingArrow = new MyArrow.LineArrow(p0, pc, p1, Color.BLACK);
+//        final JComponent jcomp = new JComponent() {
+//            @Override
+//            protected void paintComponent(Graphics graphics) {
+//                growingArrow.setArrow(
+//                        new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d),
+//                        new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY() - 30.0d),
+//                        new Point2D.Double(finalMyComponent.getLocation().getX() + 30.0d, finalMyComponent.getLocation().getY()));
+//                growingArrow.draw((Graphics2D) graphics);
+//            }
+//        };
+//        jcomp.setBounds(glassPane.getBounds());
+//        glassPane.add(jcomp);
+//
+//        final JComponent labelComponent = new JComponent() {
+//            @Override
+//            protected void paintComponent(Graphics graphics) {
+//                Graphics2D g2d = (Graphics2D) graphics;
+//                g2d.setColor(JBColor.BLACK);
+//                Font oldFont = g2d.getFont();
+//                Font font = new Font(oldFont.getName(), Font.BOLD, 14);
+//                g2d.setFont(font);
+//
+//                int stringWidth = g2d.getFontMetrics(font).stringWidth("Status Bar");
+//                final Point2D p = new Point2D.Double(finalMyComponent.getLocation().getX() + 60.0d, finalMyComponent.getLocation().getY() - 60.0d);
+//                g2d.drawString("Status Bar", (float) p.getX() - 15.0f, (float) p.getY() - 8.0f);
+//            }
+//        };
+//
+//        final MiniCloseButton closeButtonLabel = new MiniCloseButton(new Rectangle((int) p0.getX() + 65, (int) p0.getY() - 25, 12, 12));
+//        glassPane.add(closeButtonLabel);
+//        closeButtonLabel.setClickAction(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (highlightComponent != null) {
+//                    glassPane.remove(highlightComponent);
+//                }
+//                glassPane.remove(closeButtonLabel);
+//                glassPane.remove(labelComponent);
+//                glassPane.remove(jcomp);
+//                glassPane.revalidate();
+//                glassPane.repaint();
+//            }
+//        });
+////        closeButtonLabel.setBounds(glassPane.getBounds());
+//
+//        labelComponent.setBounds(glassPane.getBounds());
+//        glassPane.addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent componentEvent) {
+//                super.componentResized(componentEvent);
+//                labelComponent.repaint();
+//                labelComponent.setBounds(glassPane.getBounds());
+//                jcomp.setBounds(glassPane.getBounds());
+//                glassPane.revalidate();
+//                glassPane.repaint();
+//            }
+//        });
+//        glassPane.add(labelComponent);
+//        glassPane.revalidate();
+//        glassPane.repaint();
 
 //        Animator animator = new Animator("Animate arrow", pointPath.length - 3, 500, false) {
 //            int j = 3;
@@ -386,9 +380,9 @@ public class LearnUiUtil {
 //       animator.reset();
 //       animator.resume();
 
-        glassPane.revalidate();
-        glassPane.repaint();
-    }
+//        glassPane.revalidate();
+//        glassPane.repaint();
+//    }
 
 
     public void getEditorWindow(final Project project){
