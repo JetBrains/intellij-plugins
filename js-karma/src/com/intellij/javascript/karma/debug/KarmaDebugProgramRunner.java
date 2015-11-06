@@ -25,7 +25,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.util.Function;
@@ -41,8 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.debugger.connection.VmConnection;
-
-import java.io.File;
 
 public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
@@ -129,11 +128,11 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
-      File basePath = new File(karmaConfig.getBasePath());
-      VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
-      if (vBasePath != null && vBasePath.isValid()) {
-        String baseUrl = karmaServer.formatUrlWithoutUrlRoot("/base");
-        mappings.put(baseUrl, vBasePath);
+      String systemDependentBasePath = FileUtil.toSystemDependentName(karmaConfig.getBasePath());
+      VirtualFile basePath = LocalFileSystem.getInstance().findFileByPath(systemDependentBasePath);
+      if (basePath != null && basePath.isValid()) {
+        String baseUrl = karmaConfig.isWebpack() ? "webpack:///." : karmaServer.formatUrlWithoutUrlRoot("/base");
+        mappings.put(baseUrl, basePath);
       }
     }
     if (SystemInfo.isWindows) {

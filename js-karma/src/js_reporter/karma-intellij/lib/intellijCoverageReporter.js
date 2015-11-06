@@ -92,34 +92,11 @@ function IntellijCoverageReporter(injector, config) {
     console.warn("IDE coverage reporter is disabled");
     this.adapters = [];
   }
-  var coveragePreprocessorSpecifiedInConfig = isCoveragePreprocessorSpecified(config.preprocessors);
+  // Missing coverage preprocessor is a common mistake that results in empty coverage reports.
+  // Reporting such a mistake before actually running tests with coverage improves user experience.
+  var coveragePreprocessorSpecifiedInConfig = intellijUtil.isPreprocessorSpecified(config.preprocessors, coveragePreprocessorName);
   IntellijCoverageReporter.reportCoverageStartupStatus(coveragePreprocessorSpecifiedInConfig, karmaCoverageReporter != null);
   return that;
-}
-
-/**
- * Checks whether coverage preprocessor specified at least once in 'config.preprocessors'.
- * Missing coverage preprocessor is a common mistake that results in empty coverage reports.
- * Reporting such a mistake before actually running tests with coverage improves user experience.
- *
- * @param {Object} preprocessors
- * @return {boolean} true, if coverage preprocessor specified at least once in 'preprocessors'
- */
-function isCoveragePreprocessorSpecified(preprocessors) {
-  if (preprocessors != null) {
-    for (var key in preprocessors) {
-      if (Object.prototype.hasOwnProperty.call(preprocessors, key)) {
-        var value = preprocessors[key];
-        if (value === coveragePreprocessorName) {
-          return true;
-        }
-        if (Array.isArray(value) && value.indexOf(coveragePreprocessorName) >= 0) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
 }
 
 /**

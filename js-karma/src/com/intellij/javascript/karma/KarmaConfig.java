@@ -13,10 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaConfig {
 
   private static final Logger LOG = Logger.getInstance(KarmaConfig.class);
@@ -25,23 +23,27 @@ public class KarmaConfig {
   private static final String BROWSERS = "browsers";
   private static final String HOST_NAME = "hostname";
   private static final String URL_ROOT = "urlRoot";
+  private static final String WEBPACK = "webpack";
 
   private final boolean myAutoWatch;
   private final List<String> myBrowsers;
   private final String myBasePath;
   private final String myHostname;
   private final String myUrlRoot;
+  private final boolean myWebpack;
 
   public KarmaConfig(boolean autoWatch,
                      @NotNull String basePath,
                      @NotNull List<String> browsers,
                      @NotNull String hostname,
-                     @NotNull String urlRoot) {
+                     @NotNull String urlRoot,
+                     boolean webpack) {
     myAutoWatch = autoWatch;
     myBasePath = basePath;
     myBrowsers = ImmutableList.copyOf(browsers);
     myHostname = hostname;
     myUrlRoot = urlRoot;
+    myWebpack = webpack;
   }
 
   public boolean isAutoWatch() {
@@ -68,6 +70,10 @@ public class KarmaConfig {
     return myUrlRoot;
   }
 
+  public boolean isWebpack() {
+    return myWebpack;
+  }
+
   @Nullable
   public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement,
                                           @NotNull File configurationFileDir) {
@@ -79,8 +85,9 @@ public class KarmaConfig {
       String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir);
       String hostname = parseHostname(jsonElement, rootObject);
       String urlRoot = parseUrlRoot(jsonElement, rootObject);
+      boolean webpack = GsonUtil.getBooleanProperty(rootObject, WEBPACK, false);
 
-      return new KarmaConfig(autoWatch, basePath, browsers, hostname, urlRoot);
+      return new KarmaConfig(autoWatch, basePath, browsers, hostname, urlRoot, webpack);
     }
     return null;
   }
@@ -118,7 +125,7 @@ public class KarmaConfig {
       LOG.warn("Can not parse Karma config.hostname from " + all.toString());
       hostname = "localhost";
     }
-    hostname = hostname.toLowerCase();
+    hostname = hostname.toLowerCase(Locale.ENGLISH);
     return hostname;
   }
 

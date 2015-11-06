@@ -171,9 +171,34 @@ function removeAll(elements, elementsToRemove) {
   }
 }
 
+/**
+ * Checks whether the given preprocessor specified at least once in 'config.preprocessors'.
+ *
+ * @param {Object} preprocessors
+ * @param {String} preprocessorName
+ * @return {boolean} true, if the given preprocessor specified at least once in 'preprocessors'
+ */
+function isPreprocessorSpecified(preprocessors, preprocessorName) {
+    if (preprocessors != null) {
+        for (var key in preprocessors) {
+            if (Object.prototype.hasOwnProperty.call(preprocessors, key)) {
+                var value = preprocessors[key];
+                if (value === preprocessorName) {
+                    return true;
+                }
+                if (Array.isArray(value) && value.indexOf(preprocessorName) >= 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 exports.attributeValueEscape = attributeValueEscape;
 exports.joinList = joinList;
 exports.sendIntellijEvent = sendIntellijEvent;
 exports.isString = isString;
 exports.processStdInput = processStdInput;
 exports.removeAll = removeAll;
+exports.isPreprocessorSpecified = isPreprocessorSpecified;
