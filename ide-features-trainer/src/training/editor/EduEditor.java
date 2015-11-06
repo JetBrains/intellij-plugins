@@ -30,7 +30,7 @@ import training.editor.eduUI.Message;
 import training.lesson.*;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
-import training.lesson.LessonIsOpenedException;
+import training.lesson.exceptons.LessonIsOpenedException;
 import training.util.HighlightComponent;
 import training.util.LearnUiUtil;
 

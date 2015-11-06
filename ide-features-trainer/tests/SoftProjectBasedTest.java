@@ -1,12 +1,7 @@
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,12 +9,10 @@ import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.ui.EdtInvocationManager;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,10 +20,8 @@ import training.commands.*;
 import training.editor.EduEditor;
 import training.editor.EduEditorManager;
 import training.lesson.*;
-import training.lesson.exceptons.*;
+import training.testFramework.EduIdeaTestFixtureFactoryImpl;
 
-import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,17 +30,20 @@ import java.util.concurrent.ExecutionException;
  * Created by karashevich on 28/10/15.
  */
 @RunWith(Parameterized.class)
-public class SoftScratchBasedTest extends UsefulTestCase{
+public class SoftProjectBasedTest extends UsefulTestCase {
 
-    protected Project myProject;
+    protected static Project myProject;
     protected VirtualFile myProjectRoot;
     protected String myProjectPath;
 
+    private static SoftProjectBasedTest myCase;
+
     protected Lesson myLesson;
 
-    @org.junit.runners.Parameterized.Parameter(0) public String lessonId;
+    @Parameterized.Parameter(0)
+    public String lessonId;
 
-    private IdeaProjectTestFixture myProjectFixture;
+    private static IdeaProjectTestFixture myProjectFixture;
 
     protected Sdk getProjectJDK() {
         JavaSdk javaSdk = JavaSdk.getInstance();
@@ -64,23 +58,22 @@ public class SoftScratchBasedTest extends UsefulTestCase{
         return newJdk;
     }
 
-    @NotNull
-    protected ModuleType getModuleType() {
-        return StdModuleTypes.JAVA;
-    }
-
-    protected void setUpLesson(){
+    protected void setUpLesson() {
         myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
     }
 
     @Parameterized.Parameters(name = "{0}")
-    public static List<Object> data(){
+    public static List<Object> data() {
+        return dataA();
+    }
+
+    public static List<Object> dataA() {
         List<Object> lessonsIds = new ArrayList<Object>();
         final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
         for (Course course : courses) {
             final ArrayList<Lesson> lessons = course.getLessons();
             for (Lesson lesson : lessons) {
-                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+                if (lesson.getCourse().courseType == Course.CourseType.PROJECT) {
                     lessonsIds.add(lesson.getName());
                 }
             }
@@ -88,53 +81,47 @@ public class SoftScratchBasedTest extends UsefulTestCase{
         return lessonsIds;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        final Ref<Exception> ex = new Ref<Exception>();
-        Runnable runnable = new Runnable() {
-            public void run() {
 
-                try {
-                    SoftScratchBasedTest.super.setUp();
-                    myProjectFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
-                    myProjectFixture.setUp();
-                    myProject = myProjectFixture.getProject();
-                    myProjectRoot = myProject.getBaseDir();
-                    myProjectPath = myProjectRoot.getPath();
-                } catch (Exception e) {
-                    ex.set(e);
-                }
-            }
-        };
-        invokeTestRunnable(runnable);
-        final Exception exception = ex.get();
-        if (exception != null) {
-            throw exception;
-        }
+    @BeforeClass
+    public static void before() throws Exception {
+
+        myCase = new SoftProjectBasedTest();
+
+        myCase.setUp();
+
+        EduIdeaTestFixtureFactoryImpl.getFixtureFactory();
+        myProjectFixture = EduIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder("ProjectLessonName").getFixture();
+        myProjectFixture.setUp();
+        myProject = myProjectFixture.getProject();
+        System.out.println(myProject);
     }
 
-    @After
-    public void tearDown ()throws Exception {
-            final Ref<Exception> ex = new Ref<Exception>();
+    @AfterClass
+    public static void last() throws Exception {
+        final Ref<Exception> ex = new Ref<Exception>();
         Runnable runnable = new Runnable() {
+            @Override
             public void run() {
                 try {
                     disposeAllEduEditors();
-                    if(myProjectFixture != null) {
+                    try {
                         myProjectFixture.tearDown();
+                        myProjectFixture = null;
+                    } catch (Exception e) {
+                        ex.set(e);
                     }
                 } catch (Exception e) {
                     ex.set(e);
                 } finally {
                     try {
-                        SoftScratchBasedTest.super.tearDown();
+                        myCase.tearDown();
                     } catch (Exception e) {
                         ex.set(e);
                     }
                 }
             }
         };
-        invokeTestRunnable(runnable);
+        myCase.invokeTestRunnable(runnable);
         final Exception exception = ex.get();
         if (exception != null) {
             throw exception;
@@ -149,50 +136,21 @@ public class SoftScratchBasedTest extends UsefulTestCase{
             public void run() {
                 ((VirtualFilePointerManagerImpl) VirtualFilePointerManager.getInstance()).storePointers();
 
-                boolean noSdkDetected = false;
                 try {
                     CourseManager.getInstance().checkEnvironment(myProject, myLesson.getCourse());
-                } catch (NoSdkException e) {
-                    noSdkDetected = true;
-                } catch (OldJdkException e) {
-                    e.printStackTrace();
-                } catch (InvalidSdkException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                assertTrue(noSdkDetected);
-                final Boolean result = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
-                    @Override
-                    public Boolean compute() {
-                        ProjectRootManager.getInstance(myProject).setProjectSdk(getProjectJDK());
-                        return true;
-                    }
-                });
-                if (result) {
-                    assertNotNull(ProjectJdkTable.getInstance().findJdk(getProjectJDK().getName(), getProjectJDK().getSdkType().getName()));
-                    try {
-                        CourseManager.getInstance().openLesson(myProject, myLesson);
-                    } catch (BadCourseException e) {
-                        e.printStackTrace();
-                    } catch (BadLessonException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (FontFormatException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (LessonIsOpenedException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    assertTrue(result); //Unable to add new
+                assertNotNull(ProjectJdkTable.getInstance().findJdk(getProjectJDK().getName(), getProjectJDK().getSdkType().getName()));
+                try {
+                    CourseManager.getInstance().openLesson(myProject, myLesson);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
         invokeTestRunnable(runnable);
-        while(!myLesson.getPassed()){
+        while (!myLesson.getPassed()) {
             //pumpEvents
             EdtInvocationManager.getInstance().invokeAndWait(new Runnable() {
                 @Override
@@ -203,11 +161,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
             });
             try {
                 solveStep();
-            } catch (BadCommandException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -223,8 +177,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
     }
 
 
-
-    private void disposeAllEduEditors() {
+    private static void disposeAllEduEditors() throws Exception {
         final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
         for (EduEditor eduEditor : allNotDisposedEduEditors) {
             Disposer.dispose(eduEditor);
@@ -232,7 +185,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
     }
 
 
-    protected void prepareLesson(){
+    protected void prepareLesson() {
         assertNotNull(myLesson);
         myLesson.setPassed(false);
         assertTrue(!myLesson.getPassed());

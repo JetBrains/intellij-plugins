@@ -5,11 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import training.lesson.ActionsRecorder;
 import training.check.Check;
 import training.lesson.log.LessonLog;
-import training.util.MyClassLoader;
-import training.commandsEx.ActionCommandEx;
 import training.keymap.KeymapUtil;
 import training.keymap.SubKeymapUtil;
 import training.lesson.Lesson;
+import training.util.MyClassLoader;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -128,8 +127,8 @@ public class TryCommand extends Command {
     }
 
     public static String substitution(String text, String shortcutString){
-        if (text.contains(ActionCommandEx.SHORTCUT)) {
-            return text.replace(ActionCommandEx.SHORTCUT, shortcutString);
+        if (text.contains(ActionCommand.SHORTCUT)) {
+            return text.replace(ActionCommand.SHORTCUT, shortcutString);
         } else {
             return text;
         }

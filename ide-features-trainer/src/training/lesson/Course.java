@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
-import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -28,6 +27,12 @@ import java.util.ArrayList;
  */
 @Tag("course")
 public class Course extends ActionGroup{
+
+    private String coursePath;
+
+    public String getCoursePath() {
+        return (coursePath != null ? coursePath + "/" : "");
+    }
 
     public enum CourseType {SCRATCH, PROJECT};
 
@@ -72,6 +77,10 @@ public class Course extends ActionGroup{
     }
 
 
+    public void setCoursePath(String coursePath) {
+        this.coursePath = coursePath;
+    }
+
     public Course(){
         name = "Test";
         lessons = new ArrayList<Lesson>();
@@ -83,6 +92,7 @@ public class Course extends ActionGroup{
         lessons = new ArrayList<Lesson>();
         this.name = name;
         this.root = root;
+        coursePath = GenerateCourseXml.COURSE_COURSES_PATH;
         initLessons();
         if (root.getAttribute(GenerateCourseXml.COURSE_ANSWER_PATH_ATTR) != null) {
             answersPath = root.getAttribute(GenerateCourseXml.COURSE_ANSWER_PATH_ATTR).getValue();
@@ -146,16 +156,17 @@ public class Course extends ActionGroup{
 
         name = root.getAttribute(GenerateCourseXml.COURSE_NAME_ATTR).getValue();
 
-        if (root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR)!=null){
+        if (root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR) != null) {
 
             //retrieve list of xml files inside lessonspath directory
-            String lessonsPath = root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR).getValue();
+            String lessonsPath = getCoursePath() + root.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR).getValue();
 //            String lessonsFullpath = MyClassLoader.getInstance().getDataPath() + lessonsPath;
 //            URL url = Course.class.getResource(lessonsFullpath);
 //            File dir = new File(Course.class.getResource("/data/" + lessonsPath).toURI());
 
             for (Element lessonElement : root.getChildren()) {
-                if (!lessonElement.getName().equals(GenerateCourseXml.COURSE_LESSON_ELEMENT)) throw new BadCourseException("Course file is corrupted or cannot be read properly");
+                if (!lessonElement.getName().equals(GenerateCourseXml.COURSE_LESSON_ELEMENT))
+                    throw new BadCourseException("Course file is corrupted or cannot be read properly");
 
                 String lessonFilename = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_FILENAME_ATTR);
                 String lessonPath = lessonsPath + lessonFilename;

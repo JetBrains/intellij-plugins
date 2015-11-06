@@ -12,13 +12,15 @@ import training.editor.EduEditor;
 import training.lesson.CourseManager;
 import training.lesson.LessonProcessor;
 import training.lesson.exceptons.NoSdkException;
+import training.testFramework.EduLessonTest;
+import training.testFramework.LessonSolution;
 
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 29/10/15.
  */
-public class EditorBasics_Selection_Solution_Test extends EduLessonTest implements LessonSolution{
+public class EditorBasics_Selection_Solution_Test extends EduLessonTest implements LessonSolution {
 
 
     /**
