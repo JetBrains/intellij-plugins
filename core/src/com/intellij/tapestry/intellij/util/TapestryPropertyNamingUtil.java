@@ -35,7 +35,7 @@ public class TapestryPropertyNamingUtil {
       if (returnType == null || PsiType.VOID.equals(returnType)) return false;
     }
     else if (methodName.startsWith("is")) {
-      if (returnType != PsiType.BOOLEAN) return false;
+      if (!PsiType.BOOLEAN.equals(returnType)) return false;
     }
     else {
       return false;
