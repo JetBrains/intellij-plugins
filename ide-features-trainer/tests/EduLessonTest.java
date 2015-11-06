@@ -125,10 +125,6 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
         return getTestName(true);
     }
 
-    public void testFindAtLeastOneLesson() throws Exception {
-        Lesson lesson = getAnyLesson();
-        assertNotNull(lesson);
-    }
 
     @Nullable
     private Lesson getAnyLesson() {

@@ -116,7 +116,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
 
     @After
     public void tearDown ()throws Exception {
-        final Ref<Exception> ex = new Ref<Exception>();
+            final Ref<Exception> ex = new Ref<Exception>();
         Runnable runnable = new Runnable() {
             public void run() {
                 try {

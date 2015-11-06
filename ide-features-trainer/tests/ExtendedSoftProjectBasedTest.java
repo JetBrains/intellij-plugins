@@ -7,13 +7,14 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.util.SmartList;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.ui.EdtInvocationManager;
 import org.jdom.Element;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,17 +31,20 @@ import java.util.concurrent.ExecutionException;
  * Created by karashevich on 28/10/15.
  */
 @RunWith(Parameterized.class)
-public class ExtendedSoftProjectBasedTest extends UsefulTestCase{
+public class ExtendedSoftProjectBasedTest extends UsefulTestCase {
 
-    protected Project myProject;
+    protected static Project myProject;
     protected VirtualFile myProjectRoot;
     protected String myProjectPath;
 
+    private static ExtendedSoftProjectBasedTest myCase;
+
     protected Lesson myLesson;
 
-    @Parameterized.Parameter(0) public String lessonId;
+    @Parameterized.Parameter(0)
+    public String lessonId;
 
-    private IdeaProjectTestFixture myProjectFixture;
+    private static IdeaProjectTestFixture myProjectFixture;
 
     protected Sdk getProjectJDK() {
         JavaSdk javaSdk = JavaSdk.getInstance();
@@ -55,17 +59,24 @@ public class ExtendedSoftProjectBasedTest extends UsefulTestCase{
         return newJdk;
     }
 
-    protected void setUpLesson(){
+    protected void setUpLesson() {
         myLesson = CourseManagerOffline.getInstance().findLesson(lessonId);
     }
 
     @Parameterized.Parameters(name = "{0}")
-    public static List<Object> data(){
+    public static List<Object> data() {
+        return dataA();
+    }
+
+    public static List<Object> dataA() {
         List<Object> lessonsIds = new ArrayList<Object>();
         final Course[] courses = CourseManagerOffline.getInstance().getCourses();
-        for (Course course : courses) {
+        {
+            int i = 4;
+            Course course = courses[i];
             final ArrayList<Lesson> lessons = course.getLessons();
-            for (Lesson lesson : lessons) {
+            for (int j = 0; j < 4; j++) {
+                Lesson lesson = lessons.get(j);
                 if (lesson.getCourse().courseType == Course.CourseType.PROJECT) {
                     lessonsIds.add(lesson.getName());
                 }
@@ -74,68 +85,83 @@ public class ExtendedSoftProjectBasedTest extends UsefulTestCase{
         return lessonsIds;
     }
 
-    @Before
-    public void before() throws Exception {
-        final Ref<Exception> ex = new Ref<Exception>();
-        final List<Throwable> exceptions = new SmartList<Throwable>();
-
-        Runnable runnable = new Runnable() {
-            public void run() {
-
-                try {
-                    ExtendedSoftProjectBasedTest.super.setUp();
-//                    myProjectFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
-
-                    EduIdeaTestFixtureFactoryImpl.getFixtureFactory();
-                    myProjectFixture = EduIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder("ProjectLessonName").getFixture();
-                    myProjectFixture.setUp();
-                    myProject = myProjectFixture.getProject();
-                    System.out.println(myProject);
-                } catch (Exception e) {
-                    ex.set(e);
-                }
-            }
-        };
-        invokeTestRunnable(runnable);
-        final Exception exception = ex.get();
-        if (exception != null) {
-            throw exception;
-        }
-        if(exceptions.size() > 0){
-            for (Throwable throwable : exceptions) {
-                try {
-                    throw throwable;
-                } catch (Throwable throwable1) {
-                    throwable1.printStackTrace();
+    public static List<Object> dataB() {
+        List<Object> lessonsIds = new ArrayList<Object>();
+        final Course[] courses = CourseManagerOffline.getInstance().getCourses();
+        {
+            int i = 4;
+            Course course = courses[i];
+            final ArrayList<Lesson> lessons = course.getLessons();
+            for (int j = 3; j >= 0; j--) {
+                Lesson lesson = lessons.get(j);
+                if (lesson.getCourse().courseType == Course.CourseType.PROJECT) {
+                    lessonsIds.add(lesson.getName());
                 }
             }
         }
-
+        return lessonsIds;
     }
 
-    @After
-    public void after ()throws Exception {
+    public static List<Object> dataC() {
+        List<Object> lessonsIds = new ArrayList<Object>();
+        final Course[] courses = CourseManagerOffline.getInstance().getCourses();
+        {
+            int i = 4;
+            Course course = courses[i];
+            final ArrayList<Lesson> lessons = course.getLessons();
+            for (int j = 0; j < 4; j++) {
+                if (j != 1) {
+                    Lesson lesson = lessons.get(j);
+                    if (lesson.getCourse().courseType == Course.CourseType.PROJECT) {
+                        lessonsIds.add(lesson.getName());
+                    }
+                }
+            }
+        }
+        return lessonsIds;
+    }
+
+
+    @BeforeClass
+    public static void before() throws Exception {
+
+        myCase = new ExtendedSoftProjectBasedTest();
+
+        myCase.setUp();
+
+        EduIdeaTestFixtureFactoryImpl.getFixtureFactory();
+        myProjectFixture = EduIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder("ProjectLessonName").getFixture();
+        myProjectFixture.setUp();
+        myProject = myProjectFixture.getProject();
+        System.out.println(myProject);
+    }
+
+    @AfterClass
+    public static void last() throws Exception {
         final Ref<Exception> ex = new Ref<Exception>();
         Runnable runnable = new Runnable() {
+            @Override
             public void run() {
                 try {
                     disposeAllEduEditors();
-                    if(myProjectFixture != null) {
+                    try {
                         myProjectFixture.tearDown();
+                        myProjectFixture = null;
+                    } catch (Exception e) {
+                        ex.set(e);
                     }
                 } catch (Exception e) {
                     ex.set(e);
                 } finally {
                     try {
-                        myProjectFixture = null;
-                        ExtendedSoftProjectBasedTest.super.tearDown();
+                        myCase.tearDown();
                     } catch (Exception e) {
                         ex.set(e);
                     }
                 }
             }
         };
-        invokeTestRunnable(runnable);
+        myCase.invokeTestRunnable(runnable);
         final Exception exception = ex.get();
         if (exception != null) {
             throw exception;
@@ -164,7 +190,7 @@ public class ExtendedSoftProjectBasedTest extends UsefulTestCase{
             }
         };
         invokeTestRunnable(runnable);
-        while(!myLesson.getPassed()){
+        while (!myLesson.getPassed()) {
             //pumpEvents
             EdtInvocationManager.getInstance().invokeAndWait(new Runnable() {
                 @Override
@@ -191,8 +217,7 @@ public class ExtendedSoftProjectBasedTest extends UsefulTestCase{
     }
 
 
-
-    private void disposeAllEduEditors() {
+    private static void disposeAllEduEditors() throws Exception {
         final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
         for (EduEditor eduEditor : allNotDisposedEduEditors) {
             Disposer.dispose(eduEditor);
@@ -200,7 +225,7 @@ public class ExtendedSoftProjectBasedTest extends UsefulTestCase{
     }
 
 
-    protected void prepareLesson(){
+    protected void prepareLesson() {
         assertNotNull(myLesson);
         myLesson.setPassed(false);
         assertTrue(!myLesson.getPassed());
