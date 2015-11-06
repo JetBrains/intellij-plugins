@@ -36,7 +36,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.params.GrParameter;
-import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil;
 import org.jetbrains.plugins.groovy.lang.psi.util.PsiUtil;
 
 import java.util.Collections;
@@ -177,26 +176,13 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     final String fqnPendingException;
     if (GrCucumberUtil.isCucumber_1_1_orAbove(step)) {
       fqnPendingException = "cucumber.api.PendingException";
-    } else {
+    }
+    else {
       fqnPendingException = "cucumber.runtime.PendingException";
     }
-    StringBuilder snippet = escapePattern( generator.getSnippet(cucumberStep, null).replace("PendingException", fqnPendingException));
+    String snippet = generator.getSnippet(cucumberStep, null).replace("PendingException", fqnPendingException);
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
-  }
-
-  @NotNull
-  private static StringBuilder escapePattern(@NotNull String snippet) {
-    final int start = snippet.indexOf('\'') + 1;
-    final int end = snippet.lastIndexOf('\'');
-    String pattern = snippet.substring(start, end);
-
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(snippet.substring(0, start));
-    GrStringUtil.escapeStringCharacters(pattern.length(), pattern, "'", true, true, buffer);
-    buffer.append(snippet.substring(end));
-
-    return buffer;
   }
 
   @Override

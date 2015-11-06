@@ -13,6 +13,24 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep
 class CreateStepTest extends GrCucumberLightTestCase {
   final String basePath = null
 
+  void 'test simple step creation'() {
+    doTest '''\
+Feature: Git Cherry-Pick When Auto-Commit is selected
+  Scenario: Simple cherry-pick
+    Given a comm<caret>it
+''', '''\
+import cucumber.runtime.PendingException
+
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
+this.metaClass.mixin(cucumber.api.groovy.EN)
+
+Given(~/^a commit$/) { ->
+    // Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+}\
+'''
+  }
+
   void testEscapeChars() {
     doTest('''\
 Feature: Git Cherry-Pick When Auto-Commit is selected
