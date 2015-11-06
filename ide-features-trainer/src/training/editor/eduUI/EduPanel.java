@@ -6,7 +6,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 import training.lesson.exceptons.BadCourseException;
 import training.lesson.exceptons.BadLessonException;
-import training.lesson.LessonIsOpenedException;
+import training.lesson.exceptons.LessonIsOpenedException;
 import training.editor.EduEditor;
 import training.lesson.Course;
 import training.lesson.CourseManager;

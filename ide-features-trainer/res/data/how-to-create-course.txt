@@ -3,7 +3,7 @@
 GENERATE COURSES
 To generate specific course you have to:
  # create a directory with a Course name (or it maybe shortname of course)
- # run training.util.GenerateCourseXml.gen(String courseName, String id, String path)
+ # run util.GenerateCourseXml.gen(String courseName, String id, String path)
  # copy result to res/data/
 
 Example Completions:
@@ -12,6 +12,6 @@ Example Completions:
     path: "Completions/"
 
 To generate all courses:
- # run training.util.GenerateCourseXml.main()
+ # run util.GenerateCourseXml.main()
  # exclude redundant files from courses.xml list
 

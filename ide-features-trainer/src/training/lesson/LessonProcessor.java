@@ -1,8 +1,6 @@
 package training.lesson;
 
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
@@ -12,15 +10,13 @@ import training.commands.BadCommandException;
 import training.commands.Command;
 import training.commands.CommandFactory;
 import training.commands.ExecutionList;
-import training.commandsEx.util.PerformActionUtil;
+import training.util.PerformActionUtil;
 import training.editor.MouseListenerHolder;
 import training.editor.EduEditor;
 import training.editor.actions.HideProjectTreeAction;
 import training.editor.eduUI.Message;
 import training.util.XmlUtil;
 
-import javax.swing.*;
-import java.awt.event.InputEvent;
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
