@@ -24,8 +24,8 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
   public MarkdownHtmlPanel createHtmlPanel() {
     try {
       return (MarkdownHtmlPanel)MY_CLASS_LOADER
-              .loadClass("org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel")
-              .newInstance();
+        .loadClass("org.intellij.plugins.markdown.ui.preview.javafx.JavaFxHtmlPanel")
+        .newInstance();
     }
     catch (ClassNotFoundException e) {
       throw new IllegalStateException("Should not be called if unavailable", e);
@@ -79,14 +79,14 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
       urls.add(new URI("file", "", installationPathRoot + "/jre/lib/jfxswt.jar", null).toURL());
       urls.add(new URI("file", "", installationPathRoot + "/jre/lib/*.dylib", null).toURL());
       urls.add(JavaFxHtmlPanelProvider.class.getClassLoader()
-              .getResource("/org/intellij/plugins/markdown/ui/preview/javafx/JavaFxHtmlPanel.class"));
+                 .getResource("/org/intellij/plugins/markdown/ui/preview/javafx/JavaFxHtmlPanel.class"));
     }
     catch (Exception ignore) {
     }
 
     final ClassLoader parent = JavaFxHtmlPanelProvider.class.getClassLoader();
     if (parent instanceof PluginClassLoader) {
-      urls.addAll(((PluginClassLoader) parent).getUrls());
+      urls.addAll(((PluginClassLoader)parent).getUrls());
     }
 
     LOG.info("ClassLoader urls: " + urls.toString());
@@ -107,10 +107,12 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
         }
 
         final ClassLoader classLoader = createClassLoader();
-        if (classLoader.loadClass(name) != null) {
+        final boolean success = classLoader.loadClass(name) != null;
+
+        if (success) {
           MY_CLASS_LOADER = classLoader;
-          return true;
         }
+        return success;
       }
     }
     catch (Exception ignore) {
@@ -149,7 +151,8 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
         if (!s.contains("JavaFxHtmlPanel$") && !s.endsWith("JavaFxHtmlPanel")) {
           try {
             loadedClass = getParent().loadClass(s);
-          } catch (ClassNotFoundException ignore) {
+          }
+          catch (ClassNotFoundException ignore) {
           }
         }
 
@@ -164,6 +167,5 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
 
       return loadedClass;
     }
-
   }
 }

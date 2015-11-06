@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public enum JavaFXInstallator {
+enum JavaFXInstallator {
   INSTANCE;
 
   private static final NotNullLazyValue<String> URL = new NotNullLazyValue<String>() {
