@@ -1180,16 +1180,16 @@ public class DartAnalysisServerService {
         vmArgsRaw = "";
       }
 
-      String serverArgsRaw;
-      try {
-        serverArgsRaw = Registry.stringValue("dart.server.additional.arguments");
-      }
-      catch (MissingResourceException e) {
-        serverArgsRaw = "";
-      }
+      String serverArgsRaw = "";
       serverArgsRaw += " --port=" + port;
       serverArgsRaw += " --useAnalysisHighlight2";
       serverArgsRaw += " --file-read-mode=normalize-eol-always";
+      try {
+        serverArgsRaw += " " + Registry.stringValue("dart.server.additional.arguments");
+      }
+      catch (MissingResourceException e) {
+        // NOP
+      }
 
       myServerSocket =
         new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, StringUtil.split(serverArgsRaw, " "),
