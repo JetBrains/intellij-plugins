@@ -65,7 +65,8 @@ module.exports = function(config) {
       basePath: config.basePath,
       browsers: config.browsers || [],
       hostname: config.hostname || 'localhost',
-      urlRoot: config.urlRoot || '/'
+      urlRoot: config.urlRoot || '/',
+      webpack: intellijUtil.isPreprocessorSpecified(config.preprocessors, 'webpack')
     }
   );
 };
