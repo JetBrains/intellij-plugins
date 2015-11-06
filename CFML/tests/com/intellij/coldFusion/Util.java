@@ -19,6 +19,11 @@ import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.impl.DebugUtil;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -81,4 +86,18 @@ public class Util {
         CfmlProjectConfiguration.getInstance(project).loadState(currentState);
       }
     }
+
+  static void doParserTest(String testNameLowercased, Project project, String extraDataPath) throws IOException {
+    String fileName = testNameLowercased + ".cfml";
+
+    String testText = StringUtil.convertLineSeparators(loadFile(extraDataPath + testNameLowercased + ".test.cfml"));
+    final PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText(fileName, testText);
+    final String tree = DebugUtil.psiTreeToString(psiFile, true);
+
+    UsefulTestCase.assertSameLinesWithFile(extraDataPath + testNameLowercased + ".test.expected", tree);
+  }
+
+  private static String loadFile(String fileName) throws IOException {
+    return FileUtil.loadFile(new File(FileUtil.toSystemDependentName(fileName)));
+  }
 }
