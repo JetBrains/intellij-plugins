@@ -22,15 +22,15 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class SplitFileEditor extends UserDataHolderBase implements FileEditor {
+public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEditor> extends UserDataHolderBase implements FileEditor {
   public static final Key<SplitFileEditor> PARENT_SPLIT_KEY = Key.create("parentSplit");
 
   private static final String MY_PROPORTION_KEY = "SplitFileEditor.Proportion";
 
   @NotNull
-  protected final FileEditor myMainEditor;
+  protected final E1 myMainEditor;
   @NotNull
-  protected final FileEditor mySecondEditor;
+  protected final E2 mySecondEditor;
   @NotNull
   private final JComponent myComponent;
   @NotNull
@@ -41,7 +41,7 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
 
   private SplitEditorToolbar myToolbarWrapper;
 
-  public SplitFileEditor(@NotNull FileEditor mainEditor, @NotNull FileEditor secondEditor) {
+  public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
     myMainEditor = mainEditor;
     mySecondEditor = secondEditor;
 
@@ -115,12 +115,12 @@ public abstract class SplitFileEditor extends UserDataHolderBase implements File
   }
 
   @NotNull
-  public FileEditor getMainEditor() {
+  public E1 getMainEditor() {
     return myMainEditor;
   }
 
   @NotNull
-  public FileEditor getSecondEditor() {
+  public E2 getSecondEditor() {
     return mySecondEditor;
   }
 

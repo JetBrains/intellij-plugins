@@ -117,15 +117,7 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
     }
   }
 
-  protected FileEditor createSplitEditor(@NotNull FileEditor firstEditor, @NotNull FileEditor secondEditor) {
-    return new SplitFileEditor(firstEditor, secondEditor) {
-      @NotNull
-      @Override
-      public String getName() {
-        return "Markdown split editor";
-      }
-    };
-  }
+  protected abstract FileEditor createSplitEditor(@NotNull FileEditor firstEditor, @NotNull FileEditor secondEditor);
 
   @NotNull
   @Override

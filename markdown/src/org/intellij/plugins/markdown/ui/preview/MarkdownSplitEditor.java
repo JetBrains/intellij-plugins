@@ -7,7 +7,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
-public class MarkdownSplitEditor extends SplitFileEditor {
+public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPreviewFileEditor> {
   public MarkdownSplitEditor(@NotNull TextEditor mainEditor,
                              @NotNull MarkdownPreviewFileEditor secondEditor) {
     super(mainEditor, secondEditor);
