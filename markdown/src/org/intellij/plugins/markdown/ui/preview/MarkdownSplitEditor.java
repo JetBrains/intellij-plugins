@@ -4,10 +4,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.CaretAdapter;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.pom.Navigatable;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
-public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPreviewFileEditor> {
+public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPreviewFileEditor> implements TextEditor {
   public MarkdownSplitEditor(@NotNull TextEditor mainEditor,
                              @NotNull MarkdownPreviewFileEditor secondEditor) {
     super(mainEditor, secondEditor);
@@ -19,6 +20,22 @@ public class MarkdownSplitEditor extends SplitFileEditor<TextEditor, MarkdownPre
   @Override
   public String getName() {
     return "Markdown split editor";
+  }
+
+  @NotNull
+  @Override
+  public Editor getEditor() {
+    return getMainEditor().getEditor();
+  }
+
+  @Override
+  public boolean canNavigateTo(@NotNull Navigatable navigatable) {
+    return getMainEditor().canNavigateTo(navigatable);
+  }
+
+  @Override
+  public void navigateTo(@NotNull Navigatable navigatable) {
+    getMainEditor().navigateTo(navigatable);
   }
 
   private static class MyCaretListener extends CaretAdapter {
