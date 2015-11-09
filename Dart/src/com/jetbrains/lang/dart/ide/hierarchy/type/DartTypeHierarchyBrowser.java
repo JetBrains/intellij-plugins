@@ -71,13 +71,16 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
 
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull final String typeName, @NotNull final PsiElement psiElement) {
     if (SUPERTYPES_HIERARCHY_TYPE.equals(typeName)) {
-      return new DartSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
+      //return new DartSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
+      return new DartServerSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
     }
     else if (SUBTYPES_HIERARCHY_TYPE.equals(typeName)) {
-      return new DartSubtypesHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
+      //return new DartSubtypesHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
+      return new DartServerSubtypesHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
     else if (TYPE_HIERARCHY_TYPE.equals(typeName)) {
-      return new DartTypeHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
+      //return new DartTypeHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
+      return new DartServerTypeHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
     else {
       LOG.error("unexpected type: " + typeName);
