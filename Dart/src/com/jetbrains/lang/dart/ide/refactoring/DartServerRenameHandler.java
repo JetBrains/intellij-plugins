@@ -70,7 +70,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
     if (editor == null) return false;
 
     final VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-    if (!DartAnalysisServerService.isLocalDartOrHtmlFile(file)) return false;
+    if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return false;
 
     final PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     if (psiElement != null) {
