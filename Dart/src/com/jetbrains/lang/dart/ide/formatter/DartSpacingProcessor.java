@@ -876,8 +876,9 @@ public class DartSpacingProcessor {
 
   private static boolean hasMultilineFunctionArgument(ASTNode node) {
     ASTNode args = node.getLastChildNode();
-    args = args.getFirstChildNode().getTreeNext();
-    if (args.getElementType() == ARGUMENT_LIST) {
+    ASTNode first = args == null ? null : args.getFirstChildNode();
+    args = first == null ? null : first.getTreeNext();
+    if (args != null && args.getElementType() == ARGUMENT_LIST) {
       ASTNode arg = args.getFirstChildNode();
       int n = 1;
       while (arg != null) {
