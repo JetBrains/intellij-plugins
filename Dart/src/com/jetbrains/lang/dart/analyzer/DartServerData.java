@@ -206,7 +206,7 @@ public class DartServerData {
 
   void onDocumentChanged(@NotNull final DocumentEvent e) {
     final VirtualFile file = FileDocumentManager.getInstance().getFile(e.getDocument());
-    if (!DartAnalysisServerService.isLocalDartOrHtmlFile(file)) return;
+    if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return;
 
     final String filePath = file.getPath();
     myFilePathsWithUnsentChanges.add(filePath);

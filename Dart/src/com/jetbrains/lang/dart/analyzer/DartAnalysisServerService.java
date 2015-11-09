@@ -246,7 +246,7 @@ public class DartAnalysisServerService {
       myServerData.onDocumentChanged(e);
 
       final VirtualFile file = FileDocumentManager.getInstance().getFile(e.getDocument());
-      if (isLocalDartOrHtmlFile(file)) {
+      if (isLocalAnalyzableFile(file)) {
         for (Project project : myRootsHandler.getTrackedProjects()) {
           for (VirtualFile fileInEditor : FileEditorManager.getInstance(project).getSelectedFiles()) {
             if (fileInEditor.equals(file)) {
@@ -426,21 +426,21 @@ public class DartAnalysisServerService {
             DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
           }
 
-          if (isLocalDartOrHtmlFile(file)) {
+          if (isLocalAnalyzableFile(file)) {
             updateVisibleFiles();
           }
         }
 
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-          if (isLocalDartOrHtmlFile(event.getOldFile()) || isLocalDartOrHtmlFile(event.getNewFile())) {
+          if (isLocalAnalyzableFile(event.getOldFile()) || isLocalAnalyzableFile(event.getNewFile())) {
             updateVisibleFiles();
           }
         }
 
         @Override
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-          if (isLocalDartOrHtmlFile(file)) {
+          if (isLocalAnalyzableFile(file)) {
             // file could be opened in more than one editor, so this check is needed
             for (Project project : myRootsHandler.getTrackedProjects()) {
               if (FileEditorManager.getInstance(project).getSelectedEditor(file) == null) {
@@ -495,7 +495,7 @@ public class DartAnalysisServerService {
 
       for (Project project : myRootsHandler.getTrackedProjects()) {
         for (VirtualFile file : FileEditorManager.getInstance(project).getSelectedFiles()) {
-          if (file.isInLocalFileSystem() && isLocalDartOrHtmlFile(file)) {
+          if (isLocalAnalyzableFile(file)) {
             newVisibleFiles.add(FileUtil.toSystemDependentName(file.getPath()));
           }
         }
@@ -510,9 +510,15 @@ public class DartAnalysisServerService {
     }
   }
 
+  /**
+   * Return true if the given file can be analyzed by Dart Analysis Server.
+   */
   @Contract("null->false")
-  public static boolean isLocalDartOrHtmlFile(@Nullable final VirtualFile file) {
-    return file != null && file.isInLocalFileSystem() && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file));
+  public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
+    if (file != null && file.isInLocalFileSystem()) {
+      return file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file) || file.getName().equals(".analysis_options");
+    }
+    return false;
   }
 
   public void updateFilesContent() {
@@ -549,7 +555,7 @@ public class DartAnalysisServerService {
 
       for (Document document : documents) {
         final VirtualFile file = fileDocumentManager.getFile(document);
-        if (isLocalDartOrHtmlFile(file)) {
+        if (isLocalAnalyzableFile(file)) {
           oldTrackedFiles.remove(file.getPath());
 
           final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
