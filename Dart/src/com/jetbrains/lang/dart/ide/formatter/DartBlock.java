@@ -134,7 +134,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     }
     if (myParent instanceof DartBlock && ((DartBlock)myParent).isIncomplete()) {
       ASTNode child = myNode.getFirstChildNode();
-      if (child == null || !(child.getElementType() == OPEN_QUOTE && child.getText().length() == 3)) {
+      if (child == null || !(child.getElementType() == OPEN_QUOTE && child.getTextLength() == 3)) {
         return new ChildAttributes(Indent.getContinuationIndent(), null);
       }
     }
