@@ -1,0 +1,7 @@
+<node text="Object (dart.core)">
+  <node text="B (lib)" base="true">
+    <node text="D (lib)"/>
+    <node text="C (lib)"/>
+    <node text="E (lib)"/>
+  </node>
+</node>

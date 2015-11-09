@@ -9,12 +9,14 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartComponentName;
 import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -48,7 +50,9 @@ public class DartHierarchyUtil {
   @NotNull
   public static List<TypeHierarchyItem> getTypeHierarchyItems(@NotNull DartClass dartClass) {
     final VirtualFile file = dartClass.getContainingFile().getVirtualFile();
-    final int nameOffset = dartClass.getTextRange().getStartOffset();
-    return DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, nameOffset, false);
+    final DartComponentName name = dartClass.getComponentName();
+    if (name == null) return Collections.emptyList();
+
+    return DartAnalysisServerService.getInstance().search_getTypeHierarchy(file, name.getTextRange().getStartOffset(), false);
   }
 }

@@ -41,11 +41,13 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
   @NotNull
   protected final Object[] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
     final DartClass dartClass = ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();
-    if (dartClass == null) {
+    if (dartClass == null || DartResolveUtil.OBJECT.equals(dartClass.getName())) {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     final List<TypeHierarchyItem> items = getTypeHierarchyItems(dartClass);
+    if (items.isEmpty()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+
     addSuperClassHierarchy(Sets.<TypeHierarchyItem>newHashSet(), myProject, items, items.get(0), descriptor);
 
     return descriptor.getCachedChildren();
