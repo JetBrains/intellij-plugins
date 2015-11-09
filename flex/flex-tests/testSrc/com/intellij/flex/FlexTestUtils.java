@@ -1,42 +1,71 @@
 package com.intellij.flex;
 
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
+import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
+import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
+import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
+import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
-import com.intellij.openapi.roots.JavadocOrderRootType;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FactoryMap;
+import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class FlexTestUtils {
 
@@ -74,7 +103,7 @@ public class FlexTestUtils {
       Module[] modules = ModuleManager.getInstance(project).getModules();
 
       for (Module module : modules) {
-        JSTestUtils.addFlexLibrary(false, module, "Flex Lib", true, getTestDataPath("flexlib"), "flexlib.swc", null, null);
+        addFlexLibrary(false, module, "Flex Lib", true, getTestDataPath("flexlib"), "flexlib.swc", null, null);
       }
     }
   }
@@ -142,7 +171,7 @@ public class FlexTestUtils {
       final Sdk sdk = createSdk(flexSdkRootPath, sdkVersion);
 
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-        JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
+        modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
           public void consume(final ModifiableFlexBuildConfiguration bc) {
             bc.setNature(new BuildConfigurationNature(air ? TargetPlatform.Desktop : TargetPlatform.Web, false, OutputType.Application));
             bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdk.getName()));
@@ -202,5 +231,440 @@ public class FlexTestUtils {
     modificator.addRoot(sdk.getHomeDirectory(), OrderRootType.CLASSES);
     modificator.commitChanges();
     return sdk;
+  }
+
+  public static void setSdk(final ModifiableFlexBuildConfiguration bc, final Sdk sdk) {
+    bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdk.getName()));
+    bc.getDependencies().setTargetPlayer(FlexCommonUtils.getMaximumTargetPlayer(sdk.getHomePath()));
+  }
+
+  public static Module createModule(Project project, final String moduleName, final VirtualFile moduleContent) throws IOException {
+    AccessToken writeAction = WriteAction.start();
+    try {
+
+      final ModifiableModuleModel m1 = ModuleManager.getInstance(project).getModifiableModel();
+      final VirtualFile moduleDir = project.getBaseDir().createChildDirectory(JSTestUtils.class, moduleName);
+      final Module result = m1.newModule(moduleDir.getPath() + "/" + moduleName + ".iml", FlexModuleType.getInstance().getId());
+      m1.commit();
+
+      if (moduleContent != null) {
+        VfsUtil.copyDirectory(JSTestUtils.class, moduleContent, moduleDir, null);
+
+        PsiTestUtil.addSourceRoot(result, moduleDir);
+      }
+      return result;
+    }
+    finally {
+      writeAction.finish();
+    }
+  }
+
+  public static void modifyBuildConfiguration(final Module module, final Consumer<ModifiableFlexBuildConfiguration> modifier) {
+    modifyConfigs(module.getProject(), new Consumer<FlexProjectConfigurationEditor>() {
+      @Override
+      public void consume(final FlexProjectConfigurationEditor editor) {
+        modifier.consume(editor.getConfigurations(module)[0]);
+      }
+    });
+  }
+
+  public static void modifyConfigs(Project project, final Consumer<FlexProjectConfigurationEditor> modifier) {
+    Module[] modules = ModuleManager.getInstance(project).getModules();
+    final FlexProjectConfigurationEditor editor = createConfigEditor(modules);
+    try {
+      modifier.consume(editor);
+      editor.commit();
+    }
+    catch (ConfigurationException ex) {
+      throw new RuntimeException(ex);
+    }
+    finally {
+      Disposer.dispose(editor);
+    }
+  }
+
+  public static FlexProjectConfigurationEditor createConfigEditor(final Module... modules) {
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    final Map<Module, ModifiableRootModel> models = new FactoryMap<Module, ModifiableRootModel>() {
+      @Override
+      protected ModifiableRootModel create(final Module module) {
+        final ModifiableRootModel result = ModuleRootManager.getInstance(module).getModifiableModel();
+        Disposer.register(module, new Disposable() {
+          @Override
+          public void dispose() {
+            if (!result.isDisposed()) {
+              result.dispose();
+            }
+          }
+        });
+        return result;
+      }
+    };
+
+    return new FlexProjectConfigurationEditor(modules[0].getProject(), new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
+      @Override
+      public Module[] getModules() {
+        return modules;
+      }
+
+      @Override
+      public ModifiableRootModel getModuleModifiableModel(Module module) {
+        return models.get(module);
+      }
+
+      @Override
+      public void addListener(FlexBCConfigurator.Listener listener, Disposable parentDisposable) {
+        // ignore
+      }
+
+      @Override
+      public void commitModifiableModels() throws ConfigurationException {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
+          public void run() {
+            for (ModifiableRootModel model : models.values()) {
+              if (model.isChanged()) {
+                model.commit();
+              }
+            }
+          }
+        });
+      }
+
+      public Library findSourceLibraryForLiveName(final String name, final String level) {
+        return findSourceLibrary(name, level);
+      }
+
+      public Library findSourceLibrary(final String name, final String level) {
+        return getLibrariesTable(level).getLibraryByName(name);
+      }
+
+      private LibraryTable getLibrariesTable(final String level) {
+        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+          return ApplicationLibraryTable.getApplicationTable();
+        }
+        else {
+          assert LibraryTablesRegistrar.PROJECT_LEVEL.equals(level);
+          return ProjectLibraryTable.getInstance(modules[0].getProject());
+        }
+      }
+    });
+  }
+
+  public static void addFlexLibrary(final boolean isProjectLibrary,
+                                    final Module module,
+                                    final String libraryName,
+                                    final boolean overwrite,
+                                    String libraryRoot,
+                                    @Nullable String classesPath,
+                                    @Nullable String sourcesPath,
+                                    @Nullable String asdocPath,
+                                    final LinkageType linkageType,
+                                    @Nullable VirtualFile copyTo) {
+    if (copyTo != null) {
+      if (classesPath != null) {
+        classesPath = copyTo(copyTo, libraryRoot + classesPath).getName();
+      }
+      if (sourcesPath != null) {
+        sourcesPath = copyTo(copyTo, libraryRoot + sourcesPath).getName();
+      }
+      if (asdocPath != null) {
+        asdocPath = copyTo(copyTo, libraryRoot + asdocPath).getName();
+      }
+      libraryRoot = copyTo.getPath();
+    }
+
+
+    ModifiableRootModel moduleModifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    AccessToken l = WriteAction.start();
+    try {
+      // first let's create Flex library
+      final LibraryTable libraryTable;
+      if (isProjectLibrary) {
+        libraryTable = ProjectLibraryTable.getInstance(module.getProject());
+      }
+      else {
+        libraryTable = moduleModifiableModel.getModuleLibraryTable();
+      }
+
+      Library library = libraryTable.getLibraryByName(libraryName);
+      if (library != null && overwrite) {
+        libraryTable.removeLibrary(library);
+        library = null;
+      }
+
+      if (library == null) {
+        LibraryTable.ModifiableModel libraryTableModifiableModel = libraryTable.getModifiableModel();
+        library = libraryTableModifiableModel.createLibrary(libraryName, FlexLibraryType.FLEX_LIBRARY);
+
+        LibraryEx.ModifiableModelEx libraryModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+        libraryModel.setProperties(new FlexLibraryProperties(FlexLibraryIdGenerator.generateId()));
+        addRootIfNotNull(libraryRoot, classesPath, libraryModel, OrderRootType.CLASSES, ".swc", ".zip");
+        addRootIfNotNull(libraryRoot, sourcesPath, libraryModel, OrderRootType.SOURCES, ".zip");
+        addRootIfNotNull(libraryRoot, asdocPath, libraryModel, JavadocOrderRootType.getInstance(), ".zip");
+        libraryModel.commit();
+        libraryTableModifiableModel.commit();
+      }
+
+      moduleModifiableModel.commit();
+
+      // then add Flex library to build configuration dependency
+
+      final String committedLibraryId;
+      if (isProjectLibrary) {
+        committedLibraryId =
+          FlexProjectRootsUtil.getLibraryId(ProjectLibraryTable.getInstance(module.getProject()).getLibraryByName(libraryName));
+      }
+      else {
+        final OrderEntry
+          entry = ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(), new Condition<OrderEntry>() {
+          @Override
+          public boolean value(final OrderEntry orderEntry) {
+            return orderEntry instanceof LibraryOrderEntry && ((LibraryOrderEntry)orderEntry).getLibraryName().equals(libraryName);
+          }
+        });
+        committedLibraryId = FlexProjectRootsUtil.getLibraryId(((LibraryOrderEntry)entry).getLibrary());
+      }
+
+      if (ModuleType.get(module) == FlexModuleType.getInstance()) {
+        modifyConfigs(module.getProject(), new Consumer<FlexProjectConfigurationEditor>() {
+          @Override
+          public void consume(final FlexProjectConfigurationEditor e) {
+            final ModifiableFlexBuildConfiguration[] bcs = e.getConfigurations(module);
+            final ModifiableDependencyEntry dependencyEntry;
+            if (isProjectLibrary) {
+              dependencyEntry = e.createSharedLibraryEntry(bcs[0].getDependencies(), libraryName, LibraryTablesRegistrar.PROJECT_LEVEL);
+            }
+            else {
+              dependencyEntry = e.createModuleLibraryEntry(bcs[0].getDependencies(), committedLibraryId);
+            }
+            dependencyEntry.getDependencyType().setLinkageType(linkageType);
+            bcs[0].getDependencies().getModifiableEntries().add(dependencyEntry);
+          }
+        });
+      }
+    }
+    finally {
+      if (!moduleModifiableModel.isDisposed()) {
+        moduleModifiableModel.dispose();
+      }
+      l.finish();
+    }
+  }
+
+  private static VirtualFile copyTo(VirtualFile to, final String path) {
+    try {
+      VirtualFile f = LocalFileSystem.getInstance().findFileByPath(path);
+      if (f.isDirectory()) {
+        VirtualFile result = to.createChildDirectory(JSTestUtils.class, f.getName());
+        VfsUtil.copyDirectory(JSTestUtils.class, f, result, null);
+        return result;
+      }
+      else {
+        return VfsUtilCore.copyFile(JSTestUtils.class, f, to);
+      }
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static void addRootIfNotNull(@NotNull final String rootPath,
+                                       @Nullable String relativePath,
+                                       final Library.ModifiableModel libraryModel,
+                                       final OrderRootType orderRootType, final String... archiveSuffices) {
+    if (relativePath == null) {
+      return;
+    }
+
+    if (!rootPath.endsWith("/") && !relativePath.startsWith("/")) {
+      relativePath = "/" + relativePath;
+    }
+
+    VirtualFile root = LocalFileSystem.getInstance().findFileByPath(rootPath + relativePath);
+    assert root != null : "path '" + rootPath + relativePath + "' not found";
+
+    boolean archive = false;
+    for (String suffix : archiveSuffices) {
+      if (relativePath.endsWith(suffix)) {
+        archive = true;
+        break;
+      }
+    }
+    if (archive) {
+      root = JarFileSystem.getInstance().getJarRootForLocalFile(root);
+      assert root != null;
+    }
+    libraryModel.addRoot(root, orderRootType);
+  }
+
+  public static void addFlexLibrary(final boolean isProjectLibrary,
+                                    final Module module,
+                                    final String libraryName,
+                                    final boolean overwrite,
+                                    final String libraryRoot,
+                                    @Nullable final String classesPath,
+                                    @Nullable final String sourcesPath,
+                                    @Nullable final String asdocPath) {
+    addFlexLibrary(isProjectLibrary, module, libraryName, overwrite, libraryRoot, classesPath, sourcesPath, asdocPath,
+                   DependencyType.DEFAULT_LINKAGE, null);
+  }
+
+  public static void addFlexLibrary(final boolean isProjectLibrary,
+                                    final Module module,
+                                    final String libraryName,
+                                    final boolean overwrite,
+                                    String libraryRoot,
+                                    @Nullable String classesPath,
+                                    @Nullable String sourcesPath,
+                                    @Nullable String asdocPath,
+                                    final LinkageType linkageType) throws IOException {
+    addFlexLibrary(isProjectLibrary, module, libraryName, overwrite, libraryRoot, classesPath, sourcesPath, asdocPath, linkageType, null);
+  }
+
+  public static SdkModificator getFlexSdkModificator(final Module module) {
+    return FlexUtils.getSdkForActiveBC(module).getSdkModificator();
+  }
+
+  public static void addFlexModuleDependency(final Module dependent, final Module dependency) {
+    new WriteCommandAction.Simple(null) {
+      public void run() throws ConfigurationException {
+        modifyConfigs(dependency.getProject(), new Consumer<FlexProjectConfigurationEditor>() {
+          @Override
+          public void consume(final FlexProjectConfigurationEditor editor) {
+            final ModifiableFlexBuildConfiguration dependentBc = editor.getConfigurations(dependent)[0];
+            final ModifiableFlexBuildConfiguration dependencyBc = editor.getConfigurations(dependency)[0];
+            dependencyBc.setOutputType(OutputType.Library);
+            final ModifiableBuildConfigurationEntry dependencyEntry =
+              editor.createBcEntry(dependentBc.getDependencies(), dependencyBc, null);
+            dependentBc.getDependencies().getModifiableEntries().add(dependencyEntry);
+          }
+        });
+      }
+    }.execute().throwException();
+  }
+
+  public static void checkFlashRunConfig(final RunManagerEx runManager,
+                                         final Module module,
+                                         final String configName,
+                                         final String className) {
+    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(FlashRunConfigurationType.getInstance());
+    RunnerAndConfigurationSettings settingsToCheck = null;
+    for (RunnerAndConfigurationSettings setting : settings) {
+      if (configName.equals(setting.getName())) {
+        settingsToCheck = setting;
+        break;
+      }
+    }
+
+    Assert.assertNotNull("Run configuration not found: " + configName, settingsToCheck);
+    final FlashRunnerParameters params = ((FlashRunConfiguration)settingsToCheck.getConfiguration()).getRunnerParameters();
+    Assert.assertEquals(className, params.getOverriddenMainClass());
+    Assert.assertEquals(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getName(), params.getBCName());
+  }
+
+  public static void checkFlexUnitRunConfig(final RunManagerEx runManager,
+                                            final Module module, final String configName,
+                                            final String packageName,
+                                            final String className,
+                                            final String methodName) {
+    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(
+      FlexUnitRunConfigurationType.getInstance());
+    RunnerAndConfigurationSettings settingsToCheck = null;
+    for (RunnerAndConfigurationSettings setting : settings) {
+      if (configName.equals(setting.getName())) {
+        settingsToCheck = setting;
+        break;
+      }
+    }
+
+    Assert.assertNotNull("Run configuration not found: " + configName, settingsToCheck);
+    final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)settingsToCheck.getConfiguration()).getRunnerParameters();
+    Assert.assertEquals(packageName, params.getPackageName());
+    Assert.assertEquals(className, params.getClassName());
+    Assert.assertEquals(methodName, params.getMethodName());
+    Assert.assertEquals(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getName(), params.getBCName());
+  }
+
+  public static void createFlashRunConfig(final RunManagerEx runManager,
+                                          final Module module, final String configName, final String className, boolean generatedName) {
+    final RunnerAndConfigurationSettings settings = runManager.createRunConfiguration(configName, FlashRunConfigurationType.getFactory());
+    runManager.addConfiguration(settings, false);
+
+    final FlashRunnerParameters params = ((FlashRunConfiguration)settings.getConfiguration()).getRunnerParameters();
+    params.setModuleName(module.getName());
+    params.setBCName(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getName());
+    params.setOverrideMainClass(true);
+    params.setOverriddenMainClass(className);
+
+    if (generatedName) {
+      ((FlashRunConfiguration)settings.getConfiguration()).setGeneratedName();
+    }
+  }
+
+  public static void createFlexUnitRunConfig(final RunManagerEx runManager,
+                                             final String configName,
+                                             final Module module,
+                                             final FlexUnitRunnerParameters.Scope scope,
+                                             final String packageName,
+                                             final String className,
+                                             final String methodName,
+                                             boolean generatedName) {
+    final RunnerAndConfigurationSettings settings =
+      runManager.createRunConfiguration(configName, FlexUnitRunConfigurationType.getFactory());
+    runManager.addConfiguration(settings, false);
+
+    final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)settings.getConfiguration()).getRunnerParameters();
+    params.setModuleName(module.getName());
+    params.setBCName(FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getName());
+    params.setScope(scope);
+    params.setPackageName(packageName);
+    params.setClassName(className);
+    params.setMethodName(methodName);
+
+    if (generatedName) {
+      ((FlexUnitRunConfiguration)settings.getConfiguration()).setGeneratedName();
+    }
+  }
+
+  public static void setupCustomSdk(final Module module,
+                                    final VirtualFile swc,
+                                    @Nullable final VirtualFile srcRoot,
+                                    @Nullable final VirtualFile asdocRoot) {
+    final AccessToken accessToken = WriteAction.start();
+    try {
+      final SdkModificator modificator = getFlexSdkModificator(module);
+      modificator.removeAllRoots();
+      modificator.addRoot(swc, OrderRootType.CLASSES);
+      if (srcRoot != null) {
+        modificator.addRoot(srcRoot, OrderRootType.SOURCES);
+      }
+      if (asdocRoot != null) {
+        modificator.addRoot(asdocRoot, JavadocOrderRootType.getInstance());
+      }
+      modificator.commitChanges();
+    }
+    finally {
+      accessToken.finish();
+    }
+  }
+
+  public static void addFlexUnitLib(Class clazz, String method, Module module,
+                                    String libRootPath, String flexUnit1Swc, String flexUnit4Swc) {
+    if (JSTestUtils.testMethodHasOption(clazz, method, JSTestOption.WithFlexUnit1)) {
+      addLibrary(module, "FlexUnit1", libRootPath, flexUnit1Swc, null, null);
+    }
+    if (JSTestUtils.testMethodHasOption(clazz, method, JSTestOption.WithFlexUnit4)) {
+      addLibrary(module, "FlexUnit4", libRootPath, flexUnit4Swc, null, null);
+    }
+  }
+
+  public static void addLibrary(final Module module,
+                                @NotNull final String libraryName,
+                                final String path,
+                                String swcFileName,
+                                @Nullable final String sourcesZipFileName,
+                                @Nullable final String asdocRoot) {
+    addFlexLibrary(false, module, libraryName, true, path, swcFileName, sourcesZipFileName, asdocRoot);
   }
 }

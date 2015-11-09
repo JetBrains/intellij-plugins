@@ -169,9 +169,9 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-        JSTestUtils.addLibrary(myModule, "LibWithSources", getTestDataPath() + BASE_PATH, "TestLib2.swc", sources, null);
-        JSTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, "TestLib3.swc", null, "TestLibAsdoc.zip");
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "LibWithSources", getTestDataPath() + BASE_PATH, "TestLib2.swc", sources, null);
+        FlexTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, "TestLib3.swc", null, "TestLibAsdoc.zip");
       }
     };
 
@@ -185,8 +185,8 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
-        JSTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, libWithAsDocSwc, null, "TestLibAsdoc.zip");
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "LibWithAsdoc", getTestDataPath() + BASE_PATH, libWithAsDocSwc, null, "TestLibAsdoc.zip");
       }
     };
 
@@ -199,7 +199,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
       }
     };
 
@@ -214,12 +214,12 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
 
-    JSTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
+    FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
 
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
       }
     };
 
@@ -234,12 +234,12 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
 
-    JSTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
+    FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
 
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
       }
     };
 
@@ -253,8 +253,8 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib1", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
-        JSTestUtils.addLibrary(myModule, "Lib2", getTestDataPath() + BASE_PATH, "StyleableLib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib1", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
+        FlexTestUtils.addLibrary(myModule, "Lib2", getTestDataPath() + BASE_PATH, "StyleableLib1.swc", null, null);
       }
     };
     final VirtualFile styleableFile = getFile(sources + "!/foo/Styleable1.as");
@@ -318,7 +318,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "LibWithCssFile.swc", "LibWithCssFile_src.zip", null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "LibWithCssFile.swc", "LibWithCssFile_src.zip", null);
       }
     };
     configureByFile(BASE_PATH + "CssEmptyFile.css");
@@ -355,7 +355,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "StyleableLib.swc", sources, null);
       }
     };
     final VirtualFile includedFile = getFile(sources + expectedSourceClass);
@@ -380,7 +380,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
         final VirtualFile sdkSrc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + testName + "_sdk_src");
-        final SdkModificator sdkModificator = JSTestUtils.getFlexSdkModificator(myModule);
+        final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(myModule);
         sdkModificator.addRoot(sdkSrc, OrderRootType.SOURCES);
         sdkModificator.commitChanges();
       }
@@ -404,7 +404,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils.addFlexLibrary(false, myModule, "foo", true, getTestDataPath() + BASE_PATH, testName + ".swc", testName + ".zip", null);
+        FlexTestUtils.addFlexLibrary(false, myModule, "foo", true, getTestDataPath() + BASE_PATH, testName + ".swc", testName + ".zip", null);
       }
     };
 

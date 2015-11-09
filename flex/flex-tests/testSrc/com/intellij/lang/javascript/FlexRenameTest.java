@@ -421,87 +421,87 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnMethodRename() throws Exception {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    JSTestUtils
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "", "SomeTest",
                                "testSomething",
                                true);
     doTest("testAnotherThing", "as");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeTest.testAnotherThing()", "", "SomeTest", "testAnotherThing");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeTest.testAnotherThing()", "", "SomeTest", "testAnotherThing");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConfigUpdatedOnClassRename() throws Exception {
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.setMainClass("foo.bar.SomeClass");
       }
     });
 
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    JSTestUtils.createFlexUnitRunConfig(runManager, "Own name", myModule, FlexUnitRunnerParameters.Scope.Method, "", "foo.bar.SomeClass",
-                                        "testSomething",
-                                        false);
-    JSTestUtils
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "Own name", myModule, FlexUnitRunnerParameters.Scope.Method, "", "foo.bar.SomeClass",
+                                          "testSomething",
+                                          false);
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "",
                                true);
-    JSTestUtils
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "Same class short name", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.SomeClass", "",
                                false);
-    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
 
     doTest("Renamed", "as");
 
     assertEquals("foo.bar.Renamed", FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getMainClass());
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Own name", "", "foo.bar.Renamed", "testSomething");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Renamed", "", "foo.bar.Renamed", "");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Same class short name", "", "foo.SomeClass", "");
-    JSTestUtils.checkFlashRunConfig(runManager, myModule, "Renamed", "foo.bar.Renamed");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Own name", "", "foo.bar.Renamed", "testSomething");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Renamed", "", "foo.bar.Renamed", "");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Same class short name", "", "foo.SomeClass", "");
+    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "Renamed", "foo.bar.Renamed");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConfigUpdatedOnPackageRename() throws Exception {
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.setMainClass("foo.bar.SomeClass");
       }
     });
 
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    JSTestUtils.createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
-                                        "foo.bar.SomeClass", "testSomething",
-                                        true);
-    JSTestUtils
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
+                                          "foo.bar.SomeClass", "testSomething",
+                                          true);
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "",
                                true);
-    JSTestUtils.createFlexUnitRunConfig(runManager, "foo.bar", myModule, FlexUnitRunnerParameters.Scope.Package, "foo.bar", "", "", true);
-    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "foo.bar", myModule, FlexUnitRunnerParameters.Scope.Package, "foo.bar", "", "", true);
+    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
 
     doTest("renamed", "as");
 
     assertEquals("foo.renamed.SomeClass", FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getMainClass());
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "foo.renamed.SomeClass", "testSomething");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "foo.renamed.SomeClass", "");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "foo.renamed", "foo.renamed", "", "");
-    JSTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "foo.renamed.SomeClass");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "foo.renamed.SomeClass", "testSomething");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "foo.renamed.SomeClass", "");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "foo.renamed", "foo.renamed", "", "");
+    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "foo.renamed.SomeClass");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnBcRename() throws Exception {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    JSTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
-                                        "SomeTest", "testSomething",
-                                        true);
-    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
+                                          "SomeTest", "testSomething",
+                                          true);
+    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
     final String newBcName = "Abcde";
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       @Override
       public void consume(final ModifiableFlexBuildConfiguration configuration) {
         configuration.setName(newBcName);
       }
     });
     assertEquals(newBcName, FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getName());
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeTest.testSomething()", "", "SomeTest", "testSomething");
-    JSTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeTest.testSomething()", "", "SomeTest", "testSomething");
+    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass");
   }
 
   public void testLiteralReference1() throws Exception {

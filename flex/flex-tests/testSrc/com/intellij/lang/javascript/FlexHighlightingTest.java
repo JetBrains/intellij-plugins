@@ -116,7 +116,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
+public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls static final String BASE_PATH = "flex_highlighting";
 
   protected Runnable myAfterCommitRunnable = null;
@@ -224,7 +224,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
+        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
       }
     };
     doTestFor(true, getTestName(false) + ".css");
@@ -243,7 +243,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
+        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", "LibForCss.swc", "LibForCss_src.zip", null);
       }
     };
     defaultTest();
@@ -356,7 +356,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "lib", basePath, libFileName, null, null);
+        FlexTestUtils.addLibrary(myModule, "lib", basePath, libFileName, null, null);
       }
     };
 
@@ -1183,8 +1183,8 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   protected void doCommitModel(@NotNull final ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
     FlexTestUtils.setupFlexLib(myProject, getClass(), getTestName(false));
-    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), FlexTestUtils.getTestDataPath("flexUnit"),
-                               FlexUnitLibs.FLEX_UNIT_0_9_SWC, FlexUnitLibs.FLEX_UNIT_4_SWC);
+    FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), FlexTestUtils.getTestDataPath("flexUnit"),
+                                 FlexUnitLibs.FLEX_UNIT_0_9_SWC, FlexUnitLibs.FLEX_UNIT_4_SWC);
     if (myAfterCommitRunnable != null) {
       myAfterCommitRunnable.run();
     }
@@ -1250,7 +1250,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   public void testNamespacesAndManifestFiles() throws Exception {
     final String name = getTestName(false);
 
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
         bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
@@ -1264,7 +1264,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   public void testNamespacesAndManifestsFromCustomConfigFile() throws Exception {
     final String testName = getTestName(false);
 
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         final String path = getTestDataPath() + "/" + getBasePath() + "/" + testName + "_custom_config.xml";
         bc.getCompilerOptions().setAdditionalConfigFilePath(path);
@@ -1283,7 +1283,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   public void testNamespacesFromSdkSwcs() throws Exception {
     final String name = getTestName(false);
 
-    final SdkModificator sdkModificator = JSTestUtils.getFlexSdkModificator(getModule());
+    final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(getModule());
     final VirtualFile swcFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + name + ".swc");
     sdkModificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
     sdkModificator.commitChanges();
@@ -1340,7 +1340,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
 
     final VirtualFile swcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/" + testName + ".swc");
-    final SdkModificator modificator = JSTestUtils.getFlexSdkModificator(getModule());
+    final SdkModificator modificator = FlexTestUtils.getFlexSdkModificator(getModule());
     modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
     modificator.commitChanges();
 
@@ -1390,7 +1390,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", testName + "/" + testName + ".swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", testName + "/" + testName + ".swc", null, null);
         replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
       }
     };
@@ -1443,7 +1443,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     final VirtualFile srcFile = LocalFileSystem.getInstance()
       .findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/sdk_src/" + testName + "_sdk_src.as");
 
-    JSTestUtils.setupCustomSdk(myModule, swcFile, srcFile.getParent(), null);
+    FlexTestUtils.setupCustomSdk(myModule, swcFile, srcFile.getParent(), null);
 
     setActiveEditor(createEditor(srcFile));
     doDoTest(true, false, true);
@@ -1460,7 +1460,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", testName + ".zip", null);
+        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", testName + ".zip", null);
       }
     };
     configureByFile(getBasePath() + "/" + testName + ".as"); // file not used; we need just to have content root configured
@@ -1476,7 +1476,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
                       null);
       }
@@ -1492,7 +1492,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     final VirtualFile srcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "/sdk_src/");
 
-    final SdkModificator modificator = JSTestUtils.getFlexSdkModificator(myModule);
+    final SdkModificator modificator = FlexTestUtils.getFlexSdkModificator(myModule);
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
     modificator.commitChanges();
 
@@ -1500,7 +1500,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testComponentsFromLibsResolvedWhenSdkNotSet() throws Exception {
-    JSTestUtils.addFlexLibrary(false, myModule, "lib", true, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null, null);
+    FlexTestUtils.addFlexLibrary(false, myModule, "lib", true, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null, null);
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -1540,7 +1540,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationDefinitions() throws Exception {
     final String testName = getTestName(false);
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.getCompilerOptions()
           .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + testName + "_custom_config.xml");
@@ -1727,7 +1727,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", null, null);
       }
     };
@@ -1781,7 +1781,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
       }
     };
@@ -1902,7 +1902,7 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
         final Module otherModule =
           createModuleFromTestData(getTestDataPath() + getBasePath() + "/" + testName + "_other_module", "OtherModule",
                                    FlexModuleType.getInstance(), true);
-        JSTestUtils.addFlexModuleDependency(myModule, otherModule);
+        FlexTestUtils.addFlexModuleDependency(myModule, otherModule);
         Disposer.register(getTestRootDisposable(), otherModule);
       }
     }.execute().throwException();
@@ -1915,13 +1915,13 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib_1.swc", testName + "_lib_1_src.zip",
                       null);
       }
     };
     doTestFor(true, testName + ".as");
-    JSTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib_2.swc", null, null);
+    FlexTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib_2.swc", null, null);
 
     final List<HighlightInfo> highlightingInfo = filterUnwantedInfos(doHighlighting(), this);
     assertEquals(1, highlightingInfo.size());
@@ -1937,8 +1937,8 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib1.swc", null, null);
-        JSTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib2.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib1.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "lib_2", getTestDataPath() + getBasePath() + "/", testName + "_lib2.swc", null, null);
       }
     };
     doTestFor(true, testName + ".as");
@@ -2309,16 +2309,16 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
 
     AccessToken writeAction = WriteAction.start();
     try {
-      JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+      FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
         @Override
         public void consume(final FlexProjectConfigurationEditor editor) {
           final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-          JSTestUtils.setSdk(bc1, sdk);
+          FlexTestUtils.setSdk(bc1, sdk);
 
           final ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
           bc2.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
           bc2.setName("2");
-          JSTestUtils.setSdk(bc2, sdk);
+          FlexTestUtils.setSdk(bc2, sdk);
         }
       });
     }
@@ -2376,10 +2376,10 @@ public class FlexHighlightingTest extends JSDaemonAnalyzerTestCase {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     AccessToken writeAction = WriteAction.start();
     try {
-      JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+      FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
         @Override
         public void consume(final ModifiableFlexBuildConfiguration bc) {
-          JSTestUtils.setSdk(bc, sdk);
+          FlexTestUtils.setSdk(bc, sdk);
         }
       });
     }

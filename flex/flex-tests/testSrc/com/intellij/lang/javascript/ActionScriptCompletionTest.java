@@ -1217,14 +1217,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public void testTwoSdks() throws Exception {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
         bc1.setName("1");
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
         ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
         bc2.setName("2");
-        JSTestUtils.setSdk(bc2, sdk46);
+        FlexTestUtils.setSdk(bc2, sdk46);
       }
     });
     final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);

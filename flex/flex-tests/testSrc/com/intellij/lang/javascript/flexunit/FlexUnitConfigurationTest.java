@@ -29,7 +29,7 @@ public class FlexUnitConfigurationTest extends CodeInsightTestCase implements Fl
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
 
-    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
+    FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
   }
 
   @Override

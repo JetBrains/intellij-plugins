@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -99,7 +99,7 @@ public final class DesignerTests {
 
       for (String path : libs) {
         VirtualFile virtualFile = path.charAt(0) != '/' ? getFile("lib", path) : getFile(path);
-        JSTestUtils.addLibrary(module, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
+        FlexTestUtils.addLibrary(module, path, virtualFile.getParent().getPath(), virtualFile.getName(), null, null);
       }
     }
     finally {

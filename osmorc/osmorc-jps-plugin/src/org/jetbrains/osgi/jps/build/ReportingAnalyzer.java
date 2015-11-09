@@ -62,6 +62,11 @@ public class ReportingAnalyzer extends Analyzer {
   }
 
   @Override
+  public boolean isTrace() {
+    return myReporter.isDebugEnabled();
+  }
+
+  @Override
   public void trace(String format, Object... args) {
     myReporter.debug(formatArrays(format, args));
   }

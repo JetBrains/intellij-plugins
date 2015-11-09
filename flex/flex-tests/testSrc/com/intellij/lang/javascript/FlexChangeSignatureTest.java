@@ -212,7 +212,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
       }
     };
     doTest("abc", JSAttributeList.AccessType.PACKAGE_LOCAL, "", new String[]{"bar", "listener"});
@@ -267,7 +267,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
           Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());
           myModulesToDispose.add(module2);
           PsiTestUtil.addSourceRoot(module2, getVirtualFile(root));
-          JSTestUtils.addFlexModuleDependency(module2, myModule);
+          FlexTestUtils.addFlexModuleDependency(module2, myModule);
         }
         finally {
           l.finish();

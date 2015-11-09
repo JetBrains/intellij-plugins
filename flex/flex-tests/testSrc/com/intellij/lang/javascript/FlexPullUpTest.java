@@ -211,7 +211,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
     final VirtualFile contentRoot =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getTestRoot() + getTestName(false) + "/module2");
     PsiTestUtil.addSourceRoot(module2, contentRoot);
-    JSTestUtils.addFlexModuleDependency(myModule, module2);
+    FlexTestUtils.addFlexModuleDependency(myModule, module2);
 
     String[] conflicts = new String[]{"Class A, referenced in method Sub.foo(A), will not be accessible in module module2"};
     doTestConflicts("Sub", "ISuper", DocCommentPolicy.ASIS, conflicts, "foo");

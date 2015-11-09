@@ -49,7 +49,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     final String libraryId = createModuleLibrary();
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(FlexProjectConfigurationEditor configEditor) {
         ModifiableFlexBuildConfiguration[] configurations = configEditor.getConfigurations(myModule);
@@ -68,7 +68,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     final String libraryId = createModuleLibrary();
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(FlexProjectConfigurationEditor configEditor) {
         ModifiableFlexBuildConfiguration[] configurations = configEditor.getConfigurations(myModule);
@@ -87,7 +87,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     final Module module2 = createModule("module2");
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
@@ -99,7 +99,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     assertTrue(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
@@ -111,7 +111,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     final Module module3 = createModule("module3");
     final Module module4 = createModule("module4");
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration m1bc1 = editor.getConfigurations(myModule)[0];

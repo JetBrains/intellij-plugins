@@ -753,7 +753,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletion() throws Exception {
     final String name = getTestName(false);
 
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
         bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
@@ -768,7 +768,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletionWithNamespaceAutoInsert() throws Exception {
     final String name = getTestName(false);
 
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
         bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace",
@@ -851,8 +851,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null,
-                                   null);
+        FlexTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null,
+                                     null);
       }
     };
     doTest("", "as");
@@ -866,7 +866,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
                       null);
       }
@@ -1017,7 +1017,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInAs() throws Exception {
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.getCompilerOptions()
           .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + getTestName(false) + "_custom_config.xml");
@@ -1034,7 +1034,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInMxml() throws Exception {
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.getCompilerOptions() .setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
         bc.getCompilerOptions().setAdditionalOptions("-compiler.define=CONFIG2::defined3,true");
@@ -1372,7 +1372,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexLib, JSTestOption.WithSmartCompletion})
   public void testNonApplicableInheritors() throws Exception {
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
         final ModifiableFlexBuildConfiguration bc2 = editor.copyConfiguration(bc1, BuildConfigurationNature.DEFAULT);
@@ -1457,10 +1457,10 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   public void testVectorObject() throws Exception {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
       }
     });
     final LookupElement[] elements = doTest("", "as");
@@ -1472,8 +1472,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath() + getBasePath(), "playerglobal.swc",
-                                   null, null);
+        FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath() + getBasePath(), "playerglobal.swc",
+                                     null, null);
 
         final PsiElement clazz = ActionScriptClassResolver
           .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));

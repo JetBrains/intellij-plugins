@@ -3,7 +3,8 @@ package com.intellij.lang.javascript.refactoring.inlineFunction;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.module.ModuleType;
 
 /**
  * @author Konstantin.Ulitin
@@ -13,6 +14,11 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("as_refactoring/inlineFunction/");
+  }
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
 
   @Override
@@ -126,7 +132,7 @@ public class FlexInlineFunctionTest extends JSInlineFunctionTestBase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
+        FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
       }
     };
 

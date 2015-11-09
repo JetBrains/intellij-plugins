@@ -440,16 +440,16 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   }
 
   public void testTestDependencies() throws Exception {
-    final Module module2 = JSTestUtils.createModule(myProject, "module2", getVirtualFile("m2"));
-    final Module module3 = JSTestUtils.createModule(myProject, "module3", getVirtualFile("m3"));
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile("m2"));
+    final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile("m3"));
 
     VirtualFile moduleDir = myModule.getModuleFile().getParent();
-    JSTestUtils.addFlexLibrary(false, myModule, "Lib", true, getTestDataPath(), "Lib", null, null, LinkageType.Test, moduleDir);
-    JSTestUtils.addFlexLibrary(false, myModule, "Lib2", true, getTestDataPath(), "Lib2", null, null, LinkageType.Merged, moduleDir);
-    JSTestUtils.addFlexLibrary(true, myModule, "Lib3", true, getTestDataPath(), "Lib3", null, null, LinkageType.Test, moduleDir);
-    JSTestUtils.addFlexLibrary(true, myModule, "Lib4", true, getTestDataPath(), "Lib4", null, null, LinkageType.Merged, moduleDir);
+    FlexTestUtils.addFlexLibrary(false, myModule, "Lib", true, getTestDataPath(), "Lib", null, null, LinkageType.Test, moduleDir);
+    FlexTestUtils.addFlexLibrary(false, myModule, "Lib2", true, getTestDataPath(), "Lib2", null, null, LinkageType.Merged, moduleDir);
+    FlexTestUtils.addFlexLibrary(true, myModule, "Lib3", true, getTestDataPath(), "Lib3", null, null, LinkageType.Test, moduleDir);
+    FlexTestUtils.addFlexLibrary(true, myModule, "Lib4", true, getTestDataPath(), "Lib4", null, null, LinkageType.Merged, moduleDir);
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];

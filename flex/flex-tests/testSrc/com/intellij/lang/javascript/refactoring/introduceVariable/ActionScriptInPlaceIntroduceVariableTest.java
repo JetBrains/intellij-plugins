@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.refactoring.introduceVariable;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.module.ModuleType;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduceVariableTestCase {
@@ -9,6 +11,11 @@ public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduce
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("refactoring/introduceVariable/");
+  }
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
 
   @Override

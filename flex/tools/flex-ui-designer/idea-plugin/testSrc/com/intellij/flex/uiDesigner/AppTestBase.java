@@ -1,11 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.FlexTestUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
@@ -107,7 +107,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       }
     }
 
-    JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
       @Override
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));

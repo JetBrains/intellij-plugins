@@ -1,7 +1,9 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.FlexDocumentationProvider;
 import com.intellij.lang.documentation.DocumentationProvider;
+import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -68,6 +70,11 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     if (myAfterCommitRunnable != null) {
       myAfterCommitRunnable.run();
     }
+  }
+
+  @Override
+  protected JSDocumentationProvider createDocumentationProvider() {
+    return new FlexDocumentationProvider();
   }
 
   public void testJSDocs6() throws Exception {
@@ -157,7 +164,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testFlexCssSelectorMultiDocumentation() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
+        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
       }
     };
     doTest(getTestName(false), "css");
@@ -167,7 +174,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testFlexCssSelectorMultiDocumentationInLookup() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
+        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
       }
     };
     String doc = testOne(new CssDocumentationProvider(), getTestName(false) + ".css");
@@ -279,7 +286,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testWithLibrary1() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
+        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
       }
     };
     doTest(getTestName(false), "as");
@@ -289,7 +296,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testWithLibrary2() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
+        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
       }
     };
     doTest(getTestName(false), "as");
@@ -299,7 +306,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testWithAsDoc1() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", (String)null, "LibWithAsdoc_docs.zip");
       }
     };
@@ -311,7 +318,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testWithAsDoc2() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils
+        FlexTestUtils
           .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", (String)null, "LibWithAsdoc_docs.zip");
       }
     };
@@ -357,7 +364,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
-    JSTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
+    FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
 
     doTest(files, getTestName(false), false, Check.Url);
   }
@@ -458,7 +465,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testQuickNavigateInfoFromSource() throws Exception {
     myAfterCommitRunnable = new Runnable() {
       public void run() {
-        JSTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
+        FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", (String)null);
       }
     };
     final String testName = getTestName(false);
