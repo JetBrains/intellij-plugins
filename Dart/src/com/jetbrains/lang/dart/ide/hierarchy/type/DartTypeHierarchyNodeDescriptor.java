@@ -11,14 +11,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 public final class DartTypeHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
-  public DartTypeHierarchyNodeDescriptor(final Project project,
-                                         final HierarchyNodeDescriptor parentDescriptor,
-                                         final DartClass dartClass,
+  public DartTypeHierarchyNodeDescriptor(@NotNull final Project project,
+                                         @Nullable final HierarchyNodeDescriptor parentDescriptor,
+                                         @NotNull final DartClass dartClass,
                                          final boolean isBase) {
     super(project, parentDescriptor, dartClass, isBase);
   }

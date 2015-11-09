@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.hierarchy;
+package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
@@ -7,8 +7,9 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
-import com.jetbrains.lang.dart.ide.hierarchy.type.DartSupertypesHierarchyTreeStructure;
-import com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyTreeStructure;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerSupertypesHierarchyTreeStructure;
+import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerTypeHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponentName;
@@ -18,8 +19,15 @@ import java.util.List;
 
 public class DartTypeHierarchyTest extends HierarchyViewTestBase {
   @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
+    DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
+  }
+
+  @Override
   protected String getBasePath() {
-    return "hierarchy/type/" + getTestName(false);
+    return "analysisServer/typeHierarchy/" + getTestName(false);
   }
 
   protected String getTestDataPath() {
@@ -37,10 +45,10 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
           DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
           if (dartClass != null && dartClass.getName().equals(className)) {
             if (subtype) {
-              return new DartTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+              return new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.SCOPE_PROJECT);
             }
             else {
-              return new DartSupertypesHierarchyTreeStructure(project, dartClass);
+              return new DartServerSupertypesHierarchyTreeStructure(project, dartClass);
             }
           }
         }
@@ -53,15 +61,15 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart", "SomePart.dart");
   }
 
-  public void _testSubtypeExtends() throws Exception {
+  public void testSubtypeExtends() throws Exception {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
-  public void _testSubtypeImplements() throws Exception {
+  public void testSubtypeImplements() throws Exception {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
-  public void _testSubtypeMixins() throws Exception {
+  public void testSubtypeMixins() throws Exception {
     doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 

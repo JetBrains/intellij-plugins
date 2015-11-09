@@ -22,6 +22,7 @@ import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,13 +52,20 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
 
   @NotNull
   private static HierarchyNodeDescriptor buildHierarchyElement(@NotNull final Project project, @NotNull final DartClass dartClass) {
+    if (DartResolveUtil.OBJECT.equals(dartClass.getName())) {
+      return new DartTypeHierarchyNodeDescriptor(project, null, dartClass, true);
+    }
+
     final List<TypeHierarchyItem> items = getTypeHierarchyItems(dartClass);
     final HierarchyNodeDescriptor superDescriptor = buildSuperClassHierarchy(project, items);
     final HierarchyNodeDescriptor baseDescriptor = new DartTypeHierarchyNodeDescriptor(project, superDescriptor, dartClass, true);
     if (superDescriptor != null) {
       superDescriptor.setCachedChildren(new HierarchyNodeDescriptor[]{baseDescriptor});
     }
-    addSubClassHierarchy(Sets.<TypeHierarchyItem>newHashSet(), project, items, items.get(0), baseDescriptor);
+    if (!items.isEmpty()) {
+      addSubClassHierarchy(Sets.<TypeHierarchyItem>newHashSet(), project, items, items.get(0), baseDescriptor);
+    }
+
     return baseDescriptor;
   }
 
@@ -79,6 +87,8 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
 
   @NotNull
   private static DartClass[] createSuperClasses(@NotNull final Project project, @NotNull final List<TypeHierarchyItem> items) {
+    if (items.isEmpty()) return new DartClass[]{};
+
     final Set<TypeHierarchyItem> seenItems = Sets.newHashSet();
     final List<DartClass> superClasses = Lists.newArrayList();
     Integer superIndex = items.get(0).getSuperclass();
