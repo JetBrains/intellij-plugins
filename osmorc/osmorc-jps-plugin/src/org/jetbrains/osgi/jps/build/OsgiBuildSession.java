@@ -306,4 +306,14 @@ public class OsgiBuildSession implements Reporter {
     if (sourcePath == null) sourcePath = mySourceToReport;
     myContext.processMessage(new CompilerMessage(OsmorcBuilder.ID, BuildMessage.Kind.ERROR, myMessagePrefix + message, sourcePath));
   }
+
+  @Override
+  public boolean isDebugEnabled() {
+    return LOG.isDebugEnabled();
+  }
+
+  @Override
+  public void debug(@NotNull String message) {
+    LOG.debug(message);
+  }
 }

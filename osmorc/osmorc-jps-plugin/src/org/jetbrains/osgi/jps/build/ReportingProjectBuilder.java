@@ -49,4 +49,14 @@ public class ReportingProjectBuilder extends ProjectBuilder {
   public void progress(float progress, String format, Object... args) {
     myReporter.progress(formatArrays(format, args));
   }
+
+  @Override
+  public boolean isTrace() {
+    return myReporter.isDebugEnabled();
+  }
+
+  @Override
+  public void trace(String format, Object... args) {
+    myReporter.debug(formatArrays(format, args));
+  }
 }
