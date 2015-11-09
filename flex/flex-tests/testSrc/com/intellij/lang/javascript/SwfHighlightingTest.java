@@ -85,7 +85,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "lib", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
       }
     };
     configureByFiles((String)null);

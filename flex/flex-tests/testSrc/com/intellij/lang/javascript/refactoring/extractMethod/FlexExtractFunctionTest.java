@@ -3,8 +3,10 @@ package com.intellij.lang.javascript.refactoring.extractMethod;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -13,6 +15,11 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("refactoring/flexExtractFunction/");
+  }
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
 
   @Override

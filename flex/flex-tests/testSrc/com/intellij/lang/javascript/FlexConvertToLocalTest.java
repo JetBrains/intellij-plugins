@@ -2,10 +2,18 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalInspection;
+import com.intellij.openapi.module.ModuleType;
 import org.jetbrains.annotations.NonNls;
 
 public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
+  }
+
   @Override
   protected LocalInspectionTool[] configureLocalInspectionTools() {
     return new LocalInspectionTool[]{new JSFieldCanBeLocalInspection()};

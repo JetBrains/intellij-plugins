@@ -2,18 +2,23 @@ package com.intellij.lang.javascript;
 
 import com.intellij.execution.RunManagerEx;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveClassProcessor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,6 +44,18 @@ public class FlexMoveTest extends JSMoveTestBase {
   @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());
+  }
+
+  @Override
+  protected FlexMoveClassProcessor createCustomMoveProcessor(Collection<PsiElement> files,
+                                                             PsiDirectory targetDirectory,
+                                                             String targetDirName) {
+    return new FlexMoveClassProcessor(ContainerUtil.map(files, new Function<PsiElement, JSQualifiedNamedElement>() {
+      @Override
+      public JSQualifiedNamedElement fun(PsiElement psiElement) {
+        return (JSQualifiedNamedElement)psiElement;
+      }
+    }), targetDirectory, targetDirName.replace("/", ".").replace("\\", "."), true, true, null);
   }
 
   public void testMovePackage() throws Exception {
@@ -92,45 +109,45 @@ public class FlexMoveTest extends JSMoveTestBase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConfigUpdatedOnClassMove() throws Exception {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    JSTestUtils
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                "foo.bar.SomeClass", "testSomething", true);
-    JSTestUtils
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "", true);
-    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
 
     doTest("foo/bar/SomeClass.mxml", "");
 
     //assertEquals("SomeClass", config.MAIN_CLASS);
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "SomeClass", "testSomething");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "SomeClass", "");
-    JSTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "SomeClass");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "SomeClass", "testSomething");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "SomeClass", "");
+    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "SomeClass");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConfigUpdatedOnPackageMove() throws Exception {
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.setMainClass("foo.SomeClass");
       }
     });
 
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    JSTestUtils
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                "foo.SomeClass", "testSomething", true);
-    JSTestUtils
+    FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.SomeClass", "", true);
-    JSTestUtils.createFlexUnitRunConfig(runManager, "foo", myModule, FlexUnitRunnerParameters.Scope.Package, "foo", "", "", true);
-    JSTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.SomeClass", true);
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "foo", myModule, FlexUnitRunnerParameters.Scope.Package, "foo", "", "", true);
+    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.SomeClass", true);
 
     doTest("foo", "bar");
 
     assertEquals("bar.foo.SomeClass", FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getMainClass());
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "bar.foo.SomeClass", "testSomething");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "bar.foo.SomeClass", "");
-    JSTestUtils.checkFlexUnitRunConfig(runManager, myModule, "bar.foo", "bar.foo", "", "");
-    JSTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "bar.foo.SomeClass");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "bar.foo.SomeClass", "testSomething");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "bar.foo.SomeClass", "");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "bar.foo", "bar.foo", "", "");
+    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "bar.foo.SomeClass");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})

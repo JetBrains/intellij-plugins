@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ActionScriptStubsTest extends JSDaemonAnalyzerTestCase {
+public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
 
   protected List<PsiFile> myPsiFiles = new ArrayList<PsiFile>();
 

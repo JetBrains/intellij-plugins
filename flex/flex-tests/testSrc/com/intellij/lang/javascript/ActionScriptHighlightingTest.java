@@ -77,7 +77,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
+public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
 
   private Runnable myAfterCommitRunnable = null;
@@ -1683,7 +1683,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testConditionalBlocks() throws Exception {
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::debugging\t"));
       }
@@ -1742,7 +1742,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
       }
     };
     doTestFor(true, getTestName(false) + ".as");
@@ -1892,7 +1892,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "playerglobal", FlexImporterTest.getTestDataPath(), "PlayerGlobal10.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "playerglobal", FlexImporterTest.getTestDataPath(), "PlayerGlobal10.swc", null, null);
       }
     };
     doTestFor(true, getTestName(false) + ".as");
@@ -1982,7 +1982,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
         catch (IOException e) {
           throw new RuntimeException(e);
         }
-        JSTestUtils.addFlexLibrary(true, myModule, "lib", true, file.getPath(), "classes", "", null);
+        FlexTestUtils.addFlexLibrary(true, myModule, "lib", true, file.getPath(), "classes", "", null);
 
         ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
         model.removeContentEntry(model.getContentEntries()[0]);
@@ -2093,7 +2093,7 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
       }
     };
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
@@ -2249,11 +2249,11 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     };
     configureByFile(BASE_PATH + getTestName(false) + "1.as");
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
-        JSTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk1.get());
-        JSTestUtils.setSdk(e.getConfigurations(module2)[0], sdk2.get());
+        FlexTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk1.get());
+        FlexTestUtils.setSdk(e.getConfigurations(module2)[0], sdk2.get());
       }
     });
 
@@ -2306,17 +2306,17 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     // has more recent timestamp than its brother from SDK 4.5/airglobal.swc
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
         bc1.setTargetPlatform(TargetPlatform.Desktop);
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
 
         ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
         bc2.setName("2");
         bc1.setTargetPlatform(TargetPlatform.Mobile);
-        JSTestUtils.setSdk(bc2, sdk46);
+        FlexTestUtils.setSdk(bc2, sdk46);
       }
     });
     defaultTest();
@@ -2326,17 +2326,17 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     // same as testSuperclassResolveMixedRoots()
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
         bc1.setTargetPlatform(TargetPlatform.Desktop);
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
 
         ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
         bc2.setName("2");
         bc1.setTargetPlatform(TargetPlatform.Mobile);
-        JSTestUtils.setSdk(bc2, sdk46);
+        FlexTestUtils.setSdk(bc2, sdk46);
       }
     });
     defaultTest();
@@ -2370,18 +2370,18 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testCorrectScopeForSuperclassCheck2() throws Exception { //
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
         bc1.setName("web");
         bc1.setTargetPlatform(TargetPlatform.Web);
-        JSTestUtils.setSdk(bc1, sdk46);
+        FlexTestUtils.setSdk(bc1, sdk46);
 
         ModifiableFlexBuildConfiguration bc2 = e.createConfiguration(myModule);
         bc2.setName("air");
         bc1.setTargetPlatform(TargetPlatform.Desktop);
-        JSTestUtils.setSdk(bc2, sdk46);
+        FlexTestUtils.setSdk(bc2, sdk46);
       }
     });
     FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);
@@ -2391,12 +2391,12 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testCorrectScopeForSuperclassCheck3() throws Exception { // IDEA-91539
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
         bc1.setTargetPlatform(TargetPlatform.Desktop);
-        JSTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk46);
+        FlexTestUtils.setSdk(e.getConfigurations(myModule)[0], sdk46);
       }
     });
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.mxml");
@@ -2407,15 +2407,15 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     final Module module2 = doCreateRealModuleIn("module2", myProject, FlexModuleType.getInstance());
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        JSTestUtils.setSdk(bc1, sdk46);
+        FlexTestUtils.setSdk(bc1, sdk46);
 
         ModifiableFlexBuildConfiguration bc2 = e.getConfigurations(module2)[0];
         bc2.setOutputType(OutputType.Library);
-        JSTestUtils.setSdk(bc2, sdk45);
+        FlexTestUtils.setSdk(bc2, sdk45);
 
         bc1.getDependencies().getModifiableEntries().add(e.createBcEntry(bc1.getDependencies(), bc2, null));
       }
@@ -2438,14 +2438,14 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     // see testData\js2_highlighting\CorrectScopeForSuperclassCheck5_src.zip
 
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
-    JSTestUtils.addFlexLibrary(false, myModule, "foobar", true, getTestDataPath(), BASE_PATH + getTestName(false) + ".swc", null, null,
-                               LinkageType.Merged);
+    FlexTestUtils.addFlexLibrary(false, myModule, "foobar", true, getTestDataPath(), BASE_PATH + getTestName(false) + ".swc", null, null,
+                                 LinkageType.Merged);
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
       }
     });
     doTestFor(true, getTestName(false) + ".js2");
@@ -2455,11 +2455,11 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
     // monkey patching SDK class
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, false);
 
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor e) {
         ModifiableFlexBuildConfiguration bc1 = e.getConfigurations(myModule)[0];
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
       }
     });
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
@@ -2493,10 +2493,10 @@ public class ActionScriptHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   public void testVectorWithSdk() throws Exception {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true);
-    JSTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        JSTestUtils.setSdk(bc1, sdk45);
+        FlexTestUtils.setSdk(bc1, sdk45);
       }
     });
     doTestFor(true, getTestName(false) + ".as");

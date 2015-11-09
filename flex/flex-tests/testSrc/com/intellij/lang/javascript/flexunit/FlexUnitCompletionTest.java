@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flexunit;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -26,7 +25,7 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
 
-    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
+    FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
   }
 
   @Override

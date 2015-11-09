@@ -114,7 +114,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
 
-    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
+    FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
   }
 
   @Override
@@ -208,10 +208,10 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   @Override
   protected void setUpJdk() {
     final Sdk sdk = FlexTestUtils.createSdk(FLEX4_SDK_HOME, "4.6.0");
-    JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+    FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
       @Override
       public void consume(final ModifiableFlexBuildConfiguration configuration) {
-        JSTestUtils.setSdk(configuration, sdk);
+        FlexTestUtils.setSdk(configuration, sdk);
       }
     });
   }
@@ -286,7 +286,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
         AccessToken l = WriteAction.start();
 
         try {
-          JSTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
+          FlexTestUtils.modifyBuildConfiguration(myModule, new Consumer<ModifiableFlexBuildConfiguration>() {
             public void consume(final ModifiableFlexBuildConfiguration configuration) {
               configuration.setTargetPlatform(myTargetPlatform);
             }

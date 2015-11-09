@@ -6,9 +6,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.ProfilingUtil;
 import com.intellij.util.ThrowableRunnable;
-import org.jetbrains.annotations.NonNls;
 
-public class FlexHighlightingPerformanceTest extends JSDaemonAnalyzerTestCase {
+public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerTestCase {
   @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());

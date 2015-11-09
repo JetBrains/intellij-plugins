@@ -3,13 +3,19 @@ package com.intellij.lang.javascript.refactoring.inlineVariable;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 
 public class FlexInlineVariableTest extends JSInlineVariableTestBase {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("as_refactoring/inlineVariable/");
+  }
+
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
 
   @Override

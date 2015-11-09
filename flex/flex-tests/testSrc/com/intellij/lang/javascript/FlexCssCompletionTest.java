@@ -215,7 +215,7 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        JSTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getBasePath(), "DifferentStyleDeclarations.swc", null, null);
+        FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getBasePath(), "DifferentStyleDeclarations.swc", null, null);
       }
     };
   }

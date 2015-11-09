@@ -5,10 +5,9 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.FlexTestUtils;
-import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
+import com.intellij.lang.javascript.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassInProductSourceInspection;
 import com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitInspectionToolProvider;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class FlexUnitHighlightingTest extends JSDaemonAnalyzerTestCase implements FlexUnitLibs {
+public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase implements FlexUnitLibs {
 
   private static final Collection<String> CHECK_TEST_IN_PRODUCT_SOURCES_FOR = Arrays.asList("ClassInProductSource1", "ClassInProductSource2");
 
@@ -65,7 +64,7 @@ public class FlexUnitHighlightingTest extends JSDaemonAnalyzerTestCase implement
   protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
     super.doCommitModel(rootModel);
 
-    JSTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
+    FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
   }
 
   @Override
