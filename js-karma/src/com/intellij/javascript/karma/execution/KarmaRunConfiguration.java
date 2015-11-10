@@ -48,6 +48,10 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   public void readExternal(Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element);
+    String karmaPackageDir = myRunSettings.getKarmaPackageDir();
+    if ("true".equals(element.getAttributeValue("default")) && karmaPackageDir != null && karmaPackageDir.isEmpty()) {
+      myRunSettings = new KarmaRunSettings.Builder(myRunSettings).setKarmaPackageDir(null).build();
+    }
   }
 
   @Override
@@ -176,6 +180,9 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     if (!KarmaUtil.isPathUnderContentRoots(project, newKarmaPackageDir)) {
       KarmaProjectSettings.setKarmaPackageDir(project, newKarmaPackageDir);
       newKarmaPackageDir = "";
+    }
+    if (newKarmaPackageDir.isEmpty() && isTemplate()) {
+      newKarmaPackageDir = null;
     }
     myRunSettings = new KarmaRunSettings.Builder(runSettings).setKarmaPackageDir(newKarmaPackageDir).build();
   }
