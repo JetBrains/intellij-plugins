@@ -117,4 +117,14 @@ public class BundleCompiler implements Reporter {
   public void error(@NotNull String message, @Nullable Throwable t, @Nullable String sourcePath) {
     LOG.warn(message, t);
   }
+
+  @Override
+  public boolean isDebugEnabled() {
+    return LOG.isDebugEnabled();
+  }
+
+  @Override
+  public void debug(@NotNull String message) {
+    LOG.debug(message);
+  }
 }
