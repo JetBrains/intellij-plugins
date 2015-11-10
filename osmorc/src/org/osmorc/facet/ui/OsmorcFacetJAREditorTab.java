@@ -206,7 +206,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
         if (contentRoots.length > 0) {
           for (VirtualFile contentRoot : contentRoots) {
-            VirtualFile path = VfsUtilCore.findRelativeFile(additionalJARContent.getFirst(), contentRoot);
+            VirtualFile path = contentRoot.findFileByRelativePath(additionalJARContent.getFirst());
             if (path != null) {
               preselectedPath = path;
               break;
