@@ -610,6 +610,8 @@ public class DartAnalysisServerService {
   }
 
   private void updateProblemsView(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+    if (myRootsHandler.getTrackedProjects().isEmpty()) return;
+
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
