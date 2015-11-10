@@ -66,6 +66,10 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
           addSuperComponent(project, supers, isInClass, superItem);
         }
       }
+      for (int superIndex : seed.getMixins()) {
+        final TypeHierarchyItem superItem = items.get(superIndex);
+        addSuperComponent(project, supers, isInClass, superItem);
+      }
       for (int superIndex : seed.getInterfaces()) {
         final TypeHierarchyItem superItem = items.get(superIndex);
         addSuperComponent(project, supers, isInClass, superItem);
