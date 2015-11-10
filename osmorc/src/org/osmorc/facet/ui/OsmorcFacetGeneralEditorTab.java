@@ -274,7 +274,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
   private static VirtualFile findFileInContentRoots(String fileName, Module module) {
     for (VirtualFile root : getContentRoots(module)) {
-      VirtualFile file = VfsUtilCore.findRelativeFile(fileName, root);
+      VirtualFile file = root.findFileByRelativePath(fileName);
       if (file != null) {
         return file;
       }
