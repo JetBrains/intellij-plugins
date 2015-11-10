@@ -59,7 +59,8 @@ public class DartRunner extends DefaultProgramRunner {
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
       try {
-        final String path = ((DartCommandLineRunningState)state).getFilePath();
+        final String path = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().getFilePath();
+        assert path != null; // already checked
         final String dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
         return doExecuteDartDebug(state, env, dasExecutionContextId);
       }
@@ -132,14 +133,13 @@ public class DartRunner extends DefaultProgramRunner {
       public XDebugProcess start(@NotNull final XDebugSession session) {
         final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
         return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
-               ?
-               new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver) :
-               new DartVmServiceDebugProcess(session,
-                                             StringUtil.notNullize(debuggingHost, "localhost"),
-                                             observatoryPort,
-                                             executionResult,
-                                             dartUrlResolver,
-                                             dasExecutionContextId);
+               ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
+               : new DartVmServiceDebugProcess(session,
+                                               StringUtil.notNullize(debuggingHost, "localhost"),
+                                               observatoryPort,
+                                               executionResult,
+                                               dartUrlResolver,
+                                               dasExecutionContextId);
       }
     });
 

@@ -243,11 +243,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @Override
   public void stop() {
     if (myVmServiceWrapper != null) {
-      final String dasExecutionContextId = getDASExecutionContextId();
-      if(dasExecutionContextId != null) {
-        DartAnalysisServerService.getInstance()
-          .execution_deleteContext(dasExecutionContextId);
+      if (myDASExecutionContextId != null) {
+        DartAnalysisServerService.getInstance().execution_deleteContext(myDASExecutionContextId);
       }
+
       Disposer.dispose(myVmServiceWrapper);
     }
   }
@@ -307,14 +306,20 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
   }
 
-  @Nullable
-  public String getDASExecutionContextId() {
-    return myDASExecutionContextId;
-  }
-
   @NotNull
   public String getUriForFile(@NotNull final VirtualFile file) {
-    return threeslashize(myDartUrlResolver.getDartUrlForFile(file));
+    final String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
+
+    // DAS from SDK 1.13 is not returning dart:xxx URIs correctly
+    if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
+      final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
+      if (uriByServer != null) {
+        return uriByServer;
+      }
+    }
+
+    // fallback
+    return threeslashize(uriByIde);
   }
 
   @Nullable
@@ -322,16 +327,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     VirtualFile file = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
       @Override
       public VirtualFile compute() {
-        final String dasExecutionContextId = getDASExecutionContextId();
         final String uri = scriptRef.getUri();
-        if(dasExecutionContextId != null && !uri.matches("dart:([a-zA-Z])+-patch/.*$")) {
-          final String path = DartAnalysisServerService.getInstance()
-            .execution_mapUri(dasExecutionContextId, null, scriptRef.getUri());
-          if(path != null) {
+        if (myDASExecutionContextId != null && !isDartPatchUri(uri)) {
+          final String path = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, null, uri);
+          if (path != null) {
             return LocalFileSystem.getInstance().findFileByPath(path);
           }
         }
-        return myDartUrlResolver.findFileByDartUrl(scriptRef.getUri());
+
+        return myDartUrlResolver.findFileByDartUrl(uri);
       }
     });
 
@@ -360,6 +364,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     return XDebuggerUtil.getInstance().createPosition(file, tokenPosToLine.get(tokenPos));
+  }
+
+  private static boolean isDartPatchUri(@NotNull final String uri) {
+    // dart:_builtin or dart:core-patch/core_patch.dart
+    return uri.startsWith("dart:_") || uri.startsWith("dart:") && uri.contains("-patch/");
   }
 
   @NotNull
