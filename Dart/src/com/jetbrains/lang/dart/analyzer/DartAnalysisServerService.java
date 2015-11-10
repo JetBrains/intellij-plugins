@@ -94,8 +94,8 @@ public class DartAnalysisServerService {
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-  private static final long EXECUTION_CREATE_CONTEXT = TimeUnit.SECONDS.toMillis(10);
-  private static final long EXECUTION_MAP_URI = TimeUnit.SECONDS.toMillis(10);
+  private static final long EXECUTION_CREATE_CONTEXT = TimeUnit.SECONDS.toMillis(1);
+  private static final long EXECUTION_MAP_URI = TimeUnit.SECONDS.toMillis(1);
 
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
@@ -1213,7 +1213,7 @@ public class DartAnalysisServerService {
     // Exactly one of the file and uri fields must be provided. If both fields are provided, then an error of type INVALID_PARAMETER will
     // be generated. Similarly, if neither field is provided, then an error of type INVALID_PARAMETER will be generated.
     if ((_filePath == null && _uri == null) || (_filePath != null && _uri != null)) {
-      logError("execution_createContext()", null, "One of _filePath and _uri must be non-null.");
+      LOG.error("One of _filePath and _uri must be non-null.");
       return null;
     }
 
@@ -1241,8 +1241,8 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          logError("execution_mapUri()", filePath, error);
-
+          LOG.warn(
+            "execution_mapUri(" + _id + ", " + filePath + ", " + _uri + ") returned error " + error.getCode() + ": " + error.getMessage());
           semaphore.up();
         }
       };
@@ -1430,15 +1430,6 @@ public class DartAnalysisServerService {
       myServerBusy.set(false);
       myServerBusy.notifyAll();
     }
-  }
-
-  private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final String _message) {
-    String message = "Error from " + methodName +
-                     (filePath == null ? "" : (", file = " + filePath)) +
-                     ", SDK version = " + mySdkVersion +
-                     ", server version = " + myServerVersion +
-                     ", message = " + _message;
-    LOG.error(message);
   }
 
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
