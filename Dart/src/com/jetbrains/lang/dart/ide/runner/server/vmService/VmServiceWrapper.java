@@ -13,6 +13,7 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.server.frame.DartDebuggerEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
@@ -210,8 +211,16 @@ public class VmServiceWrapper implements Disposable {
     addRequest(new Runnable() {
       @Override
       public void run() {
-        final String uri = myDebugProcess.getUriForFile(position.getFile());
+        final String uri;
         final int line = position.getLine() + 1;
+
+        final String dasExecutionContextId = myDebugProcess.getDASExecutionContextId();
+        if(dasExecutionContextId != null) {
+          uri = DartAnalysisServerService.getInstance()
+            .execution_mapUri(dasExecutionContextId, position.getFile().getPath(), null);
+        } else {
+          uri = myDebugProcess.getUriForFile(position.getFile());
+        }
         myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
       }
     });
