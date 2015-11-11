@@ -4,7 +4,10 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 import training.lesson.exceptons.*;
+import training.solutions.BaseSolutionClass;
+import training.testFramework.LessonSolution;
 import training.util.GenerateCourseXml;
+import training.util.MyClassLoader;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 
 public class CourseManagerWithoutIDEA {
 
+    private static final String DOT = ".";
     public static CourseManagerWithoutIDEA INSTANCE = new CourseManagerWithoutIDEA();
 
     public static CourseManagerWithoutIDEA getInstance(){
@@ -92,5 +96,34 @@ public class CourseManagerWithoutIDEA {
     }
 
 
+    @Nullable
+    public LessonSolution findSolution(String lessonId) throws ClassNotFoundException, IllegalAccessException, InstantiationException, BadCourseException {
+        final Lesson lesson = findLesson(lessonId);
+        assert lesson != null;
+        if (lesson.getCourse() == null) return null;
+        final Element courseRoot = lesson.getCourse().getCourseRoot();
+        if (courseRoot == null) return null;
 
+        String lessonsPath = (courseRoot.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR) != null) ? lesson.getCourse().getCoursePath() + courseRoot.getAttribute(GenerateCourseXml.COURSE_LESSONS_PATH_ATTR).getValue() : "";
+        String lessonSolutionName = null;
+
+        for (Element lessonElement : courseRoot.getChildren()) {
+            if (!lessonElement.getName().equals(GenerateCourseXml.COURSE_LESSON_ELEMENT))
+                throw new BadCourseException("Course file is corrupted or cannot be read properly");
+
+            String lessonFilename = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_FILENAME_ATTR);
+            String lessonPath = lessonsPath + lessonFilename;
+            if (lessonPath.equals(lesson.getScn().getPath())){
+                lessonSolutionName = lessonElement.getAttributeValue(GenerateCourseXml.COURSE_LESSON_SOLUTION);
+                break;
+            }
+
+        }
+
+        final String solutionPrefix = BaseSolutionClass.class.getPackage().getName();
+        final String solutionName = (lessonSolutionName != null) ? lessonSolutionName : "";
+        final Class<?> aClass = MyClassLoader.getInstance().loadClass(solutionPrefix + DOT + solutionName);
+        if (!(aClass.newInstance() instanceof LessonSolution)) return null;
+        return (LessonSolution) aClass.newInstance();
+    }
 }
