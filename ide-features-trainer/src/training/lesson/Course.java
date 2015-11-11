@@ -231,4 +231,9 @@ public class Course extends ActionGroup{
         return false;
 
     }
+
+    @Nullable
+    Element getCourseRoot(){
+        return root;
+    }
 }

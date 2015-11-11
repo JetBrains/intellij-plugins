@@ -5,6 +5,6 @@
     <course name="courses/Refactorings.xml"/>
     <course name="courses/Formatting.xml"/>
     <course name="courses/Navigation.xml"/>
-    <course name="courses/Loops.xml"/>
+    <!--<course name="courses/Loops.xml"/>-->
 </courses>
 

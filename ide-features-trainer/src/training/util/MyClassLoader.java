@@ -14,11 +14,20 @@ public class MyClassLoader {
 
     final public static String RESPATH = "/data/";
     final public static String IMGPATH = "/img/";
+    private ClassLoader myClassLoader;
 
     public static final MyClassLoader INSTANCE = new MyClassLoader();
 
     public static MyClassLoader getInstance(){
         return INSTANCE;
+    }
+
+    public MyClassLoader() {
+        this.myClassLoader = getClass().getClassLoader();
+    }
+
+    public Class<?> loadClass(String name) throws ClassNotFoundException{
+        return myClassLoader.loadClass(name);
     }
 
     public InputStream getResourceAsStream(String path){

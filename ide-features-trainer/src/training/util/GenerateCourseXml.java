@@ -31,6 +31,7 @@ public class GenerateCourseXml {
 
     public final static String COURSE_LESSONS_PATH_ATTR = "lessonsPath";
     public final static String COURSE_LESSON_FILENAME_ATTR = "filename";
+    public final static String COURSE_LESSON_SOLUTION = "solution";
 
     public static void gen(String courseName, String id, String path) throws URISyntaxException {
         try {

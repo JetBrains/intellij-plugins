@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 29/10/15.
  */
-public class EditorBasics_Selection_Solution_Test extends EduLessonTest implements LessonSolution {
+public class EditorBasics_Selection_Solution_Test extends EduLessonTest {
 
 
     /**
