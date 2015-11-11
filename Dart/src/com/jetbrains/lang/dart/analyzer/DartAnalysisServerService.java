@@ -1289,8 +1289,6 @@ public class DartAnalysisServerService {
         }
       };
 
-      final int port = NetUtils.tryToFindAvailableSocketPort(10000);
-
       String vmArgsRaw;
       try {
         vmArgsRaw = Registry.stringValue("dart.server.vm.options");
@@ -1300,7 +1298,6 @@ public class DartAnalysisServerService {
       }
 
       String serverArgsRaw = "";
-      serverArgsRaw += " --port=" + port;
       serverArgsRaw += " --useAnalysisHighlight2";
       serverArgsRaw += " --file-read-mode=normalize-eol-always";
       try {
@@ -1327,11 +1324,9 @@ public class DartAnalysisServerService {
         mySdkVersion = sdk.getVersion();
 
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
-
-        LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
-        LOG.warn("Failed to start Dart analysis server, port=" + port, e);
+        LOG.warn("Failed to start Dart analysis server", e);
         stopServer();
       }
     }
