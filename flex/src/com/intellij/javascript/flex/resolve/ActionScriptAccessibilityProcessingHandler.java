@@ -78,7 +78,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
 
     if (processStatics) {
       if ((attributeList == null || !attributeList.hasModifier(JSAttributeList.ModifierType.STATIC))) {
-        if (JSResolveUtil.PROTOTYPE_FIELD_NAME.equals(resolveProcessor.myName)) return true;
+        if (JSResolveUtil.PROTOTYPE_FIELD_NAME.equals(resolveProcessor.getName())) return true;
         resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.INSTANCE_MEMBER_INACCESSIBLE);
         return false;
       }
