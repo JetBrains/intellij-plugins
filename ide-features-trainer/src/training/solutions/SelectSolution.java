@@ -2,6 +2,10 @@ package training.solutions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
+import com.intellij.openapi.wm.IdeFocusManager;
 import org.jdesktop.swingx.action.ActionManager;
 import training.commands.*;
 import training.lesson.LessonProcessor;
@@ -21,20 +25,21 @@ public class SelectSolution implements LessonSolution{
         if (stepNumber == 4) {
             final String actionName = "EditorNextWordWithSelection";
             final AnAction action = com.intellij.openapi.actionSystem.ActionManager.getInstance().getAction(actionName);
-//            action.actionPerformed();
-//            PerformActionUtil.performAction(actionName, currentExecutionList.getEditor(), currentExecutionList.getProject());
+//            final ActionManagerEx amex = ActionManagerEx.getInstanceEx();
+//            EditorActionManager.getInstance().getActionHandler(actionName).execute(currentExecutionList.getEditor(), null, DataContext.EMPTY_CONTEXT);
+            PerformActionUtil.performEditorAction(actionName, currentExecutionList.getEditor());
         }
         if (stepNumber == 3){
             final String actionName = "EditorSelectWord";
-            PerformActionUtil.performAction(actionName, currentExecutionList.getEditor(), currentExecutionList.getProject());
-        }
-        if (stepNumber == 2){
-            final String actionName = "EditorUnSelectWord";
-            PerformActionUtil.performAction(actionName, currentExecutionList.getEditor(), currentExecutionList.getProject());
+            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
         if (stepNumber == 1){
+            final String actionName = "EditorUnSelectWord";
+            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
+        }
+        if (stepNumber == 0){
             final String actionName = "$SelectAll";
-            PerformActionUtil.performAction(actionName, currentExecutionList.getEditor(), currentExecutionList.getProject());
+            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
     }
 }
