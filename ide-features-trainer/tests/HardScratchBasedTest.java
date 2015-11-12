@@ -1,7 +1,10 @@
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.impl.ComponentManagerImpl;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -24,24 +27,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import training.commands.*;
 import training.editor.EduEditor;
+import training.editor.EduEditorFactory;
 import training.editor.EduEditorManager;
 import training.lesson.*;
 import training.lesson.exceptons.*;
 import training.testFramework.LessonSolution;
 
-import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 28/10/15.
  */
 @RunWith(Parameterized.class)
-public class SoftScratchBasedTestWithSolution extends UsefulTestCase{
+public class HardScratchBasedTest extends UsefulTestCase{
 
     protected Project myProject;
     protected VirtualFile myProjectRoot;
@@ -99,16 +99,30 @@ public class SoftScratchBasedTestWithSolution extends UsefulTestCase{
     @Before
     public void setUp() throws Exception {
         final Ref<Exception> ex = new Ref<Exception>();
+        final EduEditorFactory[] eduEditorFactory = new EduEditorFactory[1];
         Runnable runnable = new Runnable() {
             public void run() {
 
                 try {
-                    SoftScratchBasedTestWithSolution.super.setUp();
+                    HardScratchBasedTest.super.setUp();
                     myProjectFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
                     myProjectFixture.setUp();
                     myProject = myProjectFixture.getProject();
                     myProjectRoot = myProject.getBaseDir();
                     myProjectPath = myProjectRoot.getPath();
+
+                    eduEditorFactory[0] = new EduEditorFactory(ProjectManager.getInstance());
+                    //Swap EditorFactoryClasses with EduEditorFactory
+
+                    final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
+                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
+
+//                    componentManager.getPicoContainer().unregisterComponent(editorFactoryClass);
+                    componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory[0]);
+//                    Object old = picoContainer.getComponentInstance(editorFactoryClass);
+//                    picoContainer.registerComponentInstance(editorFactoryClass, eduEditorFactory[0]);
+//                    picoContainer.registerComponent(ComCoAda)
+
                 } catch (Exception e) {
                     ex.set(e);
                 }
@@ -135,7 +149,7 @@ public class SoftScratchBasedTestWithSolution extends UsefulTestCase{
                     ex.set(e);
                 } finally {
                     try {
-                        SoftScratchBasedTestWithSolution.super.tearDown();
+                        HardScratchBasedTest.super.tearDown();
                     } catch (Exception e) {
                         ex.set(e);
                     }

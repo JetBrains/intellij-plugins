@@ -23,10 +23,9 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
 
     public static final String EDITOR_TYPE_ID = "EduEditor";
     final private com.intellij.openapi.fileEditor.FileEditorProvider defaultTextEditorProvider = TextEditorProvider.getInstance();
-    HashMap<VirtualFile, EduEditor> fileEduEditorMap;
 
     public EduEditorProvider() {
-        fileEduEditorMap = new HashMap<VirtualFile, EduEditor>();
+
     }
 
     @Override
@@ -34,23 +33,25 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
         return CourseManager.getInstance().isVirtualFileRegistered(virtualFile);
     }
 
+
     @NotNull
     @Override
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        if(fileEduEditorMap.containsKey(file)){
-            EduEditor eduEditor = fileEduEditorMap.get(file);
+        final EduEditorManager eduEditorManager = EduEditorManager.getInstance();
+        if(eduEditorManager.fileEduEditorMap.containsKey(file)){
+            EduEditor eduEditor = eduEditorManager.fileEduEditorMap.get(file);
             if(!eduEditor.isDisposed() && !eduEditor.getEditor().getProject().isDisposed()) {
                 return eduEditor;
             } else {
                 eduEditor = new EduEditor(project, file);
-                EduEditorManager.getInstance().registerEduEditor(eduEditor);
-                fileEduEditorMap.put(file, eduEditor);
+                eduEditorManager.registerEduEditor(eduEditor, file);
+                eduEditorManager.fileEduEditorMap.put(file, eduEditor);
                 return eduEditor;
             }
         } else {
             EduEditor eduEditor = new EduEditor(project, file);
-            EduEditorManager.getInstance().registerEduEditor(eduEditor);
-            fileEduEditorMap.put(file, eduEditor);
+            eduEditorManager.registerEduEditor(eduEditor, file);
+            eduEditorManager.fileEduEditorMap.put(file, eduEditor);
             return eduEditor;
         }
     }

@@ -7,6 +7,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
@@ -386,7 +387,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
         final FileEditor[] allEditors = FileEditorManager.getInstance(project).getAllEditors(vf);
         if (allEditors.length == 0) {
-            FileEditorManager.getInstance(project).openEditor(descriptor, true);
+            if (!ApplicationManager.getApplication().isUnitTestMode())
+                FileEditorManager.getInstance(project).openEditor(descriptor, true);
+            else
+//                FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
+                FileEditorManagerEx.getInstanceEx(project).openFile(vf, true);
+
         } else {
             boolean editorIsFind = false;
             for (FileEditor curEditor : allEditors) {
@@ -396,7 +402,10 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 //              close other editors with this file
                 FileEditorManager.getInstance(project).closeFile(vf);
                 ScratchFileService.getInstance().getScratchesMapping().setMapping(vf, Language.findLanguageByID("JAVA"));
-                FileEditorManager.getInstance(project).openEditor(descriptor, true);
+                if (!ApplicationManager.getApplication().isUnitTestMode())
+                    FileEditorManager.getInstance(project).openEditor(descriptor, true);
+                else
+                    FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(vf, true, false);
             }
         }
         final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(vf);

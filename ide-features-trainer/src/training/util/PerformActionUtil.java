@@ -1,16 +1,21 @@
 package training.util;
 
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.concurrent.*;
 
 /**
@@ -118,6 +123,56 @@ public class PerformActionUtil {
                 });
             }
         });
+    }
+
+    public static void performActionDisabledPresentation(String actionName, final Editor editor){
+
+        final ActionManagerEx amEx = ActionManagerEx.getInstanceEx();
+        final AnAction action = amEx.getAction(actionName);
+        final InputEvent inputEvent = getInputEvent(actionName);
+
+        final Presentation presentation = action.getTemplatePresentation().clone();
+        final DataManager dataManager = DataManager.getInstance();
+        Component contextComponent = editor.getContentComponent();
+        final DataContext context = (contextComponent != null ? dataManager.getDataContext(contextComponent) : dataManager.getDataContext());
+
+
+
+        AnActionEvent event = new AnActionEvent(
+                inputEvent, context,
+                ActionPlaces.UNKNOWN,
+                presentation, amEx,
+                inputEvent.getModifiersEx()
+        );
+        amEx.fireBeforeActionPerformed(action, context, event);
+
+        ActionUtil.performActionDumbAware(action, event);
+        amEx.queueActionPerformedEvent(action, context, event);
+    }
+
+    public static void performEditorAction(String actionId, Editor editor){
+        final ActionManagerEx amEx = ActionManagerEx.getInstanceEx();
+        final AnAction action = amEx.getAction(actionId);
+        final InputEvent inputEvent = getInputEvent(actionId);
+
+        final Presentation presentation = action.getTemplatePresentation().clone();
+        final DataManager dataManager = DataManager.getInstance();
+        Component contextComponent = editor.getContentComponent();
+        final DataContext context = (contextComponent != null ? dataManager.getDataContext(contextComponent) : dataManager.getDataContext());
+
+
+
+        AnActionEvent event = new AnActionEvent(
+                inputEvent, context,
+                ActionPlaces.UNKNOWN,
+                presentation, amEx,
+                inputEvent.getModifiersEx()
+        );
+        amEx.fireBeforeActionPerformed(action, context, event);
+
+        ActionUtil.performActionDumbAware(action, event);
+        amEx.queueActionPerformedEvent(action, context, event);
+
     }
 
     public static void sleepHere(final Editor editor, final int delay) throws InterruptedException {
