@@ -16,6 +16,7 @@
 package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
 
 class OsgiBuildTest : OsgiBuildTestCase() {
@@ -167,6 +168,21 @@ class OsgiBuildTest : OsgiBuildTestCase() {
     makeAll().assertSuccessful()
 
     assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class"))
+    assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+  }
+
+  fun testManualMode() {
+    val properties = extension(myModule).properties
+    properties.myManifestGenerationMode = ManifestGenerationMode.Manually
+    properties.myManifestLocation = "main/META-INF/MANIFEST.MF"
+    properties.myAdditionalProperties = mapOf("Export-Package" to "main")
+    createFile("main/src/main/Main.java", "package main;\n\npublic class Main { public void main() { util.Util.util(); } }")
+    createFile("main/src/util/Util.java", "package util;\n\npublic class Util { public static void util() { } }")
+    createFile("main/META-INF/MANIFEST.MF",
+        "Manifest-Version: 1.0\nBundle-Name: main\nBundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main;version=\"1.0.0\"\n")
+    makeAll().assertSuccessful()
+
+    assertJar(myModule, setOf("META-INF/MANIFEST.MF", "main/Main.class", "util/Util.class"))
     assertManifest(myModule, setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 }
