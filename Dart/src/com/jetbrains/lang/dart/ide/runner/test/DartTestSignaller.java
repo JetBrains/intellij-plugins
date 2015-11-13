@@ -26,4 +26,8 @@ public interface DartTestSignaller {
                          long durationMillis);
 
   void signalTestFinished(@NotNull String testName, int testId, long durationMillis);
+
+  void signalTestSkipped(@NotNull String testName, @NotNull String reason, @Nullable String stackTrace);
+
+  void signalTestMessage(@NotNull String testName, @NotNull String message);
 }

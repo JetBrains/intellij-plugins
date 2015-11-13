@@ -1,22 +1,17 @@
 package com.jetbrains.lang.dart.ide.runner.test;
 
+import com.google.gson.JsonSyntaxException;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.OutputLineSplitter;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.execution.testframework.sm.runner.events.*;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import static com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor.getTFrameworkPrefix;
 
@@ -33,7 +28,7 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
 
   private final OutputLineSplitter mySplitter;
   private final String myTestFrameworkName;
-  private final DartTestOutputParser myDartTestParser;
+  private final DartTestJsonReader myDartTestParser;
   private boolean myPendingLineBreakFlag;
 
   public DartTestToGeneralTestEventsConverter(@NotNull final String testFrameworkName,
@@ -46,7 +41,7 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
       }
     };
     myTestFrameworkName = testFrameworkName;
-    myDartTestParser = new DartTestOutputParser(this);
+    myDartTestParser = new DartTestJsonReader(this);
   }
 
   public void process(final String text, final Key outputType) {
@@ -74,7 +69,14 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   private void processConsistentText(final String text, final Key outputType, boolean tcLikeFakeOutput) {
-    if (!myDartTestParser.parseNext(text, outputType)) {
+    boolean result;
+    try {
+      result = myDartTestParser.process(text, outputType);
+    }
+    catch (JsonSyntaxException ex) {
+      result = false;
+    }
+    if (!result) {
       if (myPendingLineBreakFlag) {
         // output type for line break isn't important
         // we may use any, e.g. current one
@@ -197,5 +199,13 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
 
   public void signalTestFinished(@NotNull String testName, int testId, long durationMillis) {
     fireOnTestFinished(new TestFinishedEvent(testName, testId, durationMillis));
+  }
+
+  public void signalTestSkipped(@NotNull String testName, @NotNull String reason, @Nullable String stackTrace) {
+    fireOnTestIgnored(new TestIgnoredEvent(testName, reason, stackTrace));
+  }
+
+  public void signalTestMessage(@NotNull String testName, @NotNull String message) {
+    fireOnTestOutput(new TestOutputEvent(testName, message, false));
   }
 }

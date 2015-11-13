@@ -27,6 +27,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
+import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,9 +36,9 @@ import org.jetbrains.annotations.Nullable;
 public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String PUB_SNAPSHOT_PATH = "/bin/snapshots/pub.dart.snapshot";
-  private static final String RUN_COMMAND = "run";
+  private static final String RUN_COMMAND = "global run"; // TODO Change to "run" after package:test is committed.
   private static final String TEST_PACKAGE_SPEC = "test:test";
-  private static final String EXPANDED_REPORTER_OPTION = " -r expanded"; // Initial space is required.
+  private static final String EXPANDED_REPORTER_OPTION = " -r json"; // Initial space is required.
   private static final String NAME_REGEX_OPTION = "-n "; // Trailing space is required.
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
@@ -90,7 +91,8 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       throw new ExecutionException("Dart SDK cannot be found"); // can't happen
     }
     String sdkPath = sdk.getHomePath();
-    final String filePath = myRunnerParameters.getFilePath();
+    DartTestRunnerParameters params = (DartTestRunnerParameters)myRunnerParameters;
+    final String filePath = params.getFilePath();
     // TODO Try adding --pause-after-load to VM args to see if that makes test debugging possible
     StringBuilder builder = new StringBuilder();
     builder.append(RUN_COMMAND).append(' ').append(TEST_PACKAGE_SPEC);
@@ -98,13 +100,13 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     if (filePath != null) {
       builder.append(' ').append(filePath);
     }
-    String testName = ((DartTestRunnerParameters)myRunnerParameters).getTestName();
-    if (testName != null && !testName.isEmpty()) {
+    String testName = params.getTestName();
+    if (testName != null && !testName.isEmpty() && params.getScope() != Scope.ALL) {
       String safeName = StringUtil.escapeStringCharacters(testName);
       builder.append(' ').append(NAME_REGEX_OPTION).append('"').append(safeName).append('"');
     }
-    myRunnerParameters.setArguments(builder.toString());
-    myRunnerParameters.setWorkingDirectory(project.getBasePath());
+    params.setArguments(builder.toString());
+    params.setWorkingDirectory(project.getBasePath());
     return doStartProcess(pathToDartUrl(sdkPath + PUB_SNAPSHOT_PATH));
   }
 
