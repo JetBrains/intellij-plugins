@@ -209,7 +209,6 @@ public class OsgiBuildSession implements Reporter {
 
     properties.put(Constants.IMPORT_PACKAGE, "*");
     properties.put(Constants.REMOVEHEADERS, Constants.INCLUDE_RESOURCE + ',' + Constants.PRIVATE_PACKAGE);
-    properties.put(Constants.CREATED_BY, "IntelliJ IDEA / OSGi Plugin");
 
     // user settings
 
@@ -245,6 +244,10 @@ public class OsgiBuildSession implements Reporter {
 
     for (OsmorcJarContentEntry contentEntry : myExtension.getAdditionalJarContents()) {
       resources.add(contentEntry.myDestination + '=' + contentEntry.mySource);
+    }
+
+    if (myExtension.isManifestManuallyEdited()) {
+      resources.add(myModuleOutputDir.getPath());
     }
 
     if (!resources.isEmpty()) {

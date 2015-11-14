@@ -4,5 +4,6 @@
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="yaml"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection"/>
     <psi.referenceContributor language="yaml" implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
+    <fileTypeFactory implementation="com.jetbrains.lang.dart.DartYamlFileTypeFactory"/>
   </extensions>
 </idea-plugin>

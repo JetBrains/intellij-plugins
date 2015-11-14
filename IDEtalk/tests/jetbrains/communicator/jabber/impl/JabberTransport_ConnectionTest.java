@@ -788,15 +788,24 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
           if (conn.isConnected()) {
             conn.getAccountManager().deleteAccount();
           }
-        } catch (XMPPException e) {
+        }
+        catch (XMPPException e) {
           throw new RuntimeException(e);
-        } finally{
-          new Thread("jabber conn test") {
+        }
+        finally{
+          Thread thread = new Thread("jabber conn test") {
             @Override
             public void run() {
               conn.close();
             }
-          }.start();
+          };
+          thread.start();
+          try {
+            thread.join();
+          }
+          catch (InterruptedException e) {
+            throw new RuntimeException(e);
+          }
         }
       }
     });
