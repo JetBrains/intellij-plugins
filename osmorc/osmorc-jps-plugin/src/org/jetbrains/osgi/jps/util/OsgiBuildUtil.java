@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jetbrains.osgi.jps.util;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -18,39 +33,58 @@ import java.util.Map;
 import java.util.Properties;
 
 public class OsgiBuildUtil {
+  private static final boolean ourMavenPluginLoaded;
+
+  static {
+    boolean pluginLoaded = false;
+    try {
+      Class.forName("org.jetbrains.jps.maven.model.JpsMavenExtensionService");
+      pluginLoaded = true;
+    }
+    catch (ClassNotFoundException ignored) { }
+    ourMavenPluginLoaded = pluginLoaded;
+  }
+
   @NotNull
   public static Properties getMavenProjectProperties(@NotNull CompileContext context, @NotNull JpsModule module) {
-    final MavenProjectConfiguration projectConfig = getProjectConfig(context);
-    final Properties result = new Properties();
-    if (projectConfig == null) return result;
-
-    JpsJavaExtensionService.dependencies(module).recursively().productionOnly().processModules(new Consumer<JpsModule>() {
-      @Override
-      public void consume(JpsModule module) {
-        MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
-        if (moduleConfig != null) {
-          Map<String, String> properties = moduleConfig.properties;
-          for (Map.Entry<String, String> entry : properties.entrySet()) {
-            result.setProperty(entry.getKey(), entry.getValue());
-          }
-        }
-      }
-    });
+    Properties result = new Properties();
+    if (ourMavenPluginLoaded) collectMavenProjectProperties(context, module, result);
     return result;
   }
 
   @Nullable
   public static File getMavenProjectPath(@NotNull CompileContext context, @NotNull JpsModule module) {
-    MavenProjectConfiguration projectConfig = getProjectConfig(context);
-    if (projectConfig == null) return null;
-    MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
-    return moduleConfig == null ? null : new File(FileUtil.toSystemDependentName(moduleConfig.directory), "pom.xml");
+    return ourMavenPluginLoaded ? findMavenProjectPath(context, module) : null;
   }
 
-  @Nullable
-  private static MavenProjectConfiguration getProjectConfig(CompileContext context) {
+  private static void collectMavenProjectProperties(CompileContext context, JpsModule module, final Properties result) {
     BuildDataPaths dataPaths = context.getProjectDescriptor().dataManager.getDataPaths();
-    return JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
+    final MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
+    if (projectConfig != null) {
+      JpsJavaExtensionService.dependencies(module).recursively().productionOnly().processModules(new Consumer<JpsModule>() {
+        @Override
+        public void consume(JpsModule module) {
+          MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
+          if (moduleConfig != null) {
+            for (Map.Entry<String, String> entry : moduleConfig.properties.entrySet()) {
+              result.setProperty(entry.getKey(), entry.getValue());
+            }
+          }
+        }
+      });
+    }
+  }
+
+  private static File findMavenProjectPath(CompileContext context, JpsModule module) {
+    BuildDataPaths dataPaths = context.getProjectDescriptor().dataManager.getDataPaths();
+    MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
+    if (projectConfig != null) {
+      MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
+      if (moduleConfig != null) {
+        return new File(FileUtil.toSystemDependentName(moduleConfig.directory), "pom.xml");
+      }
+    }
+    return null;
   }
 
   @Nullable
