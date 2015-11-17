@@ -42,7 +42,7 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -334,22 +334,22 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
     }
     switch (myOutputPathType) {
       case CompilerOutputPath:
-        VirtualFile moduleCompilerOutputPath = CompilerPaths.getModuleOutputDirectory(myFacet.getModule(), false);
+        String moduleCompilerOutputPath = CompilerPaths.getModuleOutputPath(myFacet.getModule(), false);
         if (moduleCompilerOutputPath != null) {
-          return moduleCompilerOutputPath.getParent().getPath() + "/" + nullSafeLocation;
+          return PathUtil.getParentPath(moduleCompilerOutputPath) + '/' + nullSafeLocation;
         }
         else {
           return nullSafeLocation;
         }
       case OsgiOutputPath:
         ProjectSettings projectSettings = ModuleServiceManager.getService(myFacet.getModule(), ProjectSettings.class);
-        String bundlesOutputPath = projectSettings.getBundlesOutputPath();
-        if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
-          return bundlesOutputPath + "/" + nullSafeLocation;
+        if (projectSettings != null) {
+          String bundlesOutputPath = projectSettings.getBundlesOutputPath();
+          if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
+            return bundlesOutputPath + "/" + nullSafeLocation;
+          }
         }
-        else {
-          return ProjectSettings.getDefaultBundlesOutputPath(myFacet.getModule().getProject()) + "/" + nullSafeLocation;
-        }
+        return ProjectSettings.getDefaultBundlesOutputPath(myFacet.getModule().getProject()) + "/" + nullSafeLocation;
       case SpecificOutputPath:
       default:
         return nullSafeLocation;
