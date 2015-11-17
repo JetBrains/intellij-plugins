@@ -206,15 +206,22 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   protected void processClasses(PsiElement parentInOriginalTree, final SinkResolveProcessor<?> processor) {
     final Project project = parentInOriginalTree.getProject();
     final GlobalSearchScope resolveScope = JSResolveUtil.getResolveScope(parentInOriginalTree);
+    final LinkedHashSet<String> qualifiedNames = new LinkedHashSet<String>();
     JSPackageIndex.processElementsInScopeRecursive("", new JSPackageIndex.PackageQualifiedElementsProcessor() {
       @Override
       public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind != JSPackageIndexInfo.Kind.FUNCTION && kind != JSPackageIndexInfo.Kind.VARIABLE) return true;
-        PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(qualifiedName, resolveScope);
-        return element == null || processor.execute(element, ResolveState.initial());
+        qualifiedNames.add(qualifiedName);
+        return true;
       }
     }, resolveScope, project);
+    for(String qualifiedName:qualifiedNames) {
+      PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+        .findClassByQName(qualifiedName, resolveScope);
+      if (element != null && !processor.execute(element, ResolveState.initial())) {
+        return;
+      }
+    }
   }
 
   private static void addAllClassesFromQuery(List<Object> variants,
