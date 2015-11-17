@@ -19,7 +19,7 @@ import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,13 +34,19 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleDependency;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
-import org.jetbrains.osgi.jps.model.*;
+import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
+import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -107,26 +113,32 @@ public class OsgiBuildSession implements Reporter {
       throw new OsgiBuildException("Cannot create directory for bundle file '" + myOutputJarFile + "'.");
     }
 
-    List<File> classes = ContainerUtil.newSmartList(myModuleOutputDir);
+    List<File> classes = ContainerUtil.newSmartList();
+    if (myModuleOutputDir.exists()) {
+      classes.add(myModuleOutputDir);
+    }
     for (JpsDependencyElement dependency : myModule.getDependenciesList().getDependencies()) {
       if (dependency instanceof JpsModuleDependency) {
         JpsModule module = ((JpsModuleDependency)dependency).getModule();
         if (module != null && JpsOsmorcExtensionService.getExtension(module) == null) {
           File outputDir = JpsJavaExtensionService.getInstance().getOutputDirectory(module, false);
-          if (outputDir != null) {
+          if (outputDir != null && outputDir.exists()) {
             classes.add(outputDir);
           }
         }
       }
     }
-    myClasses = classes.toArray(new File[classes.size()]);
+    myClasses = classes.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : classes.toArray(new File[classes.size()]);
 
-    mySources = ContainerUtil.map2Array(myModule.getSourceRoots(), File.class, new Function<JpsModuleSourceRoot, File>() {
-      @Override
-      public File fun(JpsModuleSourceRoot root) {
-        return root.getFile();
+    List<File> sources = ContainerUtil.newSmartList();
+    for (JpsModuleSourceRoot sourceRoot : myModule.getSourceRoots()) {
+      File sourceDir = sourceRoot.getFile();
+      if (sourceDir.exists()) {
+        sources.add(sourceDir);
       }
-    });
+    }
+    mySources = sources.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : sources.toArray(new File[sources.size()]);
+
     myBndWrapper = new BndWrapper(this);
   }
 
