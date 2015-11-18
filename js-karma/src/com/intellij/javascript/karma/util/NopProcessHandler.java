@@ -16,6 +16,7 @@ public class NopProcessHandler extends ProcessHandler {
 
   @Override
   protected void detachProcessImpl() {
+    notifyProcessTerminated(0);
   }
 
   @Override
