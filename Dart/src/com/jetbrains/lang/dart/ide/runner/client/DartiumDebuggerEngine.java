@@ -30,6 +30,7 @@ import org.jetbrains.debugger.Location;
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   private static final Logger LOG = Logger.getInstance(DartiumDebuggerEngine.class);
 
+  @NotNull
   @Override
   public ChromeDebugProcess createDebugProcess(@NotNull final XDebugSession session,
                                                @NotNull final WebBrowser browser,
