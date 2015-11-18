@@ -134,7 +134,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     YAMLKeyValue keyValue = JsPsiUtils.getVerifiedHierarchyHead(
       element.getParent(),
       new Class[]{
-        YAMLSequence.class,
+        YAMLSequenceItem.class,
         YAMLCompoundValue.class
       },
       YAMLKeyValue.class

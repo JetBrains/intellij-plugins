@@ -15,30 +15,26 @@
  */
 package com.google.jstestdriver.idea.config;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.DocumentFragment;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
+import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.psi.*;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -67,10 +63,12 @@ public class JstdConfigFileAnnotator implements Annotator {
   }
 
   private static void annotateDocument(@NotNull YAMLDocument yamlDocument, @NotNull final AnnotationHolder holder) {
-    List<YAMLKeyValue> keyValues = fetchKeyValues(yamlDocument, holder);
-    if (keyValues == null) {
+    final YAMLValue value = yamlDocument.getTopLevelValue();
+    if (!(value instanceof YAMLMapping)) {
+      holder.createErrorAnnotation(yamlDocument, "Expected mapping");
       return;
     }
+    final Collection<YAMLKeyValue> keyValues = ((YAMLMapping)value).getKeyValues();
     markStrangeSymbols(yamlDocument, holder);
 
     BasePathInfo basePathInfo = new BasePathInfo(yamlDocument);
@@ -78,6 +76,10 @@ public class JstdConfigFileAnnotator implements Annotator {
     final Set<String> visitedKeys = Sets.newHashSet();
     for (YAMLKeyValue keyValue : keyValues) {
       String keyText = keyValue.getKeyText();
+      if (keyValue.getKey() == null) {
+        holder.createErrorAnnotation(keyValue.getFirstChild(), "Expected key");
+        continue;
+      }
       if (!JstdConfigFileUtils.isTopLevelKey(keyValue)) {
         holder.createErrorAnnotation(keyValue.getKey(), "Unexpected key '" + keyText + "'");
       }
@@ -144,38 +146,38 @@ public class JstdConfigFileAnnotator implements Annotator {
   private static void annotateKeyValueWithInnerFileSequence(@NotNull YAMLKeyValue keyValue,
                                                             @NotNull final AnnotationHolder holder,
                                                             @Nullable final VirtualFile basePath) {
-    PsiElement value = keyValue.getValue();
-    if (value == null) {
+    YAMLValue value = keyValue.getValue();
+    if (!(value instanceof YAMLSequence)) {
       holder.createErrorAnnotation(keyValue, "File sequence was expected here");
       return;
     }
-    YAMLCompoundValue compoundValue = ObjectUtils.tryCast(value, YAMLCompoundValue.class);
-    if (compoundValue == null) {
-      holder.createErrorAnnotation(value, "File sequence should start with a dash symbol");
-      return;
+    final String indent = StringUtil.repeatSymbol(' ', YAMLUtil.getIndentInThisLine(value));
+    for (YAMLSequenceItem item : ((YAMLSequence)value).getItems()) {
+      annotateFileSequence(item, holder, basePath, indent);
+      
     }
-    final String firstIndent = toIndentString(compoundValue.getPrevSibling());
-    compoundValue.acceptChildren(new PsiElementVisitor() {
-      @Override
-      public void visitElement(PsiElement element) {
-        final YAMLSequence sequence = ObjectUtils.tryCast(element, YAMLSequence.class);
-        if (sequence != null) {
-          annotateFileSequence(sequence, holder, basePath, firstIndent);
-          return;
-        }
-        boolean accepted = JsPsiUtils.isElementOfType(
-          element,
-          YAMLTokenTypes.EOL, YAMLTokenTypes.WHITESPACE, YAMLTokenTypes.COMMENT, YAMLTokenTypes.INDENT
-        );
-        accepted = accepted || element instanceof PsiWhiteSpace;
-        if (!accepted) {
-          holder.createErrorAnnotation(element, "YAML sequence was expected here");
-        }
-      }
-    });
+    
+    //final String firstIndent = toIndentString(sequence.getPrevSibling());
+    //sequence.acceptChildren(new PsiElementVisitor() {
+    //  @Override
+    //  public void visitElement(PsiElement element) {
+    //    final YAMLSequenceItem sequence = ObjectUtils.tryCast(element, YAMLSequenceItem.class);
+    //    if (sequence != null) {
+    //      return;
+    //    }
+    //    boolean accepted = JsPsiUtils.isElementOfType(
+    //      element,
+    //      YAMLTokenTypes.EOL, YAMLTokenTypes.WHITESPACE, YAMLTokenTypes.COMMENT, YAMLTokenTypes.INDENT
+    //    );
+    //    accepted = accepted || element instanceof PsiWhiteSpace;
+    //    if (!accepted) {
+    //      holder.createErrorAnnotation(element, "YAML sequence was expected here");
+    //    }
+    //  }
+    //});
   }
 
-  private static void checkSequenceIndent(@NotNull YAMLSequence sequence,
+  private static void checkSequenceIndent(@NotNull YAMLSequenceItem sequence,
                                           @NotNull AnnotationHolder holder,
                                           @NotNull String expectedIndent) {
     PsiElement prevSibling = sequence.getPrevSibling();
@@ -204,26 +206,26 @@ public class JstdConfigFileAnnotator implements Annotator {
     return "";
   }
 
-  private static void annotateFileSequence(@NotNull YAMLSequence sequence,
+  private static void annotateFileSequence(@NotNull YAMLSequenceItem sequence,
                                            @NotNull final AnnotationHolder holder,
                                            @Nullable final VirtualFile basePath,
                                            @NotNull final String expectedIndent) {
     checkSequenceIndent(sequence, holder, expectedIndent);
-    sequence.acceptChildren(new PsiElementVisitor() {
-      @Override
-      public void visitElement(PsiElement element) {
-        if (element instanceof YAMLSequence) {
-          YAMLSequence childSequence = (YAMLSequence) element;
-          annotateFileSequence(childSequence, holder, basePath, expectedIndent);
-        }
-        super.visitElement(element);
+    final YAMLValue value = sequence.getValue();
+    if (value == null) {
+      holder.createErrorAnnotation(sequence, "Sequence item is empty");
+      return;
+    }
+    if (value instanceof YAMLSequence) {
+      for (YAMLSequenceItem item : ((YAMLSequence)value).getItems()) {
+        annotateFileSequence(item, holder, basePath, expectedIndent);
       }
-    });
-    if (!isOneLineText(sequence)) {
+    }
+    if (value instanceof YAMLScalar && ((YAMLScalar)value).isMultiline()) {
       holder.createErrorAnnotation(sequence, "Unexpected multiline path");
       return;
     }
-    PsiElementFragment<YAMLSequence> sequenceTextFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
+    PsiElementFragment<YAMLSequenceItem> sequenceTextFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
     if (basePath != null && sequenceTextFragment != null) {
       DocumentFragment documentFragment = sequenceTextFragment.toDocumentFragment();
       if (documentFragment != null) {
@@ -231,22 +233,7 @@ public class JstdConfigFileAnnotator implements Annotator {
       }
     }
   }
-
-  private static boolean isOneLineText(@NotNull YAMLSequence sequence) {
-    PsiElementFragment<YAMLSequence> textSequenceFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
-    if (textSequenceFragment != null) {
-      DocumentFragment textFragment = textSequenceFragment.toDocumentFragment();
-      if (textFragment != null) {
-        Document document = textFragment.getDocument();
-        TextRange textRange = textFragment.getTextRange();
-        int startLine = document.getLineNumber(textRange.getStartOffset());
-        int endLine = document.getLineNumber(textRange.getEndOffset());
-        return startLine == endLine;
-      }
-    }
-    return false;
-  }
-
+  
   private static void annotatePath(@NotNull VirtualFile basePath,
                                    @NotNull DocumentFragment pathAsDocumentFragment,
                                    @NotNull final AnnotationHolder holder,
@@ -307,37 +294,4 @@ public class JstdConfigFileAnnotator implements Annotator {
     }
   }
 
-  @Nullable
-  private static List<YAMLKeyValue> fetchKeyValues(@NotNull YAMLDocument yamlDocument,
-                                                   @NotNull final AnnotationHolder holder) {
-    final Document document = JsPsiUtils.getDocument(yamlDocument);
-    if (document == null) {
-      return null;
-    }
-    final List<YAMLKeyValue> keyValues = Lists.newArrayList();
-    final Ref<Integer> previousKeyValueEndLineNumberRef = Ref.create(-1);
-    yamlDocument.acceptChildren(new PsiElementVisitor() {
-      @Override
-      public void visitElement(PsiElement element) {
-        if (JsPsiUtils.isElementOfType(element, YAMLTokenTypes.EOL, YAMLTokenTypes.INDENT)
-            || element instanceof PsiComment) {
-          return;
-        }
-        int startLineNumber = JstdConfigFileUtils.getStartLineNumber(document, element);
-        if (previousKeyValueEndLineNumberRef.get() < startLineNumber) {
-          if (element instanceof YAMLKeyValue) {
-            YAMLKeyValue yamlKeyValue = (YAMLKeyValue)element;
-            int endOffset = yamlKeyValue.getTextRange().getEndOffset();
-            int endLine = document.getLineNumber(Math.max(0, endOffset - 1));
-            previousKeyValueEndLineNumberRef.set(endLine);
-            keyValues.add(yamlKeyValue);
-          }
-          else {
-            holder.createErrorAnnotation(element, "Unexpected element '" + element.getText() + "'");
-          }
-        }
-      }
-    });
-    return keyValues;
-  }
 }

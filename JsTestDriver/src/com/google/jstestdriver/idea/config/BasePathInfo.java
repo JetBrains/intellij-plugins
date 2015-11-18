@@ -5,13 +5,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
+import org.jetbrains.yaml.psi.YAMLValue;
 
 import java.io.File;
 
@@ -38,11 +37,6 @@ class BasePathInfo {
       myKeyValue = basePathPair.getFirst();
       myDocumentFragment = basePathPair.getSecond();
     }
-  }
-
-  @NotNull
-  public YAMLDocument getYAMLDocument() {
-    return myYAMLDocument;
   }
 
   @Nullable
@@ -118,16 +112,15 @@ class BasePathInfo {
   @Nullable
   private static Pair<YAMLKeyValue, DocumentFragment> extractBasePathPair(@NotNull YAMLDocument yamlDocument) {
     final Ref<Pair<YAMLKeyValue, DocumentFragment>> result = Ref.create(null);
-    yamlDocument.acceptChildren(new PsiElementVisitor() {
-      @Override
-      public void visitElement(PsiElement element) {
-        YAMLKeyValue keyValue = ObjectUtils.tryCast(element, YAMLKeyValue.class);
+    final YAMLValue value = yamlDocument.getTopLevelValue();
+    if (value instanceof YAMLMapping) {
+      for (YAMLKeyValue keyValue : ((YAMLMapping)value).getKeyValues()) {
         if (keyValue != null && isBasePathKey(keyValue) && result.isNull()) {
           DocumentFragment valueFragment = JstdConfigFileUtils.extractValueAsDocumentFragment(keyValue);
           result.set(Pair.create(keyValue, valueFragment));
         }
       }
-    });
+    }
     return result.get();
   }
 

@@ -16,8 +16,8 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.common.collect.Lists;
-import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.fileTypes.FileType;
@@ -30,13 +30,12 @@ import com.intellij.patterns.VirtualFilePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLSequence;
+import org.jetbrains.yaml.psi.YAMLSequenceItem;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -100,7 +99,7 @@ public class JstdConfigFileUtils {
   }
 
   @Nullable
-  public static PsiElementFragment<YAMLSequence> buildSequenceTextFragment(@NotNull YAMLSequence sequence) {
+  public static PsiElementFragment<YAMLSequenceItem> buildSequenceTextFragment(@NotNull YAMLSequenceItem sequence) {
     final Ref<Integer> startOffsetRef = Ref.create(null);
     final Ref<Integer> endOffsetRef = Ref.create(null);
     sequence.acceptChildren(new PsiElementVisitor() {

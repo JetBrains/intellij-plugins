@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLSequence;
+import org.jetbrains.yaml.psi.YAMLSequenceItem;
 
 import java.util.List;
 
@@ -84,9 +84,9 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
           compoundValue.acceptChildren(new PsiElementVisitor() {
             @Override
             public void visitElement(PsiElement element) {
-              YAMLSequence yamlSequence = ObjectUtils.tryCast(element, YAMLSequence.class);
-              if (yamlSequence != null) {
-                PsiReference ref = getReferenceBySequence(basePathInfo, keyValue, yamlSequence);
+              YAMLSequenceItem yamlSequenceItem = ObjectUtils.tryCast(element, YAMLSequenceItem.class);
+              if (yamlSequenceItem != null) {
+                PsiReference ref = getReferenceBySequence(basePathInfo, keyValue, yamlSequenceItem);
                 if (ref != null) {
                   references.add(ref);
                 }
@@ -101,8 +101,8 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
   @Nullable
   private static PsiReference getReferenceBySequence(@NotNull BasePathInfo basePathInfo,
                                                      @NotNull YAMLKeyValue keyValue,
-                                                     @NotNull YAMLSequence sequence) {
-    PsiElementFragment<YAMLSequence> sequenceFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
+                                                     @NotNull YAMLSequenceItem sequence) {
+    PsiElementFragment<YAMLSequenceItem> sequenceFragment = JstdConfigFileUtils.buildSequenceTextFragment(sequence);
     if (sequenceFragment != null) {
       String text = sequenceFragment.getText().trim();
       String relativePath = FileUtil.toSystemIndependentName(text);
