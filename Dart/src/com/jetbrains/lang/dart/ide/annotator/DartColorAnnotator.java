@@ -141,7 +141,7 @@ public class DartColorAnnotator implements Annotator {
 
   @Contract("_, null -> false")
   public static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile file) {
-    if (file == null || !file.isInLocalFileSystem()) return false;
+    if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return false;
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;

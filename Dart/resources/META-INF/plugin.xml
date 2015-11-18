@@ -159,6 +159,7 @@
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
+    <externalAnnotator language="yaml" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
 
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
