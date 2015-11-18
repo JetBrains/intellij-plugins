@@ -324,4 +324,11 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     assertNotEmpty(service.getNavigation(secondFile));
     assertNotEmpty(service.getOverrideMembers(secondFile));
   }
+
+  public void _testAnalysisOptionsFile() throws Exception {
+    myFixture.configureByText(".analysis_options", "analyzer:\n" +
+                                                   "  errors:\n" +
+                                                   "    <error>invalid-option</error>: <error>invalid-value</error>");
+    myFixture.checkHighlighting();
+  }
 }
