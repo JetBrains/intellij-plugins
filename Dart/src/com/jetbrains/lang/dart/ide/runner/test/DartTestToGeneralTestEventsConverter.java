@@ -110,6 +110,14 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
+  private void fireOnTestsCountInSuite(final int count) {
+    // local variable is used to prevent concurrent modification
+    final GeneralTestEventsProcessor processor = getProcessor();
+    if (processor != null) {
+      processor.onTestsCountInSuite(count);
+    }
+  }
+
   private void fireOnTestStarted(@NotNull TestStartedEvent testStartedEvent) {
     // local variable is used to prevent concurrent modification
     final GeneralTestEventsProcessor processor = getProcessor();
@@ -174,6 +182,11 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     fireOnTestFrameworkAttached();
   }
 
+  // TODO Find the number of tests to be run and tell the test view so it can track progress correctly.
+  public void signalTestCount(int count) {
+    fireOnTestsCountInSuite(count);
+  }
+
   public void signalTestStarted(@NotNull String testName,
                                 int testId,
                                 int parentId,
@@ -205,7 +218,12 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
     fireOnTestIgnored(new TestIgnoredEvent(testName, reason, stackTrace));
   }
 
-  public void signalTestMessage(@NotNull String testName, @NotNull String message) {
-    fireOnTestOutput(new TestOutputEvent(testName, message, false));
+  public void signalTestMessage(@NotNull String testName, final int testId, @NotNull String message) {
+    fireOnTestOutput(new TestOutputEvent(testName, message, false) {
+      int id = testId;
+      public int getId() {
+        return id;
+      }
+    });
   }
 }

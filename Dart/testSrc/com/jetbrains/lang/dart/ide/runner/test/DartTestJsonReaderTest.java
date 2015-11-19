@@ -128,7 +128,7 @@ public class DartTestJsonReaderTest extends TestCase {
     }
 
     @Override
-    public void signalTestMessage(@NotNull String testName, @NotNull String message) {
+    public void signalTestMessage(@NotNull String testName, int id, @NotNull String message) {
       signals.add("print " + testName + " " + message);
     }
   }

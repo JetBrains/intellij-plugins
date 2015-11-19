@@ -29,5 +29,5 @@ public interface DartTestSignaller {
 
   void signalTestSkipped(@NotNull String testName, @NotNull String reason, @Nullable String stackTrace);
 
-  void signalTestMessage(@NotNull String testName, @NotNull String message);
+  void signalTestMessage(@NotNull String testName, int testId, @NotNull String message);
 }
