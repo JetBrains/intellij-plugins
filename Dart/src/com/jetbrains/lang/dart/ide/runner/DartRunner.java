@@ -59,9 +59,18 @@ public class DartRunner extends DefaultProgramRunner {
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
       try {
-        final String path = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().getFilePath();
-        assert path != null; // already checked
-        final String dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
+        final String dasExecutionContextId;
+
+        final RunProfile runConfig = env.getRunProfile();
+        if (runConfig instanceof DartRunConfigurationBase) {
+          final String path = ((DartRunConfigurationBase)runConfig).getRunnerParameters().getFilePath();
+          assert path != null; // already checked
+          dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
+        }
+        else {
+          dasExecutionContextId = null; // remote debug
+        }
+
         return doExecuteDartDebug(state, env, dasExecutionContextId);
       }
       catch (RuntimeConfigurationError e) {
