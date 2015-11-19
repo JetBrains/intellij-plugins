@@ -114,7 +114,8 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     final DartArguments arguments = testCallExpression.getArguments();
     final DartArgumentList argumentList = arguments == null ? null : arguments.getArgumentList();
     final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();
-    return argExpressions != null && !argExpressions.isEmpty() && argExpressions.get(0) instanceof DartStringLiteralExpression ? StringUtil
-      .unquoteString(argExpressions.get(0).getText()) : null;
+    return argExpressions != null && !argExpressions.isEmpty() && argExpressions.get(0) instanceof DartStringLiteralExpression
+           ? StringUtil.unquoteString(argExpressions.get(0).getText())
+           : null;
   }
 }
