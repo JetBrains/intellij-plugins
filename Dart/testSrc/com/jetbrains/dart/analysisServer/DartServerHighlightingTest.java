@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.DartFileType;
@@ -326,9 +327,12 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   }
 
   public void _testAnalysisOptionsFile() throws Exception {
-    myFixture.configureByText(".analysis_options", "analyzer:\n" +
-                                                   "  errors:\n" +
-                                                   "    <error>invalid-option</error>: <error>invalid-value</error>");
+    // do nt use configureByText(), because that method creates file with different name (___.analysis_options)
+    final PsiFile file = myFixture.addFileToProject(".analysis_options",
+                                                    "analyzer:\n" +
+                                                    "  errors:\n" +
+                                                    "    <warning>invalid-option</warning>: <warning>invalid-value</warning>");
+    myFixture.openFileInEditor(file.getVirtualFile());
     myFixture.checkHighlighting();
   }
 }
