@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.unittest;
+package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
@@ -21,20 +21,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<DartUnitRunConfiguration> {
-  public DartUnitRunConfigurationProducer() {
-    super(DartUnitRunConfigurationType.getInstance());
+public class DartTestRunConfigurationProducer extends RunConfigurationProducer<DartTestRunConfiguration> {
+  public DartTestRunConfigurationProducer() {
+    super(DartTestRunConfigurationType.getInstance());
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(final @NotNull DartUnitRunConfiguration configuration,
+  protected boolean setupConfigurationFromContext(final @NotNull DartTestRunConfiguration configuration,
                                                   final @NotNull ConfigurationContext context,
                                                   final @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile dartFile = DartCommandLineRuntimeConfigurationProducer.getRunnableDartFileFromContext(context);
     if (dartFile == null) return false;
 
     final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), dartFile);
-    final VirtualFile dartUnitLib = urlResolver.findFileByDartUrl("package:unittest/unittest.dart");
+    final VirtualFile dartUnitLib = urlResolver.findFileByDartUrl("package:test/test.dart");
     if (dartUnitLib == null) return false;
 
     final VirtualFile yamlFile = urlResolver.getPubspecYamlFile();
@@ -58,22 +58,22 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
   }
 
   @Override
-  public boolean isConfigurationFromContext(final @NotNull DartUnitRunConfiguration configuration,
+  public boolean isConfigurationFromContext(final @NotNull DartTestRunConfiguration configuration,
                                             final @NotNull ConfigurationContext context) {
     final PsiElement testElement = TestUtil.findTestElement(context.getPsiLocation());
     if (testElement == null) return false;
 
-    final DartUnitRunnerParameters paramsFromContext = new DartUnitRunnerParameters();
+    final DartTestRunnerParameters paramsFromContext = new DartTestRunnerParameters();
     if (!setupRunConfiguration(paramsFromContext, testElement)) return false;
 
-    final DartUnitRunnerParameters existingParams = configuration.getRunnerParameters();
+    final DartTestRunnerParameters existingParams = configuration.getRunnerParameters();
 
     return Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
            Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
            (existingParams.getScope() == Scope.ALL || Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
   }
 
-  private static boolean setupRunConfiguration(final @NotNull DartUnitRunnerParameters runnerParams, final @NotNull PsiElement psiElement) {
+  private static boolean setupRunConfiguration(final @NotNull DartTestRunnerParameters runnerParams, final @NotNull PsiElement psiElement) {
     if (psiElement instanceof DartCallExpression) {
       final String testName = TestUtil.findTestName((DartCallExpression)psiElement);
       final List<VirtualFile> virtualFiles = DartResolveUtil.findLibrary(psiElement.getContainingFile());

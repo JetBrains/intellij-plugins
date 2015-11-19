@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.unittest;
+package com.jetbrains.lang.dart.ide.runner.util;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.execution.Location;
@@ -72,7 +72,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
         public boolean execute(@NotNull final PsiElement element) {
           if (element instanceof DartCallExpression) {
             DartCallExpression expression = (DartCallExpression)element;
-            if (DartUnitRunConfigurationProducer.isTest(expression) || DartUnitRunConfigurationProducer.isGroup(expression)) {
+            if (TestUtil.isTest(expression) || TestUtil.isGroup(expression)) {
               if (nodes.get(nodes.size() - 1).equals(getTestLabel(expression))) {
                 boolean matches = true;
                 for (int i = nodes.size() - 2; i >= 0 && matches; --i) {
@@ -97,7 +97,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
           return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true, new Condition<PsiElement>() {
             @Override
             public boolean value(final PsiElement element) {
-              return element instanceof DartCallExpression && DartUnitRunConfigurationProducer.isGroup((DartCallExpression)element);
+              return element instanceof DartCallExpression && TestUtil.isGroup((DartCallExpression)element);
             }
           });
         }
@@ -114,8 +114,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     final DartArguments arguments = testCallExpression.getArguments();
     final DartArgumentList argumentList = arguments == null ? null : arguments.getArgumentList();
     final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();
-    return argExpressions != null && !argExpressions.isEmpty() && argExpressions.get(0) instanceof DartStringLiteralExpression
-           ? StringUtil.unquoteString(argExpressions.get(0).getText())
-           : null;
+    return argExpressions != null && !argExpressions.isEmpty() && argExpressions.get(0) instanceof DartStringLiteralExpression ? StringUtil
+      .unquoteString(argExpressions.get(0).getText()) : null;
   }
 }

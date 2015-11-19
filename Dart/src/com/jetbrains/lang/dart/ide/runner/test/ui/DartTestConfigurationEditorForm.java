@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.unittest.ui;
+package com.jetbrains.lang.dart.ide.runner.test.ui;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
@@ -16,8 +16,8 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
-import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfiguration;
-import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.ide.runner.util.TestModel;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunConfiguration> {
+public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunConfiguration> {
 
   private JPanel myMainPanel;
   private JComboBox myScopeCombo;
@@ -40,11 +40,15 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
+  private JCheckBox myVMCheckBox;
+  private JCheckBox myDartiumCheckBox;
+  private JCheckBox myChromeCheckBox;
+  private JCheckBox myFirefoxCheckBox;
 
   private final Project myProject;
   private TestModel myCachedModel;
 
-  public DartUnitConfigurationEditorForm(@NotNull final Project project) {
+  public DartTestConfigurationEditorForm(@NotNull final Project project) {
     myProject = project;
 
     DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
@@ -87,8 +91,8 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   }
 
   @Override
-  protected void resetEditorFrom(DartUnitRunConfiguration configuration) {
-    final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
+  protected void resetEditorFrom(DartTestRunConfiguration configuration) {
+    final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     myScopeCombo.setSelectedItem(parameters.getScope());
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
@@ -104,8 +108,8 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   }
 
   @Override
-  protected void applyEditorTo(DartUnitRunConfiguration configuration) throws ConfigurationException {
-    final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
+  protected void applyEditorTo(DartTestRunConfiguration configuration) throws ConfigurationException {
+    final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     parameters.setScope(scope);
@@ -123,9 +127,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     myTestNameLabel.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
     myTestNameField.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
-    myTestNameLabel.setText(scope == Scope.GROUP
-                            ? DartBundle.message("dart.unit.group.name")
-                            : DartBundle.message("dart.unit.test.name"));
+    myTestNameLabel.setText(scope == Scope.GROUP ? DartBundle.message("dart.unit.group.name") : DartBundle.message("dart.unit.test.name"));
   }
 
   private void onTestNameChanged() {
@@ -152,8 +154,9 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
 
     if (!myCachedModel.includes(scope, testLabel)) {
       myTestNameField.setForeground(JBColor.RED);
-      final String message = scope == Scope.METHOD ? DartBundle.message("test.label.not.found", testLabel)
-                                                   : DartBundle.message("test.group.not.found", testLabel);
+      final String message = scope == Scope.METHOD
+                             ? DartBundle.message("test.label.not.found", testLabel)
+                             : DartBundle.message("test.group.not.found", testLabel);
       myTestNameField.setToolTipText(message);
     }
     else {

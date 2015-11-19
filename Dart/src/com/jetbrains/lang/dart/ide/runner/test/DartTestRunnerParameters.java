@@ -1,11 +1,11 @@
-package com.jetbrains.lang.dart.ide.runner.unittest;
+package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartUnitRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
+public class DartTestRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
 
   private @NotNull Scope myScope = Scope.ALL;
   private @Nullable String myTestName = null;
@@ -31,7 +31,7 @@ public class DartUnitRunnerParameters extends DartCommandLineRunnerParameters im
   }
 
   @Override
-  protected final DartUnitRunnerParameters clone() {
-    return (DartUnitRunnerParameters)super.clone();
+  protected final DartTestRunnerParameters clone() {
+    return (DartTestRunnerParameters)super.clone();
   }
 }
