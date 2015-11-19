@@ -15,11 +15,11 @@
  */
 package jetbrains.communicator.idea.monitor;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
-import com.intellij.openapi.application.ApplicationManager;
 import jetbrains.communicator.core.IDEtalkOptions;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
@@ -58,16 +58,19 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     myProjectManager = projectManager;
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getComponentName() {
     return "UserActivityMonitor";
   }
 
+  @Override
   public void initComponent() {
     if (ApplicationManager.getApplication().isUnitTestMode()) return;
 
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+      @Override
       public boolean dispatchKeyEvent(KeyEvent e) {
         activity();
         return false;
@@ -75,6 +78,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     });
 
     AWTEventListener listener = new AWTEventListener() {
+      @Override
       public void eventDispatched(AWTEvent event) {
         activity();
       }
@@ -85,6 +89,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
 
     activity();
     myProjectManager.addProjectManagerListener(new ProjectManagerAdapter() {
+      @Override
       public void projectOpened(Project project) {
         //noinspection HardCodedStringLiteral
         Thread t = new Thread(UserActivityMonitor.this, getComponentName() + " thread");
@@ -95,6 +100,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     });
   }
 
+  @Override
   public void disposeComponent() {
     myStop = true;
     try {
@@ -126,6 +132,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     }
   }
 
+  @Override
   public void run() {
     try {
       myThreadDisposed = false;
@@ -152,6 +159,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     }
   }
 
+  @NotNull
   private UserPresence calculatePresence() {
     synchronized(myMonitor) {
       double inactivitySecs = (System.currentTimeMillis() - myLastActionTimestamp)/1000.0;
@@ -159,7 +167,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
       if (inactivitySecs < timeout(IDEtalkOptions.TIMEOUT_AWAY_MIN, AWAY_MINS)) {
         return new UserPresence(PresenceMode.AVAILABLE);
       }
-      else if (inactivitySecs < timeout(IDEtalkOptions.TIMEOUT_XA_MIN, EXTENDED_AWAY_MINS)){
+      if (inactivitySecs < timeout(IDEtalkOptions.TIMEOUT_XA_MIN, EXTENDED_AWAY_MINS)){
         return new UserPresence(PresenceMode.AWAY);
       }
       return new UserPresence(PresenceMode.EXTENDED_AWAY);
