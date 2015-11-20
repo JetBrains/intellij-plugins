@@ -3,7 +3,6 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector {
+public class AngularJSInjector implements MultiHostInjector {
   private static final Logger LOG = Logger.getInstance(AngularJSInjector.class);
 
   @Override
