@@ -360,7 +360,6 @@ module Teamcity
             @in_outline_scenario_stack.last && # if not in scenario_outline - steps will be ok
             !@in_outline_examples # examples contains correct steps
         if is_fake_outline_step
-          puts format_step(keyword, step_match, status, @options[:source] ? source_indent : nil)
           return
         end
 
