@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
@@ -16,12 +17,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DartVmServiceValue extends XNamedValue {
-  private static final int MAX_COLLECTION_ELEMENTS_TO_SHOW = 1000;
 
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
   @NotNull private String myIsolateId;
   @NotNull private final InstanceRef myInstanceRef;
   private final boolean myIsException;
+
+  private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<Integer>(0);
 
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,
@@ -154,13 +156,34 @@ public class DartVmServiceValue extends XNamedValue {
       return;
     }
 
-    if ((isListKind(myInstanceRef.getKind()) || myInstanceRef.getKind() == InstanceKind.Map) &&
-        myInstanceRef.getLength() > MAX_COLLECTION_ELEMENTS_TO_SHOW) {
-      node.setErrorMessage("Too many items");
-      return;
+    if ((isListKind(myInstanceRef.getKind()) || myInstanceRef.getKind() == InstanceKind.Map)) {
+      computeCollectionChildren(node);
     }
+    else {
+      myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
+        @Override
+        public void received(Obj obj) {
+          addFields(node, ((Instance)obj).getFields());
+        }
 
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
+        @Override
+        public void received(Sentinel sentinel) {
+          node.setErrorMessage(sentinel.getValueAsString());
+        }
+
+        @Override
+        public void onError(RPCError error) {
+          node.setErrorMessage(error.getMessage());
+        }
+      });
+    }
+  }
+
+  private void computeCollectionChildren(@NotNull final XCompositeNode node) {
+    final int offset = myCollectionChildrenAlreadyShown.get();
+    final int count = Math.min(myInstanceRef.getLength() - offset, XCompositeNode.MAX_CHILDREN_TO_SHOW);
+
+    myDebugProcess.getVmServiceWrapper().getCollectionObject(myIsolateId, myInstanceRef.getId(), offset, count, new GetObjectConsumer() {
       @Override
       public void received(Obj obj) {
         if (isListKind(myInstanceRef.getKind())) {
@@ -170,7 +193,13 @@ public class DartVmServiceValue extends XNamedValue {
           addMapChildren(node, ((Instance)obj).getAssociations());
         }
         else {
-          addFields(node, ((Instance)obj).getFields());
+          assert false : myInstanceRef.getKind();
+        }
+
+        myCollectionChildrenAlreadyShown.set(myCollectionChildrenAlreadyShown.get() + count);
+
+        if (offset + count < myInstanceRef.getLength()) {
+          node.tooManyChildren(myInstanceRef.getLength() - offset - count);
         }
       }
 
@@ -188,7 +217,7 @@ public class DartVmServiceValue extends XNamedValue {
 
   private void addListChildren(@NotNull final XCompositeNode node, @NotNull final ElementList<InstanceRef> listElements) {
     final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
-    int index = 0;
+    int index = myCollectionChildrenAlreadyShown.get();
     for (InstanceRef listElement : listElements) {
       childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement));
     }
@@ -197,7 +226,7 @@ public class DartVmServiceValue extends XNamedValue {
 
   private void addMapChildren(@NotNull final XCompositeNode node, @NotNull final ElementList<MapAssociation> mapAssociations) {
     final XValueChildrenList childrenList = new XValueChildrenList(mapAssociations.size());
-    int index = 0;
+    int index = myCollectionChildrenAlreadyShown.get();
     for (MapAssociation mapAssociation : mapAssociations) {
       final InstanceRef keyInstanceRef = mapAssociation.getKey();
       final InstanceRef valueInstanceRef = mapAssociation.getValue();
