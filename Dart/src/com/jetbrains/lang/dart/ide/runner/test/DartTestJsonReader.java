@@ -134,12 +134,11 @@ public class DartTestJsonReader {
   }
 
   private void processPrint(JsonObject obj) {
-    myProcessor.signalTestMessage(testName(obj), message(obj));
+    myProcessor.signalTestMessage(testName(obj), myTestId, message(obj));
   }
 
   private void processEnter(JsonObject obj) {
     myProcessor.signalTestFrameworkAttached();
-    ;
   }
 
   private void processExit(JsonObject obj) {
