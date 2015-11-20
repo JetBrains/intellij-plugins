@@ -1,0 +1,4 @@
+class BBB {
+  function <error>BBB</error>() {}
+  function <error>BBB</error>() {}
+}

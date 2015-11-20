@@ -572,6 +572,10 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
+  public void testDuplicatesSmall() throws Exception {
+    defaultTest();
+  }
+
   public void testFunctionSignatureMismatch() throws Exception {
     defaultTest();
   }
