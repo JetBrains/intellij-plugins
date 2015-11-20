@@ -340,6 +340,19 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
+  public void getCollectionObject(@NotNull final String isolateId,
+                                  @NotNull final String objectId,
+                                  final int offset,
+                                  final int count,
+                                  @NotNull final GetObjectConsumer consumer) {
+    addRequest(new Runnable() {
+      @Override
+      public void run() {
+        myVmService.getObject(isolateId, objectId, offset, count, consumer);
+      }
+    });
+  }
+
   public void evaluateInFrame(@NotNull final String isolateId,
                               @NotNull final Frame vmFrame,
                               @NotNull final String expression,
