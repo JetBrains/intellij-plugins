@@ -46,7 +46,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
-    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters();
+    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().clone();
 
     try {
       myRunnerParameters.check(env.getProject());

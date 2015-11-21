@@ -219,7 +219,7 @@ class DartTestToGeneralTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   public void signalTestMessage(@NotNull String testName, final int testId, @NotNull String message) {
-    fireOnTestOutput(new TestOutputEvent(testName, message, false) {
+    fireOnTestOutput(new TestOutputEvent(testName, message, true) {
       int id = testId;
       public int getId() {
         return id;
