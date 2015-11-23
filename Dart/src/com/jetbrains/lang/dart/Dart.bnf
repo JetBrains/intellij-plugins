@@ -307,7 +307,7 @@ redirection ::= ':' 'this' ('.' referenceExpression)? <<argumentsWrapper>>  {pin
 
 fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
 
-superCallOrFieldInitializer ::= ('super' | 'this') ('.' referenceExpression)? <<argumentsWrapper>>
+superCallOrFieldInitializer ::= (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
                               | fieldInitializer
                               {recoverWhile="super_call_or_field_initializer_recover"}
 private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |

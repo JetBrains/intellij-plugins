@@ -5426,7 +5426,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('super' | 'this') ('.' referenceExpression)? <<argumentsWrapper>>
+  // (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
   //                               | fieldInitializer
   public static boolean superCallOrFieldInitializer(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer")) return false;
@@ -5438,7 +5438,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('super' | 'this') ('.' referenceExpression)? <<argumentsWrapper>>
+  // (superExpression | thisExpression) ('.' referenceExpression)? <<argumentsWrapper>>
   private static boolean superCallOrFieldInitializer_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer_0")) return false;
     boolean r;
@@ -5450,13 +5450,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'super' | 'this'
+  // superExpression | thisExpression
   private static boolean superCallOrFieldInitializer_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, SUPER);
-    if (!r) r = consumeToken(b, THIS);
+    r = superExpression(b, l + 1);
+    if (!r) r = thisExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
