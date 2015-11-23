@@ -60,8 +60,8 @@ public class AssistUtils {
     }
   }
 
-  public static void applySourceChange(@NotNull final Project project,
-                                       @NotNull final SourceChange sourceChange) throws DartSourceEditException {
+  public static void applySourceChange(@NotNull final Project project, @NotNull final SourceChange sourceChange)
+    throws DartSourceEditException {
     Set<String> excludedIds = Collections.emptySet();
     applySourceChange(project, sourceChange, excludedIds);
   }
@@ -143,6 +143,16 @@ public class AssistUtils {
     return map;
   }
 
+  @Nullable
+  public static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
+    final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file, offset);
+    descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
+    descriptor.navigate(true);
+
+    final FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file);
+    return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
+  }
+
   private static void applyFileEdit(@NotNull final VirtualFile file,
                                     @NotNull final SourceFileEdit fileEdit,
                                     @NotNull final Set<String> excludedIds) {
@@ -182,16 +192,6 @@ public class AssistUtils {
 
   private static boolean isInContent(@NotNull Project project, @NotNull VirtualFile file) {
     return ProjectRootManager.getInstance(project).getFileIndex().isInContent(file);
-  }
-
-  @Nullable
-  private static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
-    final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file, offset);
-    descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
-    descriptor.navigate(true);
-
-    final FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file);
-    return fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
   }
 
   private static void runLinkedEdits(@NotNull Project project, @NotNull SourceChange sourceChange) {

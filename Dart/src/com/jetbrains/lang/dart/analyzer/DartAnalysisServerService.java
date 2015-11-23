@@ -60,6 +60,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl2;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -130,6 +131,7 @@ public class DartAnalysisServerService {
     @Override
     public void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
       updateProblemsView(DartProblemsViewImpl.createGroupName(filePath), errors);
+      updateProblemsView2(filePath, errors);
     }
 
     @Override
@@ -696,6 +698,26 @@ public class DartAnalysisServerService {
     }
 
     return resultRef.get();
+  }
+
+  private void updateProblemsView2(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
+      public void run() {
+        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+
+        for (final Project project : myRootsHandler.getTrackedProjects()) {
+          if (project.isDisposed()) continue;
+
+          if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
+            DartProblemsViewImpl2.getInstance(project).updateErrorsForFile(filePath, errors);
+          }
+          else {
+            DartProblemsViewImpl2.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
+          }
+        }
+      }
+    });
   }
 
   @Nullable
@@ -1397,6 +1419,7 @@ public class DartAnalysisServerService {
           for (final Project project : projects) {
             if (!project.isDisposed()) {
               DartProblemsViewImpl.getInstance(project).clearAll();
+              DartProblemsViewImpl2.getInstance(project).clearAll();
             }
           }
         }
