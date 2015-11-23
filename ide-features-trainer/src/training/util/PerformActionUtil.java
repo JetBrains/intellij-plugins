@@ -1,21 +1,28 @@
 package training.util;
 
 import com.intellij.ide.DataManager;
+import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -126,26 +133,32 @@ public class PerformActionUtil {
     }
 
     public static void performActionDisabledPresentation(String actionName, final Editor editor){
+        performActionDisabledPresentation(actionName, editor, null);
+    }
+
+
+    public static void performActionDisabledPresentation(String actionName, final Editor editor, @Nullable final FileEditor fileEditor){
 
         final ActionManagerEx amEx = ActionManagerEx.getInstanceEx();
         final AnAction action = amEx.getAction(actionName);
         final InputEvent inputEvent = getInputEvent(actionName);
 
         final Presentation presentation = action.getTemplatePresentation().clone();
-        final DataManager dataManager = DataManager.getInstance();
-        Component contextComponent = editor.getContentComponent();
-        final DataContext context = (contextComponent != null ? dataManager.getDataContext(contextComponent) : dataManager.getDataContext());
+//        final DataManager dataManager = DataManager.getInstance();
+//        Component contextComponent = editor.getContentComponent();
+//        final DataContext context = (contextComponent != null ? dataManager.getDataContext(contextComponent) : dataManager.getDataContext());
+
+        Object hostEditor = editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor;
+        Map<String, Object> map = ((fileEditor != null) ? ContainerUtil.newHashMap(Pair.create(CommonDataKeys.HOST_EDITOR.getName(), hostEditor), Pair.createNonNull(CommonDataKeys.EDITOR.getName(), editor),
+                Pair.createNonNull(PlatformDataKeys.FILE_EDITOR.getName(), fileEditor)):
+                ContainerUtil.newHashMap(Pair.create(CommonDataKeys.HOST_EDITOR.getName(), hostEditor),
+                        Pair.createNonNull(CommonDataKeys.EDITOR.getName(), editor)));
+        DataContext parent = DataManager.getInstance().getDataContext(editor.getContentComponent());
+        final DataContext context = SimpleDataContext.getSimpleContext(map, parent);
+        final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", context);
 
 
-
-        AnActionEvent event = new AnActionEvent(
-                inputEvent, context,
-                ActionPlaces.UNKNOWN,
-                presentation, amEx,
-                inputEvent.getModifiersEx()
-        );
         amEx.fireBeforeActionPerformed(action, context, event);
-
         ActionUtil.performActionDumbAware(action, event);
         amEx.queueActionPerformedEvent(action, context, event);
     }

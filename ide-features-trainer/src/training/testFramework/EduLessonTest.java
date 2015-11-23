@@ -8,16 +8,20 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import training.commands.BadCommandException;
 import training.editor.EduEditor;
 import training.editor.EduEditorManager;
 import training.lesson.Course;
 import training.lesson.CourseManager;
 import training.lesson.Lesson;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 28/10/15.
@@ -101,7 +105,20 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
             while(!myLesson.getPassed()){
                 //pumpEvents
                 com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
-                solveStep();
+                EdtTestUtil.runInEdtAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            solveStep();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (BadCommandException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
 
         } catch (Throwable running) {

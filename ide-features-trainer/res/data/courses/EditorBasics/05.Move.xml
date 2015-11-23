@@ -10,7 +10,7 @@
     }
 
     public static void main(String args[]) {
-       (new HelloThread()).start();
+       (new MoveDemo()).start();
     }
 
 }</CopyText>
