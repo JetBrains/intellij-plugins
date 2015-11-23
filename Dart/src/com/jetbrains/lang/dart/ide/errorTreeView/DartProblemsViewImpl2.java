@@ -35,7 +35,6 @@ import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.AnalysisErrorType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class DartProblemsViewImpl2 {
 
   private static final int TABLE_REFRESH_PERIOD = 200;
 
-  private final DartProblemsViewPanel2 myPanel;
+  private DartProblemsViewPanel2 myPanel;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
   private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<String, List<AnalysisError>>();
@@ -70,8 +69,6 @@ public class DartProblemsViewImpl2 {
   };
 
   public DartProblemsViewImpl2(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
-    myPanel = new DartProblemsViewPanel2(project);
-
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
     Disposer.register(project, myAlarm);
 
@@ -81,10 +78,15 @@ public class DartProblemsViewImpl2 {
         if (project.isDisposed()) {
           return;
         }
+
+        myPanel = new DartProblemsViewPanel2(project);
+
         final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
         toolWindow.setIcon(DartIcons.Dart_13);
+
         final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
         toolWindow.getContentManager().addContent(content);
+
         Disposer.register(project, new Disposable() {
           @Override
           public void dispose() {
@@ -127,8 +129,8 @@ public class DartProblemsViewImpl2 {
   @NotNull
   private static List<AnalysisError> computeSubsetOfErrors(@NotNull final List<AnalysisError> errors) {
     List<AnalysisError> errorsSubsetList = new SmartList<AnalysisError>();
-    for(AnalysisError e : errors) {
-      if(!DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(e)) {
+    for (AnalysisError e : errors) {
+      if (!DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(e)) {
         errorsSubsetList.add(e);
       }
     }
