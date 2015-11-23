@@ -102,9 +102,7 @@ public class DartServerErrorsAnnotator
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
     // already done using IDE engine
-    if (AnalysisErrorType.TODO.equals(error.getType())) return true;
-
-    return false;
+    return AnalysisErrorType.TODO.equals(error.getType());
   }
 
   static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
