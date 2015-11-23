@@ -56,7 +56,7 @@ public class DartProblemsViewPanel2 extends JPanel {
     super(new BorderLayout());
     myProject = project;
 
-    add(createToolbar(), BorderLayout.WEST);
+    //add(createToolbar(), BorderLayout.WEST);
     add(ScrollPaneFactory.createScrollPane(createTable()), BorderLayout.CENTER);
   }
 
