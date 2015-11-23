@@ -3,6 +3,7 @@ package training.lesson;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import training.check.Check;
 import training.lesson.exceptons.*;
 import training.solutions.BaseSolutionClass;
 import training.testFramework.LessonSolution;
@@ -122,8 +123,7 @@ public class CourseManagerWithoutIDEA {
 
         final String solutionPrefix = BaseSolutionClass.class.getPackage().getName();
         final String solutionName = (lessonSolutionName != null) ? lessonSolutionName : "";
-        final Class<?> aClass = MyClassLoader.getInstance().loadClass(solutionPrefix + DOT + solutionName);
-        if (!(aClass.newInstance() instanceof LessonSolution)) return null;
-        return (LessonSolution) aClass.newInstance();
+        Class mySolutionClass = Class.forName(solutionName);
+        return (LessonSolution) mySolutionClass.newInstance();
     }
 }

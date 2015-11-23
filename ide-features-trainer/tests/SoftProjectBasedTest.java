@@ -93,7 +93,6 @@ public class SoftProjectBasedTest extends UsefulTestCase {
         myProjectFixture = EduIdeaTestFixtureFactoryImpl.getFixtureFactory().createFixtureBuilder("ProjectLessonName").getFixture();
         myProjectFixture.setUp();
         myProject = myProjectFixture.getProject();
-        System.out.println(myProject);
     }
 
     @AfterClass

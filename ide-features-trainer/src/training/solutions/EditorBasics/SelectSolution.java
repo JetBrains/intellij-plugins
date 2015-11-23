@@ -1,4 +1,4 @@
-package training.solutions;
+package training.solutions.EditorBasics;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -25,8 +25,6 @@ public class SelectSolution implements LessonSolution{
         if (stepNumber == 4) {
             final String actionName = "EditorNextWordWithSelection";
             final AnAction action = com.intellij.openapi.actionSystem.ActionManager.getInstance().getAction(actionName);
-//            final ActionManagerEx amex = ActionManagerEx.getInstanceEx();
-//            EditorActionManager.getInstance().getActionHandler(actionName).execute(currentExecutionList.getEditor(), null, DataContext.EMPTY_CONTEXT);
             PerformActionUtil.performEditorAction(actionName, currentExecutionList.getEditor());
         }
         if (stepNumber == 3){

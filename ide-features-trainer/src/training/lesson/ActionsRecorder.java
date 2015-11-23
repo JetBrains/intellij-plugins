@@ -109,7 +109,7 @@ public class ActionsRecorder implements Disposable {
 
         if (target == null){
             if (triggerQueue !=null) {
-                return (triggerQueue.size() == 1 && (check == null ? true : check.check()));
+                return ((triggerQueue.size() == 1 || triggerQueue.size() == 0 ) && (check == null ? true : check.check()));
             } else return (triggerActivated && (check == null ? true : check.check()));
         } else {
 
@@ -176,6 +176,8 @@ public class ActionsRecorder implements Disposable {
                             if (doWhenDone != null)
                                 dispose();
                             doWhenDone.run();
+                        } else {
+                            triggerQueue.poll();
                         }
                     }
                 }

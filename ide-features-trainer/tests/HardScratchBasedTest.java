@@ -1,6 +1,7 @@
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.impl.EditorFactoryImpl;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
@@ -17,6 +18,7 @@ import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.testFramework.fixtures.HeavyIdeaTestFixture;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.ThrowableRunnable;
@@ -105,23 +107,25 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
                 try {
                     HardScratchBasedTest.super.setUp();
+
+
                     myProjectFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
+
+
+
                     myProjectFixture.setUp();
+
                     myProject = myProjectFixture.getProject();
                     myProjectRoot = myProject.getBaseDir();
                     myProjectPath = myProjectRoot.getPath();
 
-                    eduEditorFactory[0] = new EduEditorFactory(ProjectManager.getInstance());
                     //Swap EditorFactoryClasses with EduEditorFactory
-
+                    eduEditorFactory[0] = new EduEditorFactory(ProjectManager.getInstance());
+                    eduEditorFactory[0].cloneEventMulticaster(myProject);
                     final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
                     final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
-
-//                    componentManager.getPicoContainer().unregisterComponent(editorFactoryClass);
+//                    eduEditorFactory[0].cloneEventMulticaster(myProject);
                     componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory[0]);
-//                    Object old = picoContainer.getComponentInstance(editorFactoryClass);
-//                    picoContainer.registerComponentInstance(editorFactoryClass, eduEditorFactory[0]);
-//                    picoContainer.registerComponent(ComCoAda)
 
                 } catch (Exception e) {
                     ex.set(e);
@@ -137,7 +141,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
     @After
     public void tearDown ()throws Exception {
-            final Ref<Exception> ex = new Ref<Exception>();
+        final Ref<Exception> ex = new Ref<Exception>();
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
@@ -216,6 +220,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
                 @Override
                 public void run() {
                     try {
+                        int stepNumber = LessonProcessor.getCurrentExecutionList().getElements().size() - 1;
                         myLessonSolution.solveStep();
                     } catch (Exception e) {
                         e.printStackTrace();
