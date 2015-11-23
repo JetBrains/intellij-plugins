@@ -15,6 +15,7 @@ main() {
 @deprecated
 <weak_warning descr="This function declares a return type of 'int', but does not end with a return statement" type="WEAK_WARNING">int</weak_warning> bar(){}
 
+// TODO highlighted by IDE engine
 class <warning descr="The class '_Foo' is not used" type="UNUSED_SYMBOL">_Foo</warning> {
   int <warning descr="The value of the field '_unusedField' is not used" type="UNUSED_SYMBOL">_unusedField</warning>;
 }
