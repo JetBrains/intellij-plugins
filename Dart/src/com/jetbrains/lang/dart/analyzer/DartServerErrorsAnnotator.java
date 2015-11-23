@@ -85,6 +85,8 @@ public class DartServerErrorsAnnotator
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
 
     for (AnalysisError error : errors) {
+      if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
+
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
       if (annotation != null) {
