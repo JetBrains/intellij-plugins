@@ -185,7 +185,7 @@ public class AssistUtils {
   }
 
   @Nullable
-  private static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
+  public static Editor navigate(@NotNull final Project project, @NotNull final VirtualFile file, final int offset) {
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file, offset);
     descriptor.setScrollType(ScrollType.MAKE_VISIBLE);
     descriptor.navigate(true);
