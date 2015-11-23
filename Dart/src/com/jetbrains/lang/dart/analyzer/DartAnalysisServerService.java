@@ -53,7 +53,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileListener;
@@ -722,7 +721,7 @@ public class DartAnalysisServerService {
             }
             else {
               // semaphore unlocked by timeout, schedule to highlight the file again
-              LOG.info("analysis_getErrors() took too long for file " + filePath + ", restarting daemon");
+              LOG.debug("analysis_getErrors() took too long for file " + filePath + ", restarting daemon");
 
               ApplicationManager.getApplication().runReadAction(new Runnable() {
                 @Override
