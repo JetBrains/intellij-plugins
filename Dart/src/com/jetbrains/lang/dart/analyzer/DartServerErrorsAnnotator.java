@@ -83,9 +83,10 @@ public class DartServerErrorsAnnotator
     if (errors == null || errors.length == 0) return;
 
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
+    final String filePath = psiFile.getVirtualFile().getPath();
 
     for (AnalysisError error : errors) {
-      if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
+      if (shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
 
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
@@ -100,9 +101,14 @@ public class DartServerErrorsAnnotator
     }
   }
 
-  public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
+  public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath, @NotNull final AnalysisError error) {
     // already done using IDE engine
-    return AnalysisErrorType.TODO.equals(error.getType());
+    if (AnalysisErrorType.TODO.equals(error.getType())) return true;
+
+    // workaround for https://github.com/dart-lang/sdk/issues/25034
+    if (!filePath.equals(FileUtil.toSystemIndependentName(error.getLocation().getFile()))) return true;
+
+    return false;
   }
 
   static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {

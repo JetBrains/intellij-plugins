@@ -28,10 +28,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
-import com.intellij.util.SmartList;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -102,7 +100,6 @@ public class DartProblemsViewImpl2 {
   }
 
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    final List<AnalysisError> subsetOfErrors = computeSubsetOfErrors(errors);
     synchronized (myLock) {
       if (myScheduledFilePathToErrors.isEmpty()) {
         final int cancelled = myAlarm.cancelAllRequests();
@@ -111,7 +108,7 @@ public class DartProblemsViewImpl2 {
         myAlarm.addRequest(myUpdateRunnable, TABLE_REFRESH_PERIOD, ModalityState.NON_MODAL);
       }
 
-      myScheduledFilePathToErrors.put(filePath, subsetOfErrors);
+      myScheduledFilePathToErrors.put(filePath, errors);
     }
   }
 
@@ -124,16 +121,5 @@ public class DartProblemsViewImpl2 {
     }
 
     myPanel.clearAll();
-  }
-
-  @NotNull
-  private static List<AnalysisError> computeSubsetOfErrors(@NotNull final List<AnalysisError> errors) {
-    List<AnalysisError> errorsSubsetList = new SmartList<AnalysisError>();
-    for (AnalysisError e : errors) {
-      if (!DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(e)) {
-        errorsSubsetList.add(e);
-      }
-    }
-    return errorsSubsetList;
   }
 }

@@ -107,11 +107,13 @@ public class DartProblemsViewImpl {
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
-        final String groupName = createGroupName(vFile.getPath());
+        final String filePath = vFile.getPath();
+        final String groupName = createGroupName(filePath);
         myPanel.removeGroup(groupName);
 
         for (final AnalysisError analysisError : errors) {
-          if (analysisError == null || DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
+          if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError)) continue;
+
           final Location location = analysisError.getLocation();
           final int line = location.getStartLine() - 1; // editor lines are zero-based
           final Navigatable navigatable = line >= 0
