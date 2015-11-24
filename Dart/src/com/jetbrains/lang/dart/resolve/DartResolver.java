@@ -55,6 +55,21 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
         }
       }
 
+      if (region == null && (reference instanceof DartSuperExpression || reference instanceof DartReferenceExpression)) {
+        // DAS from SDK 1.13- returns 'super.foo' as a single range; SDK 1.14 returns 'super' and 'foo' separately.
+        final PsiElement parent = reference.getParent();
+        if (parent instanceof DartSuperCallOrFieldInitializer) {
+          final List<DartExpression> expressions = ((DartSuperCallOrFieldInitializer)parent).getExpressionList();
+          if (expressions.size() == 2 &&
+              expressions.get(0) instanceof DartSuperExpression &&
+              expressions.get(1) instanceof DartReferenceExpression) {
+            refOffset = expressions.get(0).getTextRange().getStartOffset();
+            refLength = expressions.get(1).getTextRange().getEndOffset() - refOffset;
+            region = findRegion(refPsiFile, refOffset, refLength);
+          }
+        }
+      }
+
       if (region != null) {
         final Project project = reference.getProject();
         final List<PsiElement> result = new SmartList<PsiElement>();
