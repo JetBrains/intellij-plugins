@@ -11,7 +11,6 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
-import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
@@ -78,13 +77,13 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
         consoleView
       );
       final DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
+      if (debuggableWebBrowser == null) {
+        return Promise.resolve(KarmaUtil.createDefaultRunProfileStarter(executionResult));
+      }
       return prepareDebugger(environment.getProject(), debuggableWebBrowser, new RunProfileStarter() {
         @Nullable
         @Override
         public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
-          if (debuggableWebBrowser == null) {
-            return new RunContentBuilder(executionResult, env).showRunContent(env.getContentToReuse());
-          }
           final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
           final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
           XDebugSession session = XDebuggerManager.getInstance(env.getProject()).startSession(
@@ -156,18 +155,15 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     return new RemoteDebuggingFileFinder(mappings, null, false);
   }
 
-  public static Promise<RunProfileStarter> prepareDebugger(@NotNull Project project, @Nullable DebuggableWebBrowser debuggableWebBrowser, @NotNull final RunProfileStarter starter) {
-    if (debuggableWebBrowser == null) {
-      return Promise.resolve(starter);
-    }
-    else {
-      return debuggableWebBrowser.getDebugEngine().prepareDebugger(project, debuggableWebBrowser.getWebBrowser())
-        .then(new Function<Void, RunProfileStarter>() {
-          @Override
-          public RunProfileStarter fun(Void aVoid) {
-            return starter;
-          }
-        });
-    }
+  public static Promise<RunProfileStarter> prepareDebugger(@NotNull Project project,
+                                                           @NotNull DebuggableWebBrowser debuggableWebBrowser,
+                                                           @NotNull final RunProfileStarter starter) {
+    return debuggableWebBrowser.getDebugEngine().prepareDebugger(project, debuggableWebBrowser.getWebBrowser())
+      .then(new Function<Void, RunProfileStarter>() {
+        @Override
+        public RunProfileStarter fun(Void aVoid) {
+          return starter;
+        }
+      });
   }
 }
