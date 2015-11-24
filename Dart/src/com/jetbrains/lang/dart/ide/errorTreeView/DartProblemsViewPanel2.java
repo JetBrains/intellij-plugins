@@ -16,24 +16,26 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.pom.Navigatable;
+import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.table.TableView;
+import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
-import com.jetbrains.lang.dart.assists.AssistUtils;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.Location;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,71 +43,121 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class DartProblemsViewPanel2 extends JPanel {
+public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
   @NotNull private final Project myProject;
-  @NotNull private final DartProblemsTableModel myModel = new DartProblemsTableModel();
+  @NotNull private final TableView<AnalysisError> myTable;
+
+  // may be remember settings in workspace.xml? (see ErrorTreeViewConfiguration)
+  private boolean myAutoScrollToSource = false;
 
   public DartProblemsViewPanel2(@NotNull final Project project) {
     super(new BorderLayout());
     myProject = project;
 
+    myTable = createTable();
     add(createToolbar(), BorderLayout.WEST);
-    add(ScrollPaneFactory.createScrollPane(createTable()), BorderLayout.CENTER);
-  }
-
-  private static JComponent createToolbar() {
-    final ActionManager manager = ActionManager.getInstance();
-    final DefaultActionGroup group = new DefaultActionGroup();
-
-    final AnAction reanalyzeAction = manager.getAction("Dart.Reanalyze");
-    if (reanalyzeAction != null) {
-      group.add(reanalyzeAction);
-    }
-
-    return manager.createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
+    add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
   }
 
   @NotNull
   private TableView<AnalysisError> createTable() {
-    final TableView<AnalysisError> table = new TableView<AnalysisError>(myModel);
+    final TableView<AnalysisError> table = new TableView<AnalysisError>(new DartProblemsTableModel());
 
-    table.addMouseListener(new MouseAdapter() {
+    table.addKeyListener(new KeyAdapter() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-          navigate(table.getSelectedObject());
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          navigate(false); // as in NewErrorTreeViewPanel
         }
       }
     });
 
+    EditSourceOnDoubleClickHandler.install(table);
+
     return table;
   }
 
-  private void navigate(@Nullable final AnalysisError analysisError) {
-    if (analysisError != null) {
-      final Location location = analysisError.getLocation();
+  private JComponent createToolbar() {
+    final DefaultActionGroup group = new DefaultActionGroup();
+
+    addReanalyzeSourcesAction(group);
+    addAutoScrollToSourceAction(group, myTable);
+
+    return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
+  }
+
+  private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group, @NotNull final TableView<AnalysisError> table) {
+    final AutoScrollToSourceHandler autoScrollToSourceHandler = new AutoScrollToSourceHandler() {
+      @Override
+      protected boolean isAutoScrollMode() {
+        return myAutoScrollToSource;
+      }
+
+      @Override
+      protected void setAutoScrollMode(boolean autoScrollToSource) {
+        myAutoScrollToSource = autoScrollToSource;
+      }
+    };
+
+    autoScrollToSourceHandler.install(table);
+    group.addAction(autoScrollToSourceHandler.createToggleAction());
+  }
+
+  private static void addReanalyzeSourcesAction(@NotNull final DefaultActionGroup group) {
+    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
+    if (reanalyzeAction != null) {
+      group.add(reanalyzeAction);
+    }
+  }
+
+  @Nullable
+  @Override
+  public Object getData(@NonNls String dataId) {
+    if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
+      return createNavigatable();
+    }
+
+    return null;
+  }
+
+  @Nullable
+  private Navigatable createNavigatable() {
+    final AnalysisError error = myTable.getSelectedObject();
+    if (error != null) {
+      final Location location = error.getLocation();
       final String filePath = FileUtil.toSystemDependentName(location.getFile());
       final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
       if (file != null) {
-        AssistUtils.navigate(myProject, file, location.getOffset());
+        final OpenFileDescriptor navigatable = new OpenFileDescriptor(myProject, file, error.getLocation().getOffset());
+        navigatable.setScrollType(ScrollType.MAKE_VISIBLE);
+        return navigatable;
       }
+    }
+
+    return null;
+  }
+
+  private void navigate(final boolean requestFocus) {
+    final Navigatable navigatable = createNavigatable();
+    if (navigatable != null && navigatable.canNavigateToSource()) {
+      navigatable.navigate(requestFocus);
     }
   }
 
   public void setErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    myModel.setErrors(filePath, errors);
+    ((DartProblemsTableModel)myTable.getModel()).setErrors(filePath, errors);
   }
 
   public void clearAll() {
-    myModel.setItems(new ArrayList<AnalysisError>());
+    ((DartProblemsTableModel)myTable.getModel()).setItems(new ArrayList<AnalysisError>());
   }
 }
 
