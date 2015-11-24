@@ -97,6 +97,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
         return !myUserMonitorThread._isAlive();
       }
     };
+    myUserMonitorThread.join();
     super.tearDown();
   }
 

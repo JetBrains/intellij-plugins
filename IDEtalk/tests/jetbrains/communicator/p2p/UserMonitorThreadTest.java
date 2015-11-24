@@ -15,12 +15,12 @@
  */
 package jetbrains.communicator.p2p;
 
+import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
-import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.ide.NullProgressIndicator;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.util.WaitFor;
@@ -85,7 +85,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
         return !myUserMonitorThread._isAlive();
       }
     };
-
+    myUserMonitorThread.join();
     super.tearDown();
   }
 
