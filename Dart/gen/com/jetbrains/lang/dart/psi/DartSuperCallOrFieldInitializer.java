@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface DartSuperCallOrFieldInitializer extends DartPsiCompositeElement {
 
-  @Nullable
-  DartFieldInitializer getFieldInitializer();
+  @NotNull
+  List<DartExpression> getExpressionList();
 
   @Nullable
-  DartReferenceExpression getReferenceExpression();
+  DartFieldInitializer getFieldInitializer();
 
 }

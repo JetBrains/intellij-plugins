@@ -788,7 +788,8 @@ Dart File
           INITIALIZERS
             PsiElement(:)(':')
             SUPER_CALL_OR_FIELD_INITIALIZER
-              PsiElement(super)('super')
+              SUPER_EXPRESSION
+                PsiElement(super)('super')
               ARGUMENTS
                 PsiElement(()('(')
                 ARGUMENT_LIST

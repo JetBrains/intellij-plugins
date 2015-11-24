@@ -232,7 +232,8 @@ Dart File
           INITIALIZERS
             PsiElement(:)(':')
             SUPER_CALL_OR_FIELD_INITIALIZER
-              PsiElement(this)('this')
+              THIS_EXPRESSION
+                PsiElement(this)('this')
               PsiElement(.)('.')
               REFERENCE_EXPRESSION
                 ID
@@ -256,7 +257,8 @@ Dart File
           INITIALIZERS
             PsiElement(:)(':')
             SUPER_CALL_OR_FIELD_INITIALIZER
-              PsiElement(this)('this')
+              THIS_EXPRESSION
+                PsiElement(this)('this')
               PsiElement(.)('.')
               REFERENCE_EXPRESSION
                 ID
@@ -275,7 +277,8 @@ Dart File
           INITIALIZERS
             PsiElement(:)(':')
             SUPER_CALL_OR_FIELD_INITIALIZER
-              PsiElement(this)('this')
+              THIS_EXPRESSION
+                PsiElement(this)('this')
               PsiElement(.)('.')
               REFERENCE_EXPRESSION
                 ID
@@ -298,7 +301,8 @@ Dart File
           INITIALIZERS
             PsiElement(:)(':')
             SUPER_CALL_OR_FIELD_INITIALIZER
-              PsiElement(this)('this')
+              THIS_EXPRESSION
+                PsiElement(this)('this')
               PsiElement(.)('.')
               REFERENCE_EXPRESSION
                 ID

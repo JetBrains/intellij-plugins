@@ -502,4 +502,25 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
            "  factory Bar.named() {}\n" +
            "}");
   }
+
+  public void testRedirectingConstructorInvocation() throws Exception {
+    doTest(myFixture,
+           "class A {\n" +
+           "  A() {}\n" +
+           "  A.foo() : <caret expected='file.dart -> A -> A'>this();\n" +
+           "  A.bar() : <caret expected='file.dart -> A -> foo'>this.<caret expected='file.dart -> A -> foo'>foo();\n" +
+           "}");
+  }
+
+  public void testSuperConstructorInvocation() throws Exception {
+    doTest(myFixture,
+           "class A {\n" +
+           "  A() {}\n" +
+           "  A.foo() {}\n" +
+           "}\n" +
+           "class B extends A {\n" +
+           "  B() : <caret expected='file.dart -> A -> A'>super();\n" +
+           "  B.foo() : <caret expected='file.dart -> A -> foo'>super.<caret expected='file.dart -> A -> foo'>foo();\n" +
+           "}");
+  }
 }
