@@ -29,6 +29,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
+import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
@@ -290,6 +291,8 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
       }
     }
     for (AnalysisError error : errors) {
+      if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
+
       addRow(error);
     }
   }

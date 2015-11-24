@@ -51,7 +51,7 @@ public class DartAnalysisServerGlobalInspectionTool extends GlobalInspectionTool
                                 final @NotNull GlobalInspectionContext globalContext,
                                 final @NotNull InspectionManager manager,
                                 final @NotNull ProblemDescriptionsProcessor problemDescriptionsProcessor) {
-    if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) return;
+    if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(file.getPath(), analysisError)) return;
 
     final PsiFile psiFile = PsiManager.getInstance(globalContext.getProject()).findFile(file);
     if (psiFile == null) return;
