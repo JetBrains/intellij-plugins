@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
-import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSConditionalCompileVariableReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
+import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -59,8 +59,8 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
 
     // nonqualified items in implements list in mxml
-    if (myParent instanceof JSReferenceList &&
-        myParent.getNode().getElementType() == JSElementTypes.IMPLEMENTS_LIST &&
+    if (myParent instanceof JSReferenceListMember &&
+        myParent.getParent().getNode().getElementType() == JSStubElementTypes.IMPLEMENTS_LIST &&
         myRef.getQualifier() == null &&
         myContainingFile instanceof JSFile &&
         XmlBackedJSClassImpl.isImplementsAttribute((JSFile)myContainingFile)) {

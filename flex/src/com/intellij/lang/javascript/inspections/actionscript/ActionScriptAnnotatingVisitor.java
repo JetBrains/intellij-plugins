@@ -1195,10 +1195,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       boolean canHaveTypeFix = false;
       JSClass contextClass = JSResolveUtil.getClassOfContext(node);
 
-      if (nodeParent instanceof JSReferenceList) {
+      if (nodeParent instanceof JSReferenceListMember) {
         canHaveTypeFix = true;
         fixes.add(new CreateClassOrInterfaceFix(node, contextClass.isInterface() ||
-                                                      node.getParent().getNode().getElementType() ==
+                                                      nodeParent.getParent().getNode().getElementType() ==
                                                       JSStubElementTypes.IMPLEMENTS_LIST, null, null));
       }
       else if (!(nodeParent instanceof JSDefinitionExpression) && resolveResults.length == 0) {

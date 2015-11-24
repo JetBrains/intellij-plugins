@@ -7,10 +7,7 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
+import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.project.Project;
@@ -205,7 +202,8 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
           sourceClass = JSResolveUtil.getXmlBackedClass((JSFile)sourceClass.getContainingFile());
         }
 
-        JSReferenceList refList = (JSReferenceList)expression.getParent();
+        JSReferenceList refList = PsiTreeUtil.getParentOfType(expression, JSReferenceList.class);
+        assert refList != null;
         final JSExpression[] references = refList.getExpressions();
         final JSClass[] referencedClasses = refList.getReferencedClasses();
         JSClass targetClass = null;
@@ -243,8 +241,8 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     @Override
     public boolean accept(JSReferenceExpression element) {
       final PsiElement parent = element.getParent();
-      return parent instanceof JSReferenceList &&
-             parent.getNode().findChildByType(myExtends ? JSTokenTypes.EXTENDS_KEYWORD : JSTokenTypes.IMPLEMENTS_KEYWORD) != null;
+      return parent instanceof JSReferenceListMember &&
+             parent.getParent().getNode().findChildByType(myExtends ? JSTokenTypes.EXTENDS_KEYWORD : JSTokenTypes.IMPLEMENTS_KEYWORD) != null;
     }
 
     @Override

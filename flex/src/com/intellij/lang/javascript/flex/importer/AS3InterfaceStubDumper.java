@@ -5,6 +5,8 @@ import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImp
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
+import com.intellij.lang.javascript.psi.stubs.JSReferenceListStub;
 import com.intellij.lang.javascript.psi.stubs.impl.*;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.util.text.StringUtil;
@@ -187,21 +189,24 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   protected void dumpExtendsList(Traits it) {
     if (!it.base.isStarReference()) {
-      JSStubElementTypes.DEFAULT_EXTENDS_LIST.createStub(new String[] {getTypeRef(it.base, null)}, parents.getLast());
+      String ref = getTypeRef(it.base, null);
+      JSReferenceListStub<JSReferenceList> parent =
+        JSStubElementTypes.DEFAULT_EXTENDS_LIST.createStub(parents.getLast());
+
+      new JSReferenceListMemberStubImpl(parent, ref);
     }
   }
 
   @Override
   protected void dumpInterfacesList(String indent, Traits it, boolean anInterface) {
-    String[] interfaces;
     if (it.interfaces.length > 0) {
-      interfaces = new String[it.interfaces.length];
+      JSReferenceListStubImpl parent = new JSReferenceListStubImpl(parents.getLast(), anInterface
+                                                                                    ? JSStubElementTypes.DEFAULT_EXTENDS_LIST
+                                                                                    : JSStubElementTypes.IMPLEMENTS_LIST);
 
-      int i = 0;
       for (Multiname name : it.interfaces) {
-        interfaces[i++] = getTypeRef(name, null);
+         new JSReferenceListMemberStubImpl(parent, getTypeRef(name, null));
       }
-      new JSReferenceListStubImpl(interfaces, parents.getLast(), anInterface ? JSStubElementTypes.DEFAULT_EXTENDS_LIST : JSStubElementTypes.IMPLEMENTS_LIST);
     }
   }
 }

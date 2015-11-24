@@ -191,7 +191,7 @@ public class FlexResolveHelper implements JSResolveHelper {
       if (justMakeQualified ||
           ref.getParent() instanceof JSImportStatement ||
           element instanceof PsiDirectoryContainer ||
-          (ref.getParent() instanceof JSReferenceList && ref.getContainingFile().getContext() instanceof XmlAttributeValue)) {
+          (ref.getParent() instanceof JSReferenceListMember && ref.getContainingFile().getContext() instanceof XmlAttributeValue)) {
         qualify = true;
         doImport = false;
       }
