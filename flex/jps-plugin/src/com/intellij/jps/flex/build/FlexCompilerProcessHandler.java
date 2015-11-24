@@ -5,6 +5,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.util.Key;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.incremental.CompileContext;
 
 import java.nio.charset.Charset;
@@ -16,7 +17,7 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
                                     final Process process,
                                     final boolean asc20,
                                     final String compilerName,
-                                    final String commandLine) {
+                                    @NotNull String commandLine) {
     super(process, commandLine, Charset.forName(FlexCommonUtils.SDK_TOOLS_ENCODING));
 
     myListener = new MyProcessListener(context, asc20, compilerName);

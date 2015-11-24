@@ -3,6 +3,7 @@ package com.jetbrains.maya;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunContentExecutor;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -77,7 +78,7 @@ public class SendToMayaCommand {
 
     try {
       final Socket socket = new Socket("127.0.0.1", myPythonCommandPort);
-      final SocketProcessHandler processHandler = new SocketProcessHandler(socket);
+      final SocketProcessHandler processHandler = new SocketProcessHandler(socket, getTitle());
       try {
         PrintWriter writer = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
 
@@ -85,13 +86,14 @@ public class SendToMayaCommand {
           String[] lines = getScriptLines();
           writeLines(writer, lines);
 
-          processHandler.setCommandLine(
-            "Sent " + lines.length + " line" + (lines.length != 1 ? "s" : "") + " to command port " + myPythonCommandPort + "\n");
+          processHandler.notifyTextAvailable(
+            "Sent " + lines.length + " line" + (lines.length != 1 ? "s" : "") + " to command port " + myPythonCommandPort + "\n",
+            ProcessOutputTypes.SYSTEM);
         }
         else {
           writeFile(writer, myFile);
-          processHandler.setCommandLine(
-            "Sent " + myFile.getPath() + " to command port " + myPythonCommandPort + "\n");
+          processHandler.notifyTextAvailable(
+            "Sent " + myFile.getPath() + " to command port " + myPythonCommandPort + "\n", ProcessOutputTypes.SYSTEM);
         }
 
         writer.flush();

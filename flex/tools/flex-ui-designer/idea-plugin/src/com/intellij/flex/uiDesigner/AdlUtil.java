@@ -205,7 +205,7 @@ final class AdlUtil {
     public Consumer<Integer> adlExitHandler;
 
     private AdlProcessHandler(GeneralCommandLine commandLine, Consumer<Integer> adlExitHandler) throws ExecutionException {
-      super(commandLine.createProcess());
+      super(commandLine);
       this.adlExitHandler = adlExitHandler;
       startNotify();
     }

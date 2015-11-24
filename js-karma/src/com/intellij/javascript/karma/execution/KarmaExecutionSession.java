@@ -108,8 +108,7 @@ public class KarmaExecutionSession {
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server,
                                                   @NotNull File clientAppFile) throws ExecutionException {
     GeneralCommandLine commandLine = createCommandLine(server.getServerPort(), server.getKarmaConfig(), clientAppFile);
-    Process process = commandLine.createProcess();
-    OSProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
+    OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
     mySmtConsoleView.attachToProcess(processHandler);
