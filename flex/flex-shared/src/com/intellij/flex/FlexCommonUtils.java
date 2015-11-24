@@ -17,7 +17,10 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.PairConsumer;
+import com.intellij.util.PathUtilRt;
+import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -929,8 +932,9 @@ public class FlexCommonUtils {
       final String javaExecutable =
         FileUtil.toSystemDependentName((SystemProperties.getJavaHome() + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
 
-      final Process process = Runtime.getRuntime().exec(new String[]{javaExecutable, "-jar", adtFile.getPath(), "-version"});
-      final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, "doesn't matter", Charset.defaultCharset());
+      String[] cmdarray = {javaExecutable, "-jar", adtFile.getPath(), "-version"};
+      final Process process = Runtime.getRuntime().exec(cmdarray);
+      final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, StringUtil.join(cmdarray, " "), Charset.defaultCharset());
 
       handler.addProcessListener(new ProcessAdapter() {
         public void onTextAvailable(ProcessEvent event, Key outputType) {

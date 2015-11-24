@@ -21,7 +21,6 @@ import org.jetbrains.plugins.ruby.ruby.run.configuration.RubyRunConfigurationExt
 import org.jetbrains.plugins.ruby.tasks.rake.runConfigurations.RakeConsoleModifier;
 import org.jetbrains.plugins.ruby.tasks.rake.runConfigurations.RakeRunConfiguration;
 
-import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
@@ -92,7 +91,7 @@ public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
         env.put("no_start", "1");
       }
     }
-    final MotionFileOutputReaders readers = new MotionFileOutputReaders(RubyProcessHandler.getOutputEncoding());
+    final MotionFileOutputReaders readers = new MotionFileOutputReaders(cmdLine);
     env.put("SIM_STDOUT_PATH", readers.getOutFileAbsolutePath());
     env.put("SIM_STDERR_PATH", readers.getErrFileAbsolutePath());
     env.put("output", "rubymine");
@@ -119,8 +118,8 @@ public class MotionSimulatorRunExtension extends RubyRunConfigurationExtension {
   static class MotionFileOutputReaders extends FileOutputReaders {
     private RubyProcessHandler myHandler;
 
-    public MotionFileOutputReaders(final Charset charset) throws ExecutionException {
-      init(charset, true);
+    public MotionFileOutputReaders(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
+      init(commandLine, true);
     }
 
     @Override

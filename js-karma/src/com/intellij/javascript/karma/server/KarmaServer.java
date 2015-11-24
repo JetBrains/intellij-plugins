@@ -167,22 +167,18 @@ public class KarmaServer {
     if (myCoveragePeer != null) {
       commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
     }
+    commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
 
-    final Process process;
+    KillableColoredProcessHandler processHandler;
     try {
-      process = commandLine.createProcess();
+      processHandler = new KillableColoredProcessHandler(commandLine);
     }
     catch (ExecutionException e) {
       throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
     }
-    final int processHashCode = System.identityHashCode(process);
+    final int processHashCode = System.identityHashCode(processHandler.getProcess());
     LOG.info("Karma server " + processHashCode + " started successfully: "
              + commandLine.getCommandLineString());
-    KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
-      process,
-      commandLine.getCommandLineString(),
-      CharsetToolkit.UTF8_CHARSET
-    );
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override

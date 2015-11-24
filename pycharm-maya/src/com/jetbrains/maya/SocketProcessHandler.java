@@ -22,19 +22,18 @@ import java.util.concurrent.Future;
  * @author traff
  */
 class SocketProcessHandler extends ProcessHandler {
-  private String myCommandLine;
+  @NotNull private final String myCommandLine;
   private final Socket mySocket;
   private SocketOutputReader myOutputReader;
 
-  SocketProcessHandler(Socket socket) {
+  SocketProcessHandler(Socket socket, @NotNull String commandLine) {
     mySocket = socket;
+    myCommandLine = commandLine;
   }
 
   @Override
   public void startNotify() {
-    if (myCommandLine != null) {
-      notifyTextAvailable(myCommandLine + '\n', ProcessOutputTypes.SYSTEM);
-    }
+    notifyTextAvailable(myCommandLine + '\n', ProcessOutputTypes.SYSTEM);
 
     addProcessListener(new ProcessAdapter() {
       @Override
@@ -86,14 +85,10 @@ class SocketProcessHandler extends ProcessHandler {
     return null;
   }
 
-  public void setCommandLine(String commandLine) {
-    myCommandLine = commandLine;
-  }
-
   private class SocketOutputReader extends BaseOutputReader {
     public SocketOutputReader(InputStream inputStream) {
       super(inputStream, null);
-      start();
+      start(myCommandLine);
     }
 
     @NotNull

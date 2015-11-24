@@ -393,9 +393,9 @@ public class PhoneGapCommandLine {
     commandLine.withWorkDirectory(myWorkDir);
     commandLine.withParentEnvironmentType(myPassParentEnv ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
     commandLine.withEnvironment(myEnv);
+    commandLine.setCharset(Charsets.UTF_8);
 
-    Process process = commandLine.createProcess();
-    OSProcessHandler processHandler = new ColoredProcessHandler(process, commandLine.getCommandLineString(), Charsets.UTF_8);
+    OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
     final ProcessOutput output = new ProcessOutput();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
@@ -410,7 +410,7 @@ public class PhoneGapCommandLine {
     });
     processHandler.startNotify();
     if (processHandler.waitFor(TimeUnit.SECONDS.toMillis(120))) {
-      output.setExitCode(process.exitValue());
+      output.setExitCode(processHandler.getProcess().exitValue());
     }
     else {
       processHandler.destroyProcess();
