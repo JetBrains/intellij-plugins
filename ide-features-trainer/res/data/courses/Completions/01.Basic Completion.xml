@@ -17,7 +17,7 @@ class BasicCompletionDemo implements Runnable{
         Random random = new
     }
 
-    public CompletionDemo() {
+    public BasicCompletionDemo() {
         byte b = MAX_VALUE
     }
 }
