@@ -10,6 +10,6 @@ import java.util.concurrent.ExecutionException;
  */
 public interface LessonSolution {
 
-    void solveStep() throws InterruptedException, ExecutionException, BadCommandException;
+    void solveStep() throws Exception;
 
 }

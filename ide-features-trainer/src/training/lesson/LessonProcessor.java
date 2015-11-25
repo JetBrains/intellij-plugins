@@ -35,7 +35,7 @@ public class LessonProcessor {
 
     private static ExecutionList currentExecutionList;
 
-    public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws InterruptedException, ExecutionException, BadCommandException {
+    public static void process(final Lesson lesson, final EduEditor eduEditor, final Project project, Document document, @Nullable String target) throws Exception {
 
         HashMap<String, String> editorParameters = new HashMap<String, String>();
 
