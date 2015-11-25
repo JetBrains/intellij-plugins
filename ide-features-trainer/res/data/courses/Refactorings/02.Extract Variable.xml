@@ -6,9 +6,9 @@
     final static int b_const = 500;
 
 
-    public static void calc(){
+    public void calc(){
 
-        InnerCalc.process(a_const, b_const);
+        (new InnerCalc()).process(a_const, b_const);
 
     }
 
@@ -16,14 +16,14 @@
 
         final static int some_const = 124136;
 
-        static int process(int a, int b){
+        int process(int a, int b){
             return  a * b + some_const;
         }
     }
 
 }</CopyText>
 <CaretBlock>
-    <SetSelection start-position="9:9" end-position="9:44" />
+    <SetSelection start-position="9:9" end-position="9:52" />
     <MoveCaret position="9:44" />
     <Try description="Select an expression and press &lt;action=&quot;IntroduceVariable&quot;&gt; to extract variable or field" triggers="IntroduceVariable;NextTemplateVariable"/>
     <Win/>

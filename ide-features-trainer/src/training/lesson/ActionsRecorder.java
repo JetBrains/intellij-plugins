@@ -97,9 +97,10 @@ public class ActionsRecorder implements Disposable {
 //        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
         triggerQueue = new LinkedList<String>();
         //set triggerMap
-        Collections.addAll(triggerQueue, actionIdArray);
+        if (actionIdArray != null) {
+            Collections.addAll(triggerQueue, actionIdArray);
+        }
         checkAction();
-
     }
 
 
@@ -169,8 +170,9 @@ public class ActionsRecorder implements Disposable {
                 if(triggerQueue.size() == 0) return;
                 if (actionId.toUpperCase().equals(triggerQueue.peek().toUpperCase())) {
 //                    System.out.println("Action trigger has been activated.");
-                    if (triggerQueue.size() > 1) triggerQueue.poll();
-                    if (triggerQueue.size() == 1) {
+                    if (triggerQueue.size() > 1) {
+                        triggerQueue.poll();
+                    } else if (triggerQueue.size() == 1) {
                         if (isTaskSolved(document, target)) {
                             actionManager.removeAnActionListener(this);
                             if (doWhenDone != null)
