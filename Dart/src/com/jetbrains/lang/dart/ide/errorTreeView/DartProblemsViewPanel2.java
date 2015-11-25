@@ -335,10 +335,11 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   }
 
   public void setErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+    final String filePathSD = FileUtil.toSystemDependentName(filePath);
     for (int i = getRowCount() - 1; i >= 0; i--) {
       final AnalysisError error = getItem(i);
       final String errorFile = error.getLocation().getFile();
-      if (FileUtil.toSystemDependentName(filePath).equals(errorFile)) {
+      if (filePathSD.equals(errorFile)) {
         removeRow(i);
       }
     }
