@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
@@ -23,13 +24,14 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
-import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   public ReanalyzeDartSourcesAction() {
-    super(DartBundle.message("dart.reanalyze.action.name"), DartBundle.message("dart.reanalyze.action.description"), DartIcons.Dart_16);
+    super(DartBundle.message("dart.reanalyze.action.name"),
+          DartBundle.message("dart.reanalyze.action.description"),
+          AllIcons.Actions.Rerun);
   }
 
   @Override
