@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberElementFactory;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 /**
  * @author Roman.Chernyatchik
@@ -29,7 +30,7 @@ public class GherkinElementFactory {
   }
 
   public static GherkinStepsHolder createScenarioFromText(final Project project, final String language, @NotNull final String text) {
-    final GherkinKeywordProvider provider = CucumberLanguageService.getInstance(project).getKeywordProvider();
+    final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
     final GherkinKeywordTable keywordsTable = provider.getKeywordsTable(language);
     String featureText = "# language: " + language + "\n" + keywordsTable.getFeatureSectionKeyword() + ": Dummy\n" + text;
     GherkinFeature feature = createFeatureFromText(project, featureText);

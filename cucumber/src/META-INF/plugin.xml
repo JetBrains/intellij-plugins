@@ -27,8 +27,6 @@
         implementation="org.jetbrains.plugins.cucumber.psi.formatter.GherkinLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider implementation="org.jetbrains.plugins.cucumber.psi.formatter.GherkinCodeStyleSettingsProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.plugins.cucumber.psi.CucumberLanguageService"
-                    serviceImplementation="org.jetbrains.plugins.cucumber.psi.CucumberLanguageService"/>
     <lang.findUsagesProvider language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFindUsagesProvider"/>
     <colorSettingsPage implementation="org.jetbrains.plugins.cucumber.psi.GherkinColorsPage"/>
 

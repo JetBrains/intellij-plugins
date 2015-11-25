@@ -5,6 +5,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinFileImpl;
 
 import java.util.*;
@@ -108,7 +109,7 @@ public class GherkinKeywordTable {
 
   @NotNull
   public static GherkinKeywordTable getKeywordsTable(PsiFile originalFile, Project project) {
-    final GherkinKeywordProvider provider = CucumberLanguageService.getInstance(project).getKeywordProvider();
+    final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
 
     // find language comment
     final String language = getFeatureLanguage(originalFile);

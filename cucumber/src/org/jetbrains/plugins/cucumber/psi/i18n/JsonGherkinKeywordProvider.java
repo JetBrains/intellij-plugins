@@ -8,10 +8,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.psi.GherkinKeywordList;
-import org.jetbrains.plugins.cucumber.psi.GherkinKeywordProvider;
-import org.jetbrains.plugins.cucumber.psi.GherkinKeywordTable;
-import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
+import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.io.*;
 import java.util.*;
@@ -27,12 +24,31 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   private final Map<String, GherkinKeywordList> myLanguageKeywords = new HashMap<String, GherkinKeywordList>();
   private final Set<String> myAllStepKeywords = new HashSet<String>();
 
+  private static GherkinKeywordProvider myKeywordProvider;
+
+  public static GherkinKeywordProvider getKeywordProvider() {
+    if (myKeywordProvider == null) {
+      final ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
+      if (classLoader != null) {
+        @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+        final InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
+        if (inputStream != null) {
+          myKeywordProvider = new JsonGherkinKeywordProvider(inputStream);
+        }
+      }
+
+      if (myKeywordProvider == null) {
+        myKeywordProvider = new PlainGherkinKeywordProvider();
+      }
+    }
+    return myKeywordProvider;
+  }
+
   public JsonGherkinKeywordProvider(final File keywordsFile) throws FileNotFoundException {
     this(new FileInputStream(keywordsFile));
 
-    if (!(keywordsFile != null && keywordsFile.exists() && !keywordsFile.isDirectory() && keywordsFile.canRead())){
+    if (!(keywordsFile.exists() && !keywordsFile.isDirectory() && keywordsFile.canRead())){
       LOG.error("Cannot read keywords from: " + keywordsFile);
-      return;
     }
   }
 

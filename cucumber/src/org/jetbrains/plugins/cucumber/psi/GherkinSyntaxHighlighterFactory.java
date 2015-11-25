@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 /**
  * @author yole
@@ -12,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public class GherkinSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
   @NotNull
   public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
-    final GherkinKeywordProvider keywordProvider = project != null
-                                                   ? CucumberLanguageService.getInstance(project).getKeywordProvider()
-                                                   : new PlainGherkinKeywordProvider(); 
-    return new GherkinSyntaxHighlighter(keywordProvider);
+    return new GherkinSyntaxHighlighter(JsonGherkinKeywordProvider.getKeywordProvider());
   }
 }

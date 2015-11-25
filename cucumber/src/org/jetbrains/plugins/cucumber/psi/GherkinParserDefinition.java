@@ -14,6 +14,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 
 /**
@@ -25,8 +26,7 @@ public class GherkinParserDefinition implements ParserDefinition {
 
   @NotNull
   public Lexer createLexer(Project project) {
-    final CucumberLanguageService instance = CucumberLanguageService.getInstance(project);
-    return new GherkinLexer(instance == null? new PlainGherkinKeywordProvider() : instance.getKeywordProvider());
+    return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider());
   }
 
   public PsiParser createParser(Project project) {

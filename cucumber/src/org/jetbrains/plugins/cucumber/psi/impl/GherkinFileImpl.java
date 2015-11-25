@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
   }
 
   public List<String> getStepKeywords() {
-    final GherkinKeywordProvider provider = CucumberLanguageService.getInstance(getProject()).getKeywordProvider();
+    final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
     List<String> result = new ArrayList<String>();
 
     // find language comment
@@ -46,7 +47,6 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
 
   public String getLocaleLanguage() {
     final ASTNode node = getNode();
-    assert node != null;
 
     ASTNode child = node.getFirstChildNode();
     while (child != null) {
