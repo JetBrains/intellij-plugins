@@ -40,8 +40,9 @@
     </MouseBlock>
     <Text description="IntelliJ IDEA allows you to navigate between occurrences."/>
     <Try description="First of all, select &lt;code&gt;cellphone&lt;/code&gt; in the code, and press &lt;action=&quot;Find&quot;&gt; to call the Find action" trigger="Find"/>
-    <Try description="You can navigate between occurrences with this search panel. Try to hide it by pressing &lt;action=&quot;EditorEscape&quot;&gt;" check="training.check.CheckFindBar"/>
-    <Try description="To navigate between occurrences with hidden search panel use &lt;action=&quot;FindNext&quot;&gt;" trigger="FindNext"/>
-    <Try description="or &lt;action=&quot;FindPrevious&quot;&gt; in a back way" trigger="FindPrevious"/>
+    <Try description="To find next occurrences use &lt;action=&quot;EditorEnter&quot;&gt; or &lt;action=&quot;FindNext&quot;&gt;" trigger="com.intellij.find.editorHeaderActions.NextOccurrenceAction"/>
+    <Try description="For previous occurrences press &lt;action=&quot;FindPrevious&quot;&gt;" trigger="com.intellij.find.editorHeaderActions.PrevOccurrenceAction"/>
+    <Try description="You can also use these shortcuts for the last finding word when the search panel is hidden. Close search panel by pressing &lt;action=&quot;EditorEscape&quot;&gt; and try to find next occurrence with &lt;action=&quot;FindNext&quot;&gt;" trigger="FindNext" check="training.check.CheckFindBar"/>
+    <Try description="And &lt;action=&quot;FindPrevious&quot;&gt; in a back way" trigger="FindPrevious"/>
     <Win/>
 </xml>

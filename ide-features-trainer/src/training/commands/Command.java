@@ -54,7 +54,7 @@ public abstract class Command {
     protected void initAgainButton(){
     }
 
-    public abstract void execute(ExecutionList executionList) throws InterruptedException, ExecutionException, BadCommandException;
+    public abstract void execute(ExecutionList executionList) throws Exception;
 
     protected void startNextCommand(final ExecutionList executionList){
         ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -67,6 +67,8 @@ public abstract class Command {
                 } catch (ExecutionException e1) {
                     e1.printStackTrace();
                 } catch (BadCommandException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

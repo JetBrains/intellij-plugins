@@ -36,7 +36,7 @@ public class EditorBasics_Selection_Solution_Test extends EduLessonTest {
      *                   5 = {org.jdom.Element@7720} "[Element: <Win/>]"    -> no need to solve, stepNumber = 0
      */
     @Override
-    public void solveStep() throws InterruptedException, ExecutionException, BadCommandException {
+    public void solveStep() throws Exception {
         final ExecutionList currentExecutionList = LessonProcessor.getCurrentExecutionList();
         if (currentExecutionList == null) return;
         int stepNumber = currentExecutionList.getElements().size() - 1;
