@@ -1411,7 +1411,7 @@ public class DartAnalysisServerService {
       myChangedDocuments.clear();
       myServerData.clearData();
 
-      final Set<Project> projects = myRootsHandler.getTrackedProjects();
+      final List<Project> projects = new ArrayList<Project>(myRootsHandler.getTrackedProjects());
       myRootsHandler.reset();
 
       ApplicationManager.getApplication().invokeLater(new Runnable() {
