@@ -43,7 +43,7 @@ public class DartProblemsViewImpl2 {
 
   private static final Logger LOG = Logger.getInstance(DartProblemsViewImpl2.class.getName());
 
-  private static final int TABLE_REFRESH_PERIOD = 200;
+  private static final int TABLE_REFRESH_PERIOD = 300;
 
   private DartProblemsViewPanel2 myPanel;
 
@@ -54,15 +54,13 @@ public class DartProblemsViewImpl2 {
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
     public void run() {
-      final Map<String, List<AnalysisError>> map;
+      final Map<String, List<AnalysisError>> filePathToErrors;
       synchronized (myLock) {
-        map = new THashMap<String, List<AnalysisError>>(myScheduledFilePathToErrors);
+        filePathToErrors = new THashMap<String, List<AnalysisError>>(myScheduledFilePathToErrors);
         myScheduledFilePathToErrors.clear();
       }
 
-      for (Map.Entry<String, List<AnalysisError>> entry : map.entrySet()) {
-        myPanel.setErrors(entry.getKey(), entry.getValue());
-      }
+      myPanel.setErrors(filePathToErrors);
     }
   };
 
