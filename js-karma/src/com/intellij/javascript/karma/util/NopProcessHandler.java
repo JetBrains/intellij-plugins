@@ -5,9 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 
-/**
- * @author Sergey Simonchik
- */
 public class NopProcessHandler extends ProcessHandler {
   @Override
   protected void destroyProcessImpl() {
@@ -16,7 +13,7 @@ public class NopProcessHandler extends ProcessHandler {
 
   @Override
   protected void detachProcessImpl() {
-    notifyProcessTerminated(0);
+    notifyProcessDetached();
   }
 
   @Override
