@@ -1152,6 +1152,18 @@ public class DartAnalysisServerService {
       LOG.debug("analysis_reanalyze, roots: " + rootsStr);
 
       myServer.analysis_reanalyze(roots);
+
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          for (final Project project : myRootsHandler.getTrackedProjects()) {
+            if (!project.isDisposed()) {
+              DartProblemsViewImpl.getInstance(project).clearAll();
+              DartProblemsViewImpl2.getInstance(project).clearAll();
+            }
+          }
+        }
+      }, ModalityState.NON_MODAL);
     }
   }
 
