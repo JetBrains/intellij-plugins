@@ -167,7 +167,15 @@ public class ActionsRecorder implements Disposable {
                 //if action called not from project or current editor is different from EduEditor
                 if (!editorFlag) return;
 
-                if(triggerQueue.size() == 0) return;
+                if(triggerQueue.size() == 0) {
+                    if (isTaskSolved(document, target)) {
+                        actionManager.removeAnActionListener(this);
+                        if (doWhenDone != null) {
+                            dispose();
+                            doWhenDone.run();
+                        }
+                    }
+                }
                 if (checkAction(action, triggerQueue.peek())) {
                     if (triggerQueue.size() > 1) {
                         triggerQueue.poll();
