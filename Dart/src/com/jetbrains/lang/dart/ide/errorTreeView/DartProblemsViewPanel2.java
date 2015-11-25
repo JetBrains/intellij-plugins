@@ -29,6 +29,8 @@ import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
@@ -46,8 +48,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
@@ -152,12 +153,12 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     }
   }
 
-  public void setErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    ((DartProblemsTableModel)myTable.getModel()).setErrors(filePath, errors);
+  public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
+    ((DartProblemsTableModel)myTable.getModel()).setErrors(filePathToErrors);
   }
 
   public void clearAll() {
-    ((DartProblemsTableModel)myTable.getModel()).setItems(new ArrayList<AnalysisError>());
+    ((DartProblemsTableModel)myTable.getModel()).removeAll();
   }
 }
 
@@ -251,6 +252,10 @@ class AnalysisErrorMessageRenderer extends DefaultTableCellRenderer {
 class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   private static final TableCellRenderer MESSAGE_RENDERER = new AnalysisErrorMessageRenderer();
 
+  // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
+  // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
+  private final List<AnalysisError> myItems;
+
   public DartProblemsTableModel() {
     super(new ColumnInfo<AnalysisError, AnalysisError>("Description") {
       final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.MESSAGE_COLUMN_ID);
@@ -322,6 +327,9 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
         return o.getCorrection();
       }
     });
+
+    myItems = new ArrayList<AnalysisError>();
+    setItems(myItems);
   }
 
   @Override
@@ -330,23 +338,104 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   }
 
   @Override
+  public void exchangeRows(int idx1, int idx2) {
+    throw new IllegalStateException();
+  }
+
+  @Override
   public boolean isCellEditable(int rowIndex, int columnIndex) {
     return false;
   }
 
-  public void setErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    final String filePathSD = FileUtil.toSystemDependentName(filePath);
+  public void removeRows(final int firstRow, final int lastRow) {
+    assert lastRow >= firstRow;
+
+    for (int i = lastRow; i >= firstRow; i--) {
+      myItems.remove(i);
+    }
+
+    fireTableRowsDeleted(firstRow, lastRow);
+  }
+
+  public void removeAll() {
+    final int rowCount = getRowCount();
+    if (rowCount > 0) {
+      myItems.clear();
+      fireTableRowsDeleted(0, rowCount - 1);
+    }
+  }
+
+  public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
+    final Set<String> systemDependentFilePaths = ContainerUtil.map2Set(filePathToErrors.keySet(), new Function<String, String>() {
+      @Override
+      public String fun(String filePath) {
+        return FileUtil.toSystemDependentName(filePath);
+      }
+    });
+    removeRowsForFilesInSet(systemDependentFilePaths);
+    addErrors(filePathToErrors);
+  }
+
+  private void removeRowsForFilesInSet(@NotNull final Set<String> systemDependentFilePaths) {
+    // Looks for regions in table items that should be removed and removes them.
+    // For performance reasons we try to call removeRows() as rare as possible, that means with regions as big as possible.
+    // Logic is based on the fact that all errors for each particular file are stored continuously in the myItems model
+
     for (int i = getRowCount() - 1; i >= 0; i--) {
       final AnalysisError error = getItem(i);
-      final String errorFile = error.getLocation().getFile();
-      if (filePathSD.equals(errorFile)) {
-        removeRow(i);
+      if (systemDependentFilePaths.remove(error.getLocation().getFile())) {
+        final int lastRowToDelete = i;
+
+        AnalysisError lastErrorForCurrentFile = error;
+
+        int j = i - 1;
+        while (j >= 0) {
+          final AnalysisError previousError = getItem(j);
+
+          if (previousError.getLocation().getFile().equals(lastErrorForCurrentFile.getLocation().getFile())) {
+            // previousError should be removed from the table as well
+            j--;
+            continue;
+          }
+
+          if (systemDependentFilePaths.remove(previousError.getLocation().getFile())) {
+            // continue iterating the table because we met a range of errors for another file that also should be removed
+            lastErrorForCurrentFile = previousError;
+            j--;
+            continue;
+          }
+
+          break;
+        }
+
+        final int firstRowToDelete = j + 1;
+        removeRows(firstRowToDelete, lastRowToDelete);
+
+        if (systemDependentFilePaths.isEmpty()) {
+          break;
+        }
+
+        //noinspection AssignmentToForLoopParameter
+        i = j + 1; // rewind according to the amount of removed rows
       }
     }
-    for (AnalysisError error : errors) {
-      if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
+  }
 
-      addRow(error);
+  private void addErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
+    final List<AnalysisError> errorsToAdd = new ArrayList<AnalysisError>();
+    for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
+      final String filePath = entry.getKey();
+      final List<AnalysisError> errors = entry.getValue();
+
+      for (AnalysisError error : errors) {
+        if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
+
+        errorsToAdd.add(error);
+      }
+    }
+
+    if (!errorsToAdd.isEmpty()) {
+      addRows(errorsToAdd);
     }
   }
 }
