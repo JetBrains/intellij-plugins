@@ -4,7 +4,7 @@
 
 class FoldingDemo {
 
-    public static void proceess(int register) {
+    public static void process(int register) {
 
         final int[] counter = new int[1];
         counter[0] = 0;
@@ -29,7 +29,10 @@ class FoldingDemo {
 </MouseBlock>
         <Text description="Fine! IntelliJ IDEA collapses &lt;code&gt;new Runnable()&lt;/code&gt; to a lambda function."/>
         <Try description="To expand this structure use &lt;action=&quot;ExpandRegion&quot;&gt;" trigger="ExpandRegion" />
-        <Try description="IntelliJ IDEA allows you to fold any region. Select some part of code and use &lt;action=&quot;CollapseSelection&quot;&gt;" trigger="CollapseSelection"/>
+        <Text description="IntelliJ IDEA allows you to fold any sequence of statements or declarations."/>
+        <SetSelection start-position="7:9" end-position="8:24" />
+        <MoveCaret position="8:24" />
+        <Try description="Try to fold selected region with &lt;action=&quot;CollapseSelection&quot;&gt;" trigger="CollapseSelection"/>
         <Try description="And &lt;action=&quot;ExpandRegion&quot;&gt; in a back way" trigger="ExpandRegion"/>
     <Win/>
 </xml>
