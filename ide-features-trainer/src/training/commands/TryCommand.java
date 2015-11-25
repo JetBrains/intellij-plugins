@@ -84,8 +84,13 @@ public class TryCommand extends Command {
 
     }
 
-    private void startRecord(ExecutionList executionList, ActionsRecorder recorder, @Nullable Check check) {
-
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, @Nullable Check check) {
+        recorder.startRecording(new Runnable() {        //do when done
+            @Override
+            public void run() {
+                pass(executionList);
+            }
+        }, (String[]) null, check);
     }
 
     private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId, @Nullable Check check) {

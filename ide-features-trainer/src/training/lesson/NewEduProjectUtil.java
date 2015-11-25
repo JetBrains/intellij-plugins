@@ -89,29 +89,29 @@ public class NewEduProjectUtil {
             projectBuilder.commit(newProject, null, ModulesProvider.EMPTY_MODULES_PROVIDER);
 
             final boolean need2OpenProjectStructure = projectBuilder.isOpenProjectSettingsAfter();
-            StartupManager.getInstance(newProject).registerPostStartupActivity(new Runnable() {
-                public void run() {
-                    // ensure the dialog is shown after all startup activities are done
-                    //noinspection SSBasedInspection
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            if (newProject.isDisposed() || ApplicationManager.getApplication().isUnitTestMode()) return;
-                            if (need2OpenProjectStructure) {
-                                ModulesConfigurator.showDialog(newProject, null, null);
-                            }
-                            ApplicationManager.getApplication().invokeLater(new Runnable() {
-                                public void run() {
-                                    if (newProject.isDisposed()) return;
-                                    final ToolWindow toolWindow = ToolWindowManager.getInstance(newProject).getToolWindow(ToolWindowId.PROJECT_VIEW);
-                                    if (toolWindow != null) {
-                                        toolWindow.activate(null);
-                                    }
-                                }
-                            }, ModalityState.NON_MODAL);
-                        }
-                    });
-                }
-            });
+//            StartupManager.getInstance(newProject).registerPostStartupActivity(new Runnable() {
+//                public void run() {
+//                     ensure the dialog is shown after all startup activities are done
+//                    noinspection SSBasedInspection
+//                    SwingUtilities.invokeLater(new Runnable() {
+//                        public void run() {
+//                            if (newProject.isDisposed() || ApplicationManager.getApplication().isUnitTestMode()) return;
+//                            if (need2OpenProjectStructure) {
+//                                ModulesConfigurator.showDialog(newProject, null, null);
+//                            }
+//                            ApplicationManager.getApplication().invokeLater(new Runnable() {
+//                                public void run() {
+//                                    if (newProject.isDisposed()) return;
+//                                    final ToolWindow toolWindow = ToolWindowManager.getInstance(newProject).getToolWindow(ToolWindowId.PROJECT_VIEW);
+//                                    if (toolWindow != null) {
+//                                        toolWindow.activate(null);
+//                                    }
+//                                }
+//                            }, ModalityState.NON_MODAL);
+//                        }
+//                    });
+//                }
+//            });
 
             if (newProject != projectToClose) {
                 ProjectUtil.updateLastProjectLocation(projectFilePath);

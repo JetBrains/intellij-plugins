@@ -28,7 +28,7 @@ class Rename{
         <Try description="Select field &lt;code&gt;deviceName&lt;/code&gt; in any place of code and start renaming by pressing &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
         <Try description="Write another name for this field instead selected. For example type &lt;code&gt;tabletName&lt;/code&gt; and save the result by taping &lt;action=&quot;EditorEnter&quot;&gt;" trigger="NextTemplateVariable"/>
         <Text description="IntelliJ IDEA automatically recognizes getter for renaming fields and also recommends to refactor it."/>
-        <Try description="Select field &lt;code&gt;stylus&lt;/code&gt; out of &lt;code&gt;touchDevice&lt;/code&gt; method and activate renaming with &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
+        <Try description="Select field &lt;code&gt;stylus&lt;/code&gt; and activate renaming with &lt;action=&quot;RenameElement&quot;&gt;" trigger="RenameElement"/>
         <Try description="Replace &lt;code&gt;stylus&lt;/code&gt; with &lt;code&gt;pencil&lt;/code&gt;, for example, and complete refactoring with &lt;action=&quot;EditorEnter&quot;&gt;" trigger="NextTemplateVariable"/>
     <Win/>
 </xml>
