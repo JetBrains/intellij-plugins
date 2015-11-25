@@ -223,6 +223,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             showSdkProblemDialog(project, e.getMessage());
         } catch (BadCommandException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

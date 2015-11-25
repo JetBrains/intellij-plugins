@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.check.Check;
 import training.editor.EduEditor;
@@ -84,12 +85,12 @@ public class ActionsRecorder implements Disposable {
 //        document.addDocumentListener(documentListener, this);
     }
 
-    public void startRecording(final Runnable doWhenDone, final @Nullable String actionId, @Nullable Check check) {
+    public void startRecording(final Runnable doWhenDone, final @Nullable String actionId, @Nullable Check check) throws Exception {
         final String[] stringArray = {actionId};
         startRecording(doWhenDone, stringArray, check);
 
     }
-    public void startRecording(final Runnable doWhenDone, final String[] actionIdArray, @Nullable Check check){
+    public void startRecording(final Runnable doWhenDone, final String[] actionIdArray, @Nullable Check check) throws Exception {
         if (check != null) this.check = check;
         if (disposed) return;
         this.doWhenDone = doWhenDone;
@@ -100,7 +101,7 @@ public class ActionsRecorder implements Disposable {
         if (actionIdArray != null) {
             Collections.addAll(triggerQueue, actionIdArray);
         }
-        checkAction();
+        addActionAndDocumentListeners();
     }
 
 
@@ -139,9 +140,14 @@ public class ActionsRecorder implements Disposable {
         return ls;
     }
 
-    private void checkAction() {
+
+    /**
+     * method adds action and document listeners to monitor user activity and check task
+     * @throws Exception
+     */
+    private void addActionAndDocumentListeners() throws Exception {
         final ActionManager actionManager = ActionManager.getInstance();
-        if(actionManager == null) return;
+        if(actionManager == null) throw new Exception("Unable to get instance for ActionManager");
 
         myAnActionListener = new AnActionListener() {
 
@@ -161,23 +167,17 @@ public class ActionsRecorder implements Disposable {
                 //if action called not from project or current editor is different from EduEditor
                 if (!editorFlag) return;
 
-
-//                final String actionId = extendActionId(action);
-                String actionId = ActionManager.getInstance().getId(action);
-
-                if(actionId == null) return;
-                //trigger queue can't be empty. Last action should lead to pass task in other case polled element should be returned back.
                 if(triggerQueue.size() == 0) return;
-                if (actionId.toUpperCase().equals(triggerQueue.peek().toUpperCase())) {
-//                    System.out.println("Action trigger has been activated.");
+                if (checkAction(action, triggerQueue.peek())) {
                     if (triggerQueue.size() > 1) {
                         triggerQueue.poll();
                     } else if (triggerQueue.size() == 1) {
                         if (isTaskSolved(document, target)) {
                             actionManager.removeAnActionListener(this);
-                            if (doWhenDone != null)
+                            if (doWhenDone != null) {
                                 dispose();
-                            doWhenDone.run();
+                                doWhenDone.run();
+                            }
                         } else {
                             triggerQueue.poll();
                         }
@@ -231,19 +231,17 @@ public class ActionsRecorder implements Disposable {
         actionManager.addAnActionListener(myAnActionListener);
     }
 
-    @Nullable
-    @Deprecated
-    private String extendActionId(AnAction action) {
 
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
+    /**
+     *
+     * @param action - caught action by AnActionListener (see {@link #addActionAndDocumentListeners()} addActionAndDocumentListeners()} method.)
+     * @param actionString - could be an actionId or action class name
+     * @return if action equals to actionId or have the same action class name
+     */
+    private boolean checkAction(AnAction action, String actionString){
         String actionId = ActionManager.getInstance().getId(action);
-
-        if (actionId != null) return actionId;
-
-//        if (action instanceof CloseOnESCAction)
-            return IdeActions.ACTION_EDITOR_ESCAPE;
-//        else
-//            return null;
+        final String actionClassName = action.getClass().getName();
+        return actionId != null ? equalStr(actionId, actionString) || equalStr(actionClassName, actionString) : equalStr(actionClassName, actionString);
     }
 
     private void removeListeners(Document document, ActionManager actionManager){
@@ -251,6 +249,10 @@ public class ActionsRecorder implements Disposable {
         if (myDocumentListener != null) document.removeDocumentListener(myDocumentListener);
         myAnActionListener = null;
         myDocumentListener = null;
+    }
+
+    private boolean equalStr(@NotNull String str1, @NotNull String str2){
+        return (str1.toUpperCase().equals(str2.toUpperCase()));
     }
 }
 

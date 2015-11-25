@@ -116,6 +116,8 @@ public abstract class EduLessonTest extends UsefulTestCase implements LessonSolu
                             e.printStackTrace();
                         } catch (BadCommandException e) {
                             e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 });

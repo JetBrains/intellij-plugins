@@ -213,7 +213,7 @@ public class SoftScratchBasedTest extends UsefulTestCase{
         }
     }
 
-    private void solveStep() throws BadCommandException, ExecutionException, InterruptedException {
+    private void solveStep() throws Exception {
         final ExecutionList currentExecutionList = LessonProcessor.getCurrentExecutionList();
         if (currentExecutionList == null) return;
         final Element peekedCommandElement = currentExecutionList.getElements().peek();

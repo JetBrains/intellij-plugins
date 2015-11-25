@@ -25,7 +25,7 @@ public class TryCommand extends Command {
     }
 
     @Override
-    public void execute(ExecutionList executionList) throws InterruptedException {
+    public void execute(ExecutionList executionList) throws Exception {
 
 
         Element element = executionList.getElements().poll();
@@ -84,7 +84,7 @@ public class TryCommand extends Command {
 
     }
 
-    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, @Nullable Check check) {
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, @Nullable Check check) throws Exception {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
@@ -93,7 +93,7 @@ public class TryCommand extends Command {
         }, (String[]) null, check);
     }
 
-    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId, @Nullable Check check) {
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String actionId, @Nullable Check check) throws Exception {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
@@ -102,7 +102,7 @@ public class TryCommand extends Command {
         }, actionId, check);
     }
 
-    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray, @Nullable Check check ){
+    private void startRecord(final ExecutionList executionList, ActionsRecorder recorder, String[] actionIdArray, @Nullable Check check ) throws Exception {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
