@@ -89,7 +89,9 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
   private JComponent createToolbar() {
     final DefaultActionGroup group = new DefaultActionGroup();
 
-    addReanalyzeSourcesAction(group);
+    addReanalyzeAndRestartActions(group);
+    group.addSeparator();
+
     addAutoScrollToSourceAction(group, myTable);
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
@@ -112,10 +114,15 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     group.addAction(autoScrollToSourceHandler.createToggleAction());
   }
 
-  private static void addReanalyzeSourcesAction(@NotNull final DefaultActionGroup group) {
+  private static void addReanalyzeAndRestartActions(@NotNull final DefaultActionGroup group) {
     final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
     if (reanalyzeAction != null) {
       group.add(reanalyzeAction);
+    }
+
+    final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
+    if (restartAction != null) {
+      group.add(restartAction);
     }
   }
 

@@ -1399,6 +1399,16 @@ public class DartAnalysisServerService {
     }
   }
 
+  public void restartServer() {
+    final Set<Project> projects = new THashSet<Project>(myRootsHandler.getTrackedProjects());
+
+    stopServer();
+
+    for (Project project : projects) {
+      serverReadyForRequest(project);
+    }
+  }
+
   void stopServer() {
     synchronized (myLock) {
       if (myServer != null) {

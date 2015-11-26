@@ -232,8 +232,11 @@
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.actions.ReanalyzeDartSourcesAction"
+    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.errorTreeView.ReanalyzeDartSourcesAction"
             text="Reanalyze Dart Sources" description="Reanalyze all Dart source files">
+    </action>
+    <action id="Dart.Restart.Analysis.Server" class="com.jetbrains.lang.dart.ide.errorTreeView.RestartDartAnalysisServerAction"
+            text="Restart Dart Analysis Server" description="Restart Dart Analysis Server">
     </action>
     <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
             text="Reformat with Dart Style" description="Format your Dart code using the dart_style formatter">
