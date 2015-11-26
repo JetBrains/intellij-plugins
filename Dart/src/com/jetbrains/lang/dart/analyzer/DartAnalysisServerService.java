@@ -1355,6 +1355,16 @@ public class DartAnalysisServerService {
           myServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         }
         myServer.addAnalysisServerListener(myAnalysisServerListener);
+
+        myServer.addStatusListener(new AnalysisServerStatusListener() {
+          @Override
+          public void isAliveServer(boolean isAlive) {
+            if (!isAlive) {
+              stopServer();
+            }
+          }
+        });
+
         mySdkVersion = sdk.getVersion();
 
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
