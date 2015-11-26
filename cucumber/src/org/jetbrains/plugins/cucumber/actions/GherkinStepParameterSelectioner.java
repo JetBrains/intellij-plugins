@@ -54,21 +54,16 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
     if (parent instanceof GherkinStep) {
       final GherkinStep step = (GherkinStep)parent;
       for (final PsiReference reference : step.getReferences()) {
-        if (reference instanceof CucumberStepReference) {
-          DumbService.getInstance(e.getProject()).withAlternativeResolveEnabled(new Runnable() {
-            @Override
-            public void run() {
-              final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
-              if (definition != null) {
-                final List<TextRange> ranges =
-                  GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
-                if (ranges != null) {
-                  result.addAll(ranges);
-                  result.addAll(buildAdditionalRanges(ranges, editorText));
-                }
-              }
+        if (reference instanceof CucumberStepReference && !DumbService.isDumb(step.getProject())) {
+          final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
+          if (definition != null) {
+            final List<TextRange> ranges =
+              GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
+            if (ranges != null) {
+              result.addAll(ranges);
+              result.addAll(buildAdditionalRanges(ranges, editorText));
             }
-          });
+          }
         }
       }
       buildAdditionalRanges(result, editorText);
