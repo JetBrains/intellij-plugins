@@ -34,6 +34,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
+import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.Location;
@@ -243,7 +244,7 @@ class AnalysisErrorMessageRenderer extends DefaultTableCellRenderer {
       setIcon(AllIcons.General.Error);
     }
     else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
-      setIcon(AllIcons.General.Warning);
+      setIcon(DartIcons.Dart_warning);
     }
     else if (AnalysisErrorSeverity.INFO.equals(severity)) {
       setIcon(AllIcons.General.Information);
