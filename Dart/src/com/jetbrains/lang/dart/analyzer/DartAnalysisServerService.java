@@ -195,6 +195,10 @@ public class DartAnalysisServerService {
     public void serverError(boolean isFatal, @Nullable String message, @Nullable String stackTrace) {
       if (message == null) message = "<no error message>";
       if (stackTrace == null) stackTrace = "<no stack trace>";
+      if (!isFatal && stackTrace.startsWith("#0      checkValidPackageUri (package:package_config/src/util.dart:72)")) {
+        return;
+      }
+
       LOG.error("Dart analysis server, SDK version " + mySdkVersion +
                 ", server version " + myServerVersion +
                 ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
