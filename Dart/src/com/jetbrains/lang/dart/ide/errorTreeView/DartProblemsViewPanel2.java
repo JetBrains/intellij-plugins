@@ -15,13 +15,11 @@
  */
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -30,28 +28,18 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.ColumnInfo;
-import com.intellij.util.ui.ListTableModel;
-import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
-import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.util.*;
 import java.util.List;
+import java.util.Map;
 
 public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
@@ -201,308 +189,4 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
   }
 }
 
-class AnalysisErrorComparator implements Comparator<AnalysisError> {
-  public static final int MESSAGE_COLUMN_ID = 0;
-  public static final int LOCATION_COLUMN_ID = 1;
-  public static final int CORRECTION_COLUMN_ID = 2;
-  final int myColumn;
 
-  AnalysisErrorComparator(int column) {
-    myColumn = column;
-  }
-
-  @Override
-  public int compare(AnalysisError o1, AnalysisError o2) {
-    {
-      final int s1 = getSeverity(o1);
-      final int s2 = getSeverity(o2);
-      if (s1 != s2) {
-        return s1 - s2;
-      }
-    }
-    if (myColumn == MESSAGE_COLUMN_ID) {
-      final String m1 = o1.getMessage();
-      final String m2 = o2.getMessage();
-      return StringUtil.compare(m1, m2, false);
-    }
-    if (myColumn == LOCATION_COLUMN_ID) {
-      final Location l1 = o1.getLocation();
-      final Location l2 = o2.getLocation();
-      // file name
-      final String n1 = getFileName(l1.getFile());
-      final String n2 = getFileName(l2.getFile());
-      final int c = StringUtil.compare(n1, n2, false);
-      if (c != 0) {
-        return c;
-      }
-      // line
-      return l1.getStartLine() - l2.getStartLine();
-    }
-    if (myColumn == CORRECTION_COLUMN_ID) {
-      final String c1 = o1.getCorrection();
-      final String c2 = o2.getCorrection();
-      return StringUtil.compare(c1, c2, false);
-    }
-    return 0;
-  }
-
-  private static String getFileName(String filePath) {
-    return new File(filePath).getName();
-  }
-
-  private static int getSeverity(AnalysisError error) {
-    final String severity = error.getSeverity();
-    if (AnalysisErrorSeverity.ERROR.equals(severity)) {
-      return 0;
-    }
-    if (AnalysisErrorSeverity.WARNING.equals(severity)) {
-      return 1;
-    }
-    return 2;
-  }
-}
-
-class AnalysisErrorMessageRenderer extends DefaultTableCellRenderer {
-  @Override
-  protected void setValue(Object value) {
-    if (!(value instanceof AnalysisError)) {
-      return;
-    }
-    final AnalysisError error = (AnalysisError)value;
-    // set icon
-    final String severity = error.getSeverity();
-    if (AnalysisErrorSeverity.ERROR.equals(severity)) {
-      setIcon(AllIcons.General.Error);
-    }
-    else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
-      setIcon(DartIcons.Dart_warning);
-    }
-    else if (AnalysisErrorSeverity.INFO.equals(severity)) {
-      setIcon(AllIcons.General.Information);
-    }
-    else {
-      setIcon(null);
-    }
-    // set text
-    setText(error.getMessage());
-  }
-}
-
-class DartProblemsTableModel extends ListTableModel<AnalysisError> {
-  private static final TableCellRenderer MESSAGE_RENDERER = new AnalysisErrorMessageRenderer();
-
-  // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
-  // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
-  private final List<AnalysisError> myItems;
-
-  private int myErrorCount = 0;
-  private int myWarningCount = 0;
-  private int myHintCount = 0;
-
-  public DartProblemsTableModel() {
-    super(new ColumnInfo<AnalysisError, AnalysisError>("Description") {
-      final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.MESSAGE_COLUMN_ID);
-
-      @Nullable
-      @Override
-      public Comparator<AnalysisError> getComparator() {
-        return myComparator;
-      }
-
-      @Nullable
-      @Override
-      public String getPreferredStringValue() {
-        return "012345678901234567890123456789012345678901234567890123456789";
-      }
-
-      @Nullable
-      @Override
-      public TableCellRenderer getRenderer(AnalysisError analysisError) {
-        return MESSAGE_RENDERER;
-      }
-
-      @NotNull
-      @Override
-      public AnalysisError valueOf(AnalysisError o) {
-        return o;
-      }
-    }, new ColumnInfo<AnalysisError, String>("Location") {
-      final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.LOCATION_COLUMN_ID);
-
-      @Nullable
-      @Override
-      public Comparator<AnalysisError> getComparator() {
-        return myComparator;
-      }
-
-      @Nullable
-      @Override
-      public String getPreferredStringValue() {
-        return "01234567890";
-      }
-
-      @NotNull
-      @Override
-      public String valueOf(AnalysisError o) {
-        final Location location = o.getLocation();
-        final String file = location.getFile();
-        final String fileName = new File(file).getName();
-        return fileName + ":" + location.getStartLine();
-      }
-    }, new ColumnInfo<AnalysisError, String>("Correction") {
-      final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.CORRECTION_COLUMN_ID);
-
-      @Nullable
-      @Override
-      public Comparator<AnalysisError> getComparator() {
-        return myComparator;
-      }
-
-      @Nullable
-      @Override
-      public String getPreferredStringValue() {
-        return "01234567890";
-      }
-
-      @Nullable
-      @Override
-      public String valueOf(AnalysisError o) {
-        return o.getCorrection();
-      }
-    });
-
-    myItems = new ArrayList<AnalysisError>();
-    setItems(myItems);
-  }
-
-  @Override
-  public boolean canExchangeRows(int oldIndex, int newIndex) {
-    return false;
-  }
-
-  @Override
-  public void exchangeRows(int idx1, int idx2) {
-    throw new IllegalStateException();
-  }
-
-  @Override
-  public boolean isCellEditable(int rowIndex, int columnIndex) {
-    return false;
-  }
-
-  public void removeRows(final int firstRow, final int lastRow) {
-    assert lastRow >= firstRow;
-
-    for (int i = lastRow; i >= firstRow; i--) {
-      final AnalysisError removed = myItems.remove(i);
-
-      if (AnalysisErrorSeverity.ERROR.equals(removed.getSeverity())) myErrorCount--;
-      if (AnalysisErrorSeverity.WARNING.equals(removed.getSeverity())) myWarningCount--;
-      if (AnalysisErrorSeverity.INFO.equals(removed.getSeverity())) myHintCount--;
-    }
-
-    fireTableRowsDeleted(firstRow, lastRow);
-  }
-
-  public void removeAll() {
-    final int rowCount = getRowCount();
-    if (rowCount > 0) {
-      myItems.clear();
-      fireTableRowsDeleted(0, rowCount - 1);
-    }
-
-    myErrorCount = 0;
-    myWarningCount = 0;
-    myHintCount = 0;
-  }
-
-  public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
-    final Set<String> systemDependentFilePaths = ContainerUtil.map2Set(filePathToErrors.keySet(), new Function<String, String>() {
-      @Override
-      public String fun(String filePath) {
-        return FileUtil.toSystemDependentName(filePath);
-      }
-    });
-    removeRowsForFilesInSet(systemDependentFilePaths);
-    addErrors(filePathToErrors);
-  }
-
-  private void removeRowsForFilesInSet(@NotNull final Set<String> systemDependentFilePaths) {
-    // Looks for regions in table items that should be removed and removes them.
-    // For performance reasons we try to call removeRows() as rare as possible, that means with regions as big as possible.
-    // Logic is based on the fact that all errors for each particular file are stored continuously in the myItems model
-
-    for (int i = getRowCount() - 1; i >= 0; i--) {
-      final AnalysisError error = getItem(i);
-      if (systemDependentFilePaths.remove(error.getLocation().getFile())) {
-        final int lastRowToDelete = i;
-
-        AnalysisError lastErrorForCurrentFile = error;
-
-        int j = i - 1;
-        while (j >= 0) {
-          final AnalysisError previousError = getItem(j);
-
-          if (previousError.getLocation().getFile().equals(lastErrorForCurrentFile.getLocation().getFile())) {
-            // previousError should be removed from the table as well
-            j--;
-            continue;
-          }
-
-          if (systemDependentFilePaths.remove(previousError.getLocation().getFile())) {
-            // continue iterating the table because we met a range of errors for another file that also should be removed
-            lastErrorForCurrentFile = previousError;
-            j--;
-            continue;
-          }
-
-          break;
-        }
-
-        final int firstRowToDelete = j + 1;
-        removeRows(firstRowToDelete, lastRowToDelete);
-
-        if (systemDependentFilePaths.isEmpty()) {
-          break;
-        }
-
-        //noinspection AssignmentToForLoopParameter
-        i = j + 1; // rewind according to the amount of removed rows
-      }
-    }
-  }
-
-  private void addErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
-    final List<AnalysisError> errorsToAdd = new ArrayList<AnalysisError>();
-    for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
-      final String filePath = entry.getKey();
-      final List<AnalysisError> errors = entry.getValue();
-
-      for (AnalysisError error : errors) {
-        if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
-
-        errorsToAdd.add(error);
-
-        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) myErrorCount++;
-        if (AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) myWarningCount++;
-        if (AnalysisErrorSeverity.INFO.equals(error.getSeverity())) myHintCount++;
-      }
-    }
-
-    if (!errorsToAdd.isEmpty()) {
-      addRows(errorsToAdd);
-    }
-  }
-
-  public int getErrorCount() {
-    return myErrorCount;
-  }
-
-  public int getWarningCount() {
-    return myWarningCount;
-  }
-
-  public int getHintCount() {
-    return myHintCount;
-  }
-}
