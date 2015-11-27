@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.Function;
@@ -56,6 +57,7 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
   @NotNull private final Project myProject;
   @NotNull private final TableView<AnalysisError> myTable;
+  @NotNull private JBLabel mySummaryLabel = new JBLabel();
 
   // may be remember settings in workspace.xml? (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
@@ -66,7 +68,7 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
     myTable = createTable();
     add(createToolbar(), BorderLayout.WEST);
-    add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
+    add(createCenterPanel(), BorderLayout.CENTER);
   }
 
   @NotNull
@@ -87,6 +89,7 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     return table;
   }
 
+  @NotNull
   private JComponent createToolbar() {
     final DefaultActionGroup group = new DefaultActionGroup();
 
@@ -96,6 +99,32 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     addAutoScrollToSourceAction(group, myTable);
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
+  }
+
+  @NotNull
+  private JPanel createCenterPanel() {
+    final JPanel panel = new JPanel(new BorderLayout());
+    panel.add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
+    panel.add(createStatusBar(), BorderLayout.SOUTH);
+    return panel;
+  }
+
+  @NotNull
+  private JPanel createStatusBar() {
+    final JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(mySummaryLabel);
+    return panel;
+  }
+
+  private void updateStatusBar() {
+    final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
+    final int errorCount = model.getErrorCount();
+    final int warningCount = model.getWarningCount();
+    final int hintCount = model.getHintCount();
+    final String errorText = errorCount == 0 ? "No errors" : errorCount == 1 ? "1 error" : errorCount + " errors";
+    final String warningText = warningCount == 0 ? "no warnings" : warningCount == 1 ? "1 warning" : warningCount + " warnings";
+    final String hintText = hintCount == 0 ? "no hints" : hintCount == 1 ? "1 hint" : hintCount + " hints";
+    mySummaryLabel.setText(errorText + ", " + warningText + ", " + hintText + ".");
   }
 
   private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group, @NotNull final TableView<AnalysisError> table) {
@@ -163,10 +192,12 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
   public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
     ((DartProblemsTableModel)myTable.getModel()).setErrors(filePathToErrors);
+    updateStatusBar();
   }
 
   public void clearAll() {
     ((DartProblemsTableModel)myTable.getModel()).removeAll();
+    updateStatusBar();
   }
 }
 
@@ -264,6 +295,10 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
   private final List<AnalysisError> myItems;
 
+  private int myErrorCount = 0;
+  private int myWarningCount = 0;
+  private int myHintCount = 0;
+
   public DartProblemsTableModel() {
     super(new ColumnInfo<AnalysisError, AnalysisError>("Description") {
       final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.MESSAGE_COLUMN_ID);
@@ -359,7 +394,11 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
     assert lastRow >= firstRow;
 
     for (int i = lastRow; i >= firstRow; i--) {
-      myItems.remove(i);
+      final AnalysisError removed = myItems.remove(i);
+
+      if (AnalysisErrorSeverity.ERROR.equals(removed.getSeverity())) myErrorCount--;
+      if (AnalysisErrorSeverity.WARNING.equals(removed.getSeverity())) myWarningCount--;
+      if (AnalysisErrorSeverity.INFO.equals(removed.getSeverity())) myHintCount--;
     }
 
     fireTableRowsDeleted(firstRow, lastRow);
@@ -371,6 +410,10 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
       myItems.clear();
       fireTableRowsDeleted(0, rowCount - 1);
     }
+
+    myErrorCount = 0;
+    myWarningCount = 0;
+    myHintCount = 0;
   }
 
   public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
@@ -439,11 +482,27 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
         if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
 
         errorsToAdd.add(error);
+
+        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) myErrorCount++;
+        if (AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) myWarningCount++;
+        if (AnalysisErrorSeverity.INFO.equals(error.getSeverity())) myHintCount++;
       }
     }
 
     if (!errorsToAdd.isEmpty()) {
       addRows(errorsToAdd);
     }
+  }
+
+  public int getErrorCount() {
+    return myErrorCount;
+  }
+
+  public int getWarningCount() {
+    return myWarningCount;
+  }
+
+  public int getHintCount() {
+    return myHintCount;
   }
 }
