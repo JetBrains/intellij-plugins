@@ -12,14 +12,12 @@ import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
-import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import java.io.File;
 import java.util.*;
 
 class DartProblemsTableModel extends ListTableModel<AnalysisError> {
@@ -43,60 +41,70 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
     }
   };
 
-  private static final ColumnInfo DESCRIPTION_COLUMN = new ColumnInfo<AnalysisError, AnalysisError>("Description") {
-    final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.MESSAGE_COLUMN_ID);
-
-    @Nullable
-    @Override
-    public Comparator<AnalysisError> getComparator() {
-      return myComparator;
-    }
-
-    @Nullable
-    @Override
-    public TableCellRenderer getRenderer(final AnalysisError error) {
-      return MESSAGE_RENDERER;
-    }
-
-    @NotNull
-    @Override
-    public AnalysisError valueOf(final AnalysisError error) {
-      return error;
-    }
-  };
-
-  public static final ColumnInfo<AnalysisError, String> FILE_COLUMN = new ColumnInfo<AnalysisError, String>("File") {
-    final Comparator<AnalysisError> myComparator = new AnalysisErrorComparator(AnalysisErrorComparator.LOCATION_COLUMN_ID);
-
-    @Nullable
-    @Override
-    public Comparator<AnalysisError> getComparator() {
-      return myComparator;
-    }
-
-    @NotNull
-    @Override
-    public String valueOf(final AnalysisError error) {
-      final Location location = error.getLocation();
-      final String file = location.getFile();
-      final String fileName = new File(file).getName();
-      return fileName + ":" + location.getStartLine();
-    }
-  };
-
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
   // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
   private final List<AnalysisError> myItems;
+
+  private boolean myGroupBySeverity = true;
+  private RowSorter.SortKey mySortKey = new RowSorter.SortKey(1, SortOrder.ASCENDING);
 
   private int myErrorCount = 0;
   private int myWarningCount = 0;
   private int myHintCount = 0;
 
-  public DartProblemsTableModel() {
-    super(DESCRIPTION_COLUMN, FILE_COLUMN);
+  private final Comparator<AnalysisError> myDescriptionComparator = new AnalysisErrorComparator(AnalysisErrorComparator.MESSAGE_COLUMN_ID);
+  private final Comparator<AnalysisError> myLocationComparator = new AnalysisErrorComparator(AnalysisErrorComparator.LOCATION_COLUMN_ID);
 
+  public DartProblemsTableModel() {
     myItems = new ArrayList<AnalysisError>();
+    setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
     setItems(myItems);
+    setSortable(true);
+  }
+
+  @NotNull
+  private ColumnInfo<AnalysisError, AnalysisError> createDescriptionColumn() {
+    return new ColumnInfo<AnalysisError, AnalysisError>("Description") {
+      @Nullable
+      @Override
+      public Comparator<AnalysisError> getComparator() {
+        return myDescriptionComparator;
+      }
+
+      @Nullable
+      @Override
+      public TableCellRenderer getRenderer(@NotNull final AnalysisError error) {
+        return MESSAGE_RENDERER;
+      }
+
+      @NotNull
+      @Override
+      public AnalysisError valueOf(@NotNull final AnalysisError error) {
+        return error;
+      }
+    };
+  }
+
+  @NotNull
+  private ColumnInfo<AnalysisError, String> createLocationColumn() {
+    return new ColumnInfo<AnalysisError, String>("Location") {
+      @Nullable
+      @Override
+      public Comparator<AnalysisError> getComparator() {
+        return myLocationComparator;
+      }
+
+      @NotNull
+      @Override
+      public String valueOf(@NotNull final AnalysisError error) {
+        return getLocationPresentableTextWithoutLine(error) + ":" + error.getLocation().getStartLine();
+      }
+    };
+  }
+
+  @Override
+  public RowSorter.SortKey getDefaultSortKey() {
+    return mySortKey;
   }
 
   @Override
@@ -230,46 +238,65 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
     return myHintCount;
   }
 
-  static class AnalysisErrorComparator implements Comparator<AnalysisError> {
-    public static final int MESSAGE_COLUMN_ID = 0;
-    public static final int LOCATION_COLUMN_ID = 1;
-    final int myColumn;
+  public boolean isGroupBySeverity() {
+    return myGroupBySeverity;
+  }
 
-    AnalysisErrorComparator(int column) {
+  public void setGroupBySeverity(boolean groupBySeverity) {
+    myGroupBySeverity = groupBySeverity;
+  }
+
+  public void setSortKey(@NotNull final RowSorter.SortKey sortKey) {
+    mySortKey = sortKey;
+  }
+
+  private static String getLocationPresentableTextWithoutLine(@NotNull final AnalysisError error) {
+    return PathUtil.getFileName(error.getLocation().getFile());
+  }
+
+  private class AnalysisErrorComparator implements Comparator<AnalysisError> {
+    private static final int MESSAGE_COLUMN_ID = 0;
+    private static final int LOCATION_COLUMN_ID = 1;
+
+    private final int myColumn;
+
+    AnalysisErrorComparator(final int column) {
       myColumn = column;
     }
 
     @Override
-    public int compare(AnalysisError o1, AnalysisError o2) {
-      {
-        final int s1 = getSeverity(o1);
-        final int s2 = getSeverity(o2);
+    public int compare(@NotNull final AnalysisError error1, @NotNull final AnalysisError error2) {
+      if (myGroupBySeverity) {
+        final int s1 = getSeverityIndex(error1);
+        final int s2 = getSeverityIndex(error2);
         if (s1 != s2) {
-          return s1 - s2;
+          // Regardless of sorting direction, if 'Group by severity' is selected then we should keep errors on top
+          return mySortKey.getSortOrder() == SortOrder.ASCENDING ? s1 - s2 : s2 - s1;
         }
       }
+
       if (myColumn == MESSAGE_COLUMN_ID) {
-        final String m1 = o1.getMessage();
-        final String m2 = o2.getMessage();
-        return StringUtil.compare(m1, m2, false);
+        return StringUtil.compare(error1.getMessage(), error2.getMessage(), false);
       }
+
       if (myColumn == LOCATION_COLUMN_ID) {
-        final Location l1 = o1.getLocation();
-        final Location l2 = o2.getLocation();
-        // file name
-        final String n1 = PathUtil.getFileName(l1.getFile());
-        final String n2 = PathUtil.getFileName(l2.getFile());
-        final int c = StringUtil.compare(n1, n2, false);
-        if (c != 0) {
-          return c;
+        final int result = StringUtil.compare(getLocationPresentableTextWithoutLine(error1),
+                                              getLocationPresentableTextWithoutLine(error2), false);
+        if (result != 0) {
+          return result;
         }
-        // line
-        return l1.getStartLine() - l2.getStartLine();
+        else {
+          // Regardless of sorting direction, line numbers within the same file should be sorted in ascending order
+          return mySortKey.getSortOrder() == SortOrder.ASCENDING
+                 ? error1.getLocation().getStartLine() - error2.getLocation().getStartLine()
+                 : error2.getLocation().getStartLine() - error1.getLocation().getStartLine();
+        }
       }
+
       return 0;
     }
 
-    private static int getSeverity(AnalysisError error) {
+    private int getSeverityIndex(@NotNull final AnalysisError error) {
       final String severity = error.getSeverity();
       if (AnalysisErrorSeverity.ERROR.equals(severity)) {
         return 0;
