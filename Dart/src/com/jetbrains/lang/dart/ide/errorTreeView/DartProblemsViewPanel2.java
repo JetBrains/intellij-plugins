@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -28,6 +29,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NonNls;
@@ -35,6 +37,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -74,6 +78,15 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
     EditSourceOnDoubleClickHandler.install(table);
 
+    table.getRowSorter().addRowSorterListener(new RowSorterListener() {
+      @Override
+      public void sorterChanged(RowSorterEvent e) {
+        final List<? extends RowSorter.SortKey> sortKeys = myTable.getRowSorter().getSortKeys();
+        assert sortKeys.size() == 1 : sortKeys;
+        ((DartProblemsTableModel)myTable.getModel()).setSortKey(sortKeys.get(0));
+      }
+    });
+
     return table;
   }
 
@@ -84,7 +97,11 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     addReanalyzeAndRestartActions(group);
     group.addSeparator();
 
-    addAutoScrollToSourceAction(group, myTable);
+    addAutoScrollToSourceAction(group);
+    // may be add 'Scroll from source' or 'Autoscroll from source' action (WEB-15792)
+    group.addSeparator();
+
+    addGroupBySeverityAction(group);
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
   }
@@ -115,7 +132,19 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     mySummaryLabel.setText(errorText + ", " + warningText + ", " + hintText + ".");
   }
 
-  private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group, @NotNull final TableView<AnalysisError> table) {
+  private static void addReanalyzeAndRestartActions(@NotNull final DefaultActionGroup group) {
+    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
+    if (reanalyzeAction != null) {
+      group.add(reanalyzeAction);
+    }
+
+    final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
+    if (restartAction != null) {
+      group.add(restartAction);
+    }
+  }
+
+  private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group) {
     final AutoScrollToSourceHandler autoScrollToSourceHandler = new AutoScrollToSourceHandler() {
       @Override
       protected boolean isAutoScrollMode() {
@@ -128,20 +157,27 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
       }
     };
 
-    autoScrollToSourceHandler.install(table);
+    autoScrollToSourceHandler.install(myTable);
     group.addAction(autoScrollToSourceHandler.createToggleAction());
   }
 
-  private static void addReanalyzeAndRestartActions(@NotNull final DefaultActionGroup group) {
-    final AnAction reanalyzeAction = ActionManager.getInstance().getAction("Dart.Reanalyze");
-    if (reanalyzeAction != null) {
-      group.add(reanalyzeAction);
-    }
+  private void addGroupBySeverityAction(@NotNull final DefaultActionGroup group) {
+    final AnAction action = new ToggleAction(DartBundle.message("group.by.severity"),
+                                             DartBundle.message("group.by.severity.description"),
+                                             AllIcons.Nodes.SortBySeverity) {
+      @Override
+      public boolean isSelected(AnActionEvent e) {
+        return ((DartProblemsTableModel)myTable.getModel()).isGroupBySeverity();
+      }
 
-    final AnAction restartAction = ActionManager.getInstance().getAction("Dart.Restart.Analysis.Server");
-    if (restartAction != null) {
-      group.add(restartAction);
-    }
+      @Override
+      public void setSelected(AnActionEvent e, boolean groupBySeverity) {
+        ((DartProblemsTableModel)myTable.getModel()).setGroupBySeverity(groupBySeverity);
+        myTable.getRowSorter().allRowsChanged();
+      }
+    };
+
+    group.addAction(action);
   }
 
   @Nullable
