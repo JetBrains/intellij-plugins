@@ -25,7 +25,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
       final DartProblem problem = (DartProblem)value;
-      setText(problem.getMessage());
+      setText(problem.getErrorMessage());
 
       final String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
@@ -97,7 +97,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       @NotNull
       @Override
       public String valueOf(@NotNull final DartProblem problem) {
-        return problem.getTextToShowInTableWithoutLineNumber() + ":" + problem.getLineNumber();
+        return problem.getPresentableLocation();
       }
     };
   }
@@ -271,12 +271,12 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       }
 
       if (myColumn == MESSAGE_COLUMN_ID) {
-        return StringUtil.compare(problem1.getMessage(), problem2.getMessage(), false);
+        return StringUtil.compare(problem1.getErrorMessage(), problem2.getErrorMessage(), false);
       }
 
       if (myColumn == LOCATION_COLUMN_ID) {
-        final int result = StringUtil.compare(problem1.getTextToShowInTableWithoutLineNumber(),
-                                              problem2.getTextToShowInTableWithoutLineNumber(), false);
+        final int result = StringUtil.compare(problem1.getPresentableLocationWithoutLineNumber(),
+                                              problem2.getPresentableLocationWithoutLineNumber(), false);
         if (result != 0) {
           return result;
         }

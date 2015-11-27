@@ -28,7 +28,7 @@ public class DartProblem {
   }
 
   @NotNull
-  public String getMessage() {
+  public String getErrorMessage() {
     return myAnalysisError.getMessage();
   }
 
@@ -105,12 +105,17 @@ public class DartProblem {
   }
 
   @NotNull
-  public String getTextToShowInTableWithoutLineNumber() {
+  public String getPresentableLocationWithoutLineNumber() {
     if (myTextWithoutLineNumber == null) {
       final String packageName = getDartPackageName();
       myTextWithoutLineNumber = packageName == null ? getPresentableFilePath()
                                                     : ("[" + packageName + "] " + getPresentableFilePath());
     }
     return myTextWithoutLineNumber;
+  }
+
+  @NotNull
+  public String getPresentableLocation() {
+    return getPresentableLocationWithoutLineNumber() + ":" + getLineNumber();
   }
 }

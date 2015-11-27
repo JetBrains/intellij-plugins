@@ -29,10 +29,12 @@ import com.intellij.pom.Navigatable;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.Function;
+import com.intellij.util.containers.Convertor;
 import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
@@ -95,6 +97,15 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider, Copy
         final List<? extends RowSorter.SortKey> sortKeys = myTable.getRowSorter().getSortKeys();
         assert sortKeys.size() == 1 : sortKeys;
         ((DartProblemsTableModel)myTable.getModel()).setSortKey(sortKeys.get(0));
+      }
+    });
+
+    new TableSpeedSearch(table, new Convertor<Object, String>() {
+      @Override
+      public String convert(Object object) {
+        return object instanceof DartProblem
+               ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
+               : "";
       }
     });
 
@@ -219,9 +230,7 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider, Copy
     final String s = StringUtil.join(selectedObjects, new Function<DartProblem, String>() {
       @Override
       public String fun(final DartProblem problem) {
-        return problem.getSeverity() + ": " +
-               problem.getMessage() +
-               " (" + problem.getTextToShowInTableWithoutLineNumber() + ":" + problem.getLineNumber() + ")";
+        return problem.getSeverity() + ": " + problem.getErrorMessage() + " (" + problem.getPresentableLocation() + ")";
       }
     }, "\n");
 
