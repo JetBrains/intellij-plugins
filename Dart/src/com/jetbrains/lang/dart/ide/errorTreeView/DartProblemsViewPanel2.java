@@ -16,10 +16,13 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.CopyProvider;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -29,6 +32,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
@@ -39,12 +43,13 @@ import javax.swing.*;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
+public class DartProblemsViewPanel2 extends JPanel implements DataProvider, CopyProvider {
 
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
@@ -101,7 +106,8 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     if (getData(CommonDataKeys.NAVIGATABLE.getName()) != null) {
       group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE));
     }
-    //group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
+
+    group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.COMPILER_MESSAGES_POPUP, group);
     menu.getComponent().show(component, x, y);
@@ -197,9 +203,39 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     group.addAction(action);
   }
 
+  @Override
+  public boolean isCopyVisible(@NotNull DataContext dataContext) {
+    return true;
+  }
+
+  @Override
+  public boolean isCopyEnabled(@NotNull DataContext dataContext) {
+    return myTable.getSelectedObject() != null;
+  }
+
+  @Override
+  public void performCopy(@NotNull DataContext dataContext) {
+    final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
+    final String s = StringUtil.join(selectedObjects, new Function<DartProblem, String>() {
+      @Override
+      public String fun(final DartProblem problem) {
+        return problem.getSeverity() + ": " +
+               problem.getMessage() +
+               " (" + problem.getTextToShowInTableWithoutLineNumber() + ":" + problem.getLineNumber() + ")";
+      }
+    }, "\n");
+
+    if (!s.isEmpty()) {
+      CopyPasteManager.getInstance().setContents(new StringSelection(s));
+    }
+  }
+
   @Nullable
   @Override
   public Object getData(@NonNls String dataId) {
+    if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
+      return this;
+    }
     if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return createNavigatable();
     }
