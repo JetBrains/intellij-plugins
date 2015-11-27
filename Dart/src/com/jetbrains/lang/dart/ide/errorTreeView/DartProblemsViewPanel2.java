@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.AutoScrollToSourceHandler;
+import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
@@ -76,6 +77,13 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
     EditSourceOnDoubleClickHandler.install(table);
 
+    table.addMouseListener(new PopupHandler() {
+      @Override
+      public void invokePopup(Component comp, int x, int y) {
+        popupInvoked(comp, x, y);
+      }
+    });
+
     table.getRowSorter().addRowSorterListener(new RowSorterListener() {
       @Override
       public void sorterChanged(RowSorterEvent e) {
@@ -86,6 +94,17 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
     });
 
     return table;
+  }
+
+  private void popupInvoked(final Component component, final int x, final int y) {
+    final DefaultActionGroup group = new DefaultActionGroup();
+    if (getData(CommonDataKeys.NAVIGATABLE.getName()) != null) {
+      group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE));
+    }
+    //group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
+
+    final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.COMPILER_MESSAGES_POPUP, group);
+    menu.getComponent().show(component, x, y);
   }
 
   @NotNull
