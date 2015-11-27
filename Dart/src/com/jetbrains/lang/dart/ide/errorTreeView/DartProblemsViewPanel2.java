@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -31,7 +30,6 @@ import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +46,7 @@ import java.util.Map;
 public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
   @NotNull private final Project myProject;
-  @NotNull private final TableView<AnalysisError> myTable;
+  @NotNull private final TableView<DartProblem> myTable;
   @NotNull private JBLabel mySummaryLabel = new JBLabel();
 
   // may be remember settings in workspace.xml? (see ErrorTreeViewConfiguration)
@@ -64,8 +62,8 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
   }
 
   @NotNull
-  private TableView<AnalysisError> createTable() {
-    final TableView<AnalysisError> table = new TableView<AnalysisError>(new DartProblemsTableModel());
+  private TableView<DartProblem> createTable() {
+    final TableView<DartProblem> table = new TableView<DartProblem>(new DartProblemsTableModel(myProject));
 
     table.addKeyListener(new KeyAdapter() {
       @Override
@@ -192,13 +190,11 @@ public class DartProblemsViewPanel2 extends JPanel implements DataProvider {
 
   @Nullable
   private Navigatable createNavigatable() {
-    final AnalysisError error = myTable.getSelectedObject();
-    if (error != null) {
-      final Location location = error.getLocation();
-      final String filePath = FileUtil.toSystemDependentName(location.getFile());
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final DartProblem problem = myTable.getSelectedObject();
+    if (problem != null) {
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(problem.getSystemIndependentPath());
       if (file != null) {
-        final OpenFileDescriptor navigatable = new OpenFileDescriptor(myProject, file, error.getLocation().getOffset());
+        final OpenFileDescriptor navigatable = new OpenFileDescriptor(myProject, file, problem.getOffset());
         navigatable.setScrollType(ScrollType.MAKE_VISIBLE);
         return navigatable;
       }

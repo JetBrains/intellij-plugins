@@ -1,11 +1,8 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
@@ -20,17 +17,17 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.util.*;
 
-class DartProblemsTableModel extends ListTableModel<AnalysisError> {
+class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
   private static final TableCellRenderer MESSAGE_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public JLabel getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-      final AnalysisError error = (AnalysisError)value;
-      setText(error.getMessage());
+      final DartProblem problem = (DartProblem)value;
+      setText(problem.getMessage());
 
-      final String severity = error.getSeverity();
+      final String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
               ? AllIcons.General.Error
               : AnalysisErrorSeverity.WARNING.equals(severity)
@@ -41,9 +38,11 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
     }
   };
 
+  private final Project myProject;
+
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
   // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
-  private final List<AnalysisError> myItems;
+  private final List<DartProblem> myItems;
 
   private boolean myGroupBySeverity = true;
   private RowSorter.SortKey mySortKey = new RowSorter.SortKey(1, SortOrder.ASCENDING);
@@ -52,52 +51,53 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   private int myWarningCount = 0;
   private int myHintCount = 0;
 
-  private final Comparator<AnalysisError> myDescriptionComparator = new AnalysisErrorComparator(AnalysisErrorComparator.MESSAGE_COLUMN_ID);
-  private final Comparator<AnalysisError> myLocationComparator = new AnalysisErrorComparator(AnalysisErrorComparator.LOCATION_COLUMN_ID);
+  private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
+  private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
-  public DartProblemsTableModel() {
-    myItems = new ArrayList<AnalysisError>();
+  public DartProblemsTableModel(@NotNull final Project project) {
+    myProject = project;
+    myItems = new ArrayList<DartProblem>();
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
     setItems(myItems);
     setSortable(true);
   }
 
   @NotNull
-  private ColumnInfo<AnalysisError, AnalysisError> createDescriptionColumn() {
-    return new ColumnInfo<AnalysisError, AnalysisError>("Description") {
+  private ColumnInfo<DartProblem, DartProblem> createDescriptionColumn() {
+    return new ColumnInfo<DartProblem, DartProblem>("Description") {
       @Nullable
       @Override
-      public Comparator<AnalysisError> getComparator() {
+      public Comparator<DartProblem> getComparator() {
         return myDescriptionComparator;
       }
 
       @Nullable
       @Override
-      public TableCellRenderer getRenderer(@NotNull final AnalysisError error) {
+      public TableCellRenderer getRenderer(@NotNull final DartProblem problem) {
         return MESSAGE_RENDERER;
       }
 
       @NotNull
       @Override
-      public AnalysisError valueOf(@NotNull final AnalysisError error) {
-        return error;
+      public DartProblem valueOf(@NotNull final DartProblem problem) {
+        return problem;
       }
     };
   }
 
   @NotNull
-  private ColumnInfo<AnalysisError, String> createLocationColumn() {
-    return new ColumnInfo<AnalysisError, String>("Location") {
+  private ColumnInfo<DartProblem, String> createLocationColumn() {
+    return new ColumnInfo<DartProblem, String>("Location") {
       @Nullable
       @Override
-      public Comparator<AnalysisError> getComparator() {
+      public Comparator<DartProblem> getComparator() {
         return myLocationComparator;
       }
 
       @NotNull
       @Override
-      public String valueOf(@NotNull final AnalysisError error) {
-        return getLocationPresentableTextWithoutLine(error) + ":" + error.getLocation().getStartLine();
+      public String valueOf(@NotNull final DartProblem problem) {
+        return problem.getTextToShowInTableWithoutLineNumber() + ":" + problem.getLineNumber();
       }
     };
   }
@@ -126,7 +126,7 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
     assert lastRow >= firstRow;
 
     for (int i = lastRow; i >= firstRow; i--) {
-      final AnalysisError removed = myItems.remove(i);
+      final DartProblem removed = myItems.remove(i);
 
       if (AnalysisErrorSeverity.ERROR.equals(removed.getSeverity())) myErrorCount--;
       if (AnalysisErrorSeverity.WARNING.equals(removed.getSeverity())) myWarningCount--;
@@ -149,41 +149,39 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   }
 
   public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
-    final Set<String> systemDependentFilePaths = ContainerUtil.map2Set(filePathToErrors.keySet(), new Function<String, String>() {
-      @Override
-      public String fun(String filePath) {
-        return FileUtil.toSystemDependentName(filePath);
-      }
-    });
-    removeRowsForFilesInSet(systemDependentFilePaths);
+    removeRowsForFilesInSet(filePathToErrors.keySet());
     addErrors(filePathToErrors);
   }
 
-  private void removeRowsForFilesInSet(@NotNull final Set<String> systemDependentFilePaths) {
+  private void removeRowsForFilesInSet(@NotNull final Set<String> filePaths) {
     // Looks for regions in table items that should be removed and removes them.
     // For performance reasons we try to call removeRows() as rare as possible, that means with regions as big as possible.
     // Logic is based on the fact that all errors for each particular file are stored continuously in the myItems model
 
+    int matchedFilesCount = 0;
+
     for (int i = getRowCount() - 1; i >= 0; i--) {
-      final AnalysisError error = getItem(i);
-      if (systemDependentFilePaths.remove(error.getLocation().getFile())) {
+      final DartProblem problem = getItem(i);
+      if (filePaths.contains(problem.getSystemIndependentPath())) {
+        matchedFilesCount++;
         final int lastRowToDelete = i;
 
-        AnalysisError lastErrorForCurrentFile = error;
+        DartProblem lastProblemForCurrentFile = problem;
 
         int j = i - 1;
         while (j >= 0) {
-          final AnalysisError previousError = getItem(j);
+          final DartProblem previousProblem = getItem(j);
 
-          if (previousError.getLocation().getFile().equals(lastErrorForCurrentFile.getLocation().getFile())) {
-            // previousError should be removed from the table as well
+          if (previousProblem.getSystemIndependentPath().equals(lastProblemForCurrentFile.getSystemIndependentPath())) {
+            // previousProblem should be removed from the table as well
             j--;
             continue;
           }
 
-          if (systemDependentFilePaths.remove(previousError.getLocation().getFile())) {
-            // continue iterating the table because we met a range of errors for another file that also should be removed
-            lastErrorForCurrentFile = previousError;
+          if (filePaths.contains(previousProblem.getSystemIndependentPath())) {
+            matchedFilesCount++;
+            // continue iterating the table because we met a range of problems for another file that also should be removed
+            lastProblemForCurrentFile = previousProblem;
             j--;
             continue;
           }
@@ -194,7 +192,7 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
         final int firstRowToDelete = j + 1;
         removeRows(firstRowToDelete, lastRowToDelete);
 
-        if (systemDependentFilePaths.isEmpty()) {
+        if (matchedFilesCount == filePaths.size()) {
           break;
         }
 
@@ -205,24 +203,25 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
   }
 
   private void addErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
-    final List<AnalysisError> errorsToAdd = new ArrayList<AnalysisError>();
+    final List<DartProblem> problemsToAdd = new ArrayList<DartProblem>();
     for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
       final List<AnalysisError> errors = entry.getValue();
 
-      for (AnalysisError error : errors) {
-        if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, error)) continue;
+      for (AnalysisError analysisError : errors) {
+        if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError)) continue;
 
-        errorsToAdd.add(error);
+        final DartProblem problem = new DartProblem(myProject, analysisError);
+        problemsToAdd.add(problem);
 
-        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) myErrorCount++;
-        if (AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) myWarningCount++;
-        if (AnalysisErrorSeverity.INFO.equals(error.getSeverity())) myHintCount++;
+        if (AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) myErrorCount++;
+        if (AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) myWarningCount++;
+        if (AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) myHintCount++;
       }
     }
 
-    if (!errorsToAdd.isEmpty()) {
-      addRows(errorsToAdd);
+    if (!problemsToAdd.isEmpty()) {
+      addRows(problemsToAdd);
     }
   }
 
@@ -250,25 +249,21 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
     mySortKey = sortKey;
   }
 
-  private static String getLocationPresentableTextWithoutLine(@NotNull final AnalysisError error) {
-    return PathUtil.getFileName(error.getLocation().getFile());
-  }
-
-  private class AnalysisErrorComparator implements Comparator<AnalysisError> {
+  private class DartProblemsComparator implements Comparator<DartProblem> {
     private static final int MESSAGE_COLUMN_ID = 0;
     private static final int LOCATION_COLUMN_ID = 1;
 
     private final int myColumn;
 
-    AnalysisErrorComparator(final int column) {
+    DartProblemsComparator(final int column) {
       myColumn = column;
     }
 
     @Override
-    public int compare(@NotNull final AnalysisError error1, @NotNull final AnalysisError error2) {
+    public int compare(@NotNull final DartProblem problem1, @NotNull final DartProblem problem2) {
       if (myGroupBySeverity) {
-        final int s1 = getSeverityIndex(error1);
-        final int s2 = getSeverityIndex(error2);
+        final int s1 = getSeverityIndex(problem1);
+        final int s2 = getSeverityIndex(problem2);
         if (s1 != s2) {
           // Regardless of sorting direction, if 'Group by severity' is selected then we should keep errors on top
           return mySortKey.getSortOrder() == SortOrder.ASCENDING ? s1 - s2 : s2 - s1;
@@ -276,28 +271,28 @@ class DartProblemsTableModel extends ListTableModel<AnalysisError> {
       }
 
       if (myColumn == MESSAGE_COLUMN_ID) {
-        return StringUtil.compare(error1.getMessage(), error2.getMessage(), false);
+        return StringUtil.compare(problem1.getMessage(), problem2.getMessage(), false);
       }
 
       if (myColumn == LOCATION_COLUMN_ID) {
-        final int result = StringUtil.compare(getLocationPresentableTextWithoutLine(error1),
-                                              getLocationPresentableTextWithoutLine(error2), false);
+        final int result = StringUtil.compare(problem1.getTextToShowInTableWithoutLineNumber(),
+                                              problem2.getTextToShowInTableWithoutLineNumber(), false);
         if (result != 0) {
           return result;
         }
         else {
           // Regardless of sorting direction, line numbers within the same file should be sorted in ascending order
           return mySortKey.getSortOrder() == SortOrder.ASCENDING
-                 ? error1.getLocation().getStartLine() - error2.getLocation().getStartLine()
-                 : error2.getLocation().getStartLine() - error1.getLocation().getStartLine();
+                 ? problem1.getLineNumber() - problem2.getLineNumber()
+                 : problem2.getLineNumber() - problem1.getLineNumber();
         }
       }
 
       return 0;
     }
 
-    private int getSeverityIndex(@NotNull final AnalysisError error) {
-      final String severity = error.getSeverity();
+    private int getSeverityIndex(@NotNull final DartProblem problem) {
+      final String severity = problem.getSeverity();
       if (AnalysisErrorSeverity.ERROR.equals(severity)) {
         return 0;
       }
