@@ -38,14 +38,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewImpl2 {
-  public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window2");
+public class DartProblemsView {
+  public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
 
-  private static final Logger LOG = Logger.getInstance(DartProblemsViewImpl2.class.getName());
+  private static final Logger LOG = Logger.getInstance(DartProblemsView.class.getName());
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
-  private DartProblemsViewPanel2 myPanel;
+  private DartProblemsViewPanel myPanel;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
   private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<String, List<AnalysisError>>();
@@ -64,7 +64,7 @@ public class DartProblemsViewImpl2 {
     }
   };
 
-  public DartProblemsViewImpl2(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
+  public DartProblemsView(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
     Disposer.register(project, myAlarm);
 
@@ -75,7 +75,7 @@ public class DartProblemsViewImpl2 {
           return;
         }
 
-        myPanel = new DartProblemsViewPanel2(project);
+        myPanel = new DartProblemsViewPanel(project);
 
         final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
         toolWindow.setIcon(DartIcons.Dart_13);
@@ -93,8 +93,8 @@ public class DartProblemsViewImpl2 {
     });
   }
 
-  public static DartProblemsViewImpl2 getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, DartProblemsViewImpl2.class);
+  public static DartProblemsView getInstance(@NotNull final Project project) {
+    return ServiceManager.getService(project, DartProblemsView.class);
   }
 
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {

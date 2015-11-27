@@ -29,6 +29,6 @@ public class RestartDartAnalysisServerAction extends DumbAwareAction {
   }
 
   private static boolean isApplicable(@Nullable final Project project) {
-    return project != null && ToolWindowManager.getInstance(project).getToolWindow(DartProblemsViewImpl.TOOLWINDOW_ID) != null;
+    return project != null && ToolWindowManager.getInstance(project).getToolWindow(DartProblemsView.TOOLWINDOW_ID) != null;
   }
 }
