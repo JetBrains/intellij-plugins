@@ -179,10 +179,8 @@
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
                     serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl"
-                    serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl2"
-                    serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl2"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"
+                    serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
                         serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>

@@ -59,8 +59,7 @@ import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
-import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
-import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl2;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -130,8 +129,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-      updateProblemsView(DartProblemsViewImpl.createGroupName(filePath), errors);
-      updateProblemsView2(FileUtil.toSystemIndependentName(filePath), errors);
+      updateProblemsView(FileUtil.toSystemIndependentName(filePath), errors);
     }
 
     @Override
@@ -161,8 +159,7 @@ public class DartAnalysisServerService {
       myServerData.onFlushedResults(filePaths);
 
       for (String filePath : filePaths) {
-        updateProblemsView(DartProblemsViewImpl.createGroupName(filePath), AnalysisError.EMPTY_LIST);
-        updateProblemsView2(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
+        updateProblemsView(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
       }
     }
 
@@ -625,28 +622,6 @@ public class DartAnalysisServerService {
   }
 
   private void updateProblemsView(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-    if (myRootsHandler.getTrackedProjects().isEmpty()) return;
-
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-
-        for (final Project project : myRootsHandler.getTrackedProjects()) {
-          if (project.isDisposed()) continue;
-
-          if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-            DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
-          }
-          else {
-            DartProblemsViewImpl.getInstance(project).removeErrorsForFile(filePath);
-          }
-        }
-      }
-    }, ModalityState.NON_MODAL);
-  }
-
-  private void updateProblemsView2(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
@@ -656,10 +631,10 @@ public class DartAnalysisServerService {
           if (project.isDisposed()) continue;
 
           if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-            DartProblemsViewImpl2.getInstance(project).updateErrorsForFile(filePath, errors);
+            DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
           }
           else {
-            DartProblemsViewImpl2.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
+            DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
           }
         }
       }
@@ -1162,8 +1137,7 @@ public class DartAnalysisServerService {
         public void run() {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             if (!project.isDisposed()) {
-              DartProblemsViewImpl.getInstance(project).clearAll();
-              DartProblemsViewImpl2.getInstance(project).clearAll();
+              DartProblemsView.getInstance(project).clearAll();
             }
           }
         }
@@ -1455,8 +1429,7 @@ public class DartAnalysisServerService {
         public void run() {
           for (final Project project : projects) {
             if (!project.isDisposed()) {
-              DartProblemsViewImpl.getInstance(project).clearAll();
-              DartProblemsViewImpl2.getInstance(project).clearAll();
+              DartProblemsView.getInstance(project).clearAll();
             }
           }
         }
