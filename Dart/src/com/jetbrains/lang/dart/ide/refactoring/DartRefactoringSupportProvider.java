@@ -7,6 +7,7 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartServerExtractMethodHandler;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceFinalVariableHandler;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceVariableHandler;
+import com.jetbrains.lang.dart.ide.refactoring.introduce.DartServerExtractLocalVariableHandler;
 import com.jetbrains.lang.dart.psi.DartNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,8 @@ public class DartRefactoringSupportProvider extends RefactoringSupportProvider {
 
   @Override
   public RefactoringActionHandler getIntroduceVariableHandler() {
-    return new DartIntroduceVariableHandler();
+    //return new DartIntroduceVariableHandler();
+    return new DartServerExtractLocalVariableHandler();
   }
 
   @Nullable

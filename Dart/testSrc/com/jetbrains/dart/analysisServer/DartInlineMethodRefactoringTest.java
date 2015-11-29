@@ -93,7 +93,7 @@ public class DartInlineMethodRefactoringTest extends CodeInsightFixtureTestCase 
       @Override
       public void run() {
         try {
-          AssistUtils.applySourceChange(myFixture.getProject(), change);
+          AssistUtils.applySourceChange(myFixture.getProject(), change, false);
         }
         catch (DartSourceEditException e) {
           fail(e.getMessage());

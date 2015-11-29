@@ -88,7 +88,7 @@ public final class DartQuickFix implements IntentionAction {
     if (document == null) return;
 
     try {
-      AssistUtils.applySourceChange(project, mySourceChange);
+      AssistUtils.applySourceChange(project, mySourceChange, true);
     }
     catch (DartSourceEditException e) {
       CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
