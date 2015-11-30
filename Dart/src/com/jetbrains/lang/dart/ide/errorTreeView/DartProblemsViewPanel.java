@@ -247,7 +247,8 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       }
     });
 
-    final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x, myTable.getLocationOnScreen().y);
+    final Rectangle visibleRect = myTable.getVisibleRect();
+    final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x + visibleRect.x, myTable.getLocationOnScreen().y + visibleRect.y);
 
     JBPopupFactory.getInstance()
       .createComponentPopupBuilder(form.getMainPanel(), form.getMainPanel())
