@@ -17,10 +17,12 @@ public class DartProblem {
 
   @NotNull private final Project myProject;
   @NotNull private final AnalysisError myAnalysisError;
+
   private String mySystemIndependentPath;
-  private String myPresentableFilePath;
-  private String myDartPackageName;
-  private String myTextWithoutLineNumber;
+
+  @Nullable private VirtualFile myFile;
+  @Nullable private VirtualFile myPackageRoot;
+  private String myPresentableLocationWithoutLineNumber;
 
   public DartProblem(@NotNull final Project project, @NotNull final AnalysisError error) {
     myProject = project;
@@ -52,24 +54,19 @@ public class DartProblem {
     return mySystemIndependentPath;
   }
 
-  /**
-   * Returns relative path form Dart package root to the file.
-   * If no pubspec.yaml then returns relative part from content root to the file.
-   * File path is returned as failover.
-   */
-  @NotNull
-  public String getPresentableFilePath() {
-    if (myPresentableFilePath != null) {
-      return myPresentableFilePath;
-    }
+  private void ensureInitialized() {
+    if (myPresentableLocationWithoutLineNumber != null) return;
 
-    // temporary final vars guarantee that both vars are initialized before this method exits
+    // temporary final vars guarantee that vars are initialized before this method exits
+    final VirtualFile file;
     final String dartPackageName;
     final String presentableFilePath;
+    final VirtualFile packageRoot;
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(getSystemIndependentPath());
+    file = LocalFileSystem.getInstance().findFileByPath(getSystemIndependentPath());
     if (file == null) {
       dartPackageName = null;
+      packageRoot = null;
       presentableFilePath = myAnalysisError.getLocation().getFile();
     }
     else {
@@ -78,9 +75,11 @@ public class DartProblem {
         dartPackageName = null;
         final VirtualFile contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
         if (contentRoot == null) {
+          packageRoot = null;
           presentableFilePath = myAnalysisError.getLocation().getFile();
         }
         else {
+          packageRoot = contentRoot;
           final String relativePath = VfsUtilCore.getRelativePath(file, contentRoot, File.separatorChar);
           presentableFilePath = relativePath != null ? relativePath : myAnalysisError.getLocation().getFile();
         }
@@ -88,34 +87,44 @@ public class DartProblem {
       else {
         final String projectName = PubspecYamlUtil.getDartProjectName(pubspec);
         dartPackageName = projectName != null ? projectName : "%unnamed%";
+        packageRoot = pubspec.getParent();
         final String relativePath = VfsUtilCore.getRelativePath(file, pubspec.getParent(), File.separatorChar);
         presentableFilePath = relativePath != null ? relativePath : myAnalysisError.getLocation().getFile();
       }
     }
 
-    myDartPackageName = dartPackageName;
-    myPresentableFilePath = presentableFilePath;
-    return myPresentableFilePath;
+    myFile = file;
+    myPackageRoot = packageRoot;
+    myPresentableLocationWithoutLineNumber = dartPackageName == null ? presentableFilePath
+                                                                     : ("[" + dartPackageName + "] " + presentableFilePath);
   }
 
-  @Nullable
-  public String getDartPackageName() {
-    getPresentableFilePath(); // ensure initialized
-    return myDartPackageName;
-  }
 
+  /**
+   * Returns Dart package name in brackets and relative path form Dart package root to the file.
+   * If no pubspec.yaml then returns relative part from content root to the file.
+   * File path is returned as failover.
+   */
   @NotNull
   public String getPresentableLocationWithoutLineNumber() {
-    if (myTextWithoutLineNumber == null) {
-      final String packageName = getDartPackageName();
-      myTextWithoutLineNumber = packageName == null ? getPresentableFilePath()
-                                                    : ("[" + packageName + "] " + getPresentableFilePath());
-    }
-    return myTextWithoutLineNumber;
+    ensureInitialized();
+    return myPresentableLocationWithoutLineNumber;
   }
 
   @NotNull
   public String getPresentableLocation() {
     return getPresentableLocationWithoutLineNumber() + ":" + getLineNumber();
+  }
+
+  @Nullable
+  public VirtualFile getFile() {
+    ensureInitialized();
+    return myFile;
+  }
+
+  @Nullable
+  public VirtualFile getPackageRoot() {
+    ensureInitialized();
+    return myPackageRoot;
   }
 }

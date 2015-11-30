@@ -63,11 +63,12 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   // may be remember settings and filters in workspace.xml? (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
 
-  private DartProblemsFilter myFilter = new DartProblemsFilter();
+  @NotNull private final DartProblemsFilter myFilter;
 
-  public DartProblemsViewPanel(@NotNull final Project project) {
+  public DartProblemsViewPanel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
     super(new BorderLayout());
     myProject = project;
+    myFilter = filter;
 
     myTable = createTable();
     add(createToolbar(), BorderLayout.WEST);
@@ -216,11 +217,15 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       @Override
       public void setSelected(AnActionEvent e, boolean groupBySeverity) {
         ((DartProblemsTableModel)myTable.getModel()).setGroupBySeverity(groupBySeverity);
-        myTable.getRowSorter().allRowsChanged();
+        fireSortingOrFilterChanged();
       }
     };
 
     group.addAction(action);
+  }
+
+  void fireSortingOrFilterChanged() {
+    myTable.getRowSorter().allRowsChanged();
   }
 
   private void showFiltersPopup() {
@@ -231,14 +236,14 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       @Override
       public void filtersChanged() {
         myFilter.updateFromUI(form);
-        myTable.getRowSorter().allRowsChanged();
+        fireSortingOrFilterChanged();
       }
 
       @Override
       public void filtersResetRequested() {
         myFilter.resetAllFilters();
         form.reset(myFilter);
-        myTable.getRowSorter().allRowsChanged();
+        fireSortingOrFilterChanged();
       }
     });
 

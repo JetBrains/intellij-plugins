@@ -22,6 +22,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -34,6 +35,7 @@ import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,7 @@ public class DartProblemsView {
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
+  private final DartProblemsFilter myFilter;
   private DartProblemsViewPanel myPanel;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
@@ -65,6 +68,7 @@ public class DartProblemsView {
   };
 
   public DartProblemsView(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
+    myFilter = new DartProblemsFilter(project);
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
     Disposer.register(project, myAlarm);
 
@@ -75,7 +79,7 @@ public class DartProblemsView {
           return;
         }
 
-        myPanel = new DartProblemsViewPanel(project);
+        myPanel = new DartProblemsViewPanel(project, myFilter);
 
         final ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
         toolWindow.setIcon(DartIcons.Dart_13);
@@ -95,6 +99,14 @@ public class DartProblemsView {
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
+  }
+
+  public void setCurrentFile(@Nullable final VirtualFile file) {
+    if (myFilter.setCurrentFile(file) && myFilter.getFileFilterMode() != DartProblemsFilter.FileFilterMode.All) {
+      if (myPanel != null) {
+        myPanel.fireSortingOrFilterChanged();
+      }
+    }
   }
 
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {

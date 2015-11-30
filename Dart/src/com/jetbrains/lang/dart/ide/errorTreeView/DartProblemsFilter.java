@@ -1,7 +1,13 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -15,13 +21,19 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   private static final boolean SHOW_HINTS_DEFAULT = true;
   private static final FileFilterMode FILE_FILTER_MODE_DEFAULT = FileFilterMode.All;
 
+  @NotNull private final Project myProject;
 
   private boolean myShowErrors;
   private boolean myShowWarnings;
   private boolean myShowHints;
   private FileFilterMode myFileFilterMode;
 
-  public DartProblemsFilter() {
+  @Nullable private VirtualFile myCurrentFile;
+  private boolean myPackageRootUpToDate = false;
+  @Nullable private VirtualFile myCurrentPackageRoot;
+
+  public DartProblemsFilter(@NotNull final Project project) {
+    myProject = project;
     resetAllFilters();
   }
 
@@ -51,6 +63,17 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
     return false;
   }
 
+  public boolean setCurrentFile(@Nullable final VirtualFile file) {
+    if (Comparing.equal(myCurrentFile, file)) {
+      return false;
+    }
+    else {
+      myCurrentFile = file;
+      myPackageRootUpToDate = false;
+      return true;
+    }
+  }
+
   public boolean isShowErrors() {
     return myShowErrors;
   }
@@ -74,6 +97,41 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
     if (!myShowWarnings && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
     if (!myShowHints && AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) return false;
 
+    if (myFileFilterMode == FileFilterMode.File && (myCurrentFile == null || !myCurrentFile.equals(problem.getFile()))) {
+      return false;
+    }
+
+    if (myFileFilterMode == FileFilterMode.Package) {
+      ensurePackageRootUpToDate();
+      if (myCurrentPackageRoot == null || !myCurrentPackageRoot.equals(problem.getPackageRoot())) {
+        return false;
+      }
+    }
+
     return true;
+  }
+
+  private void ensurePackageRootUpToDate() {
+    if (myPackageRootUpToDate) return;
+
+    // temp var to make sure that value is initialized
+    final VirtualFile packageRoot;
+
+    if (myCurrentFile == null) {
+      packageRoot = null;
+    }
+    else {
+      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(myProject, myCurrentFile);
+      if (pubspec == null) {
+        final VirtualFile contentRoot =
+          ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);
+        packageRoot = contentRoot == null ? null : contentRoot;
+      }
+      else {
+        packageRoot = pubspec.getParent();
+      }
+    }
+
+    myCurrentPackageRoot = packageRoot;
   }
 }

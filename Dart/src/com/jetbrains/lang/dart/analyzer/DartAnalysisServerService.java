@@ -18,9 +18,11 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -53,6 +55,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileListener;
@@ -495,6 +498,19 @@ public class DartAnalysisServerService {
 
   @SuppressWarnings("NestedSynchronizedStatement")
   void updateVisibleFiles() {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        for (Project project : myRootsHandler.getTrackedProjects()) {
+          // workaround for IDEA-148691
+          final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+          final VirtualFile currentFile = editor instanceof EditorEx ? ((EditorEx)editor).getVirtualFile() : null;
+          DartProblemsView.getInstance(project).setCurrentFile(currentFile);
+        }
+      }
+    });
+
+
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
       final List<String> newVisibleFiles = new ArrayList<String>();
