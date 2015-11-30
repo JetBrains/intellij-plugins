@@ -21,7 +21,9 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -30,6 +32,7 @@ import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TableSpeedSearch;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
@@ -57,8 +60,14 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   @NotNull private final TableView<DartProblem> myTable;
   @NotNull private JBLabel mySummaryLabel = new JBLabel();
 
-  // may be remember settings in workspace.xml? (see ErrorTreeViewConfiguration)
+  // may be remember settings and filters in workspace.xml? (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
+
+  // filters
+  private boolean myShowErrors = true;
+  private boolean myShowWarnings = true;
+  private boolean myShowHints = true;
+  private FileFilterMode myFileFilterMode = FileFilterMode.All;
 
   public DartProblemsViewPanel(@NotNull final Project project) {
     super(new BorderLayout());
@@ -136,6 +145,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     group.addSeparator();
 
     addGroupBySeverityAction(group);
+    group.addAction(new FilterProblemsAction());
 
     return ActionManager.getInstance().createActionToolbar(ActionPlaces.COMPILER_MESSAGES_TOOLBAR, group, false).getComponent();
   }
@@ -214,6 +224,57 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     group.addAction(action);
   }
 
+  private void showFiltersPopup() {
+    final DartProblemsFilterForm form = new DartProblemsFilterForm();
+    form.reset(myShowErrors, myShowWarnings, myShowHints, myFileFilterMode);
+
+    form.addListener(new DartProblemsFilterForm.FilterListener() {
+      @Override
+      public void filtersChanged() {
+        myShowErrors = form.isShowErrors();
+        myShowWarnings = form.isShowWarnings();
+        myShowHints = form.isShowHints();
+        myFileFilterMode = form.getFileFilterMode();
+
+        // todo update filter
+        myTable.getRowSorter().allRowsChanged();
+      }
+
+      @Override
+      public void filtersResetRequested() {
+        myShowErrors = true;
+        myShowWarnings = true;
+        myShowHints = true;
+        myFileFilterMode = FileFilterMode.All;
+        assert (!areFiltersApplied());
+
+        //noinspection ConstantConditions
+        form.reset(myShowErrors, myShowWarnings, myShowHints, myFileFilterMode);
+
+        // todo update filter
+        myTable.getRowSorter().allRowsChanged();
+      }
+    });
+
+    final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x, myTable.getLocationOnScreen().y);
+
+    JBPopupFactory.getInstance()
+      .createComponentPopupBuilder(form.getMainPanel(), form.getMainPanel())
+      .setProject(myProject)
+      .setTitle("Dart Problems Filter")
+      .setMovable(true)
+      .setRequestFocus(true)
+      .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
+  }
+
+  private boolean areFiltersApplied() {
+    if (!myShowErrors) return true;
+    if (!myShowWarnings) return true;
+    if (!myShowHints) return true;
+    if (myFileFilterMode != FileFilterMode.All) return true;
+    return false;
+  }
+
   @Override
   public boolean isCopyVisible(@NotNull DataContext dataContext) {
     return true;
@@ -283,6 +344,26 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
     ((DartProblemsTableModel)myTable.getModel()).removeAll();
     updateStatusBar();
   }
+
+  private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
+    public FilterProblemsAction() {
+      super(DartBundle.message("filter.problems"), DartBundle.message("filter.problems.description"), AllIcons.General.Filter);
+    }
+
+    @Override
+    public void update(final AnActionEvent e) {
+      final boolean filtersApplied = areFiltersApplied();
+      final Presentation presentation = e.getPresentation();
+      presentation.putClientProperty(Toggleable.SELECTED_PROPERTY, filtersApplied);
+    }
+
+    @Override
+    public void actionPerformed(final AnActionEvent e) {
+      showFiltersPopup();
+    }
+  }
+
+  public enum FileFilterMode {All, Package, File}
 }
 
 
