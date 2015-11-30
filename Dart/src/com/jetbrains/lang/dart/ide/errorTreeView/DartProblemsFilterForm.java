@@ -15,6 +15,13 @@ import java.util.List;
 
 public class DartProblemsFilterForm {
 
+  interface FilterListener {
+    void filtersChanged();
+
+    void filtersResetRequested();
+  }
+
+
   private JPanel myMainPanel;
 
   private JBCheckBox myErrorsCheckBox;
@@ -41,18 +48,15 @@ public class DartProblemsFilterForm {
     });
   }
 
-  public void reset(final boolean showErrors,
-                    final boolean showWarnings,
-                    final boolean showHints,
-                    @NotNull final DartProblemsViewPanel.FileFilterMode fileFilterMode) {
-    myErrorsCheckBox.setSelected(showErrors);
-    myWarningsCheckBox.setSelected(showWarnings);
-    myHintsCheckBox.setSelected(showHints);
+  public void reset(@NotNull final DartProblemsFilter filter) {
+    myErrorsCheckBox.setSelected(filter.isShowErrors());
+    myWarningsCheckBox.setSelected(filter.isShowWarnings());
+    myHintsCheckBox.setSelected(filter.isShowHints());
 
-    if (fileFilterMode == DartProblemsViewPanel.FileFilterMode.File) {
+    if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.File) {
       myCurrentFileRadioButton.setSelected(true);
     }
-    else if (fileFilterMode == DartProblemsViewPanel.FileFilterMode.Package) {
+    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Package) {
       myCurrentPackageRadioButton.setSelected(true);
     }
     else {
@@ -95,15 +99,9 @@ public class DartProblemsFilterForm {
     return myHintsCheckBox.isSelected();
   }
 
-  public DartProblemsViewPanel.FileFilterMode getFileFilterMode() {
-    if (myCurrentFileRadioButton.isSelected()) return DartProblemsViewPanel.FileFilterMode.File;
-    if (myCurrentPackageRadioButton.isSelected()) return DartProblemsViewPanel.FileFilterMode.Package;
-    return DartProblemsViewPanel.FileFilterMode.All;
-  }
-
-  interface FilterListener {
-    void filtersChanged();
-
-    void filtersResetRequested();
+  public DartProblemsFilter.FileFilterMode getFileFilterMode() {
+    if (myCurrentFileRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.File;
+    if (myCurrentPackageRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Package;
+    return DartProblemsFilter.FileFilterMode.All;
   }
 }
