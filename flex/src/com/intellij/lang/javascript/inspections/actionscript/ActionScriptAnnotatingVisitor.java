@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -25,10 +26,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
@@ -662,6 +660,21 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.nested.classes.are.not.allowed"));
           }
           checkClass(jsClass);
+        }
+      }
+    }
+
+    JSFunction fun;
+    if (JSSymbolUtil.isAccurateReferenceExpressionName(node, JSFunction.ARGUMENTS_VAR_NAME) &&
+        (fun = PsiTreeUtil.getParentOfType(node, JSFunction.class)) != null &&
+        node.resolve() instanceof ImplicitJSVariableImpl) {
+
+      JSParameterList parameterList = fun.getParameterList();
+      if (parameterList != null) {
+        for (JSParameter p : parameterList.getParameters()) {
+          if (p.isRest() && p.getNode().findChildByType(JSTokenTypes.DOT_DOT_DOT) != null) {
+            myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.arguments.with.rest.parameter"));
+          }
         }
       }
     }
