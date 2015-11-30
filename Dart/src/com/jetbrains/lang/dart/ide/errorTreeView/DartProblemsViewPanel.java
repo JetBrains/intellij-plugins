@@ -63,11 +63,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   // may be remember settings and filters in workspace.xml? (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
 
-  // filters
-  private boolean myShowErrors = true;
-  private boolean myShowWarnings = true;
-  private boolean myShowHints = true;
-  private FileFilterMode myFileFilterMode = FileFilterMode.All;
+  private DartProblemsFilter myFilter = new DartProblemsFilter();
 
   public DartProblemsViewPanel(@NotNull final Project project) {
     super(new BorderLayout());
@@ -99,6 +95,9 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
         popupInvoked(comp, x, y);
       }
     });
+
+    //noinspection unchecked
+    ((DefaultRowSorter)table.getRowSorter()).setRowFilter(myFilter);
 
     table.getRowSorter().addRowSorterListener(new RowSorterListener() {
       @Override
@@ -226,32 +225,19 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
   private void showFiltersPopup() {
     final DartProblemsFilterForm form = new DartProblemsFilterForm();
-    form.reset(myShowErrors, myShowWarnings, myShowHints, myFileFilterMode);
+    form.reset(myFilter);
 
     form.addListener(new DartProblemsFilterForm.FilterListener() {
       @Override
       public void filtersChanged() {
-        myShowErrors = form.isShowErrors();
-        myShowWarnings = form.isShowWarnings();
-        myShowHints = form.isShowHints();
-        myFileFilterMode = form.getFileFilterMode();
-
-        // todo update filter
+        myFilter.updateFromUI(form);
         myTable.getRowSorter().allRowsChanged();
       }
 
       @Override
       public void filtersResetRequested() {
-        myShowErrors = true;
-        myShowWarnings = true;
-        myShowHints = true;
-        myFileFilterMode = FileFilterMode.All;
-        assert (!areFiltersApplied());
-
-        //noinspection ConstantConditions
-        form.reset(myShowErrors, myShowWarnings, myShowHints, myFileFilterMode);
-
-        // todo update filter
+        myFilter.resetAllFilters();
+        form.reset(myFilter);
         myTable.getRowSorter().allRowsChanged();
       }
     });
@@ -265,14 +251,6 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       .setMovable(true)
       .setRequestFocus(true)
       .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
-  }
-
-  private boolean areFiltersApplied() {
-    if (!myShowErrors) return true;
-    if (!myShowWarnings) return true;
-    if (!myShowHints) return true;
-    if (myFileFilterMode != FileFilterMode.All) return true;
-    return false;
   }
 
   @Override
@@ -352,9 +330,8 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
     @Override
     public void update(final AnActionEvent e) {
-      final boolean filtersApplied = areFiltersApplied();
-      final Presentation presentation = e.getPresentation();
-      presentation.putClientProperty(Toggleable.SELECTED_PROPERTY, filtersApplied);
+      // show icon as toggled on if any filter is active
+      e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, myFilter.areFiltersApplied());
     }
 
     @Override
@@ -362,8 +339,6 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       showFiltersPopup();
     }
   }
-
-  public enum FileFilterMode {All, Package, File}
 }
 
 
