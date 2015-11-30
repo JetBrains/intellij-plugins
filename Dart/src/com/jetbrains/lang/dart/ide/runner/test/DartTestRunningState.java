@@ -37,9 +37,9 @@ import org.jetbrains.annotations.Nullable;
 public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String PUB_SNAPSHOT_PATH = "/bin/snapshots/pub.dart.snapshot";
-  private static final String RUN_COMMAND = "global run"; // TODO Change to "run" after package:test is committed.
+  private static final String RUN_COMMAND = "run"; // TODO Change to "run" after package:test is committed.
   private static final String TEST_PACKAGE_SPEC = "test:test";
-  private static final String EXPANDED_REPORTER_OPTION = " -r intellij"; // Initial space is required.
+  private static final String EXPANDED_REPORTER_OPTION = " -r json"; // Initial space is required.
   private static final String NAME_REGEX_OPTION = "-n "; // Trailing space is required.
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
