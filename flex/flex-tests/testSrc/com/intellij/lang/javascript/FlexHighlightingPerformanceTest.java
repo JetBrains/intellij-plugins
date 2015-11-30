@@ -43,7 +43,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
         public void run() throws Throwable {
           doTestFor(true, getTestName(false) + ".mxml", "UsingSwcStubs2.swc");
         }
-      }).cpuBound().usesAllCPUCores().assertTiming();
+      }).cpuBound().usesAllCPUCores().useLegacyScaling().assertTiming();
     }
     finally {
       if (doProfiling) ProfilingUtil.captureCPUSnapshot();

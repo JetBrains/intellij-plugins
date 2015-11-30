@@ -27,7 +27,7 @@ public class AngularJSPerformanceTest extends LightPlatformCodeInsightFixtureTes
       public void run() throws Throwable {
         myFixture.checkHighlighting();
       }
-    }).attempts(1).cpuBound().usesAllCPUCores().assertTiming();
+    }).attempts(1).cpuBound().usesAllCPUCores().useLegacyScaling().assertTiming();
   }
 
 }

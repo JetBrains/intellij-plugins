@@ -1491,7 +1491,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
         public void run() throws Throwable {
           complete();
         }
-      }).cpuBound().usesAllCPUCores().assertTiming();
+      }).cpuBound().usesAllCPUCores().useLegacyScaling().assertTiming();
     }
     finally {
       if (doProfiling) ProfilingUtil.captureCPUSnapshot();
