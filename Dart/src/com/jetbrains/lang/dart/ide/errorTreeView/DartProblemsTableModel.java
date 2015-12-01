@@ -15,14 +15,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
   private static final TableCellRenderer MESSAGE_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public JLabel getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      // Do not emphasize focused cell, drawing the whole row as selected is enough
+      final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
 
       final DartProblem problem = (DartProblem)value;
       setText(problem.getErrorMessage());
@@ -35,6 +38,14 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
                 : AllIcons.General.Information);
 
       return label;
+    }
+  };
+
+  private static final TableCellRenderer LOCATION_RENDERER = new DefaultTableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      // Do not emphasize focused cell, drawing the whole row as selected is enough
+      return super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
     }
   };
 
@@ -92,6 +103,12 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       @Override
       public Comparator<DartProblem> getComparator() {
         return myLocationComparator;
+      }
+
+      @Nullable
+      @Override
+      public TableCellRenderer getRenderer(DartProblem problem) {
+        return LOCATION_RENDERER;
       }
 
       @NotNull
