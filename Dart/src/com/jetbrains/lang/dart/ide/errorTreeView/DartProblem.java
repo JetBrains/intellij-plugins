@@ -22,6 +22,7 @@ public class DartProblem {
 
   @Nullable private VirtualFile myFile;
   @Nullable private VirtualFile myPackageRoot;
+  @Nullable private VirtualFile myContentRoot;
   private String myPresentableLocationWithoutLineNumber;
 
   public DartProblem(@NotNull final Project project, @NotNull final AnalysisError error) {
@@ -62,18 +63,21 @@ public class DartProblem {
     final String dartPackageName;
     final String presentableFilePath;
     final VirtualFile packageRoot;
+    final VirtualFile contentRoot;
 
     file = LocalFileSystem.getInstance().findFileByPath(getSystemIndependentPath());
     if (file == null) {
       dartPackageName = null;
       packageRoot = null;
+      contentRoot = null;
       presentableFilePath = myAnalysisError.getLocation().getFile();
     }
     else {
+      contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
+
       final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(myProject, file);
       if (pubspec == null) {
         dartPackageName = null;
-        final VirtualFile contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
         if (contentRoot == null) {
           packageRoot = null;
           presentableFilePath = myAnalysisError.getLocation().getFile();
@@ -95,6 +99,7 @@ public class DartProblem {
 
     myFile = file;
     myPackageRoot = packageRoot;
+    myContentRoot = contentRoot;
     myPresentableLocationWithoutLineNumber = dartPackageName == null ? presentableFilePath
                                                                      : ("[" + dartPackageName + "] " + presentableFilePath);
   }
@@ -126,5 +131,11 @@ public class DartProblem {
   public VirtualFile getPackageRoot() {
     ensureInitialized();
     return myPackageRoot;
+  }
+
+  @Nullable
+  public VirtualFile getContentRoot() {
+    ensureInitialized();
+    return myContentRoot;
   }
 }
