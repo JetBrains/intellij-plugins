@@ -18,6 +18,7 @@ package org.intellij.plugins.markdown.lang;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.intellij.markdown.flavours.gfm.GFMElementTypes;
+import org.intellij.markdown.flavours.gfm.GFMTokenTypes;
 
 import static org.intellij.plugins.markdown.lang.MarkdownElementType.platformType;
 
@@ -57,8 +58,15 @@ public interface MarkdownElementTypes {
   IElementType FULL_REFERENCE_LINK = platformType(org.intellij.markdown.MarkdownElementTypes.FULL_REFERENCE_LINK);
   IElementType SHORT_REFERENCE_LINK = platformType(org.intellij.markdown.MarkdownElementTypes.SHORT_REFERENCE_LINK);
   IElementType IMAGE = platformType(org.intellij.markdown.MarkdownElementTypes.IMAGE);
+  
+  IElementType HTML_BLOCK = platformType(org.intellij.markdown.MarkdownElementTypes.HTML_BLOCK);
 
   IElementType AUTOLINK = platformType(org.intellij.markdown.MarkdownElementTypes.AUTOLINK);
+  
+  IElementType TABLE = platformType(GFMElementTypes.TABLE);
+  IElementType TABLE_ROW = platformType(GFMElementTypes.ROW);
+  IElementType TABLE_HEADER = platformType(GFMElementTypes.HEADER);
+  IElementType TABLE_CELL = platformType(GFMTokenTypes.CELL);
 
   IElementType SETEXT_1 = platformType(org.intellij.markdown.MarkdownElementTypes.SETEXT_1);
   IElementType SETEXT_2 = platformType(org.intellij.markdown.MarkdownElementTypes.SETEXT_2);

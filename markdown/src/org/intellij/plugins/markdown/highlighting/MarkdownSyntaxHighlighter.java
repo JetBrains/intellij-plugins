@@ -66,7 +66,7 @@ public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
         safeMap(ATTRIBUTES, MarkdownElementTypes.CODE_BLOCK, MarkdownHighlighterColors.CODE_BLOCK_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownElementTypes.CODE_FENCE, MarkdownHighlighterColors.CODE_FENCE_ATTR_KEY);
 
-        safeMap(ATTRIBUTES, MarkdownTokenTypes.HTML_BLOCK, MarkdownHighlighterColors.HTML_BLOCK_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownElementTypes.HTML_BLOCK, MarkdownHighlighterColors.HTML_BLOCK_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownTokenTypes.HTML_TAG, MarkdownHighlighterColors.INLINE_HTML_ATTR_KEY);
     }
 

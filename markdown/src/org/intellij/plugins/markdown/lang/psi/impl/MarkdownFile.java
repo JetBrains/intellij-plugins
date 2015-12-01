@@ -23,6 +23,9 @@ import org.intellij.plugins.markdown.lang.MarkdownLanguage;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
   public MarkdownFile(FileViewProvider viewProvider) {
     super(viewProvider, MarkdownLanguage.INSTANCE);
@@ -33,4 +36,9 @@ public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
     return MarkdownFileType.INSTANCE;
   }
 
+  @NotNull
+  @Override
+  public List<MarkdownPsiElement> getCompositeChildren() {
+    return Arrays.asList(findChildrenByClass(MarkdownPsiElement.class));
+  }
 }

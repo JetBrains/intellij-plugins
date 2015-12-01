@@ -15,7 +15,12 @@
  */
 package org.intellij.plugins.markdown.lang.psi;
 
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.NavigatablePsiElement;
+import org.jetbrains.annotations.NotNull;
 
-public interface MarkdownPsiElement extends PsiElement {
+import java.util.List;
+
+public interface MarkdownPsiElement extends NavigatablePsiElement {
+  @NotNull
+  List<MarkdownPsiElement> getCompositeChildren();
 }

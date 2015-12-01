@@ -25,7 +25,7 @@ public interface MarkdownTokenTypes extends TokenType {
 
   IElementType TEXT = platformType(org.intellij.markdown.MarkdownTokenTypes.TEXT);
 
-  IElementType CODE = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE);
+  IElementType CODE_LINE = platformType(org.intellij.markdown.MarkdownTokenTypes.CODE_LINE);
 
   IElementType ATX_CONTENT = platformType(org.intellij.markdown.MarkdownTokenTypes.ATX_CONTENT);
 
@@ -33,7 +33,7 @@ public interface MarkdownTokenTypes extends TokenType {
 
   IElementType BLOCK_QUOTE = platformType(org.intellij.markdown.MarkdownTokenTypes.BLOCK_QUOTE);
 
-  IElementType HTML_BLOCK = platformType(org.intellij.markdown.MarkdownElementTypes.HTML_BLOCK);
+  IElementType HTML_BLOCK_CONTENT = platformType(org.intellij.markdown.MarkdownTokenTypes.HTML_BLOCK_CONTENT);
 
   IElementType SINGLE_QUOTE = platformType(org.intellij.markdown.MarkdownTokenTypes.SINGLE_QUOTE);
   IElementType DOUBLE_QUOTE = platformType(org.intellij.markdown.MarkdownTokenTypes.DOUBLE_QUOTE);

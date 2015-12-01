@@ -16,7 +16,6 @@
 package org.intellij.plugins.markdown.lang.parser;
 
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
@@ -29,6 +28,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
 import org.intellij.plugins.markdown.lang.lexer.MarkdownToplevelLexer;
+import org.intellij.plugins.markdown.lang.psi.MarkdownPsiFactory;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class MarkdownParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    return new ASTWrapperPsiElement(node);
+    return MarkdownPsiFactory.INSTANCE.createElement(node);
   }
 
   @NotNull

@@ -28,10 +28,18 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
   TokenSet HEADER_LEVEL_4_SET = TokenSet.create(ATX_4);
   TokenSet HEADER_LEVEL_5_SET = TokenSet.create(ATX_5);
   TokenSet HEADER_LEVEL_6_SET = TokenSet.create(ATX_6);
+  TokenSet HEADERS = TokenSet.orSet(HEADER_LEVEL_1_SET,
+                                    HEADER_LEVEL_2_SET,
+                                    HEADER_LEVEL_3_SET,
+                                    HEADER_LEVEL_4_SET,
+                                    HEADER_LEVEL_5_SET,
+                                    HEADER_LEVEL_6_SET);
 
   TokenSet REFERENCE_LINK_SET = TokenSet.create(FULL_REFERENCE_LINK, SHORT_REFERENCE_LINK);
 
   TokenSet LIST_MARKERS = TokenSet.create(MarkdownTokenTypes.LIST_BULLET, MarkdownTokenTypes.LIST_NUMBER);
+
+  TokenSet LISTS = TokenSet.create(MarkdownElementTypes.ORDERED_LIST, MarkdownElementTypes.UNORDERED_LIST);
 
   TokenSet INLINE_HOLDING_ELEMENT_TYPES =
     TokenSet.create(MarkdownElementTypes.PARAGRAPH,

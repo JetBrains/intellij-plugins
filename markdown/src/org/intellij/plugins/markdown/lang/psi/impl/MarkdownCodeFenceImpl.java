@@ -1,16 +1,62 @@
 package org.intellij.plugins.markdown.lang.psi.impl;
 
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.CompositePsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElement;
+import org.intellij.plugins.markdown.structureView.MarkdownBasePresentation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLanguageInjectionHost {
+import java.util.Collections;
+import java.util.List;
+
+public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLanguageInjectionHost, MarkdownPsiElement {
   public MarkdownCodeFenceImpl(IElementType type) {
     super(type);
+  }
+
+  @Override
+  public ItemPresentation getPresentation() {
+    return new MarkdownBasePresentation() {
+      @Nullable
+      @Override
+      public String getPresentableText() {
+        if (!isValid()) {
+          return null;
+        }
+        return "code fence";
+      }
+
+      @Nullable
+      @Override
+      public String getLocationString() {
+        if (!isValid()) {
+          return null;
+        }
+
+        final StringBuilder sb = new StringBuilder();
+        for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
+          if (!(child instanceof MarkdownCodeFenceContentImpl)) {
+            continue;
+          }
+          if (sb.length() > 0) {
+            sb.append("\\n");
+          }
+          sb.append(child.getText());
+
+          if (sb.length() >= MarkdownCompositePsiElementBase.PRESENTABLE_TEXT_LENGTH) {
+            break;
+          }
+        }
+
+        return sb.toString();
+      }
+    };
   }
 
   @Override
@@ -41,6 +87,10 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
       @NotNull
       @Override
       public TextRange getRelevantTextRange() {
+        return getContentTextRange();
+      }
+
+      public TextRange getContentTextRange() {
         final MarkdownCodeFenceContentImpl first = PsiTreeUtil.findChildOfType(myHost, MarkdownCodeFenceContentImpl.class);
         if (first == null) {
           return TextRange.EMPTY_RANGE;
@@ -63,6 +113,12 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
         return false;
       }
     };
+  }
+
+  @NotNull
+  @Override
+  public List<MarkdownPsiElement> getCompositeChildren() {
+    return Collections.emptyList();
   }
 
   public static class Manipulator extends AbstractElementManipulator<MarkdownCodeFenceImpl> {
