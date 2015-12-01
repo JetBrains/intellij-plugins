@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Integer> {
 
-  public enum FileFilterMode {All, Package, File}
+  public enum FileFilterMode {All, ContentRoot, Package, File}
 
 
   private static final boolean SHOW_ERRORS_DEFAULT = true;
@@ -31,6 +31,8 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   @Nullable private VirtualFile myCurrentFile;
   private boolean myPackageRootUpToDate = false;
   @Nullable private VirtualFile myCurrentPackageRoot;
+  private boolean myContentRootUpToDate = false;
+  @Nullable private VirtualFile myCurrentContentRoot;
 
   public DartProblemsFilter(@NotNull final Project project) {
     myProject = project;
@@ -70,6 +72,7 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
     else {
       myCurrentFile = file;
       myPackageRootUpToDate = false;
+      myContentRootUpToDate = false;
       return true;
     }
   }
@@ -108,6 +111,13 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
       }
     }
 
+    if (myFileFilterMode == FileFilterMode.ContentRoot) {
+      ensureContentRootUpToDate();
+      if (myCurrentContentRoot == null || !myCurrentContentRoot.equals(problem.getContentRoot())) {
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -133,5 +143,15 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
     }
 
     myCurrentPackageRoot = packageRoot;
+    myPackageRootUpToDate = true;
+  }
+
+  private void ensureContentRootUpToDate() {
+    if (myContentRootUpToDate) return;
+
+    myCurrentContentRoot = myCurrentFile == null
+                           ? null
+                           : ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);
+    myContentRootUpToDate = true;
   }
 }
