@@ -29,6 +29,7 @@ public class DartProblemsFilterForm {
   private JBCheckBox myHintsCheckBox;
 
   private JBRadioButton myWholeProjectRadioButton;
+  private JBRadioButton myCurrentContentRootRadioButton;
   private JBRadioButton myCurrentPackageRadioButton;
   private JBRadioButton myCurrentFileRadioButton;
 
@@ -59,6 +60,9 @@ public class DartProblemsFilterForm {
     else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.Package) {
       myCurrentPackageRadioButton.setSelected(true);
     }
+    else if (filter.getFileFilterMode() == DartProblemsFilter.FileFilterMode.ContentRoot) {
+      myCurrentContentRootRadioButton.setSelected(true);
+    }
     else {
       myWholeProjectRadioButton.setSelected(true);
     }
@@ -79,6 +83,7 @@ public class DartProblemsFilterForm {
     myHintsCheckBox.addActionListener(listener);
 
     myWholeProjectRadioButton.addActionListener(listener);
+    myCurrentContentRootRadioButton.addActionListener(listener);
     myCurrentPackageRadioButton.addActionListener(listener);
     myCurrentFileRadioButton.addActionListener(listener);
   }
@@ -102,6 +107,7 @@ public class DartProblemsFilterForm {
   public DartProblemsFilter.FileFilterMode getFileFilterMode() {
     if (myCurrentFileRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.File;
     if (myCurrentPackageRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.Package;
+    if (myCurrentContentRootRadioButton.isSelected()) return DartProblemsFilter.FileFilterMode.ContentRoot;
     return DartProblemsFilter.FileFilterMode.All;
   }
 }
