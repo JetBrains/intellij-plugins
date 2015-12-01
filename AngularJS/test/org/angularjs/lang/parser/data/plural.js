@@ -1,0 +1,1 @@
+recipients.length, plural, offset:1, =0 {You ({{sender.name}}) gave no gifts} other {You have many gifts}

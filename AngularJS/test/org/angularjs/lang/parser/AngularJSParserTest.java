@@ -43,9 +43,11 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
       @Override
       public void run() {
         try {
+          System.setProperty("angular.js.parse.message.format", "true");
           doSingleTest(myFileSuffix, myTestDataPath);
         }
         catch (Throwable e) {
+          System.clearProperty("angular.js.parse.message.format");
           throwables[0] = e;
         }
       }
