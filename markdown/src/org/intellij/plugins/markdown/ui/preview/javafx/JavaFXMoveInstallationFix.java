@@ -1,9 +1,8 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
-import com.intellij.openapi.application.ApplicationInfo;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.util.BuildNumber;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.SystemProperties;
@@ -17,6 +16,7 @@ import java.util.List;
 enum JavaFXMoveInstallationFix {
   INSTANCE;
 
+  private static final String MARKDOWN_INSTALLATION_MOVED_KEY = "markdown.installation.moved";
   private final Logger LOG = Logger.getInstance(JavaFXMoveInstallationFix.class);
 
   public static final List<String> INSTALLATION_LIST = Arrays.asList(
@@ -44,11 +44,11 @@ enum JavaFXMoveInstallationFix {
   );
 
   public boolean runFixIfCan() {
-    final BuildNumber build = ApplicationInfo.getInstance().getBuild();
-    if (build.getBaselineVersion() != 143 || build.getBuildNumber() != 381) {
+    if (PropertiesComponent.getInstance().getBoolean(MARKDOWN_INSTALLATION_MOVED_KEY)) {
       return false;
     }
 
+    PropertiesComponent.getInstance().setValue(MARKDOWN_INSTALLATION_MOVED_KEY, true);
     final String oldInstallationPath = getOldInstallationPath();
 
     final String testFile = oldInstallationPath + "/" + INSTALLATION_LIST.get(0);
