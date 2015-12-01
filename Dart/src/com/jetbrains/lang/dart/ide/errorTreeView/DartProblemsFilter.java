@@ -3,7 +3,9 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.NotNull;
@@ -134,7 +136,9 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
       packageRoot = null;
     }
     else {
-      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(myProject, myCurrentFile);
+      final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
+                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, myCurrentFile)
+                                  : PubspecYamlUtil.findPubspecYamlFile(myProject, myCurrentFile);
       if (pubspec == null) {
         final VirtualFile contentRoot =
           ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);
