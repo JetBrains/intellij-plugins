@@ -3,6 +3,7 @@ package org.intellij.plugins.markdown.lang.lexer;
 import com.intellij.lexer.LexerBase;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.markdown.ast.ASTNode;
+import org.intellij.markdown.ast.ASTNodeKt;
 import org.intellij.markdown.ast.visitors.RecursiveVisitor;
 import org.intellij.plugins.markdown.lang.MarkdownElementType;
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
@@ -33,7 +34,7 @@ public class MarkdownToplevelLexer extends LexerBase {
     myLexemes = new ArrayList<IElementType>();
     myStartOffsets = new ArrayList<Integer>();
     myEndOffsets = new ArrayList<Integer>();
-    parsedTree.accept(new LexerBuildingVisitor());
+    ASTNodeKt.accept(parsedTree, new LexerBuildingVisitor());
     myLexemeIndex = 0;
   }
 
