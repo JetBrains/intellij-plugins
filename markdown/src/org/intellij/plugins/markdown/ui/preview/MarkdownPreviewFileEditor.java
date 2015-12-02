@@ -206,7 +206,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
     if (provider.isAvailable() != MarkdownHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       settings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(settings.getMarkdownPreviewSettings().getSplitEditorLayout(),
-                                                                      MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
+                                                                      MarkdownPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(),
+                                                                      settings.getMarkdownPreviewSettings().isUseGrayscaleRendering()));
 
       Messages.showMessageDialog(
         myHtmlPanelWrapper,

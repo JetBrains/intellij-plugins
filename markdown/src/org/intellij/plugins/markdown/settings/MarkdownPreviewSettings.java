@@ -19,14 +19,19 @@ public final class MarkdownPreviewSettings {
   @Property(surroundWithTag = false)
   @NotNull
   private MarkdownHtmlPanelProvider.ProviderInfo myHtmlPanelProviderInfo = LoboHtmlPanelProvider.INFO;
+  
+  @Attribute("UseGrayscaleRendering")
+  private boolean myUseGrayscaleRendering = false;
 
   public MarkdownPreviewSettings() {
   }
 
   public MarkdownPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
-                                 @NotNull MarkdownHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo) {
+                                 @NotNull MarkdownHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
+                                 boolean useGrayscaleRendering) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
+    myUseGrayscaleRendering = useGrayscaleRendering;
   }
 
   @NotNull
@@ -39,6 +44,10 @@ public final class MarkdownPreviewSettings {
     return myHtmlPanelProviderInfo;
   }
 
+  public boolean isUseGrayscaleRendering() {
+    return myUseGrayscaleRendering;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -46,6 +55,7 @@ public final class MarkdownPreviewSettings {
 
     MarkdownPreviewSettings settings = (MarkdownPreviewSettings)o;
 
+    if (myUseGrayscaleRendering != settings.myUseGrayscaleRendering) return false;
     if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
     if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
 
@@ -56,6 +66,7 @@ public final class MarkdownPreviewSettings {
   public int hashCode() {
     int result = mySplitEditorLayout.hashCode();
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
+    result = 31 * result + (myUseGrayscaleRendering ? 1 : 0);
     return result;
   }
 

@@ -1,18 +1,22 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.messages.MessageBusConnection;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.intellij.markdown.html.HtmlGenerator;
+import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
 import org.intellij.plugins.markdown.util.MarkdownPluginUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +45,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private String myLastRawHtml = "";
 
   public JavaFxHtmlPanel() {
+    //System.setProperty("prism.lcdtext", "false");
+    //System.setProperty("prism.text", "t2k");
     myPanel = new JFXPanel();
 
     Platform.setImplicitExit(false);
@@ -61,6 +67,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
             }
           });
 
+        updateFontSmoothingType(myWebView, MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
         myWebView.getEngine().loadContent("<html><body>" + getScriptingLines() + "</body></html>");
         myWebView.setContextMenuEnabled(false);
 
@@ -68,6 +75,38 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
         myPanel.setScene(scene);
       }
     });
+
+    subscribeForGrayscaleSetting();
+  }
+
+  private void subscribeForGrayscaleSetting() {
+    MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
+    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
+      new MarkdownApplicationSettings.SettingsChangedListener() {
+        @Override
+        public void onSettingsChange(@NotNull final MarkdownApplicationSettings settings) {
+          Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+              if (myWebView != null) {
+                updateFontSmoothingType(myWebView, settings.getMarkdownPreviewSettings().isUseGrayscaleRendering());
+              }
+            }
+          });
+        }
+      };
+    settingsConnection.subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
+  }
+
+  private static void updateFontSmoothingType(@NotNull WebView view, boolean isGrayscale) {
+    final FontSmoothingType typeToSet;
+    if (isGrayscale) {
+      typeToSet = FontSmoothingType.GRAY;
+    }
+    else {
+      typeToSet = FontSmoothingType.LCD;
+    }
+    view.fontSmoothingTypeProperty().setValue(typeToSet);
   }
 
   @NotNull
@@ -149,6 +188,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private static String getScriptingLines() {
     try {
       final String libPath = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib";
+      //noinspection StringBufferReplaceableByString
       return new StringBuilder()
         .append("<script src=\"").append(new File(libPath + "/scrollToElement.js").toURI()).append("\"></script>\n")
         .append("<script src=\"").append(new File(libPath + "/processLinks.js").toURI()).append("\"></script>\n")

@@ -54,7 +54,8 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
         if (isSuccess) {
           markdownApplicationSettings.setMarkdownPreviewSettings(new MarkdownPreviewSettings(
             oldPreviewSettings.getSplitEditorLayout(),
-            new JavaFxHtmlPanelProvider().getProviderInfo()
+            new JavaFxHtmlPanelProvider().getProviderInfo(),
+            oldPreviewSettings.isUseGrayscaleRendering()
           ));
           EditorNotifications.updateAll();
         }
