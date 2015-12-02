@@ -316,27 +316,25 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
           break;
         case ContentRoot:
           b.append("Filtered by current content root");
-          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
-            b.append(" and severity (").append(getHiddenSeveritiesText()).append(")");
-          }
           break;
         case Package:
           b.append("Filtered by current package");
-          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
-            b.append(" and severity (").append(getHiddenSeveritiesText()).append(")");
-          }
           break;
         case File:
           b.append("Filtered by current file");
-          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
-            b.append(" and severity (").append(getHiddenSeveritiesText()).append(")");
-          }
           break;
       }
 
       if (myFilter.getFileFilterMode() != DartProblemsFilter.FileFilterMode.All) {
-        if (!myFilter.isShowErrors() && !myFilter.isShowWarnings() && !myFilter.isShowHints()) {
-          b.append("."); // everything is filtered out
+        if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+          b.append(" and severity: ");
+
+          if (!myFilter.isShowErrors() && !myFilter.isShowWarnings() && !myFilter.isShowHints()) {
+            b.append(getHiddenSeveritiesText()).append("."); // everything is filtered out
+          }
+          else {
+            b.append(getProblemsCountAfterFilterText()).append(", ").append(getHiddenSeveritiesText()).append(".");
+          }
         }
         else {
           b.append(": ").append(getProblemsCountAfterFilterText()).append(".");
