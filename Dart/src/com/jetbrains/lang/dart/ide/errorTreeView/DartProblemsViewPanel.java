@@ -77,7 +77,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
   @NotNull
   private TableView<DartProblem> createTable() {
-    final TableView<DartProblem> table = new TableView<DartProblem>(new DartProblemsTableModel(myProject));
+    final TableView<DartProblem> table = new TableView<DartProblem>(new DartProblemsTableModel(myProject, myFilter));
 
     table.addKeyListener(new KeyAdapter() {
       @Override
@@ -166,14 +166,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   }
 
   private void updateStatusBar() {
-    final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
-    final int errorCount = model.getErrorCount();
-    final int warningCount = model.getWarningCount();
-    final int hintCount = model.getHintCount();
-    final String errorText = errorCount == 0 ? "No errors" : errorCount == 1 ? "1 error" : errorCount + " errors";
-    final String warningText = warningCount == 0 ? "no warnings" : warningCount == 1 ? "1 warning" : warningCount + " warnings";
-    final String hintText = hintCount == 0 ? "no hints" : hintCount == 1 ? "1 hint" : hintCount + " hints";
-    mySummaryLabel.setText(errorText + ", " + warningText + ", " + hintText + ".");
+    mySummaryLabel.setText(((DartProblemsTableModel)myTable.getModel()).getStatusText());
   }
 
   private static void addReanalyzeAndRestartActions(@NotNull final DefaultActionGroup group) {
@@ -217,15 +210,17 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       @Override
       public void setSelected(AnActionEvent e, boolean groupBySeverity) {
         ((DartProblemsTableModel)myTable.getModel()).setGroupBySeverity(groupBySeverity);
-        fireSortingOrFilterChanged();
+        fireGroupingOrFilterChanged();
       }
     };
 
     group.addAction(action);
   }
 
-  void fireSortingOrFilterChanged() {
+  void fireGroupingOrFilterChanged() {
     myTable.getRowSorter().allRowsChanged();
+    ((DartProblemsTableModel)myTable.getModel()).onFilterChanged();
+    updateStatusBar();
   }
 
   private void showFiltersPopup() {
@@ -236,14 +231,14 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       @Override
       public void filtersChanged() {
         myFilter.updateFromUI(form);
-        fireSortingOrFilterChanged();
+        fireGroupingOrFilterChanged();
       }
 
       @Override
       public void filtersResetRequested() {
         myFilter.resetAllFilters();
         form.reset(myFilter);
-        fireSortingOrFilterChanged();
+        fireGroupingOrFilterChanged();
       }
     });
 

@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.ColumnInfo;
@@ -50,6 +51,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   };
 
   private final Project myProject;
+  @NotNull private final DartProblemsFilter myFilter;
 
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
   // Having it in hands we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
@@ -62,11 +64,16 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private int myWarningCount = 0;
   private int myHintCount = 0;
 
+  private int myErrorCountAfterFilter = 0;
+  private int myWarningCountAfterFilter = 0;
+  private int myHintCountAfterFilter = 0;
+
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
-  public DartProblemsTableModel(@NotNull final Project project) {
+  public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
     myProject = project;
+    myFilter = filter;
     myItems = new ArrayList<DartProblem>();
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
     setItems(myItems);
@@ -148,6 +155,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       if (AnalysisErrorSeverity.ERROR.equals(removed.getSeverity())) myErrorCount--;
       if (AnalysisErrorSeverity.WARNING.equals(removed.getSeverity())) myWarningCount--;
       if (AnalysisErrorSeverity.INFO.equals(removed.getSeverity())) myHintCount--;
+      updateProblemsCountAfterFilter(removed, false);
     }
 
     fireTableRowsDeleted(firstRow, lastRow);
@@ -163,6 +171,9 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     myErrorCount = 0;
     myWarningCount = 0;
     myHintCount = 0;
+    myErrorCountAfterFilter = 0;
+    myWarningCountAfterFilter = 0;
+    myHintCountAfterFilter = 0;
   }
 
   public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
@@ -234,6 +245,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
         if (AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) myErrorCount++;
         if (AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) myWarningCount++;
         if (AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) myHintCount++;
+        updateProblemsCountAfterFilter(problem, true);
       }
     }
 
@@ -242,16 +254,19 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     }
   }
 
-  public int getErrorCount() {
-    return myErrorCount;
-  }
-
-  public int getWarningCount() {
-    return myWarningCount;
-  }
-
-  public int getHintCount() {
-    return myHintCount;
+  private void updateProblemsCountAfterFilter(@NotNull final DartProblem problem, final boolean incrementNotDecrement) {
+    if (myFilter.include(problem)) {
+      if (incrementNotDecrement) {
+        if (AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) myErrorCountAfterFilter++;
+        if (AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) myWarningCountAfterFilter++;
+        if (AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) myHintCountAfterFilter++;
+      }
+      else {
+        if (AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) myErrorCountAfterFilter--;
+        if (AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) myWarningCountAfterFilter--;
+        if (AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) myHintCountAfterFilter--;
+      }
+    }
   }
 
   public boolean isGroupBySeverity() {
@@ -264,6 +279,100 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
   public void setSortKey(@NotNull final RowSorter.SortKey sortKey) {
     mySortKey = sortKey;
+  }
+
+  public void onFilterChanged() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    if (myFilter.areFiltersApplied()) {
+      myErrorCountAfterFilter = 0;
+      myWarningCountAfterFilter = 0;
+      myHintCountAfterFilter = 0;
+      for (DartProblem problem : myItems) {
+        updateProblemsCountAfterFilter(problem, true);
+      }
+    }
+    else {
+      myErrorCountAfterFilter = myErrorCount;
+      myWarningCountAfterFilter = myWarningCount;
+      myHintCountAfterFilter = myHintCount;
+    }
+  }
+
+  @NotNull
+  public String getStatusText() {
+    final StringBuilder b = new StringBuilder();
+    b.append("Total: ");
+    b.append(myErrorCount == 0 ? "no errors, " : myErrorCount == 1 ? "1 error, " : myErrorCount + " errors, ");
+    b.append(myWarningCount == 0 ? "no warnings, " : myWarningCount == 1 ? "1 warning, " : myWarningCount + " warnings, ");
+    b.append(myHintCount == 0 ? "no hints. " : myHintCount == 1 ? "1 hint. " : myHintCount + " hints. ");
+
+    if (myFilter.areFiltersApplied()) {
+      switch (myFilter.getFileFilterMode()) {
+        case All:
+          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+            // should be always true
+            b.append("Filtered by severity: ").append(getHiddenSeveritiesText()).append(".");
+          }
+          break;
+        case ContentRoot:
+          b.append("Filtered by current content root");
+          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+            b.append(" and severity (").append(getHiddenSeveritiesText()).append(")");
+          }
+          break;
+        case Package:
+          b.append("Filtered by current package");
+          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+            b.append(" and severity (").append(getHiddenSeveritiesText()).append(")");
+          }
+          break;
+        case File:
+          b.append("Filtered by current file");
+          if (!myFilter.isShowErrors() || !myFilter.isShowWarnings() || !myFilter.isShowHints()) {
+            b.append(" and severity (").append(getHiddenSeveritiesText()).append(")");
+          }
+          break;
+      }
+
+      if (myFilter.getFileFilterMode() != DartProblemsFilter.FileFilterMode.All) {
+        if (!myFilter.isShowErrors() && !myFilter.isShowWarnings() && !myFilter.isShowHints()) {
+          b.append("."); // everything is filtered out
+        }
+        else {
+          b.append(": ").append(getProblemsCountAfterFilterText()).append(".");
+        }
+      }
+    }
+
+    return b.toString();
+  }
+
+  private String getHiddenSeveritiesText() {
+    final StringBuilder b = new StringBuilder();
+    if (!myFilter.isShowErrors()) b.append("errors");
+    if (!myFilter.isShowWarnings()) b.append(b.length() == 0 ? "warnings" : " and warnings");
+    if (!myFilter.isShowHints()) b.append(b.length() == 0 ? "hints" : " and hints");
+    b.append(" hidden");
+    return b.toString();
+  }
+
+  private String getProblemsCountAfterFilterText() {
+    final StringBuilder b = new StringBuilder();
+    if (myFilter.isShowErrors()) {
+      b.append(myErrorCountAfterFilter == 0 ? "no errors" : myErrorCountAfterFilter == 1 ? "1 error" : myErrorCountAfterFilter + " errors");
+    }
+    if (myFilter.isShowWarnings()) {
+      if (b.length() > 0) b.append(", ");
+      b.append(myWarningCountAfterFilter == 0
+               ? "no warnings"
+               : myWarningCountAfterFilter == 1 ? "1 warning" : myWarningCountAfterFilter + " warnings");
+    }
+    if (myFilter.isShowHints()) {
+      if (b.length() > 0) b.append(", ");
+      b.append(myHintCountAfterFilter == 0 ? "no hints" : myHintCountAfterFilter == 1 ? "1 hint" : myHintCountAfterFilter + " hints");
+    }
+
+    return b.toString();
   }
 
   private class DartProblemsComparator implements Comparator<DartProblem> {

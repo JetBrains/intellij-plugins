@@ -104,7 +104,7 @@ public class DartProblemsView {
   public void setCurrentFile(@Nullable final VirtualFile file) {
     if (myFilter.setCurrentFile(file) && myFilter.getFileFilterMode() != DartProblemsFilter.FileFilterMode.All) {
       if (myPanel != null) {
-        myPanel.fireSortingOrFilterChanged();
+        myPanel.fireGroupingOrFilterChanged();
       }
     }
   }
