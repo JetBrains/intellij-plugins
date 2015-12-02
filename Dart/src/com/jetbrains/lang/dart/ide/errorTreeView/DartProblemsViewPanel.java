@@ -57,7 +57,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   @NotNull private final Project myProject;
   @NotNull private final TableView<DartProblem> myTable;
   @NotNull private JBLabel mySummaryLabel = new JBLabel();
-  @NotNull private HoverHyperlinkLabel myResetFilterHyperlink = new HoverHyperlinkLabel(DartBundle.message("reset.filter"));
+  @NotNull private HoverHyperlinkLabel myResetFilterHyperlink = new HoverHyperlinkLabel(DartBundle.message("reset.filter") + ".");
 
   // may be remember settings and filters in workspace.xml? (see ErrorTreeViewConfiguration)
   private boolean myAutoScrollToSource = false;
