@@ -4,6 +4,7 @@ import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBRadioButton;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -33,13 +34,13 @@ public class DartProblemsFilterForm {
   private JBRadioButton myCurrentPackageRadioButton;
   private JBRadioButton myCurrentFileRadioButton;
 
-  private HoverHyperlinkLabel myResetFiltersHyperlink;
+  private HoverHyperlinkLabel myResetFilterHyperlink;
 
   private List<FilterListener> myListeners = new ArrayList<FilterListener>();
 
   private void createUIComponents() {
-    myResetFiltersHyperlink = new HoverHyperlinkLabel("Reset all filters");
-    myResetFiltersHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+    myResetFilterHyperlink = new HoverHyperlinkLabel(DartBundle.message("reset.filter"));
+    myResetFilterHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(final HyperlinkEvent e) {
         for (FilterListener listener : myListeners) {
