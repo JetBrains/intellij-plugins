@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -86,6 +87,11 @@ public class DartProblemsView {
 
         final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
         toolWindow.getContentManager().addContent(content);
+
+        if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
+          PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
+          toolWindow.activate(null, false);
+        }
 
         Disposer.register(project, new Disposable() {
           @Override
