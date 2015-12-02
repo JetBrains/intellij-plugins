@@ -121,8 +121,8 @@ public class AngularJSInjector implements MultiHostInjector {
         final int numStarts = StringUtil.getOccurrenceCount(myText.substring(myAfterStartIdx, nextEndIdx), myStartSymbol);
         if (numStarts > 0) {
           myNumStarts += numStarts;
-          myAfterStartIdx = nextEndIdx + myEndSymbol.length();
         }
+        myAfterStartIdx = nextEndIdx + myEndSymbol.length();
         if (myNumStarts == 0) return nextEndIdx;
       }
       return -1;

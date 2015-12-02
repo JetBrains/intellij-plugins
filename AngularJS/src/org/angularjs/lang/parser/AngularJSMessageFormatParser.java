@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Irina.Chernushina on 11/30/2015.
  */
 public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSParser> {
-  private final static String PLURAL = "plural";
-  private final static String SELECT = "select";
   @NonNls public static final String OFFSET_OPTION = "offset";
   private boolean myInsideSelectExpression = false;
 
@@ -54,7 +52,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
       return rollback(expr);
     }
     builder.advanceLexer();
-    if (SELECT.equals(extensionText)) {
+    if (ExtensionType.select.name().equals(extensionText)) {
       parseOptionsTail();
     } else {
       parsePluralTail();
@@ -79,17 +77,13 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
             builder.advanceLexer();
             builder.advanceLexer();
             myJavaScriptParser.getExpressionParser().parseExpression();
-            if (!isRBraceOrNull(builder.getTokenType()) || !isRBraceOrNull(builder.lookAhead(1))) {
-              builder.error("expected }}");
+            if (! expectDoubleRBrace(true)) {
               mark.drop();
               return false;
             }
-            builder.advanceLexer();
-            builder.advanceLexer();
-            continue;
           }
           else {
-            builder.error("expected reference");
+            builder.error("expected {{");
             mark.drop();
             return false;
           }
@@ -107,6 +101,18 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (stringLiteralMark != null) stringLiteralMark.drop();
     mark.drop();
     return false;
+  }
+
+  private boolean expectDoubleRBrace(boolean advance) {
+    if (!isRBraceOrNull(builder.getTokenType()) || !isRBraceOrNull(builder.lookAhead(1))) {
+      builder.error("expected }}");
+      return false;
+    }
+    if (advance) {
+      builder.advanceLexer();
+      builder.advanceLexer();
+    }
+    return true;
   }
 
   private static boolean isRBraceOrNull(IElementType type) {
@@ -161,7 +167,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           }
         } else {
           if (JSTokenTypes.RBRACE == type) {
-            builder.advanceLexer();
+            expectDoubleRBrace(false);
             return;
           }
           builder.error("expected selection keyword");
@@ -173,7 +179,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           if (!parseInnerMessage()) return;  //+-
           key = true;
         } else {
-          builder.error("expected message");
+          builder.error("expected message in {} delimiters");
           return;
         }
       }
@@ -187,11 +193,15 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
   }
 
   private static boolean isKnownExtension(String text) {
-    return PLURAL.equals(text) || SELECT.equals(text);
+    return ExtensionType.select.name().equals(text) || ExtensionType.plural.name().equals(text);
   }
 
   private static boolean rollback(PsiBuilder.Marker expr) {
     expr.rollbackTo();
     return false;
+  }
+
+  public enum ExtensionType {
+    plural, select
   }
 }
