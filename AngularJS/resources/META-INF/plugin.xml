@@ -58,6 +58,7 @@
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
     <typedHandler implementation="org.angularjs.editor.AngularBracesInterpolationTypedHandler"/>
+    <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
 
     <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
