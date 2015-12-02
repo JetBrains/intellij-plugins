@@ -22,12 +22,12 @@ public class AngularJSPerformanceTest extends LightPlatformCodeInsightFixtureTes
 
   public void testManyInjectionsHighlighting() {
     myFixture.configureByFiles("manyInjections.highlight.html", "angular.js", "custom.js");
-    PlatformTestUtil.startPerformanceTest(getTestName(false), 30000, new ThrowableRunnable() {
+    PlatformTestUtil.startPerformanceTest(getTestName(false), 60000, new ThrowableRunnable() {
       @Override
       public void run() throws Throwable {
         myFixture.checkHighlighting();
       }
-    }).attempts(1).cpuBound().usesAllCPUCores().useLegacyScaling().assertTiming();
+    }).attempts(1).cpuBound().usesAllCPUCores().assertTiming();
   }
 
 }
