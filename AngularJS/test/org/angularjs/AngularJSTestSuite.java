@@ -26,6 +26,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(AngularTypedHandlerTest.class);
     testSuite.addTestSuite(FindUsagesTest.class);
     testSuite.addTestSuite(AngularDirectiveCommentParsingTest.class);
+    testSuite.addTestSuite(AngularJSInjectorMatchingEndFinderTest.class);
 
     return testSuite;
   }

@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
@@ -71,16 +70,14 @@ public class AngularJSInjector implements MultiHostInjector {
       if (AngularJSBracesUtil.hasConflicts(start, end, context)) return;
 
       final String text = context.getText();
-      int startIndex;
       int endIndex = -1;
-      do {
-        startIndex = text.indexOf(start, endIndex);
-        if (startIndex < 0) return;
-
-        int afterStart = startIndex + start.length();
-        endIndex = new MatchingEndFinder(start, end, text, afterStart).find();
+      while (true) {
+        final AngularJSInjectorMatchingEndFinder finder = new AngularJSInjectorMatchingEndFinder(start, end, text, endIndex);
+        int afterStart = finder.getAfterStartIdx();
+        if (afterStart < 0) return;
+        endIndex = finder.find();
         endIndex = endIndex > 0 ? endIndex : ElementManipulators.getValueTextRange(context).getEndOffset();
-        final PsiElement injectionCandidate = startIndex >= 0 ? context.findElementAt(startIndex) : null;
+        final PsiElement injectionCandidate = afterStart >= 0 ? context.findElementAt(afterStart) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
            !(injectionCandidate instanceof OuterLanguageElement)) {
           if (afterStart > endIndex) {
@@ -93,39 +90,7 @@ public class AngularJSInjector implements MultiHostInjector {
                     addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(afterStart, endIndex)).
                     doneInjecting();
         }
-      } while (startIndex >= 0);
-    }
-  }
-
-  private static class MatchingEndFinder {
-    private final String myStartSymbol;
-    private final String myEndSymbol;
-    private int myNumStarts;
-    private String myText;
-    private int myAfterStartIdx;
-
-    public MatchingEndFinder(String startSymbol, String endSymbol, String text, int afterStartIdx) {
-      assert afterStartIdx >= 0;
-      myStartSymbol = startSymbol;
-      myEndSymbol = endSymbol;
-      myNumStarts = 1;
-      myText = text;
-      myAfterStartIdx = afterStartIdx;
-    }
-
-    public int find() {
-      while (myNumStarts > 0) {
-        -- myNumStarts;
-        int nextEndIdx = myText.indexOf(myEndSymbol, myAfterStartIdx);
-        if (nextEndIdx == -1) return -1;
-        final int numStarts = StringUtil.getOccurrenceCount(myText.substring(myAfterStartIdx, nextEndIdx), myStartSymbol);
-        if (numStarts > 0) {
-          myNumStarts += numStarts;
-        }
-        myAfterStartIdx = nextEndIdx + myEndSymbol.length();
-        if (myNumStarts == 0) return nextEndIdx;
       }
-      return -1;
     }
   }
 
