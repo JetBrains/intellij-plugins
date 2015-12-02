@@ -30,7 +30,7 @@ public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   public ReanalyzeDartSourcesAction() {
     super(DartBundle.message("dart.reanalyze.action.name"),
           DartBundle.message("dart.reanalyze.action.description"),
-          AllIcons.Actions.Rerun);
+          AllIcons.Actions.ForceRefresh);
   }
 
   @Override
