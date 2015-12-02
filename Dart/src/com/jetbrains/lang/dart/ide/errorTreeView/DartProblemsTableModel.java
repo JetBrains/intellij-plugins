@@ -176,15 +176,23 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     myHintCountAfterFilter = 0;
   }
 
-  public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
-    removeRowsForFilesInSet(filePathToErrors.keySet());
-    addErrors(filePathToErrors);
+  /**
+   * If <code>selectedProblem</code> was removed and similar one added again then this method returns the added one,
+   * so that the caller could update selected row in the table
+   */
+  @Nullable
+  public DartProblem setErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<AnalysisError>> filePathToErrors,
+                                                               @Nullable final DartProblem selectedProblem) {
+    final boolean selectedProblemRemoved = removeRowsForFilesInSet(filePathToErrors.keySet(), selectedProblem);
+    return addErrorsAndReturnReplacementForSelection(filePathToErrors, selectedProblemRemoved ? selectedProblem : null);
   }
 
-  private void removeRowsForFilesInSet(@NotNull final Set<String> filePaths) {
+  private boolean removeRowsForFilesInSet(@NotNull final Set<String> filePaths, @Nullable final DartProblem selectedProblem) {
     // Looks for regions in table items that should be removed and removes them.
     // For performance reasons we try to call removeRows() as rare as possible, that means with regions as big as possible.
     // Logic is based on the fact that all errors for each particular file are stored continuously in the myItems model
+
+    boolean selectedProblemRemoved = false;
 
     int matchedFilesCount = 0;
 
@@ -193,6 +201,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       if (filePaths.contains(problem.getSystemIndependentPath())) {
         matchedFilesCount++;
         final int lastRowToDelete = i;
+
+        if (problem == selectedProblem) {
+          selectedProblemRemoved = true;
+        }
 
         DartProblem lastProblemForCurrentFile = problem;
 
@@ -203,6 +215,11 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
           if (previousProblem.getSystemIndependentPath().equals(lastProblemForCurrentFile.getSystemIndependentPath())) {
             // previousProblem should be removed from the table as well
             j--;
+
+            if (previousProblem == selectedProblem) {
+              selectedProblemRemoved = true;
+            }
+
             continue;
           }
 
@@ -211,6 +228,11 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
             // continue iterating the table because we met a range of problems for another file that also should be removed
             lastProblemForCurrentFile = previousProblem;
             j--;
+
+            if (previousProblem == selectedProblem) {
+              selectedProblemRemoved = true;
+            }
+
             continue;
           }
 
@@ -228,9 +250,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
         i = j + 1; // rewind according to the amount of removed rows
       }
     }
+
+    return selectedProblemRemoved;
   }
 
-  private void addErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
+  @Nullable
+  private DartProblem addErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<AnalysisError>> filePathToErrors,
+                                                                @Nullable final DartProblem oldSelectedProblem) {
+    DartProblem newSelectedProblem = null;
+
     final List<DartProblem> problemsToAdd = new ArrayList<DartProblem>();
     for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
@@ -242,6 +270,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
         final DartProblem problem = new DartProblem(myProject, analysisError);
         problemsToAdd.add(problem);
 
+        if (oldSelectedProblem != null &&
+            lookSimilar(problem, oldSelectedProblem) &&
+            (newSelectedProblem == null ||
+             // check if current problem is closer to oldSelectedProblem
+             (Math.abs(oldSelectedProblem.getLineNumber() - newSelectedProblem.getLineNumber()) >=
+              Math.abs(oldSelectedProblem.getLineNumber() - problem.getLineNumber())))) {
+          newSelectedProblem = problem;
+        }
+
         if (AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) myErrorCount++;
         if (AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) myWarningCount++;
         if (AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) myHintCount++;
@@ -252,6 +289,14 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     if (!problemsToAdd.isEmpty()) {
       addRows(problemsToAdd);
     }
+
+    return newSelectedProblem;
+  }
+
+  private static boolean lookSimilar(@NotNull final DartProblem problem1, @NotNull final DartProblem problem2) {
+    return problem1.getSeverity().equals(problem2.getSeverity()) &&
+           problem1.getErrorMessage().equals(problem2.getErrorMessage()) &&
+           problem1.getSystemIndependentPath().equals(problem2.getSystemIndependentPath());
   }
 
   private void updateProblemsCountAfterFilter(@NotNull final DartProblem problem, final boolean incrementNotDecrement) {
