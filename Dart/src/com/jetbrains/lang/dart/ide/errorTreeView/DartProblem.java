@@ -3,9 +3,11 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +77,9 @@ public class DartProblem {
     else {
       contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
 
-      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(myProject, file);
+      final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
+                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, file)
+                                  : PubspecYamlUtil.findPubspecYamlFile(myProject, file);
       if (pubspec == null) {
         dartPackageName = null;
         if (contentRoot == null) {
@@ -89,7 +93,9 @@ public class DartProblem {
         }
       }
       else {
-        final String projectName = PubspecYamlUtil.getDartProjectName(pubspec);
+        final String projectName = Registry.is("dart.projects.without.pubspec", false)
+                                   ? DartBuildFileUtil.getDartProjectName(pubspec)
+                                   : PubspecYamlUtil.getDartProjectName(pubspec);
         dartPackageName = projectName != null ? projectName : "%unnamed%";
         packageRoot = pubspec.getParent();
         final String relativePath = VfsUtilCore.getRelativePath(file, pubspec.getParent(), File.separatorChar);
