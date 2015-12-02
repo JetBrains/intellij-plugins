@@ -171,6 +171,9 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
       }
     });
 
+    mySummaryLabel.setText("");
+    myResetFilterHyperlink.setVisible(false);
+
     return panel;
   }
 
