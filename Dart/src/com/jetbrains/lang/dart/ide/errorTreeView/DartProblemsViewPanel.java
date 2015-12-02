@@ -49,6 +49,7 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -324,7 +325,15 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   }
 
   public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
-    ((DartProblemsTableModel)myTable.getModel()).setErrors(filePathToErrors);
+    final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
+    final DartProblem oldSelectedProblem = myTable.getSelectedObject();
+
+    final DartProblem updatedSelectedProblem = model.setErrorsAndReturnReplacementForSelection(filePathToErrors, oldSelectedProblem);
+
+    if (updatedSelectedProblem != null) {
+      myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
+    }
+
     updateStatusBar();
   }
 
