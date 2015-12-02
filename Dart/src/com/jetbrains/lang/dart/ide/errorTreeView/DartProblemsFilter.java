@@ -94,8 +94,11 @@ public class DartProblemsFilter extends RowFilter<DartProblemsTableModel, Intege
   }
 
   @Override
-  public boolean include(Entry<? extends DartProblemsTableModel, ? extends Integer> entry) {
-    final DartProblem problem = entry.getModel().getItem(entry.getIdentifier());
+  public boolean include(@NotNull final Entry<? extends DartProblemsTableModel, ? extends Integer> entry) {
+    return include(entry.getModel().getItem(entry.getIdentifier()));
+  }
+
+  public boolean include(@NotNull final DartProblem problem) {
     if (!myShowErrors && AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) return false;
     if (!myShowWarnings && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
     if (!myShowHints && AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) return false;
