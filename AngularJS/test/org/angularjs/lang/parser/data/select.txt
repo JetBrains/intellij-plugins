@@ -1,6 +1,6 @@
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+    AngularJSMessageFormatExpression
       JSExpressionStatement
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('sender')
@@ -44,7 +44,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+    AngularJSMessageFormatExpression
       JSExpressionStatement
         JSReferenceExpression
           JSIndexedPropertyAccessExpression

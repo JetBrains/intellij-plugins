@@ -5,8 +5,13 @@ import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
+import org.angularjs.codeInsight.AngularJSPluralCategories;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Irina.Chernushina on 11/30/2015.
@@ -202,6 +207,22 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
   }
 
   public enum ExtensionType {
-    plural, select
+    plural(AngularJSPluralCategories.other.name()), select("other");
+
+    private final Set<String> myRequiredSelectionKeywords;
+
+    ExtensionType(String... keywords) {
+      if (keywords.length == 0) {
+        myRequiredSelectionKeywords = null;
+      } else {
+        myRequiredSelectionKeywords = new HashSet<String>();
+        Collections.addAll(myRequiredSelectionKeywords, keywords);
+      }
+    }
+
+    @NotNull
+    public Set<String> getRequiredSelectionKeywords() {
+      return myRequiredSelectionKeywords == null ? Collections.<String>emptySet() : myRequiredSelectionKeywords;
+    }
   }
 }

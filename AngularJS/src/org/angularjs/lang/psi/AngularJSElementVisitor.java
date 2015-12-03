@@ -13,4 +13,8 @@ public class AngularJSElementVisitor extends JSElementVisitor {
   public void visitAngularJSAsExpression(AngularJSAsExpression asExpression) {
     visitJSExpression(asExpression);
   }
+
+  public void visitMessageFormatExpression(AngularJSMessageFormatExpression expression) {
+    visitJSExpression(expression);
+  }
 }
