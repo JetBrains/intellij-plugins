@@ -1,13 +1,10 @@
 # How to install IntelliJ IDEA and training plugin
 
-**1. Install IntelliJ IDEA 15 to your computer.**
-	It is not difficult (especially if it is already installed). We are doing it quite often so maybe some steps are not clear to the first time — please remember these steps and write us in a feedback. IntelliJ IDEA could be downloaded [here](https://www.jetbrains.com/idea/download/). We suggest you to install Community Edition because it is lighter, but Ultimate Edition is always work with the plugin and is absolutely free for you (ask your JetBrains ambassador if you still haven’t heard about it). 
+**1. Install IntelliJ IDEA 15 to your computer.** If you are in doubt how to do it please refer to the [installation instructions](https://www.jetbrains.com/idea/help/installing-and-launching.html). If any installation steps are unclear please mention them in the [survey](http://www.surveygizmo.com/s3/2471422/bb8318c8c870) after the course.
+[Download](https://www.jetbrains.com/idea/download/) IntelliJ IDEA. It’s up to you what edition to use, Community or Ultimate, they will both work for you.
 
-**2. Install training-plugin for IntelliJ IDEA.**
-	Go to GitHub repository of the plugin and download a zip archive via this [link](https://github.com/karashevich/training/raw/master/training.zip). Start IntelliJ IDEA and open Preferences menu (use **Ctrl + Alt + S** for Win and Linux or **⌘,** for mac). Type “plugins", than press button “Install plugin from disk…”  and specify a path to “training.zip”. Restart IntelliJ IDEA...
+**2. Install training plugin for IntelliJ IDEA.**  Download [the plugin](https://github.com/karashevich/training/raw/master/training.zip). Start IntelliJ IDEA and open Preferences menu (use **Ctrl + Alt + S** on Win or Linux, and **⌘,** on Mac). Type “plugins", than press button “Install plugin from disk…” and specify a path to “training.zip” (it must already be in your Downloads directory). Restart IntelliJ IDEA.
 
-**3. Use the plugin**
-	After restarting of IntelliJ IDEA a new menu “Learn” will appear between “Window" and “Help” menus. Start from any lesson to learn IntelliJ IDEA shortcuts. 
+**3. Start learning with the plugin.** As soon as IntelliJ IDEA restarts, a new menu item “**Learn**” will appear between “Window" and “Help”. Begin with any exercise to learn IntelliJ IDEA actions and shortcuts.
 
-**4. Feedback**
-	We kindly ask you to leave a feedback. It is really important for us.
+**4. Give us a feedback.** We kindly ask you to [answer few questions](http://www.surveygizmo.com/s3/2471422/bb8318c8c870) after you completed all exercises. Your [feedback](http://www.surveygizmo.com/s3/2471422/bb8318c8c870) is really important for us.
