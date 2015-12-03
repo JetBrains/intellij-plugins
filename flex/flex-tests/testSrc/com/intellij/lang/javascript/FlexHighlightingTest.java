@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnusedNamespaceInspection;
@@ -2062,6 +2064,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testDumbMode() throws Exception {
 
     DumbServiceImpl.getInstance(getProject()).setDumb(true);
+    ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(getProject())).mustWaitForSmartMode(false, getTestRootDisposable());
     XmlNSDescriptor nsDescriptor;
     try {
       assertTrue(DumbService.isDumb(getProject()));
