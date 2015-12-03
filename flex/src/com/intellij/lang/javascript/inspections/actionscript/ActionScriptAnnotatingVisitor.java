@@ -83,7 +83,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   protected void initTypeCheckers(@NotNull PsiElement context) {
-    myProblemReporter = new JSAnnotatorProblemReporter(myHolder);
+    myProblemReporter = new JSAnnotatorProblemReporter(myHolder) {
+      @Nullable
+      @Override
+      protected String getAnnotatorInspectionId() {
+        return null;
+      }
+    };
     myTypeChecker = new ActionScriptTypeChecker(myProblemReporter);
     myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
   }
