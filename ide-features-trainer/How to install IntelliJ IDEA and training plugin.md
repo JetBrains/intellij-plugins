@@ -1,4 +1,4 @@
-# How to install IntelliJ IDEA with training plugin
+# How to install IntelliJ IDEA and training plugin
 
 **1. Install IntelliJ IDEA 15 to your computer.**
 	It is not difficult (especially if it is already installed). We are doing it quite often so maybe some steps are not clear to the first time — please remember these steps and write us in a feedback. IntelliJ IDEA could be downloaded [here](https://www.jetbrains.com/idea/download/). We suggest you to install Community Edition because it is lighter, but Ultimate Edition is always work with the plugin and is absolutely free for you (ask your JetBrains ambassador if you still haven’t heard about it). 
