@@ -23,7 +23,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
   @Override
   public JstdTestFileStructure buildTestFileStructure(@NotNull JSFile jsFile) {
     JstdTestFileStructure jsTestFileStructure = new JstdTestFileStructure(jsFile);
-    if (JsPsiUtils.containsText(jsFile, TEST_CASE_NAME)) {
+    if (JsPsiUtils.mightContainGlobalCall(jsFile, TEST_CASE_NAME, false)) {
       List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(jsFile);
       for (JSStatement statement : statements) {
         fillJsTestFileStructure(jsTestFileStructure, statement);
