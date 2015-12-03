@@ -111,8 +111,6 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
                     myProjectFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getTestName(true)).getFixture();
 
-
-
                     myProjectFixture.setUp();
 
                     myProject = myProjectFixture.getProject();
