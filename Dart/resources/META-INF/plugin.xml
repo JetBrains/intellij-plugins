@@ -186,11 +186,7 @@
                         serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
     <exportable serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
     <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
-
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
-    <codeInspection.InspectionExtension id="dartGlobalInspection"
-                                        implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerInspectionExtensionsFactory"/>
-
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
 
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType"/>
@@ -206,16 +202,6 @@
     <!--<runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>-->
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
-
-    <!--inspections-->
-
-    <globalInspection shortName="DartAnalysisServerGlobalInspectionTool"
-                      bundle="com.jetbrains.lang.dart.DartBundle"
-                      key="dart.analyzer.inspection.display.name"
-                      groupName="Dart"
-                      enabledByDefault="true"
-                      level="WARNING"
-                      implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerGlobalInspectionTool"/>
 
   </extensions>
 
