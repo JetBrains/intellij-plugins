@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.mock;
 
-import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.diff.Diff;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
@@ -29,6 +28,7 @@ import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.ide.PooledThreadExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -56,7 +54,6 @@ public class MockIDEFacade implements IDEFacade {
   private String myProjectId;
   private String myProjectName;
   private boolean myAnswer;
-  private static final ExecutorService ourExecutorService = Executors.newCachedThreadPool(ConcurrencyUtil.newNamedThreadFactory("IDETalk pooled thread"));
 
   public MockIDEFacade() {
     myDataDir = null;
@@ -187,7 +184,7 @@ public class MockIDEFacade implements IDEFacade {
 
   @Override
   public Future<?> runOnPooledThread(Runnable toRun) {
-    return ourExecutorService.submit(toRun);
+    return PooledThreadExecutor.INSTANCE.submit(toRun);
   }
 
   public void setDataDir(File dataDir) {
