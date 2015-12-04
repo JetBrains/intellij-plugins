@@ -218,7 +218,6 @@ public class HardScratchBasedTest extends UsefulTestCase{
                 @Override
                 public void run() {
                     try {
-                        int stepNumber = LessonProcessor.getCurrentExecutionList().getElements().size() - 1;
                         myLessonSolution.solveStep();
                     } catch (Exception e) {
                         e.printStackTrace();
