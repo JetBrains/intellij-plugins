@@ -304,15 +304,17 @@ public class PhoneGapCommandLine {
   }
 
   private boolean isIonic() {
-    assert myWorkDir != null;
     File file = new File(myPath);
     if (file.getName().contains(PLATFORM_IONIC)) return true;
     if (file.getName().contains(PLATFORM_PHONEGAP)) return false;
     if (file.getName().contains(PLATFORM_CORDOVA)) return false;
 
-    String s = executeAndReturnResult(myPath);
+    if (myWorkDir != null) {
+      String s = executeAndReturnResult(myPath);
+      return s.contains(PLATFORM_IONIC);
+    }
 
-    return s.contains(PLATFORM_IONIC);
+    return false;
   }
 
   static List<String> parsePluginList(String out) {
