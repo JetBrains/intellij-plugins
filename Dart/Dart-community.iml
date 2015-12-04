@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/thirdPartySrc/vmServiceDrivers" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/thirdPartySrc/analyisServer" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/thirdPartyTestSrc" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
       <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/packages" />
       <excludeFolder url="file://$MODULE_DIR$/testData/analysisServer/completion/UriCompletionByTab/web/packages" />
@@ -144,6 +145,27 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/weberknecht-0.1.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mockito-all-1.9.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.9.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.9.0.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="fest-assert-1.4">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/fest-assert-1.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/fest-util-1.1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

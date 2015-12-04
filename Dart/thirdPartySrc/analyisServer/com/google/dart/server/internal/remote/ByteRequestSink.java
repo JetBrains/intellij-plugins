@@ -27,34 +27,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * An {@link OutputStream} based implementation of {@link RequestSink}.
- * 
+ *
  * @coverage dart.server.remote
  */
 public class ByteRequestSink implements RequestSink {
-  private class LinesWriterThread extends Thread {
-    public LinesWriterThread() {
-      setName("ByteRequestSink.LinesWriterThread");
-      setDaemon(true);
-    }
-
-    @Override
-    public void run() {
-      while (true) {
-        try {
-          String line = lineQueue.take();
-          writer.println(line);
-          writer.flush();
-        } catch (InterruptedException e) {
-        }
-      }
-    }
-  }
-
   /**
    * The {@link PrintWriter} to print JSON strings to.
    */
   private final PrintWriter writer;
-
   /**
    * The {@link PrintStream} to print all lines to.
    */
@@ -66,8 +46,8 @@ public class ByteRequestSink implements RequestSink {
 
   /**
    * Initializes a newly created request sink.
-   * 
-   * @param stream the byte stream to write JSON strings to
+   *
+   * @param stream      the byte stream to write JSON strings to
    * @param debugStream the {@link PrintStream} to print all lines to, may be {@code null}
    */
   public ByteRequestSink(OutputStream stream, DebugPrintStream debugStream) {
@@ -98,6 +78,26 @@ public class ByteRequestSink implements RequestSink {
         return;
       }
       Uninterruptibles.sleepUninterruptibly(1, TimeUnit.MILLISECONDS);
+    }
+  }
+
+  private class LinesWriterThread extends Thread {
+    public LinesWriterThread() {
+      setName("ByteRequestSink.LinesWriterThread");
+      setDaemon(true);
+    }
+
+    @Override
+    public void run() {
+      while (true) {
+        try {
+          String line = lineQueue.take();
+          writer.println(line);
+          writer.flush();
+        }
+        catch (InterruptedException e) {
+        }
+      }
     }
   }
 }
