@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, the Dart project authors.
+ * Copyright (c) 2015, the Dart project authors.
  *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -57,6 +57,12 @@ public class RequestErrorCode {
    * subject to analysis.
    */
   public static final String GET_NAVIGATION_INVALID_FILE = "GET_NAVIGATION_INVALID_FILE";
+
+  /**
+   * An "analysis.getReachableSources" request specified a FilePath which does not match a file
+   * currently subject to analysis.
+   */
+  public static final String GET_REACHABLE_SOURCES_INVALID_FILE = "GET_REACHABLE_SOURCES_INVALID_FILE";
 
   /**
    * A path passed as an argument to a request (such as analysis.reanalyze) is required to be an
@@ -135,7 +141,7 @@ public class RequestErrorCode {
 
   /**
    * A request was received which the analysis server does not recognize, or cannot handle in its
-   * current configuation.
+   * current configuration.
    */
   public static final String UNKNOWN_REQUEST = "UNKNOWN_REQUEST";
 
