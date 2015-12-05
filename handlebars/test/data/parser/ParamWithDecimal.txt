@@ -9,7 +9,7 @@ HbFile:ParamWithDecimal.hbs
             PsiElement([Hb] ID)('name')
       PsiWhiteSpace(' ')
       HbParamImpl(PARAM)
-        HbPsiElementImpl([Hb] NUMBER)
+        HbNumberLiteralImpl([Hb] NUMBER)
           PsiElement([Hb] NUMBER)('10.1')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')
