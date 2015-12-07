@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSCommaExpression;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -32,18 +33,20 @@ public class AngularMessageFormatCompletion {
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
       context.setAddCompletionChar(false);
+      final String string = item.getLookupString();
+
       final int offset = context.getEditor().getCaretModel().getCurrentCaret().getOffset();
       final String text =
         context.getDocument().getText(TextRange.create(offset, Math.min(offset + 100, context.getDocument().getTextLength()))).trim();
       // we need this code to impove the situation with the case when selection keyword starts with =
       // default implementation does nopt take it as completion pattern part, since = is not a part of java identifier
       final int idOffset = context.getStartOffset();
-      if (context.getDocument().getText(TextRange.create(idOffset, offset)).startsWith("=")) {
+      if (idOffset > 0 && (idOffset + 1) < context.getDocument().getTextLength() &&
+          "==".equals(context.getDocument().getText(TextRange.create(idOffset - 1, idOffset + 1)))) {
         context.getDocument().deleteString(idOffset, idOffset + 1);
       }
 
       if (!text.startsWith("{")) {
-        final String string = item.getLookupString();
         final int diff = context.getSelectionEndOffset() - idOffset;
         EditorModificationUtil.insertStringAtCaret(context.getEditor(), " {}", false, string.length() - diff + 2);
       }
@@ -90,6 +93,15 @@ public class AngularMessageFormatCompletion {
       if (originalPosition.getNode().getElementType() == AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD) {
         messageFormatSelectionKeywords(((AngularJSMessageFormatExpression)parent).getExtensionType(), result);
         return true;
+      }
+      if (originalPosition.getNode().getElementType() == JSTokenTypes.WHITE_SPACE) {
+        if (originalPosition.getNextSibling() != null &&
+            originalPosition.getNextSibling().getNode().getElementType() == AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD ||
+            originalPosition.getPrevSibling() != null &&
+            originalPosition.getPrevSibling().getNode().getElementType() == JSTokenTypes.RBRACE) {
+          messageFormatSelectionKeywords(((AngularJSMessageFormatExpression)parent).getExtensionType(), result);
+          return true;
+        }
       }
     }
     final PsiElement sibling = originalPosition.getPrevSibling();
