@@ -76,7 +76,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       return Result.CONTINUE;
     }
     if (c == '#') {
-      if (CfmlEditorUtil.countSharpsBalance(editor) == 0) {
+      if (CfmlEditorUtil.countSharpsBalance(editor) == 0 && false) {
         char charAtOffset = DocumentUtils.getCharAt(editor.getDocument(), offset);
         if (charAtOffset == '#') {
           EditorModificationUtil.moveCaretRelatively(editor, 1);
