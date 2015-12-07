@@ -26,17 +26,18 @@ import java.util.Map;
  */
 public interface GetReachableSourcesConsumer extends Consumer {
   /**
-   * @param sources a mapping from source URIs to directly reachable source URIs. For example,
-   *                a file "foo.dart" that imports "bar.dart" would have the corresponding mapping
-   *                { "file:///foo.dart" : ["file:///bar.dart"] }.  If "bar.dart" has further imports
-   *                (or exports) there will be a mapping from the URI "file:///bar.dart" to them.
-   *                To check if a specific URI is reachable from a given file, clients can check
-   *                for its presence in the resulting key set.
+   * @param sources a mapping from source URIs to directly reachable source URIs. For example, a
+   *          file "foo.dart" that imports "bar.dart" would have the corresponding mapping {
+   *          "file:///foo.dart" : ["file:///bar.dart"] }. If "bar.dart" has further imports (or
+   *          exports) there will be a mapping from the URI "file:///bar.dart" to them. To check if
+   *          a specific URI is reachable from a given file, clients can check for its presence in
+   *          the resulting key set.
    */
-  public void computedDiagnostics(Map<String, List<String>> sources);
+  public void computedReachableSources(Map<String, List<String>> sources);
 
   /**
-   * If a transitive closure cannot be passed back, some {@link RequestError} is passed back instead.
+   * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
+   * instead.
    *
    * @param requestError the reason why a result was not passed back
    */
