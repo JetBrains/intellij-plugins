@@ -164,21 +164,12 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
       if (key) {
         if (JSTokenTypes.LITERALS.contains(type) || isIdentifierToken(type) || JSTokenTypes.EQ == type) {
           final PsiBuilder.Marker mark = builder.mark();
-          int i = 1;
-          IElementType forwardType = null;
           // = can be only in the beginning, like =0
-          for (; !JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains((forwardType = builder.rawLookup(i))); i++);
-          if (JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(forwardType) || forwardType == null) {
-            for (int j = 0; j < i; j++) {
-              builder.advanceLexer();
-            }
-            mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
-            key = false;
-          } else {
-            mark.drop();
-            builder.error("expected selection keyword");
-            return;
+          while (!JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(builder.rawLookup(0)) && builder.rawLookup(0) != null) {
+            builder.advanceLexer();
           }
+          mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
+          key = false;
         } else {
           if (JSTokenTypes.RBRACE == type) {
             expectDoubleRBrace(false);
