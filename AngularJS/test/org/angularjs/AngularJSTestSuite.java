@@ -3,6 +3,7 @@ package org.angularjs;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.angularjs.codeInsight.*;
+import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
@@ -27,6 +28,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(FindUsagesTest.class);
     testSuite.addTestSuite(AngularDirectiveCommentParsingTest.class);
     testSuite.addTestSuite(AngularJSInjectorMatchingEndFinderTest.class);
+    testSuite.addTestSuite(AngularMessageFormatAnnotatorTest.class);
 
     return testSuite;
   }
