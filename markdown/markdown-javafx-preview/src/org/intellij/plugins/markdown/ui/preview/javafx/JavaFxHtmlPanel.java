@@ -13,6 +13,7 @@ import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.text.FontSmoothingType;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.intellij.markdown.html.HtmlGenerator;
@@ -55,21 +56,14 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       public void run() {
         myWebView = new WebView();
 
-        myWebView.getEngine().getLoadWorker().stateProperty().addListener(
-          new ChangeListener<State>() {
-            @Override
-            public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-              if (newValue == State.SUCCEEDED) {
-                JSObject win
-                  = (JSObject) getWebViewGuaranteed().getEngine().executeScript("window");
-                win.setMember("JavaPanelBridge", new JavaPanelBridge());
-              }
-            }
-          });
-
         updateFontSmoothingType(myWebView, MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isUseGrayscaleRendering());
-        myWebView.getEngine().loadContent("<html><body>" + getScriptingLines() + "</body></html>");
         myWebView.setContextMenuEnabled(false);
+
+        final WebEngine engine = myWebView.getEngine();
+        engine.getLoadWorker().stateProperty().addListener(new BridgeSettingListener());
+        engine.getLoadWorker().stateProperty().addListener(new ScrollPreservingListener());
+
+        engine.loadContent("<html><body>" + getScriptingLines() + "</body></html>");
 
         final Scene scene = new Scene(myWebView);
         myPanel.setScene(scene);
@@ -216,4 +210,34 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
   }
+  
+  private class BridgeSettingListener implements ChangeListener<State> {
+    @Override
+    public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+      if (newValue == State.SUCCEEDED) {
+        JSObject win
+          = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
+        win.setMember("JavaPanelBridge", new JavaPanelBridge());
+      }
+    }
+  }
+  
+  private class ScrollPreservingListener implements ChangeListener<State> {
+    int myScrollY = 0;
+
+    @Override
+    public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+      if (newValue == State.RUNNING) {
+        final Object result =
+          getWebViewGuaranteed().getEngine().executeScript("document.documentElement.scrollTop || document.body.scrollTop");
+        if (result instanceof Number) {
+          myScrollY = ((Number)result).intValue();
+        }
+      }
+      else if (newValue == State.SUCCEEDED) {
+        getWebViewGuaranteed().getEngine()
+          .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
+      }
+    }
+  } 
 }

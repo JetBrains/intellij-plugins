@@ -104,7 +104,12 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   }
 
   public void scrollToSrcOffset(final int offset) {
-
+    // Do not scroll if html update request is online
+    // This will restrain preview from glitches on editing
+    if (!myPooledAlarm.isEmpty()) {
+      return;
+    }
+    
     synchronized (REQUESTS_LOCK) {
       if (myLastScrollRequest != null) {
         mySwingAlarm.cancelRequest(myLastScrollRequest);
