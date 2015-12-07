@@ -162,7 +162,13 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     while (!builder.eof()) {
       final IElementType type = builder.getTokenType();
       if (key) {
-        if (JSTokenTypes.LITERALS.contains(type) || isIdentifierToken(type) || JSTokenTypes.EQ == type) {
+        if (JSTokenTypes.RBRACE == type) {
+          expectDoubleRBrace(false);
+          return;
+        } else if (JSTokenTypes.LBRACE == type) {
+          builder.error("expected selection keyword");
+          return;
+        } else {
           final PsiBuilder.Marker mark = builder.mark();
           // = can be only in the beginning, like =0
           while (!JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(builder.rawLookup(0)) && builder.rawLookup(0) != null) {
@@ -170,13 +176,6 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           }
           mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
           key = false;
-        } else {
-          if (JSTokenTypes.RBRACE == type) {
-            expectDoubleRBrace(false);
-            return;
-          }
-          builder.error("expected selection keyword");
-          return;
         }
       } else {
         if (JSTokenTypes.LBRACE == type) {
