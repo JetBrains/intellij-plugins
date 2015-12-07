@@ -75,7 +75,7 @@ public class DartTestUtils {
         Assert.fail("Incorrect path to the Dart SDK (" + sdkHome + ") is set as '-Ddart.sdk' VM option of " +
                     "the corresponding JUnit run configuration (Run | Edit Configurations)");
       }
-      VfsRootAccess.allowRootAccessTemporarily(disposable, sdkHome);
+      VfsRootAccess.allowRootAccess(disposable, sdkHome);
     }
     else {
       sdkHome = SDK_HOME_PATH;
