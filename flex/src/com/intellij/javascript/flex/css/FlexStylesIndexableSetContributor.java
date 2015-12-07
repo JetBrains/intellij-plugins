@@ -2,50 +2,52 @@ package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.IndexableSetContributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.Set;
 
 /**
- * User: ksafonov
+ * @author ksafonov
  */
 public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
-
   private static final Logger LOG = Logger.getInstance(FlexStylesIndexableSetContributor.class);
 
-  private static final Set<VirtualFile> FILES;
-
-  static {
-    URL libFileUrl = FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as");
-    if ("file".equals(libFileUrl.getProtocol())) {
-      VfsRootAccess.allowRootAccess(VfsUtilCore.urlToPath(VfsUtilCore.convertFromUrl(libFileUrl)));
+  private static final NotNullLazyValue<Set<VirtualFile>> ourFiles = new AtomicNotNullLazyValue<Set<VirtualFile>>() {
+    @NotNull
+    @Override
+    protected Set<VirtualFile> compute() {
+      URL libFileUrl = FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as");
+      VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
+      if (file != null) {
+        return Collections.singleton(file);
+      }
+      else {
+        LOG.error("Cannot find FlexStyles.as file by URL " + libFileUrl);
+        return Collections.emptySet();
+      }
     }
-    VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
-    if (file == null) {
-      LOG.error("Cannot find FlexStyles.as file by url " + VfsUtilCore.convertFromUrl(libFileUrl));
-    }
-    FILES = ContainerUtil.createMaybeSingletonSet(file);
-  }
+  };
 
   @NotNull
   @Override
   public Set<VirtualFile> getAdditionalRootsToIndex() {
-    return FILES;
+    return ourFiles.getValue();
   }
 
-  public static GlobalSearchScope enlarge(final GlobalSearchScope scope) {
+  @NotNull
+  public static GlobalSearchScope enlarge(@NotNull final GlobalSearchScope scope) {
     return scope.union(new GlobalSearchScope() {
       @Override
       public boolean contains(@NotNull final VirtualFile file) {
-        return FILES.contains(file);
+        return ourFiles.getValue().contains(file);
       }
 
       @Override

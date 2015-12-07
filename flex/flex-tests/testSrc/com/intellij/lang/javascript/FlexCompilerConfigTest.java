@@ -486,7 +486,8 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     map.put("$FLEX_UNIT_TEMP_FOLDER$", FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(myProject));
     map.put("$FLEX_DIR$", PathUtil.getParentPath(PathUtil.getParentPath(FlexTestUtils.getTestDataPath(""))));
 
-    VfsRootAccess.allowRootAccess(FileUtil.toSystemIndependentName(FlexCommonUtils.getPathToBundledJar("")));
+    String path = FileUtil.toSystemIndependentName(FlexCommonUtils.getPathToBundledJar(""));
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(), path);
     doTest("4.5.1.21328", tempBc, Factory.createCompilerOptions(), Factory.createCompilerOptions(), "_2", map);
   }
 
