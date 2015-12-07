@@ -61,6 +61,10 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
     }
   }
 
+  public PsiElement[] getOptions() {
+    return ((CompositeElement)getNode()).getChildrenAsPsiElements(AngularJSElementTypes.MESSAGE_FORMAT_OPTION, PsiElement.ARRAY_FACTORY);
+  }
+
   public List<PsiElement> getSelectionKeywordElements() {
     if (!(getNode() instanceof CompositeElement)) return Collections.emptyList();
     final PsiElement[] selectionsKeywords = ((CompositeElement)getNode()).getChildrenAsPsiElements(

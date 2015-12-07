@@ -35,6 +35,10 @@ public class AngularMessageFormatAnnotatorTest extends LightPlatformCodeInsightF
     doTest("case4.html");
   }
 
+  public void testCase5() throws Exception {
+    doTest("case5.html");
+  }
+
   @Test
   public void doTest(@NotNull final String fileName) throws Exception{
     try {

@@ -66,7 +66,6 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     return true;
   }
 
-  // todo continue: other is required option for plural
   public boolean parseInnerMessage() {
     final PsiBuilder.Marker mark = builder.mark();
     PsiBuilder.Marker stringLiteralMark = null;
@@ -131,13 +130,23 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
 
   private boolean parseOffsetOption() {
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
-      if (builder.lookAhead(1) != JSTokenTypes.COLON || builder.lookAhead(2) != JSTokenTypes.NUMERIC_LITERAL) {
+      if (builder.lookAhead(1) != JSTokenTypes.COLON) {
+        return true;
+      }
+      final IElementType third = builder.lookAhead(2);
+      boolean commaIsAfterColon = third == JSTokenTypes.COMMA;
+      if (!commaIsAfterColon && builder.lookAhead(3) != JSTokenTypes.COMMA) {
+        return true;
+      }
+      if (!commaIsAfterColon && !JSTokenTypes.LITERALS.contains(third) && JSTokenTypes.IDENTIFIER != third) {
         return true;
       }
       final PsiBuilder.Marker mark = builder.mark();
       builder.advanceLexer();// offset
       builder.advanceLexer();// colon
-      builder.advanceLexer();// numeric literal
+      if (!commaIsAfterColon) {
+        builder.advanceLexer();// literal
+      }
       mark.done(AngularJSElementTypes.MESSAGE_FORMAT_OPTION);
       if (builder.getTokenType() != JSTokenTypes.COMMA) {
         builder.error("expected comma");

@@ -1,7 +1,9 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
@@ -42,9 +44,26 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
       }
     });
 
+    checkOptions(type, expression);
     checkForRequiredSelectionKeywords(type, expression, selectionKeywords);
     checkForDuplicateSelectionKeywords(selectionKeywords, elements);
     checkForSelectionKeywordValues(type, selectionKeywords, elements);
+  }
+
+  private void checkOptions(AngularJSMessageFormatParser.ExtensionType type, AngularJSMessageFormatExpression expression) {
+    if (AngularJSMessageFormatParser.ExtensionType.plural.equals(type)) {
+      final PsiElement[] options = expression.getOptions();
+      if (options != null) {
+        for (PsiElement option : options) {
+          if (AngularJSMessageFormatParser.OFFSET_OPTION.equals(option.getNode().getFirstChildNode().getText())) {
+            final ASTNode lastChild = option.getNode().getLastChildNode();
+            if (lastChild.getElementType() != JSTokenTypes.NUMERIC_LITERAL) {
+              myHolder.createErrorAnnotation(option, "Expected integer value");
+            }
+          }
+        }
+      }
+    }
   }
 
   private void checkForSelectionKeywordValues(AngularJSMessageFormatParser.ExtensionType type,
