@@ -96,15 +96,16 @@ public class CfmlTypedHandlerTest extends CfmlCodeInsightFixtureTestCase {
     doTest('\n');
   }
 
-    // public void testLiveTemplate() throws Throwable { doTest('\t'); }
+  // public void testLiveTemplate() throws Throwable { doTest('\t'); }
 
-    public void testSharpCompletion() throws Throwable {
-        doTest('#');
-    }
-
-    public void testInnerSharpCompletion() throws Throwable {
-        doTest('#');
-    }
+  // IDEA-148357, until we calculate properly where we should insert double pounds
+  //public void testSharpCompletion() throws Throwable {
+  //    doTest('#');
+  //}
+  //
+  //public void testInnerSharpCompletion() throws Throwable {
+  //    doTest('#');
+  //}
 
     public void testRightBracketInQuotes() throws Throwable {
         doTest(')');
