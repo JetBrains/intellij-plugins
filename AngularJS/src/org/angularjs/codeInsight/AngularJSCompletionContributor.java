@@ -34,6 +34,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
   @Override
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
     if (!getElementLanguage(parameters).is(AngularJSLanguage.INSTANCE)) return;
+    if (AngularMessageFormatCompletion.messageFormatCompletion(parameters, result)) return;
     PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
 
     if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {
