@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.importer;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +39,7 @@ public class FlexImporter {
   }
 
   private static void saveStringAsFile(final String result, final String fileName) throws IOException {
-    final FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-    try {
-      fileOutputStream.write(result.getBytes());
-    } finally {
-      fileOutputStream.close();
-    }
+    FileUtil.writeToFile(new File(fileName), result);
   }
 
   public static String dumpContentsFromStream(final InputStream in, boolean _dumpCode) throws IOException {

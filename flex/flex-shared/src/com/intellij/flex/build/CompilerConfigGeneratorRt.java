@@ -36,7 +36,6 @@ import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -746,7 +745,6 @@ public class CompilerConfigGeneratorRt {
   private static File getOrCreateConfigFile(final String fileName, final String text) throws IOException {
     final File tempFolder = new File(FlexCommonUtils.getTempFlexConfigsDirPath());
     final File configFile = new File(tempFolder, fileName);
-    final byte[] textBytes = text.getBytes("UTF-8");
 
     /*
     try {
@@ -762,14 +760,7 @@ public class CompilerConfigGeneratorRt {
     if (!FileUtil.createDirectory(tempFolder) && !tempFolder.isDirectory()) {
       throw new IOException("Failed to create folder " + configFile.getParent());
     }
-
-    final FileOutputStream outputStream = new FileOutputStream(configFile);
-    try {
-      outputStream.write(textBytes);
-    }
-    finally {
-      outputStream.close();
-    }
+    FileUtil.writeToFile(configFile, text);
 
     return configFile;
   }

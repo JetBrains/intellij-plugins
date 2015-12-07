@@ -76,7 +76,7 @@ public class HealthUtils {
   public static void ReportHealth(final String reason) {
 
     //Async create and dispatch the thread
-    new Thread() {
+    new Thread("HealthReporter") {
       @Override
       public void run() {
         ReportHealthImpl(reason);

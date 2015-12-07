@@ -1,6 +1,6 @@
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+    AngularJSMessageFormatExpression
       JSExpressionStatement
         JSReferenceExpression
           JSReferenceExpression
@@ -44,7 +44,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+    AngularJSMessageFormatExpression
       JSExpressionStatement
         JSReferenceExpression
           JSReferenceExpression
@@ -86,7 +86,7 @@ ASTWrapperPsiElement(FILE)
       ASTWrapperPsiElement(MESSAGE_FORMAT_MESSAGE)
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:LBRACE)('{')
-        ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+        AngularJSMessageFormatExpression
           JSExpressionStatement
             JSReferenceExpression
               JSIndexedPropertyAccessExpression
