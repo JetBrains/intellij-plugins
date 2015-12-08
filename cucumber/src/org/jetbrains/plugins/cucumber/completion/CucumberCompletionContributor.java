@@ -210,12 +210,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
       String text = definition.getCucumberRegex();
       if (text != null) {
         // trim regexp line start/end markers
-        if (text.startsWith("^")) {
-          text = text.substring(1);
-        }
-        if (text.endsWith("$")) {
-          text = text.substring(0, text.length() - 1);
-        }
+        text = StringUtil.trimStart(text, "^");
+        text = StringUtil.trimEnd(text, "$");
         text = StringUtil.replace(text, "\\\"", "\"");
         for (Map.Entry<String, String> group : GROUP_TYPE_MAP.entrySet()) {
           text = StringUtil.replace(text, group.getKey(), group.getValue());
@@ -242,7 +238,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
         }
 
         final PsiElement element = definition.getElement();
-        final LookupElementBuilder lookup = element != null 
+        final LookupElementBuilder lookup = element != null
                                             ? LookupElementBuilder.create(element, text).bold()
                                             : LookupElementBuilder.create(text);
         result.addElement(lookup.withInsertHandler(new StepInsertHandler(ranges)));

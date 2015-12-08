@@ -213,9 +213,7 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
     String namespace = slash > 0 ? path.substring(0, slash) : null;
     String action = slash != -1 ? path.substring(slash + 1) : path;
 
-    if (action.endsWith(actionExtension)) {
-      action = action.substring(0, action.length() - actionExtension.length());
-    }
+    action = StringUtil.trimEnd(action, actionExtension);
 
     int exclamationIdx = action.indexOf('!');
     String method = null;

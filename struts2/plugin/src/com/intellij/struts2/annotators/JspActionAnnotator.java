@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
@@ -37,7 +37,9 @@ import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +49,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class JspActionAnnotator implements LineMarkerProvider {
+public class JspActionAnnotator extends LineMarkerProviderDescriptor {
 
   @NonNls
   private static final String ACTION_ATTRIBUTE_NAME = "action";
@@ -60,6 +62,18 @@ public class JspActionAnnotator implements LineMarkerProvider {
       return action.searchActionMethod();
     }
   };
+
+  @NotNull
+  @Override
+  public String getName() {
+    return "Struts 2 JSP";
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon() {
+    return StrutsIcons.ACTION_CLASS;
+  }
 
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement psiElement) {

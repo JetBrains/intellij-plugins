@@ -101,6 +101,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
   }
 
+  public void testCustomAttributesCompletion15() {
+    myFixture.testCompletion("custom.html", "custom.after.html", "custom15.js");
+  }
+
   public void testCustomAttributesCompletion20TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
       @Override
@@ -127,6 +131,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", getDirectiveDefinitionText(resolve));
+  }
+
+  public void testCustomAttributesResolve15() {
+    myFixture.configureByFiles("custom.after.html", "custom15.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom15.js", resolve.getContainingFile().getName());
     assertEquals("'myCustomer'", getDirectiveDefinitionText(resolve));
   }
 

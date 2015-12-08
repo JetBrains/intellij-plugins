@@ -4,6 +4,7 @@ import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -67,12 +68,14 @@ public class ConvertToLocalFix implements LocalQuickFix {
     final PsiElement firstElement = getFirstElement(references);
     final PsiElement anchorElement = getAnchorElement(anchorBlock, firstElement);
 
-    final String typeString = myField.getTypeString();
+    JSType type = myField.getType();
+    final String typeString = type == null ? null : type.getTypeText(JSType.TypeTextFormat.CODE);
     StringBuilder text = new StringBuilder("var ").append(myField.getName());
-    if (!StringUtil.isEmpty(typeString)) {
+    final boolean assignment = isAssignment(anchorElement, firstElement);
+    if (!StringUtil.isEmpty(typeString) && !(DialectDetector.isTypeScript(myField) && assignment)) {
       text.append(":").append(typeString);
     }
-    final boolean assignment = isAssignment(anchorElement, firstElement);
+
     if (assignment) {
       final JSExpression expression = ((JSExpressionStatement)anchorElement).getExpression();
       final JSExpression rOperand = ((JSAssignmentExpression)expression).getROperand();

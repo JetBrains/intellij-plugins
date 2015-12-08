@@ -2,7 +2,6 @@ package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSDocTokenTypes;
-import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
@@ -56,6 +55,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
+  public static final String COMPONENT = "component";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
   private static final String START_SYMBOL = "startSymbol";
@@ -69,7 +69,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
 
     INJECTABLE_METHODS.addAll(INTERESTING_METHODS);
-    Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, MODULE, "config", "run");
+    Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, COMPONENT, MODULE, "config", "run");
 
     INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.KEY);
     NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
@@ -81,7 +81,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     DATA_CALCULATORS.put(DIRECTIVE, new Function<PsiElement, String>() {
       @Override
       public String fun(PsiElement element) {
-        return calculateRestrictions(element);
+        return calculateRestrictions(element, DEFAULT_RESTRICTIONS);
+      }
+    });
+
+    INDEXERS.put(COMPONENT, AngularDirectivesIndex.KEY);
+    NAME_CONVERTERS.put(COMPONENT, NAME_CONVERTERS.get(DIRECTIVE));
+    DATA_CALCULATORS.put(COMPONENT, new Function<PsiElement, String>() {
+      @Override
+      public String fun(PsiElement element) {
+        return calculateRestrictions(element, "E");
       }
     });
 
@@ -245,10 +254,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (ngdocValue != null && name != null) {
         final String[] commentLines = StringUtil.splitByLines(comment.getText());
 
-        if (ngdocValue.contains(DIRECTIVE)) {
-          final String restrictions = calculateRestrictions(commentLines);
+        final boolean directive = ngdocValue.contains(DIRECTIVE);
+        final boolean component = ngdocValue.contains(COMPONENT);
+        if (directive || component) {
+          final String restrictions = calculateRestrictions(commentLines, directive ? DEFAULT_RESTRICTIONS : "E");
           if (outData == null) outData = new JSElementIndexingDataImpl();
-          addImplicitElements(comment, DIRECTIVE, AngularDirectivesDocIndex.KEY, name, restrictions, outData);
+          addImplicitElements(comment, directive ? DIRECTIVE : COMPONENT, AngularDirectivesDocIndex.KEY, name, restrictions, outData);
         }
         else if (ngdocValue.contains(FILTER)) {
           if (outData == null) outData = new JSElementIndexingDataImpl();
@@ -259,8 +270,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static String calculateRestrictions(final String[] commentLines) {
-    String restrict = DEFAULT_RESTRICTIONS;
+  private static String calculateRestrictions(final String[] commentLines, String defaultRestrictions) {
+    String restrict = defaultRestrictions;
     String tag = "";
     String param = "";
     StringBuilder attributes = new StringBuilder();
@@ -344,10 +355,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
-  private static String calculateRestrictions(PsiElement element) {
-    final Ref<String> restrict = Ref.create(DEFAULT_RESTRICTIONS);
+  private static String calculateRestrictions(PsiElement element, String defaultRestrictions) {
+    final Ref<String> restrict = Ref.create(defaultRestrictions);
     final Ref<String> scope = Ref.create("");
-    final JSFunction function = findFunction(element);
+    final PsiElement function = findFunction(element);
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
         @Override
@@ -374,8 +385,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return restrict.get().trim() + ";;;" + scope.get();
   }
 
-  private static JSFunction findFunction(PsiElement element) {
-    JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
+  private static PsiElement findFunction(PsiElement element) {
+    PsiElement function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
+    if (function == null) {
+      function = PsiTreeUtil.getNextSiblingOfType(element, JSObjectLiteralExpression.class);
+    }
     if (function == null) {
       final JSExpression expression = PsiTreeUtil.getNextSiblingOfType(element, JSExpression.class);
       function = findDeclaredFunction(expression);
@@ -391,14 +405,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return function;
   }
 
-  private static JSFunction findDeclaredFunction(JSExpression expression) {
+  private static PsiElement findDeclaredFunction(JSExpression expression) {
     final String name = expression instanceof JSReferenceExpression ? ((JSReferenceExpression)expression).getReferenceName() : null;
     if (name != null) {
       ASTNode node = expression.getNode();
       final JSTreeUtil.JSScopeDeclarationsAndAssignments declaration = JSTreeUtil.getDeclarationsAndAssignmentsInScopeAndUp(name, node);
       CompositeElement definition = declaration != null ? declaration.findNearestDefinition(node) : null;
-      if (definition != null && JSElementTypes.FUNCTION_DECLARATIONS.contains(definition.getElementType())) {
-        return (JSFunction)definition.getPsi();
+      if (definition != null) {
+        return definition.getPsi();
       }
     }
     return null;

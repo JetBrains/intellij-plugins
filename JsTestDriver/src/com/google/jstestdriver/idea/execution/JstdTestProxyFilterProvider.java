@@ -4,6 +4,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.javascript.testFramework.util.BrowserStacktraceFilter;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,9 +59,7 @@ public class JstdTestProxyFilterProvider implements TestProxyFilterProvider {
     try {
       URL url = new URL(urlStr);
       String path = url.getPath();
-      if (path.startsWith(DEFAULT_PATH_PREFIX)) {
-        path = path.substring(DEFAULT_PATH_PREFIX.length());
-      }
+      path = StringUtil.trimStart(path, DEFAULT_PATH_PREFIX);
       return findFileByBasePath(basePath, path);
     } catch (MalformedURLException ignored) {
     }

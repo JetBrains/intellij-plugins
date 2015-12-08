@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -92,7 +93,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
     if (path.equals(contentRoot)) path = "[content root]";
 
     final String contentRootWithSlash = contentRoot + "/";
-    if (path.startsWith(contentRootWithSlash)) path = path.substring(contentRootWithSlash.length());
+    path = StringUtil.trimStart(path, contentRootWithSlash);
 
     final DartSdk sdk = DartSdk.getDartSdk(element.getProject());
     if (sdk != null && path.startsWith(sdk.getHomePath())) path = "[Dart SDK]" + path.substring(sdk.getHomePath().length());

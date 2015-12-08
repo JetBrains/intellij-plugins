@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -54,9 +55,7 @@ public class DartGenericSpecialization implements Cloneable {
     for (String key : map.keySet()) {
       final DartClassResolveResult value = map.get(key);
       String newKey = key;
-      if (newKey.startsWith(prefixToRemove)) {
-        newKey = newKey.substring(prefixToRemove.length());
-      }
+      newKey = StringUtil.trimStart(newKey, prefixToRemove);
       result.put(newKey, value);
     }
     return new DartGenericSpecialization(result);

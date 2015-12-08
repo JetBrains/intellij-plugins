@@ -190,12 +190,8 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
   }
 
   private String prepareText(String actual) {
-    if (actual.startsWith("\n")) {
-      actual = actual.substring(1);
-    }
-    if (actual.startsWith("\n")) {
-      actual = actual.substring(1);
-    }
+    actual = StringUtil.trimStart(actual, "\n");
+    actual = StringUtil.trimStart(actual, "\n");
 
     // Strip trailing spaces
     final Document doc = EditorFactory.getInstance().createDocument(actual);

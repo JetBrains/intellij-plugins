@@ -33,6 +33,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Couple;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -60,9 +61,7 @@ public class CfmlUtil {
     base = module == null ? null : module.getModuleFile();
     base = base == null ? null : base.getParent();
 
-    if (libtag.startsWith("/")) {
-      libtag = libtag.substring("/".length());
-    }
+    libtag = StringUtil.trimStart(libtag, "/");
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       final VirtualFile virtualFile = getRealVirtualFile(originalFile);

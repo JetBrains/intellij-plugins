@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,12 @@ package com.intellij.struts2.annotators;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.struts2.StrutsIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.GrClassDefinition;
+
+import javax.swing.*;
 
 /**
  * Annotator for Groovy-Action-classes.
@@ -27,12 +31,22 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.GrClassDefin
  */
 public class ActionGroovyAnnotator extends ActionAnnotatorBase {
 
+  @Override
+  public String getName() {
+    return "Struts 2 Action (Groovy)";
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon() {
+    return StrutsIcons.ACTION_CLASS;
+  }
+
   protected PsiClass getActionPsiClass(@NotNull final PsiElement psiElement) {
     if (!(psiElement instanceof GrClassDefinition)) {
       return null;
     }
 
-    return (GrClassDefinition) psiElement;
+    return (GrClassDefinition)psiElement;
   }
-
 }
