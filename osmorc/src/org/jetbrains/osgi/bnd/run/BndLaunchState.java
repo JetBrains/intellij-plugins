@@ -35,6 +35,9 @@ import com.intellij.openapi.compiler.CompilationStatusListener;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerTopics;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileAttributes;
@@ -42,12 +45,12 @@ import com.intellij.openapi.util.io.FileSystemUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static org.osmorc.i18n.OsmorcBundle.message;
 
 public class BndLaunchState extends JavaCommandLineState implements CompilationStatusListener, HotSwapVetoableListener {
   private static final Logger LOG = Logger.getInstance(BndLaunchState.class);
@@ -76,18 +79,26 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
     }
     myNotifications = notificationGroup;
 
-    File runFile = new File(myConfiguration.bndRunFile);
+    final File runFile = new File(myConfiguration.bndRunFile);
     if (!runFile.isFile()) {
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.invalid", runFile));
+      throw new CantRunException(message("bnd.run.configuration.invalid", runFile));
     }
 
     try {
-      myLauncher = Workspace.getRun(runFile).getProjectLauncher();
-      myLauncher.prepare();
+      String title = message("bnd.run.configuration.progress");
+      myLauncher = ProgressManager.getInstance().run(new Task.WithResult<ProjectLauncher, Exception>(myProject, title, false) {
+        @Override
+        protected ProjectLauncher compute(@NotNull ProgressIndicator indicator) throws Exception {
+          indicator.setIndeterminate(true);
+          ProjectLauncher launcher = Workspace.getRun(runFile).getProjectLauncher();
+          launcher.prepare();
+          return launcher;
+        }
+      });
     }
     catch (Exception e) {
       LOG.info(e);
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
+      throw new CantRunException(message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
 
     myBundleStamps = ContainerUtil.newHashMap();
@@ -130,7 +141,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
         ApplicationManager.getApplication().invokeLater(new Runnable() {
           @Override
           public void run() {
-            myNotifications.createNotification(OsmorcBundle.message("bnd.run.reloaded.text"), NotificationType.INFORMATION).notify(myProject);
+            myNotifications.createNotification(message("bnd.run.reloaded.text"), NotificationType.INFORMATION).notify(myProject);
           }
         }, ModalityState.NON_MODAL);
       }

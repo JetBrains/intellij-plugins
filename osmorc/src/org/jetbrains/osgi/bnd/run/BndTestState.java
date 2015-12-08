@@ -40,6 +40,9 @@ import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.events.*;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -47,7 +50,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,6 +63,7 @@ import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.io.URLUtil.SCHEME_SEPARATOR;
+import static org.osmorc.i18n.OsmorcBundle.message;
 
 public class BndTestState extends JavaCommandLineState {
   private static final String TEST_FRAMEWORK_NAME = "Bnd-OSGi-JUnit";
@@ -75,22 +78,29 @@ public class BndTestState extends JavaCommandLineState {
 
     myConfiguration = configuration;
 
-    File runFile = new File(myConfiguration.bndRunFile);
+    final File runFile = new File(myConfiguration.bndRunFile);
     if (!runFile.isFile()) {
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.invalid", runFile));
+      throw new CantRunException(message("bnd.run.configuration.invalid", runFile));
     }
 
     try {
-      myTester = Workspace.getRun(runFile).getProjectTester();
+      String title = message("bnd.run.configuration.progress");
+      myTester = ProgressManager.getInstance().run(new Task.WithResult<ProjectTester, Exception>(myConfiguration.getProject(), title, false) {
+        @Override
+        protected ProjectTester compute(@NotNull ProgressIndicator indicator) throws Exception {
+          indicator.setIndeterminate(true);
+          return Workspace.getRun(runFile).getProjectTester();
+        }
+      });
     }
     catch (Exception e) {
       LOG.info(e);
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
+      throw new CantRunException(message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
 
     //noinspection InstanceofIncompatibleInterface
     if (!(myTester instanceof EclipseJUnitTester)) {
-      throw new CantRunException(OsmorcBundle.message("bnd.test.runner.unsupported", myTester.getClass().getName()));
+      throw new CantRunException(message("bnd.test.runner.unsupported", myTester.getClass().getName()));
     }
 
     try {
@@ -100,7 +110,7 @@ public class BndTestState extends JavaCommandLineState {
     }
     catch (Exception e) {
       LOG.info(e);
-      throw new CantRunException(OsmorcBundle.message("bnd.test.cannot.run", e.getMessage()));
+      throw new CantRunException(message("bnd.test.cannot.run", e.getMessage()));
     }
 
     try {
@@ -108,7 +118,7 @@ public class BndTestState extends JavaCommandLineState {
     }
     catch (Exception e) {
       LOG.info(e);
-      throw new CantRunException(OsmorcBundle.message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
+      throw new CantRunException(message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
     }
   }
 
