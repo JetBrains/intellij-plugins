@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -80,6 +81,74 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.MXML_FILE_EXTENSION,
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
+
+  protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
+    JSParameterList nodeParameterList = fun.getParameterList();
+    JSParameterList overrideParameterList = override.getParameterList();
+    final JSParameter[] parameters = nodeParameterList != null ? nodeParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+    final JSParameter[] overrideParameters =
+      overrideParameterList != null ? overrideParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+
+    SignatureMatchResult result = parameters.length != overrideParameters.length ?
+                                  SignatureMatchResult.PARAMETERS_DIFFERS : SignatureMatchResult.COMPATIBLE_SIGNATURE;
+
+    if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+      for (int i = 0; i < parameters.length; ++i) {
+        if (!compatibleType(overrideParameters[i].getTypeString(), parameters[i].getTypeString(), overrideParameterList,
+                            nodeParameterList) ||
+            overrideParameters[i].hasInitializer() != parameters[i].hasInitializer()
+          ) {
+          result = SignatureMatchResult.PARAMETERS_DIFFERS;
+          break;
+        }
+      }
+    }
+
+    if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+      if (!compatibleType(override.getReturnTypeString(), fun.getReturnTypeString(), override, fun)) {
+        result = SignatureMatchResult.RETURN_TYPE_DIFFERS;
+      }
+    }
+
+    if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+      if (override.getKind() != fun.getKind()) result = SignatureMatchResult.FUNCTION_KIND_DIFFERS;
+    }
+    return result;
+  }
+
+  /**
+   * @deprecated use {@link com.intellij.lang.javascript.psi.JSTypeUtils
+   * #areTypesCompatible(com.intellij.lang.javascript.psi.JSType, com.intellij.lang.javascript.psi.JSType)} instead.
+   */
+  protected static boolean compatibleType(String overrideParameterType,
+                                          String parameterType,
+                                          PsiElement overrideContext,
+                                          PsiElement funContext) {
+    // TODO: This should be more accurate
+    if (overrideParameterType != null && !overrideParameterType.equals(parameterType)) {
+      parameterType = JSImportHandlingUtil.resolveTypeName(parameterType, funContext);
+      overrideParameterType = JSImportHandlingUtil.resolveTypeName(overrideParameterType, overrideContext);
+
+      if (!overrideParameterType.equals(parameterType)) {
+        if (parameterType != null &&  // TODO: getter / setter to have the same types
+            (JSTypeEvaluateManager.isArrayType(overrideParameterType) &&
+             JSTypeEvaluateManager.getBaseArrayType(overrideParameterType).equals(parameterType) ||
+             JSTypeEvaluateManager.isArrayType(parameterType) ||
+             JSTypeEvaluateManager.getBaseArrayType(parameterType).equals(overrideParameterType))
+          ) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+    else if (overrideParameterType == null && parameterType != null && !"*".equals(parameterType)) {
+      return false;
+    }
+
+    return true;
+  }
+
 
   @Override
   protected void initTypeCheckers(@NotNull PsiElement context) {
