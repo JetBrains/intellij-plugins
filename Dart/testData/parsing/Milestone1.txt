@@ -616,15 +616,16 @@ Dart File
     CLASS_BODY
       PsiElement({)('{')
       CLASS_MEMBERS
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('bool')
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement(==)('==')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('==')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -638,16 +639,16 @@ Dart File
             LITERAL_EXPRESSION
               PsiElement(null)('null')
             PsiElement(;)(';')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('MagicNumber')
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(-)('-')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('-')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
@@ -657,16 +658,16 @@ Dart File
               PsiElement(null)('null')
             PsiElement(;)(';')
         PsiComment(SINGLE_LINE_COMMENT)('// unary negate')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('MagicNumber')
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(-)('-')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('-')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER

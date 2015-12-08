@@ -24,6 +24,8 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
 
   boolean isUnitMember();
 
+  boolean isOperator();
+
   DartMetadata getMetadataByName(@NotNull final String name);
 
   @NotNull

@@ -86,6 +86,10 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
     return findChildByType(DartTokenTypes.FINAL) != null;
   }
 
+  public boolean isOperator() {
+    return findChildByType(DartTokenTypes.OPERATOR) != null;
+  }
+
   @Override
   public boolean isStatic() {
     if (this instanceof DartVarDeclarationListPart) {
@@ -149,12 +153,17 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
         final StringBuilder result = new StringBuilder();
         result.append(getComponentName());
         final DartComponentType type = DartComponentType.typeOf(AbstractDartComponentImpl.this);
-        if ((type == DartComponentType.METHOD || type == DartComponentType.FUNCTION || type == DartComponentType.CONSTRUCTOR) &&
-            !(isGetter() || isSetter())) {
+        if ((type == DartComponentType.METHOD ||
+             type == DartComponentType.FUNCTION ||
+             type == DartComponentType.CONSTRUCTOR ||
+             type == DartComponentType.OPERATOR) && !(isGetter() || isSetter())) {
           final String parameterList = DartPresentableUtil.getPresentableParameterList(AbstractDartComponentImpl.this);
           result.append("(").append(parameterList).append(")");
         }
-        if (type == DartComponentType.METHOD || type == DartComponentType.FIELD || type == DartComponentType.FUNCTION) {
+        if (type == DartComponentType.METHOD ||
+            type == DartComponentType.FIELD ||
+            type == DartComponentType.FUNCTION ||
+            type == DartComponentType.OPERATOR) {
           final DartReturnType returnType = PsiTreeUtil.getChildOfType(AbstractDartComponentImpl.this, DartReturnType.class);
           final DartType dartType = PsiTreeUtil.getChildOfType(AbstractDartComponentImpl.this, DartType.class);
           if (returnType != null) {

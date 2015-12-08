@@ -121,24 +121,27 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   }
 
   @Override
-  public List<DartOperator> getOperators() {
+  public List<DartMethodDeclaration> getOperators() {
     return DartResolveUtil.findOperators(this);
   }
 
   @Nullable
   @Override
-  public DartOperator findOperator(final String operator, @Nullable final DartClass rightDartClass) {
+  public DartMethodDeclaration findOperator(final String operator, @Nullable final DartClass rightDartClass) {
     return ContainerUtil.find(getOperators(), new Condition<PsiElement>() {
       @Override
       public boolean value(PsiElement element) {
-        final DartUserDefinableOperator userDefinableOperator = PsiTreeUtil.getChildOfType(element, DartUserDefinableOperator.class);
-        final boolean isGoodOperator = userDefinableOperator != null &&
-                                       operator.equals(DartResolveUtil.getOperatorString(userDefinableOperator));
-        if (rightDartClass == null) {
-          return isGoodOperator;
+        if (element instanceof DartMethodDeclaration) {
+          final DartMethodDeclaration method = (DartMethodDeclaration)element;
+          if (method.isOperator() && operator.equals(method.getName())) {
+            if (rightDartClass == null) {
+              return true;
+            }
+            final DartFormalParameterList formalParameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
+            return DartResolveUtil.checkParametersType(formalParameterList, rightDartClass);
+          }
         }
-        final DartFormalParameterList formalParameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
-        return isGoodOperator && DartResolveUtil.checkParametersType(formalParameterList, rightDartClass);
+        return false;
       }
     });
   }

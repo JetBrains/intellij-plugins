@@ -458,11 +458,11 @@ Dart File
                     PsiElement())(')')
                 PsiElement(;)(';')
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement([)('[')
-            PsiElement(])(']')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('[]')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -542,17 +542,16 @@ Dart File
                     PsiElement(null)('null')
                   PsiElement(;)(';')
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('int')
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement([)('[')
-            PsiElement(])(']')
-            PsiElement(=)('=')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('[]=')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER

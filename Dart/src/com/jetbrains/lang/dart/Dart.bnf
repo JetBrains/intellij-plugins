@@ -230,11 +230,6 @@ varDeclarationListPart ::= componentName varInit?
   methods= [getMetadataList]
 }
 
-operatorDeclaration ::= operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType // 'operator' is a valid identifier, so can be a returnType
-{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
-private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=5}
-private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=4}
-
 classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
@@ -281,7 +276,6 @@ interfaces ::= 'implements' typeList {pin=1}
 
 private classMemberDefinition ::= factoryConstructorDeclaration
                                 | namedConstructorDeclaration
-                                | operatorDeclaration
                                 | getterOrSetterDeclaration
                                 | methodDeclaration
                                 | varDeclarationListWithSemicolon
@@ -295,8 +289,10 @@ private functionBodyOrNative ::= 'native' functionBody
 
 private functionNative ::= 'native' (stringLiteralExpression ';' | ';' | stringLiteralExpression functionBody)
 
-methodDeclaration ::= metadata* ('external' | 'static' | 'const')* functionDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
-{pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+methodDeclaration ::= metadata* ('external' | 'static' | 'const')* methodDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
+{pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartMethodDeclarationImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+private methodDeclarationPrivate ::= returnType <<methodNameWrapper>> formalParameterList | <<methodNameWrapper>> formalParameterList // todo remove, use functionSignature as in spec
+
 namedConstructorDeclaration ::= metadata* ('external' | 'const')* componentName '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
 {pin=6 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}
 
