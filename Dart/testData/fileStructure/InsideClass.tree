@@ -2,6 +2,6 @@
  -InsideClass
   []=(int i, String v):void
   Field()
-  method():void
-  num1:int
-  [num2:int]
+  method() → void
+  num1 → int
+  [num2 → int]
