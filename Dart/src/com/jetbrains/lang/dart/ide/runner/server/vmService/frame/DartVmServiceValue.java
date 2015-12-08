@@ -54,7 +54,7 @@ public class DartVmServiceValue extends XNamedValue {
     // todo handle other special kinds: Type, TypeParameter, Pattern, may be some others as well
   }
 
-  private static boolean computeVarHavingStringValuePresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
+  private boolean computeVarHavingStringValuePresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
     switch (instanceRef.getKind()) {
       case Null:
@@ -66,9 +66,12 @@ public class DartVmServiceValue extends XNamedValue {
         node.setPresentation(AllIcons.Debugger.Db_primitive, new XNumericValuePresentation(instanceRef.getValueAsString()), false);
         break;
       case String:
-        final String suffix = instanceRef.getValueAsStringIsTruncated() ? "... (truncated value)" : "";
-        final String presentableValue = StringUtil.replace(instanceRef.getValueAsString() + suffix, "\"", "\\\"");
+        final String presentableValue = StringUtil.replace(instanceRef.getValueAsString(), "\"", "\\\"");
         node.setPresentation(AllIcons.Debugger.Db_primitive, new XStringValuePresentation(presentableValue), false);
+
+        if (instanceRef.getValueAsStringIsTruncated()) {
+          addFullStringValueEvaluator(node, instanceRef);
+        }
         break;
       case Float32x4:
       case Float64x2:
@@ -83,13 +86,39 @@ public class DartVmServiceValue extends XNamedValue {
     return true;
   }
 
-  private static boolean computeRegExpPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
+  private void addFullStringValueEvaluator(@NotNull final XValueNode node, @NotNull final InstanceRef stringInstanceRef) {
+    assert stringInstanceRef.getKind() == InstanceKind.String : stringInstanceRef;
+    node.setFullValueEvaluator(new XFullValueEvaluator() {
+      @Override
+      public void startEvaluation(@NotNull final XFullValueEvaluationCallback callback) {
+        myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, stringInstanceRef.getId(), new GetObjectConsumer() {
+          @Override
+          public void received(Obj instance) {
+            assert instance instanceof Instance && ((Instance)instance).getKind() == InstanceKind.String : instance;
+            callback.evaluated(((Instance)instance).getValueAsString());
+          }
+
+          @Override
+          public void received(Sentinel response) {
+            callback.errorOccurred(response.getValueAsString());
+          }
+
+          @Override
+          public void onError(RPCError error) {
+            callback.errorOccurred(error.getMessage());
+          }
+        });
+      }
+    });
+  }
+
+  private boolean computeRegExpPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
     if (instanceRef.getKind() == InstanceKind.RegExp) {
       // The pattern is always an instance of kind String.
       final InstanceRef pattern = instanceRef.getPattern();
-      final String suffix = pattern.getValueAsStringIsTruncated() ? "... (truncated value)" : "";
-      final String patternString = StringUtil.replace(pattern.getValueAsString() + suffix, "\"", "\\\"");
+      assert pattern.getKind() == InstanceKind.String : pattern;
 
+      final String patternString = StringUtil.replace(pattern.getValueAsString(), "\"", "\\\"");
       node.setPresentation(AllIcons.Debugger.Value, new XStringValuePresentation(patternString) {
         @Nullable
         @Override
@@ -97,6 +126,11 @@ public class DartVmServiceValue extends XNamedValue {
           return instanceRef.getClassRef().getName();
         }
       }, true);
+
+      if (pattern.getValueAsStringIsTruncated()) {
+        addFullStringValueEvaluator(node, pattern);
+      }
+
       return true;
     }
     return false;
