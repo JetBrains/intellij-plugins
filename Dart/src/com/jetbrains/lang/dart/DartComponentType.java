@@ -103,21 +103,21 @@ public enum DartComponentType {
         || element instanceof DartFunctionExpression) {
       return FUNCTION;
     }
-    if (element instanceof DartOperatorDeclaration) {
-      return OPERATOR;
-    }
     if (element instanceof DartGetterDeclaration || element instanceof DartSetterDeclaration) {
-      final PsiElement dartClassCandidate = PsiTreeUtil.getParentOfType(element, DartComponent.class, DartOperator.class);
+      final PsiElement dartClassCandidate = PsiTreeUtil.getParentOfType(element, DartComponent.class);
       return dartClassCandidate instanceof DartClass ? METHOD : FUNCTION;
     }
     if (element instanceof DartMethodDeclaration) {
+      if (((DartMethodDeclaration)element).isOperator()) {
+        return OPERATOR;
+      }
       final DartClass dartClass = PsiTreeUtil.getParentOfType(element, DartClass.class);
       final String dartClassName = dartClass != null ? dartClass.getName() : null;
       return dartClassName != null && dartClassName.equals(((DartComponent)element).getName()) ? CONSTRUCTOR : METHOD;
     }
     if (element instanceof DartVarAccessDeclaration
         || element instanceof DartVarDeclarationListPart) {
-      return PsiTreeUtil.getParentOfType(element, DartComponent.class, DartOperator.class) instanceof DartClass ? FIELD : VARIABLE;
+      return PsiTreeUtil.getParentOfType(element, DartComponent.class) instanceof DartClass ? FIELD : VARIABLE;
     }
 
     if (element instanceof DartForInPart) {

@@ -23,9 +23,6 @@ public interface DartClassMembers extends DartExecutionScope {
   List<DartNamedConstructorDeclaration> getNamedConstructorDeclarationList();
 
   @NotNull
-  List<DartOperatorDeclaration> getOperatorDeclarationList();
-
-  @NotNull
   List<DartSetterDeclaration> getSetterDeclarationList();
 
   @NotNull

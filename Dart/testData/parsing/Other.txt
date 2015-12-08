@@ -417,11 +417,11 @@ Dart File
                   PsiElement(IDENTIFIER)('y')
             PsiElement(;)(';')
         PsiComment(SINGLE_LINE_COMMENT)('// Setters should be void -- not enforced by syntax.')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(+)('+')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('+')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -501,16 +501,16 @@ Dart File
                 ID
                   PsiElement(IDENTIFIER)('y')
             PsiElement(;)(';')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('int')
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(+)('+')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('+')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
