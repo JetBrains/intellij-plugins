@@ -51,7 +51,7 @@ import static com.intellij.openapi.util.Pair.pair;
 
 public class BndLaunchState extends JavaCommandLineState implements CompilationStatusListener, HotSwapVetoableListener {
   private static final Logger LOG = Logger.getInstance(BndLaunchState.class);
-  private static final Pair<Long, Long> MISSING_BUNDLE = pair(0l, 0l);
+  private static final Pair<Long, Long> MISSING_BUNDLE = pair(0L, 0L);
 
   private static final Map<String, NotificationGroup> ourNotificationGroups = ContainerUtil.newHashMap();
 
