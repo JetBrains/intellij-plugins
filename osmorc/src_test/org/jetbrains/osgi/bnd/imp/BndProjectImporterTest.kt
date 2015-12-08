@@ -98,7 +98,7 @@ class BndProjectImporterTest : IdeaTestCase() {
   }
 
   fun testImport() {
-    myImporter.resolve()
+    myImporter.resolve(false)
 
     val modules = ModuleManager.getInstance(myProject).modules
     assertEquals(3, modules.size)
