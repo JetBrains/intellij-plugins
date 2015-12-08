@@ -158,11 +158,11 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
           final DartReturnType returnType = PsiTreeUtil.getChildOfType(AbstractDartComponentImpl.this, DartReturnType.class);
           final DartType dartType = PsiTreeUtil.getChildOfType(AbstractDartComponentImpl.this, DartType.class);
           if (returnType != null) {
-            result.append(":");
+            result.append(" ").append(DartPresentableUtil.RIGHT_ARROW).append(" ");
             result.append(DartPresentableUtil.buildTypeText(AbstractDartComponentImpl.this, returnType, null));
           }
           else if (dartType != null) {
-            result.append(":");
+            result.append(" ").append(DartPresentableUtil.RIGHT_ARROW).append(" ");
             result.append(DartPresentableUtil.buildTypeText(AbstractDartComponentImpl.this, dartType, null));
           }
         }

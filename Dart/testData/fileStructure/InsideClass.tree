@@ -1,6 +1,6 @@
 -InsideClass.dart
  -InsideClass
   Field()
-  method():void
-  num1:int
-  [num2:int]
+  method() → void
+  num1 → int
+  [num2 → int]
