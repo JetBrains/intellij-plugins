@@ -15,69 +15,10 @@ package com.google.dart.server.internal.remote;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import com.google.dart.server.AnalysisServerListener;
-import com.google.dart.server.AnalysisServerSocket;
-import com.google.dart.server.AnalysisServerStatusListener;
-import com.google.dart.server.BasicConsumer;
-import com.google.dart.server.Consumer;
-import com.google.dart.server.CreateContextConsumer;
-import com.google.dart.server.FindElementReferencesConsumer;
-import com.google.dart.server.FindMemberDeclarationsConsumer;
-import com.google.dart.server.FindMemberReferencesConsumer;
-import com.google.dart.server.FindTopLevelDeclarationsConsumer;
-import com.google.dart.server.FormatConsumer;
-import com.google.dart.server.GetAssistsConsumer;
-import com.google.dart.server.GetAvailableRefactoringsConsumer;
-import com.google.dart.server.GetErrorsConsumer;
-import com.google.dart.server.GetFixesConsumer;
-import com.google.dart.server.GetHoverConsumer;
-import com.google.dart.server.GetLibraryDependenciesConsumer;
-import com.google.dart.server.GetNavigationConsumer;
-import com.google.dart.server.GetRefactoringConsumer;
-import com.google.dart.server.GetSuggestionsConsumer;
-import com.google.dart.server.GetTypeHierarchyConsumer;
-import com.google.dart.server.GetVersionConsumer;
-import com.google.dart.server.MapUriConsumer;
-import com.google.dart.server.OrganizeDirectivesConsumer;
-import com.google.dart.server.SortMembersConsumer;
-import com.google.dart.server.UpdateContentConsumer;
+import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.internal.BroadcastAnalysisServerListener;
-import com.google.dart.server.internal.remote.processor.AnalysisErrorsProcessor;
-import com.google.dart.server.internal.remote.processor.AssistsProcessor;
-import com.google.dart.server.internal.remote.processor.CompletionIdProcessor;
-import com.google.dart.server.internal.remote.processor.CreateContextProcessor;
-import com.google.dart.server.internal.remote.processor.FindElementReferencesProcessor;
-import com.google.dart.server.internal.remote.processor.FindMemberDeclarationsProcessor;
-import com.google.dart.server.internal.remote.processor.FindMemberReferencesProcessor;
-import com.google.dart.server.internal.remote.processor.FindTopLevelDeclarationsProcessor;
-import com.google.dart.server.internal.remote.processor.FixesProcessor;
-import com.google.dart.server.internal.remote.processor.FormatProcessor;
-import com.google.dart.server.internal.remote.processor.GetNavigationProcessor;
-import com.google.dart.server.internal.remote.processor.GetRefactoringProcessor;
-import com.google.dart.server.internal.remote.processor.HoverProcessor;
-import com.google.dart.server.internal.remote.processor.LibraryDependenciesProcessor;
-import com.google.dart.server.internal.remote.processor.MapUriProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisAnalyzedFilesProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisErrorsProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisFlushResultsProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisHighlightsProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisImplementedProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisNavigationProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisOccurrencesProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisOutlineProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationAnalysisOverridesProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationCompletionResultsProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationExecutionLaunchDataProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationSearchResultsProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationServerConnectedProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationServerErrorProcessor;
-import com.google.dart.server.internal.remote.processor.NotificationServerStatusProcessor;
-import com.google.dart.server.internal.remote.processor.OrganizeDirectivesProcessor;
-import com.google.dart.server.internal.remote.processor.RefactoringGetAvailableProcessor;
-import com.google.dart.server.internal.remote.processor.SortMembersProcessor;
-import com.google.dart.server.internal.remote.processor.TypeHierarchyProcessor;
-import com.google.dart.server.internal.remote.processor.VersionProcessor;
+import com.google.dart.server.internal.remote.processor.*;
 import com.google.dart.server.internal.remote.utilities.RequestUtilities;
 import com.google.dart.server.internal.remote.utilities.ResponseUtilities;
 import com.google.dart.server.utilities.general.StringUtilities;
@@ -87,7 +28,6 @@ import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
 import org.dartlang.analysis.server.protocol.AnalysisOptions;
 import org.dartlang.analysis.server.protocol.RefactoringOptions;
 import org.dartlang.analysis.server.protocol.RequestError;
@@ -103,73 +43,11 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * This {@link AnalysisServer} calls out to the analysis server written in Dart and communicates
  * with the server over standard IO streams.
- * 
+ *
  * @coverage dart.server.remote
  */
 public class RemoteAnalysisServerImpl implements AnalysisServer {
-
-  /**
-   * For requests that do not have a {@link Consumer}, this object is created as a place holder so
-   * that if an error occurs after the request, an error can be reported.
-   */
-  public static class LocalConsumer implements Consumer {
-    private final JsonObject request;
-
-    public LocalConsumer(JsonObject request) {
-      this.request = request;
-    }
-
-    @SuppressWarnings("unused")
-    private JsonObject getRequest() {
-      return request;
-    }
-  }
-
-  /**
-   * A thread which reads responses from the {@link ResponseStream} and calls the associated
-   * {@link Consumer}s from {@link RemoteAnalysisServerImpl#consumerMap}.
-   */
-  public class ServerResponseReaderThread extends Thread {
-
-    private ResponseStream stream;
-
-    public ServerResponseReaderThread(ResponseStream stream) {
-      setDaemon(true);
-      setName("ServerResponseReaderThread");
-      this.stream = stream;
-    }
-
-    @Override
-    public void run() {
-      while (true) {
-        try {
-          JsonObject response = stream.take();
-          if (response == null) {
-            return;
-          }
-          lastResponseTime.set(System.currentTimeMillis());
-          try {
-            processResponse(response);
-          } finally {
-            stream.lastRequestProcessed();
-          }
-        } catch (Throwable e) {
-          // Ignore exceptions during shutdown
-          if (shutdownRequested) {
-            return;
-          }
-          if (e instanceof IOException) {
-            String message = e.getMessage();
-            if (message != null && message.contains("closed")) {
-              Logging.getLogger().logError("AnalysisServer stream unexpected closed", e);
-              return;
-            }
-          }
-          Logging.getLogger().logError(e.getMessage(), e);
-        }
-      }
-    }
-  }
+  public static final String SERVER_NOTIFICATION_ERROR = "server.error";
 
   /**
    * Minimal analysis server version, inclusive.
@@ -183,7 +61,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   // Server domain
   private static final String SERVER_NOTIFICATION_CONNECTED = "server.connected";
-  public static final String SERVER_NOTIFICATION_ERROR = "server.error";
   private static final String SERVER_NOTIFICATION_STATUS = "server.status";
 
   // Analysis domain
@@ -205,7 +82,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   // Execution domain
   private static final String LAUNCH_DATA_NOTIFICATION_RESULTS = "execution.launchData";
-
   private final AnalysisServerSocket socket;
   private final Object requestSinkLock = new Object();
   private RequestSink requestSink;
@@ -300,13 +176,14 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void analysis_getNavigation(String file, int offset, int length,
-      GetNavigationConsumer consumer) {
+  public void analysis_getNavigation(String file, int offset, int length, GetNavigationConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateAnalysisGetNavigation(id, file, offset, length),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateAnalysisGetNavigation(id, file, offset, length), consumer);
+  }
+
+  @Override
+  public void analysis_getReachableSources(String file, GetReachableSourcesConsumer consumer) {
+    // TODO(scheglov) implement
   }
 
   @Override
@@ -316,8 +193,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void analysis_setAnalysisRoots(List<String> includedPaths, List<String> excludedPaths,
-      Map<String, String> packageRoots) {
+  public void analysis_setAnalysisRoots(List<String> includedPaths, List<String> excludedPaths, Map<String, String> packageRoots) {
     String id = generateUniqueId();
     if (includedPaths == null) {
       includedPaths = StringUtilities.EMPTY_LIST;
@@ -325,11 +201,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     if (excludedPaths == null) {
       excludedPaths = StringUtilities.EMPTY_LIST;
     }
-    sendRequestToServer(id, RequestUtilities.generateAnalysisSetAnalysisRoots(
-        id,
-        includedPaths,
-        excludedPaths,
-        packageRoots));
+    sendRequestToServer(id, RequestUtilities.generateAnalysisSetAnalysisRoots(id, includedPaths, excludedPaths, packageRoots));
   }
 
   @Override
@@ -338,9 +210,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     if (subscriptions == null) {
       subscriptions = StringUtilities.EMPTY_LIST;
     }
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateAnalysisSetGeneralSubscriptions(id, subscriptions));
+    sendRequestToServer(id, RequestUtilities.generateAnalysisSetGeneralSubscriptions(id, subscriptions));
   }
 
   @Override
@@ -379,39 +249,30 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateCompletionGetSuggestions(id, file, offset),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
   }
 
   @Override
-  public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength,
-      FormatConsumer consumer) {
+  public void diagnostic_getDiagnostics(GetDiagnosticsConsumer consumer) {
+    // TODO(scheglov) implement
+  }
+
+  @Override
+  public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateEditFormat(id, file, selectionOffset, selectionLength, lineLength),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateEditFormat(id, file, selectionOffset, selectionLength, lineLength), consumer);
   }
 
   @Override
   public void edit_getAssists(String file, int offset, int length, GetAssistsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateEditGetAssists(id, file, offset, length),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateEditGetAssists(id, file, offset, length), consumer);
   }
 
   @Override
-  public void edit_getAvailableRefactorings(String file, int offset, int length,
-      GetAvailableRefactoringsConsumer consumer) {
+  public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateEditGetAvaliableRefactorings(id, file, offset, length),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateEditGetAvaliableRefactorings(id, file, offset, length), consumer);
   }
 
   @Override
@@ -421,18 +282,16 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_getRefactoring(String kindId, String file, int offset, int length,
-      boolean validateOnly, RefactoringOptions options, GetRefactoringConsumer consumer) {
+  public void edit_getRefactoring(String kindId,
+                                  String file,
+                                  int offset,
+                                  int length,
+                                  boolean validateOnly,
+                                  RefactoringOptions options,
+                                  GetRefactoringConsumer consumer) {
     String id = generateUniqueId();
     requestToRefactoringKindMap.put(id, kindId);
-    sendRequestToServer(id, RequestUtilities.generateEditGetRefactoring(
-        id,
-        kindId,
-        file,
-        offset,
-        length,
-        validateOnly,
-        options), consumer);
+    sendRequestToServer(id, RequestUtilities.generateEditGetRefactoring(id, kindId, file, offset, length, validateOnly, options), consumer);
   }
 
   @Override
@@ -450,10 +309,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void execution_createContext(String contextRoot, CreateContextConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateExecutionCreateContext(id, contextRoot),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateExecutionCreateContext(id, contextRoot), consumer);
   }
 
   @Override
@@ -465,10 +321,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void execution_mapUri(String contextId, String file, String uri, MapUriConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateExecutionMapUri(id, contextId, file, uri),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateExecutionMapUri(id, contextId, file, uri), consumer);
   }
 
   @Override
@@ -491,22 +344,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void search_findElementReferences(String file, int offset, boolean includePotential,
-      FindElementReferencesConsumer consumer) {
+  public void search_findElementReferences(String file, int offset, boolean includePotential, FindElementReferencesConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateSearchFindElementReferences(id, file, offset, includePotential),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateSearchFindElementReferences(id, file, offset, includePotential), consumer);
   }
 
   @Override
   public void search_findMemberDeclarations(String name, FindMemberDeclarationsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateSearchFindMemberDeclarations(id, name),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateSearchFindMemberDeclarations(id, name), consumer);
   }
 
   @Override
@@ -516,23 +362,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void search_findTopLevelDeclarations(String pattern,
-      FindTopLevelDeclarationsConsumer consumer) {
+  public void search_findTopLevelDeclarations(String pattern, FindTopLevelDeclarationsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateSearchFindTopLevelDeclarations(id, pattern),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateSearchFindTopLevelDeclarations(id, pattern), consumer);
   }
 
   @Override
-  public void search_getTypeHierarchy(String file, int offset, boolean superOnly,
-      GetTypeHierarchyConsumer consumer) {
+  public void search_getTypeHierarchy(String file, int offset, boolean superOnly, GetTypeHierarchyConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(
-        id,
-        RequestUtilities.generateSearchGetTypeHierarchy(id, file, offset, superOnly),
-        consumer);
+    sendRequestToServer(id, RequestUtilities.generateSearchGetTypeHierarchy(id, file, offset, superOnly), consumer);
   }
 
   @Override
@@ -570,9 +408,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   /**
    * Starts the analysis server.
-   * 
+   *
    * @throws ServerVersionMismatchException if the underlying analysis server doesn't match to a
-   *           server version that this Java API can communicate with.
+   *                                        server version that this Java API can communicate with.
    */
   @Override
   public void start() throws Exception {
@@ -590,25 +428,17 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   /**
    * Generate and return a unique {@link String} id to be used in the requests sent to the analysis
    * server.
-   * 
+   *
    * @return a unique {@link String} id to be used in the requests sent to the analysis server
    */
   private String generateUniqueId() {
     return Integer.toString(nextId.getAndIncrement());
   }
 
-  private RequestError processErrorResponse(JsonObject errorObject) throws Exception {
-    String errorCode = errorObject.get("code").getAsString();
-    String errorMessage = errorObject.get("message").getAsString();
-    String errorStackTrace = errorObject.get("stackTrace") != null
-        ? errorObject.get("stackTrace").getAsString() : null;
-    return new RequestError(errorCode, errorMessage, errorStackTrace);
-  }
-
   /**
    * Attempts to handle the given {@link JsonObject} as a notification. Return {@code true} if it
    * was handled, otherwise {@code false} is returned.
-   * 
+   *
    * @return {@code true} if it was handled, otherwise {@code false} is returned
    */
   private boolean processNotification(JsonObject response) throws Exception {
@@ -622,46 +452,60 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     if (event.equals(ANALYSIS_NOTIFICATION_ERRORS)) {
       // analysis.errors
       new NotificationAnalysisErrorsProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_FLUSH_RESULTS)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_FLUSH_RESULTS)) {
       // analysis.flushResults
       new NotificationAnalysisFlushResultsProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_HIGHTLIGHTS)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_HIGHTLIGHTS)) {
       // analysis.highlights
       new NotificationAnalysisHighlightsProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_IMPLEMENTED)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_IMPLEMENTED)) {
       // analysis.implemented
       new NotificationAnalysisImplementedProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_NAVIGATION)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_NAVIGATION)) {
       // analysis.navigation
       new NotificationAnalysisNavigationProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_OCCURRENCES)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_OCCURRENCES)) {
       // analysis.occurrences
       new NotificationAnalysisOccurrencesProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_OUTLINE)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_OUTLINE)) {
       // analysis.outline
       new NotificationAnalysisOutlineProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_OVERRIDES)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_OVERRIDES)) {
       // analysis.overrides
       new NotificationAnalysisOverridesProcessor(listener).process(response);
-    } else if (event.equals(ANALYSIS_NOTIFICATION_ANALYZED_FILES)) {
+    }
+    else if (event.equals(ANALYSIS_NOTIFICATION_ANALYZED_FILES)) {
       // analysis.errors
       new NotificationAnalysisAnalyzedFilesProcessor(listener).process(response);
-    } else if (event.equals(COMPLETION_NOTIFICATION_RESULTS)) {
+    }
+    else if (event.equals(COMPLETION_NOTIFICATION_RESULTS)) {
       // completion.results
       new NotificationCompletionResultsProcessor(listener).process(response);
-    } else if (event.equals(SEARCH_NOTIFICATION_RESULTS)) {
+    }
+    else if (event.equals(SEARCH_NOTIFICATION_RESULTS)) {
       // search.results
       new NotificationSearchResultsProcessor(listener).process(response);
-    } else if (event.equals(SERVER_NOTIFICATION_STATUS)) {
+    }
+    else if (event.equals(SERVER_NOTIFICATION_STATUS)) {
       // server.status
       new NotificationServerStatusProcessor(listener).process(response);
-    } else if (event.equals(SERVER_NOTIFICATION_ERROR)) {
+    }
+    else if (event.equals(SERVER_NOTIFICATION_ERROR)) {
       // server.error
       new NotificationServerErrorProcessor(listener).process(response);
-    } else if (event.equals(SERVER_NOTIFICATION_CONNECTED)) {
+    }
+    else if (event.equals(SERVER_NOTIFICATION_CONNECTED)) {
       // server.connected
       new NotificationServerConnectedProcessor(listener).process(response);
-    } else if (event.equals(LAUNCH_DATA_NOTIFICATION_RESULTS)) {
+    }
+    else if (event.equals(LAUNCH_DATA_NOTIFICATION_RESULTS)) {
       new NotificationExecutionLaunchDataProcessor(listener).process(response);
     }
     // it is a notification, even if we did not handle it
@@ -674,116 +518,108 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       return;
     }
     // prepare ID
-    JsonPrimitive idJsonPrimitive = (JsonPrimitive) response.get("id");
+    JsonPrimitive idJsonPrimitive = (JsonPrimitive)response.get("id");
     if (idJsonPrimitive == null) {
       return;
     }
     String idString = idJsonPrimitive.getAsString();
     // prepare consumer
-    Consumer consumer = null;
+    Consumer consumer;
     synchronized (consumerMapLock) {
       consumer = consumerMap.get(idString);
     }
-    JsonObject errorObject = (JsonObject) response.get("error");
+    JsonObject errorObject = (JsonObject)response.get("error");
     RequestError requestError = null;
     if (errorObject != null) {
       requestError = processErrorResponse(errorObject);
       listener.requestError(requestError);
     }
     // handle result
-    JsonObject resultObject = (JsonObject) response.get("result");
+    JsonObject resultObject = (JsonObject)response.get("result");
     //
     // Analysis Domain
     //
     if (consumer instanceof UpdateContentConsumer) {
-      ((UpdateContentConsumer) consumer).onResponse();
+      ((UpdateContentConsumer)consumer).onResponse();
     }
     //
     // Completion Domain
     //
     if (consumer instanceof GetSuggestionsConsumer) {
-      new CompletionIdProcessor((GetSuggestionsConsumer) consumer).process(
-          resultObject,
-          requestError);
+      new CompletionIdProcessor((GetSuggestionsConsumer)consumer).process(resultObject, requestError);
     }
     //
     // Search Domain
     //
     else if (consumer instanceof FindElementReferencesConsumer) {
-      new FindElementReferencesProcessor((FindElementReferencesConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof FindMemberDeclarationsConsumer) {
-      new FindMemberDeclarationsProcessor((FindMemberDeclarationsConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof FindMemberReferencesConsumer) {
-      new FindMemberReferencesProcessor((FindMemberReferencesConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof FindTopLevelDeclarationsConsumer) {
-      new FindTopLevelDeclarationsProcessor((FindTopLevelDeclarationsConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof GetTypeHierarchyConsumer) {
-      new TypeHierarchyProcessor((GetTypeHierarchyConsumer) consumer).process(
-          resultObject,
-          requestError);
+      new FindElementReferencesProcessor((FindElementReferencesConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof FindMemberDeclarationsConsumer) {
+      new FindMemberDeclarationsProcessor((FindMemberDeclarationsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof FindMemberReferencesConsumer) {
+      new FindMemberReferencesProcessor((FindMemberReferencesConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof FindTopLevelDeclarationsConsumer) {
+      new FindTopLevelDeclarationsProcessor((FindTopLevelDeclarationsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetTypeHierarchyConsumer) {
+      new TypeHierarchyProcessor((GetTypeHierarchyConsumer)consumer).process(resultObject, requestError);
     }
     //
     // Edit Domain
     //
     else if (consumer instanceof FormatConsumer) {
-      new FormatProcessor((FormatConsumer) consumer).process(resultObject, requestError);
-    } else if (consumer instanceof GetHoverConsumer) {
-      new HoverProcessor((GetHoverConsumer) consumer).process(resultObject, requestError);
-    } else if (consumer instanceof GetRefactoringConsumer) {
-      new GetRefactoringProcessor(requestToRefactoringKindMap, (GetRefactoringConsumer) consumer).process(
-          idString,
-          resultObject,
-          requestError);
-    } else if (consumer instanceof GetAssistsConsumer) {
-      new AssistsProcessor((GetAssistsConsumer) consumer).process(resultObject, requestError);
-    } else if (consumer instanceof GetFixesConsumer) {
-      new FixesProcessor((GetFixesConsumer) consumer).process(resultObject, requestError);
-    } else if (consumer instanceof GetLibraryDependenciesConsumer) {
-      new LibraryDependenciesProcessor((GetLibraryDependenciesConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof GetNavigationConsumer) {
-      new GetNavigationProcessor((GetNavigationConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof GetAvailableRefactoringsConsumer) {
-      new RefactoringGetAvailableProcessor((GetAvailableRefactoringsConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof GetErrorsConsumer) {
-      new AnalysisErrorsProcessor((GetErrorsConsumer) consumer).process(resultObject, requestError);
-    } else if (consumer instanceof OrganizeDirectivesConsumer) {
-      new OrganizeDirectivesProcessor((OrganizeDirectivesConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof SortMembersConsumer) {
-      new SortMembersProcessor((SortMembersConsumer) consumer).process(resultObject, requestError);
+      new FormatProcessor((FormatConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetHoverConsumer) {
+      new HoverProcessor((GetHoverConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetRefactoringConsumer) {
+      new GetRefactoringProcessor(requestToRefactoringKindMap, (GetRefactoringConsumer)consumer)
+        .process(idString, resultObject, requestError);
+    }
+    else if (consumer instanceof GetAssistsConsumer) {
+      new AssistsProcessor((GetAssistsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetFixesConsumer) {
+      new FixesProcessor((GetFixesConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetLibraryDependenciesConsumer) {
+      new LibraryDependenciesProcessor((GetLibraryDependenciesConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetNavigationConsumer) {
+      new GetNavigationProcessor((GetNavigationConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetAvailableRefactoringsConsumer) {
+      new RefactoringGetAvailableProcessor((GetAvailableRefactoringsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetErrorsConsumer) {
+      new AnalysisErrorsProcessor((GetErrorsConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof OrganizeDirectivesConsumer) {
+      new OrganizeDirectivesProcessor((OrganizeDirectivesConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof SortMembersConsumer) {
+      new SortMembersProcessor((SortMembersConsumer)consumer).process(resultObject, requestError);
     }
     //
     // Execution Domain
     //
     else if (consumer instanceof CreateContextConsumer) {
-      new CreateContextProcessor((CreateContextConsumer) consumer).process(
-          resultObject,
-          requestError);
-    } else if (consumer instanceof MapUriConsumer) {
-      new MapUriProcessor((MapUriConsumer) consumer).process(resultObject, requestError);
+      new CreateContextProcessor((CreateContextConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof MapUriConsumer) {
+      new MapUriProcessor((MapUriConsumer)consumer).process(resultObject, requestError);
     }
     //
     // Server Domain
     //
     else if (consumer instanceof GetVersionConsumer) {
-      new VersionProcessor((GetVersionConsumer) consumer).process(resultObject, requestError);
-    } else if (consumer instanceof BasicConsumer) {
-      ((BasicConsumer) consumer).received();
+      new VersionProcessor((GetVersionConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof BasicConsumer) {
+      ((BasicConsumer)consumer).received();
     }
     synchronized (consumerMapLock) {
       consumerMap.remove(idString);
@@ -793,8 +629,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   /**
    * Sends the request, and associates the request with a {@link LocalConsumer}, a simple consumer
    * which only holds onto the the request {@link JsonObject}, for the purposes of error reporting.
-   * 
-   * @param id the identifier of the request
+   *
+   * @param id      the identifier of the request
    * @param request the request to send
    */
   private void sendRequestToServer(String id, JsonObject request) {
@@ -803,9 +639,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   /**
    * Sends the request and associates the request with the passed {@link Consumer}.
-   * 
-   * @param id the identifier of the request
-   * @param request the request to send
+   *
+   * @param id       the identifier of the request
+   * @param request  the request to send
    * @param consumer the {@link Consumer} to process a response
    */
   private void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
@@ -814,14 +650,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
     synchronized (requestSinkLock) {
       requestSink.add(request);
-    }
-  }
-
-  private void sleep(long millisToSleep) {
-    try {
-      Thread.sleep(millisToSleep);
-    } catch (InterruptedException e) {
-      //$FALL-THROUGH$
     }
   }
 
@@ -846,17 +674,21 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
           Version version = null;
           try {
             version = Version.parseVersion(versionStr);
-          } catch (Throwable e) {
+          }
+          catch (Throwable e) {
             message = "Unable to parse version: " + versionStr;
           }
           // invalid version
           if (version != null) {
-            if (version.compareTo(MIN_SERVER_VERSION) < 0
-                || version.compareTo(MAX_SERVER_VERSION) >= 0) {
-              message = "This version of the com.google.dart.server project can communicate only "
-                  + "with server versions between " + MIN_SERVER_VERSION + " and "
-                  + MAX_SERVER_VERSION + ", but the version read from the server is " + version
-                  + ".";
+            if (version.compareTo(MIN_SERVER_VERSION) < 0 || version.compareTo(MAX_SERVER_VERSION) >= 0) {
+              message = "This version of the com.google.dart.server project can communicate only " +
+                        "with server versions between " +
+                        MIN_SERVER_VERSION +
+                        " and " +
+                        MAX_SERVER_VERSION +
+                        ", but the version read from the server is " +
+                        version +
+                        ".";
             }
           }
           // OK
@@ -904,7 +736,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       @Override
       public void run() {
         watch(millisToRestart);
-      };
+      }
     };
     watcher.setDaemon(true);
     watcher.start();
@@ -922,7 +754,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     watcher.interrupt();
     try {
       watcher.join(5000);
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       //$FALL-THROUGH$
     }
     watcher = null;
@@ -934,7 +767,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     while (watch) {
       if (isSocketOpen()) {
         sleep(millisToRestart / 2);
-      } else {
+      }
+      else {
         // If still no response from server then restart the server
         InstrumentationBuilder instrumentation = Instrumentation.builder("RemoteAnalysisServerImpl.serverNotRunning");
         for (AnalysisServerStatusListener listener : statusListenerList) {
@@ -970,6 +804,87 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 //        }
 //        sentRequest = false;
 //        sleep(millisToRestart);
+      }
+    }
+  }
+
+  private static RequestError processErrorResponse(JsonObject errorObject) throws Exception {
+    String errorCode = errorObject.get("code").getAsString();
+    String errorMessage = errorObject.get("message").getAsString();
+    String errorStackTrace = errorObject.get("stackTrace") != null ? errorObject.get("stackTrace").getAsString() : null;
+    return new RequestError(errorCode, errorMessage, errorStackTrace);
+  }
+
+  private static void sleep(long millisToSleep) {
+    try {
+      Thread.sleep(millisToSleep);
+    }
+    catch (InterruptedException e) {
+      //$FALL-THROUGH$
+    }
+  }
+
+  /**
+   * For requests that do not have a {@link Consumer}, this object is created as a place holder so
+   * that if an error occurs after the request, an error can be reported.
+   */
+  public static class LocalConsumer implements Consumer {
+    private final JsonObject request;
+
+    public LocalConsumer(JsonObject request) {
+      this.request = request;
+    }
+
+    @SuppressWarnings("unused")
+    private JsonObject getRequest() {
+      return request;
+    }
+  }
+
+  /**
+   * A thread which reads responses from the {@link ResponseStream} and calls the associated
+   * {@link Consumer}s from {@link RemoteAnalysisServerImpl#consumerMap}.
+   */
+  public class ServerResponseReaderThread extends Thread {
+
+    private ResponseStream stream;
+
+    public ServerResponseReaderThread(ResponseStream stream) {
+      setDaemon(true);
+      setName("ServerResponseReaderThread");
+      this.stream = stream;
+    }
+
+    @Override
+    public void run() {
+      while (true) {
+        try {
+          JsonObject response = stream.take();
+          if (response == null) {
+            return;
+          }
+          lastResponseTime.set(System.currentTimeMillis());
+          try {
+            processResponse(response);
+          }
+          finally {
+            stream.lastRequestProcessed();
+          }
+        }
+        catch (Throwable e) {
+          // Ignore exceptions during shutdown
+          if (shutdownRequested) {
+            return;
+          }
+          if (e instanceof IOException) {
+            String message = e.getMessage();
+            if (message != null && message.contains("closed")) {
+              Logging.getLogger().logError("AnalysisServer stream unexpected closed", e);
+              return;
+            }
+          }
+          Logging.getLogger().logError(e.getMessage(), e);
+        }
       }
     }
   }

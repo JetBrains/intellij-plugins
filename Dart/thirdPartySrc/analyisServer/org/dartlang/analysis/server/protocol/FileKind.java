@@ -17,12 +17,14 @@
 package org.dartlang.analysis.server.protocol;
 
 /**
- * An enumeration of the services provided by the execution domain.
+ * An enumeration of the kinds of files.
  *
  * @coverage dart.server.generated.types
  */
-public class ExecutionService {
+public class FileKind {
 
-  public static final String LAUNCH_DATA = "LAUNCH_DATA";
+  public static final String LIBRARY = "LIBRARY";
+
+  public static final String PART = "PART";
 
 }
