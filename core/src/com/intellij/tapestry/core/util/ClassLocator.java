@@ -1,5 +1,7 @@
 package com.intellij.tapestry.core.util;
 
+import com.intellij.openapi.util.text.StringUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -71,8 +73,7 @@ public class ClassLocator {
                 URL url = new URL("jar:" + new URL("file", null, slashify(jarFile.getName())).toExternalForm() + "!/" + entry.getName());
 
                 String className = entry.getName();
-                if (className.startsWith("/"))
-                    className = className.substring(1);
+                className = StringUtil.trimStart(className, "/");
 
                 className = PathUtils.toUnixPath(className);
                 className = PathUtils.getLastPathElement(className);

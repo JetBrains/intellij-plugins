@@ -4,11 +4,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import static com.intellij.tapestry.psi.TelTokenTypes.*;
-import static com.intellij.tapestry.psi.TelCompositeElementType.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.tapestry.psi.TelCompositeElementType.*;
+import static com.intellij.tapestry.psi.TelTokenTypes.*;
 
 /**
  * @author Alexey Chmutov
@@ -137,7 +139,7 @@ public class TelParser implements PsiParser {
   private static boolean consumeToken(PsiBuilder builder, TelTokenType tokenType) {
     if (tokenType != builder.getTokenType()) {
       String s = tokenType.toString();
-      if (s.startsWith("TAP5_EL_")) s = s.substring("TAP5_EL_".length());
+      s = StringUtil.trimStart(s, "TAP5_EL_");
       builder.error(s + " expected");
       return false;
     }
