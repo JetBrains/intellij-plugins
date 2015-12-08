@@ -83,9 +83,7 @@ public class BasePackageParser extends OsgiHeaderParser {
         HeaderValuePart valuePart = ((Clause)value).getValue();
         if (valuePart != null) {
           String packageName = valuePart.getUnwrappedText();
-          if (packageName.endsWith(".*")) {
-            packageName = packageName.substring(0, packageName.length() - 2);
-          }
+          packageName = StringUtil.trimEnd(packageName, ".*");
 
           if (StringUtil.isEmptyOrSpaces(packageName)) {
             holder.createErrorAnnotation(valuePart.getHighlightingRange(), ManifestBundle.message("header.reference.invalid"));
@@ -95,7 +93,8 @@ public class BasePackageParser extends OsgiHeaderParser {
 
           PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
           if (directories.length == 0) {
-            holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
+            holder
+              .createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
             annotated = true;
           }
         }

@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.ReadonlyFragmentModificationHandler;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.rename.RenameProcessor;
@@ -102,14 +103,10 @@ public class CucumberStepRenameDialog extends RenameDialog {
     if (stepDefinition != null) {
       String result = stepDefinition.getCucumberRegex();
       if (result != null) {
-        if (result.startsWith("^")) {
-          result = result.substring(1);
-        }
-        if (result.endsWith("$")) {
-          result = result.substring(0, result.length() - 1);
-        }
+        result = StringUtil.trimStart(result, "^");
+        result = StringUtil.trimEnd(result, "$");
 
-        return new String[] {result};
+        return new String[]{result};
       }
     }
 

@@ -15,6 +15,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.google;
 
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -64,9 +65,7 @@ public class DebuggerUtils {
     }
 
     // Also remove the trailing '.' for default constructors.
-    if (name.endsWith(".")) {
-      name = name.substring(0, name.length() - 1);
-    }
+    name = StringUtil.trimEnd(name, ".");
 
     // remove "set:" and "get:"
     // Cat.get:color() ==> Cat.color()

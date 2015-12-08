@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashSet;
@@ -106,9 +107,7 @@ public abstract class AdtTask extends ExternalTask {
     for (FilePathAndPathInPackage entry : packagingOptions.getFilesToPackage()) {
       final String fullPath = FileUtil.toSystemIndependentName(entry.FILE_PATH.trim());
       String relPathInPackage = FileUtil.toSystemIndependentName(entry.PATH_IN_PACKAGE.trim());
-      if (relPathInPackage.startsWith("/")) {
-        relPathInPackage = relPathInPackage.substring(1);
-      }
+      relPathInPackage = StringUtil.trimStart(relPathInPackage, "/");
 
       final String pathEnd = "/" + relPathInPackage;
       if (fullPath.endsWith(pathEnd)) {

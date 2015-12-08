@@ -16,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.intellij.openapi.util.text.StringUtil.trimEnd;
+import static com.intellij.openapi.util.text.StringUtil.trimStart;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -32,16 +35,14 @@ public class DirectiveUtil {
     if (name == null) return null;
     if (name.startsWith("data-")) {
       name = name.substring(5);
-    } else if (name.startsWith("x-")) {
-      name = name.substring(2);
     }
+    else name = trimStart(name, "x-");
     name = name.replace(':', '-');
     name = name.replace('_', '-');
     if (name.endsWith("-start")) {
       name = name.substring(0, name.length() - 6);
-    } else if (name.endsWith("-end")) {
-      name = name.substring(0, name.length() - 4);
     }
+    else name = trimEnd(name, "-end");
     return name;
   }
 

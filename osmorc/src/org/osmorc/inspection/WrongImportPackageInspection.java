@@ -50,9 +50,7 @@ public class WrongImportPackageInspection extends AbstractOsgiVisitor {
               HeaderValuePart valuePart = ((Clause)value).getValue();
               if (valuePart != null) {
                 String packageName = valuePart.getUnwrappedText();
-                if (packageName.endsWith(".*")) {
-                  packageName = packageName.substring(0, packageName.length() - 2);
-                }
+                packageName = StringUtil.trimEnd(packageName, ".*");
                 if (StringUtil.isEmptyOrSpaces(packageName)) continue;
 
                 PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(element, packageName);
