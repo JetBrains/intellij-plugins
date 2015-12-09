@@ -51,9 +51,9 @@ public interface DartClass extends DartComponent {
   DartTypeParameters getTypeParameters();
 
   @Nullable
-  DartOperator findOperator(String operator, @Nullable DartClass rightDartClass);
+  DartMethodDeclaration findOperator(String operator, @Nullable DartClass rightDartClass);
 
-  List<DartOperator> getOperators();
+  List<DartMethodDeclaration> getOperators();
 
   @Nullable
   DartComponent findNamedConstructor(String name);

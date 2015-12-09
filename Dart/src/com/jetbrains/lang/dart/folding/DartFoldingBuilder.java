@@ -42,7 +42,6 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       root,
       new Class[]{
         DartComponent.class,
-        DartOperatorDeclaration.class,
         DartTypeArguments.class,
         PsiComment.class,
         DartStringLiteralExpression.class});

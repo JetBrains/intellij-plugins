@@ -1,5 +1,6 @@
 -InsideClass.dart
  -InsideClass
+  []=(int i, String v):void
   Field()
   method() → void
   num1 → int

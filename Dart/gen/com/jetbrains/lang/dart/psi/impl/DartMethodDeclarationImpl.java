@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartMethodDeclarationImpl extends AbstractDartComponentImpl implements DartMethodDeclaration {
+public class DartMethodDeclarationImpl extends AbstractDartMethodDeclarationImpl implements DartMethodDeclaration {
 
   public DartMethodDeclarationImpl(ASTNode node) {
     super(node);
@@ -20,12 +20,6 @@ public class DartMethodDeclarationImpl extends AbstractDartComponentImpl impleme
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMethodDeclaration(this);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
   }
 
   @Override
