@@ -60,6 +60,10 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
     doTest(1);
   }
 
+  public void testOperator() throws Throwable {
+    doTest(3);
+  }
+
   public void testIterableSubclasses() throws Throwable {
     myFixture.configureByText("foo.dart", "");
     myFixture.doHighlighting();
