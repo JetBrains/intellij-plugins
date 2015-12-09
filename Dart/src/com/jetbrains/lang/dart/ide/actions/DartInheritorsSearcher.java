@@ -68,7 +68,11 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
         if (element.getLanguage() != DartLanguage.INSTANCE) return;
 
         final DartComponentType componentType = DartComponentType.typeOf(element);
-        if (componentType != DartComponentType.CLASS && componentType != DartComponentType.METHOD) return;
+        if (componentType != DartComponentType.CLASS &&
+            componentType != DartComponentType.METHOD &&
+            componentType != DartComponentType.OPERATOR) {
+          return;
+        }
 
         final DartComponentName componentName = element instanceof DartComponentName
                                                 ? (DartComponentName)element
