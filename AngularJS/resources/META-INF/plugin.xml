@@ -3,36 +3,6 @@
   <description>Support for AngularJS</description>
   <version>999.999</version>
   <vendor>johnlindquist, JetBrains</vendor>
-  <change-notes><![CDATA[
-        <html>
-        <dl>
-            <dt>0.1.9</dt>
-            <dd>Added a setting for whitespace between braces</dd>
-            <dt>0.1.8</dt>
-            <dd>Fixing bug introduced by autocomplete with invalid elements (had to "revert" to old method of autocomplete, so I need to find a new approach for invalid elements</dd>
-            <dt>0.1.7</dt>
-            <dd>Focusing on WebStorm 7 compatibility</dd>
-            <dt>0.1.6</dt>
-            <dd>Adding navigation, auto-closing {{, attribute autocomplete on all elements, and "jump to docs"</dd>
-            <dt>0.1.5</dt>
-            <dd>Adding "href" and "disabled" to the descriptors list</dd>
-            <dt>0.1.4</dt>
-            <dd>Bundling live templates thanks to Powel Kozlowski</dd>
-            <dt>0.1.3</dt>
-            <dd>Adding the mouse events and a couple other missing directives</dd>
-            <dt>0.1.2</dt>
-            <dd>Works with any doctype (not just !doctype html).</dd>
-            <dt>0.1.1</dt>
-            <dd>Changed Autocomplete approach to "provide" custom autocompletes through a provider extension point. I'll
-                revisit a custom DTD after more discussion/thought with other developers.
-            </dd>
-            <dt>0.1</dt>
-            <dd>Basic ng attribute autocompletion based on an included DTD.</dd>
-        </dl>
-        </html>
-        ]]>
-  </change-notes>
-
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="138.1029"/>
