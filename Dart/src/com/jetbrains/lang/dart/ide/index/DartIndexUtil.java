@@ -54,6 +54,8 @@ public class DartIndexUtil {
           continue;
         }
 
+        result.addSymbol(name);
+
         PsiElement parent = componentName.getParent();
         final DartComponentType type = DartComponentType.typeOf(parent);
         if (type != null) {
