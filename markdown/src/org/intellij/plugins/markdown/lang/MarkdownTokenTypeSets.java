@@ -36,6 +36,11 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
                                     HEADER_LEVEL_6_SET);
 
   TokenSet REFERENCE_LINK_SET = TokenSet.create(FULL_REFERENCE_LINK, SHORT_REFERENCE_LINK);
+  
+  TokenSet CODE_FENCE_ITEMS = TokenSet.create(MarkdownTokenTypes.CODE_FENCE_CONTENT, 
+                                              MarkdownTokenTypes.CODE_FENCE_START,
+                                              MarkdownTokenTypes.CODE_FENCE_END,
+                                              MarkdownTokenTypes.FENCE_LANG);
 
   TokenSet LIST_MARKERS = TokenSet.create(MarkdownTokenTypes.LIST_BULLET, MarkdownTokenTypes.LIST_NUMBER);
 
