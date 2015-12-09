@@ -5,9 +5,6 @@ import com.jetbrains.lang.dart.ide.generation.CreateGetterSetterFix;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartGenerateActionTest extends DartGenerateActionTestBase {
   @NotNull
   @Override
@@ -105,5 +102,9 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
 
   public void testGetterSetter3() throws Throwable {
     doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+  }
+
+  public void testOverrideOperator() throws Throwable {
+    doOverrideTest();
   }
 }
