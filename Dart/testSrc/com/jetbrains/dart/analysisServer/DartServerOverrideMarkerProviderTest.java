@@ -68,4 +68,8 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
   public void testOverrideMarker() throws Throwable {
     doTest("Overrides method 'm' in 'A'", AllIcons.Gutter.OverridingMethod);
   }
+
+  public void testOverriddenOperator() throws Throwable {
+    doTest("Overrides operator '==' in 'Object'", AllIcons.Gutter.OverridingMethod);
+  }
 }

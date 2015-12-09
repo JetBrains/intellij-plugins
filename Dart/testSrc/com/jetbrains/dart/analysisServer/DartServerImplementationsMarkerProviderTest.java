@@ -77,4 +77,8 @@ public class DartServerImplementationsMarkerProviderTest extends CodeInsightFixt
   public void testMethodImplemented() throws Throwable {
     checkHasGutterAtCaret("Is overridden in subclasses", AllIcons.Gutter.OverridenMethod);
   }
+
+  public void testOperatorOverridden() throws Throwable {
+    checkHasGutterAtCaret("Is overridden in subclasses", AllIcons.Gutter.OverridenMethod);
+  }
 }
