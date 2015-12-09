@@ -1,0 +1,9 @@
+class I {
+  bool operator ==(other) => false;
+}
+
+class Foo extends I {
+  bool operator ==(other) {
+    <caret>
+  }
+}

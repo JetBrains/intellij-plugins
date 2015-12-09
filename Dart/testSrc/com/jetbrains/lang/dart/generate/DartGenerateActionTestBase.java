@@ -4,9 +4,6 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.jetbrains.lang.dart.ide.generation.*;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsightTestCase {
   protected void doOverrideTest() {
     doTest(new DartOverrideMethodHandler());
