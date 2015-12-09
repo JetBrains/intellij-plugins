@@ -47,6 +47,10 @@ public class DartServerGotoSuperHandlerTest extends CodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testSuperOperator() throws Throwable {
+    doTest();
+  }
+
   private void doTest() throws Throwable {
     myFixture.configureByFile(getTestName(false) + ".dart");
     initServer();
