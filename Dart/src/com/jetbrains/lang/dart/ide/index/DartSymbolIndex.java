@@ -8,6 +8,8 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
@@ -57,11 +59,15 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
     return true;
   }
 
-  public static Collection<String> getNames(Project project) {
-    return FileBasedIndex.getInstance().getAllKeys(DART_SYMBOL_INDEX, project);
+  public static String[] getAllSymbols(@NotNull final GlobalSearchScope scope) {
+    final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>();
+    FileBasedIndex.getInstance().processAllKeys(DART_SYMBOL_INDEX, processor, scope, null);
+    return ArrayUtil.toStringArray(processor.getResults());
   }
 
-  public static List<DartComponentName> getItemsByName(final String name, Project project, GlobalSearchScope searchScope) {
+  public static List<DartComponentName> getItemsByName(@NotNull final String name,
+                                                       @NotNull final Project project,
+                                                       @NotNull final GlobalSearchScope searchScope) {
     final Collection<VirtualFile> files =
       FileBasedIndex.getInstance().getContainingFiles(DART_SYMBOL_INDEX, name, searchScope);
     final Set<DartComponentName> result = new THashSet<DartComponentName>();
