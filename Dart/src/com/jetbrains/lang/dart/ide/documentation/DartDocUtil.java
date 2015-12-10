@@ -32,27 +32,93 @@ public class DartDocUtil {
       return null;
     }
     final DartComponent namedComponent = (DartComponent)(element instanceof DartComponent ? element : element.getParent());
-    final StringBuilder builder = new StringBuilder();
 
-    appendLibraryName(builder, element);
-
-    builder.append("<code>");
-
-    for (DartMetadata metadata : namedComponent.getMetadataList()) {
-      builder.append(StringUtil.escapeXml(metadata.getText())).append("<br/>");
+    final String signatureHtml;
+    {
+      final StringBuilder builder = new StringBuilder();
+      appendSignature(namedComponent, builder);
+      signatureHtml = builder.toString();
     }
 
-    appendSignature(namedComponent, builder);
+    final String containingLibraryName;
+    final PsiFile file = element.getContainingFile();
+    if (file != null) {
+      containingLibraryName = DartResolveUtil.getLibraryName(file);
+    } else {
+      containingLibraryName = null;
+    }
 
-    builder.append("</code>");
+    final String containingClassDescription;
+    final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
+    if (dartClass != null) {
+      final StringBuilder builder = new StringBuilder();
+      builder.append(dartClass.getName());
+      appendTypeParams(builder, dartClass.getTypeParameters());
+      containingClassDescription = builder.toString();
+    } else {
+      containingClassDescription = null;
+    }
 
     final String docText = getDocumentationText(namedComponent);
+    return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, null);
+  }
+
+  public static String generateDoc(@Nullable final String signature,
+                                   final boolean signatureIsHtml,
+                                   @Nullable final String docText,
+                                   @Nullable final String containingLibraryName,
+                                   @Nullable final String containingClassDescription,
+                                   @Nullable final String staticType,
+                                   @Nullable final String propagatedType) {
+    final boolean hasContainingLibraryName = !StringUtil.isEmpty(containingLibraryName);
+    final boolean hasContainingClassDescription = !StringUtil.isEmpty(containingClassDescription);
+    final boolean hasStaticType = !StringUtil.isEmpty(staticType);
+    final boolean hasPropagatedType = !StringUtil.isEmpty(propagatedType);
+    // generate
+    final StringBuilder builder = new StringBuilder();
+    builder.append("<code>");
+    if (signature != null) {
+      builder.append("<b>Signature:</b> ");
+      if (signatureIsHtml) {
+        builder.append(signature);
+      } else {
+        builder.append(StringUtil.escapeXml(signature));
+      }
+      builder.append("<br>");
+    }
+    if (hasContainingLibraryName || hasContainingClassDescription) {
+      builder.append("<br>");
+      if (hasContainingLibraryName) {
+        builder.append("<b>Containing library:</b> ");
+        builder.append(StringUtil.escapeXml(containingLibraryName));
+        builder.append("<br>");
+      }
+      if (hasContainingClassDescription) {
+        builder.append("<b>Containing class:</b> ");
+        builder.append(StringUtil.escapeXml(containingClassDescription));
+        builder.append("<br>");
+      }
+    }
+    if (hasStaticType || hasPropagatedType) {
+      builder.append("<br>");
+      if (hasStaticType) {
+        builder.append("<b>Static type:</b> ");
+        builder.append(StringUtil.escapeXml(staticType));
+        builder.append("<br>");
+      }
+      if (hasPropagatedType) {
+        builder.append("<b>Propagated type:</b> ");
+        builder.append(StringUtil.escapeXml(propagatedType));
+        builder.append("<br>");
+      }
+    }
+    builder.append("</code>");
     if (docText != null) {
-      builder.append("<br/><br/>");
+      builder.append("<br>");
       final MarkdownProcessor processor = new MarkdownProcessor();
       builder.append(processor.markdown(docText));
     }
-
+    // done
     return builder.toString();
   }
 
@@ -81,24 +147,19 @@ public class DartDocUtil {
       appendFunctionSignature(builder, namedComponent, ((DartFunctionTypeAlias)namedComponent).getReturnType());
     }
     else if (namedComponent.isConstructor()) {
-      appendDeclaringClass(builder, namedComponent);
       appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class));
     }
     else if (namedComponent instanceof DartMethodDeclaration) {
-      appendDeclaringClass(builder, namedComponent);
       appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
     }
     else if (namedComponent instanceof DartVarAccessDeclaration) {
-      appendDeclaringClass(builder, namedComponent);
       appendVariableSignature(builder, namedComponent, ((DartVarAccessDeclaration)namedComponent).getType());
     }
     else if (namedComponent instanceof DartGetterDeclaration) {
-      appendDeclaringClass(builder, namedComponent);
       builder.append("get ");
       appendFunctionSignature(builder, namedComponent, ((DartGetterDeclaration)namedComponent).getReturnType());
     }
     else if (namedComponent instanceof DartSetterDeclaration) {
-      appendDeclaringClass(builder, namedComponent);
       builder.append("set ");
       appendFunctionSignature(builder, namedComponent, ((DartSetterDeclaration)namedComponent).getReturnType());
     }
@@ -212,14 +273,6 @@ public class DartDocUtil {
     appendFunctionSignature(builder, component, dartClass.getName());
   }
 
-  private static void appendDeclaringClass(final StringBuilder builder, final DartComponent namedComponent) {
-    final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
-    if (dartClass != null) {
-      builder.append(dartClass.getName());
-      builder.append("<br/>");
-    }
-  }
-
   private static void appendVariableSignature(final StringBuilder builder, final DartComponent component, final DartType type) {
     if (type == null) {
       builder.append("var ");
@@ -268,7 +321,7 @@ public class DartDocUtil {
     final List<DartType> mixins = dartClass.getMixinsList();
     final DartType superClass = dartClass.getSuperClass();
     if (superClass != null) {
-      builder.append("<br/>extends ").append(StringUtil.escapeXml(superClass.getText()));
+      builder.append(" extends ").append(StringUtil.escapeXml(superClass.getText()));
     }
 
     if (!mixins.isEmpty()) {
@@ -278,7 +331,7 @@ public class DartDocUtil {
 
     final List<DartType> implementsList = dartClass.getImplementsList();
     if (!implementsList.isEmpty()) {
-      builder.append("<br/>implements ");
+      builder.append(" implements ");
       appendDartTypeList(builder, implementsList);
     }
   }
@@ -289,13 +342,6 @@ public class DartDocUtil {
       if (iter.hasNext()) {
         builder.append(", ");
       }
-    }
-  }
-
-  private static void appendLibraryName(final StringBuilder builder, final PsiElement element) {
-    final PsiFile file = element.getContainingFile();
-    if (file != null) {
-      builder.append(StringUtil.join("<code><small><b>", DartResolveUtil.getLibraryName(file), "</b></small></code><br/><br/>"));
     }
   }
 
@@ -323,10 +369,12 @@ public class DartDocUtil {
 
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final String returnType) {
     builder.append("<b>").append(function.getName()).append("</b>");
-    builder.append('(');
-    builder
-      .append(StringUtil.escapeXml(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true, true)));
-    builder.append(')');
+    if (!function.isGetter()) {
+      builder.append('(');
+      builder.append(
+        StringUtil.escapeXml(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true, true)));
+      builder.append(')');
+    }
     builder.append(' ');
     builder.append(DartPresentableUtil.RIGHT_ARROW);
     builder.append(' ');
