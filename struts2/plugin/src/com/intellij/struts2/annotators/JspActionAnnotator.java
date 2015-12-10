@@ -35,6 +35,7 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,16 +64,21 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
     }
   };
 
+  @Override
+  public String getId() {
+    return "JspActionAnnotator";
+  }
+
   @NotNull
   @Override
   public String getName() {
-    return "Struts 2 JSP";
+    return "Action (JSP)";
   }
 
   @Nullable
   @Override
   public Icon getIcon() {
-    return StrutsIcons.ACTION_CLASS;
+    return Struts2Icons.Action;
   }
 
   @Override

@@ -17,7 +17,7 @@ package com.intellij.struts2.annotators;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.struts2.StrutsIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.GrClassDefinition;
@@ -32,14 +32,19 @@ import javax.swing.*;
 public class ActionGroovyAnnotator extends ActionAnnotatorBase {
 
   @Override
+  public String getId() {
+    return "ActionGroovyAnnotator";
+  }
+
+  @Override
   public String getName() {
-    return "Struts 2 Action (Groovy)";
+    return "Action (Groovy)";
   }
 
   @Nullable
   @Override
   public Icon getIcon() {
-    return StrutsIcons.ACTION_CLASS;
+    return Struts2Icons.Action;
   }
 
   protected PsiClass getActionPsiClass(@NotNull final PsiElement psiElement) {

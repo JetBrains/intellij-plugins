@@ -18,7 +18,7 @@ package com.intellij.struts2.annotators;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.struts2.StrutsIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,14 +33,19 @@ import javax.swing.*;
 public class ActionJavaAnnotator extends ActionAnnotatorBase {
 
   @Override
+  public String getId() {
+    return "ActionJavaAnnotator";
+  }
+
+  @Override
   public String getName() {
-    return "Struts 2 Action (Java)";
+    return "Action (Java)";
   }
 
   @Nullable
   @Override
   public Icon getIcon() {
-    return StrutsIcons.ACTION_CLASS;
+    return Struts2Icons.Action;
   }
 
   protected PsiClass getActionPsiClass(@NotNull final PsiElement psiElement) {
