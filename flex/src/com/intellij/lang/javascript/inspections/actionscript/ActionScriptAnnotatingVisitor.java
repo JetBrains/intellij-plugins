@@ -747,7 +747,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       JSParameterList parameterList = fun.getParameterList();
       if (parameterList != null) {
         for (JSParameter p : parameterList.getParameters()) {
-          if (p.isRest() && p.getNode().findChildByType(JSTokenTypes.DOT_DOT_DOT) != null) {
+          if (p.isRest()) {
             myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.arguments.with.rest.parameter"));
           }
         }
