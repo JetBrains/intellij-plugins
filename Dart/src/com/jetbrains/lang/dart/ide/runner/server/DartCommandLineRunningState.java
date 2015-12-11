@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,13 +41,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.StringTokenizer;
 
 public class DartCommandLineRunningState extends CommandLineState {
+  private final static String OBSERVATORY_MESSAGE = "Observatory listening on ";
+
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myDebuggingPort = -1;
   private int myObservatoryPort = -1;
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
-    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters();
+    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().clone();
 
     try {
       myRunnerParameters.check(env.getProject());
@@ -102,7 +105,15 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
-    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
+    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
+      @Override
+      public void coloredTextAvailable(String text, Key attributes) {
+        if (text.startsWith(OBSERVATORY_MESSAGE)) {
+          text += "\n";
+        }
+        super.coloredTextAvailable(text, attributes);
+      }
+    };
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
     return processHandler;
   }
@@ -142,6 +153,7 @@ public class DartCommandLineRunningState extends CommandLineState {
                                @NotNull final GeneralCommandLine commandLine,
                                @NotNull final DartCommandLineRunnerParameters runnerParameters,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
+    // TODO Clean up dialog box and trim unused VM options here.
     commandLine.addParameter("--ignore-unrecognized-flags");
 
     int customObservatoryPort = -1;
@@ -197,10 +209,11 @@ public class DartCommandLineRunningState extends CommandLineState {
     if (customObservatoryPort > 0) {
       myObservatoryPort = customObservatoryPort;
     }
-    else {
-      myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
-      commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
-    }
+    // TODO Enable this for debugging package:test code, but make sure it is for the test runner VM.
+    //else {
+    //  myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
+    //  commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+    //}
 
     commandLine.addParameter("--trace_service_pause_events");
 
