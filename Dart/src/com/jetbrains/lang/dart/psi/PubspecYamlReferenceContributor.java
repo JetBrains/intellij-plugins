@@ -14,9 +14,9 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collection;
 
@@ -31,14 +31,15 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
     if (!PubspecYamlUtil.PATH.equals(element.getKeyText())) return false;
 
     final PsiElement parent1 = element.getParent();
-    final PsiElement parent2 = parent1 instanceof YAMLCompoundValue ? parent1.getParent() : null;
+    final PsiElement parent2 = parent1 instanceof YAMLMapping ? parent1.getParent() : null;
     final String packageName = parent2 instanceof YAMLKeyValue ? ((YAMLKeyValue)parent2).getKeyText() : null;
     if (packageName == null) return false;
 
     final PsiElement parent3 = parent2.getParent();
-    final PsiElement parent4 = parent3 instanceof YAMLCompoundValue ? parent3.getParent() : null;
+    final PsiElement parent4 = parent3 instanceof YAMLMapping ? parent3.getParent() : null;
     return parent4 instanceof YAMLKeyValue &&
-           parent4.getParent() instanceof YAMLDocument &&
+           parent4.getParent() instanceof YAMLMapping &&
+           parent4.getParent().getParent() instanceof YAMLDocument &&
            ((PubspecYamlUtil.DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()) ||
              PubspecYamlUtil.DEV_DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText())));
   }
