@@ -2,8 +2,8 @@ package training.solutions.EditorBasics;
 
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import training.commands.BadCommandException;
-import training.commands.ExecutionList;
+import org.jdom.Element;
+import training.commands.*;
 import training.lesson.LessonProcessor;
 import training.testFramework.LessonSolution;
 import training.util.PerformActionUtil;
@@ -24,8 +24,16 @@ public class DeleteSolution implements LessonSolution{
         }
         if (stepNumber == 0){
             final String actionName = "$Undo";
-            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor(), currentExecutionList.getEduEditor());
+//            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor(), currentExecutionList.getEduEditor());
 //            LightPlatformCodeInsightTestCase.executeAction(actionName, currentExecutionList.getEditor(), currentExecutionList.getProject());
+            final Element peekedCommandElement = currentExecutionList.getElements().peek();
+            final Command.CommandType peekedCommandType = CommandFactory.buildCommand(peekedCommandElement).getCommandType();
+            Command testCommand = new TestCommand();
+            try {
+                testCommand.execute(currentExecutionList);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
