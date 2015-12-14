@@ -21,7 +21,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,6 +30,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -41,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.StringTokenizer;
 
 public class DartCommandLineRunningState extends CommandLineState {
-  private final static String OBSERVATORY_MESSAGE = "Observatory listening on ";
 
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myDebuggingPort = -1;
@@ -105,15 +104,20 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
-    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
-      @Override
-      public void coloredTextAvailable(String text, Key attributes) {
-        if (text.startsWith(OBSERVATORY_MESSAGE)) {
-          text += "\n";
-        }
-        super.coloredTextAvailable(text, attributes);
-      }
-    };
+    final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
+
+    // Commented out code is a workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
+    // The problem is not actula at the moment because Observatory is not turned on for tests
+    //final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
+    //  @Override
+    //  public void coloredTextAvailable(String text, Key attributes) {
+    //    if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
+    //      text += "\n";
+    //    }
+    //    super.coloredTextAvailable(text, attributes);
+    //  }
+    //};
+
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
     return processHandler;
   }
@@ -209,11 +213,10 @@ public class DartCommandLineRunningState extends CommandLineState {
     if (customObservatoryPort > 0) {
       myObservatoryPort = customObservatoryPort;
     }
-    // TODO Enable this for debugging package:test code, but make sure it is for the test runner VM.
-    //else {
-    //  myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
-    //  commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
-    //}
+    else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
+      myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
+      commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+    }
 
     commandLine.addParameter("--trace_service_pause_events");
 
