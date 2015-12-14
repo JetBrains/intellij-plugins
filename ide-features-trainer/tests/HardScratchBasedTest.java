@@ -78,7 +78,7 @@ public class HardScratchBasedTest extends UsefulTestCase{
         myLesson = CourseManagerWithoutIDEA.getInstance().findLesson(lessonId);
     }
 
-    private void setUpSolution() throws ClassNotFoundException, InstantiationException, BadCourseException, IllegalAccessException {
+    private void setUpSolution() throws Exception {
         myLessonSolution = CourseManagerWithoutIDEA.getInstance().findSolution(lessonId);
         assertNotNull(myLessonSolution);
     }
@@ -214,10 +214,12 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
                 }
             });
+            if (myLesson.getPassed()) break;
             EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
                 @Override
                 public void run() {
                     try {
+                        System.out.println(lessonId + ": solving step " + (LessonProcessor.getCurrentExecutionList().getElements().size() - 1));
                         myLessonSolution.solveStep();
                     } catch (Exception e) {
                         e.printStackTrace();

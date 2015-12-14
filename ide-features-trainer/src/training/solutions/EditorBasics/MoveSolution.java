@@ -4,13 +4,12 @@ import com.intellij.openapi.actionSystem.AnAction;
 import training.commands.BadCommandException;
 import training.commands.ExecutionList;
 import training.lesson.LessonProcessor;
-import training.solutions.BaseSolutionClass;
 import training.testFramework.LessonSolution;
 import training.util.PerformActionUtil;
 
 import java.util.concurrent.ExecutionException;
 
-public class DuplicateSolution implements LessonSolution{
+public class MoveSolution implements LessonSolution{
 
     @Override
     public void solveStep() throws InterruptedException, ExecutionException, BadCommandException {
@@ -18,19 +17,17 @@ public class DuplicateSolution implements LessonSolution{
         if (currentExecutionList == null) return;
 
         int stepNumber = currentExecutionList.getElements().size() - 1;
-        if (stepNumber == 1) {
-            final String actionName = "EditorDuplicate";
-            final AnAction action = com.intellij.openapi.actionSystem.ActionManager.getInstance().getAction(actionName);
-            PerformActionUtil.performEditorAction(actionName, currentExecutionList.getEditor());
+        if (stepNumber == 5){
+            final String actionName = "MoveLineDown";
+            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
-        if (stepNumber == 0){
-            BaseSolutionClass.gotoOffset(currentExecutionList.getEduEditor(), 0);
-            final String actionName = "EditorDownWithSelection";
+        if (stepNumber == 4){
+            final String actionName = "MoveLineUp";
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
+        }
+        if (stepNumber == 2){
+            final String actionName = "MoveStatementUp";
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
-            PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
-            final String actionName2 = "EditorDuplicate";
-            PerformActionUtil.performActionDisabledPresentation(actionName2, currentExecutionList.getEditor());
         }
     }
 }

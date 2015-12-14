@@ -98,7 +98,7 @@ public class CourseManagerWithoutIDEA {
 
 
     @Nullable
-    public LessonSolution findSolution(String lessonId) throws ClassNotFoundException, IllegalAccessException, InstantiationException, BadCourseException {
+    public LessonSolution findSolution(String lessonId) throws Exception {
         final Lesson lesson = findLesson(lessonId);
         assert lesson != null;
         if (lesson.getCourse() == null) return null;
@@ -123,7 +123,12 @@ public class CourseManagerWithoutIDEA {
 
         final String solutionPrefix = BaseSolutionClass.class.getPackage().getName();
         final String solutionName = (lessonSolutionName != null) ? lessonSolutionName : "";
-        Class mySolutionClass = Class.forName(solutionName);
+        Class mySolutionClass = null;
+        try {
+            mySolutionClass = Class.forName(solutionName);
+        } catch (ClassNotFoundException e) {
+            throw new Exception("Unable to find solution class for " + lessonId + " lesson");
+        }
         return (LessonSolution) mySolutionClass.newInstance();
     }
 }

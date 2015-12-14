@@ -3,8 +3,8 @@
   <lesson filename="01.Select.xml" solution="training.solutions.EditorBasics.SelectSolution" />
   <lesson filename="02.Comment.xml" solution="training.solutions.EditorBasics.CommentSolution" />
   <lesson filename="03.Delete.xml" solution="training.solutions.EditorBasics.DeleteSolution"/>
-  <lesson filename="04.Duplicate.xml" solution="training.solutions."/>
-  <lesson filename="05.Move.xml" />
-  <lesson filename="06.Collapse.xml" />
+  <lesson filename="04.Duplicate.xml" solution="training.solutions.EditorBasics.DuplicateSolution"/>
+  <lesson filename="05.Move.xml" solution="training.solutions.EditorBasics.MoveSolution"/>
+  <lesson filename="06.Collapse.xml" solution="training.solutions.EditorBasics.CollapseSolution"/>
 </course>
 
