@@ -6,11 +6,14 @@ import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
+import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +61,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String EXPECTED = "Expected: ";
   private static final Pattern EXPECTED_ACTUAL_RESULT = Pattern.compile("\\nExpected: (.*)\\n  Actual: (.*)\\n *\\^\\n Differ.*\\n");
   private static final String FAILED_TO_LOAD = "Failed to load ";
+  private static final String FILE_URL_PREFIX = "dart_location://";
+  private static final String LOADING_PREFIX = "loading ";
 
   private static final Gson GSON = new Gson();
 
@@ -66,6 +71,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   // In theory, test events could be generated asynchronously and out of order. We might want to keep a map of tests to start times
   // so we get accurate durations when tests end. See myTestData.
   private long myStartMillis;
+  private String myLocation;
   private boolean myOutputAppeared = false;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
@@ -131,11 +137,20 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     JsonObject testObj = obj.getAsJsonObject(DEF_TEST);
     myTestId = getInitialTestID(testObj);
     // Not reached if testObj == null.
-    if (myTestId == 0) return true; // Do not display "loading" event. TODO Generalize for multiple suites.
     Test test = getTest(obj);
+    if (!test.hasValidParent() && test.getName().startsWith(LOADING_PREFIX)) {
+      String path = test.getName().substring(LOADING_PREFIX.length());
+      if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
+      return true;
+    }
     String testName = test.getName();
     ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(testName);
-    testStarted.addAttribute("locationHint", "unknown"); // TODO Save file path from hidden "loading" event.
+    String location = "unknown";
+    if (myLocation != null) {
+      String nameList = GSON.toJson(test.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
+      location = myLocation + "," + nameList;
+    }
+    testStarted.addAttribute("locationHint", location);
     myStartMillis = getTestMillis(obj);
     myOutputAppeared = false;
     myParentId = test.getValidParentId();
@@ -149,6 +164,11 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       }
     }
     return result;
+  }
+
+  private static String encodeLocation(String url, Item item) {
+    String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
+    return url + "," + nameList;
   }
 
   private boolean handleTestDone(JsonObject obj) throws ParseException {
@@ -357,7 +377,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         JsonElement testObj = obj.get(DEF_TEST);
         if (testObj != null) {
           return getItem(testObj.getAsJsonObject(), items);
-        } else {
+        }
+        else {
           throw new ParseException("No testId in json object", 0);
         }
       }
@@ -453,6 +474,21 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       else {
         return 0;
       }
+    }
+
+    List<String> nameList() {
+      List<String> names = new ArrayList<String>();
+      addNames(names);
+      return names;
+    }
+
+    void addNames(List<String> names) {
+      if (myParent == null || myParent.isArtificial()) {
+        names.add(StringUtil.escapeStringCharacters(myName));
+        return;
+      }
+      myParent.addNames(names);
+      names.add(StringUtil.escapeStringCharacters(myName.substring(getParent().getName().length() + 1)));
     }
   }
 
