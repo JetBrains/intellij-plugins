@@ -107,7 +107,7 @@ public abstract class ServerRefactoringDialog extends RefactoringDialog {
         // todo show Preview and suggest user to select which potential edits to apply
         final Set<String> excludedIds = myRefactoring.getPotentialEdits();
         try {
-          AssistUtils.applySourceChange(myProject, change, excludedIds);
+          AssistUtils.applySourceChange(myProject, change, false, excludedIds);
         }
         catch (DartSourceEditException e) {
           return e.getMessage();

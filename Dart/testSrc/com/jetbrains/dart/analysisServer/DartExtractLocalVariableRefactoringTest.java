@@ -24,15 +24,15 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
-import com.jetbrains.lang.dart.ide.refactoring.ServerExtractMethodRefactoring;
+import com.jetbrains.lang.dart.ide.refactoring.ServerExtractLocalVariableRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 
-public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase {
+public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureTestCase {
   protected String getBasePath() {
-    return "/analysisServer/refactoring/extract/method";
+    return "/analysisServer/refactoring/extract/localVariable";
   }
 
   @Override
@@ -42,28 +42,18 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
-  public void testFunctionAll() throws Throwable {
+  public void testExpressionAll() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", true, false);
+    doTest(testName + ".dart", true);
   }
 
-  public void testMethodAll() throws Throwable {
+  public void testExpressionSingle() throws Throwable {
     final String testName = getTestName(false);
-    doTest(testName + ".dart", true, false);
-  }
-
-  public void testMethodGetter() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", true, true);
-  }
-
-  public void testMethodSingle() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(testName + ".dart", false, false);
+    doTest(testName + ".dart", false);
   }
 
   @NotNull
-  private ServerExtractMethodRefactoring createRefactoring(String filePath) {
+  private ServerExtractLocalVariableRefactoring createRefactoring(String filePath) {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     final PsiFile psiFile = myFixture.configureByFile(filePath);
     myFixture.doHighlighting(); // make sure server is warmed up
@@ -71,11 +61,11 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
     final SelectionModel selectionModel = getEditor().getSelectionModel();
     int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-    return new ServerExtractMethodRefactoring(getSystemPath(psiFile), offset, length);
+    return new ServerExtractLocalVariableRefactoring(getSystemPath(psiFile), offset, length);
   }
 
-  private void doTest(String filePath, boolean all, boolean asGetter) {
-    final ServerExtractMethodRefactoring refactoring = createRefactoring(filePath);
+  private void doTest(String filePath, boolean all) {
+    final ServerExtractLocalVariableRefactoring refactoring = createRefactoring(filePath);
     // check initial conditions
     final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
     assertNotNull(initialConditions);
@@ -83,7 +73,6 @@ public class DartExtractMethodRefactoringTest extends CodeInsightFixtureTestCase
     // configure
     refactoring.setName("test");
     refactoring.setExtractAll(all);
-    refactoring.setCreateGetter(asGetter);
     // check final conditions
     final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
     assertNotNull(finalConditions);

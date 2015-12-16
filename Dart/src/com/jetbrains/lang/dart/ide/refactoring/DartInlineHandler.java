@@ -104,7 +104,7 @@ public class DartInlineHandler extends InlineActionHandler {
         final SourceChange change = refactoring.getChange();
         assert change != null;
         try {
-          AssistUtils.applySourceChange(project, change);
+          AssistUtils.applySourceChange(project, change, false);
         }
         catch (DartSourceEditException e) {
           CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
