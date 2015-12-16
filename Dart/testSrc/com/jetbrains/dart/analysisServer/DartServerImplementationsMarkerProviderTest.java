@@ -17,11 +17,11 @@ package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
-import com.intellij.util.Alarm;
+import com.intellij.util.TimeoutUtil;
 import com.jetbrains.lang.dart.util.DartTestUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.List;
@@ -46,20 +46,20 @@ public class DartServerImplementationsMarkerProviderTest extends CodeInsightFixt
 
     myFixture.doHighlighting(); // make sure server is warmed up
 
-    final List<GutterMark> gutters = myFixture.findGuttersAtCaret();
+    if (!someGutterHasIcon(myFixture.findGuttersAtCaret(), expectedIcon)) {
+      TimeoutUtil.sleep(200); // wait a bit for info about line markers 'up' to arrive
+    }
 
-    if (!gutters.isEmpty()) {
-      DartServerOverrideMarkerProviderTest.checkGutter(gutters, expectedText, expectedIcon);
+    DartServerOverrideMarkerProviderTest.checkGutter(myFixture.findGuttersAtCaret(), expectedText, expectedIcon);
+  }
+
+  private static boolean someGutterHasIcon(@NotNull final List<GutterMark> gutters, @NotNull final Icon icon) {
+    for (GutterMark gutter : gutters) {
+      if (icon.equals(gutter.getIcon())) {
+        return true;
+      }
     }
-    else {
-      new Alarm(Alarm.ThreadToUse.SWING_THREAD, myTestRootDisposable).addRequest(new Runnable() {
-        @Override
-        public void run() {
-          myFixture.doHighlighting();
-          DartServerOverrideMarkerProviderTest.checkGutter(myFixture.findGuttersAtCaret(), expectedText, expectedIcon);
-        }
-      }, 500, ModalityState.NON_MODAL);
-    }
+    return false;
   }
 
   public void testClassExtended() throws Throwable {
