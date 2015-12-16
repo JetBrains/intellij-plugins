@@ -92,15 +92,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       }
 
       if (myFlashBuilderProjectDir != null && myFlashBuilderProjectDir.exists()) {
-        AccessToken l = WriteAction.start();
-        try {
-          myFlashBuilderProjectDir.delete(this);
-        }
-        catch (IOException ignore) {
-        }
-        finally {
-          l.finish();
-        }
+        delete(myFlashBuilderProjectDir);
 
         myFlashBuilderProjectDir = null;
       }
