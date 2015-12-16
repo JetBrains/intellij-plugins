@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.testFramework.ThreadTracker;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -76,6 +77,13 @@ public class DartTestUtils {
                     "the corresponding JUnit run configuration (Run | Edit Configurations)");
       }
       VfsRootAccess.allowRootAccess(disposable, sdkHome);
+      // Dart Analysis Server threads
+      ThreadTracker.longRunningThreadCreated(ApplicationManager.getApplication(),
+                                             "ByteRequestSink.LinesWriterThread",
+                                             "ByteResponseStream.LinesReaderThread",
+                                             "RemoteAnalysisServerImpl watcher",
+                                             "ServerErrorReaderThread",
+                                             "ServerResponseReaderThread");
     }
     else {
       sdkHome = SDK_HOME_PATH;
