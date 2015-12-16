@@ -58,4 +58,7 @@ public class AngularAttributesRegistry {
   public static boolean isVariableAttribute(String name, Project project) {
     return name.startsWith("#") && AngularIndexUtil.hasAngularJS2(project);
   }
+  public static boolean isBindingAttribute(String name, Project project) {
+    return name.startsWith("[") && name.endsWith("]") && AngularIndexUtil.hasAngularJS2(project);
+  }
 }

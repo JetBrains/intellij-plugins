@@ -120,6 +120,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
           AngularAttributesRegistry.isVariableAttribute(attrName, project)) {
         return createDescriptor(project, attrName);
       }
+      if (AngularAttributesRegistry.isBindingAttribute(attrName, project)) {
+        return new AngularBindingDescriptor(project, attrName);
+      }
 
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       ThreeState attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
