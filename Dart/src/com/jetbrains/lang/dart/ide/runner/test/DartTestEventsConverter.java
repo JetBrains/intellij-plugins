@@ -143,7 +143,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
       return true;
     }
-    String testName = test.getName();
+    String testName = test.getBaseName();
     ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(testName);
     String location = "unknown";
     if (myLocation != null) {
@@ -164,11 +164,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       }
     }
     return result;
-  }
-
-  private static String encodeLocation(String url, Item item) {
-    String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
-    return url + "," + nameList;
   }
 
   private boolean handleTestDone(JsonObject obj) throws ParseException {
@@ -193,7 +188,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     if (group.isArtificial()) return true; // Ignore artificial groups.
     myTestId = group.getId();
     myParentId = group.getValidParentId();
-    ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteStarted(group.getName());
+    ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteStarted(group.getBaseName());
     // Possible attributes: "nodeType" "nodeArgs" "running"
     boolean result = finishMessage(groupMsg);
     myParentId = myTestId;
@@ -203,15 +198,16 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private boolean handleError(JsonObject obj) throws ParseException {
     String message = getErrorMessage(obj);
     if (message.startsWith(FAILED_TO_LOAD)) {
-      // An error due to loading failure probably was preceeded by a start event that was not recorded since it is not a test.
+      // An error due to loading failure probably was preceded by a start event that was not recorded since it is not a test.
       JsonElement elem = obj.get(JSON_TEST_ID);
-      if (elem != null && elem.isJsonPrimitive() && myTestData.get(elem.getAsInt()) == null) {
+      if (elem != null && elem.isJsonPrimitive() && (myTestData.get(elem.getAsInt()) == null || !myTestData.get(elem.getAsInt()).hasValidParent())) {
         return failedToLoad(message);
       }
     }
+    Test test = getTest(obj);
     String expectedText = null, actualText = null, failureMessage = message;
-    ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(getTestName(obj));
-    ServiceMessageBuilder msg = ServiceMessageBuilder.testStdErr(getTestName(obj));
+    ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
+    ServiceMessageBuilder msg = ServiceMessageBuilder.testStdErr(test.getBaseName());
     int firstExpectedIndex = message.indexOf(EXPECTED);
     if (firstExpectedIndex >= 0) {
       Matcher matcher = EXPECTED_ACTUAL_RESULT.matcher(message);
@@ -238,7 +234,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handlePrint(JsonObject obj) throws ParseException {
-    ServiceMessageBuilder message = ServiceMessageBuilder.testStdOut(getTestName(obj));
+    Test test = getTest(obj);
+    ServiceMessageBuilder message = ServiceMessageBuilder.testStdOut(test.getBaseName());
     String out;
     if (myOutputAppeared) {
       out = getMessage(obj) + NEWLINE;
@@ -273,7 +270,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   private boolean processGroupDone(Group group) throws ParseException {
     if (group.isArtificial()) return true;
-    ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getName());
+    ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getBaseName());
     myTestId = group.getId();
     myParentId = group.getValidParentId();
     finishMessage(groupMsg);
@@ -288,7 +285,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       myParentId = test.getParent().getId();
     }
     long duration = getTestMillis(obj) - myStartMillis;
-    ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(getTestName(obj));
+    ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
     testFinished.addAttribute("duration", Long.toString(duration));
     return finishMessage(testFinished);
   }
@@ -333,12 +330,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     JsonElement val = obj == null ? null : obj.get(name);
     if (val == null || !val.isJsonPrimitive()) throw new ParseException("Value is not type boolean: " + val, 0);
     return val.getAsBoolean();
-  }
-
-  @NotNull
-  private String getTestName(JsonObject obj) throws ParseException {
-    Test test = getTest(obj);
-    return test.getName();
   }
 
   @NotNull
@@ -451,6 +442,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       return myName;
     }
 
+    String getBaseName() {
+      if (hasValidParent()) {
+        return myName.substring(getParent().getName().length() + 1);
+      } else {
+        return myName;
+      }
+    }
+
     Group getParent() {
       return myParent;
     }
@@ -483,12 +482,10 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     void addNames(List<String> names) {
-      if (myParent == null || myParent.isArtificial()) {
-        names.add(StringUtil.escapeStringCharacters(myName));
-        return;
+      if (hasValidParent()) {
+        myParent.addNames(names);
+        names.add(StringUtil.escapeStringCharacters(getBaseName()));
       }
-      myParent.addNames(names);
-      names.add(StringUtil.escapeStringCharacters(myName.substring(getParent().getName().length() + 1)));
     }
   }
 
