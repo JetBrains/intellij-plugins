@@ -10,11 +10,14 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.search.JSClassSearch;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.Query;
+import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -35,11 +38,12 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
           JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
         final XmlBackedJSClass clazz = XmlBackedJSClassFactory.getInstance().getXmlBackedClass((XmlTag)element);
         Query<JSClass> classQuery = JSClassSearch.searchClassInheritors(clazz, true);
-        if (classQuery.findFirst() != null) {
-          result.add(new LineMarkerInfo<JSClass>(clazz, element.getTextOffset(), AllIcons.Gutter.OverridenMethod,
+        XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)element);
+        if (classQuery.findFirst() != null && nameElement != null) {
+          result.add(new LineMarkerInfo<JSClass>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
                                                  Pass.UPDATE_OVERRIDEN_MARKERS,
                                                  JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
-                                                 JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler));
+                                                 JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }
       }
     }
