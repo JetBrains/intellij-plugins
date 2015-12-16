@@ -56,6 +56,12 @@ public class DartServerExtractLocalVariableHandler implements RefactoringActionH
 
   @Override
   public void invoke(final @NotNull Project project, final Editor editor, PsiFile file, DataContext dataContext) {
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
+      new DartIntroduceVariableHandler().invoke(project, editor, file, dataContext);
+      return;
+    }
+
     if (editor == null || file == null) {
       return;
     }
@@ -145,11 +151,6 @@ class ExtractLocalVariableProcessor {
     return expressions;
   }
 
-  private boolean isInPlaceRenameAvailable() {
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    return sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") >= 0;
-  }
-
   private void performInPlace() {
     final String[] names = refactoring.getNames();
     if (names.length != 0) {
@@ -179,7 +180,7 @@ class ExtractLocalVariableProcessor {
   }
 
   private void performOnElementOccurrences() {
-    if (editor.getSettings().isVariableInplaceRenameEnabled() && isInPlaceRenameAvailable()) {
+    if (editor.getSettings().isVariableInplaceRenameEnabled()) {
       performInPlace();
     }
     else {
