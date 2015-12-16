@@ -89,6 +89,7 @@ public class DartAnalysisServerService {
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -655,6 +656,35 @@ public class DartAnalysisServerService {
         }
       }
     });
+  }
+
+  @NotNull
+  public List<HoverInformation> analysis_getHover(@NotNull final String _filePath, final int offset) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+    final List<HoverInformation> result = Lists.newArrayList();
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return HoverInformation.EMPTY_LIST;
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.analysis_getHover(filePath, offset, new GetHoverConsumer() {
+      @Override
+      public void computedHovers(HoverInformation[] hovers) {
+        Collections.addAll(result, hovers);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        logError("analysis_getHover()", filePath, error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_HOVER_TIMEOUT);
+    return result;
   }
 
   @Nullable
