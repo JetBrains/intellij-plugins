@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
@@ -143,6 +144,7 @@ public class DartCommandLineRunningState extends CommandLineState {
                               : myRunnerParameters.getWorkingDirectory();
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
+    commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
