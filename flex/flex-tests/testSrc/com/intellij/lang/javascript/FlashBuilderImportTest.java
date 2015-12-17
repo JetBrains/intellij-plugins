@@ -13,9 +13,8 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
-import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -25,6 +24,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
@@ -49,13 +49,13 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    final AccessToken accessToken = WriteAction.start();
-    try {
-      myFlashBuilderProjectDir = prepareFlashBuilderProjectDir();
-    }
-    finally {
-      accessToken.finish();
-    }
+    ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<Object, IOException>() {
+      @Override
+      public Object compute() throws IOException {
+        myFlashBuilderProjectDir = prepareFlashBuilderProjectDir();
+        return null;
+      }
+    });
   }
 
   private VirtualFile prepareFlashBuilderProjectDir() throws IOException {
@@ -81,13 +81,12 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       if (myModule != null) {
         final Sdk sdk = FlexUtils.getSdkForActiveBC(myModule);
         if (sdk != null) {
-          final AccessToken token = WriteAction.start();
-          try {
-            ProjectJdkTable.getInstance().removeJdk(sdk);
-          }
-          finally {
-            token.finish();
-          }
+          ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+              ProjectJdkTable.getInstance().removeJdk(sdk);
+            }
+          });
         }
       }
 

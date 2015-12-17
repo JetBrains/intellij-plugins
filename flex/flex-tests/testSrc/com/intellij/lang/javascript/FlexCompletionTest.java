@@ -15,8 +15,7 @@ import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
@@ -994,13 +993,12 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   private static void replace(final String original, final String replacement, final Editor editor) {
     final int offset = editor.getDocument().getText().indexOf(original);
     assertTrue(offset != -1);
-    AccessToken l = WriteAction.start();
-    try {
-      editor.getDocument().replaceString(offset, offset + original.length(), replacement);
-    }
-    finally {
-      l.finish();
-    }
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        editor.getDocument().replaceString(offset, offset + original.length(), replacement);
+      }
+    });
 
     PsiDocumentManager.getInstance(editor.getProject()).commitDocument(editor.getDocument());
 
