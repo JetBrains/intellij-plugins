@@ -32,6 +32,7 @@ import org.junit.runners.Parameterized;
 import training.editor.EduEditor;
 import training.editor.EduEditorFactory;
 import training.editor.EduEditorManager;
+import training.editor.EduEditorProvider;
 import training.lesson.*;
 import training.lesson.exceptons.*;
 import training.testFramework.LessonSolution;
@@ -101,7 +102,6 @@ public class HardScratchBasedTest extends UsefulTestCase{
     @Before
     public void setUp() throws Exception {
         final Ref<Exception> ex = new Ref<Exception>();
-        final EduEditorFactory[] eduEditorFactory = new EduEditorFactory[1];
         Runnable runnable = new Runnable() {
             public void run() {
 
@@ -118,12 +118,12 @@ public class HardScratchBasedTest extends UsefulTestCase{
                     myProjectPath = myProjectRoot.getPath();
 
                     //Swap EditorFactoryClasses with EduEditorFactory
-                    eduEditorFactory[0] = new EduEditorFactory(ProjectManager.getInstance());
-                    eduEditorFactory[0].cloneEventMulticaster(myProject);
+                    final EduEditorFactory eduEditorFactory = new EduEditorFactory(ProjectManager.getInstance());
+                    eduEditorFactory.cloneEventMulticaster(myProject);
                     final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
                     final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
 //                    eduEditorFactory[0].cloneEventMulticaster(myProject);
-                    componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory[0]);
+                    componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory);
 
                 } catch (Exception e) {
                     ex.set(e);
@@ -143,6 +143,8 @@ public class HardScratchBasedTest extends UsefulTestCase{
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
+                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
+
                     disposeAllEduEditors();
                     if(myProjectFixture != null) {
                         myProjectFixture.tearDown();
@@ -232,6 +234,9 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
     private void disposeAllEduEditors() {
         final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
+        for (int i = 0; i < allNotDisposedEduEditors.length; i++) {
+            EduEditorManager.getInstance().clearMap();
+        }
         for (EduEditor eduEditor : allNotDisposedEduEditors) {
             Disposer.dispose(eduEditor);
         }

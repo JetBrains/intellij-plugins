@@ -17,19 +17,19 @@ public class CollapseSolution implements LessonSolution{
         if (currentExecutionList == null) return;
 
         int stepNumber = currentExecutionList.getElements().size() - 1;
-        if (stepNumber == 3) {
+        if (stepNumber == 5) {
             final String actionName = "CollapseRegion";
             PerformActionUtil.performEditorAction(actionName, currentExecutionList.getEditor());
         }
-        if (stepNumber == 2){
+        if (stepNumber == 4){
             final String actionName = "ExpandRegion";
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
-        if (stepNumber == 1){
+        if (stepNumber == 3){
             final String actionName = "CollapseAllRegions";
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }
-        if (stepNumber == 0){
+        if (stepNumber == 2){
             final String actionName = "ExpandAllRegions";
             PerformActionUtil.performActionDisabledPresentation(actionName, currentExecutionList.getEditor());
         }

@@ -165,7 +165,7 @@ public class ActionsRecorder implements Disposable {
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
 
                 //if action called not from project or current editor is different from EduEditor
-                if (!editorFlag) return;
+                 if (!editorFlag) return;
 
                 if(triggerQueue.size() == 0) {
                     if (isTaskSolved(document, target)) {
@@ -259,7 +259,8 @@ public class ActionsRecorder implements Disposable {
         myDocumentListener = null;
     }
 
-    private boolean equalStr(@NotNull String str1, @NotNull String str2){
+    private boolean equalStr(@Nullable String str1, @Nullable String str2){
+        if ((str1 == null) || (str2 == null)) return false;
         return (str1.toUpperCase().equals(str2.toUpperCase()));
     }
 }

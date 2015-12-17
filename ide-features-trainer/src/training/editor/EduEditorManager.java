@@ -3,6 +3,7 @@ package training.editor;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.BidirectionalMap;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.List;
 
@@ -39,4 +40,8 @@ public class EduEditorManager {
         return fileEduEditorMap.values().toArray(allNotDisposedEduEditors);
     }
 
+    @TestOnly
+    public void clearMap(){
+        fileEduEditorMap.clear();
+    }
 }
