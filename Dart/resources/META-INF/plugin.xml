@@ -146,12 +146,6 @@
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix"
              implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionWeigher"/>
-    <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartKeywordCompletionContributor"/>-->
-    <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>-->
-    <!--<completion.contributor language="Dart"-->
-                            <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>-->
-    <!--<completion.contributor language="Dart"-->
-                            <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>-->
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 

@@ -60,6 +60,7 @@ import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
@@ -539,7 +540,9 @@ public class DartAnalysisServerService {
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
     if (file != null && file.isInLocalFileSystem()) {
-      return file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file) || file.getName().equals(".analysis_options");
+      return file.getFileType() == DartFileType.INSTANCE ||
+             HtmlUtil.isHtmlFile(file) ||
+             file.getName().equals(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS);
     }
     return false;
   }
