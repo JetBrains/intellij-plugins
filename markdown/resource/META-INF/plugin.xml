@@ -21,7 +21,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <fileTypeFactory implementation="org.intellij.plugins.markdown.lang.MarkdownFileTypeFactory"/>
     <lang.parserDefinition language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition"/>

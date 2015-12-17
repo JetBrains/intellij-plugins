@@ -30,7 +30,6 @@
     <codeInsight.lineMarkerProvider language="XML" implementationClass="com.intellij.flex.uiDesigner.FlashUIDesignerLineMarkerProvider"/>
     <selectInTarget implementation="com.intellij.flex.uiDesigner.SelectInDesigner"/>
 
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij.flex.uiDesigner">

@@ -41,7 +41,6 @@
 
     <profiler.SnapshotProvider implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileProvider"/>
     <programRunner implementation="com.jetbrains.actionscript.profiler.ActionScriptProfileRunner"/>
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <applicationService serviceInterface="com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings"
                         serviceImplementation="com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings"/>

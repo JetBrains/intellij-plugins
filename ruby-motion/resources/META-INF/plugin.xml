@@ -43,7 +43,6 @@
     <lang.substitutor language="PlistBase" implementationClass="org.jetbrains.plugins.ruby.motion.RubyMotionPListLanguageSubstitutor"/>
 
 
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.ruby">

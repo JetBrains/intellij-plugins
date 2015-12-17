@@ -20,8 +20,7 @@
     <depends>com.intellij.modules.ultimate</depends>
     <depends>com.intellij.database</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-        <psi.referenceContributor language="CFML" implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
+      <psi.referenceContributor language="CFML" implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
         <programRunner implementation="com.intellij.coldFusion.UI.runner.CfmlRunner"/>
         <configurationType implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationType"/>
       <localInspection language="CFML" shortName="CfmlReferenceInspection" bundle="messages.CfmlBundle" key="cfml.references.inspection"

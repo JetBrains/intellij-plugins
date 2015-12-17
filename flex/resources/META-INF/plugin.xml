@@ -21,7 +21,6 @@
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
     <compileServer.plugin classpath="flex-jps-plugin.jar;flex-shared.jar"/>

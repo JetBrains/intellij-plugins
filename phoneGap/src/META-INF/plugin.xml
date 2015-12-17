@@ -42,7 +42,6 @@
 
     <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 
   <project-components>

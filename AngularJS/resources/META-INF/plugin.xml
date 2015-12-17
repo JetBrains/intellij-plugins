@@ -17,8 +17,6 @@
 
     <lang.surroundDescriptor language="AngularJS" implementationClass="org.angularjs.refactoring.surround.AngularJSExpressionSurroundDescriptor"/>
 
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
     <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" />
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>

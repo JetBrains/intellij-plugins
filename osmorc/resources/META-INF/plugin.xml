@@ -77,7 +77,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndProjectImportProvider"/>
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndModuleImportProvider"/>
