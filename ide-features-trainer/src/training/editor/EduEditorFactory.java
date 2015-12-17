@@ -4,11 +4,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditReadOnlyListener;
 import com.intellij.openapi.editor.ex.ErrorStripeListener;
 import com.intellij.openapi.editor.ex.FocusChangeListener;
+import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.editor.impl.EditorFactoryImpl;
 import com.intellij.openapi.editor.impl.event.EditorEventMulticasterImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -17,13 +17,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.text.CharArrayCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.lesson.CourseManager;
 
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,8 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
 
     public EduEditorFactory(ProjectManager projectManager) {
         super(projectManager);
-        this.myDefaultEditorFactory = new EditorFactoryImpl(projectManager);
+//        this.myDefaultEditorFactory = new EditorFactoryImpl(projectManager);
+        this.myDefaultEditorFactory = (EditorFactoryImpl) EditorFactoryImpl.getInstance();
     }
 
     @Override
@@ -52,17 +53,38 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
         myDefaultEditorFactory.disposeComponent();
     }
 
-    @NotNull
-    @Override
-    public Document createDocument(@NotNull CharSequence text) {
-        return myDefaultEditorFactory.createDocument(text);
-    }
 
     @NotNull
     @Override
     public Document createDocument(@NotNull char[] text) {
-        return myDefaultEditorFactory.createDocument(text);
+        return myDefaultEditorFactory.createDocument(new CharArrayCharSequence(text));
     }
+
+    @NotNull
+    @Override
+    public Document createDocument(@NotNull CharSequence text) {
+        DocumentImpl document = new DocumentImpl(text);
+        ((EditorEventMulticasterImpl) myDefaultEditorFactory.getEventMulticaster()).registerDocument(document);
+        return document;
+    }
+
+    @NotNull
+    @Override
+    public Document createDocument(boolean allowUpdatesWithoutWriteAction) {
+        DocumentImpl document = new DocumentImpl("", allowUpdatesWithoutWriteAction);
+        ((EditorEventMulticasterImpl) myDefaultEditorFactory.getEventMulticaster()).registerDocument(document);
+        return document;
+    }
+
+    @NotNull
+    @Override
+    public Document createDocument(@NotNull CharSequence text, boolean acceptsSlashR, boolean allowUpdatesWithoutWriteAction) {
+        DocumentImpl document = new DocumentImpl(text, acceptsSlashR, allowUpdatesWithoutWriteAction);
+        ((EditorEventMulticasterImpl) myDefaultEditorFactory.getEventMulticaster()).registerDocument(document);
+        return document;
+    }
+
+
 
     @Override
     public Editor createEditor(@NotNull Document document) {
@@ -145,7 +167,8 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
     @NotNull
     @Override
     public EditorEventMulticaster getEventMulticaster() {
-        return super.getEventMulticaster();
+//        return super.getEventMulticaster();
+        return myDefaultEditorFactory.getEventMulticaster();
     }
 
     @Override
@@ -160,7 +183,11 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
     }
 
     public void cloneEventMulticaster(Project project) throws Exception {
-        final EditorEventMulticasterImpl clonedEventMulticaster =  (EditorEventMulticasterImpl) EditorFactory.getInstance().getEventMulticaster();
+
+    }
+
+    public void cloneEventMulticasterEx(Project project) throws Exception {
+        final EditorEventMulticasterImpl clonedEventMulticaster =  (EditorEventMulticasterImpl) EditorFactoryImpl.getInstance().getEventMulticaster();
         final Map<Class, List> listeners = clonedEventMulticaster.getListeners();
         final Collection<List> collectionOfListOfListeners = listeners.values();
         EditorEventMulticasterImpl myEventMulticaster = (EditorEventMulticasterImpl) getEventMulticaster();
