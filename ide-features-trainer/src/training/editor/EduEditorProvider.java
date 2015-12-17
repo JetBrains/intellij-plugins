@@ -1,15 +1,14 @@
 package training.editor;
 
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorPolicy;
-import com.intellij.openapi.fileEditor.FileEditorProvider;
-import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import training.lesson.CourseManager;
 
 import java.util.ArrayList;
@@ -38,6 +37,14 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
     @Override
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         final EduEditorManager eduEditorManager = EduEditorManager.getInstance();
+        //Under unit test mode create a new EduEditor with a new EventMulticaster
+//        if (ApplicationManager.getApplication().isUnitTestMode()) {
+//            if (eduEditorManager.fileEduEditorMap.containsKey(file)) {
+//                EduEditor eduEditor = eduEditorManager.fileEduEditorMap.get(file);
+//                FileEditorManager.getInstance(project).closeFile(file);
+//                eduEditorManager.fileEduEditorMap.remove(file);
+//            }
+//        }
         if(eduEditorManager.fileEduEditorMap.containsKey(file)){
             EduEditor eduEditor = eduEditorManager.fileEduEditorMap.get(file);
             if(!eduEditor.isDisposed() && !eduEditor.getEditor().getProject().isDisposed()) {
@@ -45,13 +52,11 @@ public class EduEditorProvider implements FileEditorProvider, DumbAware {
             } else {
                 eduEditor = new EduEditor(project, file);
                 eduEditorManager.registerEduEditor(eduEditor, file);
-                eduEditorManager.fileEduEditorMap.put(file, eduEditor);
                 return eduEditor;
             }
         } else {
             EduEditor eduEditor = new EduEditor(project, file);
             eduEditorManager.registerEduEditor(eduEditor, file);
-            eduEditorManager.fileEduEditorMap.put(file, eduEditor);
             return eduEditor;
         }
     }
