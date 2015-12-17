@@ -24,7 +24,6 @@ import java.util.List;
 
 public class DartDocUtil {
 
-
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
 
   public static String generateDoc(final PsiElement element) {
@@ -44,7 +43,8 @@ public class DartDocUtil {
     final PsiFile file = element.getContainingFile();
     if (file != null) {
       containingLibraryName = DartResolveUtil.getLibraryName(file);
-    } else {
+    }
+    else {
       containingLibraryName = null;
     }
 
@@ -55,7 +55,8 @@ public class DartDocUtil {
       builder.append(dartClass.getName());
       appendTypeParams(builder, dartClass.getTypeParameters());
       containingClassDescription = builder.toString();
-    } else {
+    }
+    else {
       containingClassDescription = null;
     }
 
@@ -81,7 +82,8 @@ public class DartDocUtil {
       builder.append("<b>Signature:</b> ");
       if (signatureIsHtml) {
         builder.append(signature);
-      } else {
+      }
+      else {
         builder.append(StringUtil.escapeXml(signature));
       }
       builder.append("<br>");
@@ -259,7 +261,13 @@ public class DartDocUtil {
           buf.append('\n');
         }
 
-        buf.append(StringUtil.trimStart(comment.getText(), SINGLE_LINE_DOC_COMMENT).trim());
+        final String text = comment.getText();
+        if (text.startsWith(SINGLE_LINE_DOC_COMMENT + " ")) {
+          buf.append(StringUtil.trimStart(text, SINGLE_LINE_DOC_COMMENT + " "));
+        }
+        else {
+          buf.append(StringUtil.trimStart(text, SINGLE_LINE_DOC_COMMENT));
+        }
       }
     }
 

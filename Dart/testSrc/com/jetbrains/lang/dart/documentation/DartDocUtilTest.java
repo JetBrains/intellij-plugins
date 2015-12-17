@@ -278,27 +278,27 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs1() throws Exception {
-    doTest("<code><b>Signature:</b> class <b>A</b><br><br><b>Containing library:</b> test.dart<br></code><br><p>doc1\n" +
-           "doc2</p>\n",
+    doTest("<code><b>Signature:</b> class <b>A</b><br><br><b>Containing library:</b> test.dart<br></code><br><p>  doc1 <br />\n" +
+           "doc2   </p>\n",
 
-           "// not doc \n" +
-           "///   doc1  \n" +
+           "// not doc \n"    +
+           "///   doc1  \n"   +
            " /* not doc */\n" +
            "   /// doc2   \n" +
-           " // not doc \n" +
+           " // not doc \n"   +
            "<caret>class A{}");
   }
 
   public void testClassSingleLineDocs2() throws Exception {
-    doTest("<code><b>Signature:</b> class <b>A</b><br><br><b>Containing library:</b> test.dart<br></code><br><p>doc1\n" +
-           "doc2</p>\n",
+    doTest("<code><b>Signature:</b> class <b>A</b><br><br><b>Containing library:</b> test.dart<br></code><br><p>  doc1 <br />\n" +
+           "doc2   </p>\n",
 
-           "@deprecated" +
-           "// not doc \n" +
-           "///   doc1  \n" +
+           "@deprecated"      +
+           "// not doc \n"    +
+           "///   doc1  \n"   +
            " /* not doc */\n" +
-           "   /// doc2   \n" +
-           " // not doc \n" +
+           "   ///doc2   \n"  +
+           " // not doc \n"   +
            "<caret>class A{}");
   }
 
@@ -331,16 +331,20 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMethodSingleLineDocs() throws Exception {
     doTest("<code><b>Signature:</b> <b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing library:</b> test.dart<br>" +
-           "<b>Containing class:</b> A<br></code><br><p>doc1\n" +
-           "doc2</p>\n",
+           "<b>Containing class:</b> A<br></code><br><p>  doc1  </p>\n"                                                       +
+           "\n"                                                                                                               +
+           "<pre><code>    doc2\n"                                                                                            +
+           "</code></pre>\n",
 
-           "class A{\n" +
-           "// not doc \n" +
-           "///   doc1  \n" +
-           " /* not doc */\n" +
-           "   /// doc2   \n" +
-           " // not doc \n" +
-           "<caret>foo(){}\n" +
+           "class A{\n"           +
+           "// not doc \n"        +
+           "///   doc1  \n"       +
+           " /* not doc */\n"     +
+           "   ///\n"             +
+           "   ///     doc2   \n" +
+           "   ///\n"             +
+           " // not doc \n"       +
+           "<caret>foo(){}\n"     +
            "}");
   }
 }
