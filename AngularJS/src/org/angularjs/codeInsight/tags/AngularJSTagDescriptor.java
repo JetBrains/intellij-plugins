@@ -16,6 +16,8 @@ import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
+import org.angularjs.codeInsight.attributes.AngularBindingDescriptor;
+import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,11 +60,14 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    final String string = getDeclaration().getTypeString();
+    final JSImplicitElement declaration = getDeclaration();
+    final String string = declaration.getTypeString();
     final String attributes = string.split(";", -1)[3];
     final String[] split = attributes.split(",");
     final XmlAttributeDescriptor[] result;
-    if (split.length == 1 && split[0].isEmpty()) {
+    if (context != null && AngularIndexUtil.hasAngularJS2(context.getProject())) {
+      result = AngularBindingDescriptor.getBindingDescriptors(declaration);
+    } else if (split.length == 1 && split[0].isEmpty()) {
       result = XmlAttributeDescriptor.EMPTY;
     } else {
       result = new XmlAttributeDescriptor[split.length];
@@ -70,7 +75,6 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
         result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
       }
     }
-
     final XmlAttributeDescriptor[] commonAttributes = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
     return ArrayUtil.mergeArrays(result, commonAttributes);
   }

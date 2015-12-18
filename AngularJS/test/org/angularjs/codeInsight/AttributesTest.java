@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspectionBase;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -297,6 +298,33 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         assertNotNull(resolve);
         assertEquals("binding.after.html", resolve.getContainingFile().getName());
         assertEquals("#username", resolve.getContainingFile().findElementAt(resolve.getTextOffset()).getText());
+      }
+    });
+  }
+
+  public void testBindingCompletion2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("object_binding.html", "angular2.js", "object.ts");
+        myFixture.completeBasic();
+        myFixture.checkResultByFile("object_binding.after.html");
+      }
+    });
+  }
+
+  public void testBindingResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("object_binding.after.html", "angular2.js", "object.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("object.ts", resolve.getContainingFile().getName());
+        assertInstanceOf(resolve, JSField.class);
       }
     });
   }

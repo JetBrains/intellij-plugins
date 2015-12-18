@@ -120,16 +120,18 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
           AngularAttributesRegistry.isVariableAttribute(attrName, project)) {
         return createDescriptor(project, attrName);
       }
-      if (AngularAttributesRegistry.isBindingAttribute(attrName, project)) {
-        return new AngularBindingDescriptor(project, attrName);
-      }
 
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       ThreeState attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (attributeAvailable == ThreeState.UNSURE) {
         attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesIndex.KEY);
       }
-      return attributeAvailable == ThreeState.YES ? createDescriptor(project, attributeName) : null;
+      if (attributeAvailable == ThreeState.YES) {
+        return createDescriptor(project, attributeName);
+      }
+      if (AngularAttributesRegistry.isBindingAttribute(attrName, project)) {
+        return new AngularBindingDescriptor(xmlTag, attrName);
+      }
     }
     return null;
   }
