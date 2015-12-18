@@ -72,13 +72,8 @@ public class CfmlUnitRemoteTestsRunner {
       }
     };
 
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      runnable.run();
-    }
-    else {
-      ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-      ApplicationManager.getApplication().invokeAndWait(runnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
-    }
+    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+    ApplicationManager.getApplication().invokeAndWait(runnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
     if (!error.isNull()) {
       //noinspection ThrowableResultOfMethodCallIgnored
       throw new ExecutionException(error.get().getMessage());
@@ -111,13 +106,8 @@ public class CfmlUnitRemoteTestsRunner {
         });
       }
     };
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      runnable.run();
-    }
-    else {
-      ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-      ApplicationManager.getApplication().invokeAndWait(runnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
-    }
+    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+    ApplicationManager.getApplication().invokeAndWait(runnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
 
     if (!error.isNull()) {
       //noinspection ThrowableResultOfMethodCallIgnored
