@@ -1,6 +1,8 @@
-package com.jetbrains.lang.dart.ide.runner.unittest;
+package com.jetbrains.lang.dart.ide.runner.util;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
@@ -20,14 +22,17 @@ import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   private static final List<Location> NONE = Collections.emptyList();
+  private static final Gson GSON = new Gson();
 
   public static final DartTestLocationProvider INSTANCE = new DartTestLocationProvider();
+  public static final Type STRING_LIST_TYPE = new TypeToken<List<String>>() {}.getType();
 
   @NotNull
   @Override
@@ -35,24 +40,24 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
                                     @NotNull String path,
                                     @NotNull Project project,
                                     @NotNull GlobalSearchScope scope) {
-    ///Users/x/projects/foo/test/foo_test.dart,main tests/calculate_fail
+    // path is like /Users/x/projects/foo/test/foo_test.dart,{"main tests","calculate_fail"}
 
-    final List<String> elements = StringUtil.split(path, ",");
-    if (elements.size() != 2) {
-      return NONE;
-    }
+    int commaIdx = path.indexOf(',');
+    if (commaIdx < 0) return NONE;
+    String filePath = path.substring(0, commaIdx);
+    String names = path.substring(commaIdx + 1);
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(elements.get(0));
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file == null) {
       return NONE;
     }
 
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-    return getLocation(project, pathToNodes(elements.get(1)), psiFile);
+    return getLocation(project, pathToNodes(names), psiFile);
   }
 
   private static List<String> pathToNodes(final String element) {
-    return StringUtil.split(element, "/");
+    return GSON.fromJson(element, STRING_LIST_TYPE);
   }
 
   @VisibleForTesting
@@ -64,7 +69,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
 
     final List<Location> locations = new ArrayList<Location>();
 
-    if (psiFile instanceof DartFile) {
+    if (psiFile instanceof DartFile && !nodes.isEmpty()) {
 
       PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<PsiElement>() {
 
@@ -72,7 +77,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
         public boolean execute(@NotNull final PsiElement element) {
           if (element instanceof DartCallExpression) {
             DartCallExpression expression = (DartCallExpression)element;
-            if (DartUnitRunConfigurationProducer.isTest(expression) || DartUnitRunConfigurationProducer.isGroup(expression)) {
+            if (TestUtil.isTest(expression) || TestUtil.isGroup(expression)) {
               if (nodes.get(nodes.size() - 1).equals(getTestLabel(expression))) {
                 boolean matches = true;
                 for (int i = nodes.size() - 2; i >= 0 && matches; --i) {
@@ -97,7 +102,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
           return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true, new Condition<PsiElement>() {
             @Override
             public boolean value(final PsiElement element) {
-              return element instanceof DartCallExpression && DartUnitRunConfigurationProducer.isGroup((DartCallExpression)element);
+              return element instanceof DartCallExpression && TestUtil.isGroup((DartCallExpression)element);
             }
           });
         }

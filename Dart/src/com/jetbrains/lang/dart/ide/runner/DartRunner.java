@@ -23,9 +23,11 @@ import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
+import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -43,8 +45,10 @@ public class DartRunner extends DefaultProgramRunner {
 
   @Override
   public boolean canRun(final @NotNull String executorId, final @NotNull RunProfile profile) {
-    return (profile instanceof DartRunConfigurationBase && (DefaultRunExecutor.EXECUTOR_ID.equals(executorId) ||
-                                                            DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)))
+    return (profile instanceof DartCommandLineRunConfiguration && (DefaultRunExecutor.EXECUTOR_ID.equals(executorId) ||
+                                                                   DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)))
+           ||
+           (profile instanceof DartTestRunnerParameters && DefaultRunExecutor.EXECUTOR_ID.equals(executorId))
            ||
            (profile instanceof DartRemoteDebugConfiguration && DefaultDebugExecutor.EXECUTOR_ID.equals(executorId));
   }

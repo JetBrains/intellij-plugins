@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 
 /**
  * @author: Fedor.Korotkov
@@ -25,9 +26,7 @@ public class DartCodeGenerateUtil {
   }
 
   private static String trimDummy(String text) {
-    if (text.endsWith(CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED)) {
-      text = text.substring(0, text.length() - CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED.length());
-    }
+    text = StringUtil.trimEnd(text, CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED);
     return text;
   }
 }
