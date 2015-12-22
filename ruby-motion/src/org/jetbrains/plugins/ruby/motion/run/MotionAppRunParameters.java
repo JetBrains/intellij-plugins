@@ -3,7 +3,7 @@ package org.jetbrains.plugins.ruby.motion.run;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessHandler;
-import com.jetbrains.cidr.execution.CocoaRunParametersBase;
+import com.jetbrains.cidr.execution.AppCodeRunParametersBase;
 import com.jetbrains.cidr.execution.Installer;
 import com.jetbrains.cidr.execution.TrivialInstaller;
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-class MotionAppRunParameters extends CocoaRunParametersBase {
+class MotionAppRunParameters extends AppCodeRunParametersBase {
   private final boolean myOnDevice;
   private final ProcessHandler myServerProcessHandler;
 
