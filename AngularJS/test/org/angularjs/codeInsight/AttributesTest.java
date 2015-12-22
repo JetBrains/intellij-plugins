@@ -344,10 +344,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       @Override
       public void run() throws Exception {
         myFixture.configureByFiles("for2.html", "angular2.js");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>", myFixture.getFile());
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
         myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
         myFixture.completeBasic();
-        assertContainsElements(myFixture.getLookupElementStrings(), "[ng-for]", "[ng-for-of]");
+        assertContainsElements(myFixture.getLookupElementStrings(), "[ngFor]", "[ngForOf]");
       }
     });
   }
@@ -357,13 +357,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       @Override
       public void run() throws Exception {
         myFixture.configureByFiles("for2.html", "angular2.js");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>", myFixture.getFile());
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
         PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
         assertNotNull(ref);
         PsiElement resolve = ref.resolve();
         assertNotNull(resolve);
         assertEquals("angular2.js", resolve.getContainingFile().getName());
-        assertEquals("Directive({selector: '[ng-for][ng-for-of]', properties: ['ngForOf'], lifecycle: [onCheck]})", getDirectiveDefinitionText(resolve));
+        assertEquals("Directive({selector: '[ngFor][ngForOf]', properties: ['ngForOf'], lifecycle: [onCheck]})", getDirectiveDefinitionText(resolve));
       }
     });
   }
@@ -373,10 +373,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       @Override
       public void run() throws Exception {
         myFixture.configureByFiles("for2.html", "angular2_compiled.js");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>", myFixture.getFile());
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
         myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
         myFixture.completeBasic();
-        assertContainsElements(myFixture.getLookupElementStrings(), "[ng-for]", "[ng-for-of]");
+        assertContainsElements(myFixture.getLookupElementStrings(), "[ngFor]", "[ngForOf]");
       }
     });
   }
@@ -386,14 +386,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       @Override
       public void run() throws Exception {
         myFixture.configureByFiles("for2.html", "angular2_compiled.js");
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>", myFixture.getFile());
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
         PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
         assertNotNull(ref);
         PsiElement resolve = ref.resolve();
         assertNotNull(resolve);
         assertEquals("angular2_compiled.js", resolve.getContainingFile().getName());
         assertEquals("Directive({\n" +
-                     "        selector: '[ng-for][ng-for-of]',\n" +
+                     "        selector: '[ngFor][ngForOf]',\n" +
                      "        properties: ['ngForOf'],\n" +
                      "        lifecycle: [onCheck]\n" +
                      "      })", getDirectiveDefinitionText(resolve));
