@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -18,6 +19,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -86,48 +88,55 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
   // open editor for a class with specified qname
   private void configureByElement(String classQName, @Nullable String methodName) throws IOException {
-    myFile = null;
-    myEditor = null;
+    ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<Object, IOException>() {
+      @Override
+      public Object compute() throws IOException {
+        myFile = null;
+        myEditor = null;
 
-    final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-    final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-    if (clearModelBeforeConfiguring()) {
-      rootModel.clear();
-    }
+        final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
+        final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+        if (clearModelBeforeConfiguring()) {
+          rootModel.clear();
+        }
 
-    File toDirIO = createTempDirectory();
-    VirtualFile toDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(toDirIO.getCanonicalPath().replace(File.separatorChar, '/'));
+        File toDirIO = createTempDirectory();
+        VirtualFile toDir =
+          LocalFileSystem.getInstance().refreshAndFindFileByPath(toDirIO.getCanonicalPath().replace(File.separatorChar, '/'));
 
-    boolean sourceRootAdded = false;
-    if (isAddDirToContentRoot()) {
-      // we may need a content root to add a library
-      final ContentEntry contentEntry = rootModel.addContentEntry(toDir);
-      if (isAddDirToSource()) {
-        sourceRootAdded = true;
-        contentEntry.addSourceFolder(toDir, false);
+        boolean sourceRootAdded = false;
+        if (isAddDirToContentRoot()) {
+          // we may need a content root to add a library
+          final ContentEntry contentEntry = rootModel.addContentEntry(toDir);
+          if (isAddDirToSource()) {
+            sourceRootAdded = true;
+            contentEntry.addSourceFolder(toDir, false);
+          }
+        }
+
+        doCommitModel(rootModel);
+
+        if (sourceRootAdded) {
+          sourceRootAdded(toDir);
+        }
+
+        PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+          .findClassByQName(classQName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(getModule()));
+        assertTrue("Class " + classQName + " not found", element instanceof JSClass);
+
+        if (methodName != null) {
+          element = ((JSClass)element).findFunctionByName(methodName);
+          assertTrue("Class " + classQName + " has not have method " + methodName, element instanceof JSFunction);
+        }
+
+        PsiElement navElement = element.getNavigationElement();
+
+        final VirtualFile virtualFile = navElement.getContainingFile().getVirtualFile();
+        setActiveEditor(createEditor(virtualFile));
+        myEditor.getCaretModel().moveToOffset(navElement.getTextOffset());
+        return null;
       }
-    }
-
-    doCommitModel(rootModel);
-
-    if (sourceRootAdded) {
-      sourceRootAdded(toDir);
-    }
-
-    PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-      .findClassByQName(classQName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(getModule()));
-    assertTrue("Class " + classQName + " not found", element instanceof JSClass);
-
-    if (methodName != null) {
-      element = ((JSClass)element).findFunctionByName(methodName);
-      assertTrue("Class " + classQName + " has not have method " + methodName, element instanceof JSFunction);
-    }
-
-    PsiElement navElement = element.getNavigationElement();
-
-    final VirtualFile virtualFile = navElement.getContainingFile().getVirtualFile();
-    setActiveEditor(createEditor(virtualFile));
-    myEditor.getCaretModel().moveToOffset(navElement.getTextOffset());
+    });
   }
 
   private void invokeAndCheck(String expected) {

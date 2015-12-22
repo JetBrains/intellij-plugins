@@ -418,11 +418,24 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
 
     final ModifiableFlexBuildConfiguration bc = createBuildConfiguration(TargetPlatform.Web, false, OutputType.Application, "11.1");
     VirtualFile f = getVirtualFile(getTestName(false) + "_config.xml");
-    VirtualFile additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
-                                                                    replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion), null),
-                                                                    myModule.getModuleFile().getParent());
-    bc.setOutputFileName("SetInBC.swf");
-    bc.getCompilerOptions().setAdditionalConfigFilePath(additionalConfigFile.getPath());
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        VirtualFile additionalConfigFile = null;
+        try {
+          additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
+                                                              replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion),
+                                                                            null),
+                                                              myModule.getModuleFile().getParent());
+        }
+        catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+        bc.setOutputFileName("SetInBC.swf");
+        bc.getCompilerOptions().setAdditionalConfigFilePath(additionalConfigFile.getPath());
+      }
+    });
+
     bc.getCompilerOptions().setAllOptions(createMap("compiler.locale", "en_US\nja_JP",
                                                     "compiler.services", "services"));
     doTest(sdkVersion, Factory.getTemporaryCopyForCompilation(bc));
