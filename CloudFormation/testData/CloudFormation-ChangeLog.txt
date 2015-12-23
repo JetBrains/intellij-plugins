@@ -87,6 +87,7 @@ User Guide (API Version 2010-05-15)
                 + Elastic Beanstalk
                 + Elastic Load Balancing
                 + IAM
+                + AWS Lambda
                 + AWS OpsWorks
                 + Amazon Redshift
                 + Amazon RDS
@@ -118,6 +119,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::CloudFormation::Authentication
                 + AWS::CloudFormation::CustomResource
                 + AWS::CloudFormation::Init
+                + AWS::CloudFormation::Interface
                 + AWS::CloudFormation::Stack
                 + AWS::CloudFormation::WaitCondition
                 + AWS::CloudFormation::WaitConditionHandle
@@ -127,6 +129,11 @@ User Guide (API Version 2010-05-15)
                 + AWS::CodeDeploy::Application
                 + AWS::CodeDeploy::DeploymentConfig
                 + AWS::CodeDeploy::DeploymentGroup
+                + AWS::CodePipeline::CustomActionType
+                + AWS::CodePipeline::Pipeline
+                + AWS::Config::ConfigRule
+                + AWS::Config::ConfigurationRecorder
+                + AWS::Config::DeliveryChannel
                 + AWS::DataPipeline::Pipeline
                 + AWS::DirectoryService::SimpleAD
                 + AWS::DynamoDB::Table
@@ -186,6 +193,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::IAM::User
                 + AWS::IAM::UserToGroupAddition
                 + AWS::Kinesis::Stream
+                + AWS::KMS::Key
                 + AWS::Lambda::EventSourceMapping
                 + AWS::Lambda::Function
                 + AWS::Lambda::Permission
@@ -222,14 +230,19 @@ User Guide (API Version 2010-05-15)
                 + AWS::SNS::TopicPolicy
                 + AWS::SQS::Queue
                 + AWS::SQS::QueuePolicy
+                + AWS::SSM::Document
                 + AWS::WorkSpaces::Workspace
           o Resource Property Types
                 + AutoScaling Block Device Mapping
                 + AutoScaling EBS Block Device
                 + Auto Scaling MetricsCollection
                 + Auto Scaling NotificationConfigurations
+                + Auto Scaling ScalingPolicy StepAdjustments
                 + Auto Scaling Tags
                 + CloudFormation Stack Parameters
+                + AWS CloudFormation Interface Label
+                + AWS CloudFormation Interface ParameterGroup
+                + AWS CloudFormation Interface ParameterLabel
                 + CloudFront DistributionConfig
                 + CloudFront DistributionConfig CacheBehavior
                 + CloudFront DistributionConfig CustomErrorResponse
@@ -256,6 +269,24 @@ User Guide (API Version 2010-05-15)
                 + AWS CodeDeploy DeploymentGroup Ec2TagFilters
                 + AWS CodeDeploy DeploymentGroup
                   OnPremisesInstanceTagFilters
+                + AWS CodePipeline CustomActionType ArtifactDetails
+                + AWS CodePipeline CustomActionType ConfigurationProperties
+                + AWS CodePipeline CustomActionType Settings
+                + AWS CodePipeline Pipeline ArtifactStore
+                + AWS CodePipeline Pipeline ArtifactStore EncryptionKey
+                + AWS CodePipeline Pipeline DisableInboundStageTransitions
+                + AWS CodePipeline Pipeline Stages
+                + AWS CodePipeline Pipeline Stages Actions
+                + AWS CodePipeline Pipeline Stages Actions ActionTypeId
+                + AWS CodePipeline Pipeline Stages Actions InputArtifacts
+                + AWS CodePipeline Pipeline Stages Actions OutputArtifacts
+                + AWS CodePipeline Pipeline Stages Blockers
+                + AWS Config ConfigRule Scope
+                + AWS Config ConfigRule Source
+                + AWS Config ConfigRule Source SourceDetails
+                + AWS Config ConfigurationRecorder RecordingGroup
+                + AWS Config DeliveryChannel
+                  ConfigSnapshotDeliveryProperties
                 + AWS Data Pipeline Pipeline ParameterObjects
                 + AWS Data Pipeline Parameter Objects Attributes
                 + AWS Data Pipeline Pipeline ParameterValues
@@ -269,9 +300,12 @@ User Guide (API Version 2010-05-15)
                 + DynamoDB Local Secondary Indexes
                 + DynamoDB Projection Object
                 + DynamoDB Provisioned Throughput
+                + DynamoDB Table StreamSpecification
                 + Amazon EC2 Block Device Mapping Property
                 + Amazon Elastic Block Store Block Device Property
                 + EC2 ICMP
+                + Amazon EC2 Instance SsmAssociations
+                + Amazon EC2 Instance SsmAssociations AssociationParameters
                 + EC2 MountPoint
                 + EC2 Network Interface
                 + EC2 Network Interface Association
@@ -280,8 +314,7 @@ User Guide (API Version 2010-05-15)
                 + EC2 Network Interface Private IP Specification
                 + EC2 PortRange
                 + EC2 Security Group Rule
-                + Amazon Elastic Compute Cloud SpotFleet
-                  SpotFleetRequestConfigData
+                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
                   LaunchSpecifications
                 + Amazon EC2 SpotFleet SpotFleetRequestConfigData
@@ -456,6 +489,120 @@ since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
 
+Parameter grouping and sorting
+
+December 03, 2015
+
+Use the AWS::CloudFormation::Interface metadata key to group and sort 
+parameters in the AWS CloudFormation console when users create or update a 
+stack with your template.
+
+2010-05-15
+
+Update policy attribute
+
+December 03, 2015
+
+For an Auto Scaling update policy attribute, use the 
+MinSuccessfulInstancesPercent property to specify the percentage of 
+instances that must signal success for a successful update.
+
+2010-05-15
+
+New resources
+
+December 03, 2015
+
+AWS CloudFormation added the following resources:
+
+AWS::CodePipeline::Pipeline and AWS::CodePipeline::CustomActionType
+
+    Use the AWS CodePipeline resources to create a pipeline that describes
+    how software changes go through a release process.
+
+AWS::Config::ConfigurationRecorder, AWS::Config::DeliveryChannel, and 
+AWS::Config::ConfigRule
+
+    Use the AWS Config resources to monitor configuration changes to
+    specific AWS resources.
+
+AWS::KMS::Key
+
+    Use the AWS KMS resource to create customer master keys in AWS KMS that
+    users can use to encrypt small amounts of data.
+
+AWS::SSM::Document
+
+    Use the Amazon EC2 Simple Systems Manager to create a document that
+    specify on-instance configurations.
+
+2010-05-15
+
+Resources update
+
+December 03, 2015
+
+AWS CloudFormation updated the following resources:
+
+AWS::AutoScaling::LaunchConfiguration
+
+    For EBS volumes, you can specify whether they are encrypted.
+
+AWS::AutoScaling::ScalingPolicy
+
+    You can use two different policy types to specify how an Auto Scaling
+    group scales when a CloudWatch alarm is breached.
+
+AWS::CloudTrail::Trail
+
+    Use the CloudWatch properties to send logs to a CloudWatch log group.
+    You can add tags to a trail and specify an AWS KMS key that you want to
+    use to encrypt logs.
+
+AWS::CodeDeploy::Application, AWS::CodeDeploy::DeploymentConfig, and 
+AWS::CodeDeploy::DeploymentGroup
+
+    Use the ApplicationName, DeploymentConfigName, and DeploymentGroupName 
+    properties to specify custom names for AWS CodeDeploy resources.
+
+AWS::DynamoDB::Table
+
+    Use the StreamSpecification property to specify settings for capturing
+    changes to items stored in a table.
+
+AWS::EC2::Instance
+
+    Use the SsmAssociations property to associate an Amazon EC2 Simple
+    Systems Manager document with an instance.
+
+AWS::EC2::SpotFleet
+
+    Use the AllocationStrategy property to specify how to allocate target
+    capacity across Spot pools. Use the ExcessCapacityTerminationPolicy 
+    property to specify how instances are terminated if the target capacity
+    is below the size of the Spot fleet.
+
+AWS::Redshift::Cluster
+
+    Use the KmsKeyId property to specify an AWS KMS key to encrypt data in
+    a cluster.
+
+AWS::WorkSpaces::Workspace
+
+    Use the encryption properties to encrypt data stored on volumes.
+
+2010-05-15
+
+Resource update
+
+November 04, 2015
+
+For the AWS::EC2::Volume resource, use the AutoEnableIO property to 
+automatically resume I/O operations if a volume's data becomes 
+inconsistent.
+
+2010-05-15
+
 New resources
 
 October 01, 2015
@@ -550,7 +697,7 @@ Access with AWS Identity and Access Management.
 
 AWS CloudFormation Designer
 
-October 1, 2015
+October 01, 2015
 
 Use AWS CloudFormation Designer to create and modify templates using a 
 drag-and-drop interface.
