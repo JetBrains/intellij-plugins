@@ -102,7 +102,7 @@ public class ResourceTypesSaver {
     final Document doc = getDocumentFromUrl(url);
 
     Element description = doc.select(".section").first();
-    resourceType.description = description.toString();
+    resourceType.description = cleanupHtml(description.toString());
 
     Elements vlists = doc.select("div.variablelist");
 
@@ -272,6 +272,12 @@ public class ResourceTypesSaver {
     }
 
     return resourceType;
+  }
+
+  private static Pattern cleanElementIdPattern = Pattern.compile(" ?id=\\\"[0-9a-f]{8}\\\"");
+
+  private static String cleanupHtml(String s) {
+    return cleanElementIdPattern.matcher(s).replaceAll("");
   }
 
   private static List<List<String>> parseTable(Element table) {
