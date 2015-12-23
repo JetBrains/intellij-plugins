@@ -271,6 +271,10 @@ public class CloudFormationFormatChecker {
         continue;
       }
 
+      if (propertyName.equals(CloudFormationConstants.CommentResourcePropertyName)) {
+        continue;
+      }
+
       if (resourceType.findProperty(propertyName) == null && !isCustomResourceType(resourceTypeName)) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName));
       }

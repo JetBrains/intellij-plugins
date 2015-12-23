@@ -13,6 +13,8 @@ public class CloudFormationConstants {
   public static final String CustomResourceType = "AWS::CloudFormation::CustomResource";
   public static final String CustomResourceTypePrefix = "Custom::";
 
+  public static final String CommentResourcePropertyName = "Comment";
+
   public static final String ConditionPropertyName = "Condition";
   public static final String TypePropertyName = "Type";
   public static final String PropertiesPropertyName = "Properties";
