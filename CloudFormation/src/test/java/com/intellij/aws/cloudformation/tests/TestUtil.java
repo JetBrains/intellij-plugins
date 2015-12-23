@@ -2,6 +2,7 @@ package com.intellij.aws.cloudformation.tests;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -18,7 +19,17 @@ public class TestUtil {
     return new File("testData").getAbsoluteFile();
   }
 
-  public static String getTestDataPathRelativeToIdeaHome(String relativePath) {
-    return FileUtil.getRelativePath(new File(PathManager.getHomePath()), new File(getTestDataRoot(), relativePath));
+  @NotNull
+  public static String getTestDataPathRelativeToIdeaHome(@NotNull  String relativePath) {
+    File homePath = new File(PathManager.getHomePath());
+    File testDir = new File(getTestDataRoot(), relativePath);
+
+    String relativePathToIdeaHome = FileUtil.getRelativePath(homePath, testDir);
+    if (relativePathToIdeaHome == null) {
+      throw new RuntimeException("getTestDataPathRelativeToIdeaHome: FileUtil.getRelativePath('" + homePath +
+          "', '" + testDir + "') returned null");
+    }
+
+    return relativePathToIdeaHome;
   }
 }
