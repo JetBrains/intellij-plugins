@@ -1,7 +1,7 @@
 package {
-interface <lineMarker descr="Has implementations"></lineMarker><info descr="interface">OverridingMarkersXmlBacked2_MyInterface</info> {
+interface <lineMarker descr="Has implementations"><info descr="interface">OverridingMarkersXmlBacked2_MyInterface</info></lineMarker> {
 
-    function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method"><caret>bar</info>(): <info>String</info>;
+    function <lineMarker descr="Is implemented"><info descr="instance method"><caret>bar</info></lineMarker>(): <info>String</info>;
 
 }
 }

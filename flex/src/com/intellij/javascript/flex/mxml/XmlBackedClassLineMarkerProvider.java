@@ -21,6 +21,7 @@ import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 
 public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
 
@@ -28,7 +29,7 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
     return null;
   }
 
-  public void collectSlowLineMarkers(@NotNull java.util.List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+  public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
     for (PsiElement element : elements) {
       ProgressManager.checkCanceled();
 
@@ -40,7 +41,7 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
         Query<JSClass> classQuery = JSClassSearch.searchClassInheritors(clazz, true);
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)element);
         if (classQuery.findFirst() != null && nameElement != null) {
-          result.add(new LineMarkerInfo<JSClass>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
+          result.add(new LineMarkerInfo<PsiElement>(clazz, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
                                                  Pass.UPDATE_OVERRIDEN_MARKERS,
                                                  JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
                                                  JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
