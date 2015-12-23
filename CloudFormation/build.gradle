@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-1038'
+    ext.kotlin_version = '1.0.0-beta-4584'
     repositories {
         mavenCentral()
     }
@@ -73,4 +73,10 @@ dependencies {
 
 task printVersion {
     println 'version = ' + version
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.10'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
