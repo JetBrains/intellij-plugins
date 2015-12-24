@@ -9,6 +9,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.ruby.PathUtil;
 import org.jetbrains.plugins.ruby.RubyVMOptions;
 import org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacet;
 import org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacetType;
@@ -36,6 +37,11 @@ public abstract class RubyMotionLightFixtureTestCase extends RubyLightFixtureTes
   protected void tearDown() throws Exception {
     RubyVMOptions.resetForcedLanguageLevel();
     super.tearDown();
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return PathUtil.getDataPath(getClass()) + "/" + getTestDataRelativePath();
   }
 
   @Nullable
