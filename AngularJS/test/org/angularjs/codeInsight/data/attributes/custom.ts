@@ -1,5 +1,5 @@
 @Directive({
-    selector: 'my-customer',
+    selector: '[my-customer]',
     properties: {
         'id':'dependency'
     }
