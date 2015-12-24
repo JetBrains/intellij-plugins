@@ -21,29 +21,17 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileTypes.FileTypes;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.rename.RenameHandler;
-import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.xml.util.XmlStringUtil;
-import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Locale;
 
 // todo implement ContextAwareActionHandler?
 public class DartServerRenameHandler implements RenameHandler, TitledHandler {
@@ -130,107 +118,3 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
   }
 }
 
-class DartRenameDialog extends ServerRefactoringDialog {
-  @NotNull private final ServerRenameRefactoring myRefactoring;
-  @NotNull private final String myOldName;
-
-  private final JLabel myNewNamePrefix = new JLabel("");
-  private NameSuggestionsField myNameSuggestionsField;
-
-  public DartRenameDialog(@NotNull Project project, @Nullable Editor editor, @NotNull ServerRenameRefactoring refactoring) {
-    super(project, editor, refactoring);
-    myRefactoring = refactoring;
-    myOldName = myRefactoring.getOldName();
-    setTitle("Rename " + myRefactoring.getElementKindName());
-    createNewNameComponent();
-    init();
-  }
-
-  @Override
-  protected void canRun() throws ConfigurationException {
-    if (Comparing.strEqual(getNewName(), myOldName)) {
-      throw new ConfigurationException(null);
-    }
-    super.canRun();
-  }
-
-  @Override
-  protected JComponent createCenterPanel() {
-    return null;
-  }
-
-  @Override
-  protected JComponent createNorthPanel() {
-    JPanel panel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbConstraints = new GridBagConstraints();
-
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
-    gbConstraints.weighty = 0;
-    gbConstraints.weightx = 1;
-    gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
-    gbConstraints.fill = GridBagConstraints.BOTH;
-    JLabel nameLabel = new JLabel();
-    panel.add(nameLabel, gbConstraints);
-    nameLabel.setText(XmlStringUtil.wrapInHtml(XmlTagUtilBase.escapeString(getLabelText(), false)));
-
-    gbConstraints.insets = new Insets(0, 0, 4, 0);
-    gbConstraints.gridwidth = 1;
-    gbConstraints.fill = GridBagConstraints.NONE;
-    gbConstraints.weightx = 0;
-    gbConstraints.gridx = 0;
-    gbConstraints.anchor = GridBagConstraints.WEST;
-    panel.add(myNewNamePrefix, gbConstraints);
-
-    gbConstraints.insets = new Insets(0, 0, 8, 0);
-    gbConstraints.gridwidth = 2;
-    gbConstraints.fill = GridBagConstraints.BOTH;
-    gbConstraints.weightx = 1;
-    gbConstraints.gridx = 0;
-    gbConstraints.weighty = 1;
-    panel.add(myNameSuggestionsField.getComponent(), gbConstraints);
-
-    return panel;
-  }
-
-  @Override
-  public JComponent getPreferredFocusedComponent() {
-    return myNameSuggestionsField.getFocusableComponent();
-  }
-
-  private void createNewNameComponent() {
-    String[] suggestedNames = getSuggestedNames();
-    myNameSuggestionsField = new NameSuggestionsField(suggestedNames, myProject, FileTypes.PLAIN_TEXT, myEditor) {
-      @Override
-      protected boolean shouldSelectAll() {
-        return myEditor == null || myEditor.getSettings().isPreselectRename();
-      }
-    };
-    myNameSuggestionsField.addDataChangedListener(new NameSuggestionsField.DataChanged() {
-      @Override
-      public void dataChanged() {
-        processNewNameChanged();
-      }
-    });
-  }
-
-  @NotNull
-  private String getLabelText() {
-    final String kindName = myRefactoring.getElementKindName().toLowerCase(Locale.US);
-    final String name = myOldName.isEmpty() ? kindName : kindName + " " + myOldName;
-    return RefactoringBundle.message("rename.0.and.its.usages.to", name);
-  }
-
-  private String getNewName() {
-    return myNameSuggestionsField.getEnteredName().trim();
-  }
-
-  @NotNull
-  private String[] getSuggestedNames() {
-    return new String[]{myOldName};
-  }
-
-  private void processNewNameChanged() {
-    final String newName = getNewName();
-    myRefactoring.setNewName(newName);
-  }
-}

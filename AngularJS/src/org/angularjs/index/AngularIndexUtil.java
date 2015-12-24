@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 27;
+  public static final int BASE_VERSION = 28;
   private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
@@ -113,7 +113,7 @@ public class AngularIndexUtil {
       public Result<Integer> compute() {
         int version = -1;
         PsiElement resolve;
-        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ng-for]")) != null) {
+        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
           version = 20;
         } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
           version = 13;

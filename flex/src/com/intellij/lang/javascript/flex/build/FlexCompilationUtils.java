@@ -534,12 +534,7 @@ public class FlexCompilationUtils {
       }
     };
 
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      runnable.run();
-    }
-    else {
-      ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.any());
-    }
+    ApplicationManager.getApplication().invokeAndWait(runnable, ModalityState.any());
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();

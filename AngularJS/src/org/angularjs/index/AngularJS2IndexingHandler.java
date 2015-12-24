@@ -29,8 +29,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final JSExpression expression = callExpression.getMethodExpression();
     if (expression instanceof JSReferenceExpression) {
       final String name = ((JSReferenceExpression)expression).getReferenceName();
-      final String restrictions = computeRestrictions(name);
-      addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, restrictions, getSelectorName(callExpression));
+      if (!isDirective(name)) return;
+      addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, getSelectorName(callExpression));
     }
   }
 
@@ -44,7 +44,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final ASTNode name = ref.getLastChildNode();
       if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
-        return computeRestrictions(referencedName) != null;
+        return isDirective(referencedName);
       }
     }
     return false;
@@ -53,33 +53,42 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public JSElementIndexingDataImpl processDecorator(ES7Decorator decorator, JSElementIndexingDataImpl outData) {
     final String name = decorator.getName();
-    final String restrict = computeRestrictions(name);
+    if (!isDirective(name)) return outData;
     final String selectorName = getSelectorName(decorator);
 
-    return addImplicitElement(decorator, outData, restrict, selectorName);
+    return addImplicitElement(decorator, outData, selectorName);
   }
 
   private static JSElementIndexingDataImpl addImplicitElement(PsiElement decorator,
                                                               JSElementIndexingDataImpl outData,
-                                                              String restrict,
-                                                              String selectorName) {
-    if (restrict != null && !StringUtil.isEmpty(selectorName)) {
-      final int start = selectorName.indexOf('[');
-      final int end = selectorName.indexOf(']');
-      if (start == 0 && end > 0 || start < 0 && end < 0) {
-        if (outData == null) outData = new JSElementIndexingDataImpl();
-        JSImplicitElementImpl.Builder elementBuilder;
-        for (String attr : StringUtil.split(selectorName, "]", false)) {
-          elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
-            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
-          elementBuilder.setUserString("adi");
-          outData.addImplicitElement(elementBuilder.toImplicitElement());
-        }
-        if (end > 0) {
-          elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
-            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
-          elementBuilder.setUserString("adi");
-          outData.addImplicitElement(elementBuilder.toImplicitElement());
+                                                              String selector) {
+    if (selector == null) return outData;
+
+    final String[] names = selector.split(",");
+    for (String selectorName : names) {
+      final int not = selectorName.indexOf(":");
+      if (not >= 0) {
+        selectorName = selectorName.substring(0, not);
+      }
+      if (!StringUtil.isEmpty(selectorName)) {
+        final int start = selectorName.indexOf('[');
+        final int end = selectorName.indexOf(']');
+        if (start == 0 && end > 0 || start < 0 && end < 0) {
+          if (outData == null) outData = new JSElementIndexingDataImpl();
+          JSImplicitElementImpl.Builder elementBuilder;
+          for (String attr : StringUtil.split(selectorName, "]", false)) {
+            final String restrict = selectorName.startsWith("[") ? "A" : "E";
+            elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
+              .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
+            elementBuilder.setUserString("adi");
+            outData.addImplicitElement(elementBuilder.toImplicitElement());
+          }
+          if (end > 0) {
+            elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
+              .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
+            elementBuilder.setUserString("adi");
+            outData.addImplicitElement(elementBuilder.toImplicitElement());
+          }
         }
       }
     }
@@ -101,10 +110,9 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  private static String computeRestrictions(String name) {
+  private static boolean isDirective(String name) {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
-           "Component".equals(name) || "ComponentAnnotation".equals(name)? "AE" :
-           null;
+           "Component".equals(name) || "ComponentAnnotation".equals(name);
   }
 
   @Override

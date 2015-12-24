@@ -26,11 +26,6 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
   }
 
   @Override
-  protected boolean isRunInWriteAction() {
-    return false;
-  }
-
-  @Override
   protected String getBasePath() {
     return "analysisServer/typeHierarchy/" + getTestName(false);
   }

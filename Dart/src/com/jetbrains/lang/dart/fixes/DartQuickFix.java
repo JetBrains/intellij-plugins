@@ -106,7 +106,7 @@ public final class DartQuickFix implements IntentionAction {
     if (fileEdits.size() != 1) return false;
 
     final SourceFileEdit fileEdit = fileEdits.get(0);
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    final VirtualFile virtualFile = AssistUtils.findVirtualFile(fileEdit);
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
     if (fileEdit.getFileStamp() != -1) {

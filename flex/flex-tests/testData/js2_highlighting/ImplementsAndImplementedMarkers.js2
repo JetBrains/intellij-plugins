@@ -1,26 +1,26 @@
-interface <lineMarker descr="Has implementations"></lineMarker><info>FirstInterface</info> {
-  function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">firstInterfaceMethod</info>(<info descr="parameter">x</info>);
+interface <lineMarker descr="Has implementations"><info>FirstInterface</info></lineMarker> {
+  function <lineMarker descr="Is implemented"><info descr="instance method">firstInterfaceMethod</info></lineMarker>(<info descr="parameter">x</info>);
 }
 
-interface <lineMarker descr="Has implementations"></lineMarker><info>SecondInterface</info> extends <info>FirstInterface</info> {
-  function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">secondInterfaceMethod</info>();
+interface <lineMarker descr="Has implementations"><info>SecondInterface</info></lineMarker> extends <info>FirstInterface</info> {
+  function <lineMarker descr="Is implemented"><info descr="instance method">secondInterfaceMethod</info></lineMarker>();
 }
 
-interface <lineMarker descr="Has implementations"></lineMarker><info>ThirdInterface</info> extends <info>SecondInterface</info> {
-  function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">thirdInterfaceMethod</info>();
+interface <lineMarker descr="Has implementations"><info>ThirdInterface</info></lineMarker> extends <info>SecondInterface</info> {
+  function <lineMarker descr="Is implemented"><info descr="instance method">thirdInterfaceMethod</info></lineMarker>();
 }
 
-class <lineMarker descr="Has subclasses"></lineMarker><info>FirstClass</info> implements <info>SecondInterface</info> {
-  public function <lineMarker descr="Implementation of firstInterfaceMethod in FirstInterface"></lineMarker><info descr="instance method">firstInterfaceMethod</info>(<info descr="parameter">x</info>) {}
-  public function <lineMarker descr="Implementation of secondInterfaceMethod in SecondInterface"></lineMarker><lineMarker descr="Is overridden"></lineMarker><info descr="instance method">s<caret>econdInterfaceMethod</info>() {}
+class <lineMarker descr="Has subclasses"><info>FirstClass</info></lineMarker> implements <info>SecondInterface</info> {
+  public function <lineMarker descr="Implementation of firstInterfaceMethod in FirstInterface"><info descr="instance method">firstInterfaceMethod</info></lineMarker>(<info descr="parameter">x</info>) {}
+  public function <lineMarker descr="Implementation of secondInterfaceMethod in SecondInterface"><lineMarker descr="Is overridden"><info descr="instance method">s<caret>econdInterfaceMethod</info></lineMarker></lineMarker>() {}
 }
 
-class <lineMarker descr="Has subclasses"></lineMarker><info>SecondClass</info> extends <info>FirstClass</info> {
+class <lineMarker descr="Has subclasses"><info>SecondClass</info></lineMarker> extends <info>FirstClass</info> {
 }
 
-class <lineMarker descr="Has subclasses"></lineMarker><info>ThirdClass</info> extends <info>SecondClass</info> implements <info>ThirdInterface</info> {
-  public override function <lineMarker descr="Is overridden"></lineMarker><lineMarker descr="overrides method in FirstClass"><info descr="instance method">secondInterfaceMethod</info></lineMarker>() {}
-  public function <lineMarker descr="Implementation of thirdInterfaceMethod in ThirdInterface"></lineMarker><info descr="instance method">thirdInterfaceMethod</info>() {}
+class <lineMarker descr="Has subclasses"><info>ThirdClass</info></lineMarker> extends <info>SecondClass</info> implements <info>ThirdInterface</info> {
+  public override function <lineMarker descr="Is overridden"><lineMarker descr="overrides method in FirstClass"><info descr="instance method">secondInterfaceMethod</info></lineMarker></lineMarker>() {}
+  public function <lineMarker descr="Implementation of thirdInterfaceMethod in ThirdInterface"><info descr="instance method">thirdInterfaceMethod</info></lineMarker>() {}
 }
 
 class <info>FourthClass</info> extends <info>ThirdClass</info> {

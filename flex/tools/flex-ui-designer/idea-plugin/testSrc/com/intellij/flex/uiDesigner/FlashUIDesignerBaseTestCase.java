@@ -14,11 +14,6 @@ import java.util.List;
 public abstract class FlashUIDesignerBaseTestCase extends ModuleTestCase {
   protected TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void> moduleInitializer;
 
-  @Override
-  protected boolean isRunInWriteAction() {
-    return false;
-  }
-
   protected static String getFudHome() {
     return DebugPathManager.getFudHome();
   }

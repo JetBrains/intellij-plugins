@@ -35,14 +35,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public abstract class ServerRefactoringDialog extends RefactoringDialog {
+public abstract class ServerRefactoringDialog<T extends ServerRefactoring> extends RefactoringDialog {
   @Nullable protected final Editor myEditor;
-  @NotNull private final ServerRefactoring myRefactoring;
+  @NotNull protected final T myRefactoring;
 
   private boolean myHasPendingRequests;
   private RefactoringStatus myOptionsStatus;
 
-  public ServerRefactoringDialog(@NotNull Project project, @Nullable Editor editor, @NotNull ServerRefactoring refactoring) {
+  public ServerRefactoringDialog(@NotNull final Project project, @Nullable final Editor editor, @NotNull final T refactoring) {
     super(project, true);
     myEditor = editor;
     myRefactoring = refactoring;
@@ -98,14 +98,36 @@ public abstract class ServerRefactoringDialog extends RefactoringDialog {
         return;
       }
     }
+
+    if (hasPreviewButton() && isPreviewUsages() || isForcePreview()) {
+      previewRefactoring();
+    }
+    else {
+      doRefactoring(myRefactoring.getPotentialEdits());
+    }
+
+    close(DialogWrapper.OK_EXIT_CODE);
+  }
+
+  @Override
+  protected boolean hasPreviewButton() {
+    return false;
+  }
+
+  protected boolean isForcePreview() {
+    return false;
+  }
+
+  protected void previewRefactoring() {
+  }
+
+  protected final void doRefactoring(@NotNull final Set<String> excludedIds) {
     // Apply the change.
     final String error = ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
       @Override
       public String compute() {
         final SourceChange change = myRefactoring.getChange();
         assert change != null;
-        // todo show Preview and suggest user to select which potential edits to apply
-        final Set<String> excludedIds = myRefactoring.getPotentialEdits();
         try {
           AssistUtils.applySourceChange(myProject, change, false, excludedIds);
         }
@@ -123,10 +145,5 @@ public abstract class ServerRefactoringDialog extends RefactoringDialog {
     else {
       Messages.showErrorDialog(myProject, error, CommonBundle.getErrorTitle());
     }
-  }
-
-  @Override
-  protected boolean hasPreviewButton() {
-    return false;
   }
 }

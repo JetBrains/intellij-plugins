@@ -180,7 +180,7 @@ public class AssistUtils {
   }
 
   @Nullable
-  private static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
+  public static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
     return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
   }
 

@@ -1,12 +1,12 @@
 package {
 
 
-public interface <error><lineMarker descr="Has implementations"></lineMarker>IFoo</error> {
-    function <info><lineMarker descr="Is implemented"></lineMarker>foo</info>();
+public interface <error><lineMarker descr="Has implementations">IFoo</lineMarker></error> {
+    function <info><lineMarker descr="Is implemented">foo</lineMarker></info>();
 }
 
-public class <error><lineMarker descr="Has subclasses"></lineMarker>Foo</error> implements <info>IFoo</info> {
-    public function <info><lineMarker descr="Is overridden"></lineMarker><lineMarker descr="Implementation of foo in IFoo"></lineMarker>foo</info>() {}
+public class <error><lineMarker descr="Has subclasses">Foo</lineMarker></error> implements <info>IFoo</info> {
+    public function <info><lineMarker descr="Is overridden"><lineMarker descr="Implementation of foo in IFoo">foo</lineMarker></lineMarker></info>() {}
 }
 
 public class <error>FooEx</error> extends <info>Foo</info> {

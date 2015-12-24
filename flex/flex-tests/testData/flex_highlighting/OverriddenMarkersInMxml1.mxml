@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<lineMarker descr="Has subclasses"></lineMarker><mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<<lineMarker descr="Has subclasses">mx:Application</lineMarker> xmlns:mx="http://www.adobe.com/2006/mxml">
     <mx:Script><![CDATA[<inject descr="null">
 
 

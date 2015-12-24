@@ -65,10 +65,10 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     if (tempDataDir != null) {
       tempDataDir.refresh(false, true);
       if (tempDataDir.exists()) {
-        tempDataDir.delete(this);
+        delete(tempDataDir);
       }
     }
-    return baseDir.createChildDirectory(this, FB_PROJECT_DIR_NAME);
+    return createChildDirectory(baseDir, FB_PROJECT_DIR_NAME);
   }
 
   @Override
@@ -140,9 +140,8 @@ public class FlashBuilderImportTest extends IdeaTestCase {
                                final Collection<String> otherProjectNames,
                                final @Nullable String flashBuilderWorkspacePath) throws IOException, ConfigurationException {
     final VirtualFile dotProjectFile =
-      FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_PROJECT, dotProjectFileContent, myFlashBuilderProjectDir);
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_ACTION_SCRIPT_PROPERTIES, dotActionScriptPropertiesFileContent,
-                                 myFlashBuilderProjectDir);
+      addFileWithContent(FlashBuilderImporter.DOT_PROJECT, dotProjectFileContent, myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_ACTION_SCRIPT_PROPERTIES, dotActionScriptPropertiesFileContent, myFlashBuilderProjectDir);
 
     final FlashBuilderProject flashBuilderProject = FlashBuilderProjectLoadUtil.loadProject(dotProjectFile, false);
     final Collection<FlashBuilderProject> allFBProjects = new ArrayList<FlashBuilderProject>();
@@ -163,7 +162,12 @@ public class FlashBuilderImportTest extends IdeaTestCase {
       FlexProjectConfigurationEditor.createEditor(myProject, Collections.singletonMap(myModule, rootModel), null, null);
     new FlashBuilderModuleImporter(myProject, flexEditor, allFBProjects, sdkFinder).setupModule(rootModel, flashBuilderProject);
     flexEditor.commit();
-    ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        ModifiableModelCommitter.multiCommit(new ModifiableRootModel[]{rootModel}, moduleModel);
+      }
+    });
   }
 
   protected static String getSomeAbsoluteFolderPath() {
@@ -251,11 +255,11 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   public void testContentAndSourceRoots() throws Exception {
-    final VirtualFile src3 = myFlashBuilderProjectDir.createChildDirectory(this, "src3");
-    final VirtualFile flexUnitTestsDir = src3.createChildDirectory(this, "flexUnitTests");
-    FlexUtils.addFileWithContent("doesNotMatter.as", "", flexUnitTestsDir);
-    FlexUtils.addFileWithContent("BarTestSuite.as", "", src3);
-    FlexUtils.addFileWithContent("FooTest.as", "", src3);
+    final VirtualFile src3 = createChildDirectory(myFlashBuilderProjectDir, "src3");
+    final VirtualFile flexUnitTestsDir = createChildDirectory(src3, "flexUnitTests");
+    addFileWithContent("doesNotMatter.as", "", flexUnitTestsDir);
+    addFileWithContent("BarTestSuite.as", "", src3);
+    addFileWithContent("FooTest.as", "", src3);
 
     final String someAbsoluteFolderPath = getSomeAbsoluteFolderPath();
     final String dotProjectFileContent = "<projectDescription>\n" +
@@ -304,8 +308,8 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   public void testWebFlexApp() throws Exception {
-    FlexUtils.addFileWithContent("FlexApp.mxml", "", myFlashBuilderProjectDir);
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
+    addFileWithContent("FlexApp.mxml", "", myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
     importProject("<actionScriptProperties mainApplicationPath='FlexApp.mxml'>\n" +
                   "  <compiler additionalCompilerArguments='-locale en_US&#10;-other' outputFolderPath='bin-debug' targetPlayerVersion='0.0.0'/>\n" +
                   "</actionScriptProperties>");
@@ -344,9 +348,9 @@ public class FlashBuilderImportTest extends IdeaTestCase {
                                                "    <namespaceManifestEntry manifest=\"path\\manifest.xml\" namespace=\"http://MyNamespace\"/>" +
                                                "  </namespaceManifests>" +
                                                "</flexLibProperties>";
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, dotFlexLibPropertiesContent, myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, dotFlexLibPropertiesContent, myFlashBuilderProjectDir);
     final VirtualFile dir = VfsUtil.createDirectories(myFlashBuilderProjectDir.getPath() + "/src/foo");
-    FlexUtils.addFileWithContent("a.txt", "", dir);
+    addFileWithContent("a.txt", "", dir);
 
     importProject("<actionScriptProperties mainApplicationPath='does not matter'>\n" +
                   "  <compiler outputFolderPath='bin' targetPlayerVersion='9.0.124' sourceFolderPath=\"src\"/>\n" +
@@ -404,8 +408,19 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   private void commonASLibTest(final String flexLibPropertiesFileContent,
                                final String actionScriptPropertiesFileContent,
                                final TargetPlatform expectedTargetPlatform) throws IOException, ConfigurationException {
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, flexLibPropertiesFileContent, myFlashBuilderProjectDir);
-    importProject(actionScriptPropertiesFileContent);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, flexLibPropertiesFileContent, myFlashBuilderProjectDir);
+          importProject(actionScriptPropertiesFileContent);
+        }
+        catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
+    });
+
     final String fbProjectName = getTestName(true);
     final FlexBuildConfiguration bc = getBC();
     assertEquals(expectedTargetPlatform, bc.getTargetPlatform());
@@ -423,7 +438,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   public void testLibrariesCreated() throws Exception {
-    final VirtualFile subdir = myFlashBuilderProjectDir.createChildDirectory(this, "subdir");
+    final VirtualFile subdir = createChildDirectory(myFlashBuilderProjectDir, "subdir");
     final VirtualFile swc = createEmptySwc(myFlashBuilderProjectDir, "somelib.swc");
     importProject("<actionScriptProperties>\n" +
                   "  <compiler>\n" +
@@ -450,7 +465,12 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   private static VirtualFile createEmptySwc(VirtualFile dir, String name) throws IOException {
     final File jarFile = new File(dir.getPath(), name);
     new ZipOutputStream(new FileOutputStream(jarFile)).close();
-    return FlexUtils.addFileWithContent(name, FileUtil.loadFileBytes(jarFile), dir);
+    return ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<VirtualFile, IOException>() {
+      @Override
+      public VirtualFile compute() throws IOException {
+        return FlexUtils.addFileWithContent(name, FileUtil.loadFileBytes(jarFile), dir);
+      }
+    });
   }
 
   public void testBcDependencies() throws Exception {
@@ -476,28 +496,28 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     final VirtualFile settingsDir =
       VfsUtil.createDirectories(
         myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings");
-    final VirtualFile customSdkRoot = myFlashBuilderProjectDir.createChildDirectory(this, "custom_sdk");
+    final VirtualFile customSdkRoot = createChildDirectory(myFlashBuilderProjectDir, "custom_sdk");
     final VirtualFile themesDir = VfsUtil.createDirectories(customSdkRoot.getPath() + "/frameworks/themes");
-    final VirtualFile haloDir = themesDir.createChildDirectory(this, "Halo");
+    final VirtualFile haloDir = createChildDirectory(themesDir, "Halo");
     createEmptySwc(haloDir, "halo.swc");
-    final VirtualFile aeonDir = themesDir.createChildDirectory(this, "AeonGraphical");
-    FlexUtils.addFileWithContent("AeonGraphical.css", "", aeonDir);
-    final VirtualFile wireframeDir = themesDir.createChildDirectory(this, "Wireframe");
+    final VirtualFile aeonDir = createChildDirectory(themesDir, "AeonGraphical");
+    addFileWithContent("AeonGraphical.css", "", aeonDir);
+    final VirtualFile wireframeDir = createChildDirectory(themesDir, "Wireframe");
     createEmptySwc(wireframeDir, "wireframe.swc");
 
-    final VirtualFile defaultSdkRoot = myFlashBuilderProjectDir.createChildDirectory(this, "default_sdk");
+    final VirtualFile defaultSdkRoot = createChildDirectory(myFlashBuilderProjectDir, "default_sdk");
     final String settingsContentBase = "com.adobe.flexbuilder.project.flex_sdks=" +
                                        "<sdks>\\r\\n" +
                                        "  <sdk location\\=\"{0}\" name\\=\"custom sdk name\"/>\\r\\n" +
                                        "  <sdk location\\=\"{1}\" defaultSDK\\=\"true\"/>\\r\\n" +
                                        "</sdks>\\r\\n";
     final String settingsContent = MessageFormat.format(settingsContentBase, customSdkRoot.getPath(), defaultSdkRoot.getPath());
-    FlexUtils.addFileWithContent("com.adobe.flexbuilder.project.prefs", settingsContent, settingsDir);
+    addFileWithContent("com.adobe.flexbuilder.project.prefs", settingsContent, settingsDir);
   }
 
   public void testDesktopFlexLibWithDefaultSdk() throws Exception {
     prepareSdkTest();
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, "", myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, "", myFlashBuilderProjectDir);
     importProject("<actionScriptProperties>\n" +
                   "  <compiler useApolloConfig='true'>\n" +
                   "    <libraryPath>\n" +
@@ -521,7 +541,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   public void testMobileFlexLib() throws Exception {
     final String dotFlexLibPropertiesContent = "<flexLibProperties useMultiPlatformConfig=\"true\">" +
                                                "</flexLibProperties>";
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, dotFlexLibPropertiesContent, myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, dotFlexLibPropertiesContent, myFlashBuilderProjectDir);
     importProject("<actionScriptProperties>\n" +
                   "  <compiler additionalCompilerArguments='-other -locale=en_US,ja_JP' useApolloConfig='true'>\n" +
                   "    <libraryPath>\n" +
@@ -585,7 +605,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   public void testMobileFlexIOSApp() throws Exception {
     prepareSdkTest();
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
     importProject("<actionScriptProperties>\n" +
                   "  <compiler useApolloConfig='true'>\n" +
                   "    <libraryPath>\n" +
@@ -669,13 +689,13 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   public void testDesktopFlexAppWithoutSdk() throws Exception {
     prepareSdkTest();
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
 
-    final VirtualFile srcDir = myFlashBuilderProjectDir.createChildDirectory(this, "src");
-    final VirtualFile locale1Dir = srcDir.createChildDirectory(this, "locale");
-    locale1Dir.createChildDirectory(this, "en_US");
-    final VirtualFile locale2 = myFlashBuilderProjectDir.createChildDirectory(this, "locale");
-    locale2.createChildDirectory(this, "ja_JP");
+    final VirtualFile srcDir = createChildDirectory(myFlashBuilderProjectDir, "src");
+    final VirtualFile locale1Dir = createChildDirectory(srcDir, "locale");
+    createChildDirectory(locale1Dir, "en_US");
+    final VirtualFile locale2 = createChildDirectory(myFlashBuilderProjectDir, "locale");
+    createChildDirectory(locale2, "ja_JP");
 
     importProject("<actionScriptProperties>\n" +
                   "  <compiler useApolloConfig='true' flexSDK='custom sdk name' sourceFolderPath=\"src\"" +
@@ -708,8 +728,8 @@ public class FlashBuilderImportTest extends IdeaTestCase {
     final String content = "#Fri Sep 10 19:11:24 MSD 2010\n" +
                            "eclipse.preferences.version=1\n" +
                            "pathvariable.FLASH_BUILDER_PATH_VARIABLE=" + someAbsoluteFolderPath.replace(":", "\\:") + "\n";
-    FlexUtils.addFileWithContent("org.eclipse.core.resources.prefs", content, settingsDir);
-    FlexUtils.addFileWithContent("com.adobe.flexbuilder.project.prefs", content, settingsDir);
+    addFileWithContent("org.eclipse.core.resources.prefs", content, settingsDir);
+    addFileWithContent("com.adobe.flexbuilder.project.prefs", content, settingsDir);
 
     importProject(getStandardDotProjectFileContent(),
                   "<actionScriptProperties>\n" +
@@ -739,6 +759,15 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
     assertEquals(someAbsoluteFolderPath, pathMacros.getValue("FLASH_BUILDER_PATH_VARIABLE"));
     pathMacros.removeMacro("FLASH_BUILDER_PATH_VARIABLE");
+  }
+
+  private static VirtualFile addFileWithContent(String name, String content, VirtualFile settingsDir) throws IOException {
+    return ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<VirtualFile, IOException>() {
+      @Override
+      public VirtualFile compute() throws IOException {
+        return FlexUtils.addFileWithContent(name, content, settingsDir);
+      }
+    });
   }
 
   public void testWebASAppsAndModules() throws Exception {
@@ -808,34 +837,34 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   public void testFilesToPackage() throws Exception {
-    myFlashBuilderProjectDir.createChildDirectory(this, "src"); // empty - fully included
+    createChildDirectory(myFlashBuilderProjectDir, "src");
 
-    final VirtualFile src2 = myFlashBuilderProjectDir.createChildDirectory(this, "src2");
-    FlexUtils.addFileWithContent("Main.as", "", src2); // source file - not included in package
-    FlexUtils.addFileWithContent("Main-app.xml", "", src2); // descriptor - not included
-    FlexUtils.addFileWithContent("excluded1.xml", "", src2); // excluded in .actionScriptProperties
-    FlexUtils.addFileWithContent("Main.xml", "", src2); // included
+    final VirtualFile src2 = createChildDirectory(myFlashBuilderProjectDir, "src2");
+    addFileWithContent("Main.as", "", src2); // source file - not included in package
+    addFileWithContent("Main-app.xml", "", src2); // descriptor - not included
+    addFileWithContent("excluded1.xml", "", src2); // excluded in .actionScriptProperties
+    addFileWithContent("Main.xml", "", src2); // included
 
-    final VirtualFile sub1 = src2.createChildDirectory(this, "sub1");
-    FlexUtils.addFileWithContent("Foo.mxml", "", sub1); // source file - not included
-    FlexUtils.addFileWithContent("bar.properties", "", sub1); // properties file - not included
-    FlexUtils.addFileWithContent("excluded2.txt", "", sub1); // excluded in .actionScriptProperties
+    final VirtualFile sub1 = createChildDirectory(src2, "sub1");
+    addFileWithContent("Foo.mxml", "", sub1); // source file - not included
+    addFileWithContent("bar.properties", "", sub1); // properties file - not included
+    addFileWithContent("excluded2.txt", "", sub1); // excluded in .actionScriptProperties
 
-    final VirtualFile excludedFolder = sub1.createChildDirectory(this, "excluded_folder"); // excluded in .actionScriptProperties
-    FlexUtils.addFileWithContent("x.jpeg", "", excludedFolder);
+    final VirtualFile excludedFolder = createChildDirectory(sub1, "excluded_folder"); // excluded in .actionScriptProperties
+    addFileWithContent("x.jpeg", "", excludedFolder);
 
-    final VirtualFile sub2 = sub1.createChildDirectory(this, "sub2");
-    sub2.createChildDirectory(this, ".svn"); // excluded folder
-    FlexUtils.addFileWithContent("a.png", "", sub2); // included
+    final VirtualFile sub2 = createChildDirectory(sub1, "sub2");
+    createChildDirectory(sub2, ".svn");
+    addFileWithContent("a.png", "", sub2); // included
 
-    final VirtualFile sub3 = sub2.createChildDirectory(this, "sub3"); // included fully
-    FlexUtils.addFileWithContent("b.js", "", sub3);
-    final VirtualFile sub4 = sub3.createChildDirectory(this, "sub4");
-    FlexUtils.addFileWithContent("c.html", "", sub4);
+    final VirtualFile sub3 = createChildDirectory(sub2, "sub3"); // included fully
+    addFileWithContent("b.js", "", sub3);
+    final VirtualFile sub4 = createChildDirectory(sub3, "sub4");
+    addFileWithContent("c.html", "", sub4);
 
-    final VirtualFile src3 = myFlashBuilderProjectDir.createChildDirectory(this, "src3"); // fully included
-    final VirtualFile fooDir = src3.createChildDirectory(this, "foo");
-    FlexUtils.addFileWithContent("bar.txt", "", fooDir);
+    final VirtualFile src3 = createChildDirectory(myFlashBuilderProjectDir, "src3"); // fully included
+    final VirtualFile fooDir = createChildDirectory(src3, "foo");
+    addFileWithContent("bar.txt", "", fooDir);
 
     importProject("<actionScriptProperties mainApplicationPath=\"Main.as\">\n" +
                   "  <compiler sourceFolderPath=\"src\">" +
@@ -896,14 +925,14 @@ public class FlashBuilderImportTest extends IdeaTestCase {
   }
 
   public void testFilesToPackage2() throws Exception {
-    final VirtualFile srcDir = myFlashBuilderProjectDir.createChildDirectory(this, "src");
-    FlexUtils.addFileWithContent("asset1", "", srcDir); // included
-    final VirtualFile packDir = srcDir.createChildDirectory(this, "pack");
-    FlexUtils.addFileWithContent("App1.as", "", packDir); // source file - not included in package
-    FlexUtils.addFileWithContent("App1-app.xml", "", packDir); // descriptor - not included
-    FlexUtils.addFileWithContent("App2.mxml", "", packDir); // source file - not included
-    FlexUtils.addFileWithContent("App2-app.xml", "", packDir); // descriptor - not included
-    FlexUtils.addFileWithContent("asset2", "", packDir); // included
+    final VirtualFile srcDir = createChildDirectory(myFlashBuilderProjectDir, "src");
+    addFileWithContent("asset1", "", srcDir); // included
+    final VirtualFile packDir = createChildDirectory(srcDir, "pack");
+    addFileWithContent("App1.as", "", packDir); // source file - not included in package
+    addFileWithContent("App1-app.xml", "", packDir); // descriptor - not included
+    addFileWithContent("App2.mxml", "", packDir); // source file - not included
+    addFileWithContent("App2-app.xml", "", packDir); // descriptor - not included
+    addFileWithContent("asset2", "", packDir); // included
 
     importProject("<actionScriptProperties  mainApplicationPath=\"pack/App1.as\">\n" +
                   "  <compiler sourceFolderPath=\"src\" useApolloConfig='true'/>" +
@@ -940,7 +969,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   private void commonThemeTest(final String themeLocation, final String expectedTheme) throws IOException, ConfigurationException {
     prepareSdkTest();
-    FlexUtils.addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
+    addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
     importProject("<actionScriptProperties>\n" +
                   "  <compiler flexSDK='custom sdk name' additionalCompilerArguments=\"-locale en_US\">\n" +
                   "    <libraryPath>\n" +

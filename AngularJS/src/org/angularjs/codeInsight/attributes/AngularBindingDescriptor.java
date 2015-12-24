@@ -8,7 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,13 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   }
 
   @NotNull
-  protected static AngularBindingDescriptor createBinding(PsiNamedElement field) {
+  private static AngularBindingDescriptor createBinding(PsiNamedElement field) {
     return new AngularBindingDescriptor(field, "[" + field.getName() + "]");
+  }
+
+  @Nullable
+  @Override
+  public String handleTargetRename(@NotNull @NonNls String newTargetName) {
+    return "[" + newTargetName + "]";
   }
 }

@@ -2,7 +2,7 @@ function AppComponent() {}
 
 AppComponent.annotations = [
   new angular.DirectiveAnnotation({
-    selector: 'my-customer'
+    selector: '[my-customer]'
   })
 ];
 
