@@ -1,10 +1,10 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.jstestdriver.idea.rt.TestRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunProfileState;
 import com.google.jstestdriver.idea.execution.JstdRunProgramRunner;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
+import com.google.jstestdriver.idea.rt.TestRunner;
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
@@ -84,7 +84,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
       return prepareWithServer(environment.getProject(), server, runSettings);
     }
 
-    return jstdToolWindowManager.restartServer().then(new AsyncFunction<JstdServer, RunProfileStarter>() {
+    return jstdToolWindowManager.restartServer().thenAsync(new AsyncFunction<JstdServer, RunProfileStarter>() {
       @NotNull
       @Override
       public Promise<RunProfileStarter> fun(JstdServer server) {
