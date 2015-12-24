@@ -65,22 +65,16 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
         final PsiFile psiFile = elementToSearch.getManager().findFile(vFile);
         if (psiFile == null) return;
 
-        final PsiElement usageElement = getUsagePsiElement(psiFile, TextRange.create(location.getOffset(), location.getOffset() + location
-          .getLength()));
-        if (usageElement == null) return;
+        final TextRange range = TextRange.create(location.getOffset(), location.getOffset() + location.getLength());
+        final boolean potentialUsage = result.isPotential();
+        final PsiElement usageElement = getUsagePsiElement(psiFile, range);
+        final UsageInfo usageInfo = usageElement == null ? null : getUsageInfo(usageElement, range, potentialUsage);
 
-        if (scope instanceof LocalSearchScope && !PsiSearchScopeUtil.isInScope((LocalSearchScope)scope, usageElement)) return;
-
-        int offset = location.getOffset();
-        int length = location.getLength();
-        offset -= usageElement.getTextRange().getStartOffset();
-
-        boolean nonCodeUsage = usageElement instanceof PsiComment || usageElement.getParent() instanceof PsiComment;
-
-        final UsageInfo usageInfo = new UsageInfo(usageElement, offset, offset + length, nonCodeUsage);
-        usageInfo.setDynamicUsage(result.isPotential());
-
-        processor.process(usageInfo);
+        if (usageInfo != null &&
+            usageInfo.getElement() != null &&
+            (!(scope instanceof LocalSearchScope) || PsiSearchScopeUtil.isInScope((LocalSearchScope)scope, usageInfo.getElement()))) {
+          processor.process(usageInfo);
+        }
       }
     };
 
@@ -93,8 +87,21 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
   }
 
   @Nullable
-  private static PsiElement getUsagePsiElement(@NotNull final PsiFile psiFile, @NotNull final TextRange textRange) {
-    // try to find Dartreference matching textRange. If not possible then return the topmost element matching textRange.
+  public static UsageInfo getUsageInfo(@NotNull final PsiElement usageElement,
+                                       @NotNull final TextRange range,
+                                       final boolean potentialUsage) {
+    final int offset = range.getStartOffset() - usageElement.getTextRange().getStartOffset();
+    boolean nonCodeUsage = usageElement instanceof PsiComment || usageElement.getParent() instanceof PsiComment;
+
+    final UsageInfo usageInfo = new UsageInfo(usageElement, offset, offset + range.getLength(), nonCodeUsage);
+    usageInfo.setDynamicUsage(potentialUsage);
+
+    return usageInfo;
+  }
+
+  @Nullable
+  public static PsiElement getUsagePsiElement(@NotNull final PsiFile psiFile, @NotNull final TextRange textRange) {
+    // try to find DartReference matching textRange. If not possible then return the topmost element matching textRange.
     // If neither found then return minimal element that includes the textRange.
     PsiElement element = psiFile.findElementAt(textRange.getStartOffset());
     if (element == null) return null;
