@@ -85,21 +85,21 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data(){
-//        List<Object> lessonsIds = new ArrayList<Object>();
-//        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
-//        for (Course course : courses) {
-//            final ArrayList<Lesson> lessons = course.getLessons();
-//            for (Lesson lesson : lessons) {
-//                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
-//                    lessonsIds.add(lesson.getName());
-//                }
-//            }
-//        }
-//        return lessonsIds;
-        List<Object> ids = new ArrayList<Object>();
-        ids.add("Selection");
-        ids.add("Comment Line");
-        return ids;
+        List<Object> lessonsIds = new ArrayList<Object>();
+        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
+        for (Course course : courses) {
+            final ArrayList<Lesson> lessons = course.getLessons();
+            for (Lesson lesson : lessons) {
+                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+                    lessonsIds.add(lesson.getName());
+                }
+            }
+        }
+        return lessonsIds;
+//        List<Object> ids = new ArrayList<Object>();
+//        ids.add("Selection");
+//        ids.add("Comment Line");
+//        return ids;
     }
 
     @Before
@@ -160,12 +160,12 @@ public class HardScratchBasedTest extends UsefulTestCase{
 //                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
 //                    componentManager.registerComponentInstance(editorFactoryClass, editorFactory);
 
+                    disposeAllEduEditors();
                     if(myProjectFixture != null) {
                         myProjectFixture.tearDown();
                     }
 
                     UIUtil.dispatchAllInvocationEvents();
-                    disposeAllEduEditors();
                 } catch (Exception e) {
                     ex.set(e);
                 } finally {
@@ -238,7 +238,6 @@ public class HardScratchBasedTest extends UsefulTestCase{
                 @Override
                 public void run() {
                     try {
-                        System.out.println(lessonId + ": solving step " + (LessonProcessor.getCurrentExecutionList().getElements().size() - 1));
                         myLessonSolution.solveStep();
                     } catch (Exception e) {
                         e.printStackTrace();
