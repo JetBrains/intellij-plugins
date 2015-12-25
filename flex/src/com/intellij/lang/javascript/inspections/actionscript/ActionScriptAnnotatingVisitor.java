@@ -312,7 +312,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           reportingClient.reportError(node,
                                       JSBundle.message("javascript.validation.message.interface.method.invalid.access.modifier"),
                                       ErrorReportingClient.ProblemKind.ERROR,
-                                      new SetElementVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC)
+                                      JSFixFactory.getInstance().createChangeVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC, null)
           );
         }
 
@@ -479,14 +479,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               (overrideNs = JSResolveUtil.getNamespaceValue(overrideAttrList)) != null &&
               !overrideNs.equals(JSResolveUtil.getNamespaceValue(attributeList))) {
             String newVisibility;
-            SetElementVisibilityFix fix;
+            IntentionAction fix;
             if (overrideNs != null) {
               newVisibility = overrideNs;
-              fix = new SetElementVisibilityFix(node, overrideNs);
+              fix = JSFixFactory.getInstance().createChangeVisibilityFix(node, null ,overrideNs);
             }
             else {
               newVisibility = JSFormatUtil.formatVisibility(overrideAttrList.getAccessType());
-              fix = new SetElementVisibilityFix(node, overrideAttrList.getAccessType());
+              fix = JSFixFactory.getInstance().createChangeVisibilityFix(node, overrideAttrList.getAccessType() ,null);
             }
             final Annotation annotation = myHolder.createErrorAnnotation(
               findElementForAccessModifierError(node, attributeList),
