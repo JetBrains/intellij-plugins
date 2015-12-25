@@ -214,7 +214,7 @@ public class ActionsRecorder implements Disposable {
                         @Override
                         public void run() {
 
-                            if(!disposed) {
+                            if(!disposed && !project.isDisposed()) {
                                 PsiDocumentManager.getInstance(project).commitAndRunReadAction(new Runnable() {
                                     @Override
                                     public void run() {
