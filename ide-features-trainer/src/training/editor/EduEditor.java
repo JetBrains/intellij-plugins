@@ -219,8 +219,7 @@ public class EduEditor implements TextEditor {
         isDisposed = true;
         if (myCourse != null) CourseManager.getInstance().unregisterCourse(myCourse);
         EduEditorManager.getInstance().disposeEduEditor(this);
-//        Disposer.dispose(myDefaultEditor);
-//        Disposer.dispose(myDefaultEditor);
+        Disposer.dispose(myDefaultEditor);
     }
 
     @Nullable
