@@ -100,8 +100,6 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
 
     @Override
     public Editor createEditor(@NotNull Document document, @Nullable Project project) {
-        if (LessonProcessor.getCurrentExecutionList() != null)
-            System.out.println("EduEditorFactory is processing: " + LessonProcessor.getCurrentExecutionList().getLesson().getName());
         final VirtualFile vf = FileDocumentManager.getInstance().getFile(document);
         if (CourseManager.getInstance().isVirtualFileRegistered(vf) && (document.getUserData(doubleBuildKey) == null || !document.getUserData(doubleBuildKey))){
             document.putUserData(doubleBuildKey, true);
