@@ -10,6 +10,7 @@ import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice;
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
@@ -35,7 +36,7 @@ class MotionAppRunParameters extends AppCodeRunParametersBase {
     return false;
   }
 
-  @NotNull
+  @Nullable
   @Override
   public String getArchitectureId() {
     return myOnDevice ? AMDeviceManager.getInstance().getDeviceArchitecture(getDevice()) : "i386";
