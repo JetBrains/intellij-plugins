@@ -59,7 +59,7 @@ public class ClassTemplateNavigation extends AnAction {
     PsiFile psiFile = getEventPsiFile(event);
 
     if (psiFile == null ||
-        !psiFile.getFileType().equals(TmlFileType.INSTANCE) && event.getPresentation().getText().equals("Tapestry Class")) {
+        !psiFile.getFileType().equals(TmlFileType.INSTANCE) && "Tapestry Class".equals(event.getPresentation().getText())) {
       presentation.setEnabled(false);
       return;
     }
