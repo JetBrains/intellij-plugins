@@ -31,7 +31,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
+import com.intellij.lang.javascript.refactoring.JSChangeVisibilityUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -108,7 +108,7 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
             PsiFile containingFile = anchor.getContainingFile();
             if (!FileModificationService.getInstance().prepareFileForWrite(containingFile)) return;
 
-            JSVisibilityUtil.setVisibility((JSAttributeListOwner)anchor.getParent(), JSAttributeList.AccessType.PACKAGE_LOCAL);
+            JSChangeVisibilityUtil.setVisibility((JSAttributeListOwner)anchor.getParent(), JSAttributeList.AccessType.PACKAGE_LOCAL);
           }
         }
       );
