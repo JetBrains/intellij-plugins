@@ -1,11 +1,9 @@
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.impl.EditorFactoryImpl;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -18,11 +16,11 @@ import com.intellij.openapi.vfs.impl.VirtualFilePointerManagerImpl;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
-import com.intellij.testFramework.fixtures.HeavyIdeaTestFixture;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.ui.EdtInvocationManager;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -32,9 +30,10 @@ import org.junit.runners.Parameterized;
 import training.editor.EduEditor;
 import training.editor.EduEditorFactory;
 import training.editor.EduEditorManager;
-import training.editor.EduEditorProvider;
 import training.lesson.*;
-import training.lesson.exceptons.*;
+import training.lesson.exceptons.InvalidSdkException;
+import training.lesson.exceptons.NoSdkException;
+import training.lesson.exceptons.OldJdkException;
 import training.testFramework.LessonSolution;
 
 import java.util.ArrayList;
@@ -86,17 +85,21 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
     @Parameterized.Parameters(name = "{0}")
     public static List<Object> data(){
-        List<Object> lessonsIds = new ArrayList<Object>();
-        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
-        for (Course course : courses) {
-            final ArrayList<Lesson> lessons = course.getLessons();
-            for (Lesson lesson : lessons) {
-                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
-                    lessonsIds.add(lesson.getName());
-                }
-            }
-        }
-        return lessonsIds;
+//        List<Object> lessonsIds = new ArrayList<Object>();
+//        final Course[] courses = CourseManagerWithoutIDEA.getInstance().getCourses();
+//        for (Course course : courses) {
+//            final ArrayList<Lesson> lessons = course.getLessons();
+//            for (Lesson lesson : lessons) {
+//                if (lesson.getCourse().courseType == Course.CourseType.SCRATCH) {
+//                    lessonsIds.add(lesson.getName());
+//                }
+//            }
+//        }
+//        return lessonsIds;
+        List<Object> ids = new ArrayList<Object>();
+        ids.add("Selection");
+        ids.add("Comment Line");
+        return ids;
     }
 
     @Before
@@ -118,16 +121,22 @@ public class HardScratchBasedTest extends UsefulTestCase{
                     myProjectPath = myProjectRoot.getPath();
 
                     //Swap EditorFactoryClasses with EduEditorFactory
-                    final EduEditorFactory eduEditorFactory = new EduEditorFactory(ProjectManager.getInstance());
-                    eduEditorFactory.cloneEventMulticaster(myProject);
-                    final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
-                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
-//                    eduEditorFactory[0].cloneEventMulticaster(myProject);
-                    componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory);
+                    if (!(EditorFactory.getInstance() instanceof EduEditorFactory))
+                        swapEditorFactory();
+                    System.out.print("");
 
                 } catch (Exception e) {
                     ex.set(e);
                 }
+            }
+
+            private void swapEditorFactory() throws Exception {
+                final EduEditorFactory eduEditorFactory = new EduEditorFactory();
+                eduEditorFactory.cloneEventMulticaster(myProject);
+                final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
+                final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
+//                    eduEditorFactory[0].cloneEventMulticaster(myProject);
+                componentManager.registerComponentInstance(editorFactoryClass, eduEditorFactory);
             }
         };
         invokeTestRunnable(runnable);
@@ -143,12 +152,20 @@ public class HardScratchBasedTest extends UsefulTestCase{
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
-                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
 
-                    disposeAllEduEditors();
+                    //swap managers back
+
+//                    final EditorFactory editorFactory = new EditorFactoryImpl(ProjectManager.getInstance());
+//                    final Class<EditorFactory> editorFactoryClass = EditorFactory.class;
+//                    final ComponentManagerImpl componentManager = (ComponentManagerImpl) ApplicationManager.getApplication();
+//                    componentManager.registerComponentInstance(editorFactoryClass, editorFactory);
+
                     if(myProjectFixture != null) {
                         myProjectFixture.tearDown();
                     }
+
+                    UIUtil.dispatchAllInvocationEvents();
+                    disposeAllEduEditors();
                 } catch (Exception e) {
                     ex.set(e);
                 } finally {
@@ -234,12 +251,14 @@ public class HardScratchBasedTest extends UsefulTestCase{
 
     private void disposeAllEduEditors() {
         final EduEditor[] allNotDisposedEduEditors = EduEditorManager.getInstance().getAllNotDisposedEduEditors();
-        for (int i = 0; i < allNotDisposedEduEditors.length; i++) {
-            EduEditorManager.getInstance().clearMap();
-        }
+//        for (int i = 0; i < allNotDisposedEduEditors.length; i++) {
+//            EduEditorManager.getInstance().clearMap();
+//        }
         for (EduEditor eduEditor : allNotDisposedEduEditors) {
-            Disposer.dispose(eduEditor);
+            if (!eduEditor.isDisposed())
+                Disposer.dispose(eduEditor);
         }
+        EduEditorManager.getInstance().clearMap();
     }
 
 

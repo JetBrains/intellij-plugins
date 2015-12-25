@@ -21,6 +21,8 @@ import com.intellij.util.text.CharArrayCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.lesson.CourseManager;
+import training.lesson.Lesson;
+import training.lesson.LessonProcessor;
 
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -37,9 +39,9 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
 
     private EditorFactoryImpl myDefaultEditorFactory;
 
-    public EduEditorFactory(ProjectManager projectManager) {
-        super(projectManager);
-//        this.myDefaultEditorFactory = new EditorFactoryImpl(projectManager);
+    public EduEditorFactory() throws CloneNotSupportedException {
+        super(ProjectManager.getInstance());
+        //        this.myDefaultEditorFactory = new EditorFactoryImpl(projectManager);
         this.myDefaultEditorFactory = (EditorFactoryImpl) EditorFactoryImpl.getInstance();
     }
 
@@ -98,36 +100,25 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
 
     @Override
     public Editor createEditor(@NotNull Document document, @Nullable Project project) {
+        if (LessonProcessor.getCurrentExecutionList() != null)
+            System.out.println("EduEditorFactory is processing: " + LessonProcessor.getCurrentExecutionList().getLesson().getName());
         final VirtualFile vf = FileDocumentManager.getInstance().getFile(document);
-        if (CourseManager.getInstance().isVirtualFileRegistered(vf) && (document.getUserData(doubleBuildKey) == null)){
+        if (CourseManager.getInstance().isVirtualFileRegistered(vf) && (document.getUserData(doubleBuildKey) == null || !document.getUserData(doubleBuildKey))){
             document.putUserData(doubleBuildKey, true);
             EduEditor eduEditor = (EduEditor) (new EduEditorProvider()).createEditor(project, vf);
             return eduEditor.getEditor();
         }
         else {
-            return myDefaultEditorFactory.createEditor(document, project);
+            Editor resultEditor = myDefaultEditorFactory.createEditor(document, project, vf, false);
+            document.putUserData(doubleBuildKey, false);
+            return resultEditor;
         }
 
     }
 
     @Override
-    public Editor createEditor(@NotNull Document document, Project project, @NotNull FileType fileType, boolean isViewer) {
-        return myDefaultEditorFactory.createEditor(document, project, fileType, isViewer);
-    }
-
-    @Override
-    public Editor createEditor(@NotNull Document document, Project project, @NotNull VirtualFile file, boolean isViewer) {
-        return myDefaultEditorFactory.createEditor(document, project, file, isViewer);
-    }
-
-    @Override
     public Editor createViewer(@NotNull Document document, @Nullable Project project) {
         return myDefaultEditorFactory.createViewer(document, project);
-    }
-
-    @Override
-    public void releaseEditor(@NotNull Editor editor) {
-        myDefaultEditorFactory.releaseEditor(editor);
     }
 
     @NotNull
@@ -167,7 +158,6 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
     @NotNull
     @Override
     public EditorEventMulticaster getEventMulticaster() {
-//        return super.getEventMulticaster();
         return myDefaultEditorFactory.getEventMulticaster();
     }
 
@@ -184,6 +174,15 @@ public class EduEditorFactory extends EditorFactoryImpl implements ApplicationCo
 
     public void cloneEventMulticaster(Project project) throws Exception {
 
+    }
+
+    @Override
+    public void releaseEditor(@NotNull Editor editor) {
+        if (!(myDefaultEditorFactory instanceof EduEditorFactory))
+
+            myDefaultEditorFactory.releaseEditor(editor);
+//        else
+//            super.releaseEditor(editor);
     }
 
     public void cloneEventMulticasterEx(Project project) throws Exception {

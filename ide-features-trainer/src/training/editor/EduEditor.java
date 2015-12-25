@@ -5,6 +5,7 @@ import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.impl.DocumentImpl;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
@@ -218,7 +219,8 @@ public class EduEditor implements TextEditor {
         isDisposed = true;
         if (myCourse != null) CourseManager.getInstance().unregisterCourse(myCourse);
         EduEditorManager.getInstance().disposeEduEditor(this);
-        Disposer.dispose(myDefaultEditor);
+//        Disposer.dispose(myDefaultEditor);
+//        Disposer.dispose(myDefaultEditor);
     }
 
     @Nullable

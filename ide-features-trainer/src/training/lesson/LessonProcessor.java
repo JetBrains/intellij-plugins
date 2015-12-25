@@ -106,6 +106,7 @@ public class LessonProcessor {
 
     }
 
+
     private static void getEditorParameters(Element root, HashMap<String, String> editorParameters) {
         if(root.getAttribute(Lesson.EditorParameters.PROJECT_TREE) != null) {
             editorParameters.put(Lesson.EditorParameters.PROJECT_TREE, root.getAttributeValue(Lesson.EditorParameters.PROJECT_TREE));

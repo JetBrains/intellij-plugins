@@ -394,6 +394,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             else
 //                FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
                 FileEditorManagerEx.getInstanceEx(project).openFile(vf, true);
+                System.out.print("");
 
         } else {
             boolean editorIsFind = false;
@@ -413,8 +414,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
         final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(vf);
 
         EduEditor eduEditor = null;
-        if (selectedEditor instanceof EduEditor) eduEditor = (EduEditor) selectedEditor;
-        else eduEditor = (EduEditor) (new EduEditorProvider()).createEditor(project, vf);
+        final EduEditorProvider eduEditorProvider = new EduEditorProvider();
+        if (selectedEditor instanceof EduEditor)
+            eduEditor = (EduEditor) selectedEditor;
+        else
+            eduEditor = (EduEditor) eduEditorProvider.createEditor(project, vf);
+//        FileEditorManagerEx.getInstance().setSelectedEditor(vf, eduEditorProvider.getEditorTypeId());
         return eduEditor;
     }
 
