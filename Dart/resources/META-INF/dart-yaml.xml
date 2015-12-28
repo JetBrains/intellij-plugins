@@ -5,7 +5,6 @@
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection"/>
     <psi.referenceContributor language="yaml" implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartYamlFileTypeFactory"/>
-    <externalAnnotator language="yaml" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
     <completion.contributor language="yaml" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
   </extensions>
 </idea-plugin>

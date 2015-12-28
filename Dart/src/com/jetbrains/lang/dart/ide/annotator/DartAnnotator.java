@@ -1,6 +1,9 @@
 package com.jetbrains.lang.dart.ide.annotator;
 
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.lang.annotation.Annotator;
@@ -12,20 +15,25 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
+import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import gnu.trove.THashMap;
+import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
+import org.dartlang.analysis.server.protocol.AnalysisErrorType;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +44,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartColorAnnotator implements Annotator {
+public class DartAnnotator implements Annotator {
 
   private static final Key<Boolean> DART_SERVER_DATA_HANDLED = Key.create("DART_SERVER_DATA_HANDLED");
 
@@ -44,7 +52,7 @@ public class DartColorAnnotator implements Annotator {
 
   static {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);
-    // handled by DartColorAnnotator without server
+    // handled by DartAnnotator without server
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.BUILT_IN, DartSyntaxHighlighterColors.DART_KEYWORD);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CLASS, DartSyntaxHighlighterColors.DART_CLASS);
     // handled by DartSyntaxHighlighter
@@ -84,7 +92,7 @@ public class DartColorAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_DECLARATION,
                               DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE);
-    // handled by DartColorAnnotator without server
+    // handled by DartAnnotator without server
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INVALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_INVALID_STRING_ESCAPE);
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.KEYWORD, DartSyntaxHighlighterColors.DART_KEYWORD);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LABEL, DartSyntaxHighlighterColors.DART_LABEL);
@@ -135,12 +143,12 @@ public class DartColorAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_PARAMETER, DartSyntaxHighlighterColors.DART_TYPE_PARAMETER);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE,
                               DartSyntaxHighlighterColors.DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE);
-    // handled by DartColorAnnotator without server
+    // handled by DartAnnotator without server
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.VALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_VALID_STRING_ESCAPE);
   }
 
   @Contract("_, null -> false")
-  public static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile file) {
+  private static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile file) {
     if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return false;
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
@@ -152,6 +160,18 @@ public class DartColorAnnotator implements Annotator {
 
     final Module module = fileIndex.getModuleForFile(file);
     return module != null && DartSdkGlobalLibUtil.isDartSdkEnabled(module);
+  }
+
+  public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,
+                                                            @NotNull final String errorType,
+                                                            @NotNull final String analysisErrorFileSD) {
+    // already done using IDE engine
+    if (AnalysisErrorType.TODO.equals(errorType)) return true;
+
+    // workaround for https://github.com/dart-lang/sdk/issues/25034
+    if (!filePath.equals(FileUtil.toSystemIndependentName(analysisErrorFileSD))) return true;
+
+    return false;
   }
 
   @Override
@@ -205,6 +225,22 @@ public class DartColorAnnotator implements Annotator {
   }
 
   private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
+    final PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
+    final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
+
+    for (DartServerData.DartError error : DartAnalysisServerService.getInstance().getErrors(file)) {
+      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getType(), error.getAnalysisErrorFileSD())) continue;
+
+      final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
+
+      if (annotation != null) {
+        final DartQuickFixSet quickFixSet = new DartQuickFixSet(file.getPath(), error.getOffset(), psiModificationCount);
+        for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
+          annotation.registerFix(quickFix);
+        }
+      }
+    }
+
     for (DartServerData.DartHighlightRegion region : DartAnalysisServerService.getInstance().getHighlight(file)) {
       final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
       if (attributeKey != null) {
@@ -212,6 +248,66 @@ public class DartColorAnnotator implements Annotator {
         holder.createInfoAnnotation(textRange, null).setTextAttributes(TextAttributesKey.find(attributeKey));
       }
     }
+  }
+
+  @Nullable
+  private static Annotation createAnnotation(@NotNull final AnnotationHolder holder,
+                                             @NotNull final DartServerData.DartError error,
+                                             final int fileTextLength) {
+    int highlightingStart = error.getOffset();
+    int highlightingEnd = error.getOffset() + error.getLength();
+    if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
+    if (highlightingStart > 0 && highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
+
+    final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
+
+    final String severity = error.getSeverity();
+    final String message = StringUtil.notNullize(error.getMessage());
+
+    final ProblemHighlightType specialHighlightType = getSpecialHighlightType(message);
+    final Annotation annotation;
+
+    if (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType == null) {
+      annotation = holder.createWeakWarningAnnotation(textRange, message);
+      annotation.setTextAttributes(DartSyntaxHighlighterColors.HINT);
+    }
+    else if (AnalysisErrorSeverity.WARNING.equals(severity) ||
+             (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType != null)) {
+      annotation = holder.createWarningAnnotation(textRange, message);
+      annotation.setTextAttributes(DartSyntaxHighlighterColors.WARNING);
+    }
+    else if (AnalysisErrorSeverity.ERROR.equals(severity)) {
+      annotation = holder.createErrorAnnotation(textRange, message);
+      annotation.setTextAttributes(DartSyntaxHighlighterColors.ERROR);
+    }
+    else {
+      annotation = null;
+    }
+
+    if (annotation != null && specialHighlightType != null) {
+      annotation.setTextAttributes(null);
+      annotation.setHighlightType(specialHighlightType);
+    }
+
+    return annotation;
+  }
+
+  @Nullable
+  private static ProblemHighlightType getSpecialHighlightType(@NotNull final String errorMessage) {
+    // see [Dart repo]/pkg/analyzer/lib/src/generated/error.dart
+
+    if (errorMessage.equals("Unused import") ||
+        errorMessage.equals("Duplicate import") ||
+        errorMessage.endsWith(" is not used") ||
+        errorMessage.startsWith("Dead code")) {
+      return ProblemHighlightType.LIKE_UNUSED_SYMBOL;
+    }
+
+    if (errorMessage.endsWith(" is deprecated")) {
+      return ProblemHighlightType.LIKE_DEPRECATED;
+    }
+
+    return null;
   }
 
   private static void highlightEscapeSequences(final PsiElement node, final AnnotationHolder holder) {

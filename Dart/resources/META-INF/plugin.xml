@@ -149,10 +149,7 @@
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
-    <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
-    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
-    <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
-
+    <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
     <lang.findUsagesProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.findUsages.DartFindUsagesProvider"/>

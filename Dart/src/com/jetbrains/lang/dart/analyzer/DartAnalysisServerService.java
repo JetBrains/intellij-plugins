@@ -8,7 +8,6 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
@@ -45,9 +44,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
@@ -89,10 +86,8 @@ public class DartAnalysisServerService {
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-  private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -133,8 +128,11 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-      updateProblemsView(FileUtil.toSystemIndependentName(filePath), errors);
+    public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
+      final boolean visible = myVisibleFiles.contains(filePathSD);
+      final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
+      myServerData.computedErrors(filePathSI, errors, visible);
+      updateProblemsView(filePathSI, errors);
     }
 
     @Override
@@ -474,6 +472,11 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
+  public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
+    return myServerData.getErrors(file);
+  }
+
+  @NotNull
   public List<DartServerData.DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     return myServerData.getHighlight(file);
   }
@@ -744,73 +747,6 @@ public class DartAnalysisServerService {
     if (semaphore.tryUp()) {
       LOG.info("analysis_getNavigation() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
       return null;
-    }
-
-    return resultRef.get();
-  }
-
-  @Nullable
-  public AnalysisError[] analysis_getErrors(@NotNull final DartServerErrorsAnnotator.AnnotatorInfo info) {
-    final String filePath = FileUtil.toSystemDependentName(info.myFilePath);
-
-    final Ref<AnalysisError[]> resultRef = new Ref<AnalysisError[]>();
-    final Semaphore semaphore = new Semaphore();
-
-    try {
-      synchronized (myLock) {
-        if (myServer == null) return null;
-
-        semaphore.down();
-
-        LOG.debug("analysis_getErrors(" + filePath + ")");
-
-        final GetErrorsConsumer consumer = new GetErrorsConsumer() {
-          @Override
-          public void computedErrors(final AnalysisError[] errors) {
-            if (semaphore.tryUp()) {
-              resultRef.set(errors);
-            }
-            else {
-              // semaphore unlocked by timeout, schedule to highlight the file again
-              LOG.debug("analysis_getErrors() took too long for file " + filePath + ", restarting daemon");
-
-              ApplicationManager.getApplication().runReadAction(new Runnable() {
-                @Override
-                public void run() {
-                  final VirtualFile vFile =
-                    info.myProject.isDisposed() ? null : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
-                  final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(info.myProject).findFile(vFile);
-                  if (psiFile != null) {
-                    DaemonCodeAnalyzer.getInstance(info.myProject).restart(psiFile);
-                  }
-                }
-              });
-            }
-          }
-
-          @Override
-          public void onError(final RequestError error) {
-            if (RequestErrorCode.GET_ERRORS_INVALID_FILE.equals(error.getCode())) {
-              LOG.info(getShortErrorMessage("analysis_getErrors()", filePath, error));
-            }
-            else {
-              logError("analysis_getErrors()", filePath, error);
-            }
-
-            semaphore.up();
-          }
-        };
-
-        myServer.analysis_getErrors(filePath, consumer);
-      }
-
-      final long timeout = info.isLongerAnalysisTimeout() || ApplicationManager.getApplication().isUnitTestMode()
-                           ? GET_ERRORS_LONGER_TIMEOUT
-                           : GET_ERRORS_TIMEOUT;
-      semaphore.waitFor(timeout);
-    }
-    finally {
-      semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
     }
 
     return resultRef.get();
