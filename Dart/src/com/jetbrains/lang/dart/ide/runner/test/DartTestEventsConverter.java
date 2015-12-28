@@ -508,6 +508,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     Test(int id, String name, Group parent, Metadata metadata) {
       super(id, name, parent, metadata);
     }
+
+    void addNames(List<String> names) {
+      if (hasValidParent()) {
+        super.addNames(names);
+      } else {
+        names.add(StringUtil.escapeStringCharacters(getBaseName()));
+      }
+    }
   }
 
   private static class Group extends Item {
