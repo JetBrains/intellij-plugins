@@ -3,9 +3,9 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.nodejs.NodeDetectionUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -17,7 +17,7 @@ public class KarmaProjectSettings {
 
   private static final String KARMA_PACKAGE_DIR__KEY = "javascript.karma.karma_node_package_dir";
   private static final String NODE_INTERPRETER_PATH__KEY = "javascript.karma.node_interpreter_path";
-  private static volatile KarmaProjectSettings CURRENT_SETTINGS = null;
+  private static final Key<KarmaProjectSettings> SETTINGS_KEY = Key.create("KARMA_SETTINGS_KEY");
 
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDir;
@@ -49,53 +49,48 @@ public class KarmaProjectSettings {
 
   public static void setNodeInterpreterPath(@NotNull Project project, @NotNull String nodeInterpreterPath) {
     setProjectSetting(project, NODE_INTERPRETER_PATH__KEY, nodeInterpreterPath);
-    CURRENT_SETTINGS = null;
+    SETTINGS_KEY.set(project, null);
   }
 
   public static void setKarmaPackageDir(@NotNull Project project, @NotNull String karmaPackageDir) {
     setProjectSetting(project, KARMA_PACKAGE_DIR__KEY, karmaPackageDir);
-    CURRENT_SETTINGS = null;
+    SETTINGS_KEY.set(project, null);
   }
 
   @NotNull
   public static KarmaProjectSettings get(@NotNull Project project) {
-    KarmaProjectSettings settings = CURRENT_SETTINGS;
+    KarmaProjectSettings settings = SETTINGS_KEY.get(project);
     if (settings != null) {
       return settings;
     }
     String nodeInterpreterPath = doGetNodeInterpreterPath(project);
     String karmaPackageDir = doGetKarmaPackageDir(project);
     settings = new KarmaProjectSettings(nodeInterpreterPath, karmaPackageDir);
-    CURRENT_SETTINGS = settings;
+    SETTINGS_KEY.set(project, settings);
     return settings;
   }
 
   @NotNull
   private static String doGetNodeInterpreterPath(@NotNull Project project) {
     String nodeInterpreterPath = getProjectSetting(project, NODE_INTERPRETER_PATH__KEY);
-    if (StringUtil.isEmpty(nodeInterpreterPath)) {
+    if (nodeInterpreterPath.isEmpty()) {
       File nodeInterpreterFile = NodeDetectionUtil.findInterpreterInPath();
       if (nodeInterpreterFile != null) {
         nodeInterpreterPath = nodeInterpreterFile.getAbsolutePath();
       }
     }
-    return StringUtil.notNullize(nodeInterpreterPath);
+    return nodeInterpreterPath;
   }
 
   @NotNull
   private static String doGetKarmaPackageDir(@NotNull Project project) {
-    KarmaPackageDirSetting karmaPackageDirSetting = KarmaPackageDirSetting.getInstance(project);
-    String karmaPackageDir = karmaPackageDirSetting.getPackageDir();
-    if (StringUtil.isEmpty(karmaPackageDir)) {
-      karmaPackageDir = getProjectSetting(project, KARMA_PACKAGE_DIR__KEY);
-    }
-    return StringUtil.notNullize(karmaPackageDir);
+    return getProjectSetting(project, KARMA_PACKAGE_DIR__KEY);
   }
 
-  @Nullable
+  @NotNull
   private static String getProjectSetting(@NotNull Project project, @NotNull String key) {
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-    return propertiesComponent.getValue(key);
+    return StringUtil.notNullize(propertiesComponent.getValue(key));
   }
 
   private static void setProjectSetting(@NotNull Project project, @NotNull String key, @NotNull String value) {
