@@ -109,7 +109,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return null;
   }
 
-  @Nullable
   private static boolean isDirective(String name) {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
            "Component".equals(name) || "ComponentAnnotation".equals(name);
