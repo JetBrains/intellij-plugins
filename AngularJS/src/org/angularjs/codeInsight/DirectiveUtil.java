@@ -46,7 +46,10 @@ public class DirectiveUtil {
     return name;
   }
 
-  public static String attributeToDirective(String name) {
+  public static String attributeToDirective(final Project project, final String name) {
+    if (AngularIndexUtil.hasAngularJS2(project)) {
+      return name;
+    }
     final String[] words = name.split("-");
     for (int i = 1; i < words.length; i++) {
       words[i] = StringUtil.capitalize(words[i]);

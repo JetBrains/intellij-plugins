@@ -40,7 +40,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
       RenameUtil.rename(usage, attributeName);
     }
 
-    ((PsiNamedElement)element).setName(newName);
+    ((PsiNamedElement)element).setName(DirectiveUtil.attributeToDirective(element.getProject(), newName));
     if (listener != null) {
       listener.elementRenamed(element);
     }
@@ -48,11 +48,16 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
 
   @Override
   public RenameDialog createRenameDialog(Project project, final PsiElement element, PsiElement nameSuggestionContext, Editor editor) {
-    final String directiveName = DirectiveUtil.attributeToDirective(((PsiNamedElement)element).getName());
+    final String directiveName = DirectiveUtil.attributeToDirective(element.getProject(), ((PsiNamedElement)element).getName());
     return new RenameDialog(project, element, nameSuggestionContext, editor) {
       @Override
       public String[] getSuggestedNames() {
         return new String[] {directiveName};
+      }
+
+      @Override
+      protected boolean areButtonsValid() {
+        return true;
       }
     };
   }
@@ -64,7 +69,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
       JSImplicitElement directive = DirectiveUtil.getDirective(element);
       if (directive != null) {
         if (location instanceof UsageViewTypeLocation) return "directive";
-        return DirectiveUtil.attributeToDirective(directive.getName());
+        return DirectiveUtil.attributeToDirective(directive.getProject(), directive.getName());
       }
       return null;
     }
