@@ -7,6 +7,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -186,6 +187,11 @@ public class DartAnnotator implements Annotator {
       final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
       if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest(element.getProject())) {
         service.updateFilesContent();
+
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+          service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
+        }
+
         applyServerHighlighting(vFile, holder);
       }
     }

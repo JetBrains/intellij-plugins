@@ -171,6 +171,8 @@ public class DartServerData {
     if (virtualFile != null) {
       Set<Project> projects = myRootsHandler.getTrackedProjects();
       for (final Project project : projects) {
+        if (project.isDisposed()) continue;
+
         if (clearCache) {
           ResolveCache.getInstance(project).clearCache(true);
         }

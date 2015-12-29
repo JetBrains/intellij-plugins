@@ -93,8 +93,9 @@ public class DartAnalysisServerService {
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-  private static final long EXECUTION_CREATE_CONTEXT = TimeUnit.SECONDS.toMillis(1);
-  private static final long EXECUTION_MAP_URI = TimeUnit.SECONDS.toMillis(1);
+  private static final long EXECUTION_CREATE_CONTEXT_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long EXECUTION_MAP_URI_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
 
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
@@ -501,7 +502,6 @@ public class DartAnalysisServerService {
     return myServerData.getImplementedMembers(file);
   }
 
-  @SuppressWarnings("NestedSynchronizedStatement")
   void updateVisibleFiles() {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
@@ -1192,7 +1192,7 @@ public class DartAnalysisServerService {
     }
 
     final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EXECUTION_CREATE_CONTEXT);
+    semaphore.waitFor(EXECUTION_CREATE_CONTEXT_TIMEOUT);
 
     if (semaphore.tryUp()) {
       LOG.info("execution_createContext() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
@@ -1254,7 +1254,7 @@ public class DartAnalysisServerService {
     }
 
     final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EXECUTION_MAP_URI);
+    semaphore.waitFor(EXECUTION_MAP_URI_TIMEOUT);
 
     if (semaphore.tryUp()) {
       LOG.info("execution_mapUri() took too long for contextID " +
@@ -1422,9 +1422,31 @@ public class DartAnalysisServerService {
     }
   }
 
-  public void waitWhileServerBusy_TESTS_ONLY() {
+  public void waitForAnalysisToComplete_TESTS_ONLY(@NotNull final VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
-    waitWhileServerBusy();
+
+    synchronized (myLock) {
+      if (myServer == null) return;
+
+      final Semaphore semaphore = new Semaphore();
+      semaphore.down();
+
+      myServer.analysis_getErrors(FileUtil.toSystemDependentName(file.getPath()), new GetErrorsConsumer() {
+        @Override
+        public void computedErrors(AnalysisError[] errors) {
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(RequestError requestError) {
+          semaphore.up();
+          LOG.error(requestError.getMessage());
+        }
+      });
+
+      semaphore.waitFor(ANALYSIS_IN_TESTS_TIMEOUT);
+      assert !semaphore.tryUp() : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
+    }
   }
 
   private void waitWhileServerBusy() {
