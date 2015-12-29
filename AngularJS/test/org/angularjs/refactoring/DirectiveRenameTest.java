@@ -53,12 +53,16 @@ public class DirectiveRenameTest extends LightPlatformCodeInsightFixtureTestCase
     myFixture.testRename("attribute2.after.html", "foo-bar2");
     myFixture.checkResultByFile("attribute2.ts", "attribute2.after.ts", false);
   }
-  //
-  //public void testAttribute2Normalized() {
-  //  myFixture.configureByFiles("attribute2.html", "attribute2.ts", "angular2.js");
-  //  myFixture.renameElement(myFixture.getElementAtCaret(), "fooBar2", true, true);
-  //  myFixture.checkResultByFile("attribute2.after.html");
-  //  myFixture.checkResultByFile("attribute2.ts", "attribute2.after.ts", false);
-  //}
 
+  public void testAttribute2Normalized() {
+    myFixture.configureByFiles("attribute2.html", "attribute2.ts", "angular2.js");
+    myFixture.testRename("attribute2Normalized.after.html", "fooBar2");
+    myFixture.checkResultByFile("attribute2.ts", "attribute2Normalized.after.ts", false);
+  }
+
+  public void testBinding() {
+    myFixture.configureByFiles("binding.html", "binding.ts", "angular2.js");
+    myFixture.testRename("binding.after.html", "model2");
+    myFixture.checkResultByFile("binding.ts", "binding.after.ts", false);
+  }
 }

@@ -99,6 +99,6 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   @Nullable
   @Override
   public String handleTargetRename(@NotNull @NonNls String newTargetName) {
-    return DirectiveUtil.getAttributeName(newTargetName);
+    return newTargetName;
   }
 }
