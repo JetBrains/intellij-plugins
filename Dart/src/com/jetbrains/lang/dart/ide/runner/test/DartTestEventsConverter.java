@@ -145,12 +145,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
     String testName = test.getBaseName();
     ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(testName);
-    String location = "unknown";
-    if (myLocation != null) {
-      String nameList = GSON.toJson(test.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
-      location = myLocation + "," + nameList;
-    }
-    testStarted.addAttribute("locationHint", location);
+    addLocationHint(testStarted, test);
     myStartMillis = getTestMillis(obj);
     myOutputAppeared = false;
     myParentId = test.getValidParentId();
@@ -190,6 +185,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     myParentId = group.getValidParentId();
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteStarted(group.getBaseName());
     // Possible attributes: "nodeType" "nodeArgs" "running"
+    addLocationHint(groupMsg, group);
     boolean result = finishMessage(groupMsg);
     myParentId = myTestId;
     return result;
@@ -304,6 +300,16 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     testFailed.addAttribute("message", message);
     finishMessage(testFailed);
     return true;
+  }
+
+  private void addLocationHint(ServiceMessageBuilder messageBuilder, Item item) {
+    String testName = item.getBaseName();
+    String location = "unknown";
+    if (myLocation != null) {
+      String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
+      location = myLocation + "," + nameList;
+    }
+    messageBuilder.addAttribute("locationHint", location);
   }
 
   private static long getTestMillis(JsonObject obj) throws ParseException {
@@ -501,6 +507,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     Test(int id, String name, Group parent, Metadata metadata) {
       super(id, name, parent, metadata);
+    }
+
+    void addNames(List<String> names) {
+      if (hasValidParent()) {
+        super.addNames(names);
+      } else {
+        names.add(StringUtil.escapeStringCharacters(getBaseName()));
+      }
     }
   }
 

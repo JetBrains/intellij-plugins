@@ -83,7 +83,6 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
 
   public void testClassSingleLineDocs1() throws Exception {
     doTest("<code><b>Signature:</b> class A<br></code><br><p>  doc1\n" +
-           "/* not doc */\n"                                           +
            "doc2</p>\n",
 
            "// not doc \n"    +
@@ -96,7 +95,6 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
 
   public void testClassSingleLineDocs2() throws Exception {
     doTest("<code><b>Signature:</b> class A<br></code><br><p>  doc1\n" +
-           "/* not doc */\n"                                           +
            "doc2</p>\n",
 
            "@deprecated"      +
@@ -245,7 +243,6 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
 
   public void testMethodSingleLineDocs() throws Exception {
     doTest("<code><b>Signature:</b> foo() → dynamic<br><br><b>Containing class:</b> A<br></code><br><p>  doc1\n" +
-           "/* not doc */\n" +
            "doc2</p>\n", "class A{\n" +
                          "// not doc \n" +
                          "///   doc1  \n" +

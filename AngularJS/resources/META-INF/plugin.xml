@@ -67,6 +67,9 @@
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
+
+    <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
+                     groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

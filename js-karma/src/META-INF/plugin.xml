@@ -32,7 +32,6 @@
                      implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
     />
     <runConfigurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
-    <projectService serviceImplementation="com.intellij.javascript.karma.execution.KarmaPackageDirSetting"/>
     <projectService serviceImplementation="com.intellij.javascript.karma.server.KarmaServerRegistry"/>
   </extensions>
 

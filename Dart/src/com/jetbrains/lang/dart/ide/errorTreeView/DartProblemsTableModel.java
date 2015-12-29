@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
-import com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator;
+import com.jetbrains.lang.dart.ide.annotator.DartAnnotator;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
@@ -265,7 +265,9 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final List<AnalysisError> errors = entry.getValue();
 
       for (AnalysisError analysisError : errors) {
-        if (DartServerErrorsAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError)) continue;
+        if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getType(), analysisError.getLocation().getFile())) {
+          continue;
+        }
 
         final DartProblem problem = new DartProblem(myProject, analysisError);
         problemsToAdd.add(problem);

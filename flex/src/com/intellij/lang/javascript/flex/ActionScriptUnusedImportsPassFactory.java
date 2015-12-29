@@ -23,7 +23,7 @@ import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
-import com.intellij.lang.javascript.validation.JSUnusedImportsHelper;
+import com.intellij.lang.javascript.validation.ActionScriptUnusedImportsHelper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -126,7 +126,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
         fqnsToReplaceWithShortName = Collections.emptyList();
       }
       else {
-        final JSUnusedImportsHelper.Results results = JSUnusedImportsHelper.getUnusedImports(myFile);
+        final ActionScriptUnusedImportsHelper.Results results = ActionScriptUnusedImportsHelper.getUnusedImports(myFile);
         importStatements = results.unusedImports;
         fqnsToReplaceWithShortName = results.fqnsToReplaceWithShortName;
       }
