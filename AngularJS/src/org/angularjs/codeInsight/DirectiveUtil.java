@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -46,8 +47,12 @@ public class DirectiveUtil {
     return name;
   }
 
-  public static String attributeToDirective(final Project project, final String name) {
-    if (AngularIndexUtil.hasAngularJS2(project)) {
+  public static boolean isAngular2Directive(final PsiElement directive) {
+    return directive instanceof JSImplicitElement && directive.getParent() instanceof JSCallExpression;
+  }
+
+  public static String attributeToDirective(final PsiElement directive, final String name) {
+    if (isAngular2Directive(directive)) {
       return name;
     }
     final String[] words = name.split("-");

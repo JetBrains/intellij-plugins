@@ -38,15 +38,27 @@ public class DirectiveRenameTest extends LightPlatformCodeInsightFixtureTestCase
 
   public void testTag2() {
     myFixture.configureByFiles("tag.html", "tag2.ts", "angular2.js");
-    myFixture.renameElement(myFixture.getElementAtCaret(), "foo-bar2", true, true);
-    myFixture.checkResultByFile("tag.after.html");
+    myFixture.testRename("tag.after.html", "foo-bar2");
     myFixture.checkResultByFile("tag2.ts", "tag2.after.ts", false);
   }
 
-  //public void testTag2Normalized() {
-  //  myFixture.configureByFiles("tag.html", "tag2.ts", "angular2.js");
+  public void testTag2Normalized() {
+    myFixture.configureByFiles("tag.html", "tag2.ts", "angular2.js");
+    myFixture.testRename("tag2Normalized.after.html", "fooBar2");
+    myFixture.checkResultByFile("tag2.ts", "tag2Normalized.after.ts", false);
+  }
+
+  public void testAttribute2() {
+    myFixture.configureByFiles("attribute2.html", "attribute2.ts", "angular2.js");
+    myFixture.testRename("attribute2.after.html", "foo-bar2");
+    myFixture.checkResultByFile("attribute2.ts", "attribute2.after.ts", false);
+  }
+  //
+  //public void testAttribute2Normalized() {
+  //  myFixture.configureByFiles("attribute2.html", "attribute2.ts", "angular2.js");
   //  myFixture.renameElement(myFixture.getElementAtCaret(), "fooBar2", true, true);
-  //  myFixture.checkResultByFile("tag.after.html");
-  //  myFixture.checkResultByFile("tag2.ts", "tag2.after.ts", false);
+  //  myFixture.checkResultByFile("attribute2.after.html");
+  //  myFixture.checkResultByFile("attribute2.ts", "attribute2.after.ts", false);
   //}
+
 }
