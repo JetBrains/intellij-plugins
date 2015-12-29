@@ -7,6 +7,7 @@ import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
+import org.angularjs.inspections.EmptyEventHandlerInspectionTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
 
 public class AngularJSTestSuite {
@@ -29,6 +30,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(AngularDirectiveCommentParsingTest.class);
     testSuite.addTestSuite(AngularJSInjectorMatchingEndFinderTest.class);
     testSuite.addTestSuite(AngularMessageFormatAnnotatorTest.class);
+    testSuite.addTestSuite(EmptyEventHandlerInspectionTest.class);
 
     return testSuite;
   }
