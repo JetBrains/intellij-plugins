@@ -154,30 +154,35 @@ public class IDEAFacade implements IDEFacade {
                 throw new ProcessCanceledException();
               }
             });
-          } else {
+          }
+          else {
             progressIndicator.pushState();
-            process.run(new jetbrains.communicator.ide.ProgressIndicator() {
-              @Override
-              public void setIndefinite(boolean indefinite) {
-                progressIndicator.setIndeterminate(indefinite);
-              }
+            try {
+              process.run(new jetbrains.communicator.ide.ProgressIndicator() {
+                @Override
+                public void setIndefinite(boolean indefinite) {
+                  progressIndicator.setIndeterminate(indefinite);
+                }
 
-              @Override
-              public void setText(String text) {
-                progressIndicator.setText(text);
-              }
+                @Override
+                public void setText(String text) {
+                  progressIndicator.setText(text);
+                }
 
-              @Override
-              public void setFraction(double x) {
-                progressIndicator.setFraction(x);
-              }
+                @Override
+                public void setFraction(double x) {
+                  progressIndicator.setFraction(x);
+                }
 
-              @Override
-              public void checkCanceled() {
-                progressIndicator.checkCanceled();
-              }
-            });
-            progressIndicator.popState();
+                @Override
+                public void checkCanceled() {
+                  progressIndicator.checkCanceled();
+                }
+              });
+            }
+            finally {
+              progressIndicator.popState();
+            }
           }
         }
       }, processTitle, true, null);
