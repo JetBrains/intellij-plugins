@@ -149,7 +149,12 @@ public class CfscriptParser {
     else {
       (new CfmlExpressionParser(myBuilder)).parseStatement();
     }
-    eatSemicolon(myBuilder);
+
+    if(myBuilder.getTokenType() == L_CURLYBRACKET) {
+      parseScript(myBuilder, false);
+    } else {
+      eatSemicolon(myBuilder);
+    }
     // statement.done(CfscriptElementTypes.STATEMENT);
   }
 
