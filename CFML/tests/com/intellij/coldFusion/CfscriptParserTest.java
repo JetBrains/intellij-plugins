@@ -121,6 +121,10 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
     doTest("/newSyntax");
   }
 
+  public void testNewComponentSyntax11() throws Throwable {
+    doTest("/newSyntax");
+  }
+
   public void testNewInitAsReturnStatement() throws Throwable {
     doTest();
   }
