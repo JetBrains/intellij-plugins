@@ -327,7 +327,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
     @Nullable
     public Project getEduProject(){
-        if (eduProject == null) {
+        if (eduProject == null  || eduProject.isDisposed()) {
             if (initEduProject(getCurrentProject()))
                 return eduProject;
             else
