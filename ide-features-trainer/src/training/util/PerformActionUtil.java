@@ -132,6 +132,41 @@ public class PerformActionUtil {
         });
     }
 
+    public static void performActionDisabledPresentation(final Editor editor, String actionClassName){
+        performActionDisabledPresentation(editor, actionClassName, null);
+    }
+
+    public static void performActionDisabledPresentation(final Editor editor, String actionClassName, @Nullable final FileEditor fileEditor) {
+        final Class<AnAction> aClass;
+        try {
+            aClass = (Class<AnAction>) ClassLoader.getSystemClassLoader().loadClass(actionClassName);
+            final AnAction action = aClass.newInstance();
+
+            final ActionManagerEx amEx = ActionManagerEx.getInstanceEx();
+            final String actionName = ActionManager.getInstance().getId(action);
+            final InputEvent inputEvent = getInputEvent(actionName);
+
+            final Presentation presentation = action.getTemplatePresentation().clone();
+
+            Object hostEditor = editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor;
+            Map<String, Object> map = ((fileEditor != null) ? ContainerUtil.newHashMap(Pair.create(CommonDataKeys.HOST_EDITOR.getName(), hostEditor), Pair.createNonNull(CommonDataKeys.EDITOR.getName(), editor),
+                    Pair.createNonNull(PlatformDataKeys.FILE_EDITOR.getName(), fileEditor)):
+                    ContainerUtil.newHashMap(Pair.create(CommonDataKeys.HOST_EDITOR.getName(), hostEditor),
+                            Pair.createNonNull(CommonDataKeys.EDITOR.getName(), editor)));
+            DataContext parent = DataManager.getInstance().getDataContext(editor.getContentComponent());
+            final DataContext context = SimpleDataContext.getSimpleContext(map, parent);
+            final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", context);
+
+
+            amEx.fireBeforeActionPerformed(action, context, event);
+            ActionUtil.performActionDumbAware(action, event);
+            amEx.queueActionPerformedEvent(action, context, event);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public static void performActionDisabledPresentation(String actionName, final Editor editor){
         performActionDisabledPresentation(actionName, editor, null);
     }
