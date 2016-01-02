@@ -11,6 +11,7 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.*;
@@ -82,6 +83,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
 
+  public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+    super(psiElement, holder);
+  }
+
   protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
     JSParameterList nodeParameterList = fun.getParameterList();
     JSParameterList overrideParameterList = override.getParameterList();
@@ -149,18 +154,28 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return true;
   }
 
-
+  @NotNull
   @Override
-  protected void initTypeCheckers(@NotNull PsiElement context) {
-    myProblemReporter = new JSAnnotatorProblemReporter(myHolder) {
+  protected JSAnnotatorProblemReporter createProblemReporter(PsiElement context) {
+    return new JSAnnotatorProblemReporter(myHolder) {
       @Nullable
       @Override
       protected String getAnnotatorInspectionId() {
         return null;
       }
     };
-    myTypeChecker = new ActionScriptTypeChecker(myProblemReporter);
-    myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
+  }
+
+  @NotNull
+  @Override
+  protected JSTypeChecker<Annotation> createTypeChecker(PsiElement context) {
+    return new ActionScriptTypeChecker(myProblemReporter);
+  }
+
+  @NotNull
+  @Override
+  protected JSFunctionSignatureChecker createFunctionSignatureChecker(PsiElement context) {
+    return new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
   }
 
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
