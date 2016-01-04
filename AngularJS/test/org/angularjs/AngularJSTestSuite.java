@@ -9,6 +9,7 @@ import org.angularjs.findUsages.FindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.inspections.EmptyEventHandlerInspectionTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
+import org.angularjs.refactoring.DirectiveRenameTest;
 
 public class AngularJSTestSuite {
 
@@ -31,6 +32,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(AngularJSInjectorMatchingEndFinderTest.class);
     testSuite.addTestSuite(AngularMessageFormatAnnotatorTest.class);
     testSuite.addTestSuite(EmptyEventHandlerInspectionTest.class);
+    testSuite.addTestSuite(DirectiveRenameTest.class);
 
     return testSuite;
   }

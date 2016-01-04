@@ -97,11 +97,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   private static String getSelectorName(PsiElement decorator) {
-    final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
-    final JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
-    final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
-                                                                     JSObjectLiteralExpression.class);
-    final JSProperty selector = descriptor != null ? descriptor.findProperty("selector") : null;
+    final JSProperty selector = getSelector(decorator);
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return StringUtil.unquoteString(value.getText());
@@ -110,6 +106,14 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
+  public static JSProperty getSelector(PsiElement decorator) {
+    final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
+    final JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
+    final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
+                                                                     JSObjectLiteralExpression.class);
+    return descriptor != null ? descriptor.findProperty("selector") : null;
+  }
+
   private static boolean isDirective(String name) {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
            "Component".equals(name) || "ComponentAnnotation".equals(name);

@@ -10,17 +10,20 @@ var cli = require('./intellijCli.js')
  * @param {Object} config
  */
 function configureCoverage(config) {
+  var karmaCoverageReporterName = 'coverage';
+  var reporters = config.reporters || [];
   if (cli.isWithCoverage()) {
-    var karmaCoverageReporterName = 'coverage';
-    var reporters = config.reporters || [];
-    // Coverage preprocessor won't work, if there is no 'coverage' reporter:
-    //   https://github.com/karma-runner/karma-coverage/blob/v0.4.2/lib/preprocessor.js#L53
+    // Ensure 'coverage' reporter is specified, otherwise coverage preprocessor won't work:
+    //   https://github.com/karma-runner/karma-coverage/blob/v0.5.3/lib/preprocessor.js#L54
     if (reporters.indexOf(karmaCoverageReporterName) < 0) {
       reporters.push(karmaCoverageReporterName);
+      console.log('IntelliJ integration enabled coverage by adding \'' + karmaCoverageReporterName + '\' reporter');
+      // 'coverage' reporter uses settings from 'config.coverageReporter'. If no settings set,
+      //    by default coverage report files will be stored inside project.
       if (!config.hasOwnProperty('coverageReporter')) {
-        // If 'coverage' reporter is missing and there is no 'config.coverageReporter', then
-        //   probably, it isn't a good idea to generate external files inside project ("coverage/" by default).
-        // The generated coverage won't be used.
+        // 'coverage' reporter and 'config.coverageReporter' not configured =>
+        //    let's prevent generating default coverage report files in "coverage/" directory, since
+        //    it wasn't asked explicitly and the generated lcovonly file most likely is of no used
         config.coverageReporter = {
           type : 'lcovonly',
           dir : path.join(cli.getCoverageTempDirPath(), 'unused'),
@@ -29,8 +32,25 @@ function configureCoverage(config) {
       }
     }
     reporters.push(IntellijCoverageReporter.reporterName);
-    config.reporters = reporters;
   }
+  else if (canCoverageBeDisabledSafely(config.coverageReporter)) {
+    if (reporters.indexOf(karmaCoverageReporterName) >= 0) {
+      reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
+      console.log('IntelliJ integration disabled coverage for faster run and debug capabilities');
+    }
+  }
+  config.reporters = reporters;
+}
+
+/**
+ * @param {Object} coverageReporter
+ * @returns {boolean} true if tests can be successfully run without coverage reporter and preprocessor
+ */
+function canCoverageBeDisabledSafely(coverageReporter) {
+  return coverageReporter == null || (
+      !Object.prototype.hasOwnProperty.call(coverageReporter, 'instrumenter') &&
+      !Object.prototype.hasOwnProperty.call(coverageReporter, 'instrumenters')
+    );
 }
 
 function findLcovInfoFile(coverageDir, callback) {
