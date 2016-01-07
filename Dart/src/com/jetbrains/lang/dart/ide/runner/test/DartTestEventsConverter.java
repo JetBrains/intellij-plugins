@@ -490,8 +490,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     void addNames(List<String> names) {
       if (hasValidParent()) {
         myParent.addNames(names);
-        names.add(StringUtil.escapeStringCharacters(getBaseName()));
       }
+      names.add(StringUtil.escapeStringCharacters(getBaseName()));
     }
   }
 
@@ -507,14 +507,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     Test(int id, String name, Group parent, Metadata metadata) {
       super(id, name, parent, metadata);
-    }
-
-    void addNames(List<String> names) {
-      if (hasValidParent()) {
-        super.addNames(names);
-      } else {
-        names.add(StringUtil.escapeStringCharacters(getBaseName()));
-      }
     }
   }
 

@@ -40,7 +40,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
                                     @NotNull String path,
                                     @NotNull Project project,
                                     @NotNull GlobalSearchScope scope) {
-    // path is like /Users/x/projects/foo/test/foo_test.dart,{"main tests","calculate_fail"}
+    // path is like /Users/x/projects/foo/test/foo_test.dart,["main tests","calculate_fail"]
 
     int commaIdx = path.indexOf(',');
     if (commaIdx < 0) return NONE;
