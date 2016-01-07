@@ -450,11 +450,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     String getBaseName() {
       if (hasValidParent()) {
-        try {
-          return myName.substring(getParent().getName().length() + 1);
-        } catch (StringIndexOutOfBoundsException ex) {
-          return myName;
-        }
+        return myName.substring(getParent().getName().length() + 1);
       } else {
         return myName;
       }
