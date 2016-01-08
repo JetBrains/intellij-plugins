@@ -50,6 +50,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
     //System.setProperty("prism.text", "t2k");
     myPanel = new JFXPanel();
 
+    // vsch: without setting the min size, attempting to edit a language fragment with more than one split editor open with JavaFx preview
+    // showing prevents the fragmet editor from being resizable and results from just the tab of the editor visible
+    myPanel.minimumSize = Dimension(10, 10)
+
     Platform.setImplicitExit(false);
     Platform.runLater(new Runnable() {
       @Override
@@ -210,7 +214,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
   }
-  
+
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
@@ -221,7 +225,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
       }
     }
   }
-  
+
   private class ScrollPreservingListener implements ChangeListener<State> {
     int myScrollY = 0;
 
@@ -239,5 +243,5 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
           .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
       }
     }
-  } 
+  }
 }
