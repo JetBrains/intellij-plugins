@@ -9,10 +9,7 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.completion.JSCompletionContributor;
-import com.intellij.lang.javascript.completion.JSInsertHandler;
-import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
-import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
+import com.intellij.lang.javascript.completion.*;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
@@ -25,7 +22,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
-import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -101,7 +97,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         }
         else {
           LookupElement lookupItem = JSLookupUtilImpl
-            .createPrioritizedLookupItem(clazz, clazz.getName(), VariantsProcessor.LookupPriority.SMART_PROPRITY + 1, false, true);
+            .createPrioritizedLookupItem(clazz, clazz.getName(), JSLookupPriority.SMART_PRIORITY + 1, false, true);
           CompletionResultSet completionResultSet = JSCompletionContributor.getInstance().getCompletionResultSet();
 
           if (completionResultSet != null && !ApplicationManager.getApplication().isHeadlessEnvironment()) {
@@ -137,7 +133,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
             clazz,
             ImportUtils.importAndShortenReference(typeText, parent, false, true).first + "()",
-            VariantsProcessor.LookupPriority.SMART_PROPRITY,
+            JSLookupPriority.SMART_PRIORITY,
             true,
             true
           ));
@@ -148,7 +144,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
             createType(JSCommonTypeNames.ARRAY_CLASS_NAME, JSTypeSourceFactory.createTypeSource(parent), JSContext.INSTANCE).resolveClass(),
             "<"+ ImportUtils.importAndShortenReference(signature.genericType, parent, false, true).first+">" + "[]",
-            VariantsProcessor.LookupPriority.SMART_PROPRITY,
+            JSLookupPriority.SMART_PRIORITY,
             true,
             true
           ));
@@ -188,7 +184,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
               JSDialectSpecificHandlersFactory.forElement(location).getClassResolver().findClassByQName(qName, location),
               ImportUtils.importAndShortenReference(qName, parent, false, true).first,
-              VariantsProcessor.LookupPriority.SMART_PROPRITY,
+              JSLookupPriority.SMART_PRIORITY,
               true,
               true
             ));
@@ -235,7 +231,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       if (JSResolveUtil.hasExcludeClassMetadata(result)) continue;
       if (!JSResolveUtil.isAccessibleFromCurrentPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
-      variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), VariantsProcessor.LookupPriority.SMART_PROPRITY, false, true));
+      variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY, false, true));
     }
   }
 
@@ -374,7 +370,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             LookupElement lookupItem = JSLookupUtilImpl.createPrioritizedLookupItem(
               variable,
               ((JSClass)parent).getName() + "." + name,
-              VariantsProcessor.LookupPriority.SMART_PROPRITY, false, true
+              JSLookupPriority.SMART_PRIORITY, false, true
             );
 
             ((LookupItem)lookupItem).addLookupStrings(name);

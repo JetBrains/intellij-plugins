@@ -1,9 +1,6 @@
 package com.intellij.javascript.flex.completion;
 
-import com.intellij.lang.javascript.completion.JSCompletionContributor;
-import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
-import com.intellij.lang.javascript.completion.JSKeywordsCompletionProvider;
-import com.intellij.lang.javascript.completion.KeywordCompletionConsumer;
+import com.intellij.lang.javascript.completion.*;
 import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -41,22 +38,22 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
            grandGrandParent instanceof JSFile) &&
           (!(grandParent instanceof JSFunction) || ((JSFunction)grandParent).getReturnTypeElement() != parent)
         ) {
-        consumer.consume(KeywordCompletionConsumer.SMART_KEYWORDS_PRIORITY, true, accessModifiers);
-        consumer.consume(KeywordCompletionConsumer.SMART_KEYWORDS_PRIORITY, true, "class", "function", "interface",
-                        "namespace", "package",
-                        "extends", "implements", "import", "override", "static", "dynamic", "var", "const", "use",
-                        "final");
+        consumer.consume(JSLookupPriority.SMART_KEYWORDS_PRIORITY, true, accessModifiers);
+        consumer.consume(JSLookupPriority.SMART_KEYWORDS_PRIORITY, true, "class", "function", "interface",
+                         "namespace", "package",
+                         "extends", "implements", "import", "override", "static", "dynamic", "var", "const", "use",
+                         "final");
       }
       return false;
     }
     if (JSResolveUtil.isInPlaceWhereTypeCanBeDuringCompletion(parent) && JSResolveUtil.isPlaceWhereNsCanBe(grandParent)
       ) {
-      consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, false, JSKeywordsCompletionProvider.TYPE_LITERAL_VALUES);
-      consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, false, "function");
-      consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, true, accessModifiers);
-      consumer.consume(KeywordCompletionConsumer.KEYWORDS_PRIORITY, true, "extends", "implements", "include",
-                      "import", "static",
-                      "override", "namespace", "class", "interface", "var", "use");
+      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, false, JSKeywordsCompletionProvider.TYPE_LITERAL_VALUES);
+      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, false, "function");
+      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, accessModifiers);
+      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, "extends", "implements", "include",
+                       "import", "static",
+                       "override", "namespace", "class", "interface", "var", "use");
       return false;
     }
     return true;
@@ -64,29 +61,29 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
 
   @Override
   public void appendSpecificKeywords(KeywordCompletionConsumer consumer) {
-    consumer.consume(KeywordCompletionConsumer.NON_CONTEXT_KEYWORDS_PRIORITY, true,
-                    "is",
-                    "as",
-                    "class",
-                    "interface",
-                    "internal",
-                    "public",
-                    "protected",
-                    "native",
-                    "override",
-                    "dynamic",
-                    "extends",
-                    "implements",
-                    "import",
-                    "static",
-                    "namespace",
-                    "use",
-                    "super",
-                    "include",
-                    //"get", // do not add since it will stop the auto completion even iff we have common getXXX()
-                    //"set",
-                    "package"
+    consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, true,
+                     "is",
+                     "as",
+                     "class",
+                     "interface",
+                     "internal",
+                     "public",
+                     "protected",
+                     "native",
+                     "override",
+                     "dynamic",
+                     "extends",
+                     "implements",
+                     "import",
+                     "static",
+                     "namespace",
+                     "use",
+                     "super",
+                     "include",
+                     //"get", // do not add since it will stop the auto completion even iff we have common getXXX()
+                     //"set",
+                     "package"
     );
-    consumer.consume(KeywordCompletionConsumer.NON_CONTEXT_KEYWORDS_PRIORITY, false, "int", "uint");
+    consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, false, "int", "uint");
   }
 }
