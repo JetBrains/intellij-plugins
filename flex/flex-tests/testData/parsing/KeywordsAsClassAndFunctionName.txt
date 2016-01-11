@@ -21,8 +21,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
         <empty list>
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:INT_KEYWORD)('int')
+      PsiElement(JS:INT_KEYWORD)('int')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
@@ -55,8 +54,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
         <empty list>
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:UINT_KEYWORD)('uint')
+      PsiElement(JS:UINT_KEYWORD)('uint')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')

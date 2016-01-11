@@ -9,8 +9,7 @@ JSFile:QualifiedNsReference.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('xxx')
+    PsiElement(JS:IDENTIFIER)('xxx')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       PsiElement(JS:RPAR)(')')
@@ -41,8 +40,7 @@ JSFile:QualifiedNsReference.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('yyy')
+      PsiElement(JS:IDENTIFIER)('yyy')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
@@ -80,8 +78,7 @@ JSFile:QualifiedNsReference.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      PsiElement(JS:IDENTIFIER)('foo')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')

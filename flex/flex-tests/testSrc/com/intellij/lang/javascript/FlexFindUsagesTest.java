@@ -33,7 +33,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   public void testFindConstructorUsages() throws Exception {
     PsiReference[] references = findElementAtCaret("ConstructorUsages.js2");
-    assertEquals("Constructor references",2, references.length);
+    assertEquals("Constructor references",1, references.length);
   }
 
   public void testFindClassUsages() throws Exception {
@@ -70,7 +70,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testFindImplementationMethodWhenSearchingFromInterface() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals("Find implementation method when searching for", 3, references.length);
+    assertEquals("Find implementation method when searching for", 2, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -83,14 +83,14 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   public void testFindSetterUsagesInMxml() throws Exception {
     String s = getTestName(false);
     PsiReference[] references = findElementAtCaret( s + ".mxml", s + "_2.mxml" );
-    assertEquals("Setter usages", 7, references.length);
+    assertEquals("Setter usages", 6, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testFindGetterUsagesInMxml() throws Exception {
     String s = getTestName(false);
     PsiReference[] references = findElementAtCaret( s + ".mxml", s + "_2.mxml" );
-    assertEquals("Getter usages", 4, references.length);
+    assertEquals("Getter usages", 3, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -128,36 +128,36 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   public void testSuperCall() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals(3, references.length);
+    assertEquals(2, references.length);
   }
 
   public void testSuperCall2() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals(3, references.length);
+    assertEquals(2, references.length);
   }
 
   public void testBaseMethod() throws Exception {
     final PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals(2, references.length);
+    assertEquals(1, references.length);
   }
 
   public void testInheritorCall() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals(2, references.length);
+    assertEquals(1, references.length);
   }
 
   public void testInheritorCall2() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals(3, references.length);
+    assertEquals(2, references.length);
   }
 
   public void testReferenceInStringLiteral() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as", getTestName(false) + "_2.mxml");
-    assertEquals(1, references.length);
+    assertEquals(0, references.length);
   }
 
   public void testASGenericsAndDollarsInName() throws Exception {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
-    assertEquals(2, references.length);
+    assertEquals(1, references.length);
   }
 }

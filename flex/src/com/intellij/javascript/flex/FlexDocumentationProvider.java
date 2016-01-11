@@ -5,14 +5,13 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptFunctionImpl;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -883,5 +882,36 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   @Override
   protected JSDocumentationBuilder createDocumentationBuilder(PsiElement element, PsiElement _contextElement, boolean showNamedItem) {
     return new FlexDocumentationBuilder(element, _contextElement, showNamedItem, this);
+  }
+
+  @Override
+  protected void appendParentInfo(PsiElement parent, StringBuilder builder, PsiNamedElement element) {
+    if (parent instanceof JSClass) {
+      builder.append(((JSClass)parent).getQualifiedName()).append("\n");
+    }
+    else if (parent instanceof JSPackageStatement) {
+      builder.append(((JSPackageStatement)parent).getQualifiedName()).append("\n");
+    }
+    else if (parent instanceof JSFile) {
+      if (parent.getContext() != null) {
+        final String mxmlPackage = JSResolveUtil.findPackageForMxml(parent);
+        if (mxmlPackage != null) {
+          builder.append(mxmlPackage).append(mxmlPackage.length() > 0 ? "." : "").append(parent.getContext().getContainingFile().getName())
+            .append("\n");
+        }
+      }
+      else {
+        boolean foundQualified = false;
+
+        if (element instanceof ActionScriptFunctionImpl && ((ActionScriptFunctionImpl)element).hasQualifiedName() ||
+            element instanceof ActionScriptVariableImpl && ((ActionScriptVariableImpl)element).hasQualifiedName()) {
+          final JSQualifiedName namespace = ((JSQualifiedNamedElement)element).getNamespace();
+          assert namespace != null : "null namespace of element having qualified name";
+          builder.append(namespace.getQualifiedName()).append("\n");
+          foundQualified = true;
+        }
+        if (!foundQualified) builder.append(parent.getContainingFile().getName()).append("\n");
+      }
+    }
   }
 }

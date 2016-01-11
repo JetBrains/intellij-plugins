@@ -24,8 +24,7 @@ JSFile:ObjectLiteral.js2
           JSFunctionExpression
             PsiElement(JS:GET_KEYWORD)('get')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('bbb')
+            PsiElement(JS:IDENTIFIER)('bbb')
             JSParameterList
               PsiElement(JS:LPAR)('(')
               PsiElement(JS:RPAR)(')')
@@ -47,8 +46,7 @@ JSFile:ObjectLiteral.js2
           JSFunctionExpression
             PsiElement(JS:SET_KEYWORD)('set')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('bbb')
+            PsiElement(JS:IDENTIFIER)('bbb')
             JSParameterList
               PsiElement(JS:LPAR)('(')
               JSParameter
