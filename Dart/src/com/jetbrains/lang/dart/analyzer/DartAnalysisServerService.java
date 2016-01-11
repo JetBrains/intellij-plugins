@@ -9,6 +9,7 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.codeInsight.problems.WolfTheProblemSolverImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -44,12 +45,12 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.problems.Problem;
+import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.util.Alarm;
+import com.intellij.util.*;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
-import com.intellij.util.Processor;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -387,8 +388,8 @@ public class DartAnalysisServerService {
       @Override
       public boolean value(final Module module) {
         return DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
-               !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                                 falseProcessor, module.getModuleContentScope(), project, null);
+               !FilenameIndex
+                 .processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false, falseProcessor, module.getModuleContentScope(), project, null);
       }
     };
 
@@ -655,6 +656,11 @@ public class DartAnalysisServerService {
 
           if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
+            final WolfTheProblemSolver solver = WolfTheProblemSolver.getInstance(project);
+            if (solver instanceof WolfTheProblemSolverImpl) {
+              ((WolfTheProblemSolverImpl)solver).setEnableHightlightingPass(false);
+              solver.weHaveGotProblems(vFile, convertToProblemList(solver, vFile, errors));
+            }
           }
           else {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
@@ -662,6 +668,20 @@ public class DartAnalysisServerService {
         }
       }
     });
+  }
+
+  @NotNull
+  private static List<Problem> convertToProblemList(@NotNull final WolfTheProblemSolver wolf,
+                                                    @NotNull final VirtualFile vFile,
+                                                    @NotNull final List<AnalysisError> errors) {
+    final List<Problem> problems = new SmartList<Problem>();
+    for (final AnalysisError error : errors) {
+      if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+        final Location location = error.getLocation();
+        problems.add(wolf.convertToProblem(vFile, location.getStartLine(), location.getStartColumn(), new String[]{error.getMessage()}));
+      }
+    }
+    return problems;
   }
 
   @NotNull
