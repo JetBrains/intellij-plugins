@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -98,7 +99,11 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     });
 
     if (myElement instanceof JSClass) {
-      JSRefactoringUtil.addConstructorUsages((JSClass)myElement, true, result);
+      final JSFunction constructor = ((JSClass)myElement).getConstructor();
+      if (constructor != null) {
+        result.add(new UsageInfo(constructor));
+        JSRefactoringUtil.addConstructorUsages((JSClass)myElement, result);
+      }
     }
     TextOccurrencesUtil.findNonCodeUsages(myElement, myElement.getName(), mySearchInComments, mySearchTextOccurences,
                                           StringUtil.getQualifiedName(myPackageName, myClassName), result);
@@ -131,11 +136,19 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     for (Iterator<UsageInfo> i = usagesToProcess.iterator(); i.hasNext();) {
       UsageInfo usage = i.next();
       PsiElement element;
-      if (usage instanceof NonCodeUsageInfo || !((element = usage.getElement()) instanceof JSReferenceExpression) ||
+      if (usage instanceof NonCodeUsageInfo || (element = usage.getElement()) == null ||
           !PsiTreeUtil.isAncestor(myElement, element, false)) {
         continue;
       }
-      ((JSReferenceExpression)element).bindToElement(myElement);
+      if (element instanceof JSReferenceExpression) {
+        ((JSReferenceExpression)element).bindToElement(myElement);
+      }
+      else if (element instanceof PsiNamedElement) {
+        ((PsiNamedElement)element).setName(myClassName);
+      }
+      else {
+        continue;
+      }
       i.remove();
     }
 

@@ -1544,9 +1544,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                                                       final int num,
                                                       boolean status) {
     JSReferenceExpression refExpr = PsiTreeUtil.getParentOfType(at, JSReferenceExpression.class);
-    assertNotNull(refExpr);
+    final PsiElement resolve = refExpr != null ? refExpr.resolve() : at.getParent();
+    assertNotNull(resolve);
     final CommonProcessors.CollectUniquesProcessor<PsiElement> processor = new CommonProcessors.CollectUniquesProcessor<PsiElement>();
-    final PsiElement resolve = refExpr.resolve();
     DefinitionsScopedSearch.INSTANCE.createQuery(new DefinitionsScopedSearch.SearchParameters(resolve)).forEach(processor);
 
     assertEquals(status, TargetElementUtil.getInstance().includeSelfInGotoImplementation(resolve));

@@ -5,15 +5,13 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.ASTNode;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptFunctionImpl;
+import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -905,16 +903,12 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       else {
         boolean foundQualified = false;
 
-        if (element instanceof JSNamedElement) {
-          ASTNode node = ((JSNamedElement)element).findNameIdentifier();
-          if (node != null) {
-            final String s = node.getText();
-            int i = s.lastIndexOf('.');
-            if (i != -1) {
-              builder.append(s.substring(0, i)).append("\n");
-              foundQualified = true;
-            }
-          }
+        if (element instanceof ActionScriptFunctionImpl && ((ActionScriptFunctionImpl)element).hasQualifiedName() ||
+            element instanceof ActionScriptVariableImpl && ((ActionScriptVariableImpl)element).hasQualifiedName()) {
+          final JSQualifiedName namespace = ((JSQualifiedNamedElement)element).getNamespace();
+          assert namespace != null : "null namespace of element having qualified name";
+          builder.append(namespace.getQualifiedName()).append("\n");
+          foundQualified = true;
         }
         if (!foundQualified) builder.append(parent.getContainingFile().getName()).append("\n");
       }

@@ -74,8 +74,7 @@ JSFile:ConditionalBlocks.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('MyButton')
+        PsiElement(JS:IDENTIFIER)('MyButton')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -172,8 +171,7 @@ JSFile:ConditionalBlocks.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('MyButton')
+        PsiElement(JS:IDENTIFIER)('MyButton')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')

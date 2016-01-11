@@ -39,8 +39,7 @@ JSFile:Basic.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('aaa')
+    PsiElement(JS:IDENTIFIER)('aaa')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter
@@ -61,8 +60,7 @@ JSFile:Basic.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('aaa3')
+    PsiElement(JS:IDENTIFIER)('aaa3')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter
@@ -116,8 +114,7 @@ JSFile:Basic.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('aaa4')
+    PsiElement(JS:IDENTIFIER)('aaa4')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter
@@ -140,8 +137,7 @@ JSFile:Basic.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('aaa2')
+    PsiElement(JS:IDENTIFIER)('aaa2')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter
@@ -230,8 +226,7 @@ JSFile:Basic.js2
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('bbb')
+        PsiElement(JS:IDENTIFIER)('bbb')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           JSParameter
@@ -269,8 +264,7 @@ JSFile:Basic.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('functionName')
+    PsiElement(JS:IDENTIFIER)('functionName')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter
@@ -307,8 +301,7 @@ JSFile:Basic.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('zzz')
+    PsiElement(JS:IDENTIFIER)('zzz')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       PsiElement(JS:RPAR)(')')
@@ -326,8 +319,7 @@ JSFile:Basic.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('zzz2')
+    PsiElement(JS:IDENTIFIER)('zzz2')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       PsiElement(JS:RPAR)(')')
@@ -348,8 +340,7 @@ JSFile:Basic.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('zzz3')
+    PsiElement(JS:IDENTIFIER)('zzz3')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       PsiElement(JS:RPAR)(')')

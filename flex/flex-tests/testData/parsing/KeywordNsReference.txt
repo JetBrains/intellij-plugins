@@ -14,8 +14,7 @@ JSFile:KeywordNsReference.js2
         <empty list>
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('Foo')
+      PsiElement(JS:IDENTIFIER)('Foo')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
