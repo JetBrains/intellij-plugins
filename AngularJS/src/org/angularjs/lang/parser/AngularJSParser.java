@@ -11,8 +11,6 @@ import org.angularjs.lang.lexer.AngularJSTokenTypes;
  */
 public class AngularJSParser
   extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
-  // not static for tests
-  private final boolean MESSAGE_FORMAT_OPTION = Boolean.getBoolean("angular.js.parse.message.format");
 
   public AngularJSParser(PsiBuilder builder) {
     super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
@@ -66,7 +64,7 @@ public class AngularJSParser
 
     public AngularJSExpressionParser() {
       super(AngularJSParser.this);
-      myAngularJSMessageFormatParser = MESSAGE_FORMAT_OPTION ? new AngularJSMessageFormatParser(myJavaScriptParser) : null;
+      myAngularJSMessageFormatParser = new AngularJSMessageFormatParser(myJavaScriptParser);
     }
 
     @Override
@@ -97,7 +95,7 @@ public class AngularJSParser
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
         return parseStringLiteral(firstToken);
       }
-      if (MESSAGE_FORMAT_OPTION && isIdentifierToken(firstToken) && myAngularJSMessageFormatParser.parseMessage()) {
+      if (isIdentifierToken(firstToken) && myAngularJSMessageFormatParser.parseMessage()) {
         return true;
       }
       if (parseAsExpression()) {
