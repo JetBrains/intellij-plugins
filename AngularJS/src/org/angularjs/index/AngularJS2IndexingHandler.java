@@ -114,7 +114,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return descriptor != null ? descriptor.findProperty("selector") : null;
   }
 
-  private static boolean isDirective(String name) {
+  public static boolean isDirective(String name) {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
            "Component".equals(name) || "ComponentAnnotation".equals(name);
   }
