@@ -183,8 +183,7 @@ JSFile:ASDoc.js2
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:IDENTIFIER)('a')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -210,8 +209,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('b')
+        PsiElement(JS:IDENTIFIER)('b')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -250,8 +248,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('c')
+        PsiElement(JS:IDENTIFIER)('c')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -283,8 +280,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('d')
+        PsiElement(JS:IDENTIFIER)('d')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -316,8 +312,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('e')
+        PsiElement(JS:IDENTIFIER)('e')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -334,8 +329,7 @@ JSFile:ASDoc.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('i')
+        PsiElement(JS:IDENTIFIER)('i')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')

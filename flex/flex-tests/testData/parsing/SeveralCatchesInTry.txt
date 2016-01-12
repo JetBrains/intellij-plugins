@@ -15,8 +15,7 @@ JSFile:SeveralCatchesInTry.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('wrapUpdate')
+      PsiElement(JS:IDENTIFIER)('wrapUpdate')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         JSParameter

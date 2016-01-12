@@ -49,8 +49,7 @@ JSFile:UseNsInAttrList.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:IDENTIFIER)('foo')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')

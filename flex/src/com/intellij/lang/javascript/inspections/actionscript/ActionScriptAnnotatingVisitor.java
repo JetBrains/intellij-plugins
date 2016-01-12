@@ -11,6 +11,7 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.*;
@@ -82,6 +83,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
 
+  public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+    super(psiElement, holder);
+  }
+
   protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
     JSParameterList nodeParameterList = fun.getParameterList();
     JSParameterList overrideParameterList = override.getParameterList();
@@ -149,18 +154,28 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return true;
   }
 
-
+  @NotNull
   @Override
-  protected void initTypeCheckers(@NotNull PsiElement context) {
-    myProblemReporter = new JSAnnotatorProblemReporter(myHolder) {
+  protected JSAnnotatorProblemReporter createProblemReporter(PsiElement context) {
+    return new JSAnnotatorProblemReporter(myHolder) {
       @Nullable
       @Override
       protected String getAnnotatorInspectionId() {
         return null;
       }
     };
-    myTypeChecker = new ActionScriptTypeChecker(myProblemReporter);
-    myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
+  }
+
+  @NotNull
+  @Override
+  protected JSTypeChecker<Annotation> createTypeChecker(PsiElement context) {
+    return new ActionScriptTypeChecker(myProblemReporter);
+  }
+
+  @NotNull
+  @Override
+  protected JSFunctionSignatureChecker createFunctionSignatureChecker(PsiElement context) {
+    return new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
   }
 
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
@@ -374,7 +389,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkFunction(final JSFunction node) {
+  protected void checkFunctionDeclaration(@NotNull final JSFunction node) {
+    super.checkFunctionDeclaration(node);
+
     final ASTNode nameIdentifier = node.findNameIdentifier();
     if (nameIdentifier == null) return;
     PsiElement parent = node.getParent();
@@ -546,8 +563,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     }
-
-    super.checkFunction(node);
   }
 
   private void reportStaticMethodProblem(JSAttributeList attributeList, String key) {
@@ -723,7 +738,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (parent instanceof JSClass) {
           final JSClass jsClass = (JSClass)parent;
           final JSFunction constructor = jsClass.getConstructor();
-          if (constructor == null) checkMissedSuperCall(node, constructor, jsClass);
+          if (constructor == null) checkMissedSuperCall(null, jsClass);
 
           PsiElement clazzParent = jsClass.getParent();
           final PsiElement context = clazzParent.getContext();
@@ -1204,14 +1219,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
   }
 
-  protected void validateGetPropertyReturnType(ASTNode nameIdentifier, JSFunction function, JSType type) {
+  protected void validateGetPropertyReturnType(JSFunction function, JSType type) {
     if (type instanceof JSVoidType) {
       // TODO: fix!
       final String typeString = type != null ? type.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty";
       myHolder.createErrorAnnotation(
         type != null ?
         function.getReturnTypeElement() :
-        nameIdentifier.getPsi(),
+        getPlaceForNamedElementProblem(function),
         JSBundle
           .message("javascript.validation.message.get.method.should.be.valid.type", typeString));
     }
@@ -1234,7 +1249,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             PsiElement typeElement = function.getReturnTypeElement();
 
             myHolder.createErrorAnnotation(
-              typeElement != null ? typeElement : function.findNameIdentifier().getPsi(),
+              typeElement != null ? typeElement : getPlaceForNamedElementProblem(function),
               JSBundle.message("javascript.validation.message.get.method.type.is.different.from.setter",
                                setterType != null ? setterType.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty")
             );

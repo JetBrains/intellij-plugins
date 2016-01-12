@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.completion.ActionScriptCompletionKeywordsCon
 import com.intellij.javascript.flex.index.ActionScriptCustomIndexer;
 import com.intellij.javascript.flex.resolve.*;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
+import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
 import com.intellij.lang.javascript.index.JSCustomIndexer;
@@ -52,7 +53,7 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
     if (element instanceof JSQualifiedNamedElement) {
       final String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
       if (qName != null && "avmplus".equals(StringUtil.getPackageName(qName))) {
-        return VariantsProcessor.LookupPriority.NO_RELEVANT_SMARTNESS_PRIORITY;
+        return JSLookupPriority.NO_RELEVANT_SMARTNESS_PRIORITY;
       }
     }
 

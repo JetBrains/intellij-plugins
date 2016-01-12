@@ -19,10 +19,9 @@ JSFile:OldAs2Code.js2
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
     JSReferenceExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('mypackage')
-      PsiElement(JS:DOT)('.')
-      PsiElement(JS:IDENTIFIER)('myfunction')
+      PsiElement(JS:IDENTIFIER)('mypackage')
+    PsiElement(JS:DOT)('.')
+    PsiElement(JS:IDENTIFIER)('myfunction')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       PsiElement(JS:RPAR)(')')
