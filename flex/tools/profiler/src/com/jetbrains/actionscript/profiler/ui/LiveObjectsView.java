@@ -20,6 +20,7 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SpeedSearchComparator;
 import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.util.Function;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.actionscript.profiler.ProfilerBundle;
 import com.jetbrains.actionscript.profiler.livetable.LiveModelController;
@@ -70,7 +71,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
     if (controller == null || profilingManager == null) {
       return;
     }
-    updateTimer = new Timer(2000, new ActionListener() {
+    updateTimer = UIUtil.createNamedTimer("LiveObjects", 2000, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (!liveUpdatesCheckBox.isSelected() || DumbServiceImpl.getInstance(getProject()).isDumb()) {
