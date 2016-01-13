@@ -53,7 +53,7 @@
     </context>
   </template>
 
-  <template name="soutm" value="print('$CLASS_NAME$.$METHOD_NAME$');&#10;$END$" description="prints the current class and method name to standard out"
+  <template name="soutm" value="print('$CLASS_NAME$.$METHOD_NAME$');$END$" description="prints the current class and method name to standard out"
             toReformat="true" toShortenFQNames="true">
     <variable name="CLASS_NAME" expression="" defaultValue="dartClassName" alwaysStopAt="false"/>
     <variable name="METHOD_NAME" expression="" defaultValue="dartMethodName" alwaysStopAt="false"/>
