@@ -75,4 +75,8 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
   public void testSoutm() throws Throwable {
     doTest();
   }
+
+  public void testSoutm2() throws Throwable {
+    doTest();
+  }
 }

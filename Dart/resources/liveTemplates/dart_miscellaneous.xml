@@ -46,20 +46,43 @@
     </context>
   </template>
 
+  <template name="iter" value="for ($VAR$ in $ITERABLE$) {&#10;  $END$&#10;}"
+            resource-bundle="com.jetbrains.lang.dart.DartBundle" key="livetemplate.description.iter" toReformat="true"
+            toShortenFQNames="true">
+    <variable name="ITERABLE" expression="dartIterableVariable()" defaultValue="&quot;array &quot;" alwaysStopAt="true"/>
+    <variable name="VAR" expression="dartSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="DART" value="false"/>
+      <option name="DART_STATEMENT" value="true"/>
+    </context>
+  </template>
+
+  <template name="itar" value="for (var $INDEX$ = 0; i &lt; $ARRAY$.length; ++$INDEX$) {&#10;  var $VAR$ = $ARRAY$[$INDEX$];&#10;  $END$&#10;}"
+            resource-bundle="com.jetbrains.lang.dart.DartBundle" key="livetemplate.description.itar" toReformat="true"
+            toShortenFQNames="true">
+    <variable name="INDEX" expression="dartSuggestIndexName()" defaultValue="&quot;i&quot;" alwaysStopAt="true"/>
+    <variable name="ARRAY" expression="dartListVariable()" defaultValue="&quot;array&quot;" alwaysStopAt="true"/>
+    <variable name="VAR" expression="dartSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="DART" value="false"/>
+      <option name="DART_STATEMENT" value="true"/>
+    </context>
+  </template>
+
   <template name="sout" value="print('$END$');" description="print to standard out"
             toReformat="true" toShortenFQNames="true">
     <context>
-      <option name="DART" value="true"/>
+      <option name="DART" value="false"/>
+      <option name="DART_STATEMENT" value="true"/>
     </context>
   </template>
 
-  <template name="soutm" value="print('$CLASS_NAME$.$METHOD_NAME$');$END$" description="prints the current class and method name to standard out"
+  <template name="soutm" value="print('$CLASS_NAME_METHOD_NAME$');$END$" description="prints the current class and method name to standard out"
             toReformat="true" toShortenFQNames="true">
-    <variable name="CLASS_NAME" expression="" defaultValue="dartClassName" alwaysStopAt="false"/>
-    <variable name="METHOD_NAME" expression="" defaultValue="dartMethodName" alwaysStopAt="false"/>
+    <variable name="CLASS_NAME_METHOD_NAME" expression="" defaultValue="dartClassNameMethodName" alwaysStopAt="false"/>
     <context>
-      <option name="DART" value="true"/>
+      <option name="DART" value="false"/>
+      <option name="DART_STATEMENT" value="true"/>
     </context>
   </template>
 </templateSet>
-
