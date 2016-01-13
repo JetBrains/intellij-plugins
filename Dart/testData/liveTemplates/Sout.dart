@@ -1,0 +1,3 @@
+main() {
+  sout<caret>
+}
