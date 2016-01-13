@@ -1,3 +1,3 @@
 main() {
-  print('');
+  print('<caret>');
 }
