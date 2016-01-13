@@ -32,6 +32,7 @@ import training.editor.EduEditorFactory;
 import training.editor.EduEditorManager;
 import training.lesson.*;
 import training.lesson.exceptons.InvalidSdkException;
+import training.lesson.exceptons.NoJavaModuleException;
 import training.lesson.exceptons.NoSdkException;
 import training.lesson.exceptons.OldJdkException;
 import training.testFramework.LessonSolution;
@@ -201,6 +202,8 @@ public class HardScratchBasedTest extends UsefulTestCase{
                 } catch (OldJdkException e) {
                     e.printStackTrace();
                 } catch (InvalidSdkException e) {
+                    e.printStackTrace();
+                } catch (NoJavaModuleException e) {
                     e.printStackTrace();
                 }
                 assertTrue(noSdkDetected);

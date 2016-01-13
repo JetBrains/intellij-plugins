@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.*;
@@ -24,7 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import training.commands.BadCommandException;
 import training.editor.EduEditor;
 import training.editor.EduEditorProvider;
-import training.lesson.dialogs.SdkProblemDialog;
+import training.lesson.dialogs.SdkModuleProblemDialog;
+import training.lesson.dialogs.SdkProjectProblemDialog;
 import training.lesson.exceptons.*;
 import training.lesson.log.GlobalLessonLog;
 import training.util.GenerateCourseXml;
@@ -53,7 +55,6 @@ import java.util.concurrent.ExecutionException;
 public class CourseManager implements PersistentStateComponent<CourseManager.State> {
 
     private Project eduProject;
-
     final public static String EDU_PROJECT_NAME = "EduProject";
 
     CourseManager() {
@@ -219,6 +220,8 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
             oldJdkException.printStackTrace();
         } catch (NoSdkException noSdkException){
             showSdkProblemDialog(project, noSdkException.getMessage());
+        } catch (NoJavaModuleException noJavaModuleException){
+            showModuleProblemDialog(project);
         } catch (InvalidSdkException e) {
             showSdkProblemDialog(project, e.getMessage());
         } catch (BadCommandException e) {
@@ -431,7 +434,7 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
      * @throws OldJdkException     - if project JDK version is not enough for this course
      * @throws InvalidSdkException - if project SDK is not suitable for course
      */
-    public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException, NoSdkException {
+    public void checkEnvironment(Project project, @Nullable Course course) throws OldJdkException, InvalidSdkException, NoSdkException, NoJavaModuleException {
 
         if (course == null) return;
 
@@ -444,18 +447,40 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
                 final JavaSdkVersion version = ((JavaSdk) sdkType).getVersion(projectJdk);
                 if (version != null) {
                     if (!version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw new OldJdkException(JavaSdkVersion.JDK_1_6);
+                    try {
+                        checkJavaModule(project);
+                    } catch (NoJavaModuleException e) {
+                        throw e;
+                    }
                 }
             } else if (sdkType.getName().equals("IDEA JDK")) {
-                //do nothing
+                try {
+                    checkJavaModule(project);
+                } catch (NoJavaModuleException e) {
+                    throw e;
+                }
             } else {
                 throw new InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK");
             }
         }
     }
 
+    private void checkJavaModule(Project project) throws NoJavaModuleException {
+
+        if (ModuleManager.getInstance(project).getModules() == null || ModuleManager.getInstance(project).getModules().length == 0) {
+            throw new NoJavaModuleException();
+        }
+
+    }
+
     public void showSdkProblemDialog(Project project, String sdkMessage) {
 //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
-        final SdkProblemDialog dialog = new SdkProblemDialog(project, sdkMessage);
+        final SdkProjectProblemDialog dialog = new SdkProjectProblemDialog(project, sdkMessage);
+        dialog.show();
+    }
+
+    public void showModuleProblemDialog(Project project){
+        final SdkModuleProblemDialog dialog = new SdkModuleProblemDialog(project);
         dialog.show();
     }
 

@@ -5,15 +5,11 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.ex.IdeFrameEx;
@@ -21,9 +17,7 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import training.lesson.dialogs.EduProjectWarningDialog;
-import training.lesson.dialogs.SdkProblemDialog;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -53,8 +47,7 @@ public class NewEduProjectUtil {
             final Project newProject;
 
             if (!projectBuilder.isUpdate()) {
-                String name = projectName;
-                newProject = projectBuilder.createProject(name, projectFilePath);
+                newProject = projectBuilder.createProject(projectName, projectFilePath);
             } else {
                 newProject = projectToClose;
             }
