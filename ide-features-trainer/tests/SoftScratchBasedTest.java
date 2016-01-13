@@ -158,6 +158,8 @@ public class SoftScratchBasedTest extends UsefulTestCase{
                     e.printStackTrace();
                 } catch (InvalidSdkException e) {
                     e.printStackTrace();
+                } catch (NoJavaModuleException e) {
+                    e.printStackTrace();
                 }
                 assertTrue(noSdkDetected);
                 final Boolean result = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
