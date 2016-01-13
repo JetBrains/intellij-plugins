@@ -65,9 +65,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String LOADING_PREFIX = "loading ";
 
   private static final Gson GSON = new Gson();
+  private static final long TEST_WAIT_TIME = 2L * 1000L; // Potentially wait up to 2 seconds for tests to finish.
 
-  private int myTestId = 0;
-  private int myParentId = 0;
   // In theory, test events could be generated asynchronously and out of order. We might want to keep a map of tests to start times
   // so we get accurate durations when tests end. See myTestData.
   private long myStartMillis;
@@ -77,11 +76,23 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private ServiceMessageVisitor myCurrentVisitor;
   private Map<Integer, Test> myTestData;
   private Map<Integer, Group> myGroupData;
+  private Thread myTestsDoneTimer;
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
     super(testFrameworkName, consoleProperties);
     myTestData = new HashMap<Integer, Test>();
     myGroupData = new HashMap<Integer, Group>();
+  }
+
+  public void flushBufferBeforeTerminating() {
+    if (myTestsDoneTimer != null) {
+      try {
+        myTestsDoneTimer.join();
+      } catch (InterruptedException ex) {
+        // ignore it;
+      }
+    }
+    super.flushBufferBeforeTerminating();
   }
 
   protected boolean processServiceMessages(final String text, final Key outputType, final ServiceMessageVisitor visitor)
@@ -135,12 +146,12 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   private boolean handleTestStart(JsonObject obj) throws ParseException {
     JsonObject testObj = obj.getAsJsonObject(DEF_TEST);
-    myTestId = getInitialTestID(testObj);
     // Not reached if testObj == null.
     Test test = getTest(obj);
     if (!test.hasValidParent() && test.getName().startsWith(LOADING_PREFIX)) {
       String path = test.getName().substring(LOADING_PREFIX.length());
       if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
+      test.isRunning = false;
       return true;
     }
     String testName = test.getBaseName();
@@ -148,14 +159,13 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     addLocationHint(testStarted, test);
     myStartMillis = getTestMillis(obj);
     myOutputAppeared = false;
-    myParentId = test.getValidParentId();
-    boolean result = finishMessage(testStarted);
+    boolean result = finishMessage(testStarted, test.getId(), test.getValidParentId());
     if (result) {
       Metadata metadata = Metadata.from(testObj.getAsJsonObject(DEF_METADATA));
       if (metadata.skip) {
         ServiceMessageBuilder message = ServiceMessageBuilder.testIgnored(testName);
         if (metadata.skipReason != null) message.addAttribute("message", metadata.skipReason);
-        return finishMessage(message);
+        return finishMessage(message, test.getId(), test.getValidParentId());
       }
     }
     return result;
@@ -181,13 +191,10 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private boolean handleGroup(JsonObject obj) throws ParseException {
     Group group = getGroup(obj.getAsJsonObject(DEF_GROUP));
     if (group.isArtificial()) return true; // Ignore artificial groups.
-    myTestId = group.getId();
-    myParentId = group.getValidParentId();
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteStarted(group.getBaseName());
     // Possible attributes: "nodeType" "nodeArgs" "running"
     addLocationHint(groupMsg, group);
-    boolean result = finishMessage(groupMsg);
-    myParentId = myTestId;
+    boolean result = finishMessage(groupMsg, group.getId(), group.getValidParentId());
     return result;
   }
 
@@ -196,11 +203,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     if (message.startsWith(FAILED_TO_LOAD)) {
       // An error due to loading failure probably was preceded by a start event that was not recorded since it is not a test.
       JsonElement elem = obj.get(JSON_TEST_ID);
-      if (elem != null && elem.isJsonPrimitive() && (myTestData.get(elem.getAsInt()) == null || !myTestData.get(elem.getAsInt()).hasValidParent())) {
-        return failedToLoad(message);
+      if (elem != null &&
+          elem.isJsonPrimitive() &&
+          (myTestData.get(elem.getAsInt()) == null || !myTestData.get(elem.getAsInt()).hasValidParent())) {
+        return failedToLoad(message, elem.getAsInt());
       }
     }
     Test test = getTest(obj);
+    test.isRunning = false;
     String expectedText = null, actualText = null, failureMessage = message;
     ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
     ServiceMessageBuilder msg = ServiceMessageBuilder.testStdErr(test.getBaseName());
@@ -226,7 +236,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     msg.addAttribute("out", getStackTrace(obj));
     long duration = getTestMillis(obj) - myStartMillis;
     testError.addAttribute("duration", Long.toString(duration));
-    return finishMessage(testError) && finishMessage(msg);
+    return finishMessage(testError, test.getId(), test.getValidParentId()) && finishMessage(msg, test.getId(), test.getValidParentId());
   }
 
   private boolean handlePrint(JsonObject obj) throws ParseException {
@@ -241,7 +251,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
     message.addAttribute("out", out);
     myOutputAppeared = true;
-    return finishMessage(message);
+    return finishMessage(message, test.getId(), test.getValidParentId());
   }
 
   private boolean handleStart(JsonObject obj) {
@@ -252,58 +262,96 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handleDone(JsonObject obj) throws ParseException {
+    // The test runner has reached the end of the tests. Some may still be running but no more will be started.
+    checkIfAllTestsDone();
+    //processAllTestsDone();
+    return true;
+  }
+
+  private void checkIfAllTestsDone() {
+    // If any test is still running set a timer to run processAllTestsDone()
+    // If all tests done, clear timer then processAllTestsDone()
+    boolean notDone = false;
+    for (Test test : myTestData.values()) {
+      if (test.isRunning) {
+        notDone = true;
+        break;
+      }
+    }
+    if (notDone) {
+      if (myTestsDoneTimer == null) {
+        myTestsDoneTimer = new Thread("test finisher") {
+          public void run() {
+            try {
+              Thread.sleep(TEST_WAIT_TIME);
+            } catch (InterruptedException ex) {
+              // ignore it
+            }
+            if (myTestsDoneTimer != null) {
+              processAllTestsDone();
+            }
+          }
+        };
+        myTestsDoneTimer.start();
+        Thread.yield();
+      }
+    } else {
+      myTestsDoneTimer = null;
+      processAllTestsDone();
+    }
+  }
+
+  private void processAllTestsDone() {
     // All tests are done.
     for (Group group : myGroupData.values()) {
       // There is no 'groupDone' event, due to asynchrony, so finish them all at the end.
       // AFAIK the order does not matter. A depth-first post-order traversal of the tree would work
       // if order does matter. Note: Currently, there is no tree representation, just parent links.
-      processGroupDone(group);
+      try {
+        processGroupDone(group);
+      } catch (ParseException ex) {
+        // ignore it
+      }
     }
     myTestData.clear();
     myGroupData.clear();
-    return true;
   }
 
   private boolean processGroupDone(Group group) throws ParseException {
     if (group.isArtificial()) return true;
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getBaseName());
-    myTestId = group.getId();
-    myParentId = group.getValidParentId();
-    finishMessage(groupMsg);
+    finishMessage(groupMsg, group.getId(), group.getValidParentId());
     return true;
   }
 
   private boolean eventFinished(JsonObject obj) throws ParseException {
     Test test = getTest(obj);
+    test.isRunning = false;
     if (test.getMetadata().skip) return true;
     // Since we cannot tell when a group is finished always reset the parent ID.
-    if (test.hasValidParent()) {
-      myParentId = test.getParent().getId();
-    }
     long duration = getTestMillis(obj) - myStartMillis;
     ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
     testFinished.addAttribute("duration", Long.toString(duration));
-    return finishMessage(testFinished);
+    return finishMessage(testFinished, test.getId(), test.getValidParentId());
   }
 
-  private boolean finishMessage(@NotNull ServiceMessageBuilder msg) throws ParseException {
-    msg.addAttribute("nodeId", String.valueOf(myTestId));
-    msg.addAttribute("parentNodeId", String.valueOf(myParentId));
+  private boolean finishMessage(@NotNull ServiceMessageBuilder msg, int testId, int parentId) throws ParseException {
+    msg.addAttribute("nodeId", String.valueOf(testId));
+    msg.addAttribute("parentNodeId", String.valueOf(parentId));
     return super.processServiceMessages(msg.toString(), myCurrentOutputType, myCurrentVisitor);
   }
 
-  private boolean failedToLoad(String message) throws ParseException {
-    myTestId++;
+  private boolean failedToLoad(String message, int testId) throws ParseException {
+    int syntheticTestId = testId + 1;
     ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted("Failed to load");
-    finishMessage(testStarted);
+    finishMessage(testStarted, syntheticTestId, 0);
     ServiceMessageBuilder testFailed = ServiceMessageBuilder.testFailed("Failed to load");
     testFailed.addAttribute("message", message);
-    finishMessage(testFailed);
+    finishMessage(testFailed, syntheticTestId, 0);
     return true;
   }
 
   private void addLocationHint(ServiceMessageBuilder messageBuilder, Item item) {
-    String testName = item.getBaseName();
     String location = "unknown";
     if (myLocation != null) {
       String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
@@ -450,14 +498,12 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     String getBaseName() {
       if (hasValidParent()) {
-        try {
-          return myName.substring(getParent().getName().length() + 1);
-        } catch (StringIndexOutOfBoundsException ex) {
-          return myName;
+        int parentLength = getParent().getName().length();
+        if (myName.length() > parentLength) {
+          return myName.substring(parentLength + 1);
         }
-      } else {
-        return myName;
       }
+      return myName;
     }
 
     Group getParent() {
@@ -497,9 +543,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       }
       names.add(StringUtil.escapeStringCharacters(getBaseName()));
     }
+
+    public String toString() {
+      return getClass().getSimpleName() + "(" + String.valueOf(myId) + "," + String.valueOf(myName) + ")";
+    }
   }
 
   private static class Test extends Item {
+    private boolean isRunning = true;
+
     static Test from(JsonObject obj, Map<Integer, Group> groups) {
       int[] groupIds = GSON.fromJson(obj.get(JSON_GROUP_IDS), int[].class);
       Group parent = null;
