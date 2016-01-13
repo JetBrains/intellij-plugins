@@ -59,8 +59,10 @@ public class TestUtil {
           return DartBundle.message("test.0.in.1", testName, fileName);
         case GROUP:
           return DartBundle.message("test.group.0.in.1", testName, fileName);
-        case ALL:
+        case FILE:
           return DartBundle.message("all.tests.in.0", fileName);
+        case FOLDER:
+          return DartBundle.message("all.tests.in.0", path);
       }
     }
     return null;
