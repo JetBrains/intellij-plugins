@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DartUnitRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
 
-  private @NotNull Scope myScope = Scope.ALL;
+  private @NotNull Scope myScope = Scope.FILE;
   private @Nullable String myTestName = null;
 
   @NotNull

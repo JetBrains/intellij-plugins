@@ -96,7 +96,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
     myScopeCombo.setSelectedItem(parameters.getScope());
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
-    myTestNameField.setText(parameters.getScope() == Scope.ALL ? "" : StringUtil.notNullize(parameters.getTestName()));
+    myTestNameField.setText(parameters.getScope().expectsTestName() ? StringUtil.notNullize(parameters.getTestName()) : "");
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
     myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
@@ -114,7 +114,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     parameters.setScope(scope);
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
-    parameters.setTestName(scope == Scope.ALL ? null : StringUtil.nullize(myTestNameField.getText().trim()));
+    parameters.setTestName(scope.expectsTestName() ? StringUtil.nullize(myTestNameField.getText().trim()) : null);
     parameters.setArguments(StringUtil.nullize(myArguments.getText().trim(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText().trim(), true));
     parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());

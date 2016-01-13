@@ -92,6 +92,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
 
   @NotNull
   public VirtualFile getDartFile() throws RuntimeConfigurationError {
+    if (true) return getDartFileOrDirectory(); // DEBUG
     final String filePath = getFilePath();
     if (StringUtil.isEmptyOrSpaces(filePath)) {
       throw new RuntimeConfigurationError(DartBundle.message("path.to.dart.file.not.set"));
@@ -103,6 +104,25 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     }
 
     if (dartFile.getFileType() != DartFileType.INSTANCE) {
+      throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file", FileUtil.toSystemDependentName(filePath)));
+    }
+
+    return dartFile;
+  }
+
+  @NotNull
+  public VirtualFile getDartFileOrDirectory() throws RuntimeConfigurationError {
+    final String filePath = getFilePath();
+    if (StringUtil.isEmptyOrSpaces(filePath)) {
+      throw new RuntimeConfigurationError(DartBundle.message("path.to.dart.file.not.set"));
+    }
+
+    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (dartFile == null) {
+      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(filePath)));
+    }
+
+    if (dartFile.getFileType() != DartFileType.INSTANCE && !dartFile.isDirectory()) {
       throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file", FileUtil.toSystemDependentName(filePath)));
     }
 
@@ -121,7 +141,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     }
 
     // check main dart file
-    getDartFile();
+    getDartFileOrDirectory();
 
     // check working directory
     final String workDirPath = getWorkingDirectory();

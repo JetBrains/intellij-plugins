@@ -64,7 +64,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     try {
-      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFile()));
+      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFileOrDirectory()));
 
       // unit tests can be run as normal Dart apps, so add DartUnitConsoleFilter as well
       final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())

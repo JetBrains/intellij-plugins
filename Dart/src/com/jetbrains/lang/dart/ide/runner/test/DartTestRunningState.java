@@ -109,7 +109,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       builder.append(' ').append(filePath);
     }
     String testName = params.getTestName();
-    if (testName != null && !testName.isEmpty() && params.getScope() != Scope.ALL) {
+    if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
       String safeName = StringUtil.escapeToRegexp(testName);
       builder.append(' ').append(NAME_REGEX_OPTION).append(' ').append('"').append(safeName).append('"');
     }
