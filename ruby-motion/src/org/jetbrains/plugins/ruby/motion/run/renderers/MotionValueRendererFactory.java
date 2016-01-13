@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
+import com.jetbrains.cidr.execution.debugger.CidrDebuggerSettings;
 import com.jetbrains.cidr.execution.debugger.backend.DBCannotEvaluateException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrPhysicalValue;
@@ -16,7 +17,8 @@ import org.jetbrains.annotations.Nullable;
 public class MotionValueRendererFactory implements CustomValueRendererFactory {
   @Nullable
   @Override
-  public ValueRenderer createRenderer(CidrPhysicalValue value,
+  public ValueRenderer createRenderer(CidrDebuggerSettings settings,
+                                      CidrPhysicalValue value,
                                       LLValue var,
                                       EvaluationContext context) throws ExecutionException {
     try {
