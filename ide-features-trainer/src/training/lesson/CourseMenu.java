@@ -29,5 +29,4 @@ public class CourseMenu extends ActionGroup {
             return actions;
         }
     }
-
 }
