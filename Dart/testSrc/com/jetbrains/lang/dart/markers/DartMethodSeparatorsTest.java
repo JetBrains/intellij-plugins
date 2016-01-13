@@ -32,7 +32,13 @@ public class DartMethodSeparatorsTest extends DaemonAnalyzerTestCase {
       configureByText(DartFileType.INSTANCE, "abstract class A {\n" +
                                              "  firstMethod(){}\n" + // no line marker
                                              "  <lineMarker>bar(){}</lineMarker>\n" +
-                                             "  <lineMarker>baz(){}</lineMarker>\n" +
+                                             "   \n" +
+                                             "  <lineMarker>//comment</lineMarker>\n" +
+                                             "   \n" +
+                                             "  /// doc comment\n" +
+                                             "   \n" +
+                                             "  baz(){}\n" +
+                                             "\n" +
                                              "  <lineMarker>abstract abs();</lineMarker>\n" +
                                              "}");
       doDoTest(false, false);
