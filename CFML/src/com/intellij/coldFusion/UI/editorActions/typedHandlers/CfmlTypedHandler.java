@@ -36,6 +36,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
  * Date: 13.10.2008
  */
 public class CfmlTypedHandler extends TypedHandlerDelegate {
+  static final boolean ourEnableDoublePoundInsertion = SystemProperties.getBooleanProperty("idea.cfml.insert.pair.pound", true);
 
   @Override
   public Result checkAutoPopup(char charTyped, final Project project, final Editor editor, final PsiFile file) {
@@ -76,7 +78,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       return Result.CONTINUE;
     }
     if (c == '#') {
-      if (CfmlEditorUtil.countSharpsBalance(editor) == 0 && false) {
+      if (ourEnableDoublePoundInsertion && CfmlEditorUtil.countSharpsBalance(editor) == 0) {
         char charAtOffset = DocumentUtils.getCharAt(editor.getDocument(), offset);
         if (charAtOffset == '#') {
           EditorModificationUtil.moveCaretRelatively(editor, 1);

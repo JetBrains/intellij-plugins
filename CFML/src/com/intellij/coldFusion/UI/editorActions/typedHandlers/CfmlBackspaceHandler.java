@@ -32,7 +32,7 @@ public class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
   public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
     if (file.getLanguage() != CfmlLanguage.INSTANCE) return;
     if (c == '#') {
-      if (CfmlEditorUtil.countSharpsBalance(editor) == 0) {
+      if (CfmlTypedHandler.ourEnableDoublePoundInsertion && CfmlEditorUtil.countSharpsBalance(editor) == 0) {
         final int offset = editor.getCaretModel().getOffset();
         final Document doc = editor.getDocument();
         char charAtOffset = DocumentUtils.getCharAt(doc, offset);

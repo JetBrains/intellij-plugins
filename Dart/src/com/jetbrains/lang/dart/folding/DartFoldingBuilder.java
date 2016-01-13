@@ -156,7 +156,12 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       // after "import " or "export " or "part "
       final int startOffset = firstStatement.getTextRange().getStartOffset() + firstStatement.getFirstChild().getTextLength() + 1;
       final int endOffset = lastStatement.getTextRange().getEndOffset();
-      descriptors.add(new FoldingDescriptor(firstStatement, TextRange.create(startOffset, endOffset)));
+      final FoldingDescriptor descriptor = new FoldingDescriptor(firstStatement, TextRange.create(startOffset, endOffset));
+      if (aClass == DartImportOrExportStatement.class) {
+        // imports are often added/removed automatically, so we enable autoupdate of folded region for foldings even if it's collapsed
+        descriptor.setCanBeRemovedWhenCollapsed(true);
+      }
+      descriptors.add(descriptor);
     }
   }
 

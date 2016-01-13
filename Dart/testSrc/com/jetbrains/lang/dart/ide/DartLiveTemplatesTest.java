@@ -15,9 +15,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -68,6 +65,14 @@ public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
   }
 
   public void testIter() throws Throwable {
+    doTest();
+  }
+
+  public void testSout() throws Throwable {
+    doTest();
+  }
+
+  public void testSoutm() throws Throwable {
     doTest();
   }
 }
