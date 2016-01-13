@@ -6,6 +6,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.lang.parser.AngularJSMessageFormatParser;
@@ -45,6 +46,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
     });
 
     checkOptions(type, expression);
+    if (expression.getNode().getLastChildNode() instanceof PsiErrorElement) return;
     checkForRequiredSelectionKeywords(type, expression, selectionKeywords);
     checkForDuplicateSelectionKeywords(selectionKeywords, elements);
     checkForSelectionKeywordValues(type, selectionKeywords, elements);
