@@ -131,28 +131,22 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
   private boolean parseOffsetOption() {
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
       if (builder.lookAhead(1) != JSTokenTypes.COLON) {
-        return true;
+        builder.advanceLexer();
+        builder.error("expected colon");
+        return false;
       }
-      final IElementType third = builder.lookAhead(2);
-      boolean commaIsAfterColon = third == JSTokenTypes.COMMA;
-      if (!commaIsAfterColon && builder.lookAhead(3) != JSTokenTypes.COMMA) {
-        return true;
-      }
-      if (!commaIsAfterColon && !JSTokenTypes.LITERALS.contains(third) && JSTokenTypes.IDENTIFIER != third) {
-        return true;
+      final IElementType value = builder.lookAhead(2);
+      if (!JSTokenTypes.LITERALS.contains(value) && JSTokenTypes.IDENTIFIER != value) {
+        builder.advanceLexer();
+        builder.advanceLexer();
+        builder.error("expected offset option value");
+        return false;
       }
       final PsiBuilder.Marker mark = builder.mark();
       builder.advanceLexer();// offset
       builder.advanceLexer();// colon
-      if (!commaIsAfterColon) {
-        builder.advanceLexer();// literal
-      }
+      builder.advanceLexer();// value
       mark.done(AngularJSElementTypes.MESSAGE_FORMAT_OPTION);
-      if (builder.getTokenType() != JSTokenTypes.COMMA) {
-        builder.error("expected comma");
-        return false;
-      }
-      builder.advanceLexer();
     }
     return true;
   }
