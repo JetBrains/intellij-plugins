@@ -8,7 +8,7 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.KarmaUtil;
-import com.intellij.javascript.nodejs.BaseNodeJSFilter;
+import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
@@ -93,7 +93,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
     builder.setUsePredefinedMessageFilter(false);
-    builder.addFilter(new BaseNodeJSFilter(project));
+    builder.addFilter(new NodeStackTraceFilter(project));
     return builder.getConsole();
   }
 
