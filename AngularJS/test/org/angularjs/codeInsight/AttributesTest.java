@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
@@ -161,7 +162,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
                      "    selector: '[my-customer]',\n" +
                      "    properties: {\n" +
                      "        'id':'dependency'\n" +
-                     "    }\n" +
+                     "    },\n" +
+                     "    templateUrl: '',\n" +
+                     "    styleUrls: [''],\n" +
                      "})", getDirectiveDefinitionText(resolve));
       }
     });
@@ -479,4 +482,62 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("angular.js", resolve.getContainingFile().getName());
     }
   }
+
+  public void testTemplateUrl20Completion() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.ts", "angular2.js", "custom.html");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("templateUrl: '<caret>", myFixture.getFile());
+        myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+        myFixture.completeBasic();
+        assertContainsElements(myFixture.getLookupElementStrings(), "custom.ts", "angular2.js", "custom.html");
+      }
+    });
+  }
+
+  public void testTemplateUrl20Resolve() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.template.ts", "angular2.js", "custom.html");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("templateUrl: '<caret>", myFixture.getFile());
+        final PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        final PsiElement resolve = ref.resolve();
+        assertInstanceOf(resolve, PsiFile.class);
+        assertEquals("custom.html", ((PsiFile)resolve).getName());
+      }
+    });
+  }
+
+  public void testStyleUrls20Completion() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.ts", "angular2.js", "custom.html");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("styleUrls: ['<caret>", myFixture.getFile());
+        myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+        myFixture.completeBasic();
+        assertContainsElements(myFixture.getLookupElementStrings(), "custom.ts", "angular2.js", "custom.html");
+      }
+    });
+  }
+
+
+  public void testStyleUrls20Resolve() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.style.ts", "angular2.js", "custom.html");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("styleUrls: ['<caret>", myFixture.getFile());
+        final PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        final PsiElement resolve = ref.resolve();
+        assertInstanceOf(resolve, PsiFile.class);
+        assertEquals("custom.html", ((PsiFile)resolve).getName());
+      }
+    });
+  }
+
 }
