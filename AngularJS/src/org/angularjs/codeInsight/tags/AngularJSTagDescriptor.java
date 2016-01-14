@@ -16,7 +16,9 @@ import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
+import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.codeInsight.attributes.AngularBindingDescriptor;
+import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -88,6 +90,10 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
+    final AngularAttributeDescriptor descriptor = context != null ? AngularJSAttributeDescriptorsProvider.getAngular2Descriptor(attributeName, context.getProject()) : null;
+    if (descriptor != null) {
+      return descriptor;
+    }
     return ContainerUtil.find(getAttributesDescriptors(context), new Condition<XmlAttributeDescriptor>() {
       @Override
       public boolean value(XmlAttributeDescriptor descriptor) {
