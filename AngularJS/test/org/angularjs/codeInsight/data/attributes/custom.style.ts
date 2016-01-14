@@ -4,7 +4,7 @@
         'id':'dependency'
     },
     templateUrl: '',
-    styleUrls: [''],
+    styleUrls: ['custom.html'],
 })
 class Dependency {
     id:string;

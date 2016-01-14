@@ -3,7 +3,7 @@
     properties: {
         'id':'dependency'
     },
-    templateUrl: '',
+    templateUrl: 'custom.html',
     styleUrls: [''],
 })
 class Dependency {
