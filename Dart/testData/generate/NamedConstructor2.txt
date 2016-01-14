@@ -1,0 +1,6 @@
+class IntValue {
+  num _value;
+
+  IntValue.name(this._value);<caret>
+
+}

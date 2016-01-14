@@ -1,8 +1,6 @@
 class IntValue {
   num _value;
 
-  IntValue(this._value) {
-    <caret>
-  }
+  IntValue(this._value);<caret>
 
 }
