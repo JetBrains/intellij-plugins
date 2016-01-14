@@ -270,7 +270,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
       @Override
       public void run() throws Exception {
-        myFixture.configureByFiles("variable.html", "angular2.js");
+        myFixture.configureByFiles("variable.html", "custom.ts", "angular2.js");
         myFixture.enableInspections(RequiredAttributesInspectionBase.class);
         myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
         myFixture.checkHighlighting();
