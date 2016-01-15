@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
@@ -110,6 +111,9 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       elem = jp.parse(text);
     }
     catch (JsonSyntaxException ex) {
+      if (text.contains("\"json\" is not an allowed value for option \"reporter\"")) {
+        failedToLoad("Please update your pubspec.yaml dependency on package:test to version 0.12.7 or later.", 0);
+      }
       return super.processServiceMessages(text, myCurrentOutputType, myCurrentVisitor);
     }
     if (elem == null || !elem.isJsonObject()) return false;
