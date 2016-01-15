@@ -67,9 +67,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFileOrDirectory()));
 
       // unit tests can be run as normal Dart apps, so add DartUnitConsoleFilter as well
-      final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
-                                ? myRunnerParameters.getDartFile().getParent().getPath()
-                                : myRunnerParameters.getWorkingDirectory();
+      final String workingDir = myRunnerParameters.computeProcessWorkingDirectory();
       builder.addFilter(new DartRelativePathsConsoleFilter(env.getProject(), workingDir));
       builder.addFilter(new UrlFilter());
     }
@@ -131,17 +129,13 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final String dartExePath = DartSdkUtil.getDartExePath(sdk);
 
-    final VirtualFile dartFile;
+    final String workingDir;
     try {
-      dartFile = myRunnerParameters.getDartFile();
+      workingDir = myRunnerParameters.computeProcessWorkingDirectory();
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e); // can't happen because already checked
     }
-
-    final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
-                              ? dartFile.getParent().getPath()
-                              : myRunnerParameters.getWorkingDirectory();
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
@@ -189,7 +183,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final VirtualFile dartFile;
     try {
-      dartFile = runnerParameters.getDartFile();
+      dartFile = runnerParameters.getDartFileOrDirectory();
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e);
