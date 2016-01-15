@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
@@ -89,7 +88,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     if (myTestsDoneTimer != null) {
       try {
         myTestsDoneTimer.join();
-      } catch (InterruptedException ex) {
+      }
+      catch (InterruptedException ex) {
         // ignore it;
       }
     }
@@ -288,7 +288,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
           public void run() {
             try {
               Thread.sleep(TEST_WAIT_TIME);
-            } catch (InterruptedException ex) {
+            }
+            catch (InterruptedException ex) {
               // ignore it
             }
             if (myTestsDoneTimer != null) {
@@ -299,7 +300,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         myTestsDoneTimer.start();
         Thread.yield();
       }
-    } else {
+    }
+    else {
       myTestsDoneTimer = null;
       processAllTestsDone();
     }
@@ -313,7 +315,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       // if order does matter. Note: Currently, there is no tree representation, just parent links.
       try {
         processGroupDone(group);
-      } catch (ParseException ex) {
+      }
+      catch (ParseException ex) {
         // ignore it
       }
     }
