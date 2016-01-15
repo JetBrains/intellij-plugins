@@ -3,18 +3,19 @@ package org.jetbrains.plugins.ruby.motion.run;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessHandler;
-import com.jetbrains.cidr.execution.CocoaRunParametersBase;
+import com.jetbrains.cidr.execution.AppCodeRunParametersBase;
 import com.jetbrains.cidr.execution.Installer;
 import com.jetbrains.cidr.execution.TrivialInstaller;
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice;
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
  */
-class MotionAppRunParameters extends CocoaRunParametersBase {
+class MotionAppRunParameters extends AppCodeRunParametersBase {
   private final boolean myOnDevice;
   private final ProcessHandler myServerProcessHandler;
 
@@ -35,7 +36,7 @@ class MotionAppRunParameters extends CocoaRunParametersBase {
     return false;
   }
 
-  @NotNull
+  @Nullable
   @Override
   public String getArchitectureId() {
     return myOnDevice ? AMDeviceManager.getInstance().getDeviceArchitecture(getDevice()) : "i386";
