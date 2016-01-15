@@ -1,0 +1,3 @@
+m() {
+  print('m');<caret>
+}
