@@ -7,7 +7,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -28,8 +27,6 @@ import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import static com.intellij.ide.impl.ProjectUtil.getBaseDir;
 
 public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunConfiguration> {
 
@@ -68,7 +65,8 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
           myDirField.getTextField().setForeground(JBColor.RED);
           final String message = DartBundle.message("test.dir.not.in.project");
           myDirField.getTextField().setToolTipText(message);
-        } else {
+        }
+        else {
           myDirField.getTextField().setForeground(UIUtil.getFieldForegroundColor());
           myDirField.getTextField().setToolTipText(null);
         }
