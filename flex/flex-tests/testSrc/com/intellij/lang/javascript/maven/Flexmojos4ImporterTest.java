@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.maven;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
-import com.intellij.idea.Bombed;
 import com.intellij.javascript.flex.maven.Flexmojos4Configurator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
@@ -14,7 +13,6 @@ import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 
 import static com.intellij.flex.model.bc.OutputType.Application;
 import static com.intellij.flex.model.bc.OutputType.RuntimeLoadedModule;
@@ -110,7 +108,6 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
             ".idea/flexmojos/project-com.intellij.flex.maven.test-Module2FinalName.xml");
   }
 
-  @Bombed(year = 2015, month = Calendar.NOVEMBER, day = 12)
   public void testTransitiveDepsOnPartialProjectImport() throws IOException, MavenProcessCanceledException {
     final File mavenHome = MavenUtil.resolveMavenHomeDirectory(myProjectsManager.getGeneralSettings().getMavenHome());
     if (mavenHome == null || !MavenUtil.isValidMavenHome(mavenHome)) {
@@ -201,7 +198,6 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
                       "\t\t</external-library-path>", 0);
   }
 
-  @Bombed(year = 2015, month = Calendar.NOVEMBER, day = 12)
   public void testAdditionalCompileSourceRoots() throws IOException, MavenProcessCanceledException {
     final File mavenHome = MavenUtil.resolveMavenHomeDirectory(myProjectsManager.getGeneralSettings().getMavenHome());
     if (mavenHome == null || !MavenUtil.isValidMavenHome(mavenHome)) {
