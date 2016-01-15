@@ -68,7 +68,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     final ConsoleView consoleView = SMTestRunnerConnectionUtil.createConsole(DART_FRAMEWORK_NAME, testConsoleProperties);
 
     try {
-      final VirtualFile dartFile = runnerParameters.getDartFile();
+      final VirtualFile dartFile = runnerParameters.getDartFileOrDirectory();
       consoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
 
       final String workingDir = StringUtil.isEmptyOrSpaces(runnerParameters.getWorkingDirectory())
@@ -96,7 +96,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     VirtualFile dartFile;
     final String filePath = params.getFilePath();
     try {
-      dartFile = params.getDartFile();
+      dartFile = params.getDartFileOrDirectory();
     }
     catch (RuntimeConfigurationError ex) {
       throw new ExecutionException("Cannot find test file: " + filePath, ex);
