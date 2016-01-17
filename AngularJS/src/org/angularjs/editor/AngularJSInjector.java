@@ -3,7 +3,6 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -49,14 +48,6 @@ public class AngularJSInjector implements MultiHostInjector {
       }
       if (AngularAttributesRegistry.isJSONAttribute((XmlAttribute)parent) && length > 1) {
         registrar.startInjecting(JsonLanguage.INSTANCE).
-          addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(start, length - end)).
-          doneInjecting();
-        return;
-      }
-      if ((AngularAttributesRegistry.isEventAttribute(((XmlAttribute)parent).getName(), project) ||
-           AngularAttributesRegistry.isVariableAttribute(((XmlAttribute)parent).getName(), project)) &&
-          length > 1) {
-        registrar.startInjecting(JavascriptLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(start, length - end)).
           doneInjecting();
         return;
