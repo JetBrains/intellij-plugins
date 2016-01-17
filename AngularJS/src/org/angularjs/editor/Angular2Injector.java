@@ -55,12 +55,11 @@ public class Angular2Injector implements MultiHostInjector {
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
       final int length = context.getTextLength();
       if ((AngularAttributesRegistry.isEventAttribute(((XmlAttribute)parent).getName(), project) ||
-           AngularAttributesRegistry.isVariableAttribute(((XmlAttribute)parent).getName(), project)) &&
+           AngularAttributesRegistry.isBindingAttribute(((XmlAttribute)parent).getName(), project)) &&
           length > 0) {
         registrar.startInjecting(JavascriptLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, ElementManipulators.getValueTextRange(context)).
           doneInjecting();
-        return;
       }
     }
   }
