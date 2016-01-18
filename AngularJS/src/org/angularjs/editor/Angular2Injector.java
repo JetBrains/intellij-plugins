@@ -1,5 +1,6 @@
 package org.angularjs.editor;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
@@ -16,9 +17,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
+import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJS2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,23 +37,11 @@ public class Angular2Injector implements MultiHostInjector {
 
     final PsiElement parent = context.getParent();
     if (context instanceof JSLiteralExpressionImpl && ((JSLiteralExpressionImpl)context).isQuotedLiteral()) {
+      if (injectIntoDirectiveProperty(registrar, context, parent, "template", Angular2HTMLLanguage.INSTANCE)) return;
       if (!(parent instanceof JSArrayLiteralExpression)) return;
 
       final JSProperty property = ObjectUtils.tryCast(parent.getParent(), JSProperty.class);
-      if (property != null && "styles".equals(property.getName())) {
-        final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(property, JSCallExpression.class);
-        final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
-        if (expression instanceof JSReferenceExpression) {
-          final String name = ((JSReferenceExpression)expression).getReferenceName();
-          if (!AngularJS2IndexingHandler.isDirective(name)) return;
-
-          final TextRange range = ElementManipulators.getValueTextRange(context);
-          registrar.startInjecting(CSSLanguage.INSTANCE).
-            addPlace(null, null, (PsiLanguageInjectionHost)context, range).
-            doneInjecting();
-        }
-      }
-      return;
+      if (injectIntoDirectiveProperty(registrar, context, property, "styles", CSSLanguage.INSTANCE)) return;
     }
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
       final int length = context.getTextLength();
@@ -62,6 +53,24 @@ public class Angular2Injector implements MultiHostInjector {
           doneInjecting();
       }
     }
+  }
+
+  protected boolean injectIntoDirectiveProperty(@NotNull MultiHostRegistrar registrar,
+                                                @NotNull PsiElement context,
+                                                @Nullable PsiElement parent,
+                                                @NotNull String name,
+                                                @NotNull Language language) {
+    if (parent instanceof JSProperty && name.equals(((JSProperty)parent).getName())) {
+      final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
+      final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
+      if (expression instanceof JSReferenceExpression) {
+        if (!AngularJS2IndexingHandler.isDirective(((JSReferenceExpression)expression).getReferenceName())) return true;
+
+        final TextRange range = ElementManipulators.getValueTextRange(context);
+        registrar.startInjecting(language).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();
+      }
+    }
+    return false;
   }
 
   @NotNull
