@@ -3,8 +3,8 @@ import {EventEmitter} from "events";
 
 @Component({selector: 'todo-cmp'})
 export class TodoCmp {
-    model2;
-    complete = new EventEmitter(); // TypeScript supports initializing fields
+    @Input model2;
+    @Output complete = new EventEmitter(); // TypeScript supports initializing fields
 
     onCompletedButton() {
         this.complete.emit("completed"); // this fires an event

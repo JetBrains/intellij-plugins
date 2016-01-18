@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.typescript.psi.impl.ES7DecoratorImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -38,9 +39,11 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
       JSVariable[] fields = clazz.getFields();
       final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>(fields.length);
       for (JSVariable field : fields) {
+        if (ES7DecoratorImpl.findDecorator(field, "Input") == null) continue;
         result.add(createBinding(field));
       }
       for (JSFunction function : clazz.getFunctions()) {
+        if (ES7DecoratorImpl.findDecorator(function, "Input") == null) continue;
         if (function.isSetProperty()) {
           result.add(createBinding(function));
         }
