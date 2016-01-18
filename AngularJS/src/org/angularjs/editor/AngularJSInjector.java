@@ -63,10 +63,11 @@ public class AngularJSInjector implements MultiHostInjector {
       final String text = context.getText();
       int endIndex = -1;
       while (true) {
-        final AngularJSInjectorMatchingEndFinder finder = new AngularJSInjectorMatchingEndFinder(start, end, text, endIndex);
-        int afterStart = finder.getAfterStartIdx();
+        final int startIdx = text.indexOf(start, endIndex);
+        int afterStart = startIdx < 0 ? -1 : (startIdx + start.length());
         if (afterStart < 0) return;
-        endIndex = finder.find();
+        endIndex = afterStart;
+        endIndex = AngularJSInjectorMatchingEndFinder.findMatchingEnd(start, end, text, endIndex);
         endIndex = endIndex > 0 ? endIndex : ElementManipulators.getValueTextRange(context).getEndOffset();
         final PsiElement injectionCandidate = afterStart >= 0 ? context.findElementAt(afterStart) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
