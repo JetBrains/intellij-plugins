@@ -61,8 +61,14 @@ public class DirectiveRenameTest extends LightPlatformCodeInsightFixtureTestCase
   }
 
   public void testBinding() {
-    myFixture.configureByFiles("binding.html", "binding.ts", "angular2.js");
+    myFixture.configureByFiles("binding.html", "object.ts", "angular2.js");
     myFixture.testRename("binding.after.html", "model2");
-    myFixture.checkResultByFile("binding.ts", "binding.after.ts", false);
+    myFixture.checkResultByFile("object.ts", "object.binding.ts", false);
+  }
+
+  public void testEventHandler() {
+    myFixture.configureByFiles("event.html", "object.ts", "angular2.js");
+    myFixture.testRename("event.after.html", "complete2");
+    myFixture.checkResultByFile("object.ts", "object.event.ts", false);
   }
 }

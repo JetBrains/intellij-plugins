@@ -13,18 +13,18 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularBindingDescriptor extends AngularAttributeDescriptor {
-  public static final String INPUT = "Input";
+public class AngularEventHandlerDescriptor extends AngularAttributeDescriptor {
+  public static final String OUTPUT = "Output";
   public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = new NotNullFunction<JSNamedElement, XmlAttributeDescriptor>() {
     @NotNull
     @Override
-    public XmlAttributeDescriptor fun(JSNamedElement dom) {
-      return createBinding(dom);
+    public XmlAttributeDescriptor fun(JSNamedElement function) {
+      return createEvenHandler(function);
     }
   };
   private final PsiElement myElement;
 
-  public AngularBindingDescriptor(PsiElement element,
+  public AngularEventHandlerDescriptor(PsiElement element,
                                   String attributeName) {
     super(element.getProject(), attributeName, null);
     myElement = element;
@@ -35,18 +35,18 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
     return myElement;
   }
 
-  public static XmlAttributeDescriptor[] getBindingDescriptors(JSImplicitElement declaration) {
-    return getFieldBasedDescriptors(declaration, INPUT, FACTORY);
+  public static XmlAttributeDescriptor[] getEventHandlerDescriptors(JSImplicitElement declaration) {
+    return getFieldBasedDescriptors(declaration, OUTPUT, FACTORY);
   }
 
   @NotNull
-  private static AngularBindingDescriptor createBinding(PsiNamedElement field) {
-    return new AngularBindingDescriptor(field, "[" + field.getName() + "]");
+  private static AngularEventHandlerDescriptor createEvenHandler(PsiNamedElement field) {
+    return new AngularEventHandlerDescriptor(field, "(" + field.getName() + ")");
   }
 
   @Nullable
   @Override
   public String handleTargetRename(@NotNull @NonNls String newTargetName) {
-    return "[" + newTargetName + "]";
+    return "(" + newTargetName + ")";
   }
 }

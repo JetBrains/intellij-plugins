@@ -332,6 +332,33 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testEventHandlerCompletion2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("object_event.html", "angular2.js", "object.ts");
+        myFixture.completeBasic();
+        myFixture.checkResultByFile("object_event.after.html");
+      }
+    });
+  }
+
+  public void testEventHandlerResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("object_event.after.html", "angular2.js", "object.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("(co<caret>mplete)", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("object.ts", resolve.getContainingFile().getName());
+        assertInstanceOf(resolve, JSField.class);
+      }
+    });
+  }
+
   public void testNgSrcCompletion() {
     myFixture.configureByFiles("ng-src.completion.html", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("img ng-<caret>", myFixture.getFile());
