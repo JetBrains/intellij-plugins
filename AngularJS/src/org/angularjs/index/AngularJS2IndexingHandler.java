@@ -20,6 +20,7 @@ import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
+import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,11 +122,17 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Override
   public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
-    for (XmlAttribute attribute : ((HtmlTag)customElement).getAttributes()) {
+    final HtmlTag tag = (HtmlTag)customElement;
+    for (XmlAttribute attribute : tag.getAttributes()) {
       final String name = attribute.getName();
       if (name.startsWith("#")) {
         final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name.substring(1), attribute)
           .setType(JSImplicitElement.Type.Variable);
+
+        final String tagName = tag.getName();
+        if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
+          elementBuilder.setTypeString("HTML" + StringUtil.capitalize(tagName) + "Element");
+        }
 
         builder.addImplicitElement(name.substring(1), new JSImplicitElementsIndex.JSElementProxy(elementBuilder, attribute.getTextOffset() + 1));
         JSCustomIndexer.addImplicitElement(attribute, elementBuilder, builder);
