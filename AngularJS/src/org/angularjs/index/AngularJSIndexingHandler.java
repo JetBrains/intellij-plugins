@@ -194,6 +194,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   @Override
   public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
+    final String name = property.getName();
+    if (name == null) return outData;
+
     final PsiElement parent = property.getParent();
     if (!(parent instanceof JSObjectLiteralExpression)) return outData;
     final PsiElement grandParent = parent.getParent();
@@ -209,8 +212,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       INDEXERS.get(command);
     if (index == null) return outData;
     if (((JSCallExpression)callExpression).getArguments()[0] != parent) return outData;
-    final String name = property.getName();
-    if (name == null) return outData;
 
     if (outData == null) outData = new JSElementIndexingDataImpl();
     addImplicitElements(property, command, index, name, null, outData);
