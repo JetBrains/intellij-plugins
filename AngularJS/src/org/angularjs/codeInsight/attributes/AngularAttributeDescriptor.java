@@ -1,12 +1,12 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
-import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.typescript.psi.impl.ES7DecoratorImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -50,11 +50,11 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       JSVariable[] fields = clazz.getFields();
       final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>(fields.length);
       for (JSVariable field : fields) {
-        if (ES7DecoratorImpl.findDecorator(field, decorator) == null) continue;
+        if (!hasDecorator(field, decorator)) continue;
         result.add(factory.fun(field));
       }
       for (JSFunction function : clazz.getFunctions()) {
-        if (ES7DecoratorImpl.findDecorator(function, decorator) == null) continue;
+        if (!hasDecorator(function, decorator)) continue;
         if (function.isSetProperty()) {
           result.add(factory.fun(function));
         }
@@ -62,6 +62,26 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
       return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
     return EMPTY;
+  }
+
+  private static boolean hasDecorator(JSAttributeListOwner field, String name) {
+    final JSAttributeList list = field.getAttributeList();
+    if (list != null) {
+      for (PsiElement candidate : list.getChildren()) {
+        if (candidate instanceof ES7Decorator) {
+          final PsiElement child = candidate.getLastChild();
+          if (child instanceof JSCallExpression) {
+            final JSExpression expression = ((JSCallExpression)child).getMethodExpression();
+            if (expression instanceof JSReferenceExpression &&
+                JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)expression, name)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   @Override
