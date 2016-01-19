@@ -6,6 +6,8 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,6 +22,7 @@ import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.ide.runner.util.TestModel;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -61,15 +64,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myDirField.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if (!isDirInProject(myDirField.getText(), project)) {
-          myDirField.getTextField().setForeground(JBColor.RED);
-          final String message = DartBundle.message("test.dir.not.in.project");
-          myDirField.getTextField().setToolTipText(message);
-        }
-        else {
-          myDirField.getTextField().setForeground(UIUtil.getFieldForegroundColor());
-          myDirField.getTextField().setToolTipText(null);
-        }
+        onTestDirChanged(project);
       }
     });
 
@@ -98,8 +93,15 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
         onTestNameChanged();
       }
     };
+    final DocumentAdapter dirListener = new DocumentAdapter() {
+      @Override
+      protected void textChanged(final DocumentEvent e) {
+        onTestDirChanged(project);
+      }
+    };
 
     myFileField.getTextField().getDocument().addDocumentListener(documentListener);
+    myDirField.getTextField().getDocument().addDocumentListener(dirListener);
     myTestNameField.getDocument().addDocumentListener(documentListener);
 
     myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
@@ -199,6 +201,18 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     }
   }
 
+  private void onTestDirChanged(Project project) {
+    if (!isDirInProject(myDirField.getText(), project)) {
+      myDirField.getTextField().setForeground(JBColor.RED);
+      final String message = DartBundle.message("test.dir.not.in.project");
+      myDirField.getTextField().setToolTipText(message);
+    }
+    else {
+      myDirField.getTextField().setForeground(UIUtil.getFieldForegroundColor());
+      myDirField.getTextField().setToolTipText(null);
+    }
+  }
+
   @NotNull
   @Override
   protected JComponent createEditor() {
@@ -206,13 +220,19 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   private static boolean isDirInProject(String path, Project project) {
-    File root = new File(project.getBaseDir().getPath());
-    File file = new File(path);
+    VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+    if (file == null || !file.isDirectory()) {
+      return false;
+    }
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     while (file != null) {
-      if (FileUtil.filesEqual(file, root)) {
+      if (!index.isInContent(file)) {
+        return false;
+      }
+      if (file.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
         return true;
       }
-      file = file.getParentFile();
+      file = file.getParent();
     }
     return false;
   }
