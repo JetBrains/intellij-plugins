@@ -107,11 +107,11 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   private static class PubActionsPanel extends EditorNotificationPanel {
     private PubActionsPanel() {
       myLinksPanel.add(new JLabel("Pub actions:"));
-      createActionLabel("Get Dependencies", "Dart.pub.get");
-      createActionLabel("Upgrade Dependencies", "Dart.pub.upgrade");
+      createActionLabel(DartBundle.message("get.dependencies"), "Dart.pub.get");
+      createActionLabel(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade");
       createActionLabel("Build...", "Dart.pub.build");
       myLinksPanel.add(new JLabel("        "));
-      createActionLabel("Repair Cache...", "Dart.pub.cache.repair");
+      createActionLabel("Repair cache...", "Dart.pub.cache.repair");
     }
 
     @Override
