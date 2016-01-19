@@ -5,9 +5,6 @@ import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartCodeStyleConfigurable extends CodeStyleAbstractConfigurable {
   public DartCodeStyleConfigurable(@NotNull CodeStyleSettings settings, CodeStyleSettings cloneSettings) {
     super(settings, cloneSettings, "Dart");
