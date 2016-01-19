@@ -1,24 +1,27 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.NotNullFunction;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Dennis.Ushakov
  */
 public class AngularBindingDescriptor extends AngularAttributeDescriptor {
+  public static final String INPUT = "Input";
+  public static final NotNullFunction<JSNamedElement, XmlAttributeDescriptor> FACTORY = new NotNullFunction<JSNamedElement, XmlAttributeDescriptor>() {
+    @NotNull
+    @Override
+    public XmlAttributeDescriptor fun(JSNamedElement dom) {
+      return createBinding(dom);
+    }
+  };
   private final PsiElement myElement;
 
   public AngularBindingDescriptor(PsiElement element,
@@ -33,21 +36,7 @@ public class AngularBindingDescriptor extends AngularAttributeDescriptor {
   }
 
   public static XmlAttributeDescriptor[] getBindingDescriptors(JSImplicitElement declaration) {
-    final JSClass clazz = PsiTreeUtil.getParentOfType(declaration, JSClass.class);
-    if (clazz != null) {
-      JSVariable[] fields = clazz.getFields();
-      final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>(fields.length);
-      for (JSVariable field : fields) {
-        result.add(createBinding(field));
-      }
-      for (JSFunction function : clazz.getFunctions()) {
-        if (function.isSetProperty()) {
-          result.add(createBinding(function));
-        }
-      }
-      return result.toArray(new XmlAttributeDescriptor[result.size()]);
-    }
-    return EMPTY;
+    return getFieldBasedDescriptors(declaration, INPUT, FACTORY);
   }
 
   @NotNull

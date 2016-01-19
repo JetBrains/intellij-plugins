@@ -6,9 +6,15 @@ import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspectionB
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSField;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import org.angularjs.AngularTestUtil;
@@ -289,6 +295,23 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testVariableSmart2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("binding.type.html", "angular2.js");
+        final PsiFile file = myFixture.getFile();
+        final int offset = AngularTestUtil.findOffsetBySignature("user<caret>name,", file);
+        final JSReferenceExpression ref = PsiTreeUtil.getParentOfType(file.findElementAt(offset), JSReferenceExpression.class);
+        final BaseJSSymbolProcessor.SimpleTypeProcessor processor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
+        JSTypeEvaluator.evaluateTypes(ref, file, processor);
+        final JSType type = processor.getType();
+        assertInstanceOf(type, JSNamedType.class);
+        assertEquals("HTMLInputElement", type.getTypeText());
+      }
+    });
+  }
+
   public void testVariableResolve2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
       @Override
@@ -322,6 +345,33 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       public void run() throws Exception {
         myFixture.configureByFiles("object_binding.after.html", "angular2.js", "object.ts");
         int offsetBySignature = AngularTestUtil.findOffsetBySignature("[mod<caret>el]", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("object.ts", resolve.getContainingFile().getName());
+        assertInstanceOf(resolve, JSField.class);
+      }
+    });
+  }
+
+  public void testEventHandlerCompletion2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("object_event.html", "angular2.js", "object.ts");
+        myFixture.completeBasic();
+        myFixture.checkResultByFile("object_event.after.html");
+      }
+    });
+  }
+
+  public void testEventHandlerResolve2TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("object_event.after.html", "angular2.js", "object.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("(co<caret>mplete)", myFixture.getFile());
         PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
         assertNotNull(ref);
         PsiElement resolve = ref.resolve();

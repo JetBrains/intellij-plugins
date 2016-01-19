@@ -1,13 +1,15 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.*;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.position.FilterPattern;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -91,7 +93,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
       @NotNull
       @Override
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        return new SoftFileReferenceSet(element).getAllReferences();
+        return new AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet(element).getAllReferences();
       }
     });
     registrar.registerReferenceProvider(CONTROLLER_PATTERN, new AngularJSControllerReferencesProvider());

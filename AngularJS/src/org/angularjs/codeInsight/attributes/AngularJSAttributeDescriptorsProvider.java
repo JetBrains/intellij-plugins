@@ -116,11 +116,6 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      final AngularAttributeDescriptor descriptor = getAngular2Descriptor(attrName, project);
-      if (descriptor != null) {
-        return descriptor;
-      }
-
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       ThreeState attributeAvailable = isApplicable(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (attributeAvailable == ThreeState.UNSURE) {
@@ -132,6 +127,10 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (AngularAttributesRegistry.isBindingAttribute(attrName, project)) {
         return new AngularBindingDescriptor(xmlTag, attrName);
       }
+      if (AngularAttributesRegistry.isEventAttribute(attrName, project)) {
+        return new AngularEventHandlerDescriptor(xmlTag, attrName);
+      }
+      return getAngular2Descriptor(attrName, project);
     }
     return null;
   }
@@ -139,6 +138,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Nullable
   public static AngularAttributeDescriptor getAngular2Descriptor(String attrName, Project project) {
     if (AngularAttributesRegistry.isEventAttribute(attrName, project) ||
+        AngularAttributesRegistry.isBindingAttribute(attrName, project) ||
         AngularAttributesRegistry.isVariableAttribute(attrName, project)) {
       return createDescriptor(project, attrName);
     }

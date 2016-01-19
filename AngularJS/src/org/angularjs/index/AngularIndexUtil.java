@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 28;
+  public static final int BASE_VERSION = 29;
   private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
@@ -59,7 +60,8 @@ public class AngularIndexUtil {
                 if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                             AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
                   result.set(element);
-                  if (element.canNavigate()) {
+                  final PsiFile file = element.getContainingFile();
+                  if ("ts".equals(file.getVirtualFile().getExtension())) {
                     return false;
                   }
                 }

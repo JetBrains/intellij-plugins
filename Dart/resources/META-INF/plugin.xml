@@ -126,6 +126,7 @@
 
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartClassNameMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodNameMacro"/>
+    <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartClassNameMethodNameMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodParametersMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodReturnTypeMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartListVariableMacro"/>
@@ -133,7 +134,8 @@
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartSuggestIndexNameMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartSuggestVariableNameMacro"/>
 
-    <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType"/>
+    <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType$Generic"/>
+    <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType$Statement"/>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.lang.dart.ide.template.DartLiveTemplatesProvider"/>
 
     <lang.surroundDescriptor language="Dart"
@@ -227,9 +229,13 @@
             text="Constructor">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
     </action>
+    <action id="Generate.Named.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateNamedConstructorAction"
+            text="Named Constructor">
+      <add-to-group anchor="after" relative-to-action="Generate.Constructor.Dart"  group-id="GenerateGroup"/>
+    </action>
     <action id="Generate.GetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterAction"
             text="Getter">
-      <add-to-group anchor="after" relative-to-action="Generate.Constructor.Dart" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.Named.Constructor.Dart" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.SetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateSetterAction"
             text="Setter">

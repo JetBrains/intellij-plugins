@@ -38,8 +38,8 @@ public class AngularMessageFormatCompletion {
       final int offset = context.getEditor().getCaretModel().getCurrentCaret().getOffset();
       final String text =
         context.getDocument().getText(TextRange.create(offset, Math.min(offset + 100, context.getDocument().getTextLength()))).trim();
-      // we need this code to impove the situation with the case when selection keyword starts with =
-      // default implementation does nopt take it as completion pattern part, since = is not a part of java identifier
+      // we need this code to improve the situation with the case when selection keyword starts with =
+      // default implementation does not take it as completion pattern part, since = is not a part of java identifier
       final int idOffset = context.getStartOffset();
       if (idOffset > 0 && (idOffset + 1) < context.getDocument().getTextLength() &&
           "==".equals(context.getDocument().getText(TextRange.create(idOffset - 1, idOffset + 1)))) {

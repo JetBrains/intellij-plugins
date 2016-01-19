@@ -31,6 +31,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -43,9 +44,11 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -60,10 +63,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerBundle;
-import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
@@ -596,9 +596,12 @@ public class FlexDebugProcess extends XDebugProcess {
               final XLineBreakpoint<XBreakpointProperties> breakpoint = myBreakpointsHandler.getBreakpointByIndex(index);
 
               if (breakpoint != null) {
-                FlexSuspendContext suspendContext = new FlexSuspendContext(new FlexStackFrame(this, breakpoint.getSourcePosition()));
-                boolean suspend = getSession().breakpointReached(breakpoint, null, suspendContext);
-
+                FlexStackFrame frame = new FlexStackFrame(this, breakpoint.getSourcePosition());
+                boolean suspend = false;
+                if (evaluateCondition(breakpoint.getConditionExpression(), frame)) {
+                  String message = evaluateMessage(breakpoint.getLogExpressionObject(), frame);
+                  suspend = getSession().breakpointReached(breakpoint, message, new FlexSuspendContext(frame));
+                }
                 if (!suspend) {
                   encounteredNonsuspendableBreakpoint = true;
                   toInsertContinue = true;
@@ -666,6 +669,44 @@ public class FlexDebugProcess extends XDebugProcess {
       if (toInsertContinue) insertCommand(new ContinueCommand());
     }
     while (explicitlyContinueRead || reader.hasSomeDataPending());
+  }
+
+  private boolean evaluateCondition(@Nullable XExpression expression, FlexStackFrame frame) {
+    if (expression == null || StringUtil.isEmptyOrSpaces(expression.getExpression())) {
+      return true;
+    }
+
+    final String result = frame.eval(expression.getExpression(), this);
+
+    if (result != null && (result.equalsIgnoreCase("true") || result.equalsIgnoreCase("false"))) {
+      return Boolean.valueOf(result);
+    }
+    else {
+      final String message = result == null || result.startsWith(FlexStackFrame.CANNOT_EVALUATE_EXPRESSION)
+                             ? FlexBundle.message("failed.to.evaluate.breakpoint.condition", expression)
+                             : FlexBundle.message("not.boolean.breakpoint.condition", expression, result);
+      final Ref<Boolean> stopRef = new Ref<Boolean>(false);
+
+      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          final Project project = getSession().getProject();
+          final int answer =
+            Messages.showYesNoDialog(project, message, FlexBundle.message("breakpoint.condition.error"), Messages.getQuestionIcon());
+          stopRef.set(answer == Messages.YES);
+        }
+      }, ModalityState.defaultModalityState());
+
+      return stopRef.get();
+    }
+  }
+
+  @Nullable
+  private String evaluateMessage(@Nullable XExpression expression, FlexStackFrame frame) {
+    if (expression == null || StringUtil.isEmptyOrSpaces(expression.getExpression())) {
+      return null;
+    }
+    return frame.eval(expression.getExpression(), this);
   }
 
   String defaultReadCommand(DebuggerCommand command) throws IOException {

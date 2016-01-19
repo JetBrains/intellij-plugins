@@ -1,33 +1,23 @@
 package org.angularjs.editor;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import static java.lang.Math.min;
 
 /**
  * @author Irina.Chernushina on 12/2/2015.
  */
 public class AngularJSInjectorMatchingEndFinder {
-  private final String myStartSymbol;
-  private final String myEndSymbol;
-  private final Character myShortStartSymbol;
-  private final Character myShortEndSymbol;
-  private int myNumStarts;
-  private String myText;
-  private final int myAfterStartIdx;
+  public static int findMatchingEnd(@NotNull String startSymbol, @NotNull String endSymbol, @NotNull String text, int afterStartIdx) {
+    if (afterStartIdx < 0) return -1;
 
-  public AngularJSInjectorMatchingEndFinder(@NotNull String startSymbol, @NotNull String endSymbol, @NotNull String text) {
-    this(startSymbol, endSymbol, text, 0);
-  }
+    final Character shortStartSymbol = defineShortSymbol(startSymbol);
+    final Character shortEndSymbol = defineShortSymbol(endSymbol);
 
-  public AngularJSInjectorMatchingEndFinder(@NotNull String startSymbol, @NotNull String endSymbol, @NotNull String text, int fromIndex) {
-    myStartSymbol = startSymbol;
-    myEndSymbol = endSymbol;
-    myShortStartSymbol = defineShortSymbol(startSymbol);
-    myShortEndSymbol = defineShortSymbol(endSymbol);
-    myNumStarts = 1;
-    myText = text;
-    final int startIdx = text.indexOf(startSymbol, fromIndex);
-    myAfterStartIdx = startIdx < 0 ? -1 : (startIdx + startSymbol.length());
+    if (shortStartSymbol != null && shortEndSymbol != null)
+      return findForShortSymbols(shortStartSymbol, shortEndSymbol, text, afterStartIdx, endSymbol);
+    return findForLongSymbols(text, afterStartIdx, startSymbol, endSymbol);
   }
 
   private static Character defineShortSymbol(final String s) {
@@ -35,44 +25,74 @@ public class AngularJSInjectorMatchingEndFinder {
     return null;
   }
 
-  public int find() {
-    if (myAfterStartIdx < 0) return -1;
-    if (myShortStartSymbol != null && myShortEndSymbol != null) return findForShortSymbols();
-    return findForLongSymbols();
-  }
-
-  public int getAfterStartIdx() {
-    return myAfterStartIdx;
-  }
-
-  private int findForShortSymbols() {
-    int lookFrom = myAfterStartIdx;
-    while (myNumStarts > 0) {
-      --myNumStarts;
-      int nextEndIdx = myText.indexOf(myEndSymbol, lookFrom);
+  private static int findForShortSymbols(char shortStartSymbol, char shortEndSymbol, @NotNull final String text,
+                                                          int afterStartIdx, final @NotNull String endSymbol) {
+    int totalNumStarts = 1;
+    int lookFrom = afterStartIdx;
+    while (totalNumStarts > 0) {
+      --totalNumStarts;
+      int nextEndIdx = text.indexOf(endSymbol, lookFrom);
       if (nextEndIdx == -1) return -1;
-      final int numStarts = StringUtil.getOccurrenceCount(myText.substring(lookFrom, nextEndIdx), myShortStartSymbol);
-      final int numEnds = StringUtil.getOccurrenceCount(myText.substring(lookFrom, nextEndIdx), myShortEndSymbol);
-      myNumStarts += numStarts - numEnds;
+      final int numStarts = getOccurrenceCount(text, lookFrom, nextEndIdx, shortStartSymbol);
+      final int numEnds = getOccurrenceCount(text, lookFrom, nextEndIdx, shortEndSymbol);
+      totalNumStarts += numStarts - numEnds;
       lookFrom = nextEndIdx + 1;
-      if (myNumStarts <= 0) return nextEndIdx;
+      if (totalNumStarts <= 0) return nextEndIdx;
     }
     return -1;
   }
 
-  private int findForLongSymbols() {
-    int lookFrom = myAfterStartIdx;
-    while (myNumStarts > 0) {
-      --myNumStarts;
-      int nextEndIdx = myText.indexOf(myEndSymbol, lookFrom);
+  private static int findForLongSymbols(@NotNull final String text, int afterStartIdx,
+                                                         final @NotNull String startSymbol, final @NotNull String endSymbol) {
+    int totalNumStarts = 1;
+    int lookFrom = afterStartIdx;
+    while (totalNumStarts > 0) {
+      --totalNumStarts;
+      int nextEndIdx = text.indexOf(endSymbol, lookFrom);
       if (nextEndIdx == -1) return -1;
-      final int numStarts = StringUtil.getOccurrenceCount(myText.substring(lookFrom, nextEndIdx), myStartSymbol);
+      final int numStarts = getOccurrenceCount(text, lookFrom, nextEndIdx, startSymbol);
       if (numStarts > 0) {
-        myNumStarts += numStarts;
+        totalNumStarts += numStarts;
       }
-      lookFrom = nextEndIdx + myEndSymbol.length();
-      if (myNumStarts == 0) return nextEndIdx;
+      lookFrom = nextEndIdx + endSymbol.length();
+      if (totalNumStarts == 0) return nextEndIdx;
     }
     return -1;
+  }
+
+  @Contract(pure = true)
+  private static int getOccurrenceCount(@NotNull String text, final int from, final int toExcluding, final char c) {
+    int res = 0;
+    int i = from;
+    final int limit = min(text.length(), toExcluding);
+    while (i < limit) {
+      i = text.indexOf(c, i);
+      if (i >= 0 && i < limit) {
+        res++;
+        i++;
+      }
+      else {
+        break;
+      }
+    }
+    return res;
+  }
+
+  @Contract(pure = true)
+  private static int getOccurrenceCount(@NotNull String text, final int from, final int toExcluding, final String s) {
+    int res = 0;
+    int i = from;
+    final int limit = min(text.length(), toExcluding);
+    while (i < limit) {
+      i = text.indexOf(s, i);
+      if (i >= 0 && i < limit) {
+        res++;
+        i+=s.length();
+      }
+      else {
+        break;
+      }
+    }
+    return res;
   }
 }

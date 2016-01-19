@@ -44,10 +44,9 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
         template.addTextSegment(",");
       }
     }
-    template.addTextSegment(")");
-    template.addTextSegment("{\n");
+    template.addTextSegment(");");
     template.addEndVariable();
-    template.addTextSegment("\n}\n");
+    template.addTextSegment("\n");
     return template;
   }
 

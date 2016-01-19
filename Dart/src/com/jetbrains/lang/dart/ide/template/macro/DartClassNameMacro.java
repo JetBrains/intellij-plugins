@@ -19,8 +19,8 @@ public class DartClassNameMacro extends DartMacroBase {
 
   @Override
   public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
-    final String containingFunctionName = getContainingClassName(context.getPsiElementAtStartOffset());
-    return containingFunctionName == null ? null : new TextResult(containingFunctionName);
+    final String containingClassName = getContainingClassName(context.getPsiElementAtStartOffset());
+    return containingClassName == null ? null : new TextResult(containingClassName);
   }
 
   @VisibleForTesting

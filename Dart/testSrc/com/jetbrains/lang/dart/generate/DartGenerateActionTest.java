@@ -24,6 +24,18 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doConstructor();
   }
 
+  public void testNamedConstructor1() throws Throwable {
+    doNamedConstructor();
+  }
+
+  public void testNamedConstructor2() throws Throwable {
+    doNamedConstructor();
+  }
+
+  public void testNamedConstructor3() throws Throwable {
+    doNamedConstructor();
+  }
+
   public void testImplement1() throws Throwable {
     doImplementTest();
   }
@@ -106,5 +118,15 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
 
   public void testOverrideOperator() throws Throwable {
     doOverrideTest();
+  }
+}
+
+class A {
+  int x, y, z;
+
+  public A(int x, int y, int z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
   }
 }

@@ -45,6 +45,8 @@
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
     <lang.syntaxHighlighterFactory language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
+    <lang.parserDefinition language="Angular2HTML" implementationClass="org.angularjs.html.Angular2HTMLParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Angular2HTML" implementationClass="org.angularjs.html.Angular2HTMLHighlighterFactory"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
