@@ -27,7 +27,6 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
-import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
@@ -68,7 +67,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     final ConsoleView consoleView = SMTestRunnerConnectionUtil.createConsole(DART_FRAMEWORK_NAME, testConsoleProperties);
 
     try {
-      final VirtualFile dartFile = runnerParameters.getDartFile();
+      final VirtualFile dartFile = runnerParameters.getDartFileOrDirectory();
       consoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
 
       final String workingDir = StringUtil.isEmptyOrSpaces(runnerParameters.getWorkingDirectory())
@@ -96,7 +95,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     VirtualFile dartFile;
     final String filePath = params.getFilePath();
     try {
-      dartFile = params.getDartFile();
+      dartFile = params.getDartFileOrDirectory();
     }
     catch (RuntimeConfigurationError ex) {
       throw new ExecutionException("Cannot find test file: " + filePath, ex);
@@ -109,7 +108,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       builder.append(' ').append(filePath);
     }
     String testName = params.getTestName();
-    if (testName != null && !testName.isEmpty() && params.getScope() != Scope.ALL) {
+    if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
       String safeName = StringUtil.escapeToRegexp(testName);
       builder.append(' ').append(NAME_REGEX_OPTION).append(' ').append('"').append(safeName).append('"');
     }

@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunConfiguration> {
 
@@ -44,6 +45,8 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JCheckBox myDartiumCheckBox;
   private JCheckBox myChromeCheckBox;
   private JCheckBox myFirefoxCheckBox;
+  private TextFieldWithBrowseButton myDirField;
+  private JLabel myDirLabel;
 
   private final Project myProject;
   private TestModel myCachedModel;
@@ -52,6 +55,23 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myProject = project;
 
     DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
+    myDirField.addBrowseFolderListener(DartBundle.message("choose.dart.directory"), null, project,
+                                       // Unfortunately, withFileFilter() only works for files, not directories.
+                                       FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myDirField.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (!isDirInProject(myDirField.getText(), project)) {
+          myDirField.getTextField().setForeground(JBColor.RED);
+          final String message = DartBundle.message("test.dir.not.in.project");
+          myDirField.getTextField().setToolTipText(message);
+        }
+        else {
+          myDirField.getTextField().setForeground(UIUtil.getFieldForegroundColor());
+          myDirField.getTextField().setToolTipText(null);
+        }
+      }
+    });
 
     myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
@@ -95,8 +115,14 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     myScopeCombo.setSelectedItem(parameters.getScope());
-    myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
-    myTestNameField.setText(parameters.getScope() == Scope.ALL ? "" : StringUtil.notNullize(parameters.getTestName()));
+    String testPath = FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath()));
+    if (parameters.getScope() == Scope.FOLDER) {
+      myDirField.setText(testPath);
+    }
+    else {
+      myFileField.setText(testPath);
+    }
+    myTestNameField.setText(parameters.getScope().expectsTestName() ? StringUtil.notNullize(parameters.getTestName()) : "");
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
     myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
@@ -113,8 +139,9 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     parameters.setScope(scope);
-    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
-    parameters.setTestName(scope == Scope.ALL ? null : StringUtil.nullize(myTestNameField.getText().trim()));
+    TextFieldWithBrowseButton pathSource = scope == Scope.FOLDER ? myDirField : myFileField;
+    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(pathSource.getText().trim()), true));
+    parameters.setTestName(scope.expectsTestName() ? StringUtil.nullize(myTestNameField.getText().trim()) : null);
     parameters.setArguments(StringUtil.nullize(myArguments.getText().trim(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText().trim(), true));
     parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
@@ -128,9 +155,17 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myTestNameLabel.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
     myTestNameField.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
     myTestNameLabel.setText(scope == Scope.GROUP ? DartBundle.message("dart.unit.group.name") : DartBundle.message("dart.unit.test.name"));
+    boolean on = scope == Scope.FOLDER;
+    myFileField.setVisible(!on);
+    myTestFileLabel.setVisible(!on);
+    myDirField.setVisible(on);
+    myDirLabel.setVisible(on);
   }
 
   private void onTestNameChanged() {
+    final Scope scope = (Scope)myScopeCombo.getSelectedItem();
+    if (scope == Scope.FOLDER) return;
+
     final String filePath = FileUtil.toSystemIndependentName(myFileField.getText().trim());
     if (filePath.isEmpty()) {
       return;
@@ -141,7 +176,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
       return;
     }
 
-    final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     if (scope != Scope.METHOD && scope != Scope.GROUP) {
       return;
     }
@@ -169,5 +203,17 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   @Override
   protected JComponent createEditor() {
     return myMainPanel;
+  }
+
+  private static boolean isDirInProject(String path, Project project) {
+    File root = new File(project.getBaseDir().getPath());
+    File file = new File(path);
+    while (file != null) {
+      if (FileUtil.filesEqual(file, root)) {
+        return true;
+      }
+      file = file.getParentFile();
+    }
+    return false;
   }
 }

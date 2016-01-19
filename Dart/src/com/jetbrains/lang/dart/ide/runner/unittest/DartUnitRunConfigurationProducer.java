@@ -70,7 +70,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
     return Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
            Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
-           (existingParams.getScope() == Scope.ALL || Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
+           (existingParams.getScope() == Scope.FILE || Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
   }
 
   private static boolean setupRunConfiguration(final @NotNull DartUnitRunnerParameters runnerParams, final @NotNull PsiElement psiElement) {
@@ -98,7 +98,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
         }
 
         runnerParams.setTestName(DartResolveUtil.getLibraryName((DartFile)psiElement));
-        runnerParams.setScope(Scope.ALL);
+        runnerParams.setScope(Scope.FILE);
         final String dartFilePath = FileUtil.toSystemIndependentName(virtualFile.getPath());
         runnerParams.setFilePath(dartFilePath);
         runnerParams.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(psiElement.getProject(), virtualFile));

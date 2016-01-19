@@ -28,7 +28,7 @@
         <properties>
           <inheritsPopupMenu value="true"/>
           <labelFor value="17e7a"/>
-          <text value="Dart &amp;File:"/>
+          <text value="Dart &amp;file:"/>
         </properties>
       </component>
       <component id="c23d5" class="javax.swing.JLabel">

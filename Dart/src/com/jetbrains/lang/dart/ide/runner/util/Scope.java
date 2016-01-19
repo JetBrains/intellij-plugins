@@ -1,7 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.util;
 
 public enum Scope {
-  ALL("All in file"), GROUP("Test group"), METHOD("Single test");
+  FILE("All in file"), FOLDER("All in folder"), GROUP("Test group"), METHOD("Single test");
 
   private final String myPresentableName;
 
@@ -11,5 +11,9 @@ public enum Scope {
 
   public String getPresentableName() {
     return myPresentableName;
+  }
+
+  public boolean expectsTestName() {
+    return this == GROUP || this == METHOD;
   }
 }
