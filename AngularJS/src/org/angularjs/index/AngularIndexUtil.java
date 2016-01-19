@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -59,7 +60,8 @@ public class AngularIndexUtil {
                 if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                             AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
                   result.set(element);
-                  if (element.canNavigate()) {
+                  final PsiFile file = element.getContainingFile();
+                  if ("ts".equals(file.getVirtualFile().getExtension())) {
                     return false;
                   }
                 }
