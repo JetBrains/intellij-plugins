@@ -65,7 +65,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String LOADING_PREFIX = "loading ";
 
   private static final Gson GSON = new Gson();
-  private static final long TEST_WAIT_TIME = 2L * 1000L; // Potentially wait up to 2 seconds for tests to finish.
+  private static final long TEST_WAIT_TIME = 100L; // 100ms wait for tests to finish, looped.
 
   // In theory, test events could be generated asynchronously and out of order. We might want to keep a map of tests to start times
   // so we get accurate durations when tests end. See myTestData.
@@ -77,6 +77,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private Map<Integer, Test> myTestData;
   private Map<Integer, Group> myGroupData;
   private Thread myTestsDoneTimer;
+  private final Object myLock = new Object();
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
     super(testFrameworkName, consoleProperties);
@@ -85,13 +86,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   public void flushBufferBeforeTerminating() {
-    if (myTestsDoneTimer != null) {
-      try {
-        myTestsDoneTimer.join();
+    try {
+      while (!areAllTestsDone()) {
+        synchronized (myLock) {
+          myLock.wait(TEST_WAIT_TIME);
+        }
       }
-      catch (InterruptedException ex) {
-        // ignore it;
-      }
+    }
+    catch (InterruptedException ex) {
+      // ignore it;
     }
     super.flushBufferBeforeTerminating();
   }
@@ -155,7 +158,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     if (!test.hasValidParent() && test.getName().startsWith(LOADING_PREFIX)) {
       String path = test.getName().substring(LOADING_PREFIX.length());
       if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
-      test.isRunning = false;
+      setNotRunning(test);
       return true;
     }
     String testName = test.getBaseName();
@@ -214,16 +217,16 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       }
     }
     Test test = getTest(obj);
-    test.isRunning = false;
-    String expectedText = null, actualText = null, failureMessage = message;
+    setNotRunning(test);
+    String failureMessage = message;
     ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
     ServiceMessageBuilder msg = ServiceMessageBuilder.testStdErr(test.getBaseName());
     int firstExpectedIndex = message.indexOf(EXPECTED);
     if (firstExpectedIndex >= 0) {
       Matcher matcher = EXPECTED_ACTUAL_RESULT.matcher(message);
       if (matcher.find(firstExpectedIndex + EXPECTED.length())) {
-        expectedText = matcher.group(1);
-        actualText = matcher.group(2);
+        String expectedText = matcher.group(1);
+        String actualText = matcher.group(2);
         testError.addAttribute("expected", expectedText);
         testError.addAttribute("actual", actualText);
         if (firstExpectedIndex == 0) {
@@ -268,31 +271,24 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private boolean handleDone(JsonObject obj) throws ParseException {
     // The test runner has reached the end of the tests. Some may still be running but no more will be started.
     checkIfAllTestsDone();
-    //processAllTestsDone();
+    return true;
+  }
+
+  private boolean areAllTestsDone() {
+    for (Test test : myTestData.values()) {
+      if (test.isRunning) {
+        return false;
+      }
+    }
     return true;
   }
 
   private void checkIfAllTestsDone() {
-    // If any test is still running set a timer to run processAllTestsDone()
-    // If all tests done, clear timer then processAllTestsDone()
-    boolean notDone = false;
-    for (Test test : myTestData.values()) {
-      if (test.isRunning) {
-        notDone = true;
-        break;
-      }
-    }
-    if (notDone) {
+    if (!areAllTestsDone()) {
       if (myTestsDoneTimer == null) {
         myTestsDoneTimer = new Thread("test finisher") {
           public void run() {
-            try {
-              Thread.sleep(TEST_WAIT_TIME);
-            }
-            catch (InterruptedException ex) {
-              // ignore it
-            }
-            if (myTestsDoneTimer != null) {
+            synchronized (myLock) {
               processAllTestsDone();
             }
           }
@@ -333,7 +329,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   private boolean eventFinished(JsonObject obj) throws ParseException {
     Test test = getTest(obj);
-    test.isRunning = false;
+    setNotRunning(test);
     if (test.getMetadata().skip) return true;
     // Since we cannot tell when a group is finished always reset the parent ID.
     long duration = getTestMillis(obj) - myStartMillis;
@@ -367,18 +363,18 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     messageBuilder.addAttribute("locationHint", location);
   }
 
+  private void setNotRunning(Test test) {
+    test.isRunning = false;
+    try {
+      myLock.notifyAll();
+    }
+    catch (IllegalMonitorStateException ex) {
+      // No waiting thread, so nothing to do.
+    }
+  }
+
   private static long getTestMillis(JsonObject obj) throws ParseException {
     return getLong(obj, JSON_MILLIS);
-  }
-
-  private static int getInitialTestID(JsonObject obj) throws ParseException {
-    return getInt(obj, JSON_ID);
-  }
-
-  private static int getInt(JsonObject obj, String name) throws ParseException {
-    JsonElement val = obj == null ? null : obj.get(name);
-    if (val == null || !val.isJsonPrimitive()) throw new ParseException("Value is not type int: " + val, 0);
-    return val.getAsInt();
   }
 
   private static long getLong(JsonObject obj, String name) throws ParseException {
