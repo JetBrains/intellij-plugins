@@ -31,9 +31,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.PairProcessor;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
+import org.angularjs.codeInsight.router.AngularJSRouterConstants;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -50,6 +52,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     new HashMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
+  private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<String, PairProcessor<JSProperty, JSElementIndexingData>>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
@@ -61,6 +64,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final String START_SYMBOL = "startSymbol";
   private static final String END_SYMBOL = "endSymbol";
   public static final String DEFAULT_RESTRICTIONS = "D";
+  public static final String WHEN = "when";
 
   private static final String[] ALL_INTERESTING_METHODS;
   private static final BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXES;
@@ -117,6 +121,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
+
+    CUSTOM_PROPERTY_PROCESSORS.put(WHEN, createRouterWhenProcessor());
   }
 
   static final String RESTRICT = "@restrict";
@@ -208,6 +214,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       return outData;
     }
     final String command = ((JSReferenceExpression)methodExpression).getReferenceName();
+    final PairProcessor<JSProperty, JSElementIndexingData> customProcessor = CUSTOM_PROPERTY_PROCESSORS.get(command);
+    JSElementIndexingData localOutData = null;
+    if (customProcessor != null && customProcessor.process(property,
+                                                           (localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))))
+      return localOutData;
+
     final StubIndexKey<String, JSImplicitElementProvider> index =
       INDEXERS.get(command);
     if (index == null) return outData;
@@ -511,5 +523,32 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       collection = ((JSBinaryExpression)collection).getLOperand();
     }
     return collection;
+  }
+
+  private static PairProcessor<JSProperty, JSElementIndexingData> createRouterWhenProcessor() {
+    return new PairProcessor<JSProperty, JSElementIndexingData>() {
+      @Override
+      public boolean process(JSProperty property, JSElementIndexingData outData) {
+        if (AngularJSRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
+          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
+          if (!value.isQuotedLiteral()) return false;
+          final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(CONTROLLER);
+          assert index != null;
+          final JSObjectLiteralExpression object = ObjectUtils.tryCast(property.getParent(), JSObjectLiteralExpression.class);
+          if (object == null) return false;
+          final JSProperty[] properties = object.getProperties();
+          for (JSProperty jsProperty : properties) {
+            if (CONTROLLER.equals(jsProperty.getName())) {
+              // value (JSFunctionExpression) is not implicit element provider
+              addImplicitElements(jsProperty, null, index, StringUtil.unquoteString(value.getText()), null, outData);
+              return true;
+            }
+          }
+          addImplicitElements(value, null, index, StringUtil.unquoteString(value.getText()), null, outData);
+          return true;
+        }
+        return false;
+      }
+    };
   }
 }
