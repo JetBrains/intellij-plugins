@@ -53,7 +53,7 @@
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
-    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector"/>
+    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
                             id="AngularJSCompletionContributor" order="first"/>
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
