@@ -27,10 +27,10 @@ import com.intellij.ui.IdeBorderFactory;
 import javax.swing.*;
 
 public class DartCodeStyleGenerationConfigurable implements Configurable {
-  JPanel myPanel;
 
   private final CodeStyleSettings mySettings;
 
+  private JPanel myPanel;
   private JCheckBox myInsertOverrideAnnotationCheckBox;
 
   public DartCodeStyleGenerationConfigurable(CodeStyleSettings settings) {
@@ -84,5 +84,4 @@ public class DartCodeStyleGenerationConfigurable implements Configurable {
   private static boolean isModified(JCheckBox checkBox, boolean value) {
     return checkBox.isSelected() != value;
   }
-
 }
