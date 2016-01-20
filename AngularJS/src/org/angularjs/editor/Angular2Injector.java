@@ -15,6 +15,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import org.angularjs.html.Angular2HTMLLanguage;
@@ -76,6 +77,6 @@ public class Angular2Injector implements MultiHostInjector {
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(JSLiteralExpressionImpl.class, XmlAttributeValueImpl.class);
+    return Arrays.asList(JSLiteralExpression.class, XmlAttributeValue.class);
   }
 }

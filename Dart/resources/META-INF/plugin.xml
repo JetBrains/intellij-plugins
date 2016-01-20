@@ -196,6 +196,9 @@
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
+    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="outdated.dependencies.inspection.name"
+                     groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
