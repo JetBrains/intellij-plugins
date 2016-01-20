@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myCache = BundleManifestCache.getInstance(getProject())
+    myCache = BundleManifestCache.getInstance(project)
   }
 
 
@@ -45,51 +45,51 @@ class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
   fun testJdkManifest() {
     val manifest = myCache.getManifest(findClass("javax.swing.Icon"))
     assertNotNull(manifest)
-    assertNotNull(manifest?.getBundleSymbolicName())
+    assertNotNull(manifest?.bundleSymbolicName)
     assertEquals("javax.swing", manifest?.getExportedPackage("javax.swing"))
   }
 
   fun testModuleManual() {
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Manually)
-    myFixture.addFileToProject(myConfiguration.getManifestLocation(), "Bundle-SymbolicName: test\n")
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.Manually
+    myFixture.addFileToProject(myConfiguration.manifestLocation, "Bundle-SymbolicName: test\n")
     assertManifest(myCache.getManifest(myModule))
   }
 
   fun testModuleGenerated() {
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled)
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.OsmorcControlled
     myConfiguration.setBundleSymbolicName("test")
     assertManifest(myCache.getManifest(myModule))
   }
 
   fun testModuleBnd() {
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd)
-    myFixture.addFileToProject(myConfiguration.getBndFileLocation(), "Bundle-SymbolicName: test\n")
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
+    myFixture.addFileToProject(myConfiguration.bndFileLocation, "Bundle-SymbolicName: test\n")
     assertManifest(myCache.getManifest(myModule))
   }
 
   fun testModuleBndImplicitBSN() {
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd)
-    myFixture.addFileToProject(myConfiguration.getBndFileLocation(), "Bundle-Version: 1.0.0\n")
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
+    myFixture.addFileToProject(myConfiguration.bndFileLocation, "Bundle-Version: 1.0.0\n")
     assertManifest(myCache.getManifest(myModule))
   }
 
   fun testModuleCacheUpdate() {
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled)
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.OsmorcControlled
     assertNotNull(myCache.getManifest(myModule))
 
-    myConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd)
+    myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
     assertNull(myCache.getManifest(myModule))
 
-    myFixture.addFileToProject(myConfiguration.getBndFileLocation(), "Bundle-SymbolicName: test\n")
+    myFixture.addFileToProject(myConfiguration.bndFileLocation, "Bundle-SymbolicName: test\n")
     assertNotNull(myCache.getManifest(myModule))
   }
 
 
   private fun findClass(className: String): PsiClass =
-    JavaPsiFacade.getInstance(getProject()).findClass(className, myModule.getModuleWithLibrariesScope())!!
+    JavaPsiFacade.getInstance(project).findClass(className, myModule.moduleWithLibrariesScope)!!
 
   private fun assertManifest(manifest: BundleManifest?) {
     assertNotNull(manifest)
-    assertTrue(StringUtil.isNotEmpty(manifest!!.getBundleSymbolicName()))
+    assertTrue(StringUtil.isNotEmpty(manifest!!.bundleSymbolicName))
   }
 }
