@@ -106,15 +106,6 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     runTest(SampleEvents, SampleSignals, SampleParents);
   }
 
-  public void testOutOfOrder() throws Exception {
-    int len = SampleEvents.length;
-    String[] events = Arrays.copyOf(SampleEvents, len);
-    String event = events[len - 4];
-    events[len - 4] = events[len - 3];
-    events[len - 3] = event;
-    runTest(events, SampleSignals, SampleParents);
-  }
-
   public void testLoadFailure() throws Exception {
     String[] events =
       {"/usr/local/opt/dart/libexec/bin/dart --ignore-unrecognized-flags --checked --enable-vm-service:50383 --trace_service_pause_events file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json test/formatter_test.dart -n \"line endings\"\n",

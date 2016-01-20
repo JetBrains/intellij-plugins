@@ -76,27 +76,13 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private ServiceMessageVisitor myCurrentVisitor;
   private Map<Integer, Test> myTestData;
   private Map<Integer, Group> myGroupData;
-  private Thread myTestsDoneTimer;
-  private final Object myLock = new Object();
+  //private Thread myTestsDoneTimer;
+  //private final Object myLock = new Object();
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
     super(testFrameworkName, consoleProperties);
     myTestData = new HashMap<Integer, Test>();
     myGroupData = new HashMap<Integer, Group>();
-  }
-
-  public void flushBufferBeforeTerminating() {
-    try {
-      while (!areAllTestsDone()) {
-        synchronized (myLock) {
-          myLock.wait(TEST_WAIT_TIME);
-        }
-      }
-    }
-    catch (InterruptedException ex) {
-      // ignore it;
-    }
-    super.flushBufferBeforeTerminating();
   }
 
   protected boolean processServiceMessages(final String text, final Key outputType, final ServiceMessageVisitor visitor)
@@ -269,38 +255,9 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handleDone(JsonObject obj) throws ParseException {
-    // The test runner has reached the end of the tests. Some may still be running but no more will be started.
-    checkIfAllTestsDone();
+    // The test runner has reached the end of the tests.
+    processAllTestsDone();
     return true;
-  }
-
-  private boolean areAllTestsDone() {
-    for (Test test : myTestData.values()) {
-      if (test.isRunning) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private void checkIfAllTestsDone() {
-    if (!areAllTestsDone()) {
-      if (myTestsDoneTimer == null) {
-        myTestsDoneTimer = new Thread("test finisher") {
-          public void run() {
-            synchronized (myLock) {
-              processAllTestsDone();
-            }
-          }
-        };
-        myTestsDoneTimer.start();
-        Thread.yield();
-      }
-    }
-    else {
-      myTestsDoneTimer = null;
-      processAllTestsDone();
-    }
   }
 
   private void processAllTestsDone() {
@@ -363,14 +320,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     messageBuilder.addAttribute("locationHint", location);
   }
 
-  private void setNotRunning(Test test) {
+  private static void setNotRunning(Test test) {
     test.isRunning = false;
-    try {
-      myLock.notifyAll();
-    }
-    catch (IllegalMonitorStateException ex) {
-      // No waiting thread, so nothing to do.
-    }
   }
 
   private static long getTestMillis(JsonObject obj) throws ParseException {
