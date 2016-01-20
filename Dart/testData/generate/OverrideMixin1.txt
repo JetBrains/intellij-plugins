@@ -4,6 +4,7 @@ abstract class Mixin {
 
 class AClass extends Object with Mixin {
 
+  @override
   mixinMethod() {
     <caret>
   }

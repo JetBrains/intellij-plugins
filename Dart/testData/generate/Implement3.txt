@@ -1,5 +1,6 @@
 class TestMock implements Test {
 
+  @override
   get foo {
     <caret>
   }
