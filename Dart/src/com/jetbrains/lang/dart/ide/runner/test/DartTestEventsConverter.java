@@ -65,7 +65,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String LOADING_PREFIX = "loading ";
 
   private static final Gson GSON = new Gson();
-  private static final long TEST_WAIT_TIME = 100L; // 100ms wait for tests to finish, looped.
 
   // In theory, test events could be generated asynchronously and out of order. We might want to keep a map of tests to start times
   // so we get accurate durations when tests end. See myTestData.
@@ -76,8 +75,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private ServiceMessageVisitor myCurrentVisitor;
   private Map<Integer, Test> myTestData;
   private Map<Integer, Group> myGroupData;
-  //private Thread myTestsDoneTimer;
-  //private final Object myLock = new Object();
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
     super(testFrameworkName, consoleProperties);

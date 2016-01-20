@@ -21,7 +21,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
 
@@ -130,8 +133,6 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
         // ignored
       }
     }
-    Thread.yield();
-    parser.flushBufferBeforeTerminating();
     assertEquals(signals.length, myEventsProcessor.signals.size());
     int index = 0;
     for (String signal : myEventsProcessor.signals) {

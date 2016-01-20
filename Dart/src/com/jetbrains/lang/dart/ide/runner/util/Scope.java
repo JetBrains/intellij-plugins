@@ -1,7 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.util;
 
 public enum Scope {
-  FILE("All in file"), FOLDER("All in folder"), GROUP("Test group"), METHOD("Single test");
+  FOLDER("All in folder"), FILE("All in file"), GROUP("Test group"), METHOD("Single test");
 
   private final String myPresentableName;
 

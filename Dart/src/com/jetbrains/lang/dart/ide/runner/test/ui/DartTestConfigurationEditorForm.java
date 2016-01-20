@@ -29,7 +29,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunConfiguration> {
 
@@ -37,6 +36,8 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JComboBox myScopeCombo;
   private JLabel myTestFileLabel;
   private TextFieldWithBrowseButton myFileField;
+  private JLabel myDirLabel;
+  private TextFieldWithBrowseButton myDirField;
   private JLabel myTestNameLabel;
   private JTextField myTestNameField;
   private RawCommandLineEditor myVMOptions;
@@ -48,8 +49,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JCheckBox myDartiumCheckBox;
   private JCheckBox myChromeCheckBox;
   private JCheckBox myFirefoxCheckBox;
-  private TextFieldWithBrowseButton myDirField;
-  private JLabel myDirLabel;
 
   private final Project myProject;
   private TestModel myCachedModel;
@@ -109,6 +108,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
     // 'Environment variables' is the widest label, anchored by myTestFileLabel
     myTestFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
+    myDirLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
     myEnvironmentVariables.setAnchor(myTestFileLabel);
   }
 
