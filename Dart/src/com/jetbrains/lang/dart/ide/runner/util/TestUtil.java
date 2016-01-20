@@ -62,7 +62,7 @@ public class TestUtil {
         case FILE:
           return DartBundle.message("all.tests.in.0", fileName);
         case FOLDER:
-          return DartBundle.message("all.tests.in.0", path);
+          return DartBundle.message("all.tests.in.0", PathUtil.getFileName(path));
       }
     }
     return null;
