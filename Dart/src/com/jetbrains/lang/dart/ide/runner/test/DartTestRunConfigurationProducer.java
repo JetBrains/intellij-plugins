@@ -2,13 +2,11 @@ package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer;
@@ -21,7 +19,6 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.List;
 
 public class DartTestRunConfigurationProducer extends RunConfigurationProducer<DartTestRunConfiguration> {
@@ -63,18 +60,8 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
   @Override
   public boolean isConfigurationFromContext(final @NotNull DartTestRunConfiguration configuration,
                                             final @NotNull ConfigurationContext context) {
-    if (context.getPsiLocation() != null) {
-      VirtualFile target = ((PsiDirectory)context.getPsiLocation().getNavigationElement()).getVirtualFile();
-      if (target.isDirectory()) {
-        if (!isDirInProject(target.getPath(), context.getProject())) {
-          return false;
-        }
-      }
-    }
     final PsiElement testElement = TestUtil.findTestElement(context.getPsiLocation());
-    if (testElement == null) {
-      return false;
-    }
+    if (testElement == null) return false;
 
     final DartTestRunnerParameters paramsFromContext = new DartTestRunnerParameters();
     if (!setupRunConfiguration(paramsFromContext, testElement)) return false;
@@ -104,31 +91,19 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
     }
     else {
       final PsiFile psiFile = psiElement.getContainingFile();
-      if (psiFile instanceof DartFile || psiFile.isDirectory()) {
+      if (psiFile instanceof DartFile) {
         final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile((DartFile)psiElement);
         if (virtualFile == null || !DartResolveUtil.isLibraryRoot((DartFile)psiElement)) {
           return false;
         }
 
         runnerParams.setTestName(DartResolveUtil.getLibraryName((DartFile)psiElement));
-        runnerParams.setScope(psiFile.isDirectory() ? Scope.FOLDER : Scope.FILE);
+        runnerParams.setScope(Scope.FILE);
         final String dartFilePath = FileUtil.toSystemIndependentName(virtualFile.getPath());
         runnerParams.setFilePath(dartFilePath);
         runnerParams.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(psiElement.getProject(), virtualFile));
         return true;
       }
-    }
-    return false;
-  }
-
-  public static boolean isDirInProject(String path, Project project) {
-    File root = new File(project.getBaseDir().getPath());
-    File file = new File(path);
-    while (file != null) {
-      if (FileUtil.filesEqual(file, root)) {
-        return true;
-      }
-      file = file.getParentFile();
     }
     return false;
   }
