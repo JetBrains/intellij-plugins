@@ -23,9 +23,11 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
   @Override
   @NotNull
   protected String getNothingFoundMessage() {
-    return myImplementNotOverride ? DartBundle.message("dart.fix.implement.none.found")
-                                  : DartBundle.message("dart.fix.override.none.found");
+    return myImplementNotOverride
+           ? DartBundle.message("dart.fix.implement.none.found")
+           : DartBundle.message("dart.fix.override.none.found");
   }
+
 
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent element) {
@@ -56,7 +58,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     template.addTextSegment(element.getName());
     if (!element.isGetter()) {
       template.addTextSegment("(");
-      template.addTextSegment(DartPresentableUtil.getPresentableParameterList(element, specializations));
+      template.addTextSegment(DartPresentableUtil.getPresentableParameterList(element, specializations, false, true));
       template.addTextSegment(")");
     }
     template.addTextSegment("{\n");

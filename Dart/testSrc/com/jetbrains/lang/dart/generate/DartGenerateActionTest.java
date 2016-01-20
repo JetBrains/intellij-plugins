@@ -68,6 +68,14 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doImplementTest();
   }
 
+  public void testImplement_WEB_16793() throws Throwable {
+    doImplementTest();
+  }
+
+  public void testImplement_WEB_16793_2() throws Throwable {
+    doImplementTest();
+  }
+
   public void testImplementMixin1() throws Throwable {
     doImplementTest();
   }
