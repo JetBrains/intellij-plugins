@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@ import org.junit.Test as test
 class BundleManifestTest {
   @test fun bundleSymbolicName() {
     val manifest = BundleManifest(mapOf("Bundle-SymbolicName" to "foo.bar"))
-    assertEquals("foo.bar", manifest.getBundleSymbolicName())
+    assertEquals("foo.bar", manifest.bundleSymbolicName)
   }
 
   @test fun bundleActivator() {
     val manifest = BundleManifest(mapOf("Bundle-Activator" to "foo.bar.WakeMeUp"))
-    assertEquals("foo.bar.WakeMeUp", manifest.getBundleActivator())
+    assertEquals("foo.bar.WakeMeUp", manifest.bundleActivator)
   }
 
   @test fun exportedPackage() {

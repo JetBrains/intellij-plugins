@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,8 +81,8 @@ class BndProjectImporterTest : IdeaTestCase() {
     }
 
     val rootManager = ModuleRootManager.getInstance(rootModule)
-    assertEquals(1, rootManager.getContentRootUrls().size())
-    assertEquals(0, rootManager.getSourceRootUrls().size())
+    assertEquals(1, rootManager.getContentRootUrls().size)
+    assertEquals(0, rootManager.getSourceRootUrls().size)
     assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
@@ -104,14 +104,14 @@ class BndProjectImporterTest : IdeaTestCase() {
     myImporter.resolve()
 
     val modules = ModuleManager.getInstance(myProject).getModules()
-    assertEquals(3, modules.size())
+    assertEquals(3, modules.size)
     assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.getName() }.toSet())
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
-      assertEquals(it.getName(), 1, rootManager.getContentRootUrls().size())
-      assertEquals(it.getName(), 2, rootManager.getSourceRootUrls().size())
-      assertEquals(it.getName(), 3, rootManager.getExcludeRootUrls().size())
+      assertEquals(it.getName(), 1, rootManager.getContentRootUrls().size)
+      assertEquals(it.getName(), 2, rootManager.getSourceRootUrls().size)
+      assertEquals(it.getName(), 3, rootManager.getExcludeRootUrls().size)
 
       val dependencies = getDependencies(it)
       when (it.getName()) {
