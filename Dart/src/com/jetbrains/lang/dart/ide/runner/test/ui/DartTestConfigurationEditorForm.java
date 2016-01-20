@@ -6,8 +6,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -202,7 +200,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   private void onTestDirChanged(Project project) {
-    if (!isDirInProject(myDirField.getText(), project)) {
+    if (!isDirApplicable(myDirField.getText(), project)) {
       myDirField.getTextField().setForeground(JBColor.RED);
       final String message = DartBundle.message("test.dir.not.in.project");
       myDirField.getTextField().setToolTipText(message);
@@ -219,21 +217,8 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     return myMainPanel;
   }
 
-  private static boolean isDirInProject(String path, Project project) {
-    VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
-    if (file == null || !file.isDirectory()) {
-      return false;
-    }
-    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-    while (file != null) {
-      if (!index.isInContent(file)) {
-        return false;
-      }
-      if (file.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
-        return true;
-      }
-      file = file.getParent();
-    }
-    return false;
+  private static boolean isDirApplicable(@NotNull final String path, @NotNull final Project project) {
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+    return file != null && file.isDirectory() && PubspecYamlUtil.findPubspecYamlFile(project, file) != null;
   }
 }
