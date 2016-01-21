@@ -10,7 +10,8 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,9 +19,6 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaServerRestarter {
 
   private final AtomicInteger myActiveRunners = new AtomicInteger(0);
@@ -39,10 +37,10 @@ public class KarmaServerRestarter {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           @Override
           public void run() {
-            VirtualFile virtualFile = VfsUtil.findFileByIoFile(configurationFile, false);
-            if (virtualFile != null && virtualFile.isValid()) {
+            VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(configurationFile);
+            if (virtualFile != null && virtualFile.isValid() && !virtualFile.isDirectory()) {
               Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-              if (document != null) {
+              if (document != null && !Disposer.isDisposed(parentDisposable)) {
                 document.addDocumentListener(new DocumentAdapter() {
                   @Override
                   public void documentChanged(DocumentEvent e) {
