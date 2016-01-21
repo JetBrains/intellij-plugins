@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.JspHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
-import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
@@ -33,7 +32,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
   public static final TextAttributesKey TEL_BOUNDS =
     createTextAttributesKey("TEL_BOUNDS", JavaHighlightingColors.KEYWORD);
   public static final TextAttributesKey TEL_IDENT =
-    createTextAttributesKey("TEL_IDENT", CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES);
+    createTextAttributesKey("TEL_IDENT", JavaHighlightingColors.LOCAL_VARIABLE_ATTRIBUTES);
   public static final TextAttributesKey TEL_DOT =
     createTextAttributesKey("TEL_DOT", JavaHighlightingColors.DOT);
   public static final TextAttributesKey TEL_NUMBER =
