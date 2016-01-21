@@ -3,6 +3,7 @@
 <script type="application/dart">
   class TestMock implements Test {
 
+      @override
       get foo {
           <caret>
       }
