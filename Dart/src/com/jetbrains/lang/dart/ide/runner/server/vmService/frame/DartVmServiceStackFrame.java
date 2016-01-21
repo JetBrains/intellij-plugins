@@ -73,13 +73,13 @@ public class DartVmServiceStackFrame extends XStackFrame {
     final XValueChildrenList childrenList = new XValueChildrenList(vars.size() + 1);
 
     if (myException != null) {
-      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, "exception", myException, true));
+      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, "exception", myException, null, true));
     }
 
     for (BoundVariable var : vars) {
       final InstanceRef value = var.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), value));
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), value, null, false));
       }
     }
     node.addChildren(childrenList, true);

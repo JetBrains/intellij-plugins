@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.xdebugger.frame.*;
@@ -21,6 +22,7 @@ public class DartVmServiceValue extends XNamedValue {
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
   @NotNull private String myIsolateId;
   @NotNull private final InstanceRef myInstanceRef;
+  @Nullable private final FieldRef myFieldRef;
   private final boolean myIsException;
 
   private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<Integer>(0);
@@ -28,20 +30,62 @@ public class DartVmServiceValue extends XNamedValue {
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,
                             @NotNull final String name,
-                            @NotNull final InstanceRef instanceRef) {
-    this(debugProcess, isolateId, name, instanceRef, false);
-  }
-
-  public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
-                            @NotNull final String isolateId,
-                            @NotNull final String name,
                             @NotNull final InstanceRef instanceRef,
+                            @Nullable final FieldRef fieldRef,
                             boolean isException) {
     super(name);
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myInstanceRef = instanceRef;
+    myFieldRef = fieldRef;
     myIsException = isException;
+  }
+
+  @Override
+  public boolean canNavigateToSource() {
+    return myFieldRef != null;
+  }
+
+  @Override
+  public void computeSourcePosition(@NotNull final XNavigatable navigatable) {
+    if (myFieldRef == null) {
+      navigatable.setSourcePosition(null);
+      return;
+    }
+
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myFieldRef.getId(), new GetObjectConsumer() {
+      @Override
+      public void received(final Obj obj) {
+        final SourceLocation location = ((Field)obj).getLocation();
+
+        if (location == null) {
+          navigatable.setSourcePosition(null);
+          return;
+        }
+
+        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+          @Override
+          public void run() {
+            ApplicationManager.getApplication().runReadAction(new Runnable() {
+              @Override
+              public void run() {
+                navigatable.setSourcePosition(myDebugProcess.getSourcePosition(myIsolateId, location.getScript(), location.getTokenPos()));
+              }
+            });
+          }
+        });
+      }
+
+      @Override
+      public void received(final Sentinel sentinel) {
+        navigatable.setSourcePosition(null);
+      }
+
+      @Override
+      public void onError(final RPCError error) {
+        navigatable.setSourcePosition(null);
+      }
+    });
   }
 
   @Override
@@ -253,7 +297,7 @@ public class DartVmServiceValue extends XNamedValue {
     final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
     int index = myCollectionChildrenAlreadyShown.get();
     for (InstanceRef listElement : listElements) {
-      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement));
+      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, false));
     }
     node.addChildren(childrenList, true);
   }
@@ -274,9 +318,10 @@ public class DartVmServiceValue extends XNamedValue {
 
         @Override
         public void computeChildren(@NotNull XCompositeNode node) {
-          node.addChildren(XValueChildrenList.singleton(new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef)), false);
-          node.addChildren(XValueChildrenList.singleton(new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef)),
-                           true);
+          final DartVmServiceValue key = new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef, null, false);
+          final DartVmServiceValue value = new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef, null, false);
+          node.addChildren(XValueChildrenList.singleton(key), false);
+          node.addChildren(XValueChildrenList.singleton(value), true);
         }
       });
     }
@@ -289,7 +334,7 @@ public class DartVmServiceValue extends XNamedValue {
     for (BoundField field : fields) {
       final InstanceRef value = field.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value));
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, field.getDecl(), false));
       }
     }
     node.addChildren(childrenList, true);

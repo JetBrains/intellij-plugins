@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -26,7 +27,7 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSt
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import gnu.trove.TIntIntHashMap;
+import gnu.trove.TIntObjectHashMap;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.element.IsolateRef;
 import org.dartlang.vm.service.element.Script;
@@ -55,7 +56,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private String myLatestCurrentIsolateId;
 
   private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<String, LightVirtualFile>();
-  private final Map<String, TIntIntHashMap> myScriptIdToLinesMap = new THashMap<String, TIntIntHashMap>();
+  private final Map<String, TIntObjectHashMap<Pair<Integer, Integer>>> myScriptIdToLinesAndColumnsMap =
+    new THashMap<String, TIntObjectHashMap<Pair<Integer, Integer>>>();
 
   @Nullable private final String myDASExecutionContextId;
 
@@ -343,10 +345,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       file = myScriptIdToContentMap.get(scriptRef.getId());
     }
 
-    TIntIntHashMap tokenPosToLine = myScriptIdToLinesMap.get(scriptRef.getId());
+    TIntObjectHashMap<Pair<Integer, Integer>> tokenPosToLineAndColumn = myScriptIdToLinesAndColumnsMap.get(scriptRef.getId());
 
-    if (file != null && tokenPosToLine != null) {
-      return XDebuggerUtil.getInstance().createPosition(file, tokenPosToLine.get(tokenPos));
+    if (file != null && tokenPosToLineAndColumn != null) {
+      final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+      return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
     }
 
     final Script script = myVmServiceWrapper.getScriptSync(isolateId, scriptRef.getId());
@@ -358,12 +361,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       myScriptIdToContentMap.put(scriptRef.getId(), (LightVirtualFile)file);
     }
 
-    if (tokenPosToLine == null) {
-      tokenPosToLine = createTokenPosToLineMap(script.getTokenPosTable());
-      myScriptIdToLinesMap.put(scriptRef.getId(), tokenPosToLine);
+    if (tokenPosToLineAndColumn == null) {
+      tokenPosToLineAndColumn = createTokenPosToLineAndColumnMap(script.getTokenPosTable());
+      myScriptIdToLinesAndColumnsMap.put(scriptRef.getId(), tokenPosToLineAndColumn);
     }
 
-    return XDebuggerUtil.getInstance().createPosition(file, tokenPosToLine.get(tokenPos));
+    final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+    return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
   }
 
   private static boolean isDartPatchUri(@NotNull final String uri) {
@@ -372,18 +376,18 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @NotNull
-  private static TIntIntHashMap createTokenPosToLineMap(@NotNull final List<List<Integer>> tokenPosTable) {
+  private static TIntObjectHashMap<Pair<Integer, Integer>> createTokenPosToLineAndColumnMap(@NotNull final List<List<Integer>> tokenPosTable) {
     // Each subarray consists of a line number followed by (tokenPos, columnNumber) pairs
     // see https://github.com/dart-lang/vm_service_drivers/blob/master/dart/tool/service.md#script
-    final TIntIntHashMap result = new TIntIntHashMap();
+    final TIntObjectHashMap<Pair<Integer, Integer>> result = new TIntObjectHashMap<Pair<Integer, Integer>>();
 
     for (List<Integer> lineAndPairs : tokenPosTable) {
       final Iterator<Integer> iterator = lineAndPairs.iterator();
-      int line = iterator.next() - 1;
+      int line = Math.max(0, iterator.next() - 1);
       while (iterator.hasNext()) {
         final int tokenPos = iterator.next();
-        iterator.next(); // column
-        result.put(tokenPos, line);
+        final int column = Math.max(0, iterator.next() - 1);
+        result.put(tokenPos, Pair.create(line, column));
       }
     }
 
