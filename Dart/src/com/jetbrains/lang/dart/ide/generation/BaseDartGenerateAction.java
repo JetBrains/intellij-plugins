@@ -9,10 +9,10 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public abstract class BaseDartGenerateAction extends AnAction {
 
   public void actionPerformed(final AnActionEvent e) {
@@ -39,9 +39,26 @@ public abstract class BaseDartGenerateAction extends AnAction {
     final PsiFile psiFile = editorAndPsiFile.second;
 
     final int caretOffset = editor == null ? -1 : editor.getCaretModel().getOffset();
-    final boolean inClass = psiFile != null && PsiTreeUtil.getParentOfType(psiFile.findElementAt(caretOffset), DartClass.class) != null;
+    final boolean enable = psiFile != null && doEnable(PsiTreeUtil.getParentOfType(psiFile.findElementAt(caretOffset), DartClass.class));
 
-    e.getPresentation().setEnabled(inClass);
-    e.getPresentation().setVisible(inClass);
+    e.getPresentation().setEnabled(enable);
+    e.getPresentation().setVisible(enable);
   }
+
+  protected boolean doEnable(@Nullable final DartClass dartClass) {
+    return dartClass != null;
+  }
+
+  protected static boolean doesClassContainMember(@NotNull final DartClass dartClass, @NotNull final String memberName) {
+    if (memberName.isEmpty()) {
+      return false;
+    }
+    final DartComponent dartComponent = dartClass.findMemberByName(memberName);
+    if (dartComponent == null) {
+      return true;
+    }
+    final DartClass containingClass = PsiTreeUtil.getParentOfType(dartComponent, DartClass.class);
+    return containingClass != dartClass;
+  }
+
 }

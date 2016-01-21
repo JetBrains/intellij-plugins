@@ -251,6 +251,10 @@
             text="Getter and Setter">
       <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
+    <action id="Generate.ToString.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateToStringAction"
+            text="toString()">
+      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Dart" group-id="GenerateGroup"/>
+    </action>
 
     <group>
       <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies"

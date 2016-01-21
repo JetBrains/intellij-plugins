@@ -131,4 +131,12 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   public void testOverrideOperator() throws Throwable {
     doOverrideTest();
   }
+
+  public void testToString1() throws Throwable {
+    doToStringTest();
+  }
+
+  public void testToString2() throws Throwable {
+    doToStringTest();
+  }
 }

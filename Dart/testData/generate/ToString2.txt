@@ -1,0 +1,7 @@
+class ToString extends Foo {
+
+  @override
+  String toString() {
+    return 'ToString{}';
+  }<caret>
+}
