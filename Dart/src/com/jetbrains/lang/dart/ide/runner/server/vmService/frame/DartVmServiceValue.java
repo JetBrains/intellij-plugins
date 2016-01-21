@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XNumericValuePresentation;
@@ -55,25 +56,8 @@ public class DartVmServiceValue extends XNamedValue {
 
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myFieldRef.getId(), new GetObjectConsumer() {
       @Override
-      public void received(final Obj obj) {
-        final SourceLocation location = ((Field)obj).getLocation();
-
-        if (location == null) {
-          navigatable.setSourcePosition(null);
-          return;
-        }
-
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-          @Override
-          public void run() {
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              @Override
-              public void run() {
-                navigatable.setSourcePosition(myDebugProcess.getSourcePosition(myIsolateId, location.getScript(), location.getTokenPos()));
-              }
-            });
-          }
-        });
+      public void received(final Obj field) {
+        reportSourcePosition(navigatable, ((Field)field).getLocation());
       }
 
       @Override
@@ -84,6 +68,51 @@ public class DartVmServiceValue extends XNamedValue {
       @Override
       public void onError(final RPCError error) {
         navigatable.setSourcePosition(null);
+      }
+    });
+  }
+
+  @Override
+  public boolean canNavigateToTypeSource() {
+    return true;
+  }
+
+  @Override
+  public void computeTypeSourcePosition(@NotNull final XNavigatable navigatable) {
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getClassRef().getId(), new GetObjectConsumer() {
+      @Override
+      public void received(final Obj classObj) {
+        reportSourcePosition(navigatable, ((ClassObj)classObj).getLocation());
+      }
+
+      @Override
+      public void received(final Sentinel response) {
+        navigatable.setSourcePosition(null);
+      }
+
+      @Override
+      public void onError(final RPCError error) {
+        navigatable.setSourcePosition(null);
+      }
+    });
+  }
+
+  private void reportSourcePosition(@NotNull final XNavigatable navigatable, final @Nullable SourceLocation location) {
+    if (location == null) {
+      navigatable.setSourcePosition(null);
+      return;
+    }
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        final XSourcePosition sourcePosition = myDebugProcess.getSourcePosition(myIsolateId, location.getScript(), location.getTokenPos());
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+          @Override
+          public void run() {
+            navigatable.setSourcePosition(sourcePosition);
+          }
+        });
       }
     });
   }
