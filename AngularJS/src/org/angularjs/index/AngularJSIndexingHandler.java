@@ -536,13 +536,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           assert index != null;
           final JSObjectLiteralExpression object = ObjectUtils.tryCast(property.getParent(), JSObjectLiteralExpression.class);
           if (object == null) return false;
-          final JSProperty[] properties = object.getProperties();
-          for (JSProperty jsProperty : properties) {
-            if (CONTROLLER.equals(jsProperty.getName())) {
-              // value (JSFunctionExpression) is not implicit element provider
-              addImplicitElements(jsProperty, null, index, StringUtil.unquoteString(value.getText()), null, outData);
-              return true;
-            }
+          final JSProperty controllerProperty = object.findProperty(CONTROLLER);
+          if (controllerProperty != null) {
+            // value (JSFunctionExpression) is not implicit element provider
+            addImplicitElements(controllerProperty, null, index, StringUtil.unquoteString(value.getText()), null, outData);
+            return true;
           }
           addImplicitElements(value, null, index, StringUtil.unquoteString(value.getText()), null, outData);
           return true;
