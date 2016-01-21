@@ -493,7 +493,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "js2");
     doTest("_2", "js2");
     doTest("_3", "js2");
-    doTest("_2", "js");
   }
 
   public final void testCompleteFunction() throws Exception {
