@@ -270,7 +270,8 @@ public class DartVmServiceValue extends XNamedValue {
       myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
         @Override
         public void received(Obj obj) {
-          addFields(node, ((Instance)obj).getFields());
+          addFields(myDebugProcess, node, myIsolateId, ((Instance)obj).getFields());
+          node.addChildren(XValueChildrenList.EMPTY, true);
         }
 
         @Override
@@ -358,15 +359,18 @@ public class DartVmServiceValue extends XNamedValue {
     node.addChildren(childrenList, true);
   }
 
-  private void addFields(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundField> fields) {
+  static void addFields(@NotNull final DartVmServiceDebugProcess debugProcess,
+                        @NotNull final XCompositeNode node,
+                        @NotNull String isolateId,
+                        @NotNull final ElementList<BoundField> fields) {
     final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
     for (BoundField field : fields) {
       final InstanceRef value = field.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, field.getDecl(), false));
+        childrenList.add(new DartVmServiceValue(debugProcess, isolateId, field.getDecl().getName(), value, field.getDecl(), false));
       }
     }
-    node.addChildren(childrenList, true);
+    node.addChildren(childrenList, false);
   }
 
   @NotNull
