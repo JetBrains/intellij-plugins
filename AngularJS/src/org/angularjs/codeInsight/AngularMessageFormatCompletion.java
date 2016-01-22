@@ -68,7 +68,7 @@ public class AngularMessageFormatCompletion {
           //
         }
       }
-      return super.weigh(element);
+      return Integer.MAX_VALUE;
     }
   };
 
