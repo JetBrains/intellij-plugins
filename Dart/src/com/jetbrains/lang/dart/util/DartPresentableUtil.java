@@ -7,7 +7,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -146,7 +145,7 @@ public class DartPresentableUtil {
           result.append(defaultFormalNamedParameter.getText());
         }
         else {
-          if (displayFinalKeyword && ((DartSimpleFormalParameterImpl)simpleFormalParameter).isFinal()) {
+          if (displayFinalKeyword && simpleFormalParameter.isFinal()) {
             result.append(DartTokenTypes.FINAL.toString());
             result.append(SPACE);
           }
@@ -159,7 +158,7 @@ public class DartPresentableUtil {
         }
       }
       else {
-        if (displayFinalKeyword && ((DartSimpleFormalParameterImpl)simpleFormalParameter).isFinal()) {
+        if (displayFinalKeyword && simpleFormalParameter.isFinal()) {
           result.append(DartTokenTypes.FINAL.toString());
           result.append(SPACE);
         }

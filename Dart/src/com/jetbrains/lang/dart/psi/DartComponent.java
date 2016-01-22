@@ -10,6 +10,8 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
   @Nullable
   DartComponentName getComponentName();
 
+  boolean isFinal();
+
   boolean isStatic();
 
   boolean isPublic();
