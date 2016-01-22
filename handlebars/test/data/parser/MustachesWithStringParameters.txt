@@ -14,7 +14,7 @@ HbFile:MustachesWithStringParameters.hbs
             PsiElement([Hb] ID)('bar')
       PsiWhiteSpace(' ')
       HbParamImpl(PARAM)
-        HbPsiElementImpl([Hb] STRING)
+        HbStringLiteralImpl([Hb] STRING)
           PsiElement([Hb] STRING)('"baz"')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')

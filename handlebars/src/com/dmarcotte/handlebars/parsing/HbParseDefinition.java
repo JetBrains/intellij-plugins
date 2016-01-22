@@ -103,6 +103,18 @@ public class HbParseDefinition implements ParserDefinition {
       return new HbCommentImpl(node);
     }
 
+    if (elementType == HbTokenTypes.STRING) {
+      return new HbStringLiteralImpl(node);
+    }
+
+    if (elementType == HbTokenTypes.BOOLEAN) {
+      return new HbBooleanLiteralImpl(node);
+    }
+
+    if (elementType == HbTokenTypes.NUMBER) {
+      return new HbNumberLiteralImpl(node);
+    }
+
     if (elementType == HbTokenTypes.HASH) {
       return new HbHashImpl(node);
     }

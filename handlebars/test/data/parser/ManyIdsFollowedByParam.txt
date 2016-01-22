@@ -29,7 +29,7 @@ HbFile:ManyIdsFollowedByParam.hbs
         HbPsiElementImpl([Hb] EQUALS)
           PsiElement([Hb] EQUALS)('=')
         HbParamImpl(PARAM)
-          HbPsiElementImpl([Hb] STRING)
+          HbStringLiteralImpl([Hb] STRING)
             PsiElement([Hb] STRING)('"test"')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')

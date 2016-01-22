@@ -9,7 +9,7 @@ HbFile:MustachesWithNumberParameters.hbs
             PsiElement([Hb] ID)('foo')
       PsiWhiteSpace(' ')
       HbParamImpl(PARAM)
-        HbPsiElementImpl([Hb] NUMBER)
+        HbNumberLiteralImpl([Hb] NUMBER)
           PsiElement([Hb] NUMBER)('1')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')
