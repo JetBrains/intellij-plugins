@@ -5,7 +5,9 @@ import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +33,15 @@ public class DartPresentableUtil {
 
   @NotNull
   public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization) {
-    return getPresentableParameterList(element, specialization, false, false);
+    return getPresentableParameterList(element, specialization, false, false, false);
   }
 
   @NotNull
-  public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization,
-                                                   boolean functionalStyleSignatures, boolean displayDefaultValues) {
+  public static String getPresentableParameterList(DartComponent element,
+                                                   DartGenericSpecialization specialization,
+                                                   final boolean functionalStyleSignatures,
+                                                   final boolean displayDefaultValues,
+                                                   final boolean displayFinalKeyword) {
     final StringBuilder result = new StringBuilder();
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
@@ -44,7 +49,8 @@ public class DartPresentableUtil {
     }
     final List<DartNormalFormalParameter> list = parameterList.getNormalFormalParameterList();
     for (int i = 0, size = list.size(); i < size; i++) {
-      result.append(getPresentableNormalFormalParameter(list.get(i), specialization, functionalStyleSignatures, displayDefaultValues));
+      result.append(getPresentableNormalFormalParameter(list.get(i), specialization, functionalStyleSignatures, displayDefaultValues,
+                                                        displayFinalKeyword));
       if (i < size - 1) {
         result.append(", ");
       }
@@ -66,7 +72,7 @@ public class DartPresentableUtil {
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
         result.append(
           getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures,
-                                              displayDefaultValues));
+                                              displayDefaultValues, displayFinalKeyword));
       }
       result.append(isOptional ? '}' : ']');
     }
@@ -80,11 +86,14 @@ public class DartPresentableUtil {
   }
 
   public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization) {
-    return getPresentableNormalFormalParameter(parameter, specialization, false, false);
+    return getPresentableNormalFormalParameter(parameter, specialization, false, false, false);
   }
 
-  public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization,
-                                                           boolean functionalStyleSignature, boolean displayDefaultValues) {
+  public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter,
+                                                           DartGenericSpecialization specialization,
+                                                           final boolean functionalStyleSignature,
+                                                           final boolean displayDefaultValues,
+                                                           final boolean displayFinalKeyword) {
     final StringBuilder result = new StringBuilder();
 
     final DartFunctionSignature functionSignature = parameter.getFunctionSignature();
@@ -100,7 +109,8 @@ public class DartPresentableUtil {
 
       result.append(functionSignature.getName());
       result.append("(");
-      result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature, displayDefaultValues));
+      result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature, displayDefaultValues,
+                                                displayFinalKeyword));
       result.append(")");
 
       if (functionalStyleSignature && returnType != null) {
@@ -136,6 +146,10 @@ public class DartPresentableUtil {
           result.append(defaultFormalNamedParameter.getText());
         }
         else {
+          if (displayFinalKeyword && ((DartSimpleFormalParameterImpl)simpleFormalParameter).isFinal()) {
+            result.append(DartTokenTypes.FINAL.toString());
+            result.append(SPACE);
+          }
           final DartType type = simpleFormalParameter.getType();
           if (type != null) {
             result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
@@ -145,6 +159,10 @@ public class DartPresentableUtil {
         }
       }
       else {
+        if (displayFinalKeyword && ((DartSimpleFormalParameterImpl)simpleFormalParameter).isFinal()) {
+          result.append(DartTokenTypes.FINAL.toString());
+          result.append(SPACE);
+        }
         final DartType type = simpleFormalParameter.getType();
         if (type != null) {
           result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));

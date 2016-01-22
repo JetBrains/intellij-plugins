@@ -370,8 +370,8 @@ public class DartDocUtil {
   }
 
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final DartReturnType returnType) {
-    final String returnString = returnType == null ? "dynamic"
-                                                   : StringUtil.escapeXml(DartPresentableUtil.buildTypeText(null, returnType, null));
+    final String returnString =
+      returnType == null ? "dynamic" : StringUtil.escapeXml(DartPresentableUtil.buildTypeText(null, returnType, null));
     appendFunctionSignature(builder, function, returnString);
   }
 
@@ -379,8 +379,8 @@ public class DartDocUtil {
     builder.append("<b>").append(function.getName()).append("</b>");
     if (!function.isGetter()) {
       builder.append('(');
-      builder.append(
-        StringUtil.escapeXml(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true, true)));
+      builder.append(StringUtil.escapeXml(
+        DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true, true, false)));
       builder.append(')');
     }
     builder.append(' ');

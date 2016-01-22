@@ -9,7 +9,7 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH +  FileUtil.toSystemDependentName("/generate/");
+    return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/generate/");
   }
 
   public void testConstructor1() throws Throwable {
@@ -76,6 +76,10 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doImplementTest();
   }
 
+  public void testImplement_WEB_14400() throws Throwable {
+    doImplementTest();
+  }
+
   public void testImplementMixin1() throws Throwable {
     doImplementTest();
   }
@@ -126,15 +130,5 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
 
   public void testOverrideOperator() throws Throwable {
     doOverrideTest();
-  }
-}
-
-class A {
-  int x, y, z;
-
-  public A(int x, int y, int z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
   }
 }
