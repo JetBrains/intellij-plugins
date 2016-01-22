@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.SmartList;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
@@ -75,18 +76,52 @@ public class DartVmServiceStackFrame extends XStackFrame {
     final ElementList<BoundVariable> vars = myVmFrame.getVars();
 
     if (vars.size() > 0 && "this".equals(vars.get(0).getName())) {
-      addChildrenOfFirstVarAndOtherVars(node, vars);
+      addStaticAndInstanceFieldsOfFirstVarAndOtherVars(node, vars);
     }
     else {
       addVars(node, vars, 0);
     }
   }
 
-  private void addChildrenOfFirstVarAndOtherVars(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
+  // first var in 'vars' list must be 'this'.
+  private void addStaticAndInstanceFieldsOfFirstVarAndOtherVars(@NotNull final XCompositeNode node,
+                                                                @NotNull final ElementList<BoundVariable> vars) {
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, vars.get(0).getValue().getClassRef().getId(), new GetObjectConsumer() {
+      @Override
+      public void received(Obj classObj) {
+        final SmartList<FieldRef> staticFields = new SmartList<FieldRef>();
+        for (FieldRef fieldRef : ((ClassObj)classObj).getFields()) {
+          if (fieldRef.isStatic()) {
+            staticFields.add(fieldRef);
+          }
+        }
+
+        if (!staticFields.isEmpty()) {
+          final XValueChildrenList list = new XValueChildrenList();
+          list.addTopGroup(new DartStaticFieldsGroup(myDebugProcess, myIsolateId, ((ClassObj)classObj).getName(), staticFields));
+          node.addChildren(list, false);
+        }
+
+        addInstanceFieldsOfFirstVarAndOtherVars(node, vars);
+      }
+
+      @Override
+      public void received(Sentinel sentinel) {
+        node.setErrorMessage(sentinel.getValueAsString());
+      }
+
+      @Override
+      public void onError(RPCError error) {
+        node.setErrorMessage(error.getMessage());
+      }
+    });
+  }
+
+  private void addInstanceFieldsOfFirstVarAndOtherVars(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, vars.get(0).getValue().getId(), new GetObjectConsumer() {
       @Override
-      public void received(Obj obj) {
-        DartVmServiceValue.addFields(myDebugProcess, node, myIsolateId, ((Instance)obj).getFields());
+      public void received(Obj instance) {
+        DartVmServiceValue.addFields(myDebugProcess, node, myIsolateId, ((Instance)instance).getFields());
         addVars(node, vars, 1);
       }
 
