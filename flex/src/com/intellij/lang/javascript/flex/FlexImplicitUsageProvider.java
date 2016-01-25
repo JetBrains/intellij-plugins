@@ -69,7 +69,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
     if (element instanceof JSParameter) {
       JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
       if (function != null) {
-        final JSParameter[] params = function.getParameters();
+        final JSParameter[] params = function.getParameterVariables();
 
         if (params.length == 1 && element == params[0]) {
           @NonNls String type = ((JSParameter)element).getTypeString();

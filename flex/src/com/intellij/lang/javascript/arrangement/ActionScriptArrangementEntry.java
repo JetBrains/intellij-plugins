@@ -18,7 +18,10 @@ import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
 
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.EntryType.*;
 
@@ -120,7 +123,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   }
 
   private static boolean isEventHandler(final JSFunction function) {
-    final JSParameter[] parameters = function.getParameters();
+    final JSParameter[] parameters = function.getParameterVariables();
 
     if (parameters.length == 1) {
       final PsiElement typeElement = parameters[0].getTypeElement();
