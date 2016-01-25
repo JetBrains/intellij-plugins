@@ -5,7 +5,7 @@ import com.intellij.lang.LanguageHtmlScriptContentProvider;
 import com.intellij.lang.html.HTMLParserDefinition;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lang.xml.XmlASTFactory;
-import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -22,8 +22,8 @@ public class DartInHtmlParsingTest extends ParsingTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
-    registerExtensionPoint(new ExtensionPointName<StartTagEndTokenProvider>("com.intellij.xml.startTagEndToken"),
-                           StartTagEndTokenProvider.class);
+    registerExtensionPoint(StartTagEndTokenProvider.EP_NAME, StartTagEndTokenProvider.class);
+    registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, DartLanguage.INSTANCE, new DartScriptContentProvider());
   }
 
