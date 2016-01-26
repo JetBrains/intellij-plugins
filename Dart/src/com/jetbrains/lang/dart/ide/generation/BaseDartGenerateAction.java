@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartGetterDeclaration;
 import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,22 @@ public abstract class BaseDartGenerateAction extends AnAction {
     }
     for (DartMethodDeclaration methodDecaration : methodDeclarations) {
       if (methodName.equals(methodDecaration.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected static boolean doesClassContainGetter(@NotNull final DartClass dartClass, @NotNull final String getterName) {
+    if (getterName.isEmpty()) {
+      return false;
+    }
+    final DartGetterDeclaration[] getterDeclarations = getChildrenOfType(DartResolveUtil.getBody(dartClass), DartGetterDeclaration.class);
+    if (getterDeclarations == null) {
+      return false;
+    }
+    for (DartGetterDeclaration getterDecaration : getterDeclarations) {
+      if (getterName.equals(getterDecaration.getName())) {
         return true;
       }
     }

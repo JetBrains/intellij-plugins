@@ -1,0 +1,15 @@
+class EqualsAndHashCode2 {
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is EqualsAndHashCode2;
+  }
+
+  @override
+  int get hashCode {
+    return 0;
+  }<caret>
+}
