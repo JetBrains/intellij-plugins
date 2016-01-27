@@ -167,10 +167,10 @@ public class DartCommandLineRunningState extends CommandLineState {
 
         try {
           if (vmOption.startsWith("--enable-vm-service:")) {
-            customObservatoryPort = Integer.parseInt(vmOption.substring("--enable-vm-service:".length()));
+            customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--enable-vm-service:".length()));
           }
           if (vmOption.startsWith("--observe:")) {
-            customObservatoryPort = Integer.parseInt(vmOption.substring("--observe:".length()));
+            customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--observe:".length()));
           }
         }
         catch (NumberFormatException ignore) {/**/}
@@ -225,6 +225,12 @@ public class DartCommandLineRunningState extends CommandLineState {
         commandLine.addParameter(argumentsTokenizer.nextToken());
       }
     }
+  }
+
+  private static int parseIntBeforeSlash(@NotNull final String s) throws NumberFormatException {
+    // "5858" or "5858/0.0.0.0"
+    final int index = s.indexOf('/');
+    return Integer.parseInt(index > 0 ? s.substring(0, index) : s);
   }
 
   public int getDebuggingPort() {
