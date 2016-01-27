@@ -121,8 +121,9 @@
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
     <library.type implementation="com.jetbrains.lang.dart.sdk.DartPackagesLibraryType"/>
-    <treeStructureProvider implementation="com.jetbrains.lang.dart.DartTreeStructureProvider"/>
-    <iconProvider implementation="com.jetbrains.lang.dart.DartIconProvider" order="first"/>
+
+    <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
+    <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first"/>
 
     <internalFileTemplate name="Dart File"/>
 

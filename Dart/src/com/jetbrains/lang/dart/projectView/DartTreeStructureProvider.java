@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart;
+package com.jetbrains.lang.dart.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;
