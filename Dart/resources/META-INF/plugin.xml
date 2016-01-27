@@ -33,7 +33,6 @@
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
     <psi.treeChangePreprocessor implementation="com.jetbrains.lang.dart.DartPsiTreeChangePreprocessor"/>
     <lang.syntaxHighlighterFactory language="Dart" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterFactory"/>
-    <problemFileHighlightFilter implementation="com.jetbrains.lang.dart.highlight.DartProblemFileHighlightFilter"/>
 
     <lang.braceMatcher language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartBraceMatcher"/>
     <typedHandler implementation="com.jetbrains.lang.dart.ide.editor.DartTypeHandler" id="Dart"/>
@@ -124,6 +123,7 @@
 
     <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first"/>
+    <projectViewNodeDecorator implementation="com.jetbrains.lang.dart.projectView.DartNodeDecorator"/>
 
     <internalFileTemplate name="Dart File"/>
 
