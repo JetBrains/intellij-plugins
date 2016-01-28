@@ -5,6 +5,5 @@ public class JustStatements2_6 {
         trace(123);
 //		blah-blah-blah
     }
-
 }
 }

@@ -4,5 +4,4 @@ class Some {
         var arr:Array = new Array(1, 2, 3);
         trace(arr);
     }
-
 }
