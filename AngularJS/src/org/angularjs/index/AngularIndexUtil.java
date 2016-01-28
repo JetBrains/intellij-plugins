@@ -1,6 +1,7 @@
 package org.angularjs.index;
 
 import com.intellij.ProjectTopics;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -15,7 +16,6 @@ import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -60,8 +60,7 @@ public class AngularIndexUtil {
                 if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                             AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
                   result.set(element);
-                  final PsiFile file = element.getContainingFile();
-                  if ("ts".equals(file.getVirtualFile().getExtension())) {
+                  if (DialectDetector.isTypeScript(element)) {
                     return false;
                   }
                 }
