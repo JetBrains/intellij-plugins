@@ -85,12 +85,13 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     newActions[newActions.length - 2] = new Separator();
 
-    newActions[newActions.length - 1] = new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        return !processHandler.isProcessTerminated();
-      }
-    });
+    newActions[newActions.length - 1] =
+      new OpenDartObservatoryUrlAction("http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort, new Computable<Boolean>() {
+        @Override
+        public Boolean compute() {
+          return !processHandler.isProcessTerminated();
+        }
+      });
 
     return newActions;
   }
