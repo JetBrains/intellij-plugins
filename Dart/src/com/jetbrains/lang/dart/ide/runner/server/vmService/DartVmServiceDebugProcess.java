@@ -20,6 +20,7 @@ import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
@@ -48,6 +49,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @NotNull private final DartUrlResolver myDartUrlResolver;
   @NotNull private final String myDebuggingHost;
   private final int myObservatoryPort;
+
+  private boolean myVmConnected = false;
 
   @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
   private final IsolatesInfo myIsolatesInfo;
@@ -192,6 +195,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
     myVmServiceWrapper.handleDebuggerConnected();
+
+    myVmConnected = true;
   }
 
   @NotNull
@@ -245,6 +250,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void stop() {
+    myVmConnected = false;
+
     if (myVmServiceWrapper != null) {
       if (myDASExecutionContextId != null) {
         DartAnalysisServerService.getInstance().execution_deleteContext(myDASExecutionContextId);
@@ -293,6 +300,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
+  public String getCurrentStateMessage() {
+    return getSession().isStopped()
+           ? XDebuggerBundle.message("debugger.state.message.disconnected")
+           : myVmConnected
+             ? XDebuggerBundle.message("debugger.state.message.connected")
+             : DartBundle.message("debugger.trying.to.connect.vm.at.0", getObservatoryUrl("ws", "/ws"));
+  }
+
+  @Override
   public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
                                         @NotNull final DefaultActionGroup topToolbar,
                                         @NotNull final DefaultActionGroup settings) {
@@ -303,7 +319,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       topToolbar.addAction(new OpenDartObservatoryUrlAction(getObservatoryUrl("http", null), new Computable<Boolean>() {
         @Override
         public Boolean compute() {
-          return !getSession().isStopped();
+          return myVmConnected && !getSession().isStopped();
         }
       }));
     }
