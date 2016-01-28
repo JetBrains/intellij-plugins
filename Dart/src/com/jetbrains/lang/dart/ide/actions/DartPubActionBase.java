@@ -69,12 +69,16 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     super(DartIcons.Dart_16);
   }
 
+  public static boolean isInProgress() {
+    return ourInProgress.get();
+  }
+
   @Override
   public void update(@NotNull final AnActionEvent e) {
     //e.getPresentation().setText(getTitle());  "Pub: Build..." action name set in plugin.xml is different from its "Pub: Build" title
     final boolean visible = getModuleAndPubspecYamlFile(e) != null;
     e.getPresentation().setVisible(visible);
-    e.getPresentation().setEnabled(visible && !ourInProgress.get());
+    e.getPresentation().setEnabled(visible && !isInProgress());
   }
 
   @Nullable
@@ -353,7 +357,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     @Override
     public void update(@NotNull final AnActionEvent e) {
-      e.getPresentation().setEnabled(!ourInProgress.get() && myProcessHandler != null && myProcessHandler.isProcessTerminated());
+      e.getPresentation().setEnabled(!isInProgress() && myProcessHandler != null && myProcessHandler.isProcessTerminated());
     }
 
     @Override
