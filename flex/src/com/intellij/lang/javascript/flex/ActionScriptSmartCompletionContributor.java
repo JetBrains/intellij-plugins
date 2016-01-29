@@ -58,13 +58,13 @@ import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 public class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
   @Nullable
   @Override
-  public List<Object> getSmartCompletionVariants(final @NotNull PsiElement location) {
+  public List<?> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
     final PsiElement parent = location.getParent();
 
     List<Object> variants = new ArrayList<Object>();
     if (parent instanceof JSArgumentList &&
         ((JSArgumentList)parent).getArguments()[0] == location &&
-        ((JSReferenceExpression)location).getQualifier() == null
+        location.getQualifier() == null
       ) {
       final JSExpression calledExpr = ((JSCallExpression) parent.getParent()).getMethodExpression();
 
@@ -152,8 +152,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       }
       return variants.isEmpty() ? Collections.emptyList() : variants;
     }
-    else if (location instanceof JSReferenceExpression && ((JSReferenceExpression)location).getQualifier() == null) {
-      if (JSResolveUtil.isExprInStrictTypeContext((JSReferenceExpression)location)) {
+    else if (location.getQualifier() == null) {
+      if (JSResolveUtil.isExprInStrictTypeContext(location)) {
         if (parent instanceof JSVariable || parent instanceof JSFunction) {
           JSType type = TypeFromUsageDetector.detectTypeFromUsage(parent, parent.getContainingFile());
           if (type == null && parent instanceof JSVariable) {
@@ -192,7 +192,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         }
       }
       else {
-        variants = addVariantsForUnqualifiedReference((JSReferenceExpression)location);
+        variants = addVariantsForUnqualifiedReference(location);
       }
     }
     return variants.isEmpty() ? null : variants;
