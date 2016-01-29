@@ -286,6 +286,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return mySuspendedIsolateIds.contains(isolateId);
   }
 
+  public boolean isIsolateAlive(@NotNull final String isolateId) {
+    for (IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
+      if (isolateId.equals(isolateInfo.getIsolateId())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public void isolateResumed(@NotNull final IsolateRef isolateRef) {
     mySuspendedIsolateIds.remove(isolateRef.getId());
   }

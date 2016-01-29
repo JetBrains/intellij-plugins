@@ -51,7 +51,11 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
     final Collection<Pair<String, String>> isolateAndVmBreakpointIds = myXBreakpointToIsolateAndVmBreakpointIdsMap.get(xBreakpoint);
     if (isolateAndVmBreakpointIds != null) {
       for (Pair<String, String> isolateAndVmBreakpointId : isolateAndVmBreakpointIds) {
-        myDebugProcess.getVmServiceWrapper().removeBreakpoint(isolateAndVmBreakpointId.first, isolateAndVmBreakpointId.second);
+        final String isolateId = isolateAndVmBreakpointId.first;
+        final String vmBreakpointId = isolateAndVmBreakpointId.second;
+        if (myDebugProcess.isIsolateAlive(isolateId)) {
+          myDebugProcess.getVmServiceWrapper().removeBreakpoint(isolateId, vmBreakpointId);
+        }
       }
     }
   }
