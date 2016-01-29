@@ -152,7 +152,8 @@ public class DartRunner extends DefaultProgramRunner {
                                                observatoryPort,
                                                executionResult,
                                                dartUrlResolver,
-                                               dasExecutionContextId);
+                                               dasExecutionContextId,
+                                               runConfiguration instanceof DartRemoteDebugConfiguration);
       }
     });
 
