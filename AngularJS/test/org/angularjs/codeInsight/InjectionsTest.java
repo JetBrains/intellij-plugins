@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
@@ -10,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
@@ -193,6 +195,16 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testBinding2Resolve() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("binding.html", "angular2.js", "event.ts");
+        checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+      }
+    });
+  }
+
   private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSNamedElement> varClass) {
     int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -211,5 +223,17 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     } finally {
       System.clearProperty("angular.js.parse.message.format");
     }
+  }
+
+  public void testStyles2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("custom.ts", "angular2.js");
+        final int offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
+        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
+        assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
+      }
+    });
   }
 }

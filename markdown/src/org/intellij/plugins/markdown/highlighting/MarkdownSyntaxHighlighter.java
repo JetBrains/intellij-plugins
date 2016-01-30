@@ -54,8 +54,13 @@ public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
 
         safeMap(ATTRIBUTES, MarkdownElementTypes.INLINE_LINK, MarkdownHighlighterColors.EXPLICIT_LINK_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownTokenTypeSets.REFERENCE_LINK_SET, MarkdownHighlighterColors.REFERENCE_LINK_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownElementTypes.IMAGE, MarkdownHighlighterColors.IMAGE_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownElementTypes.AUTOLINK, MarkdownHighlighterColors.AUTO_LINK_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_DEFINITION, MarkdownHighlighterColors.LINK_DEFINITION_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_TEXT, MarkdownHighlighterColors.LINK_TEXT_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_LABEL, MarkdownHighlighterColors.LINK_LABEL_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_DESTINATION, MarkdownHighlighterColors.LINK_DESTINATION_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownElementTypes.LINK_TITLE, MarkdownHighlighterColors.LINK_TITLE_ATTR_KEY);
 
         safeMap(ATTRIBUTES, MarkdownElementTypes.BLOCK_QUOTE, MarkdownHighlighterColors.BLOCK_QUOTE_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownElementTypes.UNORDERED_LIST, MarkdownHighlighterColors.UNORDERED_LIST_ATTR_KEY);
@@ -63,8 +68,9 @@ public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
         safeMap(ATTRIBUTES, MarkdownElementTypes.LIST_ITEM, MarkdownHighlighterColors.LIST_ITEM_ATTR_KEY);
 
         safeMap(ATTRIBUTES, MarkdownElementTypes.CODE_SPAN, MarkdownHighlighterColors.CODE_SPAN_ATTR_KEY);
-        safeMap(ATTRIBUTES, MarkdownElementTypes.CODE_BLOCK, MarkdownHighlighterColors.CODE_BLOCK_ATTR_KEY);
-        safeMap(ATTRIBUTES, MarkdownElementTypes.CODE_FENCE, MarkdownHighlighterColors.CODE_FENCE_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownTokenTypes.BACKTICK, MarkdownHighlighterColors.CODE_SPAN_MARKER_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownTokenTypes.CODE_LINE, MarkdownHighlighterColors.CODE_BLOCK_ATTR_KEY);
+        safeMap(ATTRIBUTES, MarkdownTokenTypeSets.CODE_FENCE_ITEMS, MarkdownHighlighterColors.CODE_FENCE_ATTR_KEY);
 
         safeMap(ATTRIBUTES, MarkdownElementTypes.HTML_BLOCK, MarkdownHighlighterColors.HTML_BLOCK_ATTR_KEY);
         safeMap(ATTRIBUTES, MarkdownTokenTypes.HTML_TAG, MarkdownHighlighterColors.INLINE_HTML_ATTR_KEY);

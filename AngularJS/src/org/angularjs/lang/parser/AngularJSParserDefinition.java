@@ -13,6 +13,7 @@ import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.lexer.AngularJSLexer;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
+import org.angularjs.lang.psi.AngularJSMessageFormatExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +45,8 @@ public class AngularJSParserDefinition extends JavascriptParserDefinition {
       return new AngularJSFilterExpression(node);
     } else if (type == AngularJSElementTypes.AS_EXPRESSION) {
       return new AngularJSAsExpression(node);
+    } else if (type == AngularJSElementTypes.MESSAGE_FORMAT_EXPRESSION) {
+      return new AngularJSMessageFormatExpression(node);
     }
     return super.createElement(node);
   }

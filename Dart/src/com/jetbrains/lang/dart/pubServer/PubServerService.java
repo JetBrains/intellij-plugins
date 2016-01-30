@@ -26,7 +26,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.net.NetUtils;
+import com.intellij.util.net.NetKt;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -182,7 +182,7 @@ final class PubServerService extends NetService {
                                   final int port,
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
-    InetSocketAddress firstPubServerAddress = new InetSocketAddress(NetUtils.getLoopbackAddress(), port);
+    InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
     InetSocketAddress old = servedDirToSocketAddress.put(firstServedDir, firstPubServerAddress);
     LOG.assertTrue(old == null);
 

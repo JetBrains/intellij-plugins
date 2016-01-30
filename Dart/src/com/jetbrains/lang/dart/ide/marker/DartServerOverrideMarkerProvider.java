@@ -138,9 +138,9 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
   }
 
   @Nullable
-  private static LineMarkerInfo tryCreateOverrideMarker(final DartComponentName componentName,
-                                                        final DartComponent superclassComponent,
-                                                        final List<DartComponent> interfaceComponents) {
+  private static LineMarkerInfo tryCreateOverrideMarker(@NotNull final DartComponentName componentName,
+                                                        @Nullable final DartComponent superclassComponent,
+                                                        @NotNull final List<DartComponent> interfaceComponents) {
     if (superclassComponent == null && interfaceComponents.isEmpty()) {
       return null;
     }
@@ -163,7 +163,9 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
                                               final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
                                               if (superClass == null) return "null";
                                               if (overrides) {
-                                                return DartBundle.message("overrides.method.in", name, superClass.getName());
+                                                return superclassComponent.isOperator()
+                                                       ? DartBundle.message("overrides.operator.in", name, superClass.getName())
+                                                       : DartBundle.message("overrides.method.in", name, superClass.getName());
                                               }
                                               return DartBundle.message("implements.method.in", name, superClass.getName());
                                             }

@@ -134,7 +134,7 @@ public class FlexSdkUtils {
   }
 
   private static Sdk createSdk(final SdkType sdkType, final @NotNull String sdkHomePath) {
-    if (ApplicationManager.getApplication().isDispatchThread() || ApplicationManager.getApplication().isUnitTestMode()) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
       return doCreateSdk(sdkType, sdkHomePath);
     }
     else {

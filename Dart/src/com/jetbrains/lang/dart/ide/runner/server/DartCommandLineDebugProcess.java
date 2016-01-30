@@ -13,6 +13,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.TimeoutUtil;
+import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
@@ -286,12 +287,13 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     topToolbar.addSeparator();
 
     if (myObservatoryPort > 0) {
-      topToolbar.addAction(new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
-        @Override
-        public Boolean compute() {
-          return myVmConnected && !getSession().isStopped();
-        }
-      }));
+      topToolbar.addAction(
+        new OpenDartObservatoryUrlAction("http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort, new Computable<Boolean>() {
+          @Override
+          public Boolean compute() {
+            return myVmConnected && !getSession().isStopped();
+          }
+        }));
     }
   }
 

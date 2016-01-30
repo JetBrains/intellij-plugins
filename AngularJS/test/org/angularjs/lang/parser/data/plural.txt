@@ -1,6 +1,6 @@
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+    AngularJSMessageFormatExpression
       JSExpressionStatement
         JSReferenceExpression
           JSReferenceExpression
@@ -10,12 +10,6 @@ ASTWrapperPsiElement(FILE)
       PsiElement(JS:COMMA)(',')
       PsiWhiteSpace(' ')
       PsiElement(MESSAGE_FORMAT_EXPRESSION_NAME)('plural')
-      PsiElement(JS:COMMA)(',')
-      PsiWhiteSpace(' ')
-      ASTWrapperPsiElement(MESSAGE_FORMAT_OPTION)
-        PsiElement(JS:IDENTIFIER)('offset')
-        PsiElement(JS:COLON)(':')
-        PsiElement(JS:NUMERIC_LITERAL)('1')
       PsiElement(JS:COMMA)(',')
       PsiWhiteSpace(' ')
       PsiElement(MESSAGE_FORMAT_SELECTION_KEYWORD)('=0')
@@ -44,7 +38,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+    AngularJSMessageFormatExpression
       JSExpressionStatement
         JSReferenceExpression
           JSReferenceExpression
@@ -60,7 +54,49 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:IDENTIFIER)('offset')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(MESSAGE_FORMAT_SELECTION_KEYWORD)('=0')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      ASTWrapperPsiElement(MESSAGE_FORMAT_MESSAGE)
+        PsiElement(JS:STRING_LITERAL)('You (')
+        PsiElement(JS:LBRACE)('{')
+        PsiElement(JS:LBRACE)('{')
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('sender')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('name')
+        PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:STRING_LITERAL)(') gave no gifts')
+      PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace(' ')
+      PsiElement(MESSAGE_FORMAT_SELECTION_KEYWORD)('other')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:LBRACE)('{')
+      ASTWrapperPsiElement(MESSAGE_FORMAT_MESSAGE)
+        PsiElement(JS:STRING_LITERAL)('You have many gifts')
+      PsiElement(JS:RBRACE)('}')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    AngularJSMessageFormatExpression
+      JSExpressionStatement
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('recipients')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('length')
       PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiElement(MESSAGE_FORMAT_EXPRESSION_NAME)('plural')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      ASTWrapperPsiElement(MESSAGE_FORMAT_OPTION)
+        PsiElement(JS:IDENTIFIER)('offset')
+        PsiElement(JS:COLON)(':')
+        PsiElement(JS:NUMERIC_LITERAL)('1')
       PsiWhiteSpace(' ')
       PsiElement(MESSAGE_FORMAT_SELECTION_KEYWORD)('=0')
       PsiWhiteSpace(' ')
@@ -86,7 +122,7 @@ ASTWrapperPsiElement(FILE)
       ASTWrapperPsiElement(MESSAGE_FORMAT_MESSAGE)
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:LBRACE)('{')
-        ASTWrapperPsiElement(MESSAGE_FORMAT_EXPRESSION)
+        AngularJSMessageFormatExpression
           JSExpressionStatement
             JSReferenceExpression
               JSIndexedPropertyAccessExpression

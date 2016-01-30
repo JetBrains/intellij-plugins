@@ -5,8 +5,13 @@ import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
+import org.angularjs.codeInsight.AngularJSPluralCategories;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Irina.Chernushina on 11/30/2015.
@@ -61,7 +66,6 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     return true;
   }
 
-  // todo continue: other is required option for plural
   public boolean parseInnerMessage() {
     final PsiBuilder.Marker mark = builder.mark();
     PsiBuilder.Marker stringLiteralMark = null;
@@ -126,19 +130,23 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
 
   private boolean parseOffsetOption() {
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
-      if (builder.lookAhead(1) != JSTokenTypes.COLON || builder.lookAhead(2) != JSTokenTypes.NUMERIC_LITERAL) {
-        return true;
+      if (builder.lookAhead(1) != JSTokenTypes.COLON) {
+        builder.advanceLexer();
+        builder.error("expected colon");
+        return false;
+      }
+      final IElementType value = builder.lookAhead(2);
+      if (!JSTokenTypes.LITERALS.contains(value) && JSTokenTypes.IDENTIFIER != value) {
+        builder.advanceLexer();
+        builder.advanceLexer();
+        builder.error("expected offset option value");
+        return false;
       }
       final PsiBuilder.Marker mark = builder.mark();
       builder.advanceLexer();// offset
       builder.advanceLexer();// colon
-      builder.advanceLexer();// numeric literal
+      builder.advanceLexer();// value
       mark.done(AngularJSElementTypes.MESSAGE_FORMAT_OPTION);
-      if (builder.getTokenType() != JSTokenTypes.COMMA) {
-        builder.error("expected comma");
-        return false;
-      }
-      builder.advanceLexer();
     }
     return true;
   }
@@ -148,30 +156,20 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     while (!builder.eof()) {
       final IElementType type = builder.getTokenType();
       if (key) {
-        if (JSTokenTypes.LITERALS.contains(type) || isIdentifierToken(type) || JSTokenTypes.EQ == type) {
-          final PsiBuilder.Marker mark = builder.mark();
-          int i = 1;
-          IElementType forwardType = null;
-          // = can be only in the beginning, like =0
-          for (; !JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains((forwardType = builder.rawLookup(i))); i++);
-          if (JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(forwardType) || forwardType == null) {
-            for (int j = 0; j < i; j++) {
-              builder.advanceLexer();
-            }
-            mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
-            key = false;
-          } else {
-            mark.drop();
-            builder.error("expected selection keyword");
-            return;
-          }
-        } else {
-          if (JSTokenTypes.RBRACE == type) {
-            expectDoubleRBrace(false);
-            return;
-          }
+        if (JSTokenTypes.RBRACE == type) {
+          expectDoubleRBrace(false);
+          return;
+        } else if (JSTokenTypes.LBRACE == type) {
           builder.error("expected selection keyword");
           return;
+        } else {
+          final PsiBuilder.Marker mark = builder.mark();
+          // = can be only in the beginning, like =0
+          while (!JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(builder.rawLookup(0)) && builder.rawLookup(0) != null) {
+            builder.advanceLexer();
+          }
+          mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
+          key = false;
         }
       } else {
         if (JSTokenTypes.LBRACE == type) {
@@ -202,6 +200,22 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
   }
 
   public enum ExtensionType {
-    plural, select
+    plural(AngularJSPluralCategories.other.name()), select("other");
+
+    private final Set<String> myRequiredSelectionKeywords;
+
+    ExtensionType(String... keywords) {
+      if (keywords.length == 0) {
+        myRequiredSelectionKeywords = null;
+      } else {
+        myRequiredSelectionKeywords = new HashSet<String>();
+        Collections.addAll(myRequiredSelectionKeywords, keywords);
+      }
+    }
+
+    @NotNull
+    public Set<String> getRequiredSelectionKeywords() {
+      return myRequiredSelectionKeywords == null ? Collections.<String>emptySet() : myRequiredSelectionKeywords;
+    }
   }
 }

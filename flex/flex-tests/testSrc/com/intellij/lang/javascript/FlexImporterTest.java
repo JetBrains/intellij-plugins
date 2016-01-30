@@ -7,7 +7,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import junit.framework.TestCase;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -101,9 +104,7 @@ public class FlexImporterTest extends TestCase {
       assertEquals(expected,result);
     } catch (IOException ex) {
       if (!new File(resultFileName).exists()) {
-        FileOutputStream fileOutputStream = new FileOutputStream(resultFileName);
-        fileOutputStream.write(result.getBytes(CharsetToolkit.UTF8_CHARSET));
-        fileOutputStream.close();
+        FileUtil.writeToFile(new File(resultFileName), result);
         System.out.println("File " + resultFileName + " was created");
         throw ex;
       }

@@ -84,4 +84,33 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     final List<String> variants = myFixture.getLookupElementStrings();
     assertContainsElements(variants, "AppCtrl", "OtherCtrl");
   }
+
+  public void testControllerWithControllerAsCompletion() {
+    myFixture.configureByFiles("custom1.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("controller: '<caret>AppCtrl'", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    final List<String> variants = myFixture.getLookupElementStrings();
+    assertContainsElements(variants, "AppCtrl", "localCtl", "localCtl2", "OtherCtrl");
+  }
+
+  public void testControllerWithControllerAsResolve() {
+    myFixture.configureByFiles("custom1.js", "angular.js", "partials/phone-details.html", "partials/phone-list.html");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("controller: 'local<caret>Ctl'", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("controller: function(){}", resolve.getParent().getText());
+  }
+
+  public void testControllerWithControllerAsResolve2() {
+    myFixture.configureByFiles("custom1.js", "angular.js", "partials/phone-details.html", "partials/phone-list.html");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("controller: 'local<caret>Ctl2'", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("'localCtl2'", resolve.getParent().getText());
+  }
 }

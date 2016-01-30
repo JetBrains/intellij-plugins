@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -519,12 +520,20 @@ public class DartResolveUtil {
     return new ArrayList<DartComponent>(namedComponentToMap(unfilteredResult).values());
   }
 
-  public static List<DartOperator> findOperators(AbstractDartPsiClass dartPsiClass) {
-    return findSubComponents(new Function<DartClass, List<DartOperator>>() {
+  public static List<DartMethodDeclaration> findOperators(AbstractDartPsiClass dartPsiClass) {
+    return findSubComponents(new Function<DartClass, List<DartMethodDeclaration>>() {
       @Override
-      public List<DartOperator> fun(DartClass dartClass) {
-        final DartOperator[] operators = PsiTreeUtil.getChildrenOfType(getBody(dartClass), DartOperator.class);
-        return operators == null ? Collections.<DartOperator>emptyList() : Arrays.asList(operators);
+      public List<DartMethodDeclaration> fun(DartClass dartClass) {
+        List<DartMethodDeclaration> operators = Lists.newArrayList();
+        final DartMethodDeclaration[] methods = PsiTreeUtil.getChildrenOfType(getBody(dartClass), DartMethodDeclaration.class);
+        if (methods != null) {
+          for (DartMethodDeclaration method : methods) {
+            if (method.isOperator()) {
+              operators.add(method);
+            }
+          }
+        }
+        return operators;
       }
     }, dartPsiClass);
   }

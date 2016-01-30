@@ -14,8 +14,8 @@ class <info>Foo2</info> {
     function <info>Foo2</info>() {}
 }
 
-class <lineMarker></lineMarker><info>Base</info> {
-    public function <lineMarker></lineMarker><info>foo</info>(<info>s</info>:<info>String</info>, <info>n</info>:int):void {}
+class <lineMarker><info>Base</info></lineMarker> {
+    public function <lineMarker><info>foo</info></lineMarker>(<info>s</info>:<info>String</info>, <info>n</info>:int):void {}
 }
 
 class <info>Derived</info> extends <info>Base</info> {

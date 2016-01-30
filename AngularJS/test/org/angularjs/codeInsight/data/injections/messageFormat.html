@@ -7,7 +7,7 @@
 <body>
 <div ng-controller="View1Ctrl">
   <br><br><b>Message</b><br>
-  {{recipients.length, plural, offset:1,
+  {{recipients.length, plural, offset:1
   =0 {You ({{sender.name}}) gave no gifts}
   =1 { {{ recipients[0].gender, select,
   male {You ({{sender.name}}) gave him ({{recipients[0].name}}) a gift.}

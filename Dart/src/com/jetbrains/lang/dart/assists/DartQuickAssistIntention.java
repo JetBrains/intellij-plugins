@@ -85,7 +85,7 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     if (sourceChange != null) {
       try {
-        AssistUtils.applySourceChange(project, sourceChange);
+        AssistUtils.applySourceChange(project, sourceChange, true);
       }
       catch (DartSourceEditException e) {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);

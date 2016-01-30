@@ -453,20 +453,25 @@ public class FlexTestUtils {
   }
 
   private static VirtualFile copyTo(VirtualFile to, final String path) {
-    try {
-      VirtualFile f = LocalFileSystem.getInstance().findFileByPath(path);
-      if (f.isDirectory()) {
-        VirtualFile result = to.createChildDirectory(JSTestUtils.class, f.getName());
-        VfsUtil.copyDirectory(JSTestUtils.class, f, result, null);
-        return result;
+    return ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+      @Override
+      public VirtualFile compute() {
+        try {
+          VirtualFile f = LocalFileSystem.getInstance().findFileByPath(path);
+          if (f.isDirectory()) {
+            VirtualFile result = to.createChildDirectory(JSTestUtils.class, f.getName());
+            VfsUtil.copyDirectory(JSTestUtils.class, f, result, null);
+            return result;
+          }
+          else {
+            return VfsUtilCore.copyFile(JSTestUtils.class, f, to);
+          }
+        }
+        catch (IOException e) {
+          throw new RuntimeException(e);
+        }
       }
-      else {
-        return VfsUtilCore.copyFile(JSTestUtils.class, f, to);
-      }
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    });
   }
 
   private static void addRootIfNotNull(@NotNull final String rootPath,

@@ -16,6 +16,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartUriBasedDirective;
@@ -31,40 +32,45 @@ import javax.swing.*;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.intellij.patterns.PlatformPatterns.psiFile;
+import static com.intellij.patterns.StandardPatterns.or;
 
 public class DartServerCompletionContributor extends CompletionContributor {
   public DartServerCompletionContributor() {
-    extend(CompletionType.BASIC, psiElement().withLanguage(DartLanguage.INSTANCE), new CompletionProvider<CompletionParameters>() {
-      @Override
-      protected void addCompletions(@NotNull final CompletionParameters parameters,
-                                    @NotNull final ProcessingContext context,
-                                    @NotNull final CompletionResultSet originalResultSet) {
-        final VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
-        if (file == null) return;
+    extend(CompletionType.BASIC,
+           or(psiElement().withLanguage(DartLanguage.INSTANCE),
+              psiElement().inFile(psiFile().withName(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS))),
+           new CompletionProvider<CompletionParameters>() {
+             @Override
+             protected void addCompletions(@NotNull final CompletionParameters parameters,
+                                           @NotNull final ProcessingContext context,
+                                           @NotNull final CompletionResultSet originalResultSet) {
+               final VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               if (file == null) return;
 
-        final Project project = parameters.getOriginalFile().getProject();
+               final Project project = parameters.getOriginalFile().getProject();
 
-        final DartSdk sdk = DartSdk.getDartSdk(project);
-        if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
+               final DartSdk sdk = DartSdk.getDartSdk(project);
+               if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
-        DartAnalysisServerService.getInstance().updateFilesContent();
+               DartAnalysisServerService.getInstance().updateFilesContent();
 
-        final String completionId =
-          DartAnalysisServerService.getInstance().completion_getSuggestions(file.getPath(), parameters.getOffset());
-        if (completionId == null) return;
+               final String completionId =
+                 DartAnalysisServerService.getInstance().completion_getSuggestions(file.getPath(), parameters.getOffset());
+               if (completionId == null) return;
 
-        final String uriPrefix = getPrefixIfCompletingUri(parameters);
-        final CompletionResultSet resultSet = uriPrefix != null ? originalResultSet.withPrefixMatcher(uriPrefix) : originalResultSet;
+               final String uriPrefix = getPrefixIfCompletingUri(parameters);
+               final CompletionResultSet resultSet = uriPrefix != null ? originalResultSet.withPrefixMatcher(uriPrefix) : originalResultSet;
 
-        DartAnalysisServerService.getInstance().addCompletions(completionId, new Consumer<CompletionSuggestion>() {
-          @Override
-          public void consume(CompletionSuggestion suggestion) {
-            final LookupElement lookupElement = createLookupElement(project, suggestion);
-            resultSet.addElement(lookupElement);
-          }
-        });
-      }
-    });
+               DartAnalysisServerService.getInstance().addCompletions(completionId, new Consumer<CompletionSuggestion>() {
+                 @Override
+                 public void consume(CompletionSuggestion suggestion) {
+                   final LookupElement lookupElement = createLookupElement(project, suggestion);
+                   resultSet.addElement(lookupElement);
+                 }
+               });
+             }
+           });
   }
 
   @Nullable

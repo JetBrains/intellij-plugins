@@ -65,7 +65,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
 

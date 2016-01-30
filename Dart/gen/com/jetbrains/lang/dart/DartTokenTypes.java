@@ -91,7 +91,6 @@ public interface DartTokenTypes {
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType ON_PART = new DartElementType("ON_PART");
-  IElementType OPERATOR_DECLARATION = new DartElementType("OPERATOR_DECLARATION");
   IElementType PARAMETER_NAME_REFERENCE_EXPRESSION = new DartElementType("PARAMETER_NAME_REFERENCE_EXPRESSION");
   IElementType PARENTHESIZED_EXPRESSION = new DartElementType("PARENTHESIZED_EXPRESSION");
   IElementType PART_OF_STATEMENT = new DartElementType("PART_OF_STATEMENT");
@@ -512,9 +511,6 @@ public interface DartTokenTypes {
       }
       else if (type == ON_PART) {
         return new DartOnPartImpl(node);
-      }
-      else if (type == OPERATOR_DECLARATION) {
-        return new DartOperatorDeclarationImpl(node);
       }
       else if (type == PARAMETER_NAME_REFERENCE_EXPRESSION) {
         return new DartParameterNameReferenceExpressionImpl(node);

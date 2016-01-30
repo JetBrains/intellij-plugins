@@ -61,13 +61,15 @@ public class AssistUtils {
   }
 
   public static void applySourceChange(@NotNull final Project project,
-                                       @NotNull final SourceChange sourceChange) throws DartSourceEditException {
+                                       @NotNull final SourceChange sourceChange,
+                                       final boolean withLinkedEdits) throws DartSourceEditException {
     Set<String> excludedIds = Collections.emptySet();
-    applySourceChange(project, sourceChange, excludedIds);
+    applySourceChange(project, sourceChange, withLinkedEdits, excludedIds);
   }
 
   public static void applySourceChange(@NotNull final Project project,
                                        @NotNull final SourceChange sourceChange,
+                                       final boolean withLinkedEdits,
                                        @NotNull final Set<String> excludedIds) throws DartSourceEditException {
     final Map<VirtualFile, SourceFileEdit> changeMap = getContentFilesChanges(project, sourceChange, excludedIds);
     // ensure not read-only
@@ -87,7 +89,9 @@ public class AssistUtils {
           final SourceFileEdit fileEdit = entry.getValue();
           applyFileEdit(file, fileEdit, excludedIds);
         }
-        runLinkedEdits(project, sourceChange);
+        if (withLinkedEdits) {
+          runLinkedEdits(project, sourceChange);
+        }
       }
     }, sourceChange.getMessage(), null);
   }
@@ -176,7 +180,7 @@ public class AssistUtils {
   }
 
   @Nullable
-  private static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
+  public static VirtualFile findVirtualFile(@NotNull final SourceFileEdit fileEdit) {
     return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
   }
 

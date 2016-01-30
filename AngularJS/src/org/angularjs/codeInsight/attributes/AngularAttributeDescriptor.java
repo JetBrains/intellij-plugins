@@ -1,12 +1,20 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.NotNullFunction;
+import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -16,6 +24,9 @@ import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -29,6 +40,48 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;
+  }
+
+  public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration,
+                                                                  String decorator,
+                                                                  NotNullFunction<JSNamedElement, XmlAttributeDescriptor> factory) {
+    final JSClass clazz = PsiTreeUtil.getParentOfType(declaration, JSClass.class);
+    if (clazz != null) {
+      JSVariable[] fields = clazz.getFields();
+      final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>(fields.length);
+      for (JSVariable field : fields) {
+        if (!hasDecorator(field, decorator)) continue;
+        result.add(factory.fun(field));
+      }
+      for (JSFunction function : clazz.getFunctions()) {
+        if (!hasDecorator(function, decorator)) continue;
+        if (function.isSetProperty()) {
+          result.add(factory.fun(function));
+        }
+      }
+      return result.toArray(new XmlAttributeDescriptor[result.size()]);
+    }
+    return EMPTY;
+  }
+
+  private static boolean hasDecorator(JSAttributeListOwner field, String name) {
+    final JSAttributeList list = field.getAttributeList();
+    if (list != null) {
+      for (PsiElement candidate : list.getChildren()) {
+        if (candidate instanceof ES7Decorator) {
+          final PsiElement child = candidate.getLastChild();
+          if (child instanceof JSCallExpression) {
+            final JSExpression expression = ((JSCallExpression)child).getMethodExpression();
+            if (expression instanceof JSReferenceExpression &&
+                JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)expression, name)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   @Override
@@ -99,6 +152,6 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   @Nullable
   @Override
   public String handleTargetRename(@NotNull @NonNls String newTargetName) {
-    return DirectiveUtil.getAttributeName(newTargetName);
+    return newTargetName;
   }
 }

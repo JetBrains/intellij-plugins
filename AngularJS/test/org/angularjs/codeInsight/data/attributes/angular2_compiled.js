@@ -1,10 +1,4 @@
-$__export("NgNonBindable", NgNonBindable = __decorate([Directive({
-    selector: '[ng-non-bindable]',
-    compileChildren: false
-}), __metadata('design:paramtypes', [])], NgNonBindable));
-
-$__export("NgFor", NgFor = __decorate([Directive({
-        selector: '[ng-for][ng-for-of]',
-        properties: ['ngForOf'],
-        lifecycle: [onCheck]
-      }), __metadata('design:paramtypes', [ViewContainerRef, ProtoViewRef, PipeRegistry])], NgFor));
+NgFor = __decorate([core_1.Directive({
+  selector: '[ngFor][ngForOf]',
+  inputs: ['ngForOf', 'ngForTemplate']
+}), __metadata('design:paramtypes', [core_1.ViewContainerRef, core_1.TemplateRef, core_1.IterableDiffers, core_1.ChangeDetectorRef])], NgFor);

@@ -104,7 +104,7 @@ class <info textAttributesKey="DART_CLASS">Foo2</info><<info textAttributesKey="
 
   <info textAttributesKey="DART_TYPE_NAME_DYNAMIC">dynamic</info> <info textAttributesKey="DART_INSTANCE_METHOD_DECLARATION">abstractMethod</info>();
 
-  <info textAttributesKey="DART_ANNOTATION">@<error descr="The name 'deprecated' is not a class" textAttributesKey="DART_ERROR"><info textAttributesKey="DART_TOP_LEVEL_GETTER_REFERENCE">deprecated</info></error>(</info>"foo"<info textAttributesKey="DART_ANNOTATION">)</info>
+  <info textAttributesKey="DART_ANNOTATION">@<error descr="The name 'deprecated' is not a class" textAttributesKey="DART_ERROR">deprecated</error>(</info>"foo"<info textAttributesKey="DART_ANNOTATION">)</info>
   var <info textAttributesKey="DART_INSTANCE_FIELD_DECLARATION">listLiteral</info> = [1, "", <info textAttributesKey="DART_CLASS">Object</info>];
 
   var <info textAttributesKey="DART_INSTANCE_FIELD_DECLARATION">mapLiteral</info> = {

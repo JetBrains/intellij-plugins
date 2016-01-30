@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartMethodDeclaration extends DartComponent {
 
   @NotNull
-  DartComponentName getComponentName();
-
-  @NotNull
   DartFormalParameterList getFormalParameterList();
 
   @Nullable

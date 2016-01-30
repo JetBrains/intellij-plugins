@@ -5,5 +5,4 @@ class C {
         var b:C;
         var c = b.a + b.b;
     }
-
 }

@@ -10,11 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="lang-impl" />
-    <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="idea-ui" />
-    <orderEntry type="module" module-name="compiler-openapi" />
-    <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module" module-name="external-system-api" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />

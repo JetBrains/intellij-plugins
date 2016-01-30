@@ -4,11 +4,11 @@
 <hh2>Text
 ----</hh2>
 
-Here is a paragraph with bold text. <bold>**This is some bold text.**</bold> Here is a
-paragraph with bold text. <bold>__This is also some bold text.__</bold>
+Here is a paragraph with bold text. <bold><boldm>**</boldm>This is some bold text.<boldm>**</boldm></bold> Here is a
+paragraph with bold text. <bold><boldm>__</boldm>This is also some bold text.<boldm>__</boldm></bold>
 
-Here is another one with italic text. <italic>*This is some italic text.*</italic> Here is
-another one with italic text. <italic>_This is some italic text._</italic>
+Here is another one with italic text. <italic><italicm>*</italicm>This is some italic text.<italicm>*</italicm></italic> Here is
+another one with italic text. <italic><italicm>_</italicm>This is some italic text.<italicm>_</italicm></italic>
 
 Here is another one with struckout text. <strike>~~This is some struckout text.~~</strike>
 
@@ -18,17 +18,17 @@ Here is another one with struckout text. <strike>~~This is some struckout text.~
 
 Autolink: <alink><http://example.com></alink>
 
-Link: [Example](http://example.com)
+Link: <link_text>[Example]</link_text>(<link_dest>http://example.com</link_dest>)
 
-Reference style [link][1].
+Reference style <link_text>[link]</link_text><link_label>[1]</link_label>.
 
-[1]: http://example.com  "Example"
+<link_def><link_label>[1]</link_label>: <link_dest>http://example.com</link_dest>  <link_title>"Example"</link_title></link_def>
 
 
 <hh2>Images
 ------</hh2>
 
-Image: ![My image](http://www.foo.bar/image.png)
+Image: <link_img>!<link_text>[My image]</link_text>(<link_dest>http://www.foo.bar/image.png</link_dest>)</link_img>
 
 <hh2>Headers
 -------</hh2>

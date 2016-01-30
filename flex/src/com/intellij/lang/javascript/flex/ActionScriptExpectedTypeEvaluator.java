@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 
 /**
  * @author yole
@@ -36,40 +37,37 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
                        null;
     if (classType != null && JSTypeUtils.isActionScriptVectorType(classType)) {
       String name = fun.getName();
-      String qualifiedExpressionType = null;
+      JSType qualifiedExpressionType = null;
 
       JSExpression methodExpression = ((JSCallExpression)JSTypeUtils.getScopeInOriginalTree(myGrandParent).getParent()).getMethodExpression();
       if (methodExpression instanceof JSReferenceExpression) {
         JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
         if (qualifier != null) {
-          qualifiedExpressionType = JSResolveUtil.getQualifiedExpressionType(qualifier, qualifier.getContainingFile());
+          qualifiedExpressionType = JSResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
         }
       }
 
       if (qualifiedExpressionType != null) {
         if ("push".equals(name) || "unshift".equals(name) || "splice".equals(name)) {
-          JSResolveUtil.GenericSignature signature = JSResolveUtil.extractGenericSignature(qualifiedExpressionType);
-          if (signature != null) {
-            myType = signature.genericType;
-            myScope = methodExpression;
+          if (qualifiedExpressionType instanceof JSGenericTypeImpl) {
+            myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)qualifiedExpressionType).getArguments());
           }
-        } else if ("concat".equals(name)) {
-          myType = qualifiedExpressionType;
-          myScope = methodExpression;
+        }
+        else if ("concat".equals(name)) {
+          myResult = qualifiedExpressionType;
         }
       }
     } else {
-      myType = JSCommonTypeNames.OBJECT_CLASS_NAME;
-      myScope = myParent;
+      myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent);
     }
   }
 
   protected void evaluateIndexedAccessType(JSIndexedPropertyAccessExpression node) {
     if (isASDictionaryAccess(node)) {
-      myType = JSCommonTypeNames.OBJECT_CLASS_NAME;
+      myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent);
     }
     else {
-      final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myScope, true);
+      final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myGrandParent, true);
       myResult = new JSCompositeTypeImpl(typeSource,
                                          JSNamedType.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
                                          JSNamedType.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE));

@@ -21,7 +21,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <fileTypeFactory implementation="org.intellij.plugins.markdown.lang.MarkdownFileTypeFactory"/>
     <lang.parserDefinition language="Markdown" implementationClass="org.intellij.plugins.markdown.lang.parser.MarkdownParserDefinition"/>
@@ -32,6 +31,8 @@
 
     <colorSettingsPage implementation="org.intellij.plugins.markdown.highlighting.MarkdownColorSettingsPage"/>
     <syntaxHighlighter key="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownSyntaxHighlighter"/>
+    <additionalTextAttributes scheme="Default" file="colorSchemes/MarkdownDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/MarkdownDefault.xml"/>
 
     <braceMatcher filetype="Markdown" implementationClass="org.intellij.plugins.markdown.braces.MarkdownBraceMatcher"/>
     <quoteHandler fileType="Markdown" className="org.intellij.plugins.markdown.braces.MarkdownQuoteHandler"/>

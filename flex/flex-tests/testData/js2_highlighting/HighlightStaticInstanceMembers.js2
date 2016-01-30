@@ -25,7 +25,7 @@ class <info>Foo2</info> {
     }
 }
 
-class <lineMarker descr="Has subclasses"></lineMarker><info>Base</info> {
+class <lineMarker descr="Has subclasses"><info>Base</info></lineMarker> {
     var <info descr="field">x</info>;
     public static function  <info descr="static method">staticFunction</info>():void {}
 }

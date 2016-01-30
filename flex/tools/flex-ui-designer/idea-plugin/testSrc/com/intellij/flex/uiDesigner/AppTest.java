@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -122,16 +120,15 @@ public class AppTest extends AppTestBase {
     callClientAssert(files[0]);
   }
 
-  private void insertString(VirtualFile file, int offset, @NotNull CharSequence s) throws InterruptedException {
+  private void insertString(VirtualFile file, final int offset, @NotNull final CharSequence s) throws InterruptedException {
     final Document document = FileDocumentManager.getInstance().getDocument(file);
     assertNotNull(document);
-    AccessToken token = WriteAction.start();
-    try {
-      document.insertString(offset, s);
-    }
-    finally {
-      token.finish();
-    }
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        document.insertString(offset, s);
+      }
+    });
 
     semaphore.down();
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();

@@ -20,6 +20,7 @@ import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
+import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +30,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     final JSExpression expression = callExpression.getMethodExpression();
     if (expression instanceof JSReferenceExpression) {
       final String name = ((JSReferenceExpression)expression).getReferenceName();
-      final String restrictions = computeRestrictions(name);
-      addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, restrictions, getSelectorName(callExpression));
+      if (!isDirective(name)) return;
+      addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, getSelectorName(callExpression));
     }
   }
 
@@ -44,7 +45,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final ASTNode name = ref.getLastChildNode();
       if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
-        return computeRestrictions(referencedName) != null;
+        return isDirective(referencedName);
       }
     }
     return false;
@@ -53,33 +54,42 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public JSElementIndexingDataImpl processDecorator(ES7Decorator decorator, JSElementIndexingDataImpl outData) {
     final String name = decorator.getName();
-    final String restrict = computeRestrictions(name);
+    if (!isDirective(name)) return outData;
     final String selectorName = getSelectorName(decorator);
 
-    return addImplicitElement(decorator, outData, restrict, selectorName);
+    return addImplicitElement(decorator, outData, selectorName);
   }
 
   private static JSElementIndexingDataImpl addImplicitElement(PsiElement decorator,
                                                               JSElementIndexingDataImpl outData,
-                                                              String restrict,
-                                                              String selectorName) {
-    if (restrict != null && !StringUtil.isEmpty(selectorName)) {
-      final int start = selectorName.indexOf('[');
-      final int end = selectorName.indexOf(']');
-      if (start == 0 && end > 0 || start < 0 && end < 0) {
-        if (outData == null) outData = new JSElementIndexingDataImpl();
-        JSImplicitElementImpl.Builder elementBuilder;
-        for (String attr : StringUtil.split(selectorName, "]", false)) {
-          elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
-            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
-          elementBuilder.setUserString("adi");
-          outData.addImplicitElement(elementBuilder.toImplicitElement());
-        }
-        if (end > 0) {
-          elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
-            .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";;;");
-          elementBuilder.setUserString("adi");
-          outData.addImplicitElement(elementBuilder.toImplicitElement());
+                                                              String selector) {
+    if (selector == null) return outData;
+
+    final String[] names = selector.split(",");
+    for (String selectorName : names) {
+      final int not = selectorName.indexOf(":");
+      if (not >= 0) {
+        selectorName = selectorName.substring(0, not);
+      }
+      if (!StringUtil.isEmpty(selectorName)) {
+        final int start = selectorName.indexOf('[');
+        final int end = selectorName.indexOf(']');
+        if (start == 0 && end > 0 || start < 0 && end < 0) {
+          if (outData == null) outData = new JSElementIndexingDataImpl();
+          JSImplicitElementImpl.Builder elementBuilder;
+          for (String attr : StringUtil.split(selectorName, "]", false)) {
+            final String restrict = selectorName.startsWith("[") ? "A" : "E";
+            elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
+              .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
+            elementBuilder.setUserString("adi");
+            outData.addImplicitElement(elementBuilder.toImplicitElement());
+          }
+          if (end > 0) {
+            elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
+              .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
+            elementBuilder.setUserString("adi");
+            outData.addImplicitElement(elementBuilder.toImplicitElement());
+          }
         }
       }
     }
@@ -88,11 +98,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   private static String getSelectorName(PsiElement decorator) {
-    final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
-    final JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
-    final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
-                                                                     JSObjectLiteralExpression.class);
-    final JSProperty selector = descriptor != null ? descriptor.findProperty("selector") : null;
+    final JSProperty selector = getSelector(decorator);
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return StringUtil.unquoteString(value.getText());
@@ -101,19 +107,32 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  private static String computeRestrictions(String name) {
+  public static JSProperty getSelector(PsiElement decorator) {
+    final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
+    final JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
+    final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
+                                                                     JSObjectLiteralExpression.class);
+    return descriptor != null ? descriptor.findProperty("selector") : null;
+  }
+
+  public static boolean isDirective(String name) {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
-           "Component".equals(name) || "ComponentAnnotation".equals(name)? "AE" :
-           null;
+           "Component".equals(name) || "ComponentAnnotation".equals(name);
   }
 
   @Override
   public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
-    for (XmlAttribute attribute : ((HtmlTag)customElement).getAttributes()) {
+    final HtmlTag tag = (HtmlTag)customElement;
+    for (XmlAttribute attribute : tag.getAttributes()) {
       final String name = attribute.getName();
       if (name.startsWith("#")) {
         final JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name.substring(1), attribute)
           .setType(JSImplicitElement.Type.Variable);
+
+        final String tagName = tag.getName();
+        if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
+          elementBuilder.setTypeString("HTML" + StringUtil.capitalize(tagName) + "Element");
+        }
 
         builder.addImplicitElement(name.substring(1), new JSImplicitElementsIndex.JSElementProxy(elementBuilder, attribute.getTextOffset() + 1));
         JSCustomIndexer.addImplicitElement(attribute, elementBuilder, builder);

@@ -3,7 +3,6 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -53,14 +52,6 @@ public class AngularJSInjector implements MultiHostInjector {
           doneInjecting();
         return;
       }
-      if ((AngularAttributesRegistry.isEventAttribute(((XmlAttribute)parent).getName(), project) ||
-           AngularAttributesRegistry.isVariableAttribute(((XmlAttribute)parent).getName(), project)) &&
-          length > 1) {
-        registrar.startInjecting(JavascriptLanguage.INSTANCE).
-          addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(start, length - end)).
-          doneInjecting();
-        return;
-      }
     }
 
     if (context instanceof XmlTextImpl || context instanceof XmlAttributeValueImpl) {
@@ -72,10 +63,11 @@ public class AngularJSInjector implements MultiHostInjector {
       final String text = context.getText();
       int endIndex = -1;
       while (true) {
-        final AngularJSInjectorMatchingEndFinder finder = new AngularJSInjectorMatchingEndFinder(start, end, text, endIndex);
-        int afterStart = finder.getAfterStartIdx();
+        final int startIdx = text.indexOf(start, endIndex);
+        int afterStart = startIdx < 0 ? -1 : (startIdx + start.length());
         if (afterStart < 0) return;
-        endIndex = finder.find();
+        endIndex = afterStart;
+        endIndex = AngularJSInjectorMatchingEndFinder.findMatchingEnd(start, end, text, endIndex);
         endIndex = endIndex > 0 ? endIndex : ElementManipulators.getValueTextRange(context).getEndOffset();
         final PsiElement injectionCandidate = afterStart >= 0 ? context.findElementAt(afterStart) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&

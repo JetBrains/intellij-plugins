@@ -3,14 +3,11 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.JSDebuggerSupportUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
@@ -56,7 +53,7 @@ public class FlexStackFrame extends XStackFrame {
   private int myFrameIndex;
   @NonNls protected static final String UNKNOWN_SCOPE = "<unknown>";
   static final String CLASS_MARKER = ", class='";
-  private static final String CANNOT_EVALUATE_EXPRESSION = "Cannot evaluate expression: ";
+  static final String CANNOT_EVALUATE_EXPRESSION = "Cannot evaluate expression: ";
 
   FlexStackFrame(final FlexDebugProcess debugProcess, final @Nullable XSourcePosition sourcePosition) {
     myDebugProcess = debugProcess;
@@ -452,38 +449,6 @@ public class FlexStackFrame extends XStackFrame {
     }
 
     @Override
-    public boolean evaluateCondition(@NotNull final String expression) {
-      final String result = eval(expression, myDebugProcess);
-
-      if (result != null && (result.equalsIgnoreCase("true") || result.equalsIgnoreCase("false"))) {
-        return Boolean.valueOf(result);
-      }
-      else {
-        final String message = result == null || result.startsWith(CANNOT_EVALUATE_EXPRESSION)
-                               ? FlexBundle.message("failed.to.evaluate.breakpoint.condition", expression)
-                               : FlexBundle.message("not.boolean.breakpoint.condition", expression, result);
-        final Ref<Boolean> stopRef = new Ref<Boolean>(false);
-
-        ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-          @Override
-          public void run() {
-            final Project project = getDebugProcess().getSession().getProject();
-            final int answer =
-              Messages.showYesNoDialog(project, message, FlexBundle.message("breakpoint.condition.error"), Messages.getQuestionIcon());
-            stopRef.set(answer == Messages.YES);
-          }
-        }, ModalityState.defaultModalityState());
-
-        return stopRef.get();
-      }
-    }
-
-    @Override
-    public String evaluateMessage(@NotNull final String expression) {
-      return eval(expression, myDebugProcess);
-    }
-
-    @Override
     public void evaluate(@NotNull final String expression, @NotNull final XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
       final EvaluateCommand command = new EvaluateCommand(expression, callback);
       myDebugProcess.sendCommand(command);
@@ -496,7 +461,7 @@ public class FlexStackFrame extends XStackFrame {
     }
   }
 
-  private String eval(final String expression, FlexDebugProcess process) {
+  String eval(final String expression, FlexDebugProcess process) {
     final EvaluateCommand command = new EvaluateCommand(expression, null);
     process.sendAndProcessOneCommand(command, null);
 

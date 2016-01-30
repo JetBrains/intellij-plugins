@@ -70,8 +70,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('HelloWorld2')
+        PsiElement(JS:IDENTIFIER)('HelloWorld2')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -148,8 +147,7 @@ JSFile:ClassesPackagesNamespaces.js2
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('f')
+        PsiElement(JS:IDENTIFIER)('f')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -159,8 +157,7 @@ JSFile:ClassesPackagesNamespaces.js2
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('f2')
+        PsiElement(JS:IDENTIFIER)('f2')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -173,8 +170,7 @@ JSFile:ClassesPackagesNamespaces.js2
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('f3')
+        PsiElement(JS:IDENTIFIER)('f3')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -272,8 +268,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:GET_KEYWORD)('get')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('eventsToHandle')
+        PsiElement(JS:IDENTIFIER)('eventsToHandle')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -296,8 +291,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:SET_KEYWORD)('set')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('eventsToHandle')
+        PsiElement(JS:IDENTIFIER)('eventsToHandle')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           JSParameter
@@ -322,8 +316,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiWhiteSpace(' ')
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('mynative')
+        PsiElement(JS:IDENTIFIER)('mynative')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')

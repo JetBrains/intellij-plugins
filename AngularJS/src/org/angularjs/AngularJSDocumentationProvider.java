@@ -49,7 +49,7 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
         if (name != null) name = name.substring(name.indexOf(':') + 1);
 
         if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(name)) != null) {
-          final String directiveName = DirectiveUtil.attributeToDirective(name);
+          final String directiveName = DirectiveUtil.attributeToDirective(null, name);
           return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + directiveName);
         }
       }

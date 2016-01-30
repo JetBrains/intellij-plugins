@@ -5,14 +5,11 @@ import com.jetbrains.lang.dart.ide.generation.CreateGetterSetterFix;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartGenerateActionTest extends DartGenerateActionTestBase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH +  FileUtil.toSystemDependentName("/generate/");
+    return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/generate/");
   }
 
   public void testConstructor1() throws Throwable {
@@ -25,6 +22,18 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
 
   public void testConstructor3() throws Throwable {
     doConstructor();
+  }
+
+  public void testNamedConstructor1() throws Throwable {
+    doNamedConstructor();
+  }
+
+  public void testNamedConstructor2() throws Throwable {
+    doNamedConstructor();
+  }
+
+  public void testNamedConstructor3() throws Throwable {
+    doNamedConstructor();
   }
 
   public void testImplement1() throws Throwable {
@@ -56,6 +65,18 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   }
 
   public void testImplement_WEB_2479_2() throws Throwable {
+    doImplementTest();
+  }
+
+  public void testImplement_WEB_16793() throws Throwable {
+    doImplementTest();
+  }
+
+  public void testImplement_WEB_16793_2() throws Throwable {
+    doImplementTest();
+  }
+
+  public void testImplement_WEB_14400() throws Throwable {
     doImplementTest();
   }
 
@@ -105,5 +126,17 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
 
   public void testGetterSetter3() throws Throwable {
     doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+  }
+
+  public void testOverrideOperator() throws Throwable {
+    doOverrideTest();
+  }
+
+  public void testToString1() throws Throwable {
+    doToStringTest();
+  }
+
+  public void testToString2() throws Throwable {
+    doToStringTest();
   }
 }

@@ -3,36 +3,6 @@
   <description>Support for AngularJS</description>
   <version>999.999</version>
   <vendor>johnlindquist, JetBrains</vendor>
-  <change-notes><![CDATA[
-        <html>
-        <dl>
-            <dt>0.1.9</dt>
-            <dd>Added a setting for whitespace between braces</dd>
-            <dt>0.1.8</dt>
-            <dd>Fixing bug introduced by autocomplete with invalid elements (had to "revert" to old method of autocomplete, so I need to find a new approach for invalid elements</dd>
-            <dt>0.1.7</dt>
-            <dd>Focusing on WebStorm 7 compatibility</dd>
-            <dt>0.1.6</dt>
-            <dd>Adding navigation, auto-closing {{, attribute autocomplete on all elements, and "jump to docs"</dd>
-            <dt>0.1.5</dt>
-            <dd>Adding "href" and "disabled" to the descriptors list</dd>
-            <dt>0.1.4</dt>
-            <dd>Bundling live templates thanks to Powel Kozlowski</dd>
-            <dt>0.1.3</dt>
-            <dd>Adding the mouse events and a couple other missing directives</dd>
-            <dt>0.1.2</dt>
-            <dd>Works with any doctype (not just !doctype html).</dd>
-            <dt>0.1.1</dt>
-            <dd>Changed Autocomplete approach to "provide" custom autocompletes through a provider extension point. I'll
-                revisit a custom DTD after more discussion/thought with other developers.
-            </dd>
-            <dt>0.1</dt>
-            <dd>Basic ng attribute autocompletion based on an included DTD.</dd>
-        </dl>
-        </html>
-        ]]>
-  </change-notes>
-
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="138.1029"/>
@@ -41,14 +11,11 @@
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
 
-
   <extensions defaultExtensionNs="com.intellij">
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
 
     <lang.surroundDescriptor language="AngularJS" implementationClass="org.angularjs.refactoring.surround.AngularJSExpressionSurroundDescriptor"/>
-
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
     <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" />
@@ -78,15 +45,21 @@
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
     <lang.syntaxHighlighterFactory language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
+    <lang.parserDefinition language="Angular2HTML" implementationClass="org.angularjs.html.Angular2HTMLParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Angular2HTML" implementationClass="org.angularjs.html.Angular2HTMLHighlighterFactory"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
+    <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
+    <multiHostInjector implementation="org.angularjs.editor.Angular2Injector" order="first"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
                             id="AngularJSCompletionContributor" order="first"/>
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
                             id="AngularJSDICompletionContributor" order="first"/>
+    <lookup.charFilter implementation="org.angularjs.editor.Angular2LookupCharFilter" order="before xml"/>
+
     <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
     <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
     <elementDescriptionProvider order="first"
@@ -97,6 +70,9 @@
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
+
+    <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
+                     groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

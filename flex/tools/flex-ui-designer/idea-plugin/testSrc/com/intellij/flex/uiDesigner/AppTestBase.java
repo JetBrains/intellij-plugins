@@ -10,9 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBu
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -77,34 +75,32 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     final String sdkName = generateSdkName(sdkVersion);
     Sdk sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
     if (sdk == null) {
-      final AccessToken token = WriteAction.start();
-      try {
-        FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-        sdk = new ProjectJdkImpl(sdkName, sdkType, flexSdkRootPath, "");
-        ProjectJdkTable.getInstance().addJdk(sdk);
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          FlexSdkType2 sdkType = FlexSdkType2.getInstance();
+          Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, flexSdkRootPath, "");
+          ProjectJdkTable.getInstance().addJdk(sdk);
 
-        Disposer.register(getSdkParentDisposable(), new Disposable() {
-          @Override
-          public void dispose() {
-            final AccessToken t = WriteAction.start();
-            try {
-              ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
-              sdkTable.removeJdk(sdkTable.findJdk(sdkName));
+          Disposer.register(getSdkParentDisposable(), new Disposable() {
+            @Override
+            public void dispose() {
+              ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                @Override
+                public void run() {
+                  ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
+                  sdkTable.removeJdk(sdkTable.findJdk(sdkName));
+                }
+              });
             }
-            finally {
-              t.finish();
-            }
-          }
-        });
+          });
 
-        final SdkModificator modificator = sdk.getSdkModificator();
-        modificator.setVersionString(FlexSdkType2.getInstance().getVersionString(sdk.getHomePath()));
-        modifySdk(sdk, modificator);
-        modificator.commitChanges();
-      }
-      finally {
-        token.finish();
-      }
+          final SdkModificator modificator = sdk.getSdkModificator();
+          modificator.setVersionString(FlexSdkType2.getInstance().getVersionString(sdk.getHomePath()));
+          modifySdk(sdk, modificator);
+          modificator.commitChanges();
+        }
+      });
     }
 
     FlexTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {

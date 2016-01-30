@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -15,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+
+import static com.intellij.openapi.util.text.StringUtil.trimEnd;
+import static com.intellij.openapi.util.text.StringUtil.trimStart;
 
 /**
  * @author Dennis.Ushakov
@@ -32,20 +36,25 @@ public class DirectiveUtil {
     if (name == null) return null;
     if (name.startsWith("data-")) {
       name = name.substring(5);
-    } else if (name.startsWith("x-")) {
-      name = name.substring(2);
     }
+    else name = trimStart(name, "x-");
     name = name.replace(':', '-');
     name = name.replace('_', '-');
     if (name.endsWith("-start")) {
       name = name.substring(0, name.length() - 6);
-    } else if (name.endsWith("-end")) {
-      name = name.substring(0, name.length() - 4);
     }
+    else name = trimEnd(name, "-end");
     return name;
   }
 
-  public static String attributeToDirective(String name) {
+  public static boolean isAngular2Directive(final PsiElement directive) {
+    return directive instanceof JSImplicitElement && directive.getParent() instanceof JSCallExpression;
+  }
+
+  public static String attributeToDirective(final PsiElement directive, final String name) {
+    if (isAngular2Directive(directive)) {
+      return name;
+    }
     final String[] words = name.split("-");
     for (int i = 1; i < words.length; i++) {
       words[i] = StringUtil.capitalize(words[i]);

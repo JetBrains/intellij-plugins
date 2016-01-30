@@ -125,7 +125,7 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
       StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
         @Override
         public void run() {
-          importer.resolve();
+          importer.resolve(false);
         }
       });
       return Collections.singletonList(rootModule);

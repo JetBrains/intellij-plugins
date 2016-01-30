@@ -38,15 +38,6 @@ public class JstdServerUtils {
       return HttpRequests.request(serverUrl.replaceAll("/$", "") + "/cmd?listBrowsers").connect(new HttpRequests.RequestProcessor<JstdServerFetchResult>() {
         @Override
         public JstdServerFetchResult process(@NotNull HttpRequests.Request request) throws IOException {
-          try {
-            if (!request.isSuccessful()) {
-              return JstdServerFetchResult.fromErrorMessage("Incorrect server response status");
-            }
-          }
-          catch (IOException e) {
-            return JstdServerFetchResult.fromErrorMessage("Reading error occurred");
-          }
-
           final String badResponse = "Malformed server response received";
           JsonElement jsonElement;
           try {
@@ -64,6 +55,9 @@ public class JstdServerUtils {
           }
         }
       });
+    }
+    catch (HttpRequests.HttpStatusException e) {
+      return JstdServerFetchResult.fromErrorMessage("Incorrect server response status: " + e.getStatusCode());
     }
     catch (Exception e) {
       return JstdServerFetchResult.fromErrorMessage("Could not connect to " + serverUrl);

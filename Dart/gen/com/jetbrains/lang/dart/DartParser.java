@@ -272,9 +272,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == ON_PART) {
       r = onPart(b, 0);
     }
-    else if (t == OPERATOR_DECLARATION) {
-      r = operatorDeclaration(b, 0);
-    }
     else if (t == PARAMETER_NAME_REFERENCE_EXPRESSION) {
       r = parameterNameReferenceExpression(b, 0);
     }
@@ -1172,7 +1169,6 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // factoryConstructorDeclaration
   //                                 | namedConstructorDeclaration
-  //                                 | operatorDeclaration
   //                                 | getterOrSetterDeclaration
   //                                 | methodDeclaration
   //                                 | varDeclarationListWithSemicolon
@@ -1183,7 +1179,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, null);
     r = factoryConstructorDeclaration(b, l + 1);
     if (!r) r = namedConstructorDeclaration(b, l + 1);
-    if (!r) r = operatorDeclaration(b, l + 1);
     if (!r) r = getterOrSetterDeclaration(b, l + 1);
     if (!r) r = methodDeclaration(b, l + 1);
     if (!r) r = varDeclarationListWithSemicolon(b, l + 1);
@@ -3841,14 +3836,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* ('external' | 'static' | 'const')* functionDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
+  // metadata* ('external' | 'static' | 'const')* methodDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
   public static boolean methodDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclaration")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<method declaration>");
     r = methodDeclaration_0(b, l + 1);
     r = r && methodDeclaration_1(b, l + 1);
-    r = r && functionDeclarationPrivate(b, l + 1);
+    r = r && methodDeclarationPrivate(b, l + 1);
     p = r; // pin = 3
     r = r && report_error_(b, methodDeclaration_3(b, l + 1));
     r = p && methodDeclaration_4(b, l + 1) && r;
@@ -3914,6 +3909,41 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, SEMICOLON);
     if (!r) r = functionBodyOrNative(b, l + 1);
     if (!r) r = redirection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // returnType <<methodNameWrapper>> formalParameterList | <<methodNameWrapper>> formalParameterList
+  static boolean methodDeclarationPrivate(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "methodDeclarationPrivate")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = methodDeclarationPrivate_0(b, l + 1);
+    if (!r) r = methodDeclarationPrivate_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // returnType <<methodNameWrapper>> formalParameterList
+  private static boolean methodDeclarationPrivate_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "methodDeclarationPrivate_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = returnType(b, l + 1);
+    r = r && methodNameWrapper(b, l + 1);
+    r = r && formalParameterList(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // <<methodNameWrapper>> formalParameterList
+  private static boolean methodDeclarationPrivate_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "methodDeclarationPrivate_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = methodNameWrapper(b, l + 1);
+    r = r && formalParameterList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4460,114 +4490,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "onPart_1_2")) return false;
     catchPart(b, l + 1);
     return true;
-  }
-
-  /* ********************************************************** */
-  // operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType
-  public static boolean operatorDeclaration(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclaration")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, "<operator declaration>");
-    r = operatorDeclarationWithReturnType(b, l + 1);
-    if (!r) r = operatorDeclarationWithoutReturnType(b, l + 1);
-    exit_section_(b, l, m, OPERATOR_DECLARATION, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative)
-  static boolean operatorDeclarationWithReturnType(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithReturnType")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
-    r = operatorDeclarationWithReturnType_0(b, l + 1);
-    r = r && operatorDeclarationWithReturnType_1(b, l + 1);
-    r = r && returnType(b, l + 1);
-    r = r && consumeToken(b, OPERATOR);
-    r = r && userDefinableOperator(b, l + 1);
-    p = r; // pin = 5
-    r = r && report_error_(b, formalParameterList(b, l + 1));
-    r = p && operatorDeclarationWithReturnType_6(b, l + 1) && r;
-    exit_section_(b, l, m, null, r, p, null);
-    return r || p;
-  }
-
-  // metadata*
-  private static boolean operatorDeclarationWithReturnType_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithReturnType_0")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!metadata(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "operatorDeclarationWithReturnType_0", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // 'external'?
-  private static boolean operatorDeclarationWithReturnType_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithReturnType_1")) return false;
-    consumeToken(b, EXTERNAL);
-    return true;
-  }
-
-  // ';' | functionBodyOrNative
-  private static boolean operatorDeclarationWithReturnType_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithReturnType_6")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, SEMICOLON);
-    if (!r) r = functionBodyOrNative(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative)
-  static boolean operatorDeclarationWithoutReturnType(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithoutReturnType")) return false;
-    if (!nextTokenIs(b, "", AT, EXTERNAL, OPERATOR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
-    r = operatorDeclarationWithoutReturnType_0(b, l + 1);
-    r = r && operatorDeclarationWithoutReturnType_1(b, l + 1);
-    r = r && consumeToken(b, OPERATOR);
-    r = r && userDefinableOperator(b, l + 1);
-    p = r; // pin = 4
-    r = r && report_error_(b, formalParameterList(b, l + 1));
-    r = p && operatorDeclarationWithoutReturnType_5(b, l + 1) && r;
-    exit_section_(b, l, m, null, r, p, null);
-    return r || p;
-  }
-
-  // metadata*
-  private static boolean operatorDeclarationWithoutReturnType_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithoutReturnType_0")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!metadata(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "operatorDeclarationWithoutReturnType_0", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // 'external'?
-  private static boolean operatorDeclarationWithoutReturnType_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithoutReturnType_1")) return false;
-    consumeToken(b, EXTERNAL);
-    return true;
-  }
-
-  // ';' | functionBodyOrNative
-  private static boolean operatorDeclarationWithoutReturnType_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operatorDeclarationWithoutReturnType_5")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, SEMICOLON);
-    if (!r) r = functionBodyOrNative(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */

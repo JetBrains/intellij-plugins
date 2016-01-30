@@ -11,12 +11,14 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -81,17 +83,99 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
 
+  public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+    super(psiElement, holder);
+  }
+
+  protected static SignatureMatchResult checkCompatibleSignature(final JSFunction fun, final JSFunction override) {
+    JSParameterList nodeParameterList = fun.getParameterList();
+    JSParameterList overrideParameterList = override.getParameterList();
+    final JSParameter[] parameters = nodeParameterList != null ? nodeParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+    final JSParameter[] overrideParameters =
+      overrideParameterList != null ? overrideParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+
+    SignatureMatchResult result = parameters.length != overrideParameters.length ?
+                                  SignatureMatchResult.PARAMETERS_DIFFERS : SignatureMatchResult.COMPATIBLE_SIGNATURE;
+
+    if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+      for (int i = 0; i < parameters.length; ++i) {
+        if (!compatibleType(overrideParameters[i].getTypeString(), parameters[i].getTypeString(), overrideParameterList,
+                            nodeParameterList) ||
+            overrideParameters[i].hasInitializer() != parameters[i].hasInitializer()
+          ) {
+          result = SignatureMatchResult.PARAMETERS_DIFFERS;
+          break;
+        }
+      }
+    }
+
+    if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+      if (!compatibleType(override.getReturnTypeString(), fun.getReturnTypeString(), override, fun)) {
+        result = SignatureMatchResult.RETURN_TYPE_DIFFERS;
+      }
+    }
+
+    if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
+      if (override.getKind() != fun.getKind()) result = SignatureMatchResult.FUNCTION_KIND_DIFFERS;
+    }
+    return result;
+  }
+
+  /**
+   * @deprecated use {@link com.intellij.lang.javascript.psi.JSTypeUtils
+   * #areTypesCompatible(com.intellij.lang.javascript.psi.JSType, com.intellij.lang.javascript.psi.JSType)} instead.
+   */
+  protected static boolean compatibleType(String overrideParameterType,
+                                          String parameterType,
+                                          PsiElement overrideContext,
+                                          PsiElement funContext) {
+    // TODO: This should be more accurate
+    if (overrideParameterType != null && !overrideParameterType.equals(parameterType)) {
+      parameterType = JSImportHandlingUtil.resolveTypeName(parameterType, funContext);
+      overrideParameterType = JSImportHandlingUtil.resolveTypeName(overrideParameterType, overrideContext);
+
+      if (!overrideParameterType.equals(parameterType)) {
+        if (parameterType != null &&  // TODO: getter / setter to have the same types
+            (JSTypeEvaluateManager.isArrayType(overrideParameterType) &&
+             JSTypeEvaluateManager.getBaseArrayType(overrideParameterType).equals(parameterType) ||
+             JSTypeEvaluateManager.isArrayType(parameterType) ||
+             JSTypeEvaluateManager.getBaseArrayType(parameterType).equals(overrideParameterType))
+          ) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+    else if (overrideParameterType == null && parameterType != null && !"*".equals(parameterType)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @NotNull
   @Override
-  protected void initTypeCheckers(@NotNull PsiElement context) {
-    myProblemReporter = new JSAnnotatorProblemReporter(myHolder) {
+  protected JSAnnotatorProblemReporter createProblemReporter(PsiElement context) {
+    return new JSAnnotatorProblemReporter(myHolder) {
       @Nullable
       @Override
       protected String getAnnotatorInspectionId() {
         return null;
       }
     };
-    myTypeChecker = new ActionScriptTypeChecker(myProblemReporter);
-    myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
+  }
+
+  @NotNull
+  @Override
+  protected JSTypeChecker<Annotation> createTypeChecker(PsiElement context) {
+    return new ActionScriptTypeChecker(myProblemReporter);
+  }
+
+  @NotNull
+  @Override
+  protected JSFunctionSignatureChecker createFunctionSignatureChecker(PsiElement context) {
+    return new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
   }
 
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
@@ -243,7 +327,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           reportingClient.reportError(node,
                                       JSBundle.message("javascript.validation.message.interface.method.invalid.access.modifier"),
                                       ErrorReportingClient.ProblemKind.ERROR,
-                                      new SetElementVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC)
+                                      JSFixFactory.getInstance().createChangeVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC, null)
           );
         }
 
@@ -305,7 +389,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkFunction(final JSFunction node) {
+  protected void checkFunctionDeclaration(@NotNull final JSFunction node) {
+    super.checkFunctionDeclaration(node);
+
     final ASTNode nameIdentifier = node.findNameIdentifier();
     if (nameIdentifier == null) return;
     PsiElement parent = node.getParent();
@@ -410,14 +496,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               (overrideNs = JSResolveUtil.getNamespaceValue(overrideAttrList)) != null &&
               !overrideNs.equals(JSResolveUtil.getNamespaceValue(attributeList))) {
             String newVisibility;
-            SetElementVisibilityFix fix;
+            IntentionAction fix;
             if (overrideNs != null) {
               newVisibility = overrideNs;
-              fix = new SetElementVisibilityFix(node, overrideNs);
+              fix = JSFixFactory.getInstance().createChangeVisibilityFix(node, null ,overrideNs);
             }
             else {
               newVisibility = JSFormatUtil.formatVisibility(overrideAttrList.getAccessType());
-              fix = new SetElementVisibilityFix(node, overrideAttrList.getAccessType());
+              fix = JSFixFactory.getInstance().createChangeVisibilityFix(node, overrideAttrList.getAccessType() ,null);
             }
             final Annotation annotation = myHolder.createErrorAnnotation(
               findElementForAccessModifierError(node, attributeList),
@@ -477,8 +563,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     }
-
-    super.checkFunction(node);
   }
 
   private void reportStaticMethodProblem(JSAttributeList attributeList, String key) {
@@ -654,7 +738,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (parent instanceof JSClass) {
           final JSClass jsClass = (JSClass)parent;
           final JSFunction constructor = jsClass.getConstructor();
-          if (constructor == null) checkMissedSuperCall(node, constructor, jsClass);
+          if (constructor == null) checkMissedSuperCall(null, jsClass);
 
           PsiElement clazzParent = jsClass.getParent();
           final PsiElement context = clazzParent.getContext();
@@ -678,7 +762,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       JSParameterList parameterList = fun.getParameterList();
       if (parameterList != null) {
         for (JSParameter p : parameterList.getParameters()) {
-          if (p.isRest() && p.getNode().findChildByType(JSTokenTypes.DOT_DOT_DOT) != null) {
+          if (p.isRest()) {
             myHolder.createErrorAnnotation(node, JSBundle.message("javascript.validation.message.arguments.with.rest.parameter"));
           }
         }
@@ -1135,14 +1219,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
   }
 
-  protected void validateGetPropertyReturnType(ASTNode nameIdentifier, JSFunction function, JSType type) {
+  protected void validateGetPropertyReturnType(JSFunction function, JSType type) {
     if (type instanceof JSVoidType) {
       // TODO: fix!
       final String typeString = type != null ? type.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty";
       myHolder.createErrorAnnotation(
         type != null ?
         function.getReturnTypeElement() :
-        nameIdentifier.getPsi(),
+        getPlaceForNamedElementProblem(function),
         JSBundle
           .message("javascript.validation.message.get.method.should.be.valid.type", typeString));
     }
@@ -1165,7 +1249,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             PsiElement typeElement = function.getReturnTypeElement();
 
             myHolder.createErrorAnnotation(
-              typeElement != null ? typeElement : function.findNameIdentifier().getPsi(),
+              typeElement != null ? typeElement : getPlaceForNamedElementProblem(function),
               JSBundle.message("javascript.validation.message.get.method.type.is.different.from.setter",
                                setterType != null ? setterType.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty")
             );

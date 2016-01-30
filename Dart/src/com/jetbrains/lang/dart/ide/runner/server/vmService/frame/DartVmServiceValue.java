@@ -1,8 +1,10 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XNumericValuePresentation;
@@ -21,6 +23,7 @@ public class DartVmServiceValue extends XNamedValue {
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
   @NotNull private String myIsolateId;
   @NotNull private final InstanceRef myInstanceRef;
+  @Nullable private final FieldRef myFieldRef;
   private final boolean myIsException;
 
   private Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<Integer>(0);
@@ -28,20 +31,100 @@ public class DartVmServiceValue extends XNamedValue {
   public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
                             @NotNull final String isolateId,
                             @NotNull final String name,
-                            @NotNull final InstanceRef instanceRef) {
-    this(debugProcess, isolateId, name, instanceRef, false);
-  }
-
-  public DartVmServiceValue(@NotNull final DartVmServiceDebugProcess debugProcess,
-                            @NotNull final String isolateId,
-                            @NotNull final String name,
                             @NotNull final InstanceRef instanceRef,
+                            @Nullable final FieldRef fieldRef,
                             boolean isException) {
     super(name);
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myInstanceRef = instanceRef;
+    myFieldRef = fieldRef;
     myIsException = isException;
+  }
+
+  @Override
+  public boolean canNavigateToSource() {
+    return myFieldRef != null;
+  }
+
+  @Override
+  public void computeSourcePosition(@NotNull final XNavigatable navigatable) {
+    if (myFieldRef == null) {
+      navigatable.setSourcePosition(null);
+      return;
+    }
+
+    doComputeSourcePosition(myDebugProcess, navigatable, myIsolateId, myFieldRef);
+  }
+
+  static void doComputeSourcePosition(@NotNull final DartVmServiceDebugProcess debugProcess,
+                                      @NotNull final XNavigatable navigatable,
+                                      @NotNull final String isolateId,
+                                      @NotNull final FieldRef fieldRef) {
+    debugProcess.getVmServiceWrapper().getObject(isolateId, fieldRef.getId(), new GetObjectConsumer() {
+      @Override
+      public void received(final Obj field) {
+        reportSourcePosition(debugProcess, navigatable, isolateId, ((Field)field).getLocation());
+      }
+
+      @Override
+      public void received(final Sentinel sentinel) {
+        navigatable.setSourcePosition(null);
+      }
+
+      @Override
+      public void onError(final RPCError error) {
+        navigatable.setSourcePosition(null);
+      }
+    });
+  }
+
+  @Override
+  public boolean canNavigateToTypeSource() {
+    return true;
+  }
+
+  @Override
+  public void computeTypeSourcePosition(@NotNull final XNavigatable navigatable) {
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getClassRef().getId(), new GetObjectConsumer() {
+      @Override
+      public void received(final Obj classObj) {
+        reportSourcePosition(myDebugProcess, navigatable, myIsolateId, ((ClassObj)classObj).getLocation());
+      }
+
+      @Override
+      public void received(final Sentinel response) {
+        navigatable.setSourcePosition(null);
+      }
+
+      @Override
+      public void onError(final RPCError error) {
+        navigatable.setSourcePosition(null);
+      }
+    });
+  }
+
+  private static void reportSourcePosition(@NotNull final DartVmServiceDebugProcess debugProcess,
+                                           @NotNull final XNavigatable navigatable,
+                                           @NotNull final String isolateId,
+                                           @Nullable final SourceLocation location) {
+    if (location == null) {
+      navigatable.setSourcePosition(null);
+      return;
+    }
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, location.getScript(), location.getTokenPos());
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+          @Override
+          public void run() {
+            navigatable.setSourcePosition(sourcePosition);
+          }
+        });
+      }
+    });
   }
 
   @Override
@@ -54,7 +137,7 @@ public class DartVmServiceValue extends XNamedValue {
     // todo handle other special kinds: Type, TypeParameter, Pattern, may be some others as well
   }
 
-  private static boolean computeVarHavingStringValuePresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
+  private boolean computeVarHavingStringValuePresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
     switch (instanceRef.getKind()) {
       case Null:
@@ -66,9 +149,12 @@ public class DartVmServiceValue extends XNamedValue {
         node.setPresentation(AllIcons.Debugger.Db_primitive, new XNumericValuePresentation(instanceRef.getValueAsString()), false);
         break;
       case String:
-        final String suffix = instanceRef.getValueAsStringIsTruncated() ? "... (truncated value)" : "";
-        final String presentableValue = StringUtil.replace(instanceRef.getValueAsString() + suffix, "\"", "\\\"");
+        final String presentableValue = StringUtil.replace(instanceRef.getValueAsString(), "\"", "\\\"");
         node.setPresentation(AllIcons.Debugger.Db_primitive, new XStringValuePresentation(presentableValue), false);
+
+        if (instanceRef.getValueAsStringIsTruncated()) {
+          addFullStringValueEvaluator(node, instanceRef);
+        }
         break;
       case Float32x4:
       case Float64x2:
@@ -83,13 +169,39 @@ public class DartVmServiceValue extends XNamedValue {
     return true;
   }
 
-  private static boolean computeRegExpPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
+  private void addFullStringValueEvaluator(@NotNull final XValueNode node, @NotNull final InstanceRef stringInstanceRef) {
+    assert stringInstanceRef.getKind() == InstanceKind.String : stringInstanceRef;
+    node.setFullValueEvaluator(new XFullValueEvaluator() {
+      @Override
+      public void startEvaluation(@NotNull final XFullValueEvaluationCallback callback) {
+        myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, stringInstanceRef.getId(), new GetObjectConsumer() {
+          @Override
+          public void received(Obj instance) {
+            assert instance instanceof Instance && ((Instance)instance).getKind() == InstanceKind.String : instance;
+            callback.evaluated(((Instance)instance).getValueAsString());
+          }
+
+          @Override
+          public void received(Sentinel response) {
+            callback.errorOccurred(response.getValueAsString());
+          }
+
+          @Override
+          public void onError(RPCError error) {
+            callback.errorOccurred(error.getMessage());
+          }
+        });
+      }
+    });
+  }
+
+  private boolean computeRegExpPresentation(@NotNull final XValueNode node, @NotNull final InstanceRef instanceRef) {
     if (instanceRef.getKind() == InstanceKind.RegExp) {
       // The pattern is always an instance of kind String.
       final InstanceRef pattern = instanceRef.getPattern();
-      final String suffix = pattern.getValueAsStringIsTruncated() ? "... (truncated value)" : "";
-      final String patternString = StringUtil.replace(pattern.getValueAsString() + suffix, "\"", "\\\"");
+      assert pattern.getKind() == InstanceKind.String : pattern;
 
+      final String patternString = StringUtil.replace(pattern.getValueAsString(), "\"", "\\\"");
       node.setPresentation(AllIcons.Debugger.Value, new XStringValuePresentation(patternString) {
         @Nullable
         @Override
@@ -97,6 +209,11 @@ public class DartVmServiceValue extends XNamedValue {
           return instanceRef.getClassRef().getName();
         }
       }, true);
+
+      if (pattern.getValueAsStringIsTruncated()) {
+        addFullStringValueEvaluator(node, pattern);
+      }
+
       return true;
     }
     return false;
@@ -123,6 +240,11 @@ public class DartVmServiceValue extends XNamedValue {
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
     final Icon icon = myIsException ? AllIcons.Debugger.Db_exception_breakpoint : AllIcons.Debugger.Value;
+
+    if (myInstanceRef.getJson().get("id") == null) {
+      int i = 0;
+    }
+
     myDebugProcess.getVmServiceWrapper()
       .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toString()", new VmServiceConsumers.EvaluateConsumerWrapper() {
         @Override
@@ -162,8 +284,9 @@ public class DartVmServiceValue extends XNamedValue {
     else {
       myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
         @Override
-        public void received(Obj obj) {
-          addFields(node, ((Instance)obj).getFields());
+        public void received(Obj instance) {
+          addFields(myDebugProcess, node, myIsolateId, ((Instance)instance).getFields());
+          node.addChildren(XValueChildrenList.EMPTY, true);
         }
 
         @Override
@@ -185,12 +308,12 @@ public class DartVmServiceValue extends XNamedValue {
 
     myDebugProcess.getVmServiceWrapper().getCollectionObject(myIsolateId, myInstanceRef.getId(), offset, count, new GetObjectConsumer() {
       @Override
-      public void received(Obj obj) {
+      public void received(Obj instance) {
         if (isListKind(myInstanceRef.getKind())) {
-          addListChildren(node, ((Instance)obj).getElements());
+          addListChildren(node, ((Instance)instance).getElements());
         }
         else if (myInstanceRef.getKind() == InstanceKind.Map) {
-          addMapChildren(node, ((Instance)obj).getAssociations());
+          addMapChildren(node, ((Instance)instance).getAssociations());
         }
         else {
           assert false : myInstanceRef.getKind();
@@ -219,7 +342,7 @@ public class DartVmServiceValue extends XNamedValue {
     final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
     int index = myCollectionChildrenAlreadyShown.get();
     for (InstanceRef listElement : listElements) {
-      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement));
+      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, false));
     }
     node.addChildren(childrenList, true);
   }
@@ -240,9 +363,10 @@ public class DartVmServiceValue extends XNamedValue {
 
         @Override
         public void computeChildren(@NotNull XCompositeNode node) {
-          node.addChildren(XValueChildrenList.singleton(new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef)), false);
-          node.addChildren(XValueChildrenList.singleton(new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef)),
-                           true);
+          final DartVmServiceValue key = new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef, null, false);
+          final DartVmServiceValue value = new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef, null, false);
+          node.addChildren(XValueChildrenList.singleton(key), false);
+          node.addChildren(XValueChildrenList.singleton(value), true);
         }
       });
     }
@@ -250,15 +374,18 @@ public class DartVmServiceValue extends XNamedValue {
     node.addChildren(childrenList, true);
   }
 
-  private void addFields(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundField> fields) {
+  static void addFields(@NotNull final DartVmServiceDebugProcess debugProcess,
+                        @NotNull final XCompositeNode node,
+                        @NotNull String isolateId,
+                        @NotNull final ElementList<BoundField> fields) {
     final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
     for (BoundField field : fields) {
       final InstanceRef value = field.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value));
+        childrenList.add(new DartVmServiceValue(debugProcess, isolateId, field.getDecl().getName(), value, field.getDecl(), false));
       }
     }
-    node.addChildren(childrenList, true);
+    node.addChildren(childrenList, false);
   }
 
   @NotNull

@@ -52,6 +52,10 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom13.html", "custom13.after.html", "angular13.js", "custom.js");
   }
 
+  public void testCustomTagsCompletion15() {
+    myFixture.testCompletion("custom13.html", "custom13.after.html", "angular13.js", "custom15.js");
+  }
+
   public void testCustomTagsCompletion20TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
       @Override
@@ -103,6 +107,17 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("'myCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
+  }
+
+  public void testCustomTagsResolve15() {
+    myFixture.configureByFiles("custom13.after.html", "angular.js", "custom15.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("new-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom15.js", resolve.getContainingFile().getName());
+    assertEquals("'newCustomer'", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testCustomTagsResolve20TypeScriptComponent() throws Exception {

@@ -1357,14 +1357,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     myAfterCommitRunnable = new Runnable() {
       @Override
       public void run() {
-        AccessToken l = WriteAction.start();
-        try {
-          replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
-          ModuleRootModificationUtil.addDependency(myModule, dependentModule);
-        }
-        finally {
-          l.finish();
-        }
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
+          public void run() {
+            replaceText(fileRelPath, "${SOME_ABSOLUTE_PATH}", absPath);
+            ModuleRootModificationUtil.addDependency(myModule, dependentModule);
+          }
+        });
       }
     };
 
@@ -1572,15 +1571,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + testName + ".as");
     final File toDirIO = createTempDirectory();
     final VirtualFile toDir = getVirtualFile(toDirIO);
-    VirtualFile copyRef;
-    final AccessToken accessToken = WriteAction.start();
+    VirtualFile copyRef =
+    copy(file, toDir, file.getName());
 
-    try {
-      copyRef = file.copy(this, toDir, file.getName());
-    }
-    finally {
-      accessToken.finish();
-    }
     setActiveEditor(createEditor(copyRef));
     doDoTest(true, false, true);
   }

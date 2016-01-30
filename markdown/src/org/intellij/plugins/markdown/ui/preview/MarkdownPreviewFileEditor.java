@@ -104,7 +104,12 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   }
 
   public void scrollToSrcOffset(final int offset) {
-
+    // Do not scroll if html update request is online
+    // This will restrain preview from glitches on editing
+    if (!myPooledAlarm.isEmpty()) {
+      return;
+    }
+    
     synchronized (REQUESTS_LOCK) {
       if (myLastScrollRequest != null) {
         mySwingAlarm.cancelRequest(myLastScrollRequest);
@@ -231,8 +236,11 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     return myPanel;
   }
 
+  /**
+   * Is always run from pooled thread 
+   */
   private void updateHtml(final boolean preserveScrollOffset) {
-    if (!myFile.isValid() || myDocument == null) {
+    if (!myFile.isValid() || myDocument == null || Disposer.isDisposed(this)) {
       return;
     }
 
@@ -245,6 +253,11 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
                                           true)
       .generateHtml();
 
+    // EA-75860: The lines to the top may be processed slowly; Since we're in pooled thread, we can be disposed already.
+    if (!myFile.isValid() || Disposer.isDisposed(this)) {
+      return;
+    }
+    
     synchronized (REQUESTS_LOCK) {
       if (myLastHtmlOrRefreshRequest != null) {
         mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);

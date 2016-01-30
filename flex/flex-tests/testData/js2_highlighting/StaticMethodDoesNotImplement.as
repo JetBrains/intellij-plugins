@@ -1,4 +1,4 @@
-interface <lineMarker descr="Has implementations"></lineMarker><info>Int</info> {
+interface <lineMarker descr="Has implementations"><info>Int</info></lineMarker> {
     function <info descr="instance method">foo</info>():void;
 }
 class <error>Impl</error> implements <info>Int</info> {

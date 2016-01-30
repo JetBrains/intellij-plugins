@@ -1,0 +1,10 @@
+class I {
+  bool operator ==(other) => false;
+}
+
+class Foo extends I {
+  @override
+  bool operator ==(other) {
+    <caret>
+  }
+}

@@ -442,7 +442,7 @@ public class CodeContext {
 
   public static boolean hasDefaultConstructor(final @NotNull JSClass jsClass) {
     final JSFunction constructor = jsClass.getConstructor();
-    final JSParameter[] parameters = constructor == null ? null : constructor.getParameters();
+    final JSParameter[] parameters = constructor == null ? null : constructor.getParameterVariables();
     return parameters == null || parameters.length == 0 || parameters[0].isOptional() || parameters[0].isRest();
   }
 

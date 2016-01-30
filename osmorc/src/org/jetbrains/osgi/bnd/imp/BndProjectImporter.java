@@ -19,6 +19,8 @@ import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.header.Attrs;
+import aQute.bnd.service.Refreshable;
+import aQute.bnd.service.RepositoryPlugin;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.facet.impl.FacetUtil;
@@ -90,6 +92,19 @@ public class BndProjectImporter {
   private static final String SRC_ROOT = "OSGI-OPT/src";
   private static final String JDK_DEPENDENCY = "ee.j2se";
 
+  private static final Comparator<OrderEntry> ORDER_ENTRY_COMPARATOR = new Comparator<OrderEntry>() {
+    @Override
+    public int compare(OrderEntry o1, OrderEntry o2) {
+      return weight(o1) - weight(o2);
+    }
+
+    private int weight(OrderEntry e) {
+      return e instanceof JdkOrderEntry ? 2 :
+             e instanceof ModuleSourceOrderEntry ? 0 :
+             1;
+    }
+  };
+
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
   private final Collection<Project> myProjects;
@@ -107,6 +122,7 @@ public class BndProjectImporter {
   @NotNull
   public Module createRootModule(@NotNull ModifiableModuleModel model) {
     String rootDir = myProject.getBasePath();
+    assert rootDir != null : myProject;
     String imlPath = rootDir + File.separator + myProject.getName() + ModuleFileType.DOT_DEFAULT_EXTENSION;
     Module module = model.newModule(imlPath, StdModuleTypes.JAVA.getId());
     ModuleRootModificationUtil.addContentRoot(module, rootDir);
@@ -130,7 +146,7 @@ public class BndProjectImporter {
     javacOptions.ADDITIONAL_OPTIONS_STRING = myWorkspace.getProperty("java.options", "");
   }
 
-  public void resolve() {
+  public void resolve(final boolean refresh) {
     if (!myUnitTestMode) {
       new Task.Backgroundable(myProject, message("bnd.import.resolve.task"), true) {
         @Override
@@ -140,6 +156,9 @@ public class BndProjectImporter {
               @Override
               public void run() {
                 createProjectStructure();
+                if (refresh) {
+                  VirtualFileManager.getInstance().asyncRefresh(null);
+                }
               }
             }, ModalityState.NON_MODAL);
           }
@@ -341,12 +360,7 @@ public class BndProjectImporter {
 
       OrderEntry[] entries = rootModel.getOrderEntries();
       if (entries.length > 2) {
-        Arrays.sort(entries, new Comparator<OrderEntry>() {
-          @Override
-          public int compare(OrderEntry o1, OrderEntry o2) {
-            return weight(o1) - weight(o2);
-          }
-        });
+        Arrays.sort(entries, ORDER_ENTRY_COMPARATOR);
         rootModel.rearrangeOrderEntries(entries);
       }
     }
@@ -432,22 +446,28 @@ public class BndProjectImporter {
         entry = rootModel.addModuleOrderEntry(module);
         break;
       }
+
       case REPO: {
         String name = BND_LIB_PREFIX + bsn + ":" + version;
         Library library = libraryModel.getLibraryByName(name);
         if (library == null) {
           library = libraryModel.createLibrary(name);
-          Library.ModifiableModel model = library.getModifiableModel();
-          model.addRoot(url(file), OrderRootType.CLASSES);
-          String srcRoot = mySourcesMap.get(path);
-          if (srcRoot != null) {
-            model.addRoot(url(file) + srcRoot, OrderRootType.SOURCES);
-          }
-          model.commit();
         }
+
+        Library.ModifiableModel model = library.getModifiableModel();
+        for (String url : model.getUrls(OrderRootType.CLASSES)) model.removeRoot(url, OrderRootType.CLASSES);
+        for (String url : model.getUrls(OrderRootType.SOURCES)) model.removeRoot(url, OrderRootType.SOURCES);
+        model.addRoot(url(file), OrderRootType.CLASSES);
+        String srcRoot = mySourcesMap.get(path);
+        if (srcRoot != null) {
+          model.addRoot(url(file) + srcRoot, OrderRootType.SOURCES);
+        }
+        model.commit();
+
         entry = rootModel.addLibraryEntry(library);
         break;
       }
+
       case EXTERNAL: {
         Library library = rootModel.getModuleLibraryTable().createLibrary(file.getName());
         Library.ModifiableModel model = library.getModifiableModel();
@@ -461,6 +481,7 @@ public class BndProjectImporter {
         assert entry != null : library;
         break;
       }
+
       default:
         throw new IllegalArgumentException("Unknown dependency '" + dependency + "' of type " + dependency.getType());
     }
@@ -506,12 +527,6 @@ public class BndProjectImporter {
     return VfsUtil.getUrlForLibraryRoot(file);
   }
 
-  private static int weight(OrderEntry e) {
-    return e instanceof JdkOrderEntry ? 2 :
-           e instanceof ModuleSourceOrderEntry ? 0 :
-           1;
-  }
-
   @NotNull
   public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) throws Exception {
     return ContainerUtil.filter(workspace.getAllProjects(), Condition.NOT_NULL);
@@ -550,6 +565,8 @@ public class BndProjectImporter {
       workspace.clear();
       workspace.forceRefresh();
 
+      refreshRepositories(workspace);
+
       Collection<Project> projects = getWorkspaceProjects(workspace);
       for (Project p : projects) {
         p.clear();
@@ -558,7 +575,7 @@ public class BndProjectImporter {
 
       BndProjectImporter importer = new BndProjectImporter(project, workspace, projects);
       importer.setupProject();
-      importer.resolve();
+      importer.resolve(true);
     }
     catch (Exception e) {
       LOG.error("ws=" + workspace.getBase(), e);
@@ -570,6 +587,8 @@ public class BndProjectImporter {
     assert workspace != null : project;
 
     try {
+      refreshRepositories(workspace);
+
       Collection<Project> projects = ContainerUtil.newArrayListWithCapacity(projectDirs.size());
       for (String dir : projectDirs) {
         Project p = workspace.getProject(PathUtil.getFileName(dir));
@@ -580,10 +599,19 @@ public class BndProjectImporter {
         }
       }
 
-      new BndProjectImporter(project, workspace, projects).resolve();
+      new BndProjectImporter(project, workspace, projects).resolve(true);
     }
     catch (Exception e) {
       LOG.error("ws=" + workspace.getBase() + " pr=" + projectDirs, e);
+    }
+  }
+
+  private static void refreshRepositories(Workspace workspace) throws Exception {
+    List<RepositoryPlugin> plugins = workspace.getPlugins(RepositoryPlugin.class);
+    for (RepositoryPlugin plugin : plugins) {
+      if (plugin instanceof Refreshable) {
+        ((Refreshable)plugin).refresh();
+      }
     }
   }
 }

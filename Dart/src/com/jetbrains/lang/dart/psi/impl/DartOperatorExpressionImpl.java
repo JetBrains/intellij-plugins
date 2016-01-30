@@ -87,7 +87,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
       return DartClassResolveResult.EMPTY;
     }
     // ignore right class. it's a warning.
-    final DartOperator operator = dartClass.findOperator(getOperatorSign(), null);
+    final DartMethodDeclaration operator = dartClass.findOperator(getOperatorSign(), null);
     return DartResolveUtil.getDartClassResolveResult(operator, leftClassResolveResult.getSpecialization());
   }
 

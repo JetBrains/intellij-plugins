@@ -1,8 +1,10 @@
 @Directive({
-    selector: 'my-customer',
+    selector: '[my-customer]',
     properties: {
         'id':'dependency'
-    }
+    },
+    templateUrl: '',
+    styleUrls: [''],
 })
 class Dependency {
     id:string;

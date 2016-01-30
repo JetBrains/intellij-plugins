@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
-import com.intellij.lang.javascript.validation.JSUnusedImportsHelper;
+import com.intellij.lang.javascript.validation.ActionScriptUnusedImportsHelper;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -44,7 +44,7 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
                            ? InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, templateRange.getStartOffset())
                            : hostFile;
       if (file instanceof JSFile && file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
-        final JSUnusedImportsHelper.Results unusedImportsResults = JSUnusedImportsHelper.getUnusedImports(file);
+        final ActionScriptUnusedImportsHelper.Results unusedImportsResults = ActionScriptUnusedImportsHelper.getUnusedImports(file);
         for (final JSReferenceExpression reference : unusedImportsResults.fqnsToReplaceWithShortName) {
           final TextRange range = InjectedLanguageManager.getInstance(project).injectedToHost(file, reference.getTextRange());
           if (TextRange.create(templateRange).contains(range)) {

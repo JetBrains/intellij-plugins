@@ -187,8 +187,7 @@ JSFile:MiscGotchas.js2
           <empty list>
         PsiElement(JS:FUNCTION_KEYWORD)('function')
         PsiWhiteSpace(' ')
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('XXX')
+        PsiElement(JS:IDENTIFIER)('XXX')
         JSParameterList
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
@@ -318,8 +317,7 @@ JSFile:MiscGotchas.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:IDENTIFIER)('foo')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter

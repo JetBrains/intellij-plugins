@@ -32,7 +32,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public static final DartResolver INSTANCE = new DartResolver();
 
   public static boolean isServerDrivenResolution() {
-    return Registry.is("dart.server.driven.resolution", false);
+    return true; // Registry.is("dart.server.driven.resolution", false);
   }
 
   @Nullable

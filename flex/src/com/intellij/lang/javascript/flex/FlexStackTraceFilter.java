@@ -85,9 +85,7 @@ public class FlexStackTraceFilter implements Filter {
     if (slashOrParenIndex > 0) {
       String somethingLikeFqn = fqnInfo.substring(0, slashOrParenIndex);  // "org.flexunit::Assert$"
 
-      if (somethingLikeFqn.endsWith("$")) {
-        somethingLikeFqn = somethingLikeFqn.substring(0, somethingLikeFqn.length() - 1); // "org.flexunit::Assert"
-      }
+      somethingLikeFqn = StringUtil.trimEnd(somethingLikeFqn, "$");
 
       final int dotIndex = fileName.lastIndexOf('.');
       final String dotExtension = dotIndex < 0 ? "" : fileName.substring(dotIndex);

@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
@@ -30,6 +31,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -40,13 +42,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.StringTokenizer;
 
 public class DartCommandLineRunningState extends CommandLineState {
+
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
   private int myDebuggingPort = -1;
   private int myObservatoryPort = -1;
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
-    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters();
+    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().clone();
 
     try {
       myRunnerParameters.check(env.getProject());
@@ -61,12 +64,10 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     try {
-      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFile()));
+      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFileOrDirectory()));
 
       // unit tests can be run as normal Dart apps, so add DartUnitConsoleFilter as well
-      final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
-                                ? myRunnerParameters.getDartFile().getParent().getPath()
-                                : myRunnerParameters.getWorkingDirectory();
+      final String workingDir = myRunnerParameters.computeProcessWorkingDirectory();
       builder.addFilter(new DartRelativePathsConsoleFilter(env.getProject(), workingDir));
       builder.addFilter(new UrlFilter());
     }
@@ -84,12 +85,13 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     newActions[newActions.length - 2] = new Separator();
 
-    newActions[newActions.length - 1] = new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        return !processHandler.isProcessTerminated();
-      }
-    });
+    newActions[newActions.length - 1] =
+      new OpenDartObservatoryUrlAction("http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort, new Computable<Boolean>() {
+        @Override
+        public Boolean compute() {
+          return !processHandler.isProcessTerminated();
+        }
+      });
 
     return newActions;
   }
@@ -103,6 +105,19 @@ public class DartCommandLineRunningState extends CommandLineState {
   protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
+
+    // Commented out code is a workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
+    // The problem is not actula at the moment because Observatory is not turned on for tests
+    //final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
+    //  @Override
+    //  public void coloredTextAvailable(String text, Key attributes) {
+    //    if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
+    //      text += "\n";
+    //    }
+    //    super.coloredTextAvailable(text, attributes);
+    //  }
+    //};
+
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
     return processHandler;
   }
@@ -115,19 +130,16 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final String dartExePath = DartSdkUtil.getDartExePath(sdk);
 
-    final VirtualFile dartFile;
+    final String workingDir;
     try {
-      dartFile = myRunnerParameters.getDartFile();
+      workingDir = myRunnerParameters.computeProcessWorkingDirectory();
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e); // can't happen because already checked
     }
 
-    final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
-                              ? dartFile.getParent().getPath()
-                              : myRunnerParameters.getWorkingDirectory();
-
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
+    commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
@@ -142,6 +154,7 @@ public class DartCommandLineRunningState extends CommandLineState {
                                @NotNull final GeneralCommandLine commandLine,
                                @NotNull final DartCommandLineRunnerParameters runnerParameters,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
+    // TODO Clean up dialog box and trim unused VM options here.
     commandLine.addParameter("--ignore-unrecognized-flags");
 
     int customObservatoryPort = -1;
@@ -155,10 +168,10 @@ public class DartCommandLineRunningState extends CommandLineState {
 
         try {
           if (vmOption.startsWith("--enable-vm-service:")) {
-            customObservatoryPort = Integer.parseInt(vmOption.substring("--enable-vm-service:".length()));
+            customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--enable-vm-service:".length()));
           }
           if (vmOption.startsWith("--observe:")) {
-            customObservatoryPort = Integer.parseInt(vmOption.substring("--observe:".length()));
+            customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--observe:".length()));
           }
         }
         catch (NumberFormatException ignore) {/**/}
@@ -171,7 +184,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final VirtualFile dartFile;
     try {
-      dartFile = runnerParameters.getDartFile();
+      dartFile = runnerParameters.getDartFileOrDirectory();
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e);
@@ -197,7 +210,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     if (customObservatoryPort > 0) {
       myObservatoryPort = customObservatoryPort;
     }
-    else {
+    else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
       myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
       commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
     }
@@ -213,6 +226,12 @@ public class DartCommandLineRunningState extends CommandLineState {
         commandLine.addParameter(argumentsTokenizer.nextToken());
       }
     }
+  }
+
+  private static int parseIntBeforeSlash(@NotNull final String s) throws NumberFormatException {
+    // "5858" or "5858/0.0.0.0"
+    final int index = s.indexOf('/');
+    return Integer.parseInt(index > 0 ? s.substring(0, index) : s);
   }
 
   public int getDebuggingPort() {

@@ -1,8 +1,8 @@
-interface <lineMarker descr="Has implementations"></lineMarker><info>IFoo</info> {
-    function <lineMarker descr="Is implemented"></lineMarker><info descr="instance method">foo</info>();
+interface <lineMarker descr="Has implementations"><info>IFoo</info></lineMarker> {
+    function <lineMarker descr="Is implemented"><info descr="instance method">foo</info></lineMarker>();
 }
 
-class <lineMarker descr="Has subclasses"></lineMarker><info>Base</info> {
+class <lineMarker descr="Has subclasses"><info>Base</info></lineMarker> {
     public function <info descr="instance method">foo</info>() {}
 }
 

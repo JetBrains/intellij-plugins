@@ -1,6 +1,7 @@
 package org.angularjs.index;
 
 import com.intellij.ProjectTopics;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 26;
+  public static final int BASE_VERSION = 29;
   private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
@@ -59,7 +60,7 @@ public class AngularIndexUtil {
                 if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                             AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
                   result.set(element);
-                  if (element.canNavigate()) {
+                  if (DialectDetector.isTypeScript(element)) {
                     return false;
                   }
                 }
@@ -113,7 +114,7 @@ public class AngularIndexUtil {
       public Result<Integer> compute() {
         int version = -1;
         PsiElement resolve;
-        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ng-for]")) != null) {
+        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
           version = 20;
         } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
           version = 13;

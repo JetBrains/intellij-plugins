@@ -1053,6 +1053,11 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "25") >= 0) return "36";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "24") >= 0) return "35";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "23") >= 0) return "34";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "22") >= 0) return "33";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "21") >= 0) return "32";
     if (StringUtil.compareVersionNumbers(targetPlayer, "20") >= 0) return "31";
     if (StringUtil.compareVersionNumbers(targetPlayer, "19") >= 0) return "30";
     if (StringUtil.compareVersionNumbers(targetPlayer, "18") >= 0) return "29";
@@ -1079,6 +1084,11 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "25") >= 0) return "36";
+    if (StringUtil.compareVersionNumbers(airVersion, "24") >= 0) return "35";
+    if (StringUtil.compareVersionNumbers(airVersion, "23") >= 0) return "34";
+    if (StringUtil.compareVersionNumbers(airVersion, "22") >= 0) return "33";
+    if (StringUtil.compareVersionNumbers(airVersion, "21") >= 0) return "32";
     if (StringUtil.compareVersionNumbers(airVersion, "20") >= 0) return "31";
     if (StringUtil.compareVersionNumbers(airVersion, "19") >= 0) return "30";
     if (StringUtil.compareVersionNumbers(airVersion, "18") >= 0) return "29";

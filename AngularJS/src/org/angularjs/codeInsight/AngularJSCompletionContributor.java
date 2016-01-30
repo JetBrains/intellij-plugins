@@ -5,10 +5,10 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResult;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
@@ -29,11 +29,12 @@ import java.util.Collection;
  * @author Dennis.Ushakov
  */
 public class AngularJSCompletionContributor extends CompletionContributor {
-  private static final int NG_VARIABLE_PRIORITY = VariantsProcessor.LookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
+  private static final int NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
 
   @Override
   public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
     if (!getElementLanguage(parameters).is(AngularJSLanguage.INSTANCE)) return;
+    if (AngularMessageFormatCompletion.messageFormatCompletion(parameters, result)) return;
     PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
 
     if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {

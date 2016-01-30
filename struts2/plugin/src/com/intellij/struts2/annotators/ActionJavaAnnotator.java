@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,11 @@ package com.intellij.struts2.annotators;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 /**
  * Annotator for JAVA-Action-classes.
@@ -27,6 +31,22 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class ActionJavaAnnotator extends ActionAnnotatorBase {
+
+  @Override
+  public String getId() {
+    return "ActionJavaAnnotator";
+  }
+
+  @Override
+  public String getName() {
+    return "Action (Java)";
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon() {
+    return Struts2Icons.Action;
+  }
 
   protected PsiClass getActionPsiClass(@NotNull final PsiElement psiElement) {
     if (!(psiElement instanceof PsiClass)) {
@@ -38,7 +58,6 @@ public class ActionJavaAnnotator extends ActionAnnotatorBase {
       return null;
     }
 
-    return (PsiClass) psiElement;
+    return (PsiClass)psiElement;
   }
-
 }

@@ -27,7 +27,7 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
   }
 
   public void testFieldRef() throws Exception {
-    doTestQuickNavigateInfo("A<br/>int <b>x</b>", "class A { int <caret>x; foo() => x; }");
+    doTestQuickNavigateInfo("int <b>x</b>", "class A { int <caret>x; foo() => x; }");
   }
 
   public void _testTypeRef() throws Exception {

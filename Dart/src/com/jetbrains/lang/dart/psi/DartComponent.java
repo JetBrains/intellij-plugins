@@ -10,6 +10,8 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
   @Nullable
   DartComponentName getComponentName();
 
+  boolean isFinal();
+
   boolean isStatic();
 
   boolean isPublic();
@@ -23,6 +25,8 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
   boolean isAbstract();
 
   boolean isUnitMember();
+
+  boolean isOperator();
 
   DartMetadata getMetadataByName(@NotNull final String name);
 

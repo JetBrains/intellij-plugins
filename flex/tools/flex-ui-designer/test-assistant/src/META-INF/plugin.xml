@@ -10,6 +10,5 @@
     <implicitUsageProvider implementation="com.intellij.flex.uiDesigner.testAssistant.MyImplicitUsageProvider"/>
 
     <configurationType implementation="com.intellij.flex.uiDesigner.testAssistant.run.AnyApplication"/>
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 </idea-plugin>

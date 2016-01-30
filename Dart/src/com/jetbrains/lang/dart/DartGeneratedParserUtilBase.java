@@ -59,6 +59,28 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return result;
   }
 
+  public static boolean methodNameWrapper(PsiBuilder builder_, int level_) {
+    if (nextTokenIs(builder_, OPERATOR)) {
+      final PsiBuilder.Marker marker0 = builder_.mark();
+      consumeToken(builder_, OPERATOR);
+      final PsiBuilder.Marker marker1 = builder_.mark();
+      final PsiBuilder.Marker marker2 = builder_.mark();
+      final PsiBuilder.Marker marker3 = builder_.mark();
+      if (DartParser.userDefinableOperator(builder_, level_)) {
+        marker3.collapse(IDENTIFIER);
+        marker2.done(ID);
+        marker1.done(COMPONENT_NAME);
+        marker0.drop();
+        return true;
+      }
+      marker3.rollbackTo();
+      marker2.rollbackTo();
+      marker1.rollbackTo();
+      marker0.rollbackTo();
+    }
+    return DartParser.componentName(builder_, level_);
+  }
+
   public static boolean nonStrictID(PsiBuilder builder_, int level_) {
     final PsiBuilder.Marker marker_ = builder_.mark();
     final boolean result_ = consumeToken(builder_, IDENTIFIER);
@@ -76,7 +98,6 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
       marker_.done(ID);
       return true;
     }
-
     marker_.rollbackTo();
     return false;
   }

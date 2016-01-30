@@ -8,12 +8,12 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -59,11 +59,15 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
     return true;
   }
 
-  public static Collection<String> getNames(Project project) {
-    return FileBasedIndex.getInstance().getAllKeys(DART_SYMBOL_INDEX, project);
+  public static String[] getAllSymbols(@NotNull final GlobalSearchScope scope) {
+    final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>();
+    FileBasedIndex.getInstance().processAllKeys(DART_SYMBOL_INDEX, processor, scope, null);
+    return ArrayUtil.toStringArray(processor.getResults());
   }
 
-  public static List<DartComponentName> getItemsByName(final String name, Project project, GlobalSearchScope searchScope) {
+  public static List<DartComponentName> getItemsByName(@NotNull final String name,
+                                                       @NotNull final Project project,
+                                                       @NotNull final GlobalSearchScope searchScope) {
     final Collection<VirtualFile> files =
       FileBasedIndex.getInstance().getContainingFiles(DART_SYMBOL_INDEX, name, searchScope);
     final Set<DartComponentName> result = new THashSet<DartComponentName>();
@@ -98,27 +102,49 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
   }
 
   private static void processComponents(PsiElement context, PsiElementProcessor<DartComponent> processor) {
+    // top-level components
     final DartComponent[] components = PsiTreeUtil.getChildrenOfType(context, DartComponent.class);
-    if (components == null) {
-      return;
-    }
-    for (DartComponent component : components) {
-      final String componentName = component.getName();
-      if (componentName == null) {
-        continue;
-      }
-      if (component instanceof DartClass) {
-        for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)component)) {
-          if (!processor.execute(subComponent)) {
-            return;
-          }
-        }
-      }
-      else {
-        if (!processor.execute(component)) {
+    if (components != null) {
+      for (DartComponent component : components) {
+        if (!processComponent(processor, component)) {
           return;
         }
       }
     }
+    // top-level variables
+    final DartVarDeclarationList[] varLists = PsiTreeUtil.getChildrenOfType(context, DartVarDeclarationList.class);
+    if (varLists != null) {
+      for (DartVarDeclarationList varList : varLists) {
+        if (!processComponent(processor, varList.getVarAccessDeclaration())) {
+          return;
+        }
+        for (DartVarDeclarationListPart part : varList.getVarDeclarationListPartList()) {
+          if (!processComponent(processor, part)) {
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  private static boolean processComponent(PsiElementProcessor<DartComponent> processor, DartComponent component) {
+    final String componentName = component.getName();
+    if (componentName == null) {
+      return true;
+    }
+    if (!processor.execute(component)) {
+      return false;
+    }
+    if (component instanceof DartClass) {
+      for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)component)) {
+        if (subComponent.isConstructor() && componentName.equals(subComponent.getName())) {
+          continue;
+        }
+        if (!processor.execute(subComponent)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }

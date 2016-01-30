@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.uml.actions;
 
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.parsing.JavaScriptParserBase;
@@ -49,7 +50,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
     myTargetClass = clazz;
 
     setTitle(JSBundle.message("create.field.dialog.title"));
-    myVisibilityPanel.configureOptions(false, false, true, true);
+    myVisibilityPanel.configureOptions(false, false, DialectDetector.dialectOfElement(clazz));
     myVisibilityPanel.setVisibility(JSAttributeList.AccessType.PRIVATE.name());
     myTypeLabel.setLabelFor(myTypeField.getChildComponent());
     myNameLabel.setLabelFor(myNameField);

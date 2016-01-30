@@ -23,19 +23,39 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import org.intellij.plugins.markdown.lang.MarkdownElementTypes;
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownHighlightingAnnotator implements Annotator, DumbAware {
 
-    private static final SyntaxHighlighter SYNTAX_HIGHLIGHTER = new MarkdownSyntaxHighlighter();
+  private static final SyntaxHighlighter SYNTAX_HIGHLIGHTER = new MarkdownSyntaxHighlighter();
 
-    @Override public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        final IElementType type = element.getNode().getElementType();
-        final TextAttributesKey[] tokenHighlights = SYNTAX_HIGHLIGHTER.getTokenHighlights(type);
+  @Override
+  public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    final IElementType type = element.getNode().getElementType();
 
-        if (tokenHighlights.length > 0) {
-            final Annotation annotation = holder.createInfoAnnotation(element, null);
-            annotation.setTextAttributes(tokenHighlights[0]);
-        }
+    if (type == MarkdownTokenTypes.EMPH) {
+      final PsiElement parent = element.getParent();
+      if (parent == null) {
+        return;
+      }
+
+      final IElementType parentType = parent.getNode().getElementType();
+      if (parentType == MarkdownElementTypes.EMPH || parentType == MarkdownElementTypes.STRONG) {
+        final Annotation annotation = holder.createInfoAnnotation(element, null);
+        annotation.setTextAttributes(parentType == MarkdownElementTypes.EMPH
+                                     ? MarkdownHighlighterColors.ITALIC_MARKER_ATTR_KEY
+                                     : MarkdownHighlighterColors.BOLD_MARKER_ATTR_KEY);
+      }
+      return;
     }
+
+    final TextAttributesKey[] tokenHighlights = SYNTAX_HIGHLIGHTER.getTokenHighlights(type);
+
+    if (tokenHighlights.length > 0 && !MarkdownHighlighterColors.TEXT_ATTR_KEY.equals(tokenHighlights[0])) {
+      final Annotation annotation = holder.createInfoAnnotation(element, null);
+      annotation.setTextAttributes(tokenHighlights[0]);
+    }
+  }
 }

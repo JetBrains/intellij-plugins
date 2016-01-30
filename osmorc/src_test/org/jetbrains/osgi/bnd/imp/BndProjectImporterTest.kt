@@ -19,6 +19,7 @@ import aQute.bnd.build.Workspace
 import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration
 import com.intellij.ide.actions.ImportModuleAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
@@ -65,22 +66,23 @@ class BndProjectImporterTest : IdeaTestCase() {
   }
 
   fun testRootModule() {
-    val rootModule: Module
 
     val model = ModuleManager.getInstance(myProject).modifiableModel
-    try {
-      rootModule = myImporter.createRootModule(model)
-      model.commit()
+    ApplicationManager.getApplication().runWriteAction {
+      val rootModule: Module
+      try {
+        rootModule = myImporter.createRootModule(model)
+        model.commit()
+      }
+      catch (e: Throwable) {
+        model.dispose()
+        throw e
+      }
+      val rootManager = ModuleRootManager.getInstance(rootModule)
+      assertEquals(1, rootManager.contentRootUrls.size)
+      assertEquals(0, rootManager.sourceRootUrls.size)
+      assertNull(OsmorcFacet.getInstance(rootModule))
     }
-    catch (e: Throwable) {
-      model.dispose()
-      throw e
-    }
-
-    val rootManager = ModuleRootManager.getInstance(rootModule)
-    assertEquals(1, rootManager.contentRootUrls.size)
-    assertEquals(0, rootManager.sourceRootUrls.size)
-    assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
   fun testProjectSetup() {
@@ -98,7 +100,7 @@ class BndProjectImporterTest : IdeaTestCase() {
   }
 
   fun testImport() {
-    myImporter.resolve()
+    myImporter.resolve(false)
 
     val modules = ModuleManager.getInstance(myProject).modules
     assertEquals(3, modules.size)

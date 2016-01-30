@@ -418,11 +418,24 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
 
     final ModifiableFlexBuildConfiguration bc = createBuildConfiguration(TargetPlatform.Web, false, OutputType.Application, "11.1");
     VirtualFile f = getVirtualFile(getTestName(false) + "_config.xml");
-    VirtualFile additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
-                                                                    replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion), null),
-                                                                    myModule.getModuleFile().getParent());
-    bc.setOutputFileName("SetInBC.swf");
-    bc.getCompilerOptions().setAdditionalConfigFilePath(additionalConfigFile.getPath());
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        VirtualFile additionalConfigFile = null;
+        try {
+          additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
+                                                              replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion),
+                                                                            null),
+                                                              myModule.getModuleFile().getParent());
+        }
+        catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+        bc.setOutputFileName("SetInBC.swf");
+        bc.getCompilerOptions().setAdditionalConfigFilePath(additionalConfigFile.getPath());
+      }
+    });
+
     bc.getCompilerOptions().setAllOptions(createMap("compiler.locale", "en_US\nja_JP",
                                                     "compiler.services", "services"));
     doTest(sdkVersion, Factory.getTemporaryCopyForCompilation(bc));
@@ -486,7 +499,8 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     map.put("$FLEX_UNIT_TEMP_FOLDER$", FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(myProject));
     map.put("$FLEX_DIR$", PathUtil.getParentPath(PathUtil.getParentPath(FlexTestUtils.getTestDataPath(""))));
 
-    VfsRootAccess.allowRootAccess(FileUtil.toSystemIndependentName(FlexCommonUtils.getPathToBundledJar("")));
+    String path = FileUtil.toSystemIndependentName(FlexCommonUtils.getPathToBundledJar(""));
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(), path);
     doTest("4.5.1.21328", tempBc, Factory.createCompilerOptions(), Factory.createCompilerOptions(), "_2", map);
   }
 

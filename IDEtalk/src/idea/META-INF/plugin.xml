@@ -28,9 +28,6 @@
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.platform</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-  </extensions>
   <extensions defaultExtensionNs="org.jetbrains">
     <customPortServerManager implementation="jetbrains.communicator.p2p.P2PTransport$P2PCustomPortServerManager"/>
   </extensions>

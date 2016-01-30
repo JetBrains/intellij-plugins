@@ -3,10 +3,13 @@ package org.angularjs;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.angularjs.codeInsight.*;
+import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
+import org.angularjs.inspections.EmptyEventHandlerInspectionTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
+import org.angularjs.refactoring.DirectiveRenameTest;
 
 public class AngularJSTestSuite {
 
@@ -27,6 +30,9 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(FindUsagesTest.class);
     testSuite.addTestSuite(AngularDirectiveCommentParsingTest.class);
     testSuite.addTestSuite(AngularJSInjectorMatchingEndFinderTest.class);
+    testSuite.addTestSuite(AngularMessageFormatAnnotatorTest.class);
+    testSuite.addTestSuite(EmptyEventHandlerInspectionTest.class);
+    testSuite.addTestSuite(DirectiveRenameTest.class);
 
     return testSuite;
   }

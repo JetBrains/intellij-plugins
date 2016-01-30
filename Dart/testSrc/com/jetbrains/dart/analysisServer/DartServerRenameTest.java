@@ -100,7 +100,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
       public void run() {
         final Set<String> excludedIds = refactoring.getPotentialEdits();
         try {
-          AssistUtils.applySourceChange(myFixture.getProject(), change, excludedIds);
+          AssistUtils.applySourceChange(myFixture.getProject(), change, false, excludedIds);
         }
         catch (DartSourceEditException e) {
           fail(e.getMessage());

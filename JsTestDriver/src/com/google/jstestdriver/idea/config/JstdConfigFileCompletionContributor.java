@@ -28,6 +28,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.*;
 
 import java.io.File;
@@ -72,16 +73,18 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {
     boolean acceptPathSeparator = false;
-    {
-      final int offset = context.getEditor().getCaretModel().getOffset();
-      PsiElement element = context.getFile().findElementAt(offset);
-      if (element != null) {
-        int prefixLength = offset - element.getTextRange().getStartOffset();
-        BipartiteString caretBipartiteElementText = splitByPrefixLength(element.getText(), prefixLength);
-        Character separator = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
-        acceptPathSeparator = separator != null;
+    final int offset = context.getEditor().getCaretModel().getOffset();
+    final PsiElement element = context.getFile().findElementAt(offset);
+    if (element != null) {
+      if (element.getNode().getElementType() == YAMLTokenTypes.SCALAR_KEY) {
+        return;
       }
+      int prefixLength = offset - element.getTextRange().getStartOffset();
+      BipartiteString caretBipartiteElementText = splitByPrefixLength(element.getText(), prefixLength);
+      Character separator = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
+      acceptPathSeparator = separator != null;
     }
+    
     final OffsetMap offsetMap = context.getOffsetMap();
     int idEnd = offsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET);
     final String text = context.getFile().getText();

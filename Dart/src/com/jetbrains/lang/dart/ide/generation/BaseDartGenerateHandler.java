@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -46,8 +44,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
 
   public void invoke(Project project, Editor editor, PsiFile file, int offset) {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
-    final DartClass dartClass =
-      PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
+    final DartClass dartClass = PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
     if (dartClass == null) return;
 
     final List<DartComponent> candidates = new ArrayList<DartComponent>();
@@ -63,8 +60,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
       });
     }
     else if (!candidates.isEmpty()) {
-      final MemberChooser<DartNamedElementNode> chooser =
-        createMemberChooserDialog(project, dartClass, candidates, getTitle());
+      final MemberChooser<DartNamedElementNode> chooser = createMemberChooserDialog(project, dartClass, candidates, getTitle());
       chooser.show();
       selectedElements = chooser.getSelectedElements();
     }
@@ -166,40 +162,36 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
                                                                           final DartClass dartClass,
                                                                           final Collection<DartComponent> candidates,
                                                                           String title) {
-    final MemberChooser<DartNamedElementNode> chooser = new MemberChooser<DartNamedElementNode>(
-      ContainerUtil.map(candidates, new Function<DartComponent, DartNamedElementNode>() {
+    final MemberChooser<DartNamedElementNode> chooser =
+      new MemberChooser<DartNamedElementNode>(ContainerUtil.map(candidates, new Function<DartComponent, DartNamedElementNode>() {
         @Override
         public DartNamedElementNode fun(DartComponent namedComponent) {
           return new DartNamedElementNode(namedComponent);
         }
-      }).toArray(new DartNamedElementNode[candidates.size()]), false, true, project, false) {
+      }).toArray(new DartNamedElementNode[candidates.size()]), doAllowEmptySelection(), true, project, false) {
 
-      protected void init() {
-        super.init();
-        myTree.addTreeSelectionListener(new TreeSelectionListener() {
-          public void valueChanged(final TreeSelectionEvent e) {
-            setOKActionEnabled(myTree.getSelectionCount() > 0);
+        protected JComponent createCenterPanel() {
+          final JComponent superComponent = super.createCenterPanel();
+          final JComponent optionsComponent = getOptionsComponent(dartClass, candidates);
+          if (optionsComponent == null) {
+            return superComponent;
           }
-        });
-      }
-
-      protected JComponent createCenterPanel() {
-        final JComponent superComponent = super.createCenterPanel();
-        final JComponent optionsComponent = getOptionsComponent(dartClass, candidates);
-        if (optionsComponent == null) {
-          return superComponent;
+          else {
+            final JPanel panel = new JPanel(new BorderLayout());
+            panel.add(superComponent, BorderLayout.CENTER);
+            panel.add(optionsComponent, BorderLayout.SOUTH);
+            return panel;
+          }
         }
-        else {
-          final JPanel panel = new JPanel(new BorderLayout());
-          panel.add(superComponent, BorderLayout.CENTER);
-          panel.add(optionsComponent, BorderLayout.SOUTH);
-          return panel;
-        }
-      }
-    };
+      };
 
     chooser.setTitle(title);
     chooser.setCopyJavadocVisible(false);
     return chooser;
   }
+
+  protected boolean doAllowEmptySelection() {
+    return false;
+  }
+
 }

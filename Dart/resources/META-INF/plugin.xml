@@ -30,11 +30,9 @@
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
     <psi.treeChangePreprocessor implementation="com.jetbrains.lang.dart.DartPsiTreeChangePreprocessor"/>
     <lang.syntaxHighlighterFactory language="Dart" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterFactory"/>
-    <problemFileHighlightFilter implementation="com.jetbrains.lang.dart.highlight.DartProblemFileHighlightFilter"/>
 
     <lang.braceMatcher language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartBraceMatcher"/>
     <typedHandler implementation="com.jetbrains.lang.dart.ide.editor.DartTypeHandler" id="Dart"/>
@@ -75,6 +73,8 @@
                                implementationClass="com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler"/>
 
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.application.options.DartGenerationSettingsProvider"/>
+
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.dart.ide.formatter.settings.DartLanguageCodeStyleSettingsProvider"/>
     <lang.importOptimizer language="Dart" implementationClass="com.jetbrains.lang.dart.ide.imports.DartImportOptimizer"/>
 
@@ -82,6 +82,7 @@
     <renameHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartServerRenameHandler"/>
     <inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>
 
+    <codeInsight.lineMarkerProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodLineMarkerProvider"/>
     <!--<codeInsight.lineMarkerProvider language="Dart"-->
                                     <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"
@@ -119,13 +120,16 @@
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
     <library.type implementation="com.jetbrains.lang.dart.sdk.DartPackagesLibraryType"/>
-    <treeStructureProvider implementation="com.jetbrains.lang.dart.DartTreeStructureProvider"/>
-    <iconProvider implementation="com.jetbrains.lang.dart.DartIconProvider" order="first"/>
+
+    <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
+    <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first"/>
+    <projectViewNodeDecorator implementation="com.jetbrains.lang.dart.projectView.DartNodeDecorator"/>
 
     <internalFileTemplate name="Dart File"/>
 
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartClassNameMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodNameMacro"/>
+    <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartClassNameMethodNameMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodParametersMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodReturnTypeMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartListVariableMacro"/>
@@ -133,7 +137,8 @@
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartSuggestIndexNameMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartSuggestVariableNameMacro"/>
 
-    <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType"/>
+    <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType$Generic"/>
+    <liveTemplateContext implementation="com.jetbrains.lang.dart.ide.template.DartTemplateContextType$Statement"/>
     <defaultLiveTemplatesProvider implementation="com.jetbrains.lang.dart.ide.template.DartLiveTemplatesProvider"/>
 
     <lang.surroundDescriptor language="Dart"
@@ -147,19 +152,10 @@
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <weigher key="completion" id="DartServerCompletionWeigher" order="after prefix"
              implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionWeigher"/>
-    <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartKeywordCompletionContributor"/>-->
-    <!--<completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>-->
-    <!--<completion.contributor language="Dart"-->
-                            <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>-->
-    <!--<completion.contributor language="Dart"-->
-                            <!--implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>-->
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
-    <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
-    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
-    <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartServerErrorsAnnotator"/>
-
+    <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
     <lang.findUsagesProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.findUsages.DartFindUsagesProvider"/>
@@ -198,11 +194,14 @@
     <!--<configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>-->
     <!--<runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer"/>-->
 
-    <!--<configurationType implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType"/>-->
-    <!--<runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>-->
+    <configurationType implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
+    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="outdated.dependencies.inspection.name"
+                     groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
@@ -236,9 +235,13 @@
             text="Constructor">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
     </action>
+    <action id="Generate.Named.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateNamedConstructorAction"
+            text="Named Constructor">
+      <add-to-group anchor="after" relative-to-action="Generate.Constructor.Dart"  group-id="GenerateGroup"/>
+    </action>
     <action id="Generate.GetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterAction"
             text="Getter">
-      <add-to-group anchor="after" relative-to-action="Generate.Constructor.Dart" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.Named.Constructor.Dart" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.SetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateSetterAction"
             text="Setter">
@@ -247,6 +250,10 @@
     <action id="Generate.GetSetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterSetterAction"
             text="Getter and Setter">
       <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Dart" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.ToString.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateToStringAction"
+            text="toString()">
+      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
 
     <group>

@@ -35,6 +35,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.Element;
+import org.dartlang.analysis.server.protocol.ElementKind;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
@@ -99,16 +100,17 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
   }
 
   private static void addSuperComponent(@NotNull Project project, List<DartComponent> supers, boolean isInClass, TypeHierarchyItem item) {
-    final Element classElement = item.getClassElement();
-    // ignore Object
-    if (classElement != null && "Object".equals(classElement.getName())) {
-      return;
-    }
     // prepare Element for the current item
     final Element itemElement = isInClass ? item.getClassElement() : item.getMemberElement();
     if (itemElement == null) {
       return;
     }
+
+    // ignore Object
+    if (ElementKind.CLASS.equals(itemElement.getKind()) && "Object".equals(itemElement.getName())) {
+      return;
+    }
+
     // find the DartComponent
     final Location itemLocation = itemElement.getLocation();
     final DartComponent itemComponent = DartServerOverrideMarkerProvider.findDartComponent(project, itemLocation);

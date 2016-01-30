@@ -150,8 +150,7 @@ JSFile:E4X.js2
       <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('metricToImperial')
+    PsiElement(JS:IDENTIFIER)('metricToImperial')
     JSParameterList
       PsiElement(JS:LPAR)('(')
       JSParameter

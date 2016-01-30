@@ -1,9 +1,9 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -45,7 +45,7 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
       int i = 0;
       for (String controller : controllers) {
         final LookupElement item = JSLookupUtilImpl.createPrioritizedLookupItem(null, controller,
-                                                                                VariantsProcessor.LookupPriority.LOCAL_SCOPE_MAX_PRIORITY,
+                                                                                JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY,
                                                                                 false, false);
         result[i] = item;
         i++;

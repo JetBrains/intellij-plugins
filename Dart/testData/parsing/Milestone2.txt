@@ -898,11 +898,11 @@ Dart File
     CLASS_BODY
       PsiElement({)('{')
       CLASS_MEMBERS
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(-)('-')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('-')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
@@ -912,30 +912,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(+)('+')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            NORMAL_FORMAL_PARAMETER
-              SIMPLE_FORMAL_PARAMETER
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('arg')
-            PsiElement())(')')
-          FUNCTION_BODY
-            BLOCK
-              PsiElement({)('{')
-              STATEMENTS
-                <empty list>
-              PsiElement(})('}')
-        OPERATOR_DECLARATION
-          PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement([)('[')
-            PsiElement(])(']')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('+')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -950,12 +931,30 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement([)('[')
-            PsiElement(])(']')
-            PsiElement(=)('=')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('[]')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('arg')
+            PsiElement())(')')
+          FUNCTION_BODY
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          PsiElement(operator)('operator')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('[]=')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1432,11 +1431,11 @@ Dart File
     CLASS_BODY
       PsiElement({)('{')
       CLASS_MEMBERS
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            RELATIONAL_OPERATOR
-              PsiElement(<)('<')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('<')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1451,11 +1450,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            RELATIONAL_OPERATOR
-              PsiElement(>)('>')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('>')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1470,11 +1469,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            RELATIONAL_OPERATOR
-              PsiElement(<=)('<=')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('<=')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1489,11 +1488,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            RELATIONAL_OPERATOR
-              PsiElement(>=)('>=')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('>=')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1508,10 +1507,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement(==)('==')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('==')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1526,11 +1526,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(-)('-')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('-')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
@@ -1540,30 +1540,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(-)('-')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            NORMAL_FORMAL_PARAMETER
-              SIMPLE_FORMAL_PARAMETER
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('v')
-            PsiElement())(')')
-          FUNCTION_BODY
-            BLOCK
-              PsiElement({)('{')
-              STATEMENTS
-                <empty list>
-              PsiElement(})('}')
-        OPERATOR_DECLARATION
-          PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            ADDITIVE_OPERATOR
-              PsiElement(+)('+')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('-')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1578,11 +1559,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            MULTIPLICATIVE_OPERATOR
-              PsiElement(/)('/')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('+')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1597,11 +1578,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            MULTIPLICATIVE_OPERATOR
-              PsiElement(~/)('~/')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('/')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1616,11 +1597,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            MULTIPLICATIVE_OPERATOR
-              PsiElement(*)('*')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('~/')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1635,11 +1616,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            MULTIPLICATIVE_OPERATOR
-              PsiElement(%)('%')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('*')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1654,11 +1635,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            BITWISE_OPERATOR
-              PsiElement(|)('|')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('%')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1673,11 +1654,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            BITWISE_OPERATOR
-              PsiElement(^)('^')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('|')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1692,11 +1673,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            BITWISE_OPERATOR
-              PsiElement(&)('&')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('^')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1711,11 +1692,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            SHIFT_OPERATOR
-              PsiElement(<<)('<<')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('&')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1730,11 +1711,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            SHIFT_OPERATOR
-              PsiElement(>>)('>>')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('<<')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1749,11 +1730,30 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement([)('[')
-            PsiElement(])(']')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('>>')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
+            PsiElement())(')')
+          FUNCTION_BODY
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          PsiElement(operator)('operator')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('[]')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1768,12 +1768,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement([)('[')
-            PsiElement(])(']')
-            PsiElement(=)('=')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('[]=')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
@@ -1794,10 +1793,11 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        OPERATOR_DECLARATION
+        METHOD_DECLARATION
           PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
-            PsiElement(~)('~')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('~')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')

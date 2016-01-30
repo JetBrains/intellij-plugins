@@ -73,9 +73,14 @@ public class LocalesDialog extends DialogWrapper {
   private void createUIComponents() {
     myCheckBoxList = new CheckBoxList<String>() {
       @Override
-      protected void adjustRendering(final JCheckBox checkBox, int index, final boolean selected, final boolean hasFocus) {
+      protected JComponent adjustRendering(JComponent rootComponent,
+                                           final JCheckBox checkBox,
+                                           int index,
+                                           final boolean selected,
+                                           final boolean hasFocus) {
         final String locale = checkBox.getText();
         checkBox.setForeground(mySdkLocales.contains(locale) ? UIUtil.getListForeground(selected) : JBColor.RED);
+        return rootComponent;
       }
     };
 

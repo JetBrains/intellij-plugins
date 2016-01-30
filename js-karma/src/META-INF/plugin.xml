@@ -20,7 +20,6 @@
   <depends optional="true" config-file="karma-coverage.xml">com.intellij.modules.coverage</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
     <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>
@@ -33,7 +32,6 @@
                      implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
     />
     <runConfigurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
-    <projectService serviceImplementation="com.intellij.javascript.karma.execution.KarmaPackageDirSetting"/>
     <projectService serviceImplementation="com.intellij.javascript.karma.server.KarmaServerRegistry"/>
   </extensions>
 

@@ -8,7 +8,6 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
@@ -45,9 +44,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
@@ -60,6 +57,7 @@ import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
@@ -88,16 +86,16 @@ public class DartAnalysisServerService {
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-  private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-  private static final long EXECUTION_CREATE_CONTEXT = TimeUnit.SECONDS.toMillis(1);
-  private static final long EXECUTION_MAP_URI = TimeUnit.SECONDS.toMillis(1);
+  private static final long EXECUTION_CREATE_CONTEXT_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long EXECUTION_MAP_URI_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
 
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
@@ -123,6 +121,8 @@ public class DartAnalysisServerService {
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
+  @NotNull private final Set<VirtualFile> myFilesWithErrors = Collections.synchronizedSet(new THashSet<VirtualFile>());
+
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
@@ -131,8 +131,11 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
-      updateProblemsView(FileUtil.toSystemIndependentName(filePath), errors);
+    public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
+      final boolean visible = myVisibleFiles.contains(filePathSD);
+      final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
+      myServerData.computedErrors(filePathSI, errors, visible);
+      onErrorsUpdated(filePathSI, errors);
     }
 
     @Override
@@ -162,7 +165,7 @@ public class DartAnalysisServerService {
       myServerData.onFlushedResults(filePaths);
 
       for (String filePath : filePaths) {
-        updateProblemsView(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
+        onErrorsUpdated(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
       }
     }
 
@@ -472,6 +475,11 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
+  public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
+    return myServerData.getErrors(file);
+  }
+
+  @NotNull
   public List<DartServerData.DartHighlightRegion> getHighlight(@NotNull final VirtualFile file) {
     return myServerData.getHighlight(file);
   }
@@ -496,7 +504,6 @@ public class DartAnalysisServerService {
     return myServerData.getImplementedMembers(file);
   }
 
-  @SuppressWarnings("NestedSynchronizedStatement")
   void updateVisibleFiles() {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
@@ -538,7 +545,9 @@ public class DartAnalysisServerService {
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
     if (file != null && file.isInLocalFileSystem()) {
-      return file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file) || file.getName().equals(".analysis_options");
+      return file.getFileType() == DartFileType.INSTANCE ||
+             HtmlUtil.isHtmlFile(file) ||
+             file.getName().equals(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS);
     }
     return false;
   }
@@ -637,7 +646,7 @@ public class DartAnalysisServerService {
     return true;
   }
 
-  private void updateProblemsView(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+  private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
@@ -648,13 +657,70 @@ public class DartAnalysisServerService {
 
           if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
+
+            updateFilesWithErrorsSet(vFile, errors);
           }
           else {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
+
+            if (vFile != null) {
+              updateFilesWithErrorsSet(vFile, AnalysisError.EMPTY_LIST);
+            }
           }
         }
       }
     });
+  }
+
+  private void updateFilesWithErrorsSet(@NotNull final VirtualFile file, @NotNull final List<AnalysisError> errors) {
+    boolean hasProblems = false;
+    for (AnalysisError error : errors) {
+      if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+        hasProblems = true;
+        break;
+      }
+    }
+
+    if (hasProblems) {
+      myFilesWithErrors.add(file);
+    }
+    else {
+      myFilesWithErrors.remove(file);
+    }
+  }
+
+  private void clearAllErrors(@NotNull final Project project) {
+    DartProblemsView.getInstance(project).clearAll();
+    myFilesWithErrors.clear();
+  }
+
+  @NotNull
+  public List<HoverInformation> analysis_getHover(@NotNull final String _filePath, final int offset) {
+    final String filePath = FileUtil.toSystemDependentName(_filePath);
+    final List<HoverInformation> result = Lists.newArrayList();
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return HoverInformation.EMPTY_LIST;
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.analysis_getHover(filePath, offset, new GetHoverConsumer() {
+      @Override
+      public void computedHovers(HoverInformation[] hovers) {
+        Collections.addAll(result, hovers);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        logError("analysis_getHover()", filePath, error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_HOVER_TIMEOUT);
+    return result;
   }
 
   @Nullable
@@ -711,73 +777,6 @@ public class DartAnalysisServerService {
     if (semaphore.tryUp()) {
       LOG.info("analysis_getNavigation() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
       return null;
-    }
-
-    return resultRef.get();
-  }
-
-  @Nullable
-  public AnalysisError[] analysis_getErrors(@NotNull final DartServerErrorsAnnotator.AnnotatorInfo info) {
-    final String filePath = FileUtil.toSystemDependentName(info.myFilePath);
-
-    final Ref<AnalysisError[]> resultRef = new Ref<AnalysisError[]>();
-    final Semaphore semaphore = new Semaphore();
-
-    try {
-      synchronized (myLock) {
-        if (myServer == null) return null;
-
-        semaphore.down();
-
-        LOG.debug("analysis_getErrors(" + filePath + ")");
-
-        final GetErrorsConsumer consumer = new GetErrorsConsumer() {
-          @Override
-          public void computedErrors(final AnalysisError[] errors) {
-            if (semaphore.tryUp()) {
-              resultRef.set(errors);
-            }
-            else {
-              // semaphore unlocked by timeout, schedule to highlight the file again
-              LOG.debug("analysis_getErrors() took too long for file " + filePath + ", restarting daemon");
-
-              ApplicationManager.getApplication().runReadAction(new Runnable() {
-                @Override
-                public void run() {
-                  final VirtualFile vFile =
-                    info.myProject.isDisposed() ? null : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
-                  final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(info.myProject).findFile(vFile);
-                  if (psiFile != null) {
-                    DaemonCodeAnalyzer.getInstance(info.myProject).restart(psiFile);
-                  }
-                }
-              });
-            }
-          }
-
-          @Override
-          public void onError(final RequestError error) {
-            if (RequestErrorCode.GET_ERRORS_INVALID_FILE.equals(error.getCode())) {
-              LOG.info(getShortErrorMessage("analysis_getErrors()", filePath, error));
-            }
-            else {
-              logError("analysis_getErrors()", filePath, error);
-            }
-
-            semaphore.up();
-          }
-        };
-
-        myServer.analysis_getErrors(filePath, consumer);
-      }
-
-      final long timeout = info.isLongerAnalysisTimeout() || ApplicationManager.getApplication().isUnitTestMode()
-                           ? GET_ERRORS_LONGER_TIMEOUT
-                           : GET_ERRORS_TIMEOUT;
-      semaphore.waitFor(timeout);
-    }
-    finally {
-      semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
     }
 
     return resultRef.get();
@@ -1153,7 +1152,7 @@ public class DartAnalysisServerService {
         public void run() {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             if (!project.isDisposed()) {
-              DartProblemsView.getInstance(project).clearAll();
+              clearAllErrors(project);
             }
           }
         }
@@ -1223,7 +1222,7 @@ public class DartAnalysisServerService {
     }
 
     final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EXECUTION_CREATE_CONTEXT);
+    semaphore.waitFor(EXECUTION_CREATE_CONTEXT_TIMEOUT);
 
     if (semaphore.tryUp()) {
       LOG.info("execution_createContext() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
@@ -1285,7 +1284,7 @@ public class DartAnalysisServerService {
     }
 
     final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(EXECUTION_MAP_URI);
+    semaphore.waitFor(EXECUTION_MAP_URI_TIMEOUT);
 
     if (semaphore.tryUp()) {
       LOG.info("execution_mapUri() took too long for contextID " +
@@ -1445,7 +1444,7 @@ public class DartAnalysisServerService {
         public void run() {
           for (final Project project : projects) {
             if (!project.isDisposed()) {
-              DartProblemsView.getInstance(project).clearAll();
+              clearAllErrors(project);
             }
           }
         }
@@ -1453,9 +1452,31 @@ public class DartAnalysisServerService {
     }
   }
 
-  public void waitWhileServerBusy_TESTS_ONLY() {
+  public void waitForAnalysisToComplete_TESTS_ONLY(@NotNull final VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
-    waitWhileServerBusy();
+
+    synchronized (myLock) {
+      if (myServer == null) return;
+
+      final Semaphore semaphore = new Semaphore();
+      semaphore.down();
+
+      myServer.analysis_getErrors(FileUtil.toSystemDependentName(file.getPath()), new GetErrorsConsumer() {
+        @Override
+        public void computedErrors(AnalysisError[] errors) {
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(RequestError requestError) {
+          semaphore.up();
+          LOG.error(requestError.getMessage());
+        }
+      });
+
+      semaphore.waitFor(ANALYSIS_IN_TESTS_TIMEOUT);
+      assert !semaphore.tryUp() : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
+    }
   }
 
   private void waitWhileServerBusy() {
@@ -1479,6 +1500,10 @@ public class DartAnalysisServerService {
       myServerBusy.set(false);
       myServerBusy.notifyAll();
     }
+  }
+
+  public boolean isFileWithErrors(@NotNull final VirtualFile file) {
+    return myFilesWithErrors.contains(file);
   }
 
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {

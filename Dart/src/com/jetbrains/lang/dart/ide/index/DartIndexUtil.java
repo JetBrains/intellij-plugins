@@ -23,7 +23,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int INDEX_VERSION = 18;
+  public static final int INDEX_VERSION = 19;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -53,6 +53,8 @@ public class DartIndexUtil {
         if (name == null) {
           continue;
         }
+
+        result.addSymbol(name);
 
         PsiElement parent = componentName.getParent();
         final DartComponentType type = DartComponentType.typeOf(parent);

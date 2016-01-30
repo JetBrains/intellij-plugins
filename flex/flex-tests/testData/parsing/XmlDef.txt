@@ -24,8 +24,7 @@ JSFile:XmlDef.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:SET_KEYWORD)('set')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('ignoreComments')
+      PsiElement(JS:IDENTIFIER)('ignoreComments')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         JSParameter
@@ -60,8 +59,7 @@ JSFile:XmlDef.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:GET_KEYWORD)('get')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('ignoreProcessingInstructions')
+      PsiElement(JS:IDENTIFIER)('ignoreProcessingInstructions')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
@@ -77,8 +75,7 @@ JSFile:XmlDef.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:FUNCTION_KEYWORD)('function')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
+      PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
       JSParameterList
         PsiElement(JS:LPAR)('(')
         JSParameter

@@ -162,6 +162,22 @@ public class VmServiceWrapper implements Disposable {
   }
 
   private void setInitialBreakpointsAndResume(@NotNull final String isolateId) {
+    if (myDebugProcess.isRemoteDebug() && myIsolatesInfo.getIsolateInfos().size() == 1) {
+      // need to detect remote project root path before setting breakpoints
+      getIsolate(isolateId, new VmServiceConsumers.GetIsolateConsumerWrapper() {
+        @Override
+        public void received(final Isolate isolate) {
+          myDebugProcess.guessRemoteProjectRoot(isolate.getLibraries());
+          doSetInitialBreakpointsAndResume(isolateId);
+        }
+      });
+    }
+    else {
+      doSetInitialBreakpointsAndResume(isolateId);
+    }
+  }
+
+  private void doSetInitialBreakpointsAndResume(@NotNull final String isolateId) {
     final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints = myBreakpointHandler.getXBreakpoints();
     if (xBreakpoints.isEmpty()) {
       resumeIsolate(isolateId, null);
@@ -364,7 +380,7 @@ public class VmServiceWrapper implements Disposable {
         myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
           @Override
           public void received(InstanceRef instanceRef) {
-            callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef));
+            callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, false));
           }
 
           @Override

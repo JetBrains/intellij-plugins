@@ -470,40 +470,43 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     for (AirPackagingOptions.FilePathAndPathInPackage entry : packagingOptions.getFilesToPackage()) {
       final String fullPath = entry.FILE_PATH;
       String relPathInPackage = entry.PATH_IN_PACKAGE;
-      if (relPathInPackage.startsWith("/")) {
-        relPathInPackage = relPathInPackage.substring(1);
-      }
+      relPathInPackage = StringUtil.trimStart(relPathInPackage, "/");
 
       if (fullPath.isEmpty()) {
-        errorConsumer.consume(FlashProjectStructureProblem.createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
-          .message("packaging.options.empty.file.name", device), AirPackagingConfigurableBase.Location.FilesToPackage));
+        errorConsumer.consume(FlashProjectStructureProblem
+                                .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
+                                                                 .message("packaging.options.empty.file.name", device),
+                                                               AirPackagingConfigurableBase.Location.FilesToPackage));
       }
       else {
         final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
         if (file == null) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
-                                    .message("packaging.options.file.not.found", device, FileUtil.toSystemDependentName(fullPath)),
+                                                                   .message("packaging.options.file.not.found", device, FileUtil.toSystemDependentName(fullPath)),
                                                                  AirPackagingConfigurableBase.Location.FilesToPackage));
         }
 
         if (relPathInPackage.isEmpty()) {
-          errorConsumer.consume(FlashProjectStructureProblem.createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
-            .message("packaging.options.empty.relative.path", device), AirPackagingConfigurableBase.Location.FilesToPackage));
+          errorConsumer.consume(FlashProjectStructureProblem
+                                  .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
+                                                                   .message("packaging.options.empty.relative.path", device),
+                                                                 AirPackagingConfigurableBase.Location.FilesToPackage));
         }
 
         if (file != null && file.isDirectory()) {
           if (FileUtil.isAncestor(file.getPath(), outputFolderPath, false)) {
             errorConsumer.consume(FlashProjectStructureProblem
                                     .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
-                                      .message("folder.to.package.includes.output", device, file.getPresentableUrl()),
+                                                                     .message("folder.to.package.includes.output", device, file.getPresentableUrl()),
                                                                    AirPackagingConfigurableBase.Location.FilesToPackage));
           }
           else if (!relPathInPackage.isEmpty() && !".".equals(relPathInPackage) && !fullPath.endsWith("/" + relPathInPackage)) {
             errorConsumer.consume(
-              FlashProjectStructureProblem.createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
-                .message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)),
-                                                                         AirPackagingConfigurableBase.Location.FilesToPackage));
+              FlashProjectStructureProblem
+                .createPackagingOptionsProblem(ProjectStructureProblemType.Severity.ERROR, packagingOptions, FlexBundle
+                                                 .message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)),
+                                               AirPackagingConfigurableBase.Location.FilesToPackage));
           }
         }
       }

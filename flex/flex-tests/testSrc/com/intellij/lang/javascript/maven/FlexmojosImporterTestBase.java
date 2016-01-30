@@ -185,7 +185,7 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
            "  </repositories>\n" +
            "  <pluginRepositories>\n" +
            "    <pluginRepository>\n" +
-           "      <id>flex-mojos-plugin-repository</id>\n" +
+           "      <id>flex-repository</id>\n" +
            "      <url>http://maven.labs.intellij.net/flex</url>\n" +
            "      <releases>\n" +
            "        <enabled>true</enabled>\n" +

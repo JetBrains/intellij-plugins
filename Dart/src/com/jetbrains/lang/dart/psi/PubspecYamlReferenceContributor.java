@@ -38,7 +38,7 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
     final PsiElement parent3 = parent2.getParent();
     final PsiElement parent4 = parent3 instanceof YAMLMapping ? parent3.getParent() : null;
     return parent4 instanceof YAMLKeyValue &&
-           parent4.getParent() instanceof YAMLMapping && 
+           parent4.getParent() instanceof YAMLMapping &&
            parent4.getParent().getParent() instanceof YAMLDocument &&
            ((PubspecYamlUtil.DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()) ||
              PubspecYamlUtil.DEV_DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText())));
