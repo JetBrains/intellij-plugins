@@ -6,6 +6,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Created by karashevich on 31/03/15.
@@ -14,6 +15,8 @@ public class MyClassLoader {
 
     final public static String RESPATH = "/data/";
     final public static String IMGPATH = "/img/";
+    final public static String DLGPATH = "/dialogs/";
+
     private ClassLoader myClassLoader;
 
     public static final MyClassLoader INSTANCE = new MyClassLoader();
@@ -32,6 +35,14 @@ public class MyClassLoader {
 
     public InputStream getResourceAsStream(String path){
         return this.getClass().getResourceAsStream(RESPATH + path);
+    }
+
+    public URL getURL(String fileName){
+        return this.getClass().getResource(fileName);
+    }
+
+    public URL getDialogURL(String fileName){
+        return this.getClass().getResource(DLGPATH + fileName);
     }
 
     @Nullable

@@ -197,10 +197,12 @@ public class CourseManager implements PersistentStateComponent<CourseManager.Sta
 
                 @Override
                 public void fileClosed(FileEditorManager source, VirtualFile file) {
+                    lesson.close();
                 }
 
                 @Override
                 public void selectionChanged(FileEditorManagerEvent event) {
+
                 }
             });
 

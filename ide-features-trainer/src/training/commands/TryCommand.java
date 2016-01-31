@@ -62,11 +62,7 @@ public class TryCommand extends Command {
                 check = (Check) myCheck.newInstance();
                 check.set(executionList.getProject(), executionList.getEduEditor());
                 check.before();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -114,7 +110,8 @@ public class TryCommand extends Command {
     private void pass(ExecutionList executionList) {
         executionList.getEduEditor().passExercise();
         final LessonLog lessonLog = executionList.getLesson().getLessonLog();
-        lessonLog.log("Passed exercise. Exercise #" + lessonLog.exerciseCount++);
+        lessonLog.log("Passed exercise. Exercise #" + lessonLog.getMyLesson().getExerciseCount());
+        executionList.getLesson().passItem();
         startNextCommand(executionList);
     }
 
