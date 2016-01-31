@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.Nullable;
 import training.editor.eduUI.EduIcons;
@@ -15,7 +16,9 @@ import training.lesson.log.LessonLog;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -28,7 +31,8 @@ public class Lesson extends AnAction {
     private String targetPath;
     private ArrayList<LessonListener> lessonListeners;
     private Course parentCourse;
-
+    private ArrayList<MyPair> kpis = new ArrayList<MyPair>();
+    private short exerciseCount;
 
     private boolean passed;
     private boolean isOpen;
@@ -42,6 +46,14 @@ public class Lesson extends AnAction {
 
     public void setPassed(boolean passed) {
         this.passed = passed;
+    }
+
+    public ArrayList<MyPair> getKpis() {
+        return kpis;
+    }
+
+    public void setKpis(ArrayList<MyPair> kpis) {
+        this.kpis = kpis;
     }
 
     public ArrayList<LessonListener> getLessonListeners() {
@@ -70,6 +82,7 @@ public class Lesson extends AnAction {
     public Lesson(){
         passed = false;
         lessonLog = new LessonLog(this);
+        exerciseCount = 0;
     }
 
     public Lesson(Scenario scenario, boolean passed, @Nullable Course course) throws BadLessonException {
@@ -114,9 +127,7 @@ public class Lesson extends AnAction {
         CourseManager.getInstance().openLesson(projectWhereToOpenLesson, this);
     }
 
-    @Deprecated
     public void close(){
-        //destroy infoPanel (infoPanel = null)
         isOpen = false;
         onClose();
     }
@@ -141,6 +152,10 @@ public class Lesson extends AnAction {
     @Nullable
     public Course getCourse() {return parentCourse;}
 
+    public short getExerciseCount() {
+        return exerciseCount;
+    }
+
     //Listeners
     public void addLessonListener(LessonListener lessonListener){
         if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
@@ -157,6 +172,9 @@ public class Lesson extends AnAction {
     public void onStart(){
         lessonLog = new LessonLog(this);
         lessonLog.log("Lesson started");
+        exerciseCount = 0;
+        kpis.add(new MyPair("started", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())));
+
         lessonLog.resetCounter();
         if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
 
@@ -165,18 +183,25 @@ public class Lesson extends AnAction {
         }
     }
 
+    public void onItemPassed(){
+        kpis.add(new MyPair("passed item #" + exerciseCount, (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())));
+        exerciseCount++;
+    }
+
     public void onClose(){
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonClosed(this);
         }
 
         lessonListeners = null;
+        kpis.add(new MyPair("closed", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())));
 
     }
 
     //call onPass handlers in lessonListeners
     public void onPass(){
         lessonLog.log("Lesson passed");
+        kpis.add(new MyPair("finished", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())));
         CourseManager.getInstance().getGlobalLessonLog().commitSession(this);
 
         for (LessonListener lessonListener : lessonListeners) {
@@ -194,6 +219,10 @@ public class Lesson extends AnAction {
     public void pass(){
         setPassed(true);
         onPass();
+    }
+
+    public void passItem(){
+        onItemPassed();
     }
 
     @Override
@@ -238,4 +267,5 @@ public class Lesson extends AnAction {
         return false;
 
     }
+
 }
