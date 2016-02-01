@@ -100,6 +100,10 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doOverrideTest();
   }
 
+  public void testOverride5() throws Throwable {
+    doOverrideTest();
+  }
+
   public void testOverrideMixin1() throws Throwable {
     doOverrideTest();
   }

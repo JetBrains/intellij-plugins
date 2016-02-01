@@ -16,19 +16,19 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
   }
 
   @Override
-  protected void collectCandidates(Map<Pair<String, Boolean>, DartComponent> classMembersMap,
-                                   Map<Pair<String, Boolean>, DartComponent> superClassesMembersMap,
-                                   Map<Pair<String, Boolean>, DartComponent> superInterfacesMembersMap,
-                                   List<DartComponent> candidates) {
-    Map<Pair<String, Boolean>, DartComponent> result = new THashMap<Pair<String, Boolean>, DartComponent>(superInterfacesMembersMap);
-    result.keySet().removeAll(superClassesMembersMap.keySet());
-    for (Map.Entry<Pair<String, Boolean>, DartComponent> entry : superClassesMembersMap.entrySet()) {
+  protected void collectCandidates(DartClass dartClass, List<DartComponent> candidates) {
+    Map<Pair<String, Boolean>, DartComponent> result =
+      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperInterfacesMembersMap(dartClass));
+    Map<Pair<String, Boolean>, DartComponent> superClassesMemberMap =
+      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
+    result.keySet().removeAll(superClassesMemberMap.keySet());
+    for (Map.Entry<Pair<String, Boolean>, DartComponent> entry : superClassesMemberMap.entrySet()) {
       final DartComponent component = entry.getValue();
       if (component.isAbstract() && !result.containsKey(entry.getKey())) {
         result.put(entry.getKey(), entry.getValue());
       }
     }
-    result.keySet().removeAll(classMembersMap.keySet());
+    result.keySet().removeAll(computeClassMembersMap(dartClass).keySet());
     candidates.addAll(result.values());
   }
 
