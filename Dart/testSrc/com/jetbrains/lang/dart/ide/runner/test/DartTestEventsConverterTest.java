@@ -29,7 +29,7 @@ import java.util.Map;
 public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
 
   // Do not reformat this list.
-  private static final String[] SampleEvents = {
+  private static final String[] Sample1Events = {
     // @formatter:off
     "/usr/local/opt/dart/libexec/bin/dart --ignore-unrecognized-flags --checked --enable-vm-service:51706 --trace_service_pause_events file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json test/formatter_test.dart -n \"line endings\"\n",
     "Observatory listening on http://127.0.0.1:51706\n",
@@ -68,7 +68,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   };
 
   // Do not reformat this list.
-  private static final String[] SampleSignals = {
+  private static final String[] Sample1Signals = {
     // @formatter:off
     "start uses given line ending",
     "finish uses given line ending",
@@ -94,7 +94,87 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     // @formatter:on
   };
 
-  private static final int[] SampleParents = {0, 0, 0, 2, 2, 2, 2, 2, 7, 7, 2, 2};
+  private static final int[] Sample1Parents = {0, 0, 0, 2, 2, 2, 2, 2, 7, 7, 2, 2};
+
+  // Do not reformat this list.
+  private static final String[] Sample2Events = {
+    // @formatter:off
+    "/usr/local/opt/dart/libexec/bin/dart --ignore-unrecognized-flags --checked --trace_service_pause_events file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json /Users/messick/src/quiver-dart/test/\n",
+    "{\"protocolVersion\":\"0.1.0\",\"runnerVersion\":\"0.12.9-dev (from ../test-master)\",\"type\":\"start\",\"time\":0}\n",
+    "{\"suite\":{\"id\":0,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/collect_test.dart\"},\"type\":\"suite\",\"time\":0}\n",
+    "{\"test\":{\"id\":1,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/collect_test.dart\",\"suiteID\":0,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":0}\n",
+    "{\"suite\":{\"id\":2,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/concat_test.dart\"},\"type\":\"suite\",\"time\":1}\n",
+    "{\"test\":{\"id\":3,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/concat_test.dart\",\"suiteID\":2,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":1}\n",
+    "{\"suite\":{\"id\":4,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/countdown_timer_test.dart\"},\"type\":\"suite\",\"time\":1}\n",
+    "{\"test\":{\"id\":5,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/countdown_timer_test.dart\",\"suiteID\":4,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":2}\n",
+    "{\"suite\":{\"id\":6,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/create_timer_test.dart\"},\"type\":\"suite\",\"time\":2}\n",
+    "{\"test\":{\"id\":7,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/create_timer_test.dart\",\"suiteID\":6,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":2}\n",
+    "{\"suite\":{\"id\":8,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/enumerate_test.dart\"},\"type\":\"suite\",\"time\":2}\n",
+    "{\"test\":{\"id\":9,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/enumerate_test.dart\",\"suiteID\":8,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":2}\n",
+    "{\"suite\":{\"id\":10,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/future_group_test.dart\"},\"type\":\"suite\",\"time\":3}\n",
+    "{\"test\":{\"id\":11,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/future_group_test.dart\",\"suiteID\":10,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":3}\n",
+    "{\"suite\":{\"id\":12,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/future_stream_test.dart\"},\"type\":\"suite\",\"time\":3}\n",
+    "{\"test\":{\"id\":13,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/future_stream_test.dart\",\"suiteID\":12,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":4}\n",
+    "{\"suite\":{\"id\":14,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/iteration_test.dart\"},\"type\":\"suite\",\"time\":4}\n",
+    "{\"test\":{\"id\":15,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/iteration_test.dart\",\"suiteID\":14,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":4}\n",
+    "{\"testID\":5,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":723}\n",
+    "{\"group\":{\"id\":16,\"suiteID\":4,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":730}\n",
+    "{\"group\":{\"id\":17,\"suiteID\":4,\"parentID\":16,\"name\":\"CountdownTimer\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":730}\n",
+    "{\"test\":{\"id\":18,\"name\":\"CountdownTimer should countdown\",\"suiteID\":4,\"groupIDs\":[16,17],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":732}\n",
+    "{\"testID\":1,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":733}\n",
+    "{\"group\":{\"id\":19,\"suiteID\":0,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":733}\n",
+    "{\"group\":{\"id\":20,\"suiteID\":0,\"parentID\":19,\"name\":\"collect\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":734}\n",
+    "{\"test\":{\"id\":21,\"name\":\"collect should produce no events for no futures\",\"suiteID\":0,\"groupIDs\":[19,20],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":734}\n",
+    "{\"testID\":7,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":734}\n",
+    "{\"group\":{\"id\":22,\"suiteID\":6,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":734}\n",
+    "{\"group\":{\"id\":23,\"suiteID\":6,\"parentID\":22,\"name\":\"createTimer\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":734}\n",
+    "{\"test\":{\"id\":24,\"name\":\"createTimer should be assignable to CreateTimer\",\"suiteID\":6,\"groupIDs\":[22,23],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":735}\n",
+    "{\"testID\":11,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":735}\n",
+    "{\"group\":{\"id\":25,\"suiteID\":10,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":735}\n",
+    "{\"group\":{\"id\":26,\"suiteID\":10,\"parentID\":25,\"name\":\"FutureGroup\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":735}\n",
+    "{\"test\":{\"id\":27,\"name\":\"FutureGroup should complete when all added futures are complete\",\"suiteID\":10,\"groupIDs\":[25,26],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":735}\n",
+    "{\"testID\":9,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":737}\n",
+    "{\"testID\":3,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":748}\n",
+    "{\"testID\":15,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":751}\n",
+    "{\"testID\":13,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":755}\n",
+    "{\"testID\":24,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":773}\n",
+    "{\"group\":{\"id\":28,\"suiteID\":6,\"parentID\":22,\"name\":\"createTimerPeriodic\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":774}\n",
+    "{\"test\":{\"id\":29,\"name\":\"createTimerPeriodic should be assignable to CreateTimerPeriodic\",\"suiteID\":6,\"groupIDs\":[22,28],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":774}\n",
+    "{\"testID\":21,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":776}\n",
+    "{\"test\":{\"id\":30,\"name\":\"collect should produce events for future completions in input order\",\"suiteID\":0,\"groupIDs\":[19,20],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":777}\n",
+    "{\"testID\":29,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":794}\n",
+    "{\"suite\":{\"id\":31,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/metronome_test.dart\"},\"type\":\"suite\",\"time\":798}\n",
+    "{\"test\":{\"id\":32,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/metronome_test.dart\",\"suiteID\":31,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":798}\n",
+    "{\"group\":{\"id\":33,\"suiteID\":8,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":798}\n",
+    "{\"group\":{\"id\":34,\"suiteID\":8,\"parentID\":33,\"name\":\"enumerate\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":798}\n",
+    "{\"test\":{\"id\":35,\"name\":\"enumerate should add indices to its argument\",\"suiteID\":8,\"groupIDs\":[33,34],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":799}\n",
+    "{\"testID\":27,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":799}\n",
+    "{\"test\":{\"id\":36,\"name\":\"FutureGroup should throw if adding a future after the group is completed\",\"suiteID\":10,\"groupIDs\":[25,26],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":801}\n",
+    "{\"testID\":36,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":805}\n",
+    "{\"success\":true,\"type\":\"done\",\"time\":4877}\n",
+    "\n",
+    "Process finished with exit code 1\n",
+    // @formatter:on
+  };
+
+  // Do not reformat this list.
+  private static final String[] Sample2Signals = {
+    // @formatter:off
+    "start should countdown",
+    "start should produce no events for no futures",
+    "start should be assignable to CreateTimer",
+    "start should complete when all added futures are complete",
+    "finish should be assignable to CreateTimer",
+    "start should be assignable to CreateTimerPeriodic",
+    "finish should produce no events for no futures",
+    "start should produce events for future completions in input order",
+    "finish should be assignable to CreateTimerPeriodic",
+    "start should add indices to its argument",
+    "finish should complete when all added futures are complete",
+    "start should throw if adding a future after the group is completed",
+    "finish should throw if adding a future after the group is completed",
+    // @formatter:on
+  };
 
   private SMTRunnerConsoleView myConsole;
   private DartTestEventsConverter myEventsConverter;
@@ -105,8 +185,12 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private MockPrinter myMockResettablePrinter;
   private Map<Integer, DefaultMutableTreeNode> myNodes;
 
-  public void testSample() throws Exception {
-    runTest(SampleEvents, SampleSignals, SampleParents);
+  public void testSample1() throws Exception {
+    runTest(Sample1Events, Sample1Signals, Sample1Parents);
+  }
+
+  public void testSample2() throws Exception {
+    runTest(Sample2Events, Sample2Signals, new int[]{});
   }
 
   public void testLoadFailure() throws Exception {
