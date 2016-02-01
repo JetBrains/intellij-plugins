@@ -121,6 +121,8 @@ public class DartAnalysisServerService {
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
+  @NotNull private final Set<VirtualFile> myFilesWithErrors = Collections.synchronizedSet(new THashSet<VirtualFile>());
+
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
@@ -133,7 +135,7 @@ public class DartAnalysisServerService {
       final boolean visible = myVisibleFiles.contains(filePathSD);
       final String filePathSI = FileUtil.toSystemIndependentName(filePathSD);
       myServerData.computedErrors(filePathSI, errors, visible);
-      updateProblemsView(filePathSI, errors);
+      onErrorsUpdated(filePathSI, errors);
     }
 
     @Override
@@ -163,7 +165,7 @@ public class DartAnalysisServerService {
       myServerData.onFlushedResults(filePaths);
 
       for (String filePath : filePaths) {
-        updateProblemsView(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
+        onErrorsUpdated(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
       }
     }
 
@@ -644,7 +646,7 @@ public class DartAnalysisServerService {
     return true;
   }
 
-  private void updateProblemsView(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+  private void onErrorsUpdated(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
@@ -655,13 +657,41 @@ public class DartAnalysisServerService {
 
           if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
+
+            updateFilesWithErrorsSet(vFile, errors);
           }
           else {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
+
+            if (vFile != null) {
+              updateFilesWithErrorsSet(vFile, AnalysisError.EMPTY_LIST);
+            }
           }
         }
       }
     });
+  }
+
+  private void updateFilesWithErrorsSet(@NotNull final VirtualFile file, @NotNull final List<AnalysisError> errors) {
+    boolean hasProblems = false;
+    for (AnalysisError error : errors) {
+      if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+        hasProblems = true;
+        break;
+      }
+    }
+
+    if (hasProblems) {
+      myFilesWithErrors.add(file);
+    }
+    else {
+      myFilesWithErrors.remove(file);
+    }
+  }
+
+  private void clearAllErrors(@NotNull final Project project) {
+    DartProblemsView.getInstance(project).clearAll();
+    myFilesWithErrors.clear();
   }
 
   @NotNull
@@ -1122,7 +1152,7 @@ public class DartAnalysisServerService {
         public void run() {
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             if (!project.isDisposed()) {
-              DartProblemsView.getInstance(project).clearAll();
+              clearAllErrors(project);
             }
           }
         }
@@ -1414,7 +1444,7 @@ public class DartAnalysisServerService {
         public void run() {
           for (final Project project : projects) {
             if (!project.isDisposed()) {
-              DartProblemsView.getInstance(project).clearAll();
+              clearAllErrors(project);
             }
           }
         }
@@ -1470,6 +1500,10 @@ public class DartAnalysisServerService {
       myServerBusy.set(false);
       myServerBusy.notifyAll();
     }
+  }
+
+  public boolean isFileWithErrors(@NotNull final VirtualFile file) {
+    return myFilesWithErrors.contains(file);
   }
 
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {

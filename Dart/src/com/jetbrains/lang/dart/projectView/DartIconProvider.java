@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart;
+package com.jetbrains.lang.dart.projectView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IconProvider;

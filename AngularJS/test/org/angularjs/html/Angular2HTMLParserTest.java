@@ -8,9 +8,8 @@ import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lang.xml.XmlASTFactory;
-import com.intellij.lexer.HtmlEmbeddedTokenTypesProvider;
+import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
 
@@ -33,11 +32,10 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
     super.setUp();
     addExplicitExtension(LanguageASTFactory.INSTANCE, JavascriptLanguage.INSTANCE, new JavascriptASTFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
-    registerExtensionPoint(HtmlEmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, HtmlEmbeddedTokenTypesProvider.class);
     addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
                          new HtmlInlineJSScriptTokenTypesProvider());
-    registerExtensionPoint(new ExtensionPointName<StartTagEndTokenProvider>("com.intellij.xml.startTagEndToken"),
-                           StartTagEndTokenProvider.class);
+    registerExtensionPoint(StartTagEndTokenProvider.EP_NAME, StartTagEndTokenProvider.class);
+    registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
 
   }
 

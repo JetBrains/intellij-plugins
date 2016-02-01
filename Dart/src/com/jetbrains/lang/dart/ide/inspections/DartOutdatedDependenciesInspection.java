@@ -38,6 +38,8 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
 
     if (!(psiFile instanceof DartFile)) return null;
 
+    if (DartPubActionBase.isInProgress()) return null;
+
     final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
     if (file == null || !file.isInLocalFileSystem()) return null;
 

@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,6 +49,7 @@ public class DartProblemsView {
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
+  private final Project myProject;
   private final DartProblemsFilter myFilter;
   private DartProblemsViewPanel myPanel;
 
@@ -58,6 +60,8 @@ public class DartProblemsView {
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
     public void run() {
+      ProjectView.getInstance(myProject).refresh(); // refresh red waves managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+
       final Map<String, List<AnalysisError>> filePathToErrors;
       synchronized (myLock) {
         filePathToErrors = new THashMap<String, List<AnalysisError>>(myScheduledFilePathToErrors);
@@ -69,6 +73,7 @@ public class DartProblemsView {
   };
 
   public DartProblemsView(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
+    myProject = project;
     myFilter = new DartProblemsFilter(project);
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
     Disposer.register(project, myAlarm);

@@ -18,12 +18,12 @@ import org.jetbrains.io.jsonRpc.Client;
 import java.util.List;
 
 public class OpenDartObservatoryUrlAction extends DumbAwareAction {
-  private final int myObservatoryPort;
+  private final String myUrl;
   private final Computable<Boolean> myIsApplicable;
 
-  public OpenDartObservatoryUrlAction(final int observatoryPort, final Computable<Boolean> isApplicable) {
+  public OpenDartObservatoryUrlAction(@NotNull final String url, @NotNull final Computable<Boolean> isApplicable) {
     super(DartBundle.message("open.observatory.action.text"), DartBundle.message("open.observatory.action.description"), DartIcons.Dart_16);
-    myObservatoryPort = observatoryPort;
+    myUrl = url;
     myIsApplicable = isApplicable;
   }
 
@@ -34,9 +34,7 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    final String url = "http://" + NetUtils.getLocalHostString() + ":" + myObservatoryPort;
-
-    openUrlInChromeFamilyBrowser(url);
+    openUrlInChromeFamilyBrowser(myUrl);
   }
 
   /**

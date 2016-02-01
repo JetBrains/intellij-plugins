@@ -54,10 +54,17 @@ public class DartVmServiceValue extends XNamedValue {
       return;
     }
 
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myFieldRef.getId(), new GetObjectConsumer() {
+    doComputeSourcePosition(myDebugProcess, navigatable, myIsolateId, myFieldRef);
+  }
+
+  static void doComputeSourcePosition(@NotNull final DartVmServiceDebugProcess debugProcess,
+                                      @NotNull final XNavigatable navigatable,
+                                      @NotNull final String isolateId,
+                                      @NotNull final FieldRef fieldRef) {
+    debugProcess.getVmServiceWrapper().getObject(isolateId, fieldRef.getId(), new GetObjectConsumer() {
       @Override
       public void received(final Obj field) {
-        reportSourcePosition(navigatable, ((Field)field).getLocation());
+        reportSourcePosition(debugProcess, navigatable, isolateId, ((Field)field).getLocation());
       }
 
       @Override
@@ -82,7 +89,7 @@ public class DartVmServiceValue extends XNamedValue {
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getClassRef().getId(), new GetObjectConsumer() {
       @Override
       public void received(final Obj classObj) {
-        reportSourcePosition(navigatable, ((ClassObj)classObj).getLocation());
+        reportSourcePosition(myDebugProcess, navigatable, myIsolateId, ((ClassObj)classObj).getLocation());
       }
 
       @Override
@@ -97,7 +104,10 @@ public class DartVmServiceValue extends XNamedValue {
     });
   }
 
-  private void reportSourcePosition(@NotNull final XNavigatable navigatable, final @Nullable SourceLocation location) {
+  private static void reportSourcePosition(@NotNull final DartVmServiceDebugProcess debugProcess,
+                                           @NotNull final XNavigatable navigatable,
+                                           @NotNull final String isolateId,
+                                           @Nullable final SourceLocation location) {
     if (location == null) {
       navigatable.setSourcePosition(null);
       return;
@@ -106,7 +116,7 @@ public class DartVmServiceValue extends XNamedValue {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
-        final XSourcePosition sourcePosition = myDebugProcess.getSourcePosition(myIsolateId, location.getScript(), location.getTokenPos());
+        final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, location.getScript(), location.getTokenPos());
         ApplicationManager.getApplication().runReadAction(new Runnable() {
           @Override
           public void run() {
@@ -230,6 +240,11 @@ public class DartVmServiceValue extends XNamedValue {
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
     final Icon icon = myIsException ? AllIcons.Debugger.Db_exception_breakpoint : AllIcons.Debugger.Value;
+
+    if (myInstanceRef.getJson().get("id") == null) {
+      int i = 0;
+    }
+
     myDebugProcess.getVmServiceWrapper()
       .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toString()", new VmServiceConsumers.EvaluateConsumerWrapper() {
         @Override
@@ -269,8 +284,8 @@ public class DartVmServiceValue extends XNamedValue {
     else {
       myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
         @Override
-        public void received(Obj obj) {
-          addFields(myDebugProcess, node, myIsolateId, ((Instance)obj).getFields());
+        public void received(Obj instance) {
+          addFields(myDebugProcess, node, myIsolateId, ((Instance)instance).getFields());
           node.addChildren(XValueChildrenList.EMPTY, true);
         }
 
@@ -293,12 +308,12 @@ public class DartVmServiceValue extends XNamedValue {
 
     myDebugProcess.getVmServiceWrapper().getCollectionObject(myIsolateId, myInstanceRef.getId(), offset, count, new GetObjectConsumer() {
       @Override
-      public void received(Obj obj) {
+      public void received(Obj instance) {
         if (isListKind(myInstanceRef.getKind())) {
-          addListChildren(node, ((Instance)obj).getElements());
+          addListChildren(node, ((Instance)instance).getElements());
         }
         else if (myInstanceRef.getKind() == InstanceKind.Map) {
-          addMapChildren(node, ((Instance)obj).getAssociations());
+          addMapChildren(node, ((Instance)instance).getAssociations());
         }
         else {
           assert false : myInstanceRef.getKind();

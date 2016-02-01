@@ -17,10 +17,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
-import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.ui.PopupHandler;
-import com.intellij.ui.PortField;
+import com.intellij.ui.*;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
@@ -33,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -57,6 +55,13 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
     mySdk = DartSdk.getDartSdk(project);
+
+    myHostField.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(DocumentEvent e) {
+        updateVmArgs();
+      }
+    });
 
     myPortField.addChangeListener(new ChangeListener() {
       @Override
@@ -152,7 +157,9 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
 
   private void updateVmArgs() {
     if (mySdk == null || StringUtil.compareVersionNumbers(mySdk.getVersion(), "1.14") >= 0) {
-      myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + " --pause_isolates_on_start");
+      final String host = myHostField.getText().trim();
+      final boolean localhost = "localhost".equals(host) || "127.0.0.1".equals(host);
+      myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + (localhost ? "" : "/0.0.0.0") + " --pause_isolates_on_start");
     }
     else {
       myVMArgsArea.setText("--debug:" + myPortField.getNumber() + " --break-at-isolate-spawn");

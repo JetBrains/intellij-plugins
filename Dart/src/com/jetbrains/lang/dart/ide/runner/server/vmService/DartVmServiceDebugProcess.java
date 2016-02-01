@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -19,6 +20,7 @@ import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
@@ -47,6 +49,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   @NotNull private final DartUrlResolver myDartUrlResolver;
   @NotNull private final String myDebuggingHost;
   private final int myObservatoryPort;
+
+  private boolean myVmConnected = false;
 
   @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
   private final IsolatesInfo myIsolatesInfo;
@@ -77,7 +81,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     final DartVmServiceBreakpointHandler breakpointHandler = new DartVmServiceBreakpointHandler(this);
     myBreakpointHandlers = new XBreakpointHandler[]{breakpointHandler};
 
-    setLogger(getUrlForDebugger());
+    setLogger();
 
     session.addSessionListener(new XDebugSessionAdapter() {
       @Override
@@ -106,7 +110,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return myIsolatesInfo.getIsolateInfos();
   }
 
-  private void setLogger(@NotNull final String url) {
+  private void setLogger() {
     Logging.setLogger(new org.dartlang.vm.service.logging.Logger() {
       @Override
       public void logError(final String message) {
@@ -132,7 +136,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         LOG.debug(message);
 
         // myExecutionResult is null only in case of remote debug.
-        if (myExecutionResult == null && message.equals("VM connection closed: " + url)) {
+        if (myExecutionResult == null && message.equals("VM connection closed: " + getObservatoryUrl("ws", "/ws"))) {
           getSession().stop();
         }
       }
@@ -186,16 +190,18 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   private void connect() throws IOException {
-    final VmService vmService = VmService.connect(getUrlForDebugger());
+    final VmService vmService = VmService.connect(getObservatoryUrl("ws", "/ws"));
     vmService.addVmServiceListener(new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]));
 
     myVmServiceWrapper = new VmServiceWrapper(this, vmService, myIsolatesInfo, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
     myVmServiceWrapper.handleDebuggerConnected();
+
+    myVmConnected = true;
   }
 
   @NotNull
-  private String getUrlForDebugger() {
-    return "ws://" + myDebuggingHost + ":" + myObservatoryPort + "/ws";
+  private String getObservatoryUrl(@NotNull final String scheme, @Nullable final String path) {
+    return scheme + "://" + myDebuggingHost + ":" + myObservatoryPort + StringUtil.notNullize(path);
   }
 
   @Override
@@ -244,6 +250,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Override
   public void stop() {
+    myVmConnected = false;
+
     if (myVmServiceWrapper != null) {
       if (myDASExecutionContextId != null) {
         DartAnalysisServerService.getInstance().execution_deleteContext(myDASExecutionContextId);
@@ -292,6 +300,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
+  public String getCurrentStateMessage() {
+    return getSession().isStopped()
+           ? XDebuggerBundle.message("debugger.state.message.disconnected")
+           : myVmConnected
+             ? XDebuggerBundle.message("debugger.state.message.connected")
+             : DartBundle.message("debugger.trying.to.connect.vm.at.0", getObservatoryUrl("ws", "/ws"));
+  }
+
+  @Override
   public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
                                         @NotNull final DefaultActionGroup topToolbar,
                                         @NotNull final DefaultActionGroup settings) {
@@ -299,10 +316,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     topToolbar.addSeparator();
 
     if (myObservatoryPort > 0) {
-      topToolbar.addAction(new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
+      topToolbar.addAction(new OpenDartObservatoryUrlAction(getObservatoryUrl("http", null), new Computable<Boolean>() {
         @Override
         public Boolean compute() {
-          return !getSession().isStopped();
+          return myVmConnected && !getSession().isStopped();
         }
       }));
     }

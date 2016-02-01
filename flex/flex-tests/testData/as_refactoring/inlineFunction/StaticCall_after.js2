@@ -4,5 +4,4 @@ class C {
     function foo() {
         var c = C.a + C.b;
     }
-
 }
