@@ -2,7 +2,7 @@
 <problems>
   <problem>
     <file>autoscalingmultiazwithnotifications-4ccf.template</file>
-    <line>181</line>
+    <line>199</line>
     <description>Unknown resource type property: NotificationConfiguration</description>
   </problem>
 

@@ -119,6 +119,10 @@ public class ResourceTypesSaver {
         }
 
         for (Element term : vlist.select("span.term")) {
+          if (term.parent().parent().parent() != vlist) {
+            continue;
+          }
+
           CloudFormationResourceProperty property = new CloudFormationResourceProperty();
 
           final Element descr = term.parent().nextElementSibling();
