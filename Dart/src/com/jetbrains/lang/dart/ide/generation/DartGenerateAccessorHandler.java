@@ -25,14 +25,15 @@ public abstract class DartGenerateAccessorHandler extends BaseDartGenerateHandle
 
   @Override
   protected void collectCandidates(final DartClass dartClass, List<DartComponent> candidates) {
+    final List<DartComponent> subComponents = DartResolveUtil.getNamedSubComponents(dartClass);
+
     candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass).values(), new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
         return DartComponentType.typeOf(component) == DartComponentType.FIELD &&
                !component.isStatic() &&
-               myStrategy.accept(component.getName(), DartResolveUtil.getNamedSubComponents(dartClass));
+               myStrategy.accept(component.getName(), subComponents);
       }
     }));
   }
-
 }
