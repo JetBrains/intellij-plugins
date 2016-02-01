@@ -11,9 +11,11 @@
     },
     "AWSInstanceType2Arch" : {
       "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.nano"     : { "Arch" : "HVM64"  },
       "t2.micro"    : { "Arch" : "HVM64"  },
       "t2.small"    : { "Arch" : "HVM64"  },
       "t2.medium"   : { "Arch" : "HVM64"  },
+      "t2.large"    : { "Arch" : "HVM64"  },
       "m1.small"    : { "Arch" : "PV64"   },
       "m1.medium"   : { "Arch" : "PV64"   },
       "m1.large"    : { "Arch" : "PV64"   },
@@ -25,6 +27,11 @@
       "m3.large"    : { "Arch" : "HVM64"  },
       "m3.xlarge"   : { "Arch" : "HVM64"  },
       "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.large"    : { "Arch" : "HVM64"  },
+      "m4.xlarge"   : { "Arch" : "HVM64"  },
+      "m4.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.4xlarge"  : { "Arch" : "HVM64"  },
+      "m4.10xlarge" : { "Arch" : "HVM64"  },
       "c1.medium"   : { "Arch" : "PV64"   },
       "c1.xlarge"   : { "Arch" : "PV64"   },
       "c3.large"    : { "Arch" : "HVM64"  },
@@ -38,6 +45,7 @@
       "c4.4xlarge"  : { "Arch" : "HVM64"  },
       "c4.8xlarge"  : { "Arch" : "HVM64"  },
       "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "HVMG2"  },
       "r3.large"    : { "Arch" : "HVM64"  },
       "r3.xlarge"   : { "Arch" : "HVM64"  },
       "r3.2xlarge"  : { "Arch" : "HVM64"  },
@@ -59,9 +67,11 @@
 
     "AWSInstanceType2NATArch" : {
       "t1.micro"    : { "Arch" : "NATPV64"   },
+      "t2.nano"     : { "Arch" : "NATHVM64"  },
       "t2.micro"    : { "Arch" : "NATHVM64"  },
       "t2.small"    : { "Arch" : "NATHVM64"  },
       "t2.medium"   : { "Arch" : "NATHVM64"  },
+      "t2.large"    : { "Arch" : "NATHVM64"  },
       "m1.small"    : { "Arch" : "NATPV64"   },
       "m1.medium"   : { "Arch" : "NATPV64"   },
       "m1.large"    : { "Arch" : "NATPV64"   },
@@ -73,6 +83,11 @@
       "m3.large"    : { "Arch" : "NATHVM64"  },
       "m3.xlarge"   : { "Arch" : "NATHVM64"  },
       "m3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.large"    : { "Arch" : "NATHVM64"  },
+      "m4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.10xlarge" : { "Arch" : "NATHVM64"  },
       "c1.medium"   : { "Arch" : "NATPV64"   },
       "c1.xlarge"   : { "Arch" : "NATPV64"   },
       "c3.large"    : { "Arch" : "NATHVM64"  },
@@ -86,6 +101,7 @@
       "c4.4xlarge"  : { "Arch" : "NATHVM64"  },
       "c4.8xlarge"  : { "Arch" : "NATHVM64"  },
       "g2.2xlarge"  : { "Arch" : "NATHVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "NATHVMG2"  },
       "r3.large"    : { "Arch" : "NATHVM64"  },
       "r3.xlarge"   : { "Arch" : "NATHVM64"  },
       "r3.2xlarge"  : { "Arch" : "NATHVM64"  },
@@ -112,6 +128,7 @@
       "eu-west-1"        : {"PV64" : "ami-95e33ce6", "HVM64" : "ami-bff32ccc", "HVMG2" : "ami-83fd23f0"},
       "eu-central-1"     : {"PV64" : "ami-794a5915", "HVM64" : "ami-bc5b48d0", "HVMG2" : "ami-ba1a09d6"},
       "ap-northeast-1"   : {"PV64" : "ami-393c1957", "HVM64" : "ami-383c1956", "HVMG2" : "ami-08e5c166"},
+      "ap-northeast-2"   : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-249b554a", "HVMG2" : "NOT_SUPPORTED"},
       "ap-southeast-1"   : {"PV64" : "ami-34bd7a57", "HVM64" : "ami-c9b572aa", "HVMG2" : "ami-5a15d239"},
       "ap-southeast-2"   : {"PV64" : "ami-ced887ad", "HVM64" : "ami-48d38c2b", "HVMG2" : "ami-0c1a446f"},
       "sa-east-1"        : {"PV64" : "ami-7d15ad11", "HVM64" : "ami-6817af04", "HVMG2" : "NOT_SUPPORTED"},
@@ -125,6 +142,7 @@
       "eu-west-1"        : {"NATPV64" : "ami-cb7de3bc", "NATHVM64" : "ami-c0993ab3"},
       "eu-central-1"     : {"NATPV64" : "ami-3604392b", "NATHVM64" : "ami-0b322e67"},
       "ap-northeast-1"   : {"NATPV64" : "ami-c7e016c7", "NATHVM64" : "ami-f885ae96"},
+      "ap-northeast-2"   : {"NATPV64" : "NOT_SUPPORTED", "NATHVM64" : "ami-4118d72f"},
       "ap-southeast-1"   : {"NATPV64" : "ami-b098a9e2", "NATHVM64" : "ami-e2fc3f81"},
       "ap-southeast-2"   : {"NATPV64" : "ami-0fed9d35", "NATHVM64" : "ami-e3217a80"},
       "sa-east-1"        : {"NATPV64" : "ami-93fb408e", "NATHVM64" : "ami-8631b5ea"},
@@ -138,6 +156,7 @@
       "eu-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "ap-southeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "ap-northeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "ap-southeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "sa-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "cn-north-1"     : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
@@ -181,7 +200,7 @@
       "Properties": {
         "StackId": { "Ref": "OpsWorksStack" },
         "LayerIds": [ { "Ref": "OpsWorksLayer" } ],
-        "InstanceType": "m1.small",
+        "InstanceType": "t2.small",
         "RootDeviceType" : "ebs"
       }
     },
@@ -191,7 +210,7 @@
       "Properties": {
         "StackId": { "Ref": "OpsWorksStack" },
         "LayerIds": [ { "Ref": "OpsWorksLayer" } ],
-        "InstanceType": "m1.small",
+        "InstanceType": "t2.small",
         "RootDeviceType" : "ebs"
       }
     },
@@ -553,11 +572,11 @@
     "NATDevice": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "InstanceType": "m1.small",
+        "InstanceType": "t2.small",
         "SubnetId": { "Ref": "PublicSubnet" },
         "SourceDestCheck": "false",
         "ImageId" : { "Fn::FindInMap" : [ "AWSNATRegionArch2AMI", { "Ref" : "AWS::Region" },
-                          { "Fn::FindInMap" : [ "AWSInstanceType2NATArch", "m1.small", "Arch" ] } ] },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2NATArch", "t2.small", "Arch" ] } ] },
         "SecurityGroupIds": [ { "Ref": "NATSecurityGroup" } ]
       }
     },

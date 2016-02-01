@@ -13,8 +13,8 @@
     "InstanceType" : {
       "Description" : "Amazon EC2 instance type",
       "Type" : "String",
-      "Default" : "m1.large",
-      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+      "Default" : "m4.large",
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
 ,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
@@ -51,16 +51,17 @@
 
   "Mappings" : {
     "AWSRegion2AMI" : {
-      "us-east-1"        : {"Windows2008r2" : "ami-31620c54", "Windows2012r2" : "ami-c9cea0ac"},
-      "us-west-2"        : {"Windows2008r2" : "ami-d53c21e5", "Windows2012r2" : "ami-dfccd1ef"},
-      "us-west-1"        : {"Windows2008r2" : "ami-2b2dd76f", "Windows2012r2" : "ami-890af0cd"},
-      "eu-west-1"        : {"Windows2008r2" : "ami-872f0ff0", "Windows2012r2" : "ami-abe9c9dc"},
-      "eu-central-1"     : {"Windows2008r2" : "ami-98656585", "Windows2012r2" : "ami-3e737323"},
-      "ap-northeast-1"   : {"Windows2008r2" : "ami-2c41ca2c", "Windows2012r2" : "ami-4623a846"},
-      "ap-southeast-1"   : {"Windows2008r2" : "ami-80c2c8d2", "Windows2012r2" : "ami-58efe50a"},
-      "ap-southeast-2"   : {"Windows2008r2" : "ami-ed2b64d7", "Windows2012r2" : "ami-f53679cf"},
-      "sa-east-1"        : {"Windows2008r2" : "ami-53db4e4e", "Windows2012r2" : "ami-3bce5b26"},
-      "cn-north-1"       : {"Windows2008r2" : "ami-e2811ddb", "Windows2012r2" : "ami-f0811dc9"}
+      "us-east-1"        : {"Windows2008r2" : "ami-44015c2e", "Windows2012r2" : "ami-9a0558f0"},
+      "us-west-2"        : {"Windows2008r2" : "ami-c5a7bea4", "Windows2012r2" : "ami-83a5bce2"},
+      "us-west-1"        : {"Windows2008r2" : "ami-abe68ccb", "Windows2012r2" : "ami-e7e78d87"},
+      "eu-west-1"        : {"Windows2008r2" : "ami-8642edf5", "Windows2012r2" : "ami-7943ec0a"},
+      "eu-central-1"     : {"Windows2008r2" : "ami-58918e34", "Windows2012r2" : "ami-8a918ee6"},
+      "ap-northeast-1"   : {"Windows2008r2" : "ami-9e1120f0", "Windows2012r2" : "ami-482a1b26"},
+      "ap-northeast-2"   : {"Windows2008r2" : "ami-3fa16f51", "Windows2012r2" : "ami-a2a06ecc"},
+      "ap-southeast-1"   : {"Windows2008r2" : "ami-3e69ab5d", "Windows2012r2" : "ami-5869ab3b"},
+      "ap-southeast-2"   : {"Windows2008r2" : "ami-c54f15a6", "Windows2012r2" : "ami-9b4f15f8"},
+      "sa-east-1"        : {"Windows2008r2" : "ami-f99d1b95", "Windows2012r2" : "ami-6a981e06"},
+      "cn-north-1"       : {"Windows2008r2" : "ami-6a9a5207", "Windows2012r2" : "ami-8a9a52e7"}
     }
 
   },

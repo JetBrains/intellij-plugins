@@ -41,6 +41,7 @@
       "eu-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "ap-southeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "ap-northeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "ap-southeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "sa-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
       "cn-north-1"     : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
@@ -117,7 +118,7 @@
       "Properties" : {
         "ApplicationName" : { "Ref" : "SampleApplication" },
         "Description" : "Default Configuration Version 1.0",
-        "SolutionStackName" : "64bit Amazon Linux 2014.03 v1.0.9 running Tomcat 7 Java 7",
+        "SolutionStackName" : "64bit Amazon Linux 2015.03 v2.0.1 running Tomcat 7 Java 7",
         "OptionSettings" : [{
           "Namespace": "aws:elasticbeanstalk:application:environment",
           "OptionName": "JDBC_CONNECTION_STRING",
@@ -192,7 +193,7 @@
         "Engine": "MySQL",
         "DBName": "beanstalkdb",
         "MasterUsername": { "Ref": "DBUser" },
-        "DBInstanceClass": "db.m1.small",
+        "DBInstanceClass": "db.t2.small",
         "AllocatedStorage": "5",
         "MasterUserPassword": { "Ref": "DBPassword" },
         "VPCSecurityGroups": { "Fn::If" : [ "Is-EC2-VPC", [ { "Fn::GetAtt": [ "DBEC2SecurityGroup", "GroupId" ] } ], { "Ref" : "AWS::NoValue" }]},

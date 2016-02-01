@@ -29,8 +29,8 @@
     "NodeType": {
       "Description": "The node type to be provisioned for the redshift cluster",
       "Type": "String",
-      "Default": "dw1.xlarge",
-      "AllowedValues" : [ "dw1.xlarge", "dw1.8xlarge", "dw2.large", "dw2.8xlarge" ]
+      "Default": "ds1.xlarge",
+      "AllowedValues" : [ "dw1.xlarge", "dw1.8xlarge", "dw2.large", "dw2.8xlarge", "dc1.large", "dc1.8xlarge", "ds2.xlarge", "ds2.8xlarge" ]
 ,
       "ConstraintDescription" : "must be a valid RedShift node type."
     },
