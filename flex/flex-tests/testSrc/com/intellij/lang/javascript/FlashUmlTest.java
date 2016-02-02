@@ -31,6 +31,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.JdomKt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,7 +42,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.JDOMCompare;
-import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -203,18 +204,18 @@ public class FlashUmlTest extends CodeInsightTestCase {
     String expectedDataFileName =
       getTestName(false) + (StringUtil.isEmpty(expectedPrefix) ? ".expected.xml" : ".expected." + expectedPrefix + ".xml");
     CharSequence expectedText = LoadTextUtil.loadText(getVirtualFile(BASE_PATH + expectedDataFileName));
-    final Document expected = JDOMUtil.loadDocument(expectedText);
-    final String expectedOriginFqn = expected.getRootElement().getAttributeValue("origin");
+    final Element expected = JdomKt.loadElement(expectedText);
+    final String expectedOriginFqn = expected.getAttributeValue("origin");
     assertEquals(expectedDataFileName + ": Invalid origin element", expectedOriginFqn, actualOriginFqn);
     JDOMResult actual = new JDOMResult();
     UmlDataModelDumper.dump(actual, provider, model);
     actual.getDocument().getRootElement().setAttribute("origin", actualOriginFqn);
 
-    String difference = JDOMCompare.diffDocuments(expected, actual.getDocument());
+    String difference = JDOMCompare.diffElements(expected, actual.getDocument().getRootElement());
     if (difference != null) {
       // this will fail if structure is different
-      assertEquals(expectedDataFileName + ": " + difference, JDOMUtil.writeDocument(expected, "\n"),
-                   JDOMUtil.writeDocument(actual.getDocument(), "\n").trim());
+      assertEquals(expectedDataFileName + ": " + difference, JDOMUtil.writeElement(expected, "\n"),
+                   JDOMUtil.writeElement(actual.getDocument().getRootElement(), "\n").trim());
     }
   }
 
