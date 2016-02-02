@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.template;
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -56,7 +57,7 @@ public abstract class DartTemplateContextType extends TemplateContextType {
 
     @Override
     protected boolean isInContext(@NotNull PsiElement element) {
-      return PsiTreeUtil.getParentOfType(element, DartBlock.class) != null;
+      return PsiTreeUtil.getNonStrictParentOfType(element, DartBlock.class, PsiComment.class) instanceof DartBlock;
     }
   }
 }

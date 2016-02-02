@@ -18,11 +18,8 @@ public class DartWordSelectionTest extends DartCodeInsightFixtureTestCase {
   }
 
   private void doTest() {
-    doTest(getTestDataPath(), getTestName(false));
-  }
-
-  private void doTest(final String filePath, final String testName) {
-    myFixture.configureByFiles(filePath + testName + ".dart");
+    final String testName = getTestName(false);
+    myFixture.configureByFiles(testName + ".dart");
     CodeInsightTestUtil.doWordSelectionTest(myFixture, testName + ".dart", testName + "_after.dart");
   }
 

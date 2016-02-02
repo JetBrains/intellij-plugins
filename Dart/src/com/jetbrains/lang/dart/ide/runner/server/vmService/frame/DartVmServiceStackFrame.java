@@ -86,7 +86,9 @@ public class DartVmServiceStackFrame extends XStackFrame {
   // first var in 'vars' list must be 'this'.
   private void addStaticAndInstanceFieldsOfFirstVarAndOtherVars(@NotNull final XCompositeNode node,
                                                                 @NotNull final ElementList<BoundVariable> vars) {
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, vars.get(0).getValue().getClassRef().getId(), new GetObjectConsumer() {
+    final BoundVariable firstVar = vars.get(0);
+
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, firstVar.getValue().getClassRef().getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj classObj) {
         final SmartList<FieldRef> staticFields = new SmartList<FieldRef>();
@@ -102,7 +104,13 @@ public class DartVmServiceStackFrame extends XStackFrame {
           node.addChildren(list, false);
         }
 
-        addInstanceFieldsOfFirstVarAndOtherVars(node, vars);
+        final InstanceKind kind = firstVar.getValue().getKind();
+        if (kind == InstanceKind.Null) {
+          addVars(node, vars, 0);
+        }
+        else {
+          addVarsAndFieldsOfFirstOne(node, vars);
+        }
       }
 
       @Override
@@ -117,8 +125,13 @@ public class DartVmServiceStackFrame extends XStackFrame {
     });
   }
 
-  private void addInstanceFieldsOfFirstVarAndOtherVars(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, vars.get(0).getValue().getId(), new GetObjectConsumer() {
+  private void addVarsAndFieldsOfFirstOne(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
+    final BoundVariable firstVar = vars.get(0);
+
+    node.addChildren(XValueChildrenList.singleton(
+      new DartVmServiceValue(myDebugProcess, myIsolateId, firstVar.getName(), firstVar.getValue(), null, false)), false);
+
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, firstVar.getValue().getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj instance) {
         DartVmServiceValue.addFields(myDebugProcess, node, myIsolateId, ((Instance)instance).getFields());

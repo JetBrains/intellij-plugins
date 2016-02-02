@@ -18,13 +18,14 @@ package com.jetbrains.lang.dart.ide.generation;
 import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.Nullable;
 
-public class DartGenerateToStringAction extends BaseDartGenerateAction {
+public class DartGenerateEqualsAndHashcodeAction extends BaseDartGenerateAction {
 
-  private static final String TO_STRING = "toString";
+  private static final String EQUALS_OP = "==";
+  private static final String HASHCODE = "hashCode";
 
   @Override
   protected BaseDartGenerateHandler getGenerateHandler() {
-    return new DartGenerateToStringHandler();
+    return new DartGenerateEqualsAndHashcodeHandler();
   }
 
   @Override
@@ -32,7 +33,6 @@ public class DartGenerateToStringAction extends BaseDartGenerateAction {
     if (dartClass == null) {
       return false;
     }
-    return !doesClassContainMethod(dartClass, TO_STRING);
+    return !doesClassContainMethod(dartClass, EQUALS_OP) && !doesClassContainGetter(dartClass, HASHCODE);
   }
-
 }
