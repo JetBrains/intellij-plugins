@@ -13,27 +13,35 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   }
 
   public void testConstructor1() throws Throwable {
-    doConstructor();
+    doConstructorTest();
   }
 
   public void testConstructor2() throws Throwable {
-    doConstructor();
+    doConstructorTest();
   }
 
   public void testConstructor3() throws Throwable {
-    doConstructor();
+    doConstructorTest();
   }
 
   public void testNamedConstructor1() throws Throwable {
-    doNamedConstructor();
+    doNamedConstructorTest();
   }
 
   public void testNamedConstructor2() throws Throwable {
-    doNamedConstructor();
+    doNamedConstructorTest();
   }
 
   public void testNamedConstructor3() throws Throwable {
-    doNamedConstructor();
+    doNamedConstructorTest();
+  }
+
+  public void testEqualsAndHashCode1() throws Throwable {
+    doEqualsAndHashcodeTest();
+  }
+
+  public void testEqualsAndHashCode2() throws Throwable {
+    doEqualsAndHashcodeTest();
   }
 
   public void testImplement1() throws Throwable {

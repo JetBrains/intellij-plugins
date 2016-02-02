@@ -255,6 +255,10 @@
             text="toString()">
       <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
+    <action id="Generate.EqualsAndHashcode.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateEqualsAndHashcodeAction"
+            text="Equals and HashCode">
+      <add-to-group anchor="after" relative-to-action="Generate.ToString.Dart" group-id="GenerateGroup"/>
+    </action>
 
     <group>
       <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies"

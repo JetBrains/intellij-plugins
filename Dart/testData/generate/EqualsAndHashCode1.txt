@@ -1,0 +1,22 @@
+class EqualsAndHashCode1 {
+  String str;
+  var v;
+  int i;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is EqualsAndHashCode1 &&
+        this.str == other.str &&
+        this.v == other.v &&
+        this.i == other.i;
+  }
+
+  @override
+  int get hashCode {
+    return str.hashCode ^ v.hashCode ^ i.hashCode;
+  }<caret>
+
+}
