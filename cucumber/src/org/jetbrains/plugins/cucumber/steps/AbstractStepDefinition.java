@@ -65,7 +65,7 @@ public abstract class AbstractStepDefinition {
         patternText.replace(patternText.length() - CUCUMBER_END_SUFFIX.length(), patternText.length(), "$");
       }
 
-      return new Perl5Compiler().compile(patternText.toString());
+      return new Perl5Compiler().compile(patternText.toString(), Perl5Compiler.CASE_INSENSITIVE_MASK);
     }
     catch (final MalformedPatternException ignored) {
       return null; // Bad regex?
