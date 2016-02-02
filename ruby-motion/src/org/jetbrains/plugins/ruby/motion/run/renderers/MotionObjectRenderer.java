@@ -61,9 +61,10 @@ public class MotionObjectRenderer extends ValueRenderer {
       final String ivarName = TextUtil.removeQuoting(context.evaluate(namePointer).getReadableValue());
       final String ivarExpr = getChildEvaluationExpression(ivarName);
       final LLValue ivar = context.evaluate(ivarExpr);
-      children.add(new MotionMemberValue(myValue.getProcess(), context,
-                                         myValue.getSourcePosition(),
-                                         myValue.getFrame(), ivar, ivarName, myValue));
+      children.add(new MotionMemberValue(ivar, 
+                                         ivarName, 
+                                         myValue
+      ));
     }
     CidrValue.addAllTo(children, container);
   }
