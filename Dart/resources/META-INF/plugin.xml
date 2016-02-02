@@ -256,7 +256,7 @@
       <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.EqualsAndHashcode.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateEqualsAndHashcodeAction"
-            text="Equals and HashCode">
+            text="==() and hashCode">
       <add-to-group anchor="after" relative-to-action="Generate.ToString.Dart" group-id="GenerateGroup"/>
     </action>
 
