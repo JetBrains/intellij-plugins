@@ -121,6 +121,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "{\"group\":{\"id\":16,\"suiteID\":4,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":730}\n",
     "{\"group\":{\"id\":17,\"suiteID\":4,\"parentID\":16,\"name\":\"CountdownTimer\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":730}\n",
     "{\"test\":{\"id\":18,\"name\":\"CountdownTimer should countdown\",\"suiteID\":4,\"groupIDs\":[16,17],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":732}\n",
+    "{\"count\":11,\"type\":\"allSuites\",\"time\":732}",
     "{\"testID\":1,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":733}\n",
     "{\"group\":{\"id\":19,\"suiteID\":0,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":733}\n",
     "{\"group\":{\"id\":20,\"suiteID\":0,\"parentID\":19,\"name\":\"collect\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":734}\n",

@@ -10,6 +10,7 @@ import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String TYPE_GROUP = "group";
   private static final String TYPE_PRINT = "print";
   private static final String TYPE_DONE = "done";
+  private static final String TYPE_ALL_SUITES = "allSuites";
   private static final String TYPE_TEST_START = "testStart";
   private static final String TYPE_TEST_DONE = "testDone";
 
@@ -51,6 +53,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String JSON_RESULT = "result";
   private static final String JSON_HIDDEN = "hidden";
   private static final String JSON_MILLIS = "time";
+  private static final String JSON_COUNT = "count";
+  private static final String JSON_TEST_COUNT = "testCount";
   private static final String JSON_MESSAGE = "message";
   private static final String JSON_ERROR_MESSAGE = "error";
   private static final String JSON_STACK_TRACE = "stackTrace";
@@ -81,6 +85,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private Map<Integer, Test> myTestData;
   private Map<Integer, Group> myGroupData;
   private Map<Integer, Suite> mySuiteData;
+  private int mySuitCount;
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
     super(testFrameworkName, consoleProperties);
@@ -133,6 +138,9 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     else if (TYPE_SUITE.equals(type)) {
       return handleSuite(obj);
     }
+    else if (TYPE_ALL_SUITES.equals(type)) {
+      return handleAllSuites(obj);
+    }
     else if (TYPE_START.equals(type)) {
       return handleStart(obj);
     }
@@ -140,7 +148,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       return handleDone(obj);
     }
     else {
-      throw new JsonSyntaxException("Unexpected type: " + type + " (check for package:test update)");
+      return true;
     }
   }
 
@@ -247,6 +255,13 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     return finishMessage(testError, test.getId(), test.getValidParentId()) && finishMessage(msg, test.getId(), test.getValidParentId());
   }
 
+  private boolean handleAllSuites(JsonObject obj) {
+    JsonElement elem = obj.get(JSON_TEST_COUNT);
+    if (elem == null || !elem.isJsonPrimitive()) return true;
+    mySuitCount = elem.getAsInt();
+    return true;
+  }
+
   private boolean handlePrint(JsonObject obj) throws ParseException {
     Test test = getTest(obj);
     ServiceMessageBuilder message = ServiceMessageBuilder.testStdOut(test.getBaseName());
@@ -266,6 +281,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
+    mySuitCount = 0;
     // This apparently is a no-op: myProcessor.signalTestFrameworkAttached();
     return true;
   }
@@ -292,6 +308,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
+    mySuitCount = 0;
   }
 
   private boolean processGroupDone(Group group) throws ParseException {
@@ -560,7 +577,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     private boolean isRunning = true;
 
     static Test from(JsonObject obj, Map<Integer, Group> groups, Map<Integer, Suite> suites) {
-      int[] groupIds = GSON.fromJson(obj.get(JSON_GROUP_IDS), int[].class);
+      int[] groupIds = GSON.fromJson(obj.get(JSON_GROUP_IDS), (Type)int[].class);
       Group parent = null;
       if (groupIds != null && groupIds.length > 0) {
         parent = groups.get(groupIds[groupIds.length - 1]);
@@ -575,6 +592,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private static class Group extends Item {
+    private int myTestCount = 0;
+
+    static int extractTestCount(JsonObject obj) {
+      JsonElement elem = obj.get(JSON_TEST_COUNT);
+      if (elem == null || !elem.isJsonPrimitive()) return -1;
+      return elem.getAsInt();
+    }
+
     static Group from(JsonObject obj, Map<Integer, Group> groups, Map<Integer, Suite> suites) {
       JsonElement parentObj = obj.get(JSON_PARENT_ID);
       Group parent = null;
@@ -583,11 +608,16 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         parent = groups.get(parentId);
       }
       Suite suite = lookupSuite(obj, suites);
-      return new Group(extractId(obj), extractName(obj), parent, suite, extractMetadata(obj));
+      return new Group(extractId(obj), extractName(obj), parent, suite, extractMetadata(obj), extractTestCount(obj));
     }
 
-    Group(int id, String name, Group parent, Suite suite, Metadata metadata) {
+    Group(int id, String name, Group parent, Suite suite, Metadata metadata, int count) {
       super(id, name, parent, suite, metadata);
+      myTestCount = count;
+    }
+
+    int getTestCount() {
+      return myTestCount;
     }
   }
 
@@ -637,7 +667,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     static Metadata from(JsonElement elem) {
       if (elem == null) return new Metadata();
-      return GSON.fromJson(elem, Metadata.class);
+      return GSON.fromJson(elem, (Type)Metadata.class);
     }
   }
 }
