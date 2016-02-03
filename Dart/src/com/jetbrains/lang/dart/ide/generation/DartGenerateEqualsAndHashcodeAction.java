@@ -33,6 +33,6 @@ public class DartGenerateEqualsAndHashcodeAction extends BaseDartGenerateAction 
     if (dartClass == null) {
       return false;
     }
-    return !doesClassContainMethod(dartClass, EQUALS_OP) && !doesClassContainGetter(dartClass, HASHCODE);
+    return hasNonStaticField(dartClass) && !doesClassContainMethod(dartClass, EQUALS_OP) && !doesClassContainGetter(dartClass, HASHCODE);
   }
 }

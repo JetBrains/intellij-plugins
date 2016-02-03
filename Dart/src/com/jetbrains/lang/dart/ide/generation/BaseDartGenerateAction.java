@@ -8,7 +8,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartGetterDeclaration;
 import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -79,6 +81,15 @@ public abstract class BaseDartGenerateAction extends AnAction {
     }
     for (DartGetterDeclaration getterDecaration : getterDeclarations) {
       if (getterName.equals(getterDecaration.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected static boolean hasNonStaticField(@NotNull final DartClass dartClass) {
+    for (DartComponent component : DartResolveUtil.getNamedSubComponents(dartClass)) {
+      if (DartComponentType.typeOf(component) == DartComponentType.FIELD && !component.isStatic()) {
         return true;
       }
     }

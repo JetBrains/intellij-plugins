@@ -16,7 +16,6 @@
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -24,7 +23,6 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 
 import java.util.List;
-import java.util.Map;
 
 public class DartGenerateEqualsAndHashcodeHandler extends BaseDartGenerateHandler {
   @Override
@@ -39,11 +37,11 @@ public class DartGenerateEqualsAndHashcodeHandler extends BaseDartGenerateHandle
 
   @Override
   protected void collectCandidates(DartClass dartClass, List<DartComponent> candidates) {
-  candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass).values(), new Condition<DartComponent>() {
-        @Override
-        public boolean value(DartComponent component) {
-          return DartComponentType.typeOf(component) == DartComponentType.FIELD;
-        }
-      }));
+    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass).values(), new Condition<DartComponent>() {
+      @Override
+      public boolean value(DartComponent component) {
+        return DartComponentType.typeOf(component) == DartComponentType.FIELD && !component.isStatic();
+      }
+    }));
   }
 }

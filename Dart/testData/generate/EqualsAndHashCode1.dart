@@ -1,5 +1,6 @@
 class EqualsAndHashCode1 {
   String str;
   var v;
-  int i;<caret>
+  int i;
+  static var s;<caret>
 }
