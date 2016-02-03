@@ -17,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 public class MotionValueRendererFactory implements CustomValueRendererFactory {
   @Nullable
   @Override
-  public ValueRenderer createRenderer(CidrDebuggerSettings settings, CidrPhysicalValue value,
-                                      LLValue var,
-                                      EvaluationContext context) throws ExecutionException {
+  public ValueRenderer createRendererLeading(CidrDebuggerSettings settings, CidrPhysicalValue value,
+                                             LLValue var,
+                                             EvaluationContext context) throws ExecutionException {
     try {
       if (var.isValidPointer()) {
         context.evaluate(EvaluationContext.cast("rb_inspect(" + EvaluationContext.cast(var.getPointer(), "id") + ")", "id"));
@@ -29,6 +29,15 @@ public class MotionValueRendererFactory implements CustomValueRendererFactory {
         return collectionRenderer != null ? collectionRenderer : new MotionObjectRenderer(value);
       }
     } catch (DBCannotEvaluateException ignored) {}
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public ValueRenderer createRendererTrailing(CidrDebuggerSettings settings,
+                                              CidrPhysicalValue value,
+                                              LLValue var,
+                                              EvaluationContext context) throws ExecutionException {
     return null;
   }
 }
