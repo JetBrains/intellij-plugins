@@ -9,7 +9,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 @State(
   name = "AirPackageProjectParameters",
   storages = {
-    @Storage(file = StoragePathMacros.WORKSPACE_FILE)
+    @Storage(StoragePathMacros.WORKSPACE_FILE)
   }
 )
 public class AirPackageProjectParameters implements PersistentStateComponent<AirPackageProjectParameters> {

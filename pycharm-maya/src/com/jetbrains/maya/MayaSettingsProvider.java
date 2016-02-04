@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 @State(
   name = "MayaSettingsProvider",
   storages = {
-    @Storage(file = StoragePathMacros.WORKSPACE_FILE)
+    @Storage(StoragePathMacros.WORKSPACE_FILE)
   }
 )
 public class MayaSettingsProvider implements PersistentStateComponent<MayaSettingsProvider.State> {

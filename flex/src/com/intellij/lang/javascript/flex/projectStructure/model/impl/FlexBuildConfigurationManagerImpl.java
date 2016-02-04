@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.*;
 
-@State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME, storages = @Storage(file = StoragePathMacros.MODULE_FILE))
+@State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME, storages = @Storage(StoragePathMacros.MODULE_FILE))
 public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
   implements PersistentStateComponent<FlexBuildConfigurationManagerImpl.State> {
 

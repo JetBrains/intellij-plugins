@@ -1,6 +1,9 @@
 package org.intellij.errorProne;
 
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -9,13 +12,7 @@ import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
 /**
  * @author nik
  */
-@State(
-  name = "ErrorProneCompilerSettings",
-  storages = {
-    @Storage(file = StoragePathMacros.PROJECT_FILE),
-    @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/compiler.xml", scheme = StorageScheme.DIRECTORY_BASED)
-  }
-)
+@State(name = "ErrorProneCompilerSettings", storages = @Storage("compiler.xml"))
 public class ErrorProneCompilerConfiguration implements PersistentStateComponent<JpsJavaCompilerOptions> {
   private final JpsJavaCompilerOptions mySettings = new JpsJavaCompilerOptions();
 
