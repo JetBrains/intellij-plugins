@@ -1,13 +1,11 @@
 <idea-plugin version="2">
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap/Cordova Plugin</name>
-  <version>999.999</version>
   <vendor email="masahiro.suzuka@gmail.com">masahirosuzuka, JetBrains</vendor>
 
   <resource-bundle>com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle</resource-bundle>
 
   <depends optional="true" config-file="javascript-plugin.xml">JavaScript</depends>
-
 
   <description><![CDATA[
         <h4>PhoneGap/Cordova integration for InteliJ Platform.</h4>
@@ -20,10 +18,6 @@
         <p>See README.md</p>
 
     ]]></description>
-
-
-
-  <idea-version since-build="138.1498"/>
 
   <depends>com.intellij.modules.lang</depends>
 

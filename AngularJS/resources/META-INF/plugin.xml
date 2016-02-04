@@ -1,11 +1,7 @@
 <idea-plugin version="2" url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <name>AngularJS</name>
   <description>Support for AngularJS</description>
-  <version>999.999</version>
   <vendor>johnlindquist, JetBrains</vendor>
-
-  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="138.1029"/>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
