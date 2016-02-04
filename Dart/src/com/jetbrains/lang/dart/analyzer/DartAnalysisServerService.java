@@ -1297,6 +1297,10 @@ public class DartAnalysisServerService {
       return null;
     }
 
+    if (_uri != null && !resultRef.isNull()) {
+      return FileUtil.toSystemIndependentName(resultRef.get());
+    }
+
     return resultRef.get();
   }
 
