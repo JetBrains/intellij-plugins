@@ -21,6 +21,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -31,16 +32,16 @@ public class DartGenerateEqualsAndHashcodeHandler extends BaseDartGenerateHandle
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateEqualsAndHashcodeFix(dartClass);
   }
 
   @Override
-  protected void collectCandidates(DartClass dartClass, List<DartComponent> candidates) {
-    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass).values(), new Condition<DartComponent>() {
+  protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
+    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, false).values(), new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
-        return DartComponentType.typeOf(component) == DartComponentType.FIELD && !component.isStatic();
+        return DartComponentType.typeOf(component) == DartComponentType.FIELD;
       }
     }));
   }

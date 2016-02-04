@@ -100,7 +100,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
   }
 
-  protected abstract BaseCreateMethodsFix createFix(DartClass dartClass);
+  protected abstract BaseCreateMethodsFix createFix(final DartClass dartClass);
 
   protected abstract String getTitle();
 
@@ -113,10 +113,21 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
   };
 
+  private final static Condition<DartComponent> NOT_STATIC_CONDITION = new Condition<DartComponent>() {
+    @Override
+    public boolean value(DartComponent component) {
+      return !component.isStatic();
+    }
+  };
+
   @NotNull
-  protected final Map<Pair<String, Boolean>, DartComponent> computeClassMembersMap(@NotNull final DartClass dartClass) {
+  protected final Map<Pair<String, Boolean>, DartComponent> computeClassMembersMap(@NotNull final DartClass dartClass,
+                                                                                   final boolean doIncludeStatics) {
     List<DartComponent> classMembers = DartResolveUtil.getNamedSubComponents(dartClass);
     classMembers = ContainerUtil.filter(classMembers, NOT_CONSTRUCTOR_CONDITION);
+    if (!doIncludeStatics) {
+      classMembers = ContainerUtil.filter(classMembers, NOT_STATIC_CONDITION);
+    }
     return DartResolveUtil.namedComponentToMap(classMembers);
   }
 
@@ -133,6 +144,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
 
     superClassesMembers = ContainerUtil.filter(superClassesMembers, NOT_CONSTRUCTOR_CONDITION);
+    superClassesMembers = ContainerUtil.filter(superClassesMembers, NOT_STATIC_CONDITION);
 
     return DartResolveUtil.namedComponentToMap(superClassesMembers);
   }
@@ -150,6 +162,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
 
     superInterfacesMembers = ContainerUtil.filter(superInterfacesMembers, NOT_CONSTRUCTOR_CONDITION);
+    superInterfacesMembers = ContainerUtil.filter(superInterfacesMembers, NOT_STATIC_CONDITION);
 
     return DartResolveUtil.namedComponentToMap(superInterfacesMembers);
   }

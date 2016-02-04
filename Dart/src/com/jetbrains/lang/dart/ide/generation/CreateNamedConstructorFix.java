@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class CreateNamedConstructorFix extends BaseCreateMethodsFix<DartComponent> {
-  public CreateNamedConstructorFix(DartClass dartClass) {
+  public CreateNamedConstructorFix(@NotNull final DartClass dartClass) {
     super(dartClass);
   }
 

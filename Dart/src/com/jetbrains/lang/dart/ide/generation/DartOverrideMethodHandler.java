@@ -8,6 +8,7 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class DartOverrideMethodHandler extends BaseDartGenerateHandler {
   protected void collectCandidates(DartClass dartClass, List<DartComponent> candidates) {
     Map<Pair<String, Boolean>, DartComponent> result =
       new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
-    result.keySet().removeAll(computeClassMembersMap(dartClass).keySet());
+    result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
     candidates.addAll(ContainerUtil.findAll(result.values(), new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
@@ -32,7 +33,7 @@ public class DartOverrideMethodHandler extends BaseDartGenerateHandler {
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new OverrideImplementMethodFix(dartClass, false);
   }
 }
