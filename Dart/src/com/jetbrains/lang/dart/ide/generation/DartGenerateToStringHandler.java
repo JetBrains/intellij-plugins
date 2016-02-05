@@ -32,14 +32,14 @@ public class DartGenerateToStringHandler extends BaseDartGenerateHandler {
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateToStringFix(dartClass);
   }
 
 
   @Override
   protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
-    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass).values(), new Condition<DartComponent>() {
+    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, false).values(), new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
         return DartComponentType.typeOf(component) == DartComponentType.FIELD;

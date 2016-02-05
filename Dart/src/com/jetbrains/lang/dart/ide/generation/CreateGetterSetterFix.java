@@ -64,7 +64,7 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
 
   private final @NotNull Strategy myStrategy;
 
-  public CreateGetterSetterFix(final DartClass dartClass, @NotNull Strategy strategy) {
+  public CreateGetterSetterFix(@NotNull final DartClass dartClass, @NotNull Strategy strategy) {
     super(dartClass);
     myStrategy = strategy;
   }
@@ -79,8 +79,9 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent namedComponent) {
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(namedComponent, DartReturnType.class);
     final DartType dartType = PsiTreeUtil.getChildOfType(namedComponent, DartType.class);
-    final String typeText = returnType == null ? DartPresentableUtil.buildTypeText(namedComponent, dartType, null)
-                                               : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
+    final String typeText = returnType == null
+                            ? DartPresentableUtil.buildTypeText(namedComponent, dartType, null)
+                            : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
     if (myStrategy == Strategy.GETTER || myStrategy == Strategy.GETTERSETTER) {

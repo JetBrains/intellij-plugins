@@ -5,6 +5,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,12 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
         result.put(entry.getKey(), entry.getValue());
       }
     }
-    result.keySet().removeAll(computeClassMembersMap(dartClass).keySet());
+    result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
     candidates.addAll(result.values());
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new OverrideImplementMethodFix(dartClass, true);
   }
 }

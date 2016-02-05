@@ -104,10 +104,8 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     if (functionTemplate != null) {
       setCaretSafe(editor, anchor.getTextRange().getEndOffset());
       templateManager.startTemplate(editor, functionTemplate);
-      final PsiElement dartComponent = PsiTreeUtil.getParentOfType(
-        anchor.findElementAt(editor.getCaretModel().getOffset()),
-        DartComponent.class
-      );
+      final PsiElement dartComponent =
+        PsiTreeUtil.getParentOfType(anchor.findElementAt(editor.getCaretModel().getOffset()), DartComponent.class);
       return dartComponent != null ? dartComponent : anchor;
     }
     return anchor;

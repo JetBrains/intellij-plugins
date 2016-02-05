@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class CreateToStringFix extends BaseCreateMethodsFix<DartComponent> {
 
-  public CreateToStringFix(final DartClass dartClass) {
+  public CreateToStringFix(@NotNull final DartClass dartClass) {
     super(dartClass);
   }
 
