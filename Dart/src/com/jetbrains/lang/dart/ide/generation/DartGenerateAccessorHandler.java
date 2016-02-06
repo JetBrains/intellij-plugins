@@ -6,6 +6,7 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -18,21 +19,18 @@ public abstract class DartGenerateAccessorHandler extends BaseDartGenerateHandle
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
     return new CreateGetterSetterFix(dartClass, myStrategy);
   }
-
 
   @Override
   protected void collectCandidates(final DartClass dartClass, List<DartComponent> candidates) {
     final List<DartComponent> subComponents = DartResolveUtil.getNamedSubComponents(dartClass);
 
-    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass).values(), new Condition<DartComponent>() {
+    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, false).values(), new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
-        return DartComponentType.typeOf(component) == DartComponentType.FIELD &&
-               !component.isStatic() &&
-               myStrategy.accept(component.getName(), subComponents);
+        return DartComponentType.typeOf(component) == DartComponentType.FIELD && myStrategy.accept(component.getName(), subComponents);
       }
     }));
   }

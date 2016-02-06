@@ -1,5 +1,6 @@
 class IntValue {
   num _value;
+  static var s;
 
   IntValue(this._value);<caret>
 

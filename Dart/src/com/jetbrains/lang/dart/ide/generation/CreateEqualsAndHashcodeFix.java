@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartComponent> {
-  public CreateEqualsAndHashcodeFix(DartClass dartClass) {
+  public CreateEqualsAndHashcodeFix(@NotNull final DartClass dartClass) {
     super(dartClass);
   }
 

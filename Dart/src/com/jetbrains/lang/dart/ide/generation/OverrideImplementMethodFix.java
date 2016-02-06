@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
   final boolean myImplementNotOverride;
 
-  public OverrideImplementMethodFix(final DartClass dartClass, final boolean implementNotOverride) {
+  public OverrideImplementMethodFix(@NotNull final DartClass dartClass, final boolean implementNotOverride) {
     super(dartClass);
     myImplementNotOverride = implementNotOverride;
   }
