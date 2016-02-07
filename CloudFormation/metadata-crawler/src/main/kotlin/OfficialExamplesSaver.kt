@@ -6,7 +6,6 @@ import java.io.File
 import java.net.URL
 
 object OfficialExamplesSaver {
-  @Throws(Exception::class)
   fun save() {
     val url = URL("http://s3.amazonaws.com/cloudformation-templates-us-east-1/")
 

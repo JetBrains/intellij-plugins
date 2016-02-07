@@ -1,19 +1,34 @@
 package com.intellij.aws.cloudformation.metadata
 
-import java.util.*
+data class CloudFormationResourceProperty(
+    val name: String,
+    val description: String,
+    val type: String,
+    val required: Boolean,
+    val updateRequires: String)
 
-class CloudFormationMetadata {
-  var resourceTypes: MutableList<CloudFormationResourceType> = ArrayList()
-  var predefinedParameters: MutableList<String> = ArrayList()
-  var limits = CloudFormationLimits()
+data class CloudFormationResourceAttribute(val name: String, val description: String)
 
-  fun findResourceType(name: String): CloudFormationResourceType? {
-    for (resourceType in resourceTypes) {
-      if (resourceType.name == name) {
-        return resourceType
-      }
-    }
+data class CloudFormationResourceType(
+    var name: String,
+    var description: String,
+    var properties: List<CloudFormationResourceProperty>,
+    var attributes: List<CloudFormationResourceAttribute>) {
 
-    return null
-  }
+  fun findProperty(name: String): CloudFormationResourceProperty? =
+      properties.filter { it.name == name }.singleOrNull()
+
+  val requiredProperties: Set<String>
+    get() = properties.filter { it.required }.map { it.name }.toSet()
+}
+
+data class CloudFormationLimits(val maxParameters: Int, val maxOutputs: Int, val maxMappings: Int)
+
+data class CloudFormationMetadata(
+    val resourceTypes: List<CloudFormationResourceType>,
+    val predefinedParameters: List<String>,
+    val limits: CloudFormationLimits) {
+
+  fun findResourceType(name: String): CloudFormationResourceType? =
+      resourceTypes.filter { it.name == name }.singleOrNull()
 }

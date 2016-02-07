@@ -1,6 +1,5 @@
 import com.intellij.aws.cloudformation.metadata.*
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.tuple.Pair
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -17,30 +16,34 @@ object ResourceTypesSaver {
 
   @Throws(Exception::class)
   fun saveResourceTypes() {
-    val metadata = CloudFormationMetadata()
+    val resourceAttributesMap = fetchResourceAttributes()
 
-    metadata.limits = limits
-    metadata.predefinedParameters.addAll(predefinedParameters)
+    val limits = fetchLimits()
+    val resourceTypeLocations = fetchResourceTypeLocations()
+    val predefinedParameters = fetchPredefinedParameters()
 
-    val types = resourceTypes
-    for (type in types) {
-      val resourceType = getResourceType(type.value, type.key)
-      metadata.resourceTypes.add(resourceType)
+    val resourceTypes = resourceTypeLocations.map {
+      fetchResourceType(it.name, it.location, resourceAttributesMap.getOrElse(it.name, { emptyList() }))
     }
 
-    fetchResourceAttributes(metadata)
+    val metadata = CloudFormationMetadata(
+        resourceTypes = resourceTypes,
+        predefinedParameters = predefinedParameters,
+        limits = limits
+    )
 
     FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
   }
 
-  @Throws(IOException::class)
-  private fun fetchResourceAttributes(metadata: CloudFormationMetadata) {
+  private fun fetchResourceAttributes(): Map<String, List<CloudFormationResourceAttribute>> {
     val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
     val tableElement = doc.select("div.informaltable").first()!!
 
     val table = parseTable(tableElement)
+
+    val result: MutableMap<String, MutableList<CloudFormationResourceAttribute>> = hashMapOf()
 
     for (row in table) {
       if (row.size != 3) {
@@ -60,15 +63,11 @@ object ResourceTypesSaver {
         resourceTypeName = "AWS::EC2::SubnetNetworkAclAssociation"
       }
 
-      var resourceType: CloudFormationResourceType? = metadata.findResourceType(resourceTypeName)
-      if (resourceType == null) {
-        resourceType = CloudFormationResourceType()
-        resourceType.name = resourceTypeName
-        metadata.resourceTypes.add(resourceType)
-      }
-
-      resourceType.attributes.add(CloudFormationResourceAttribute.create(attribute, ""))
+      val attributesList = result.getOrPut(resourceTypeName, { arrayListOf() })
+      attributesList.add(CloudFormationResourceAttribute(attribute, ""))
     }
+
+    return result
   }
 
   private fun getDocumentFromUrl(url: URL): Document {
@@ -85,18 +84,17 @@ object ResourceTypesSaver {
     throw RuntimeException("Could not download from " + url)
   }
 
-  private fun getResourceType(name: String, url: URL): CloudFormationResourceType {
-    println(name)
+  private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: List<CloudFormationResourceAttribute>): CloudFormationResourceType {
+    println(resourceTypeName)
 
-    val resourceType = CloudFormationResourceType()
-    resourceType.name = name
+    val doc = getDocumentFromUrl(docLocation)
 
-    val doc = getDocumentFromUrl(url)
-
-    val description = doc.select(".section").first()
-    resourceType.description = cleanupHtml(description.toString())
+    val descriptionElement = doc.select(".section").first()
+    val description = cleanupHtml(descriptionElement.toString())
 
     val vlists = doc.select("div.variablelist")
+
+    val properties: MutableList<CloudFormationResourceProperty> = arrayListOf()
 
     if (!vlists.isEmpty()) {
       for (vlist in vlists) {
@@ -115,18 +113,16 @@ object ResourceTypesSaver {
             continue
           }
 
-          val property = CloudFormationResourceProperty()
-
           val descr = term.parent().nextElementSibling()
           //descr.children().
           val descrElements = descr.select("p")
 
-          property.name = term.text()
+          val name = term.text()
 
           var requiredValue: String? = null
           var typeValue: String? = null
-          var descriptionValue: String? = null
-          var updateValue: String? = null
+          var descriptionValue: String = ""
+          var updateValue: String = ""
 
           for (element in descrElements) {
             if (element.parent() !== descr) {
@@ -154,16 +150,16 @@ object ResourceTypesSaver {
             }
           }
 
-          property.description = descriptionValue
-          property.updateRequires = updateValue
+          var type: String = ""
+
           if (typeValue != null) {
-            property.type = typeValue
-          } else if (resourceType.name == "AWS::Redshift::Cluster" && property.name == "SnapshotClusterIdentifier") {
-            property.type = "String"
+            type = typeValue
+          } else if (resourceTypeName == "AWS::Redshift::Cluster" && resourceTypeName == "SnapshotClusterIdentifier") {
+            type = "String"
           } else {
             // TODO
-            if (resourceType.name != "AWS::Route53::RecordSet") {
-              throw RuntimeException("Type is not found in property " + property.name + " in " + url)
+            if (resourceTypeName != "AWS::Route53::RecordSet") {
+              throw RuntimeException("Type is not found in property $name in $docLocation")
             }
           }
 
@@ -175,9 +171,11 @@ object ResourceTypesSaver {
           // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster isn't in a VPC, you must specify this property
           // TODO http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html: If your cache cluster is in a VPC, you must specify this property
 
+          var required = false
+
           if (requiredValue != null) {
             if (requiredValue == "Yes") {
-              property.required = true
+              required = true
             } else if (requiredValue.startsWith("No") ||
                 requiredValue.startsWith("Conditional") ||
                 requiredValue == "Required if NetBiosNameServers is specified; optional otherwise" ||
@@ -187,20 +185,20 @@ object ResourceTypesSaver {
                 requiredValue == "Yes, for ICMP and any protocol that uses ports" ||
                 requiredValue == "If your cache cluster isn't in a VPC, you must specify this property" ||
                 requiredValue == "If your cache cluster is in a VPC, you must specify this property") {
-              property.required = false
+              required = false
             } else {
-              throw RuntimeException("Unknown value for required in property " + property.name + " in " + url + ": " + requiredValue)
+              throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredValue")
             }
           } else {
             // TODO
-            if (resourceType.name != "AWS::RDS::DBParameterGroup" &&
-                resourceType.name != "AWS::Route53::RecordSet" &&
-                resourceType.name != "AWS::RDS::DBSecurityGroupIngress") {
-              throw RuntimeException("Required is not found in property " + property.name + " in " + url)
+            if (resourceTypeName != "AWS::RDS::DBParameterGroup" &&
+                resourceTypeName != "AWS::Route53::RecordSet" &&
+                resourceTypeName != "AWS::RDS::DBSecurityGroupIngress") {
+              throw RuntimeException("Required is not found in property $name in $docLocation")
             }
           }
 
-          resourceType.properties.add(property)
+          properties.add(CloudFormationResourceProperty(name, descriptionValue, type, required, updateValue))
         }
       }
     } else {
@@ -213,61 +211,63 @@ object ResourceTypesSaver {
             continue
           }
 
-          val property = row[0]
+          val name = row[0]
           val type = row[1]
-          val required = row[2]
+          val requiredString = row[2]
           // final String notes = row.get(3);
 
-          val resourceProperty = CloudFormationResourceProperty()
+          val required: Boolean
 
-          resourceProperty.name = property
-          resourceProperty.description = "" // notes
-
-          if (required.equals("yes", ignoreCase = true)) {
-            resourceProperty.required = true
-          } else if (required.equals("no", ignoreCase = true)) {
-            resourceProperty.required = false
+          if (requiredString.equals("yes", ignoreCase = true)) {
+            required = true
+          } else if (requiredString.equals("no", ignoreCase = true)) {
+            required = false
           } else {
-            throw RuntimeException("Unknown value for required in property $property in $url: $required")
+            throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
           }
 
-          resourceProperty.type = type
-
-          resourceType.properties.add(resourceProperty)
+          properties.add(CloudFormationResourceProperty(name, "", type, required, ""))
         }
       } else {
-        if (name != "AWS::CloudFormation::WaitConditionHandle" &&
-            name != "AWS::SDB::Domain" &&
-            name != "AWS::CodeDeploy::Application" &&
-            name != "AWS::ECS::Cluster") {
-          throw RuntimeException("No properties found in " + url)
+        if (resourceTypeName != "AWS::CloudFormation::WaitConditionHandle" &&
+            resourceTypeName != "AWS::SDB::Domain" &&
+            resourceTypeName != "AWS::CodeDeploy::Application" &&
+            resourceTypeName != "AWS::ECS::Cluster") {
+          throw RuntimeException("No properties found in $docLocation")
         }
       }
     }
 
     // De-facto changes not covered in documentation
 
-    if (name == "AWS::ElasticBeanstalk::Application") {
+    fun changeProperty(name: String, converter: (CloudFormationResourceProperty) -> CloudFormationResourceProperty) {
+      val statusIndex = properties.indexOfFirst { it.name == name }
+      assert(statusIndex >= 0, { "Property $name is not found in resource type $resourceTypeName"})
+
+      properties[statusIndex] = converter(properties[statusIndex])
+    }
+
+    if (resourceTypeName == "AWS::ElasticBeanstalk::Application") {
       // Not in official documentation yet, found in examples
-      resourceType.properties.add(CloudFormationResourceProperty.create("ConfigurationTemplates", "", "Unknown", false, ""))
-      resourceType.properties.add(CloudFormationResourceProperty.create("ApplicationVersions", "", "Unknown", false, ""))
+      properties.add(CloudFormationResourceProperty("ConfigurationTemplates", "", "Unknown", false, ""))
+      properties.add(CloudFormationResourceProperty("ApplicationVersions", "", "Unknown", false, ""))
     }
 
-    if (name == "AWS::IAM::AccessKey") {
-      resourceType.findProperty("Status")!!.required = false
+    if (resourceTypeName == "AWS::IAM::AccessKey") {
+      changeProperty("Status", { it.copy(required = false) })
     }
 
-    if (name == "AWS::RDS::DBInstance") {
-      resourceType.findProperty("AllocatedStorage")!!.required = false
+    if (resourceTypeName == "AWS::RDS::DBInstance") {
+      changeProperty("AllocatedStorage", { it.copy(required = false) })
     }
 
     // See #17, ToPort and FromPort are required with port-based ip protocols only, will implement special check later
-    if (name == "AWS::EC2::SecurityGroupEgress" || name == "AWS::EC2::SecurityGroupIngress") {
-      resourceType.findProperty("ToPort")!!.required = false
-      resourceType.findProperty("FromPort")!!.required = false
+    if (resourceTypeName == "AWS::EC2::SecurityGroupEgress" || resourceTypeName == "AWS::EC2::SecurityGroupIngress") {
+      changeProperty("ToPort", { it.copy(required = false) })
+      changeProperty("FromPort", { it.copy(required = false) })
     }
 
-    return resourceType
+    return CloudFormationResourceType(resourceTypeName, description, properties, resourceAttributes)
   }
 
   private val cleanElementIdPattern = Regex(" ?id=\\\"[0-9a-f]{8}\\\"")
@@ -301,70 +301,52 @@ object ResourceTypesSaver {
     return result
   }
 
-  private // EXCEPTION Not a resource type
-  val resourceTypes: List<Pair<URL, String>>
-    @Throws(IOException::class)
-    get() {
-      val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html")
-      val content = IOUtils.toString(url)
+  private data class ResourceTypeLocation(val name: String, val location: URL)
 
-      val result = ArrayList<Pair<URL, String>>()
+  private fun fetchResourceTypeLocations(): List<ResourceTypeLocation> {
+    val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html")
+    val content = IOUtils.toString(url)
 
-      val matcher = RESOURCE_TYPE_PATTERN.matcher(content)
-      while (matcher.find()) {
-        val href = matcher.group(1)
-        val name = matcher.group(2)
-        if ("AWS::CloudFormation::Init" == name) {
-          continue
-        }
+    val result: MutableList<ResourceTypeLocation> = ArrayList()
 
-        result.add(Pair.of(URL(url, href.trim { it <= ' ' }), name.trim { it <= ' ' }))
+    val matcher = RESOURCE_TYPE_PATTERN.matcher(content)
+    while (matcher.find()) {
+      val href = matcher.group(1)
+      val name = matcher.group(2)
+      if ("AWS::CloudFormation::Init" == name) {
+        continue
       }
 
-      Collections.sort(result) { o1, o2 -> o1.value.compareTo(o2.value) }
-
-      return result
+      result.add(ResourceTypeLocation(name.trim(), URL(url, href.trim())))
     }
 
-  private val predefinedParameters: List<String>
-    @Throws(IOException::class)
-    get() {
-      val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
-      val doc = getDocumentFromUrl(url)
+    return result.sortedBy { it.name }
+  }
 
-      val result = ArrayList<String>()
+  private fun fetchPredefinedParameters(): List<String> {
+    val url = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
+    val doc = getDocumentFromUrl(url)
 
-      val vlist = doc.select("div.variablelist").first()
+    val vlist = doc.select("div.variablelist").first()
+    return vlist.select("span.term").map { it.text() }.sorted()
+  }
 
-      for (param in vlist.select("span.term")) {
-        result.add(param.text())
-      }
+  private fun fetchLimits(): CloudFormationLimits {
+    val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html")
+    val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
-      Collections.sort(result)
+    val tableElement = doc.select("div.table-contents").first()!!
 
-      return result
+    val table = parseTable(tableElement)
+    val limits = HashMap<String, String>()
+    for (row in table) {
+      limits.put(row[0], row[2])
     }
 
-  private val limits: CloudFormationLimits
-    @Throws(IOException::class)
-    get() {
-      val result = CloudFormationLimits()
-
-      val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html")
-      val doc = getDocumentFromUrl(fnGetAttrDocUrl)
-
-      val tableElement = doc.select("div.table-contents").first()!!
-
-      val table = parseTable(tableElement)
-      val limits = HashMap<String, String>()
-      for (row in table) {
-        limits.put(row[0], row[2])
-      }
-
-      result.maxOutputs = Integer.parseInt(limits["Outputs"]?.replace(" outputs", ""))
-      result.maxParameters = Integer.parseInt(limits["Parameters"]?.replace(" parameters", ""))
-      result.maxMappings = Integer.parseInt(limits["Mappings"]?.replace(" mappings", ""))
-
-      return result
-    }
+    return CloudFormationLimits(
+        maxMappings = Integer.parseInt(limits["Mappings"]?.replace(" mappings", "")),
+        maxParameters = Integer.parseInt(limits["Parameters"]?.replace(" parameters", "")),
+        maxOutputs = Integer.parseInt(limits["Outputs"]?.replace(" outputs", ""))
+    )
+  }
 }
