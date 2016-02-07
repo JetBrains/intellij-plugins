@@ -254,17 +254,17 @@ object ResourceTypesSaver {
     }
 
     if (name == "AWS::IAM::AccessKey") {
-      resourceType.findProperty("Status").required = false
+      resourceType.findProperty("Status")!!.required = false
     }
 
     if (name == "AWS::RDS::DBInstance") {
-      resourceType.findProperty("AllocatedStorage").required = false
+      resourceType.findProperty("AllocatedStorage")!!.required = false
     }
 
     // See #17, ToPort and FromPort are required with port-based ip protocols only, will implement special check later
     if (name == "AWS::EC2::SecurityGroupEgress" || name == "AWS::EC2::SecurityGroupIngress") {
-      resourceType.findProperty("ToPort").required = false
-      resourceType.findProperty("FromPort").required = false
+      resourceType.findProperty("ToPort")!!.required = false
+      resourceType.findProperty("FromPort")!!.required = false
     }
 
     return resourceType
