@@ -2,7 +2,9 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.base.Charsets
 import com.intellij.icons.AllIcons
+import com.intellij.json.JsonFileType
 import com.intellij.json.JsonLanguage
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile
 import com.intellij.openapi.vfs.VirtualFile
@@ -32,7 +34,14 @@ class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileType
   }
 
   override fun isMyFileType(file: VirtualFile): Boolean {
-    return CloudFormationFileType.EXTENSION.equals(file.extension, ignoreCase = true) && detectFromContent(file)
+    val extension = file.extension ?: return false
+
+    if (FileTypeManager.getInstance().getFileTypeByExtension(extension) === JsonFileType.INSTANCE ||
+        CloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true)) {
+      return detectFromContent(file)
+    }
+
+    return false
   }
 
   private fun detectFromContent(file: VirtualFile): Boolean {
@@ -53,19 +62,15 @@ class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileType
     }
 
     try {
-      val inputStream = virtualFileSystem.getInputStream(file)
-      try {
+      virtualFileSystem.getInputStream(file).use {
         val bytes = ByteArray(1024)
 
-        val n = inputStream.read(bytes, 0, bytes.size)
+        val n = it.read(bytes, 0, bytes.size)
         return n > 0 && findArray(bytes, BYTES_TO_DETECT_CFN_FILE) >= 0
-      } finally {
-        inputStream.close()
       }
     } catch (ignored: IOException) {
       return false
     }
-
   }
 
   companion object {
