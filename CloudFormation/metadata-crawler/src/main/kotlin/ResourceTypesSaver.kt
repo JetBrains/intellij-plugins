@@ -22,8 +22,12 @@ object ResourceTypesSaver {
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
 
+    for (orphanResourceTypeName in resourceAttributesMap.keys.minus(resourceTypeLocations.map { it.name })) {
+      throw RuntimeException("ResourceType $orphanResourceTypeName from resources attributes list is not found in list of resource types")
+    }
+
     val resourceTypes = resourceTypeLocations.map {
-      fetchResourceType(it.name, it.location, resourceAttributesMap.getOrElse(it.name, { emptyList() }))
+      fetchResourceType(it.name, it.location, resourceAttributesMap.getOrElse(it.name, { arrayListOf() }))
     }
 
     val metadata = CloudFormationMetadata(
@@ -63,8 +67,22 @@ object ResourceTypesSaver {
         resourceTypeName = "AWS::EC2::SubnetNetworkAclAssociation"
       }
 
-      val attributesList = result.getOrPut(resourceTypeName, { arrayListOf() })
-      attributesList.add(CloudFormationResourceAttribute(attribute, ""))
+      if (resourceTypeName == "the section called “AWS::Config::ConfigRule”") {
+        resourceTypeName = "AWS::Config::ConfigRule"
+      }
+
+      fun addAttribute(resourceTypeName: String, attribute: String) {
+        val attributesList = result.getOrPut(resourceTypeName, { arrayListOf() })
+        attributesList.add(CloudFormationResourceAttribute(attribute, ""))
+      }
+
+      if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
+        addAttribute("AWS::DirectoryService::MicrosoftAD", attribute)
+        addAttribute("AWS::DirectoryService::SimpleAD", attribute)
+        continue
+      }
+
+      addAttribute(resourceTypeName, attribute)
     }
 
     return result
@@ -154,7 +172,7 @@ object ResourceTypesSaver {
 
           if (typeValue != null) {
             type = typeValue
-          } else if (resourceTypeName == "AWS::Redshift::Cluster" && resourceTypeName == "SnapshotClusterIdentifier") {
+          } else if (resourceTypeName == "AWS::Redshift::Cluster" && name == "SnapshotClusterIdentifier") {
             type = "String"
           } else {
             // TODO
@@ -328,7 +346,7 @@ object ResourceTypesSaver {
     val doc = getDocumentFromUrl(url)
 
     val vlist = doc.select("div.variablelist").first()
-    return vlist.select("span.term").map { it.text() }.sorted()
+    return vlist.select("span.term").map { it.text() }.sorted().toList()
   }
 
   private fun fetchLimits(): CloudFormationLimits {

@@ -10,10 +10,10 @@ data class CloudFormationResourceProperty(
 data class CloudFormationResourceAttribute(val name: String, val description: String)
 
 data class CloudFormationResourceType(
-    var name: String,
-    var description: String,
-    var properties: List<CloudFormationResourceProperty>,
-    var attributes: List<CloudFormationResourceAttribute>) {
+    val name: String,
+    val description: String,
+    val properties: List<CloudFormationResourceProperty>,
+    val attributes: List<CloudFormationResourceAttribute>) {
 
   fun findProperty(name: String): CloudFormationResourceProperty? =
       properties.filter { it.name == name }.singleOrNull()

@@ -406,6 +406,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>LaunchConfigurationName</name>
+          <description></description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -1969,48 +1970,56 @@
           <description>&lt;p&gt;Specifies the access key ID for S3 authentication.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>buckets</name>
           <description>&lt;p&gt;A comma-delimited list of Amazon S3 buckets to be associated with the S3 authentication credentials.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>password</name>
           <description>&lt;p&gt;Specifies the password for basic authentication.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>secretKey</name>
           <description>&lt;p&gt;Specifies the secret key for S3 authentication.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>type</name>
           <description>&lt;p&gt;If you specify &lt;code class=&quot;code&quot;&gt;&quot;S3&quot;&lt;/code&gt;, you must also specify the &lt;code class=&quot;code&quot;&gt;accessKeyId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;secretKey&lt;/code&gt;, and &lt;code class=&quot;code&quot;&gt;buckets&lt;/code&gt; properties.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String Valid values are &quot;basic&quot; or &quot;S3&quot;&lt;/p&gt;</type>
           <required>true</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>uris</name>
           <description>&lt;p&gt;A comma-delimited list of URIs to be associated with the basic authentication credentials. The authorization applies to the specified URIs and any more specific URI. For example, if you specify &lt;code class=&quot;code&quot;&gt;http://www.example.com&lt;/code&gt;, the authorization will also apply to &lt;code class=&quot;code&quot;&gt;http://www.example.com/test&lt;/code&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>username</name>
           <description>&lt;p&gt;Specifies the user name for basic authentication.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>roleName</name>
           <description>&lt;p&gt;Describes the role for role-based authentication.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String.&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -2226,6 +2235,7 @@
           <description>&lt;p&gt;The service token that was given to the template developer by the service provider to access the service, such as an Amazon SNS topic ARN or Lambda function ARN. The service token must be from the same region in which you are creating the stack.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>true</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -4923,7 +4933,20 @@
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>Arn</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>ConfigRuleId</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>Compliance.Type</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::Config::ConfigurationRecorder</name>
@@ -5890,7 +5913,16 @@
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>Alias</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>DnsIpAddresses</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::DirectoryService::SimpleAD</name>
@@ -6150,7 +6182,16 @@
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>Alias</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>DnsIpAddresses</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::DynamoDB::Table</name>
@@ -12333,6 +12374,7 @@
           <description>&lt;p&gt;The ID of the customer gateway. This can either be an embedded JSON object or a reference to a Gateway ID.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>true</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>StaticRoutesOnly</name>
@@ -12353,6 +12395,7 @@
           <description>&lt;p class=&quot;simpara&quot;&gt;The ID of the virtual private gateway. This can either be an embedded JSON object or a reference to a Gateway ID.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>true</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -14431,6 +14474,7 @@
           <description>&lt;p&gt;All other updates require &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;replacement&lt;/a&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>PreferredMaintenanceWindow</name>
@@ -16947,6 +16991,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>SecurityGroups</name>
+          <description></description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A list of security groups assigned to your load balancer within your virtual private cloud (VPC).&lt;/p&gt;</type>
           <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -17908,6 +17953,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>Roles</name>
+          <description></description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of strings&lt;/p&gt;</type>
           <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -18520,6 +18566,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>Users</name>
+          <description></description>
           <type>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of users&lt;/p&gt;</type>
           <required>true</required>
           <updateRequires>&lt;p class=&quot;simpara&quot;&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -23105,6 +23152,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>DBParameterGroupName</name>
+          <description></description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt; or &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-some-interrupt&quot;&gt;some interruptions&lt;/a&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBInstance.html&quot; target=&quot;_blank&quot;&gt;ModifyDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;. Also, if any of the data members of the referenced parameter group are changed during an update, the database instance may need to be restarted, causing some interruption.&lt;/p&gt;</updateRequires>
@@ -25659,6 +25707,7 @@
           <description>&lt;p&gt;If this property was specified previously and you&apos;re modifying values, updates require &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;no interruption&lt;/a&gt;. If this property wasn&apos;t specified and you add values, updates require &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;replacement&lt;/a&gt;. Also, if this property was specified and you remove all values, updates require &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;replacement&lt;/a&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-resource-route53-hostedzone-hostedzonevpcs.html&quot; title=&quot;Amazon Route&amp;nbsp;53 HostedZoneVPCs&quot;&gt;Amazon Route&amp;nbsp;53 HostedZoneVPCs&lt;/a&gt;&lt;/p&gt;</type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -25977,7 +26026,9 @@
         <ResourceProperty>
           <name>Region</name>
           <description>&lt;p&gt;To see a list of regions by service, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/general/latest/gr/rande.html&quot; target=&quot;_blank&quot;&gt;Regions and Endpoints&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS General Reference&lt;/em&gt;.&lt;/p&gt;</description>
+          <type></type>
           <required>false</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>ResourceRecords</name>
@@ -26866,6 +26917,7 @@
           <description>&lt;p&gt;You cannot update this property. If you want to add or remove a bucket from a bucket policy, you must modify your AWS CloudFormation template by creating a new bucket policy resource and removing the old one. Then use the modified template to update your AWS CloudFormation stack.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>true</required>
+          <updateRequires></updateRequires>
         </ResourceProperty>
         <ResourceProperty>
           <name>PolicyDocument</name>
@@ -28951,38 +29003,6 @@
         </ResourceProperty>
       </properties>
       <attributes/>
-    </ResourceType>
-    <ResourceType>
-      <name>the section called “AWS::Config::ConfigRule”</name>
-      <properties/>
-      <attributes>
-        <ResourceAttribute>
-          <name>Arn</name>
-          <description></description>
-        </ResourceAttribute>
-        <ResourceAttribute>
-          <name>ConfigRuleId</name>
-          <description></description>
-        </ResourceAttribute>
-        <ResourceAttribute>
-          <name>Compliance.Type</name>
-          <description></description>
-        </ResourceAttribute>
-      </attributes>
-    </ResourceType>
-    <ResourceType>
-      <name>AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD</name>
-      <properties/>
-      <attributes>
-        <ResourceAttribute>
-          <name>Alias</name>
-          <description></description>
-        </ResourceAttribute>
-        <ResourceAttribute>
-          <name>DnsIpAddresses</name>
-          <description></description>
-        </ResourceAttribute>
-      </attributes>
     </ResourceType>
   </resourceTypes>
   <predefinedParameters>
