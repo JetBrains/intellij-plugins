@@ -743,7 +743,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e16841&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example LaunchConfig with block device&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows a launch configuration that describes two Amazon Elastic Block Store mappings.&lt;/p&gt;
@@ -781,7 +781,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e16848&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example LaunchConfig with Spot Price in Autoscaling Group&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows a launch configuration that features a spot price in the AutoScaling group. This launch configuration will only be active if the current spot price is less than the amount in the template specification (0.05).&lt;/p&gt;
@@ -810,7 +810,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e16855&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example LaunchConfig with IAM Instance Profile&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;Here&apos;s a launch configuration using the &lt;a class=&quot;link&quot; href=&quot;aws-properties-as-launchconfig.html#cfn-as-launchconfig-iaminstanceprofile&quot;&gt;IamInstanceProfile&lt;/a&gt; property.&lt;/p&gt;
@@ -1867,7 +1867,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e18215&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example EC2 Web Server Authentication&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This template snippet shows how to get a file from a private S3 bucket within an EC2 instance. The credentials used for authentication are defined in the AWS::CloudFormation::Authentication resource, and referenced by the AWS::CloudFormation::Init resource in the &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;files&lt;/em&gt;&lt;/span&gt; section.&lt;/p&gt;
@@ -1915,7 +1915,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e18228&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Specifying Both Basic and S3 Authentication&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following example template snippet includes both &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;basic&lt;/em&gt;&lt;/span&gt; and &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;S3&lt;/em&gt;&lt;/span&gt; authentication types.&lt;/p&gt;
@@ -1938,7 +1938,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e18241&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Roles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following example shows how to use IAM roles.&lt;/p&gt;
@@ -2323,7 +2323,7 @@
 }&lt;/code&gt;&lt;/pre&gt;
   &lt;p&gt;Using the metadata key from this example, the following figure shows how the console displays parameter groups when a stack is created or updated: &lt;/p&gt;
   &lt;div class=&quot;figure&quot;&gt;
-   &lt;a name=&quot;d0e19351&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Parameter Groups in the Console&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;figure-contents&quot;&gt;
     &lt;div class=&quot;mediaobject&quot;&gt;
@@ -2676,7 +2676,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e19768&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example WaitCondition that waits for the desired number of instances in a web server group&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -8998,7 +8998,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e26971&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Attaching &lt;code class=&quot;code&quot;&gt;MyNetworkInterface&lt;/code&gt; to &lt;code class=&quot;code&quot;&gt;MyInstance&lt;/code&gt;&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;NetworkInterfaceAttachment&quot; : {
@@ -9291,7 +9291,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e27346&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Route with Gateway ID&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -9313,7 +9313,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e27351&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Route with Instance ID&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -9334,7 +9334,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e27356&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Route with Network Interface ID.&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -9355,7 +9355,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e27361&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Route with VPC peering connection ID.&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -9530,7 +9530,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e27492&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example &lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following example snippet uses the VPC ID from a VPC named &lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;myVPC&lt;/em&gt;&lt;/span&gt; that was declared elsewhere in the same template.&lt;/p&gt;
@@ -10886,7 +10886,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e28998&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example &lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -11703,7 +11703,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e30400&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Attaching both an Internet gateway and a VPN gateway to a VPC&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;To attach both an Internet gateway and a VPN gateway to a VPC, you must specify two separate &lt;span class=&quot;type&quot;&gt;AWS::EC2::VPCGatewayAttachment&lt;/span&gt; resources:&lt;/p&gt;
@@ -11872,7 +11872,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e30558&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example A sample VPC peering connection&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template creates two VPCs to demonstrate how to configure a peering connection. For a VPC peering connection, you must create a VPC peering route for each VPC route table, as shown in the sample by &lt;code class=&quot;code&quot;&gt;PeeringRoute1&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;PeeringRoute2&lt;/code&gt;. If you launch the template, you can SSH into the &lt;code class=&quot;code&quot;&gt;myInstance&lt;/code&gt; instance and then ping the &lt;code class=&quot;code&quot;&gt;myPrivateInstance&lt;/code&gt; instance even though both instances are in separate VPCs.&lt;/p&gt;
@@ -12297,7 +12297,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e30777&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example VPNConnection&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -12446,7 +12446,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e30880&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Specifying a static route&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;MyConnectionRoute0&quot; : {
@@ -12928,7 +12928,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e29474&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Encrypted Amazon EBS volume with DeletionPolicy to make a snapshot on delete&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
@@ -12950,7 +12950,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e29479&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Amazon EBS volume with 100 provisioned IOPS&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;json &quot;&gt;
@@ -17416,7 +17416,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e35946&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Role with Embedded Policy and Instance Profiles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows an embedded Policy in the IAM::Role. The policy is specified inline in the IAM::Role Policies property.&lt;/p&gt;
@@ -18077,7 +18077,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e36743&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Role with Embedded Policy and Instance Profiles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows an embedded Policy in the IAM::Role. The policy is specified inline in the IAM::Role Policies property.&lt;/p&gt;
@@ -18126,7 +18126,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e36751&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example IAM Role with External Policy and Instance Profiles&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;In this example, the Policy and InstanceProfile resources are specified externally to the IAM Role. They refer to the role by specifying its name, &quot;RootRole&quot;, in their respective Roles properties.&lt;/p&gt;
@@ -22954,7 +22954,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e43195&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example DBInstance with a set MySQL version, Tags and DeletionPolicy&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example shows how to set the MySQL version that has a &lt;code class=&quot;code&quot;&gt;&lt;a class=&quot;link&quot; href=&quot;aws-attribute-deletionpolicy.html&quot; title=&quot;DeletionPolicy Attribute&quot;&gt;DeletionPolicy Attribute&lt;/a&gt;&lt;/code&gt; set. With the &lt;code class=&quot;code&quot;&gt;DeletionPolicy&lt;/code&gt; set to &lt;code class=&quot;code&quot;&gt;Snapshot&lt;/code&gt;, AWS CloudFormation will take a snapshot of this DB instance before deleting it during stack deletion. A tag that contains a friendly name for the database is also set.&lt;/p&gt;
@@ -22977,7 +22977,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e43211&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example DBInstance with provisioned IOPS&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example sets a provisioned IOPS value in the &lt;a class=&quot;link&quot; href=&quot;aws-properties-rds-database-instance.html#cfn-rds-dbinstance-iops&quot;&gt;Iops&lt;/a&gt; property. Note that the &lt;a class=&quot;link&quot; href=&quot;aws-properties-rds-database-instance.html#cfn-rds-dbinstance-allocatedstorage&quot;&gt;AllocatedStorage&lt;/a&gt; property is set according to the 10:1 ratio between IOPS and GiBs of storage.&lt;/p&gt;
@@ -22998,7 +22998,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e43224&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Read replica DBInstance&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;This example creates a read replica named &lt;code class=&quot;code&quot;&gt;MyDBreadreplica&lt;/code&gt; for the &lt;code class=&quot;code&quot;&gt;MyDB&lt;/code&gt; DB instance.&lt;/p&gt;
@@ -25882,7 +25882,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e46495&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Mapping an Amazon Route&amp;nbsp;53 A record to the public IP of an Amazon EC2 instance&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;json &quot;&gt;
@@ -26394,7 +26394,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47132&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Static website configuration with a routing rule&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;In this example, AWS::S3::Bucket&apos;s &lt;code class=&quot;function&quot;&gt;Fn::GetAtt&lt;/code&gt; values are used to provide outputs. The routing rule redirects requests to an Amazon EC2 instance in the event of an HTTP 404 error and inserts a object key prefix &lt;code class=&quot;code&quot;&gt;report-404/&lt;/code&gt; in the redirect. For example, if you request a page &lt;code class=&quot;code&quot;&gt;ExamplePage.html&lt;/code&gt; and it results in a HTTP 404 error, the request is routed to a page &lt;code class=&quot;code&quot;&gt;report-404/ExamplePage.html&lt;/code&gt; on the specified instance. For all other HTTP error codes, &lt;code class=&quot;code&quot;&gt;error.html&lt;/code&gt; is returned. &lt;/p&gt;
@@ -26441,7 +26441,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47154&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Enable cross-origin resource sharing&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template shows an Amazon S3 bucket with two cross-origin resource sharing rules.&lt;/p&gt;
@@ -26507,7 +26507,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47161&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Manage the lifecycle for Amazon S3 objects&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template shows an Amazon S3 bucket with a lifecycle configuration rule. The rule applies to all objects with the &lt;code class=&quot;code&quot;&gt;glacier&lt;/code&gt; key prefix. The objects are transitioned to Amazon Glacier after one day and deleted after one year.&lt;/p&gt;
@@ -26548,7 +26548,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47171&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Log access requests for a specific bucket&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template creates two Amazon S3 buckets. The &lt;code class=&quot;code&quot;&gt;LoggingBucket&lt;/code&gt; bucket store the logs from the &lt;code class=&quot;code&quot;&gt;S3Bucket&lt;/code&gt; bucket. The logging bucket requires log delivery write permissions in order receive logs from the &lt;code class=&quot;code&quot;&gt;S3Bucket&lt;/code&gt; bucket.&lt;/p&gt;
@@ -26585,7 +26585,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47187&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Receive bucket notifications to an Amazon SNS topic&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample template shows an Amazon S3 bucket with a notification configuration that sends an event to the specified topic when Amazon S3 has lost all replicas of an object.&lt;/p&gt;
@@ -26620,7 +26620,7 @@
   &lt;/div&gt;
   &lt;br class=&quot;example-break&quot;&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47194&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Replicate objects and store them in another S3 bucket&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample includes two replication rules. Amazon S3 replicates objects with the &lt;code class=&quot;code&quot;&gt;MyPrefix&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;MyOtherPrefix&lt;/code&gt; prefixes and stores them in the &lt;code class=&quot;code&quot;&gt;my-replication-bucket&lt;/code&gt; bucket, which must be in a different region than the &lt;code class=&quot;code&quot;&gt;S3Bucket&lt;/code&gt; bucket.&lt;/p&gt;
@@ -26829,7 +26829,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
   &lt;div class=&quot;example&quot;&gt;
-   &lt;a name=&quot;d0e47317&quot;&gt;&lt;/a&gt;
+   &lt;a&gt;&lt;/a&gt;
    &lt;p class=&quot;title&quot;&gt;&lt;b&gt;Example Bucket policy that allows GET requests from specific referers&lt;/b&gt;&lt;/p&gt;
    &lt;div class=&quot;example-contents&quot;&gt;
     &lt;p&gt;The following sample is a bucket policy that is attached to the &lt;code class=&quot;code&quot;&gt;myExampleBucket&lt;/code&gt; bucket and allows GET requests that originate from &lt;code class=&quot;code&quot;&gt;www.example.com&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;example.com&lt;/code&gt;:&lt;/p&gt;
