@@ -19366,7 +19366,7 @@
   &quot;Type&quot;: &quot;AWS::Lambda::Permission&quot;,
   &quot;Properties&quot;: {
     &quot;FunctionName&quot; : { &quot;Fn::GetAtt&quot; : [&quot;MyLambdaFunction&quot;, &quot;Arn&quot;] },
-    &quot;Action&quot;: &quot;lambda:InvokeFunction&quot;,
+    &quot;Action&quot;: [&quot;lambda:InvokeFunction&quot;],
     &quot;Principal&quot;: &quot;s3.amazonaws.com&quot;,
     &quot;SourceAccount&quot;: { &quot;Ref&quot; : &quot;AWS::AccountId&quot; }
   }
@@ -22574,7 +22574,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;DBInstanceIdentifier&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;A name for the DB instance. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the DB instance. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;
+     &lt;p&gt;A name for the DB instance. If you specify a name, AWS CloudFormation converts it to lower case. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the DB instance. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;
      &lt;div class=&quot;aws-note&quot;&gt;
       &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
       &lt;p&gt;If you specify a name, you cannot do updates that require this resource to be replaced. You can still do updates that require no or some interruption. If you must replace the resource, specify a new name.&lt;/p&gt;
@@ -23091,7 +23091,7 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>DBInstanceIdentifier</name>
-          <description>&lt;p&gt;A name for the DB instance. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the DB instance. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;</description>
+          <description>&lt;p&gt;A name for the DB instance. If you specify a name, AWS CloudFormation converts it to lower case. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the DB instance. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;</description>
           <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
           <required>false</required>
           <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
