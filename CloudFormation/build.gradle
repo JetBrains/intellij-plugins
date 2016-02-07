@@ -25,34 +25,23 @@ allprojects {
         mavenCentral()
     }
 
-    configurations {
-        provided
-        compile.extendsFrom provided
-    }
-
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
-
-    dependencies {
-        provided 'org.jetbrains:annotations:13.0'
-    }
-}
-
-project(':metadata-model') {
-    dependencies {
-        compile 'com.thoughtworks.xstream:xstream:1.4.7'
-        provided "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    }
 }
 
 project(':metadata-crawler') {
+    apply plugin: 'org.jetbrains.intellij'
+
+    intellij {
+        version idea_version
+    }
+
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 
     dependencies {
-        compile project(':metadata-model')
+        compile rootProject
 
-        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
         compile 'commons-io:commons-io:2.4'
         compile 'org.apache.commons:commons-lang3:3.3.2'
         compile 'net.htmlparser.jericho:jericho-html:3.3'
@@ -68,14 +57,9 @@ project(':metadata-crawler') {
     }
 }
 
-dependencies {
-    compile project(':metadata-model')
-}
-
 task printVersion {
     println 'version = ' + version
 }
-
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
