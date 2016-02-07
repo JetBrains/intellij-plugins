@@ -18,7 +18,8 @@ object MetadataSerializer {
   }
 
   private fun createXStream(): XStream {
-    val xstream = XStream(StaxDriver())
+    val xstream = XStream(null, StaxDriver(), javaClass.classLoader)
+
     xstream.alias("Metadata", CloudFormationMetadata::class.java)
     xstream.alias("ResourceType", CloudFormationResourceType::class.java)
     xstream.alias("ResourceProperty", CloudFormationResourceProperty::class.java)
