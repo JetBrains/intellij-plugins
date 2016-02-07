@@ -270,10 +270,11 @@ object ResourceTypesSaver {
     return resourceType
   }
 
-  private val cleanElementIdPattern = Pattern.compile(" ?id=\\\"[0-9a-f]{8}\\\"")
+  private val cleanElementIdPattern = Regex(" ?id=\\\"[0-9a-f]{8}\\\"")
+  private val cleanElementNamePattern = Regex(" name=\\\"[0-9a-f]{8}\\\"")
 
   private fun cleanupHtml(s: String): String {
-    return cleanElementIdPattern.matcher(s).replaceAll("")
+    return s.replace(cleanElementIdPattern, "").replace(cleanElementNamePattern, "")
   }
 
   private fun parseTable(table: Element): List<List<String>> {
