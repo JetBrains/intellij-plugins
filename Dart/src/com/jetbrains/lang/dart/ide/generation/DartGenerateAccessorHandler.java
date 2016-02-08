@@ -27,7 +27,7 @@ public abstract class DartGenerateAccessorHandler extends BaseDartGenerateHandle
   protected void collectCandidates(final DartClass dartClass, List<DartComponent> candidates) {
     final List<DartComponent> subComponents = DartResolveUtil.getNamedSubComponents(dartClass);
 
-    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, false).values(), new Condition<DartComponent>() {
+    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, true).values(), new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
         return DartComponentType.typeOf(component) == DartComponentType.FIELD && myStrategy.accept(component.getName(), subComponents);
