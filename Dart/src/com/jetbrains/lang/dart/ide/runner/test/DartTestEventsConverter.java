@@ -227,9 +227,10 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
     Test test = getTest(obj);
     setNotRunning(test);
+
+    final ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
+
     String failureMessage = message;
-    ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
-    ServiceMessageBuilder msg = ServiceMessageBuilder.testStdErr(test.getBaseName());
     int firstExpectedIndex = message.indexOf(EXPECTED);
     if (firstExpectedIndex >= 0) {
       Matcher matcher = EXPECTED_ACTUAL_RESULT.matcher(message);
@@ -246,13 +247,23 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         }
       }
     }
+
     // The stack trace could be null, but we disallow that for consistency with all the transmitted values.
     if (!getBoolean(obj, JSON_IS_FAILURE)) testError.addAttribute("error", "true");
     testError.addAttribute("message", failureMessage + NEWLINE);
-    msg.addAttribute("out", getStackTrace(obj));
+
     long duration = getTestMillis(obj) - myStartMillis;
     testError.addAttribute("duration", Long.toString(duration));
-    return finishMessage(testError, test.getId(), test.getValidParentId()) && finishMessage(msg, test.getId(), test.getValidParentId());
+
+    final ServiceMessageBuilder testStdErr = ServiceMessageBuilder.testStdErr(test.getBaseName());
+    testStdErr.addAttribute("out", getStackTrace(obj));
+
+    final ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
+    testFinished.addAttribute("duration", Long.toString(duration));
+
+    return finishMessage(testError, test.getId(), test.getValidParentId()) &&
+           finishMessage(testStdErr, test.getId(), test.getValidParentId()) &&
+           finishMessage(testFinished, test.getId(), test.getValidParentId());
   }
 
   private boolean handleAllSuites(JsonObject obj) {
