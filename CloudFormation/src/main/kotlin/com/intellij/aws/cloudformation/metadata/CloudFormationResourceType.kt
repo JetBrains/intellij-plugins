@@ -6,9 +6,15 @@ data class CloudFormationResourceType(
     val properties: List<CloudFormationResourceProperty>,
     val attributes: List<CloudFormationResourceAttribute>) {
 
-  fun findProperty(name: String): CloudFormationResourceProperty? =
-      properties.filter { it.name == name }.singleOrNull()
+  // Called by xstream on deserialization
+  @Suppress("Unused")
+  private fun readResolve(): Any {
+    // Call the usual constructor, which calls initializers
+    return this.copy()
+  }
 
-  val requiredProperties: Set<String>
-    get() = properties.filter { it.required }.map { it.name }.toSet()
+  val propertiesMap = properties.map { it.name to it }.toMap()
+  fun findProperty(name: String): CloudFormationResourceProperty? = propertiesMap[name]
+
+  val requiredProperties: Set<String> = properties.filter { it.required }.map { it.name }.toSet()
 }

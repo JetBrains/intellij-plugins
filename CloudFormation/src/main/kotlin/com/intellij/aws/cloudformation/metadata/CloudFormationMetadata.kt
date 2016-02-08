@@ -5,6 +5,13 @@ data class CloudFormationMetadata(
     val predefinedParameters: List<String>,
     val limits: CloudFormationLimits) {
 
-  fun findResourceType(name: String): CloudFormationResourceType? =
-      resourceTypes.filter { it.name == name }.singleOrNull()
+  // Called by xstream on deserialization
+  @Suppress("Unused")
+  private fun readResolve(): Any {
+    // Call the usual constructor, which calls resourceTypesMap initializer
+    return this.copy()
+  }
+
+  val resourceTypesMap = resourceTypes.map { it.name to it }.toMap()
+  fun findResourceType(name: String): CloudFormationResourceType? = resourceTypesMap[name]
 }
