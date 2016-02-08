@@ -198,12 +198,21 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   private boolean handleGroup(JsonObject obj) throws ParseException {
     Group group = getGroup(obj.getAsJsonObject(DEF_GROUP));
+
+    // From spec: The implicit group at the root of each test suite has null name and parentID attributes.
+    if (group.getParent() == null && group.getTestCount() > 0) {
+      // com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter.MyServiceMessageVisitor.KEY_TESTS_COUNT
+      // and  com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter.MyServiceMessageVisitor.ATTR_KEY_TEST_COUNT
+      final ServiceMessageBuilder testCount =
+        new ServiceMessageBuilder("testCount").addAttribute("count", String.valueOf(group.getTestCount()));
+      super.processServiceMessages(testCount.toString(), myCurrentOutputType, myCurrentVisitor);
+    }
+
     if (group.isArtificial()) return true; // Ignore artificial groups.
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteStarted(group.getBaseName());
     // Possible attributes: "nodeType" "nodeArgs" "running"
     addLocationHint(groupMsg, group);
-    boolean result = finishMessage(groupMsg, group.getId(), group.getValidParentId());
-    return result;
+    return finishMessage(groupMsg, group.getId(), group.getValidParentId());
   }
 
   private boolean handleSuite(JsonObject obj) throws ParseException {
