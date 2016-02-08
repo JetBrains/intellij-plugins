@@ -106,7 +106,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     myToolbarWrapper.refresh();
     myComponent.repaint();
 
-    IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent);
+    IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
   }
 
   private void adjustEditorsVisibility() {

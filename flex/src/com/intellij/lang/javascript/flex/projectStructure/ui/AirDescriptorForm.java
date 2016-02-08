@@ -25,7 +25,7 @@ public class AirDescriptorForm {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
         if (myCustomDescriptorRadioButton.isSelected()) {
-          IdeFocusManager.getInstance(project).requestFocus(myCustomDescriptorTextWithBrowse.getTextField());
+          IdeFocusManager.getInstance(project).requestFocus(myCustomDescriptorTextWithBrowse.getTextField(), true);
         }
       }
     };
@@ -76,7 +76,7 @@ public class AirDescriptorForm {
 
   public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
     if (location == AirPackagingConfigurableBase.Location.CustomDescriptor) {
-      return IdeFocusManager.findInstance().requestFocus(myCustomDescriptorTextWithBrowse.getChildComponent());
+      return IdeFocusManager.findInstance().requestFocus(myCustomDescriptorTextWithBrowse.getChildComponent(), true);
     }
     return ActionCallback.DONE;
   }

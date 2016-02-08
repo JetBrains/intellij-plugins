@@ -48,7 +48,7 @@ public class DartPubBuildDialog extends DialogWrapper {
     myOtherRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         if (myOtherRadioButton.isSelected()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myOtherModeTextField);
+          IdeFocusManager.getInstance(myProject).requestFocus(myOtherModeTextField, true);
         }
       }
     });

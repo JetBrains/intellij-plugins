@@ -170,7 +170,7 @@ public class FilesToPackageForm {
         if (files.length > 0) {
           fireDataChanged();
 
-          IdeFocusManager.getInstance(myProject).requestFocus(myFilesToPackageTable);
+          IdeFocusManager.getInstance(myProject).requestFocus(myFilesToPackageTable, true);
           final int rowCount = myFilesToPackageTable.getRowCount();
           myFilesToPackageTable.setRowSelectionInterval(rowCount - files.length, rowCount - 1);
         }
@@ -212,7 +212,7 @@ public class FilesToPackageForm {
 
   public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
     if (location == AirPackagingConfigurableBase.Location.FilesToPackage) {
-      return IdeFocusManager.findInstance().requestFocus(myFilesToPackageTable);
+      return IdeFocusManager.findInstance().requestFocus(myFilesToPackageTable, true);
     }
     return ActionCallback.DONE;
   }
