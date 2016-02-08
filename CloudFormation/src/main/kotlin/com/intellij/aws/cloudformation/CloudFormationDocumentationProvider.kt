@@ -46,14 +46,11 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
       return ""
     }
 
-    for (resourceType in CloudFormationMetadataProvider.METADATA.resourceTypes) {
-      val propertyText = if (property.value != null) property.value!!.text else ""
+    val propertyText = (if (property.value != null) property.value!!.text else "").replace("\"", "")
 
-      if (resourceType.name == propertyText.replace("\"", ""))
-        return prefixLinksWithUserGuideRoot(resourceType.description)
-    }
+    val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(propertyText)
 
-    return ""
+    return resourceType?.description ?: ""
   }
 
   private fun createPropertyDescription(element: PsiElement): String {
@@ -76,18 +73,14 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
 
     val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(type) ?: return ""
 
-    for (propertyMetadata in resourceTypeMetadata.properties) {
-      if (propertyMetadata.name == property.name) {
-        val document = "<p>" + propertyMetadata.description + "</p><br>" +
-            "<p><i>Required:</i> " + propertyMetadata.required + "</p>" +
-            propertyMetadata.type +
-            propertyMetadata.updateRequires
+    val propertyMetadata = resourceTypeMetadata.findProperty(property.name) ?: return ""
 
-        return prefixLinksWithUserGuideRoot(document)
-      }
+    val document = "<p>" + propertyMetadata.description + "</p><br>" +
+        "<p><i>Required:</i> " + propertyMetadata.required + "</p>" +
+        propertyMetadata.type +
+        propertyMetadata.updateRequires
 
-    }
-    return ""
+    return prefixLinksWithUserGuideRoot(document)
   }
 
   override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
