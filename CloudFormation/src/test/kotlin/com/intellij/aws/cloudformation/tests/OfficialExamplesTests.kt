@@ -9,17 +9,14 @@ import com.intellij.testFramework.InspectionFixtureTestCase
 import java.io.File
 
 class OfficialExamplesTests : InspectionFixtureTestCase() {
-  @Throws(Exception::class)
   fun testFormatViolationInspection() {
     runInspection("format", FormatViolationInspection())
   }
 
-  @Throws(Exception::class)
   fun testUnresolvedReferencesInspection() {
     runInspection("resolve", UnresolvedReferencesInspection())
   }
 
-  @Throws(Exception::class)
   private fun runInspection(inspectionMoniker: String, inspectionTool: LocalInspectionTool) {
     val examplesFolder = TestUtil.getTestDataFile(EXAMPLES_FOLDER_NAME)
 

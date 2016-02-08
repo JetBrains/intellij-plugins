@@ -15,7 +15,6 @@ import java.util.ArrayList
 abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : ResolveTestCase() {
   protected var NotResolved = Object()
 
-  @Throws(Exception::class)
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
     val templateFileName = testName + ".template"
 

@@ -7,7 +7,6 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformTestCase
 
 class RenameTests : LightCodeInsightTestCase() {
-  @Throws(Exception::class)
   fun testSimpleEntity() {
     configureByFile("simpleEntity.template")
     val element = TargetElementUtil.findTargetElement(

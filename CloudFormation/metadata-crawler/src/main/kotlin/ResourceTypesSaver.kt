@@ -19,7 +19,6 @@ object ResourceTypesSaver {
   private val RESOURCE_TYPE_PATTERN = Pattern.compile("<li><a href=\"([^\"]+)\">(AWS::[^<]+)</a></li>")
   val FETCH_TIMEOUT_MS = 10000
 
-  @Throws(Exception::class)
   fun saveResourceTypes() {
     val resourceAttributesMap = fetchResourceAttributes()
 
