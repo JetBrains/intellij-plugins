@@ -77,7 +77,7 @@ object ResourceTypesSaver {
 
       fun addAttribute(resourceTypeName: String, attribute: String) {
         val attributesList = result.getOrPut(resourceTypeName, { arrayListOf() })
-        attributesList.add(CloudFormationResourceAttribute(attribute, ""))
+        attributesList.add(CloudFormationResourceAttribute(attribute))
       }
 
       if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
