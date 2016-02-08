@@ -8,7 +8,6 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.testFramework.ResolveTestCase
-import com.intellij.util.ObjectUtils
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -66,7 +65,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
           Assert.fail("Ref #" + (i + 1) + " is unresolved")
         }
 
-        val namedResolved = ObjectUtils.tryCast(resolved, PsiNamedElement::class.java)
+        val namedResolved = resolved as? PsiNamedElement
         if (namedResolved == null) {
           Assert.fail("Ref #" + (i + 1) + " should be named element")
         }

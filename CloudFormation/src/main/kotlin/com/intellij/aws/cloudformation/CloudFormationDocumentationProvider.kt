@@ -7,7 +7,6 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.ObjectUtils
 
 class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
   private fun getDocElement(element: PsiElement): PsiElement? {
@@ -41,7 +40,7 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
   }
 
   private fun createResourceDescription(element: PsiElement): String {
-    val property = ObjectUtils.tryCast(element.parent, JsonProperty::class.java)
+    val property = element.parent as? JsonProperty
     if (property == null || property.name != "Type") {
       return ""
     }
@@ -54,20 +53,20 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
   }
 
   private fun createPropertyDescription(element: PsiElement): String {
-    val propertyName = ObjectUtils.tryCast(element, JsonStringLiteral::class.java) ?: return ""
+    val propertyName = element as? JsonStringLiteral ?: return ""
 
-    val property = ObjectUtils.tryCast(propertyName.parent, JsonProperty::class.java)
+    val property = propertyName.parent as? JsonProperty
     if (property == null || property.nameElement !== propertyName) {
       return ""
     }
 
     val resourceElement = CloudFormationPsiUtils.getResourceElementFromPropertyName(propertyName) ?: return ""
 
-    val resourceValue = ObjectUtils.tryCast(resourceElement.value, JsonObject::class.java) ?: return ""
+    val resourceValue = resourceElement.value as? JsonObject ?: return ""
 
     val typeProperty = resourceValue.findProperty(CloudFormationConstants.TypePropertyName) ?: return ""
 
-    val typeValue = ObjectUtils.tryCast(typeProperty.value, JsonStringLiteral::class.java) ?: return ""
+    val typeValue = typeProperty.value as? JsonStringLiteral ?: return ""
 
     val type = CloudFormationResolve.getTargetName(typeValue)
 

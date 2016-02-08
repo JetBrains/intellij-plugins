@@ -11,7 +11,6 @@ import com.intellij.json.psi.JsonValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.ObjectUtils
 import java.util.*
 import java.util.regex.Pattern
 
@@ -135,7 +134,7 @@ class CloudFormationFormatChecker(private val myInspectionManager: InspectionMan
   }
 
   private fun stringValue(expression: JsonValue) {
-    val literalExpression = ObjectUtils.tryCast(expression, JsonStringLiteral::class.java)
+    val literalExpression = expression as? JsonStringLiteral
     if (literalExpression != null) {
       // TODO
     }
@@ -213,7 +212,7 @@ class CloudFormationFormatChecker(private val myInspectionManager: InspectionMan
   }
 
   private fun resourceProperties(propertiesProperty: JsonProperty, typeProperty: JsonProperty) {
-    val properties = ObjectUtils.tryCast(propertiesProperty.value, JsonObject::class.java)
+    val properties = propertiesProperty.value as? JsonObject
     if (properties == null) {
       addProblemOnNameElement(propertiesProperty, CloudFormationBundle.getString("format.properties.property.should.properties.list"))
       return
@@ -270,7 +269,7 @@ class CloudFormationFormatChecker(private val myInspectionManager: InspectionMan
   }
 
   private fun checkAndGetObject(expression: JsonValue): JsonObject? {
-    val obj = ObjectUtils.tryCast(expression, JsonObject::class.java)
+    val obj = expression as? JsonObject
     if (obj == null) {
       addProblem(
           expression,
@@ -305,7 +304,7 @@ class CloudFormationFormatChecker(private val myInspectionManager: InspectionMan
       return null
     }
 
-    val literal = ObjectUtils.tryCast(expression, JsonStringLiteral::class.java)
+    val literal = expression as? JsonStringLiteral
     if (literal == null) {
       myProblems.add(
           myInspectionManager.createProblemDescriptor(

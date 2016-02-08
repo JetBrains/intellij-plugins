@@ -13,7 +13,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.ObjectUtils
 import com.intellij.util.ProcessingContext
 
 class CloudFormationCompletionContributor : CompletionContributor() {
@@ -51,7 +50,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
             }
 
             for (reference in parent.references) {
-              val cfnReference = ObjectUtils.tryCast(reference, CloudFormationReferenceBase::class.java)
+              val cfnReference = reference as? CloudFormationReferenceBase
               if (cfnReference != null) {
                 for (v in cfnReference.getCompletionVariants()) {
                   rs.addElement(createLookupElement(v, quoteResult))
@@ -66,20 +65,20 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeResourceTopLevelProperty(rs: CompletionResultSet, element: PsiElement, quoteResult: Boolean) {
-    val propertyName = ObjectUtils.tryCast(element, JsonStringLiteral::class.java) ?: return
+    val propertyName = element as? JsonStringLiteral ?: return
 
-    val property = ObjectUtils.tryCast(propertyName.parent, JsonProperty::class.java)
+    val property = propertyName.parent as? JsonProperty
     if (property == null || property.nameElement !== propertyName) {
       return
     }
 
-    val resourceExpression = ObjectUtils.tryCast(property.parent, JsonObject::class.java) ?: return
+    val resourceExpression = property.parent as? JsonObject ?: return
 
-    val resourceProperty = ObjectUtils.tryCast(resourceExpression.parent, JsonProperty::class.java) ?: return
+    val resourceProperty = resourceExpression.parent as? JsonProperty ?: return
 
-    val resourcesExpression = ObjectUtils.tryCast(resourceProperty.parent, JsonObject::class.java) ?: return
+    val resourcesExpression = resourceProperty.parent as? JsonObject ?: return
 
-    val resourcesProperty = ObjectUtils.tryCast(resourcesExpression.parent, JsonProperty::class.java)
+    val resourcesProperty = resourcesExpression.parent as? JsonProperty
     if (resourcesProperty == null || CloudFormationSections.Resources != StringUtil.stripQuotesAroundValue(resourcesProperty.name)) {
       return
     }
@@ -97,19 +96,19 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun getResourceNameFromGetAttAttributePosition(element: PsiElement): String? {
-    val attributeExpression = ObjectUtils.tryCast(element, JsonStringLiteral::class.java) ?: return null
+    val attributeExpression = element as? JsonStringLiteral ?: return null
 
-    val getattParameters = ObjectUtils.tryCast(attributeExpression.parent, JsonArray::class.java)
+    val getattParameters = attributeExpression.parent as? JsonArray
     if (getattParameters == null || getattParameters.valueList.size != 2) {
       return null
     }
 
-    val getattProperty = ObjectUtils.tryCast(getattParameters.parent, JsonProperty::class.java)
+    val getattProperty = getattParameters.parent as? JsonProperty
     if (getattProperty == null || CloudFormationIntrinsicFunctions.FnGetAtt != getattProperty.name) {
       return null
     }
 
-    val getattFunc = ObjectUtils.tryCast(getattProperty.parent, JsonObject::class.java)
+    val getattFunc = getattProperty.parent as? JsonObject
     if (getattFunc == null || getattFunc.propertyList.size != 1) {
       return null
     }
@@ -127,7 +126,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   private fun completeAttribute(file: PsiFile, rs: CompletionResultSet, quoteResult: Boolean, resourceName: String) {
     val resource = CloudFormationResolve.resolveEntity(file, resourceName, CloudFormationSections.ResourcesSingletonList) ?: return
 
-    val resourceProperties = ObjectUtils.tryCast(resource.value, JsonObject::class.java) ?: return
+    val resourceProperties = resource.value as? JsonObject ?: return
 
     val typeProperty = resourceProperties.findProperty(CloudFormationConstants.TypePropertyName)
     if (typeProperty == null || typeProperty.value == null) {
@@ -144,22 +143,22 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeResourceProperty(rs: CompletionResultSet, propertyNameElement: PsiElement, quoteResult: Boolean) {
-    val propertyName = ObjectUtils.tryCast(propertyNameElement, JsonStringLiteral::class.java) ?: return
+    val propertyName = propertyNameElement as? JsonStringLiteral ?: return
 
-    val property = ObjectUtils.tryCast(propertyName.parent, JsonProperty::class.java)
+    val property = propertyName.parent as? JsonProperty
     if (property == null || property.nameElement !== propertyName) {
       return
     }
 
-    val propertiesExpression = ObjectUtils.tryCast(property.parent, JsonObject::class.java) ?: return
+    val propertiesExpression = property.parent as? JsonObject ?: return
 
     val resourceElement = CloudFormationPsiUtils.getResourceElementFromPropertyName(propertyName) ?: return
 
-    val resourceValue = ObjectUtils.tryCast(resourceElement.value, JsonObject::class.java) ?: return
+    val resourceValue = resourceElement.value as? JsonObject ?: return
 
     val typeProperty = resourceValue.findProperty(CloudFormationConstants.TypePropertyName) ?: return
 
-    val typeValue = ObjectUtils.tryCast(typeProperty.value, JsonStringLiteral::class.java) ?: return
+    val typeValue = typeProperty.value as? JsonStringLiteral ?: return
 
     val type = CloudFormationResolve.getTargetName(typeValue)
 
