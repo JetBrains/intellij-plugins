@@ -60,7 +60,7 @@ object ResourceTypesSaver {
 
       var resourceTypeName = row[0]
       val attribute = row[1]
-      // final String description = row.get(2);
+      val description = row[2]
 
       if (resourceTypeName == "AWS::CloudFormation::Stack" && attribute == "Outputs.NestedStackOutputName") {
         // Not an attribute name
@@ -75,18 +75,18 @@ object ResourceTypesSaver {
         resourceTypeName = "AWS::Config::ConfigRule"
       }
 
-      fun addAttribute(resourceTypeName: String, attribute: String) {
+      fun addAttribute(resourceTypeName: String, attribute: String, description: String) {
         val attributesList = result.getOrPut(resourceTypeName, { arrayListOf() })
-        attributesList.add(CloudFormationResourceAttribute(attribute))
+        attributesList.add(CloudFormationResourceAttribute(attribute, description))
       }
 
       if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
-        addAttribute("AWS::DirectoryService::MicrosoftAD", attribute)
-        addAttribute("AWS::DirectoryService::SimpleAD", attribute)
+        addAttribute("AWS::DirectoryService::MicrosoftAD", attribute, description)
+        addAttribute("AWS::DirectoryService::SimpleAD", attribute, description)
         continue
       }
 
-      addAttribute(resourceTypeName, attribute)
+      addAttribute(resourceTypeName, attribute, description)
     }
 
     return result
