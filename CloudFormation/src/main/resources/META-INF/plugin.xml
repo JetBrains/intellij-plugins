@@ -38,10 +38,9 @@
   </project-components>
 
   <actions>
-    <group id="NewXml" text="XML">
-      <action id="NewAwsCloudFormationFile" class="com.intellij.aws.cloudformation.CreateAWSTemplateFileAction"/>
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
-    </group>
+    <action id="NewAwsCloudFormationFile" class="com.intellij.aws.cloudformation.CreateAWSTemplateFileAction">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
