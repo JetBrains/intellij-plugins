@@ -45,4 +45,9 @@ public class DartGenerateEqualsAndHashcodeHandler extends BaseDartGenerateHandle
       }
     }));
   }
+
+  @Override
+  protected boolean doAllowEmptySelection() {
+    return true;
+  }
 }
