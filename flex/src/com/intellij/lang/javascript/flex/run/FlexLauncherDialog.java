@@ -60,14 +60,14 @@ public class FlexLauncherDialog extends DialogWrapper {
       @Override
       public void actionPerformed(ActionEvent e) {
         updateControls();
-        IdeFocusManager.getInstance(myProject).requestFocus(myBrowserSelector.getMainComponent(), true);
+        IdeFocusManager.getInstance(myProject).requestFocus(myBrowserSelector.getMainComponent());
       }
     });
     myPlayerRadioButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         updateControls();
-        IdeFocusManager.getInstance(myProject).requestFocus(myPlayerTextWithBrowse.getTextField(), true);
+        IdeFocusManager.getInstance(myProject).requestFocus(myPlayerTextWithBrowse.getTextField());
       }
     });
   }

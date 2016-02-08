@@ -1753,7 +1753,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
       if (location == Location.SDK) {
         if (requestFocus) {
-          return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
+          return IdeFocusManager.findInstance().requestFocus(mySdkCombo);
         }
       }
       else if (location instanceof Location.TableEntry) {
@@ -1768,7 +1768,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }
         if (requestFocus) {
-          return IdeFocusManager.findInstance().requestFocus(myTable, true);
+          return IdeFocusManager.findInstance().requestFocus(myTable);
         }
       }
     }

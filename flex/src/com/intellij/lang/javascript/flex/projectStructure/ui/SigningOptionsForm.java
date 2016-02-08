@@ -237,11 +237,11 @@ public class SigningOptionsForm {
   public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
     switch (location) {
       case ProvisioningProfile:
-        return IdeFocusManager.findInstance().requestFocus(myProvisioningProfileTextWithBrowse.getChildComponent(), true);
+        return IdeFocusManager.findInstance().requestFocus(myProvisioningProfileTextWithBrowse.getChildComponent());
       case Keystore:
-        return IdeFocusManager.findInstance().requestFocus(myKeystoreFileTextWithBrowse.getChildComponent(), true);
+        return IdeFocusManager.findInstance().requestFocus(myKeystoreFileTextWithBrowse.getChildComponent());
       case IosSdkPath:
-        return IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField(), true);
+        return IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField());
       default:
         return ActionCallback.DONE;
     }

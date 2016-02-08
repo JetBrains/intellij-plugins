@@ -1007,10 +1007,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       if (location instanceof Location) {
         switch ((Location)location) {
           case AdditionalConfigFile:
-            return IdeFocusManager.findInstance().requestFocus(myConfigFileTextWithBrowse.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myConfigFileTextWithBrowse.getChildComponent());
 
           case FilesToIncludeInSwc:
-            return IdeFocusManager.findInstance().requestFocus(myIncludeInSWCField.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myIncludeInSWCField.getChildComponent());
 
           case ConditionalCompilerDefinition:
             final DefaultMutableTreeNode root = (DefaultMutableTreeNode)myTreeTable.getTree().getModel().getRoot();

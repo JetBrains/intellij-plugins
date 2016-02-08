@@ -241,7 +241,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myUseHTMLWrapperCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        IdeFocusManager.getInstance(myModule.getProject()).requestFocus(myWrapperTemplateTextWithBrowse.getTextField(), true);
+        IdeFocusManager.getInstance(myModule.getProject()).requestFocus(myWrapperTemplateTextWithBrowse.getTextField());
       }
     });
 
@@ -752,19 +752,19 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       if (location instanceof Location) {
         switch ((Location)location) {
           case Nature:
-            return IdeFocusManager.findInstance().requestFocus(myChangeNatureHyperlink, true);
+            return IdeFocusManager.findInstance().requestFocus(myChangeNatureHyperlink);
           case MainClass:
-            return IdeFocusManager.findInstance().requestFocus(myMainClassComponent.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myMainClassComponent.getChildComponent());
           case OutputFileName:
-            return IdeFocusManager.findInstance().requestFocus(myOutputFileNameTextField, true);
+            return IdeFocusManager.findInstance().requestFocus(myOutputFileNameTextField);
           case OutputFolder:
-            return IdeFocusManager.findInstance().requestFocus(myOutputFolderField.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myOutputFolderField.getChildComponent());
           case HtmlTemplatePath:
-            return IdeFocusManager.findInstance().requestFocus(myWrapperTemplateTextWithBrowse.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myWrapperTemplateTextWithBrowse.getChildComponent());
           case RuntimeStyleSheets:
-            return IdeFocusManager.findInstance().requestFocus(myCssFilesTextWithBrowse.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myCssFilesTextWithBrowse.getChildComponent());
           case RLMs:
-            return IdeFocusManager.findInstance().requestFocus(myRLMTextWithBrowse.getChildComponent(), true);
+            return IdeFocusManager.findInstance().requestFocus(myRLMTextWithBrowse.getChildComponent());
         }
       }
     }

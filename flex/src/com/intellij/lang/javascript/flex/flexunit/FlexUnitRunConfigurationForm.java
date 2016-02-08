@@ -71,7 +71,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myShowLogCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (myShowLogCheckBox.isSelected()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myLogLevelCombo, false);
+          IdeFocusManager.getInstance(myProject).requestFocus(myLogLevelCombo);
         }
         updateControls();
       }

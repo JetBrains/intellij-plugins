@@ -167,7 +167,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         updateControls();
 
         if (myMainClassComponent.isEnabled()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myMainClassComponent.getChildComponent(), true);
+          IdeFocusManager.getInstance(myProject).requestFocus(myMainClassComponent.getChildComponent());
         }
       }
     });
@@ -203,7 +203,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         updateControls();
 
         if (myUrlOrFileTextWithBrowse.isEnabled()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myUrlOrFileTextWithBrowse.getTextField(), true);
+          IdeFocusManager.getInstance(myProject).requestFocus(myUrlOrFileTextWithBrowse.getTextField());
         }
       }
     });
@@ -316,10 +316,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         updateControls();
 
         if (myOnEmulatorRadioButton.isSelected()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myEmulatorCombo, true);
+          IdeFocusManager.getInstance(myProject).requestFocus(myEmulatorCombo);
         }
         if (myOnIOSSimulatorRadioButton.isSelected()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myIOSSimulatorSdkTextWithBrowse.getTextField(), true);
+          IdeFocusManager.getInstance(myProject).requestFocus(myIOSSimulatorSdkTextWithBrowse.getTextField());
         }
       }
     };

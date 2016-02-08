@@ -171,7 +171,7 @@ public class DartConfigurable implements SearchableConfigurable {
         myCheckSdkUpdateButton.setEnabled(enabled);
 
         if (enabled) {
-          IdeFocusManager.getInstance(myProject).requestFocus(mySdkUpdateChannelCombo, true);
+          IdeFocusManager.getInstance(myProject).requestFocus(mySdkUpdateChannelCombo);
         }
       }
     });
@@ -246,7 +246,7 @@ public class DartConfigurable implements SearchableConfigurable {
         updateErrorLabel();
 
         if (enabled) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myCustomPackageRootTextWithBrowse.getTextField(), true);
+          IdeFocusManager.getInstance(myProject).requestFocus(myCustomPackageRootTextWithBrowse.getTextField());
         }
       }
     });

@@ -246,7 +246,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
           case CustomDescriptor:
             return myAirDescriptorForm.navigateTo((Location)location);
           case PackageFileName:
-            return IdeFocusManager.findInstance().requestFocus(myPackageFileNameTextField, true);
+            return IdeFocusManager.findInstance().requestFocus(myPackageFileNameTextField);
           case FilesToPackage:
             return myFilesToPackageForm.navigateTo((Location)location);
           case ProvisioningProfile:
