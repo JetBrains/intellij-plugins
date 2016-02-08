@@ -1,6 +1,6 @@
 main() {
   var arr = new Foo();
-  itar<caret>
+  for<caret>
 }
 
 class Foo {
