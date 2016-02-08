@@ -3,7 +3,6 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import javafx.application.Platform;
@@ -123,15 +122,9 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   }
 
   private String prepareHtml(@NotNull String html) {
-    String result = html
+    return html
       .replace("<head>", "<head>" + getCssLines(myInlineCss, myCssUris))
       .replace("</body>", getScriptingLines() + "</body>");
-
-    // temp workaround for RUBY-17329
-    if (SystemInfo.isJetbrainsJvm && SystemInfo.isMac) {
-      result = SVG_REPLACE_PATTERN.matcher(result).replaceAll("$1_svg_$2");
-    }
-    return result;
   }
 
   @Override
