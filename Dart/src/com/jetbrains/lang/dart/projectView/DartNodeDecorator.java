@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.projectView;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ProjectViewNodeDecorator;
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class DartNodeDecorator implements ProjectViewNodeDecorator {
   @Override
   public void decorate(@NotNull final ProjectViewNode node, @NotNull final PresentationData presentation) {
-    if (node instanceof PsiFileNode) {
+    if (node instanceof PsiFileNode || node instanceof PsiDirectoryNode) {
       final VirtualFile nodeFile = node.getVirtualFile();
       if (nodeFile != null && DartAnalysisServerService.getInstance().isFileWithErrors(nodeFile)) {
         presentation.setAttributesKey(CodeInsightColors.ERRORS_ATTRIBUTES);
