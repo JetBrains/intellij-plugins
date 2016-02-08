@@ -8,7 +8,7 @@
   <description><![CDATA[
     <p>Amazon AWS CloudFormation language support
     <p>
-    <p>Open any *.template file with CloudFormation JSON inside. There should be number of features available:
+    <p>Open any *.template or *.json file with CloudFormation JSON inside. There should be number of features available:
     <ul>
       <li>Template validation
         <ul>
