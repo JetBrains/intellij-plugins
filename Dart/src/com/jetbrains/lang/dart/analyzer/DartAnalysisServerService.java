@@ -67,6 +67,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import gnu.trove.TObjectIntHashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -121,7 +122,9 @@ public class DartAnalysisServerService {
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
-  @NotNull private final Set<VirtualFile> myFilesWithErrors = Collections.synchronizedSet(new THashSet<VirtualFile>());
+  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<String>();
+  // how many files with errors are in this folder (recursively)
+  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<String>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -657,22 +660,18 @@ public class DartAnalysisServerService {
 
           if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, errors);
-
-            updateFilesWithErrorsSet(vFile, errors);
+            updateFilesWithErrorsSet(filePath, errors);
           }
           else {
             DartProblemsView.getInstance(project).updateErrorsForFile(filePath, AnalysisError.EMPTY_LIST);
-
-            if (vFile != null) {
-              updateFilesWithErrorsSet(vFile, AnalysisError.EMPTY_LIST);
-            }
+            updateFilesWithErrorsSet(filePath, AnalysisError.EMPTY_LIST);
           }
         }
       }
     });
   }
 
-  private void updateFilesWithErrorsSet(@NotNull final VirtualFile file, @NotNull final List<AnalysisError> errors) {
+  private void updateFilesWithErrorsSet(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
     boolean hasProblems = false;
     for (AnalysisError error : errors) {
       if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
@@ -681,17 +680,43 @@ public class DartAnalysisServerService {
       }
     }
 
-    if (hasProblems) {
-      myFilesWithErrors.add(file);
-    }
-    else {
-      myFilesWithErrors.remove(file);
+    synchronized (myFilePathsWithErrors) {
+      if (hasProblems) {
+        if (myFilePathsWithErrors.add(filePath)) {
+          String parentPath = PathUtil.getParentPath(filePath);
+          while (!parentPath.isEmpty()) {
+            final int count = myFolderPathsWithErrors.get(parentPath); // returns zero if there were no path in the map
+            myFolderPathsWithErrors.put(parentPath, count + 1);
+            parentPath = PathUtil.getParentPath(parentPath);
+          }
+        }
+      }
+      else {
+        if (myFilePathsWithErrors.remove(filePath)) {
+          String parentPath = PathUtil.getParentPath(filePath);
+          while (!parentPath.isEmpty()) {
+            final int count = myFolderPathsWithErrors.remove(parentPath); // returns zero if there were no path in the map
+            if (count > 1) {
+              myFolderPathsWithErrors.put(parentPath, count - 1);
+            }
+            parentPath = PathUtil.getParentPath(parentPath);
+          }
+        }
+      }
     }
   }
 
-  private void clearAllErrors(@NotNull final Project project) {
-    DartProblemsView.getInstance(project).clearAll();
-    myFilesWithErrors.clear();
+  private void clearAllErrors(@NotNull final Collection<Project> projects) {
+    synchronized (myFolderPathsWithErrors) {
+      myFilePathsWithErrors.clear();
+      myFolderPathsWithErrors.clear();
+    }
+
+    for (final Project project : projects) {
+      if (!project.isDisposed()) {
+        DartProblemsView.getInstance(project).clearAll();
+      }
+    }
   }
 
   @NotNull
@@ -1150,11 +1175,7 @@ public class DartAnalysisServerService {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
         public void run() {
-          for (final Project project : myRootsHandler.getTrackedProjects()) {
-            if (!project.isDisposed()) {
-              clearAllErrors(project);
-            }
-          }
+          clearAllErrors(myRootsHandler.getTrackedProjects());
         }
       }, ModalityState.NON_MODAL);
     }
@@ -1446,11 +1467,7 @@ public class DartAnalysisServerService {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
         public void run() {
-          for (final Project project : projects) {
-            if (!project.isDisposed()) {
-              clearAllErrors(project);
-            }
-          }
+          clearAllErrors(projects);
         }
       }, ModalityState.NON_MODAL);
     }
@@ -1507,7 +1524,9 @@ public class DartAnalysisServerService {
   }
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {
-    return myFilesWithErrors.contains(file);
+    synchronized (myFilePathsWithErrors) {
+      return file.isDirectory() ? myFolderPathsWithErrors.get(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
+    }
   }
 
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
