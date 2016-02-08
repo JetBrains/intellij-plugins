@@ -12,6 +12,7 @@ data class CloudFormationMetadata(
     return this.copy()
   }
 
+  @Transient
   val resourceTypesMap = resourceTypes.map { it.name to it }.toMap()
   fun findResourceType(name: String): CloudFormationResourceType? = resourceTypesMap[name]
 }

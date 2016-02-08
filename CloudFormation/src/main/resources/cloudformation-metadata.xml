@@ -2761,7 +2761,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Data</name>
-          <description></description>
+          <description>A JSON format string containing the UniqueId and Data values from the wait condition signal(s) for the specified wait condition. For more information about wait condition signals, see Wait Condition Signal JSON Format. Example for wait condition with 2 signals: {&quot;Signal1&quot;:&quot;Step 1 complete.&quot;,&quot;Signal2&quot;:&quot;Step 2 complete.&quot;}</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -2934,7 +2934,7 @@
       <attributes>
         <ResourceAttribute>
           <name>DomainName</name>
-          <description></description>
+          <description>Example: d2fadu0nynjpfn.cloudfront.net</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -4936,15 +4936,15 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>Example: arn:aws:config:us-east-1:123456789012:config-rule/config-rule-a1bzhi</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>ConfigRuleId</name>
-          <description></description>
+          <description>Example: config-rule-a1bzhi</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>Compliance.Type</name>
-          <description></description>
+          <description>Example: COMPLIANT</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -5916,11 +5916,11 @@
       <attributes>
         <ResourceAttribute>
           <name>Alias</name>
-          <description></description>
+          <description>The alias for a directory. Example: d-12373a053a or alias4-mydirectory-12345abcgmzsk (if you have the CreateAlias property set to true)</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>DnsIpAddresses</name>
-          <description></description>
+          <description>The IP addresses of the DNS servers for the directory. Example: [ &quot;192.0.2.1&quot;, &quot;192.0.2.2&quot; ]</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -6185,11 +6185,11 @@
       <attributes>
         <ResourceAttribute>
           <name>Alias</name>
-          <description></description>
+          <description>The alias for a directory. Example: d-12373a053a or alias4-mydirectory-12345abcgmzsk (if you have the CreateAlias property set to true)</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>DnsIpAddresses</name>
-          <description></description>
+          <description>The IP addresses of the DNS servers for the directory. Example: [ &quot;192.0.2.1&quot;, &quot;192.0.2.2&quot; ]</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -6605,7 +6605,7 @@
       <attributes>
         <ResourceAttribute>
           <name>StreamArn</name>
-          <description></description>
+          <description>The Amazon Resource Name (ARN) of the DynamoDB stream. Example: arn:aws:dynamodb:us-east-1:123456789012:table/testddbstack-myDynamoDBTable-012A1SL7SMP5Q/stream/2015-11-30T20:10:00.000</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -7166,7 +7166,7 @@
       <attributes>
         <ResourceAttribute>
           <name>AllocationId</name>
-          <description></description>
+          <description>ID that AWS assigns to represent the allocation of the address for use with Amazon VPC. Returned only for VPC elastic IP addresses. Example: eipalloc-5723d13e</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -8068,23 +8068,23 @@
       <attributes>
         <ResourceAttribute>
           <name>AvailabilityZone</name>
-          <description></description>
+          <description>The Availability Zone where the instance that you specified is launched. Example: us-east-1b</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>PrivateDnsName</name>
-          <description></description>
+          <description>The private DNS name of the instance that you specified. Example: ip-10-24-34-0.ec2.internal</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>PublicDnsName</name>
-          <description></description>
+          <description>The public DNS name of the specified instance that you specified. Example: ec2-107-20-50-45.compute-1.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>PrivateIp</name>
-          <description></description>
+          <description>The private IP address of the instance that you specified. Example: 10.24.34.0</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>PublicIp</name>
-          <description></description>
+          <description>The public IP address of the instance that you specified. Example: 192.0.2.0</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -8920,11 +8920,11 @@
       <attributes>
         <ResourceAttribute>
           <name>PrimaryPrivateIpAddress</name>
-          <description></description>
+          <description>The primary private IP address of the network interface that you specified. Example: 10.0.0.192</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>SecondaryPrivateIpAddresses</name>
-          <description></description>
+          <description>The secondary private IP addresses of the network interface that you specified. Example: [&quot;10.0.0.161&quot;, &quot;10.0.0.162&quot;, &quot;10.0.0.163&quot;]</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -9871,7 +9871,7 @@
       <attributes>
         <ResourceAttribute>
           <name>GroupId</name>
-          <description></description>
+          <description>The group ID of the specified security group. Example: sg-94b3a1f6</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -10808,7 +10808,7 @@
       <attributes>
         <ResourceAttribute>
           <name>AvailabilityZone</name>
-          <description></description>
+          <description>The Availability Zone of the subnet. Example: us-east-1a</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -10967,7 +10967,7 @@
       <attributes>
         <ResourceAttribute>
           <name>AssociationId</name>
-          <description></description>
+          <description>NetworkAcl associationId that is attached to a subnet.</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -11338,15 +11338,15 @@
       <attributes>
         <ResourceAttribute>
           <name>CidrBlock</name>
-          <description></description>
+          <description>The set of IP addresses for the VPC. Example: 10.0.0.0/16</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>DefaultNetworkAcl</name>
-          <description></description>
+          <description>The default network ACL ID that is associated with the VPC, which AWS creates when you create a VPC. Example: acl-814dafe3</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>DefaultSecurityGroup</name>
-          <description></description>
+          <description>The default security group ID that is associated with the VPC, which AWS creates when you create a VPC. Example: sg-b178e0d3</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -14529,11 +14529,11 @@
       <attributes>
         <ResourceAttribute>
           <name>ConfigurationEndpoint.Address</name>
-          <description></description>
+          <description>The DNS address of the configuration endpoint for the cache cluster. Example: test.abc12a.cfg.use1.cache.amazonaws.com:11111</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>ConfigurationEndpoint.Port</name>
-          <description></description>
+          <description>The port number of the configuration endpoint for the cache cluster.</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -15174,27 +15174,27 @@
       <attributes>
         <ResourceAttribute>
           <name>PrimaryEndPoint.Address</name>
-          <description></description>
+          <description>The DNS address of the primary read-write cache node.</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>PrimaryEndPoint.Port</name>
-          <description></description>
+          <description>The port number that the primary read-write cache engine is listening on.</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>ReadEndPoint.Addresses</name>
-          <description></description>
+          <description>A string with a list of endpoints for the read-only replicas. The order of the addresses map to the order of the ports from the ReadEndPoint.Ports attribute. Example: &quot;[abc12xmy3d1w3hv6-001.rep12a.0001.use1.cache.amazonaws.com, abc12xmy3d1w3hv6-002.rep12a.0001.use1.cache.amazonaws.com, abc12xmy3d1w3hv6-003.rep12a.0001.use1.cache.amazonaws.com]&quot;</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>ReadEndPoint.Ports</name>
-          <description></description>
+          <description>A string with a list of ports for the read-only replicas. The order of the ports map to the order of the addresses from the ReadEndPoint.Addresses attribute. Example: &quot;[6379, 6379, 6379]&quot;</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>ReadEndPoint.Addresses.List</name>
-          <description></description>
+          <description>A list of endpoints for the read-only replicas. Example: [&quot;abc12xmy3d1w3hv6-001.rep12a.0001.use1.cache.amazonaws.com&quot;, &quot;abc12xmy3d1w3hv6-002.rep12a.0001.use1.cache.amazonaws.com&quot;, &quot;abc12xmy3d1w3hv6-003.rep12a.0001.use1.cache.amazonaws.com&quot;]</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>ReadEndPoint.Ports.List</name>
-          <description></description>
+          <description>A list of ports for the read-only replicas. Example: [&quot;6379&quot;,&quot;6379&quot;,&quot;6379&quot;]</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -16337,7 +16337,7 @@
       <attributes>
         <ResourceAttribute>
           <name>EndpointURL</name>
-          <description></description>
+          <description>The URL to the LoadBalancer for this environment. Example: awseb-myst-myen-132MQC4KRLAMD-1371280482.us-east-1.elb.amazonaws.com</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -17014,23 +17014,23 @@
       <attributes>
         <ResourceAttribute>
           <name>CanonicalHostedZoneName</name>
-          <description></description>
+          <description>The name of the Amazon Route 53 hosted zone that is associated with the LoadBalancer. Example: mystack-myelb-15HMABG9ZCN57-1013119603.us-east-1.elb.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>CanonicalHostedZoneNameID</name>
-          <description></description>
+          <description>The ID of the Amazon Route 53 hosted zone name that is associated with the LoadBalancer. Example: Z3DZXE0Q79N41H</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>DNSName</name>
-          <description></description>
+          <description>The DNS name for the LoadBalancer. Example: mystack-myelb-15HMABG9ZCN57-1013119603.us-east-1.elb.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>SourceSecurityGroup.GroupName</name>
-          <description></description>
+          <description>The security group that you can use as part of your inbound rules for your LoadBalancer&apos;s back-end Amazon EC2 application instances. Example: amazon-elb</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>SourceSecurityGroup.OwnerAlias</name>
-          <description></description>
+          <description>Owner of the source security group. Example: amazon-elb-sg</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -17186,7 +17186,7 @@
       <attributes>
         <ResourceAttribute>
           <name>SecretAccessKey</name>
-          <description></description>
+          <description>Secret access key for the specified Access Key. Example: wJalrXUtnFEMI/K7MDENG/bPxRfiCYzEXAMPLEKEY</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -17341,7 +17341,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>Example: arn:aws:iam::123456789012:group/mystack-mygroup-1DZETITOWEKVO</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -17530,7 +17530,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>Returns the Amazon Resource Name (ARN) for the instance profile. Example: arn:aws:iam::1234567890:instance-profile/MyProfile-ASDNSDLKJ</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -18277,7 +18277,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>Example: arn:aws:iam::1234567890:role/MyRole-AJJHDSKSDF</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -18467,7 +18467,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>Example: arn:aws:iam::123456789012:group/mystack-myuser-1CCXAFG2H2U4D</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -18876,7 +18876,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>The ARN of the Amazon Kinesis stream. Example: arn:aws:kinesis:us-east-1:123456789012:stream/mystream.</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -19303,7 +19303,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>Example: arn:aws:lambda:us-west-2:123456789012:MyStack-AMILookUp-NT5EUXTNTXXD</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -19743,7 +19743,7 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>The ARN of the CloudWatch Logs log group. Example: arn:aws:logs:us-east-1:123456789012:log-group:/mystack-testgroup-12ABC1AB12A1:*</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -22281,11 +22281,11 @@
       <attributes>
         <ResourceAttribute>
           <name>Endpoint.Address</name>
-          <description></description>
+          <description>Connection endpoint for the DB cluster. Example: mystack-mydbcluster-1apw1j4phylrk.cg034hpkmmjt.us-east-1.rds.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>Endpoint.Port</name>
-          <description></description>
+          <description>The port number on which the DB cluster accepts connections. Example: 3306</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -23308,11 +23308,11 @@
       <attributes>
         <ResourceAttribute>
           <name>Endpoint.Address</name>
-          <description></description>
+          <description>Connection endpoint for the database. Example: mystack-mydb-1apw1j4phylrk.cg034hpkmmjt.us-east-1.rds.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>Endpoint.Port</name>
-          <description></description>
+          <description>The port number on which the database accepts connections. Example: 3306</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -24901,11 +24901,11 @@
       <attributes>
         <ResourceAttribute>
           <name>Endpoint.Address</name>
-          <description></description>
+          <description>Connection endpoint for the cluster. Example: examplecluster.cg034hpkmmjt.us-east-1.redshift.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>Endpoint.Port</name>
-          <description></description>
+          <description>Connection port for the cluster. Example: 5439</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -26801,11 +26801,11 @@
       <attributes>
         <ResourceAttribute>
           <name>DomainName</name>
-          <description></description>
+          <description>The DNS name of the specified bucket. Example: mystack-mybucket-kdwwxmddtr2g.s3.amazonaws.com</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>WebsiteURL</name>
-          <description></description>
+          <description>Amazon S3 website endpoint for the specified bucket. Example: http://mystack-mybucket-kdwwxmddtr2g.s3-website-us-east-1.amazonaws.com/</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -27131,7 +27131,7 @@
       <attributes>
         <ResourceAttribute>
           <name>TopicName</name>
-          <description></description>
+          <description>The name of an Amazon SNS topic. Example: my-sns-topic</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>
@@ -27588,11 +27588,11 @@
       <attributes>
         <ResourceAttribute>
           <name>Arn</name>
-          <description></description>
+          <description>ARN for the specified queue. Example: arn:aws:sqs:us-east-1:123456789012:mystack-myqueue-15PG5C2FC1CW8</description>
         </ResourceAttribute>
         <ResourceAttribute>
           <name>QueueName</name>
-          <description></description>
+          <description>The name of an Amazon SQS queue. Example: mystack-myqueue-1VF9BKQH5BJVI</description>
         </ResourceAttribute>
       </attributes>
     </ResourceType>

@@ -13,8 +13,10 @@ data class CloudFormationResourceType(
     return this.copy()
   }
 
+  @Transient
   val propertiesMap = properties.map { it.name to it }.toMap()
   fun findProperty(name: String): CloudFormationResourceProperty? = propertiesMap[name]
 
+  @Transient
   val requiredProperties: Set<String> = properties.filter { it.required }.map { it.name }.toSet()
 }
