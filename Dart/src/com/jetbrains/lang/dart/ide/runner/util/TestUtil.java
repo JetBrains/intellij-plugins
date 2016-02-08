@@ -51,18 +51,27 @@ public class TestUtil {
     return expectedName.equals(callExpression.getExpression().getText());
   }
 
-  public static String suggestedName(String path, Scope scope, String testName) {
+  public static String suggestedName(@Nullable final String path, @NotNull final Scope scope, @Nullable final String testName) {
     if (path != null) {
-      final String fileName = PathUtil.getFileName(path);
+      final String fileOrDirName = PathUtil.getFileName(path);
       switch (scope) {
         case METHOD:
-          return DartBundle.message("test.0.in.1", testName, fileName);
+          return DartBundle.message("test.0.in.1", testName, fileOrDirName);
         case GROUP:
-          return DartBundle.message("test.group.0.in.1", testName, fileName);
+          return DartBundle.message("test.group.0.in.1", testName, fileOrDirName);
         case FILE:
-          return DartBundle.message("all.tests.in.0", fileName);
+          return DartBundle.message("all.tests.in.0", fileOrDirName);
         case FOLDER:
-          return DartBundle.message("all.tests.in.0", PathUtil.getFileName(path));
+          final String dirName;
+          if ("test".equals(fileOrDirName)) {
+            final String parentPath = PathUtil.getParentPath(path);
+            final String parentDirName = PathUtil.getFileName(parentPath);
+            dirName = parentDirName.isEmpty() ? fileOrDirName : parentDirName + "/" + fileOrDirName;
+          }
+          else {
+            dirName = fileOrDirName;
+          }
+          return DartBundle.message("all.tests.in.0", dirName);
       }
     }
     return null;
