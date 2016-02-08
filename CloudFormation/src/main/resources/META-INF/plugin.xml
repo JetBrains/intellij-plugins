@@ -22,6 +22,7 @@
       <li>Completion of resources types and properties</li>
       <li>Live template for Ref clause: type "ref" and press Tab</li>
       <li>Ctrl-Click on any reference to jump to its definition</li>
+      <li>Quick Documentation for resource types and properties</li>
       <li>Format file</li>
     </ul>
   ]]></description>

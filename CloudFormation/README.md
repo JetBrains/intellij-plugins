@@ -22,6 +22,7 @@ Quick Start
   * Completion of resources types and properties
   * Live template for Ref clause: type "ref" and press Tab
   * Ctrl-Click on any reference to jump to its definition
+  * Quick Documentation for resource types and properties
   * Format file
 
 Builds from trunk
