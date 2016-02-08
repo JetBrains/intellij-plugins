@@ -31,8 +31,8 @@ object ResourceTypesSaver {
     }
 
     val resourceTypes = resourceTypeLocations.map {
-      fetchResourceType(it.name, it.location, resourceAttributesMap.getOrElse(it.name, { arrayListOf() }))
-    }
+      it.name to fetchResourceType(it.name, it.location, resourceAttributesMap.getOrElse(it.name, { mapOf() }))
+    }.toMap()
 
     val metadata = CloudFormationMetadata(
         resourceTypes = resourceTypes,
@@ -43,7 +43,7 @@ object ResourceTypesSaver {
     FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
   }
 
-  private fun fetchResourceAttributes(): Map<String, List<CloudFormationResourceAttribute>> {
+  private fun fetchResourceAttributes(): Map<String, Map<String, CloudFormationResourceAttribute>> {
     val fnGetAttrDocUrl = URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
     val doc = getDocumentFromUrl(fnGetAttrDocUrl)
 
@@ -51,7 +51,7 @@ object ResourceTypesSaver {
 
     val table = parseTable(tableElement)
 
-    val result: MutableMap<String, MutableList<CloudFormationResourceAttribute>> = hashMapOf()
+    val result: MutableMap<String, MutableMap<String, CloudFormationResourceAttribute>> = hashMapOf()
 
     for (row in table) {
       if (row.size != 3) {
@@ -76,8 +76,8 @@ object ResourceTypesSaver {
       }
 
       fun addAttribute(resourceTypeName: String, attribute: String, description: String) {
-        val attributesList = result.getOrPut(resourceTypeName, { arrayListOf() })
-        attributesList.add(CloudFormationResourceAttribute(attribute, description))
+        val attributesList = result.getOrPut(resourceTypeName, { mutableMapOf() })
+        attributesList[attribute] = CloudFormationResourceAttribute(attribute, description)
       }
 
       if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
@@ -106,7 +106,7 @@ object ResourceTypesSaver {
     throw RuntimeException("Could not download from " + url)
   }
 
-  private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: List<CloudFormationResourceAttribute>): CloudFormationResourceType {
+  private fun fetchResourceType(resourceTypeName: String, docLocation: URL, resourceAttributes: Map<String, CloudFormationResourceAttribute>): CloudFormationResourceType {
     println(resourceTypeName)
 
     val doc = getDocumentFromUrl(docLocation)
@@ -116,7 +116,7 @@ object ResourceTypesSaver {
 
     val vlists = doc.select("div.variablelist")
 
-    val properties: MutableList<CloudFormationResourceProperty> = arrayListOf()
+    val properties: MutableMap<String, CloudFormationResourceProperty> = mutableMapOf()
 
     if (!vlists.isEmpty()) {
       for (vlist in vlists) {
@@ -220,7 +220,7 @@ object ResourceTypesSaver {
             }
           }
 
-          properties.add(CloudFormationResourceProperty(name, descriptionValue, type, required, updateValue))
+          properties[name] = CloudFormationResourceProperty(name, descriptionValue, type, required, updateValue)
         }
       }
     } else {
@@ -248,7 +248,7 @@ object ResourceTypesSaver {
             throw RuntimeException("Unknown value for required in property $name in $docLocation: $requiredString")
           }
 
-          properties.add(CloudFormationResourceProperty(name, "", type, required, ""))
+          properties[name] = CloudFormationResourceProperty(name, "", type, required, "")
         }
       } else {
         if (resourceTypeName != "AWS::CloudFormation::WaitConditionHandle" &&
@@ -263,16 +263,14 @@ object ResourceTypesSaver {
     // De-facto changes not covered in documentation
 
     fun changeProperty(name: String, converter: (CloudFormationResourceProperty) -> CloudFormationResourceProperty) {
-      val statusIndex = properties.indexOfFirst { it.name == name }
-      assert(statusIndex >= 0, { "Property $name is not found in resource type $resourceTypeName"})
-
-      properties[statusIndex] = converter(properties[statusIndex])
+      val value = properties[name] ?: error("Property $name is not found in resource type $resourceTypeName")
+      properties[name] = converter(value)
     }
 
     if (resourceTypeName == "AWS::ElasticBeanstalk::Application") {
       // Not in official documentation yet, found in examples
-      properties.add(CloudFormationResourceProperty("ConfigurationTemplates", "", "Unknown", false, ""))
-      properties.add(CloudFormationResourceProperty("ApplicationVersions", "", "Unknown", false, ""))
+      properties["ConfigurationTemplates"] = CloudFormationResourceProperty("ConfigurationTemplates", "", "Unknown", false, "")
+      properties["ApplicationVersions"] = CloudFormationResourceProperty("ApplicationVersions", "", "Unknown", false, "")
     }
 
     if (resourceTypeName == "AWS::IAM::AccessKey") {

@@ -122,7 +122,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
   }
 
   private fun completeResourceType(rs: CompletionResultSet, quoteResult: Boolean) {
-    for (resourceType in CloudFormationMetadataProvider.METADATA.resourceTypes) {
+    for (resourceType in CloudFormationMetadataProvider.METADATA.resourceTypes.values) {
       rs.addElement(createLookupElement(resourceType.name, quoteResult))
     }
   }
@@ -141,7 +141,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
     val resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName) ?: return
 
-    for (attribute in resourceType.attributes) {
+    for (attribute in resourceType.attributes.values) {
       rs.addElement(createLookupElement(attribute.name, quoteResult))
     }
   }
@@ -168,7 +168,7 @@ class CloudFormationCompletionContributor : CompletionContributor() {
 
     val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(type) ?: return
 
-    for (propertyMetadata in resourceTypeMetadata.properties) {
+    for (propertyMetadata in resourceTypeMetadata.properties.values) {
       if (propertiesExpression.findProperty(propertyMetadata.name) != null) {
         continue
       }
