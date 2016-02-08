@@ -1,4 +1,4 @@
-AWS CloudFormation plugin for IntelliJ IDEA 14+
+AWS CloudFormation plugin for IntelliJ IDEA 16+
 
 [![Travis Build Status](https://travis-ci.org/shalupov/idea-cloudformation.svg?branch=master)](https://travis-ci.org/shalupov/idea-cloudformation)
 
@@ -11,7 +11,7 @@ https://plugins.jetbrains.com/plugin/7371?pr=idea_ce
 Quick Start
 -----------
 
-* Open any *.template file with CloudFormation JSON inside
+* Open any *.template or *.json file with CloudFormation JSON inside
 * There should be number of features available:
   * Template validation
     * Overall file structure
