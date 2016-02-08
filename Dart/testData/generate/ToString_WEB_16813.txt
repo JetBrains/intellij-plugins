@@ -1,0 +1,17 @@
+class ToString_WEB_16813 {
+
+  var a;
+
+  /// Returns a greeting from this object.
+  String hello() => "I'm a Test";
+
+
+  @override
+  String toString() {
+    return 'ToString_WEB_16813{a: $a}';
+  }<caret>
+
+  /// Returns another greeting from this object.
+  String hello2() => "I'm a Test";
+
+}

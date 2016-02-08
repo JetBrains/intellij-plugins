@@ -151,4 +151,8 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   public void testToString2() throws Throwable {
     doToStringTest();
   }
+
+  public void testToString_WEB_16813() throws Throwable {
+    doToStringTest();
+  }
 }
