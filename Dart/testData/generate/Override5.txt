@@ -17,7 +17,19 @@ class C extends B {
   }
 
   @override
+  _privateMethodInB() {
+    
+  }
+
+
+  @override
   publicMethodInB() {
+    
+  }
+
+
+  @override
+  _privateMethodInA() {
     
   }
 
