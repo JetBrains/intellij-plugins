@@ -1,4 +1,9 @@
-import com.intellij.aws.cloudformation.metadata.*
+import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
+import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
+import com.intellij.aws.cloudformation.metadata.MetadataSerializer
 import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -7,7 +12,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
-import java.util.*
+import java.util.ArrayList
 import java.util.regex.Pattern
 
 object ResourceTypesSaver {
@@ -296,7 +301,7 @@ object ResourceTypesSaver {
   }
 
   private fun parseTable(table: Element): List<List<String>> {
-    val tbody = table.getElementsByTag("tbody").first() ?: return ArrayList()
+    val tbody = table.getElementsByTag("tbody").first() ?: return emptyList()
 
     val result = ArrayList<List<String>>()
     for (tr in tbody.children()) {
@@ -356,10 +361,8 @@ object ResourceTypesSaver {
     val tableElement = doc.select("div.table-contents").first()!!
 
     val table = parseTable(tableElement)
-    val limits = HashMap<String, String>()
-    for (row in table) {
-      limits.put(row[0], row[2])
-    }
+
+    val limits = table.map { it[0] to it[2] }.toMap()
 
     return CloudFormationLimits(
         maxMappings = Integer.parseInt(limits["Mappings"]?.replace(" mappings", "")),

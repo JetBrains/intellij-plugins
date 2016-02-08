@@ -3,13 +3,18 @@ package com.intellij.aws.cloudformation
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelKeyReference
-import com.intellij.json.psi.*
+import com.intellij.json.psi.JsonArray
+import com.intellij.json.psi.JsonLiteral
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonProperty
+import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
-import java.util.*
+import java.util.Arrays
+import java.util.HashSet
 
 class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
@@ -18,25 +23,23 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       return PsiReference.EMPTY_ARRAY
     }
 
-    val references = buildFromElement(element)
-    return if (!references.isEmpty()) references.toTypedArray() else PsiReference.EMPTY_ARRAY
+    val reference = buildFromElement(element)
+    return if (reference != null) arrayOf(reference) else PsiReference.EMPTY_ARRAY
   }
 
   companion object {
     val ParametersAndResourcesSections = Arrays.asList(CloudFormationSections.Parameters, CloudFormationSections.Resources)
 
-    fun buildFromElement(element: PsiElement): List<PsiReference> {
-      val stringLiteral = element as? JsonStringLiteral ?: return emptyList()
+    fun buildFromElement(element: PsiElement): PsiReference? {
+      val stringLiteral = element as? JsonStringLiteral ?: return null
 
-      val result = ArrayList<PsiReference>()
-
-      if (handleRef(stringLiteral, result)) {
-        return result
+      val handleRef = handleRef(stringLiteral)
+      if (handleRef != null) {
+        return handleRef
       }
 
       if (isInCondition(stringLiteral)) {
-        result.add(CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null))
-        return result
+        return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
       }
 
       val parametersArray = element.parent as? JsonArray
@@ -54,27 +57,22 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
               val properties = obj.propertyList
               if (properties.size == 1) {
                 if (isGetAtt) {
-                  result.add(CloudFormationEntityReference(stringLiteral, CloudFormationSections.ResourcesSingletonList, null))
-                  return result
+                  return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ResourcesSingletonList, null)
                 }
 
                 if (isFindInMap) {
-                  result.add(CloudFormationEntityReference(stringLiteral, CloudFormationSections.MappingsSingletonList, null))
-                  return result
+                  return CloudFormationEntityReference(stringLiteral, CloudFormationSections.MappingsSingletonList, null)
                 }
 
                 if (isIf) {
-                  result.add(CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null))
-                  return result
+                  return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
                 }
               }
             } else if (allParameters.size > 1 && element === allParameters[1]) {
               if (isFindInMap) {
                 val mappingNameExpression = allParameters[0] as? JsonStringLiteral
                 if (mappingNameExpression != null) {
-                  result.add(CloudFormationMappingTopLevelKeyReference(stringLiteral,
-                      CloudFormationResolve.getTargetName(mappingNameExpression)))
-                  return result
+                  return CloudFormationMappingTopLevelKeyReference(stringLiteral, CloudFormationResolve.getTargetName(mappingNameExpression))
                 }
               }
             } else if (allParameters.size > 2 && element === allParameters[2]) {
@@ -82,11 +80,10 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
                 val mappingNameExpression = allParameters[0] as? JsonStringLiteral
                 val topLevelKeyExpression = allParameters[1] as? JsonStringLiteral
                 if (mappingNameExpression != null && topLevelKeyExpression != null) {
-                  result.add(CloudFormationMappingSecondLevelKeyReference(
+                  return CloudFormationMappingSecondLevelKeyReference(
                       stringLiteral,
                       CloudFormationResolve.getTargetName(mappingNameExpression),
-                      CloudFormationResolve.getTargetName(topLevelKeyExpression)))
-                  return result
+                      CloudFormationResolve.getTargetName(topLevelKeyExpression))
                 }
               }
             }
@@ -94,46 +91,46 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
         }
       }
 
-      if (handleDependsOnSingle(stringLiteral, result)) {
-        return result
+      val handleDependsOnSingle = handleDependsOnSingle(stringLiteral)
+      if (handleDependsOnSingle != null) {
+        return handleDependsOnSingle
       }
 
-      if (handleDependsOnMultiple(stringLiteral, result)) {
-        return result
+      val handleDependsOnMultiple = handleDependsOnMultiple(stringLiteral)
+      if (handleDependsOnMultiple != null) {
+        return handleDependsOnMultiple
       }
 
       if (isInConditionOnResource(element)) {
-        result.add(CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null))
-        return result
+        return CloudFormationEntityReference(stringLiteral, CloudFormationSections.ConditionsSingletonList, null)
       }
 
-      return result
+      return null
     }
 
-    fun handleRef(element: JsonStringLiteral, result: MutableList<PsiReference>): Boolean {
+    fun handleRef(element: JsonStringLiteral): PsiReference? {
       val refProperty = element.parent as? JsonProperty
       if (refProperty == null || CloudFormationIntrinsicFunctions.Ref != refProperty.name) {
-        return false
+        return null
       }
 
       if (refProperty.nameElement === element) {
-        return false
+        return null
       }
 
-      val obj = refProperty.parent as? JsonObject ?: return false
+      val obj = refProperty.parent as? JsonObject ?: return null
 
       val properties = obj.propertyList
       if (properties.size != 1) {
-        return false
+        return null
       }
 
       val targetName = CloudFormationResolve.getTargetName(element)
       if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
-        return false
+        return null
       }
 
-      result.add(CloudFormationEntityReference(element, ParametersAndResourcesSections, null))
-      return true
+      return CloudFormationEntityReference(element, ParametersAndResourcesSections, null)
     }
 
     fun isInCondition(element: JsonLiteral): Boolean {
@@ -150,26 +147,24 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       return obj != null && obj.propertyList.size == 1
     }
 
-    fun handleDependsOnSingle(element: JsonLiteral, result: MutableList<PsiReference>): Boolean {
+    fun handleDependsOnSingle(element: JsonLiteral): PsiReference? {
       val dependsOnProperty = element.parent as? JsonProperty
       if (dependsOnProperty == null || CloudFormationConstants.DependsOnPropertyName != dependsOnProperty.name) {
-        return false
+        return null
       }
 
       if (dependsOnProperty.nameElement === element) {
-        return false
+        return null
       }
 
-      val resourceProperties = dependsOnProperty.parent as? JsonObject ?: return false
+      val resourceProperties = dependsOnProperty.parent as? JsonObject ?: return null
 
       val resource = resourceProperties.parent as? JsonProperty
       if (resource == null || !isResourceElement(resource)) {
-        return false
+        return null
       }
 
-      result.add(CloudFormationEntityReference(
-          element, CloudFormationSections.ResourcesSingletonList, listOf(resource.name)))
-      return true
+      return CloudFormationEntityReference(element, CloudFormationSections.ResourcesSingletonList, listOf(resource.name))
     }
 
     fun isInConditionOnResource(element: PsiElement): Boolean {
@@ -188,19 +183,19 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
       return resource != null && isResourceElement(resource)
     }
 
-    fun handleDependsOnMultiple(element: JsonLiteral, result: MutableList<PsiReference>): Boolean {
-      val refArray = element.parent as? JsonArray ?: return false
+    fun handleDependsOnMultiple(element: JsonLiteral): PsiReference? {
+      val refArray = element.parent as? JsonArray ?: return null
 
       val dependsOnProperty = refArray.parent as? JsonProperty
       if (dependsOnProperty == null || CloudFormationConstants.DependsOnPropertyName != dependsOnProperty.name) {
-        return false
+        return null
       }
 
-      val resourceProperties = dependsOnProperty.parent as? JsonObject ?: return false
+      val resourceProperties = dependsOnProperty.parent as? JsonObject ?: return null
 
       val resource = resourceProperties.parent as? JsonProperty
       if (resource == null || !isResourceElement(resource)) {
-        return false
+        return null
       }
 
       val excludes = HashSet<String>()
@@ -216,8 +211,7 @@ class CloudFormationReferenceProvider : PsiReferenceProvider() {
 
       excludes.add(resource.name)
 
-      result.add(CloudFormationEntityReference(element, CloudFormationSections.ResourcesSingletonList, excludes))
-      return true
+      return CloudFormationEntityReference(element, CloudFormationSections.ResourcesSingletonList, excludes)
     }
 
     private fun isResourceElement(element: JsonProperty): Boolean {

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.testFramework.ResolveTestCase
 import org.junit.Assert
 import java.io.File
-import java.util.*
+import java.util.ArrayList
 
 abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : ResolveTestCase() {
   protected var NotResolved = Object()

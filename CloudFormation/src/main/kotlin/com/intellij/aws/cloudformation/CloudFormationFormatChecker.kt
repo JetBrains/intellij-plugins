@@ -11,11 +11,11 @@ import com.intellij.json.psi.JsonValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import java.util.*
+import java.util.ArrayList
+import java.util.HashSet
 import java.util.regex.Pattern
 
 class CloudFormationFormatChecker(private val myInspectionManager: InspectionManager, private val myOnTheFly: Boolean) {
-
   private val myProblems = ArrayList<ProblemDescriptor>()
 
   val problems: List<ProblemDescriptor>
@@ -199,7 +199,7 @@ class CloudFormationFormatChecker(private val myInspectionManager: InspectionMan
       if (resourceType != null) {
         val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourceType)
         if (resourceTypeMetadata != null) {
-          val requiredProperties = HashSet(resourceTypeMetadata.requiredProperties)
+          val requiredProperties = resourceTypeMetadata.requiredProperties
           if (!requiredProperties.isEmpty()) {
             val requiredPropertiesString = StringUtil.join(requiredProperties, " ")
             addProblemOnNameElement(

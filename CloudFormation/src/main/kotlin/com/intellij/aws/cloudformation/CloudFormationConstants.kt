@@ -1,11 +1,10 @@
 package com.intellij.aws.cloudformation
 
 import com.intellij.util.containers.HashSet
-import java.util.*
+import java.util.Arrays
 
 object CloudFormationConstants {
-  val SupportedTemplateFormatVersions: Set<String> = HashSet(Arrays.asList(
-      "2010-09-09"))
+  val SupportedTemplateFormatVersions: Set<String> = HashSet(Arrays.asList("2010-09-09"))
 
   val CustomResourceType = "AWS::CloudFormation::CustomResource"
   val CustomResourceTypePrefix = "Custom::"
@@ -22,7 +21,7 @@ object CloudFormationConstants {
   val UpdatePolicyPropertyName = "UpdatePolicy"
   val VersionPropertyName = "Version"
 
-  val AllTopLevelResourceProperties: Set<String> = HashSet(Arrays.asList(
+  val AllTopLevelResourceProperties = listOf(
       ConditionPropertyName,
       TypePropertyName,
       PropertiesPropertyName,
@@ -31,5 +30,6 @@ object CloudFormationConstants {
       DependsOnPropertyName,
       MetadataPropertyName,
       UpdatePolicyPropertyName,
-      VersionPropertyName))
+      VersionPropertyName
+  ).toSet()
 }

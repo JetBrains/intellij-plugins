@@ -8,12 +8,12 @@ object CloudFormationSections {
   val Conditions = "Conditions"
   val Outputs = "Outputs"
 
-  val ResourcesSingletonList: Collection<String> = listOf(Resources)
-  val ParametersSingletonList: Collection<String> = listOf(Parameters)
-  val MappingsSingletonList: Collection<String> = listOf(Mappings)
-  val MetadataSingletonList: Collection<String> = listOf(Metadata)
-  val ConditionsSingletonList: Collection<String> = listOf(Conditions)
-  val OutputsSingletonList: Collection<String> = listOf(Outputs)
+  val ResourcesSingletonList = listOf(Resources)
+  val ParametersSingletonList = listOf(Parameters)
+  val MappingsSingletonList = listOf(Mappings)
+  val MetadataSingletonList = listOf(Metadata)
+  val ConditionsSingletonList = listOf(Conditions)
+  val OutputsSingletonList = listOf(Outputs)
 
   val FormatVersion = "AWSTemplateFormatVersion"
   val Description = "Description"

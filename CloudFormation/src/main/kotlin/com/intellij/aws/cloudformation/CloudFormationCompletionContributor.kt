@@ -1,7 +1,11 @@
 package com.intellij.aws.cloudformation
 
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.json.JsonLanguage
@@ -173,9 +177,8 @@ class CloudFormationCompletionContributor : CompletionContributor() {
     }
   }
 
-  private fun createLookupElement(`val`: String, quote: Boolean): LookupElement {
-    val id = if (quote) "\"" + `val` + "\"" else `val`
+  private fun createLookupElement(value: String, quote: Boolean): LookupElement {
+    val id = if (quote) "\"$value\"" else value
     return LookupElementBuilder.create(id)
   }
-
 }

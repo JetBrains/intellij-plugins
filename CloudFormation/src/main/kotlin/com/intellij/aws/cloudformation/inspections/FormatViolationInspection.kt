@@ -6,7 +6,6 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.psi.PsiFile
-import com.intellij.util.ArrayUtil
 
 class FormatViolationInspection : LocalInspectionTool() {
   override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
@@ -16,6 +15,6 @@ class FormatViolationInspection : LocalInspectionTool() {
 
     val checker = CloudFormationFormatChecker(manager, isOnTheFly)
     checker.file(file)
-    return ArrayUtil.toObjectArray(checker.problems, ProblemDescriptor::class.java)
+    return checker.problems.toTypedArray()
   }
 }

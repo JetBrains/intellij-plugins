@@ -13,25 +13,15 @@ import com.intellij.openapi.vfs.newvfs.FileSystemInterface
 import com.intellij.openapi.vfs.newvfs.impl.StubVirtualFile
 import org.apache.commons.lang.ArrayUtils
 import java.io.IOException
-import java.util.*
+import java.util.Arrays
+import java.util.Collections
 import javax.swing.Icon
 
 class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
-  override fun getName(): String {
-    return "AWSCloudFormation"
-  }
-
-  override fun getDescription(): String {
-    return "AWS CloudFormation templates"
-  }
-
-  override fun getDefaultExtension(): String {
-    return ""
-  }
-
-  override fun getIcon(): Icon? {
-    return AllIcons.FileTypes.Json
-  }
+  override fun getName(): String = "AWSCloudFormation"
+  override fun getDescription(): String = "AWS CloudFormation templates"
+  override fun getDefaultExtension(): String = ""
+  override fun getIcon(): Icon? = AllIcons.FileTypes.Json
 
   override fun isMyFileType(file: VirtualFile): Boolean {
     val extension = file.extension ?: return false
@@ -42,6 +32,10 @@ class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileType
     }
 
     return false
+  }
+
+  private fun findArray(array: ByteArray, subArray: ByteArray): Int {
+    return Collections.indexOfSubList(Arrays.asList(*ArrayUtils.toObject(array)), Arrays.asList(*ArrayUtils.toObject(subArray)))
   }
 
   private fun detectFromContent(file: VirtualFile): Boolean {
@@ -78,9 +72,5 @@ class CloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileType
 
     private val EXTENSION = "template"
     private val BYTES_TO_DETECT_CFN_FILE = CloudFormationSections.FormatVersion.toByteArray(Charsets.US_ASCII)
-
-    private fun findArray(array: ByteArray, subArray: ByteArray): Int {
-      return Collections.indexOfSubList(Arrays.asList(*ArrayUtils.toObject(array)), Arrays.asList(*ArrayUtils.toObject(subArray)))
-    }
   }
 }
