@@ -2,9 +2,8 @@ package org.jetbrains.plugins.ruby.motion.run.renderers;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.xdebugger.frame.XCompositeNode;
-import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
-import com.jetbrains.cidr.execution.debugger.backend.DBCannotCollectVariablesException;
 import com.jetbrains.cidr.execution.debugger.backend.DBCannotEvaluateException;
+import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrPhysicalValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrValue;
@@ -28,25 +27,18 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @NotNull
   @Override
-  protected String doComputeValue(@NotNull EvaluationContext context) throws ExecutionException {
-    try {
-      return TextUtil.removeQuoting(
-        context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVar().getPointer() + ") description] UTF8String]").getReadableValue());
-    }
-    catch (DBCannotEvaluateException e) {
-      CidrDebuggerLog.LOG.debug(e);
-    }
-    return super.doComputeValue(context);
+  protected String doComputeValue(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
+    return TextUtil.removeQuoting(
+      context.evaluate("(char *)[[(id)rb_inspect(" + myValue.getVar().getPointer() + ") description] UTF8String]").getReadableValue());
   }
 
   @Override
-  protected int doComputeChildrenCount(@NotNull EvaluationContext context)
-    throws ExecutionException, DBCannotCollectVariablesException, DBCannotEvaluateException {
+  protected int doComputeChildrenCount(@NotNull EvaluationContext context) throws ExecutionException, DBUserException {
     final LLValue instanceVariablesNames = getInstanceVariablesNames(context);
     return count(context, instanceVariablesNames);
   }
 
-  private int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DBCannotEvaluateException {
+  private static int count(EvaluationContext context, LLValue instanceVariablesNames) throws ExecutionException, DBUserException {
     return (int)context.evaluate(context.castIDToNumber("[" + getSelf(instanceVariablesNames) + " count]", "unsigned int")).intValue();
   }
 
@@ -56,12 +48,7 @@ public class MotionObjectRenderer extends ValueRenderer {
 
   @Override
   protected void doComputeChildren(@NotNull EvaluationContext context,
-                                   XCompositeNode container,
-                                   boolean modifiable)
-    throws
-    ExecutionException,
-    DBCannotCollectVariablesException,
-    DBCannotEvaluateException {
+                                   @NotNull XCompositeNode container) throws ExecutionException, DBUserException{
 
     final Collection<CidrValue> children = new ArrayList<CidrValue>();
     final LLValue names = getInstanceVariablesNames(context);
@@ -74,9 +61,10 @@ public class MotionObjectRenderer extends ValueRenderer {
       final String ivarName = TextUtil.removeQuoting(context.evaluate(namePointer).getReadableValue());
       final String ivarExpr = getChildEvaluationExpression(ivarName);
       final LLValue ivar = context.evaluate(ivarExpr);
-      children.add(new MotionMemberValue(myValue.getProcess(), context,
-                                         myValue.getSourcePosition(),
-                                         myValue.getFrame(), ivar, ivarName, myValue));
+      children.add(new MotionMemberValue(ivar, 
+                                         ivarName, 
+                                         myValue
+      ));
     }
     CidrValue.addAllTo(children, container);
   }
