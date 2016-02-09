@@ -9,6 +9,4 @@ class GetterSetter4 {
   static int get bar => _bar;
 
   static set bar(int value) => _bar = value;
-
-
 }
