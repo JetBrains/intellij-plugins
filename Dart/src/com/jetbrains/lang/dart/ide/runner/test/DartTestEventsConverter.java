@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
  * convert a successful test into a failure. That case is not being handled.
  */
 public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter {
+  private static final Logger LOG = Logger.getInstance(DartTestEventsConverter.class.getName());
 
   private static final String TYPE_START = "start";
   private static final String TYPE_SUITE = "suite";
@@ -96,6 +98,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   protected boolean processServiceMessages(final String text, final Key outputType, final ServiceMessageVisitor visitor)
     throws ParseException {
+    LOG.debug("<<< " + text.trim());
     myCurrentOutputType = outputType;
     myCurrentVisitor = visitor;
     // service message parser expects line like "##teamcity[ .... ]" without whitespaces in the end.
@@ -112,10 +115,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       if (text.contains("\"json\" is not an allowed value for option \"reporter\"")) {
         failedToLoad("Please update your pubspec.yaml dependency on package:test to version 0.12.7 or later.", 0);
       }
-      return super.processServiceMessages(text, myCurrentOutputType, myCurrentVisitor);
+      return doProcessServiceMessages(text);
     }
     if (elem == null || !elem.isJsonObject()) return false;
     return process(elem.getAsJsonObject());
+  }
+
+  private boolean doProcessServiceMessages(@NotNull final String text) throws ParseException {
+    LOG.debug(">>> " + text);
+    return super.processServiceMessages(text, myCurrentOutputType, myCurrentVisitor);
   }
 
   private boolean process(JsonObject obj) throws JsonSyntaxException, ParseException {
@@ -205,7 +213,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       // and  com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter.MyServiceMessageVisitor.ATTR_KEY_TEST_COUNT
       final ServiceMessageBuilder testCount =
         new ServiceMessageBuilder("testCount").addAttribute("count", String.valueOf(group.getTestCount()));
-      super.processServiceMessages(testCount.toString(), myCurrentOutputType, myCurrentVisitor);
+      doProcessServiceMessages(testCount.toString());
     }
 
     if (group.isArtificial()) return true; // Ignore artificial groups.
@@ -352,7 +360,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private boolean finishMessage(@NotNull ServiceMessageBuilder msg, int testId, int parentId) throws ParseException {
     msg.addAttribute("nodeId", String.valueOf(testId));
     msg.addAttribute("parentNodeId", String.valueOf(parentId));
-    return super.processServiceMessages(msg.toString(), myCurrentOutputType, myCurrentVisitor);
+    return doProcessServiceMessages(msg.toString());
   }
 
   private boolean failedToLoad(String message, int testId) throws ParseException {
