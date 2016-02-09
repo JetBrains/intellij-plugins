@@ -33,6 +33,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(AngularMessageFormatAnnotatorTest.class);
     testSuite.addTestSuite(EmptyEventHandlerInspectionTest.class);
     testSuite.addTestSuite(DirectiveRenameTest.class);
+    testSuite.addTestSuite(ContextTest.class);
 
     return testSuite;
   }

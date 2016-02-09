@@ -1,6 +1,7 @@
 package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -9,18 +10,24 @@ import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
+import org.angularjs.html.Angular2HTMLLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,6 +146,28 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return true;
+  }
+
+  @Override
+  public void addContextType(BaseJSSymbolProcessor.TypeInfo info, PsiElement context) {
+    if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
+      final JSQualifiedName directiveNamespace = findDirective(context);
+      if (directiveNamespace != null) {
+        info.addType(new JSNamespaceImpl(directiveNamespace, JSContext.INSTANCE, true), false);
+      }
+    }
+  }
+
+  private static JSQualifiedName findDirective(PsiElement context) {
+    final PsiFile file = context.getContainingFile();
+    if (file.getLanguage().is(Angular2HTMLLanguage.INSTANCE)) { // inline template
+      final PsiLanguageInjectionHost host = InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file);
+      final JSClass clazz = PsiTreeUtil.getParentOfType(host, JSClass.class);
+      if (clazz != null) {
+        return JSQualifiedNameImpl.buildProvidedNamespace(clazz);
+      }
+    }
+    return null;
   }
 
   @Override
