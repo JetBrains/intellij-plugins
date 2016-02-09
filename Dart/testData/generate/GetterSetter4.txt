@@ -1,0 +1,14 @@
+class GetterSetter4 {
+  static var _foo;
+  static int _bar;
+
+  static get foo => _foo;
+
+  static set foo(value) => _foo = value;
+
+  static int get bar => _bar;
+
+  static set bar(int value) => _bar = value;
+
+
+}

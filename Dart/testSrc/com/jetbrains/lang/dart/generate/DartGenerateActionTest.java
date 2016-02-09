@@ -140,6 +140,10 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
   }
 
+  public void testGetterSetter4() throws Throwable {
+    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+  }
+
   public void testOverrideOperator() throws Throwable {
     doOverrideTest();
   }
