@@ -76,13 +76,16 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "print fails once \nsomething\n",
     "fail fails once false",
     "print fails once package:test                    fail\ntest/formatter_test.dart 108:7  main.<fn>.<fn>\n",
+    "finish fails once",
     "start fails twice",
     "print fails twice \nmessage\n",
     "fail fails twice true",
     "print fails twice dart:core                       NoSuchMethodError._throwNew\ntest/formatter_test.dart 112:7  main.<fn>.<fn>\n",
+    "finish fails twice",
     "start fails thrice",
     "fail fails thrice false",
     "print fails thrice package:test                    expect\ntest/formatter_test.dart 115:7  main.<fn>.<fn>\n",
+    "finish fails thrice",
     "start \\r\\n if the first newline uses that",
     "skip \\r\\n if the first newline uses that Test ignored.",
     "start \\n if the first newline uses that",
@@ -218,11 +221,9 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
         // ignored
       }
     }
-    assertEquals(signals.length, myEventsProcessor.signals.size());
-    int index = 0;
-    for (String signal : myEventsProcessor.signals) {
-      assertEquals(signals[index++], signal);
-    }
+
+    assertOrderedEquals(myEventsProcessor.signals, signals);
+
     for (int childIdx = 0; childIdx < parents.length; childIdx++) {
       int parentIdx = parents[childIdx];
       if (parentIdx > 0) {
