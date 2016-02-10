@@ -2,8 +2,6 @@ package com.intellij.tapestry.intellij;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleUtil;
@@ -18,10 +16,7 @@ import com.intellij.tapestry.lang.TmlFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@State(
-  name = "Loomy",
-  storages = @Storage(StoragePathMacros.MODULE_FILE)
-)
+@State(name = "Loomy")
 public class TapestryModuleSupportLoader
     implements PersistentStateComponent<TapestryModuleSupportLoader.ModuleConfiguration> {
 
