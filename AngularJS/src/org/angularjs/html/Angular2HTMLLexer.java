@@ -12,9 +12,9 @@ public class Angular2HTMLLexer extends HtmlLexer {
     TokenHandler value = new TokenHandler() {
       @Override
       public void handleElement(Lexer lexer) {
-        final String text = lexer.getTokenText();
-        if (text.startsWith("(") || text.startsWith("[")) {
-          if (!isHtmlTagState(lexer.getState())) {
+        if (!isHtmlTagState(lexer.getState())) {
+          final String text = lexer.getTokenText();
+          if (text.startsWith("(") || text.startsWith("[")) {
             seenAttribute = true;
             seenScript = true;
           }
