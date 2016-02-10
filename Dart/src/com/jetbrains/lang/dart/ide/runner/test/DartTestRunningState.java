@@ -20,6 +20,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,6 +28,7 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
+import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
@@ -102,16 +104,26 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     }
     // TODO Try adding --pause-after-load to VM args to see if that makes test debugging possible
     StringBuilder builder = new StringBuilder();
-    builder.append(RUN_COMMAND).append(' ').append(TEST_PACKAGE_SPEC);
-    builder.append(' ').append(EXPANDED_REPORTER_OPTION);
-    if (filePath != null) {
-      builder.append(' ').append(filePath);
+    builder.append(RUN_COMMAND);
+
+    final boolean projectWithoutPubspec = Registry.is("dart.projects.without.pubspec", false);
+    final String targetName = params.getTargetName();
+    if (projectWithoutPubspec && params.getScope() == Scope.FOLDER && targetName != null && !targetName.isEmpty()) {
+      builder.append(" ").append(":").append(targetName).append(" ").append(EXPANDED_REPORTER_OPTION);
     }
-    String testName = params.getTestName();
-    if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
-      String safeName = StringUtil.escapeToRegexp(testName);
-      builder.append(' ').append(NAME_REGEX_OPTION).append(' ').append('"').append(safeName).append('"');
+    else {
+      builder.append(' ').append(TEST_PACKAGE_SPEC);
+      builder.append(' ').append(EXPANDED_REPORTER_OPTION);
+      if (filePath != null) {
+        builder.append(' ').append(filePath);
+      }
+      String testName = params.getTestName();
+      if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
+        String safeName = StringUtil.escapeToRegexp(testName);
+        builder.append(' ').append(NAME_REGEX_OPTION).append(' ').append('"').append(safeName).append('"');
+      }
     }
+
     params.setArguments(builder.toString());
     params.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(project, dartFile));
     return doStartProcess(pathToDartUrl(sdkPath + PUB_SNAPSHOT_PATH));

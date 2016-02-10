@@ -8,6 +8,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,6 +39,8 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private TextFieldWithBrowseButton myDirField;
   private JLabel myTestNameLabel;
   private JTextField myTestNameField;
+  private JLabel myTargetNameLabel;
+  private JTextField myTargetNameField;
   private RawCommandLineEditor myVMOptions;
   private JBCheckBox myCheckedModeCheckBox;
   private RawCommandLineEditor myArguments;
@@ -118,6 +121,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     String testPath = FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath()));
     if (parameters.getScope() == Scope.FOLDER) {
       myDirField.setText(testPath);
+      myTargetNameField.setText(parameters.getTargetName());
     }
     else {
       myFileField.setText(testPath);
@@ -142,6 +146,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     TextFieldWithBrowseButton pathSource = scope == Scope.FOLDER ? myDirField : myFileField;
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(pathSource.getText().trim()), true));
     parameters.setTestName(scope.expectsTestName() ? StringUtil.nullize(myTestNameField.getText().trim()) : null);
+    parameters.setTargetName(scope == Scope.FOLDER ? StringUtil.nullize(myTargetNameField.getText().trim()) : null);
     parameters.setArguments(StringUtil.nullize(myArguments.getText().trim(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText().trim(), true));
     parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
@@ -156,10 +161,13 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myTestNameField.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
     myTestNameLabel.setText(scope == Scope.GROUP ? DartBundle.message("dart.unit.group.name") : DartBundle.message("dart.unit.test.name"));
     boolean on = scope == Scope.FOLDER;
+    boolean projectWithoutPubspec = Registry.is("dart.projects.without.pubspec", false);
     myFileField.setVisible(!on);
     myTestFileLabel.setVisible(!on);
     myDirField.setVisible(on);
     myDirLabel.setVisible(on);
+    myTargetNameField.setVisible(on && projectWithoutPubspec);
+    myTargetNameLabel.setVisible(on && projectWithoutPubspec);
   }
 
   private void onTestNameChanged() {

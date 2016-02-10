@@ -71,7 +71,11 @@ public abstract class DartProjectTemplate {
         return parent.getPath();
       }
     }
-    return dartFile.getParent().getPath();
+    if(dartFile.isDirectory()) {
+      return dartFile.getPath();
+    } else {
+      return dartFile.getParent().getPath();
+    }
   }
 
   /**

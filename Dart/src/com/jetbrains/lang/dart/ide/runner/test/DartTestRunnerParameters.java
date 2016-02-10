@@ -9,6 +9,7 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
 
   private @NotNull Scope myScope = Scope.FILE;
   private @Nullable String myTestName = null;
+  private @Nullable String myTargetName = null;
 
   @NotNull
   public Scope getScope() {
@@ -26,8 +27,17 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     return myTestName;
   }
 
+  @Nullable
+  public String getTargetName() {
+    return myTargetName;
+  }
+
   public void setTestName(final @Nullable String name) {
     myTestName = name;
+  }
+
+  public void setTargetName(final @Nullable String name) {
+    myTargetName = name;
   }
 
   @Override
