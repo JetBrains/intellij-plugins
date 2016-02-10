@@ -29,7 +29,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
-import com.intellij.psi.css.impl.util.CssReferenceProviderUtil;
+import com.intellij.psi.css.resolve.CssReferenceProviderUtil;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.NamespaceFilter;
