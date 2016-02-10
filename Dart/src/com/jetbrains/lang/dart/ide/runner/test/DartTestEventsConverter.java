@@ -164,44 +164,46 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     JsonObject testObj = obj.getAsJsonObject(DEF_TEST);
     // Not reached if testObj == null.
     Test test = getTest(obj);
-    if (!test.hasValidParent() && test.getName().startsWith(LOADING_PREFIX)) {
+    if (test.getParent() == null && test.getName().startsWith(LOADING_PREFIX)) { // virtual test that represents loading a test suite
       String path = test.getName().substring(LOADING_PREFIX.length());
       if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
-      setNotRunning(test);
       return true;
     }
+
     String testName = test.getBaseName();
     ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(testName);
     addLocationHint(testStarted, test);
     myStartMillis = getTestMillis(obj);
     myOutputAppeared = false;
     boolean result = finishMessage(testStarted, test.getId(), test.getValidParentId());
-    if (result) {
-      Metadata metadata = Metadata.from(testObj.getAsJsonObject(DEF_METADATA));
-      if (metadata.skip) {
-        ServiceMessageBuilder message = ServiceMessageBuilder.testIgnored(testName);
-        if (metadata.skipReason != null) message.addAttribute("message", metadata.skipReason);
-        return finishMessage(message, test.getId(), test.getValidParentId());
-      }
+
+    Metadata metadata = Metadata.from(testObj.getAsJsonObject(DEF_METADATA));
+    if (metadata.skip) {
+      ServiceMessageBuilder message = ServiceMessageBuilder.testIgnored(testName);
+      if (metadata.skipReason != null) message.addAttribute("message", metadata.skipReason);
+      result |= finishMessage(message, test.getId(), test.getValidParentId());
     }
+
     return result;
   }
 
   private boolean handleTestDone(JsonObject obj) throws ParseException {
     if (getBoolean(obj, JSON_HIDDEN)) return true;
     String result = getResult(obj);
-    if (result.equals(RESULT_SUCCESS)) {
-      return eventFinished(obj);
-    }
-    else if (result.equals(RESULT_FAILURE)) {
-      return true;
-    }
-    else if (result.equals(RESULT_ERROR)) {
-      return true;
-    }
-    else {
+    if (!result.equals(RESULT_SUCCESS) && !result.equals(RESULT_FAILURE) && !result.equals(RESULT_ERROR)) {
       throw new ParseException("Unknown result: " + obj, 0);
     }
+
+    Test test = getTest(obj);
+    setNotRunning(test);
+
+    //if (test.getMetadata().skip) return true; // skipped tests are reported as ignored in
+
+    // Since we cannot tell when a group is finished always reset the parent ID.
+    long duration = getTestMillis(obj) - myStartMillis;
+    ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
+    testFinished.addAttribute("duration", Long.toString(duration));
+    return finishMessage(testFinished, test.getId(), test.getValidParentId());
   }
 
   private boolean handleGroup(JsonObject obj) throws ParseException {
@@ -242,9 +244,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         return failedToLoad(message, elem.getAsInt());
       }
     }
-    Test test = getTest(obj);
-    setNotRunning(test);
 
+    Test test = getTest(obj);
     final ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
 
     String failureMessage = message;
@@ -279,8 +280,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     testFinished.addAttribute("duration", Long.toString(duration));
 
     return finishMessage(testError, test.getId(), test.getValidParentId()) &&
-           finishMessage(testStdErr, test.getId(), test.getValidParentId()) &&
-           finishMessage(testFinished, test.getId(), test.getValidParentId());
+           finishMessage(testStdErr, test.getId(), test.getValidParentId());
   }
 
   private boolean handleAllSuites(JsonObject obj) {
@@ -344,17 +344,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getBaseName());
     finishMessage(groupMsg, group.getId(), group.getValidParentId());
     return true;
-  }
-
-  private boolean eventFinished(JsonObject obj) throws ParseException {
-    Test test = getTest(obj);
-    setNotRunning(test);
-    if (test.getMetadata().skip) return true;
-    // Since we cannot tell when a group is finished always reset the parent ID.
-    long duration = getTestMillis(obj) - myStartMillis;
-    ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
-    testFinished.addAttribute("duration", Long.toString(duration));
-    return finishMessage(testFinished, test.getId(), test.getValidParentId());
   }
 
   private boolean finishMessage(@NotNull ServiceMessageBuilder msg, int testId, int parentId) throws ParseException {

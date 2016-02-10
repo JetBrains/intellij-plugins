@@ -88,8 +88,10 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "finish fails thrice",
     "start \\r\\n if the first newline uses that",
     "skip \\r\\n if the first newline uses that Test ignored.",
+    "finish \\r\\n if the first newline uses that",
     "start \\n if the first newline uses that",
     "skip \\n if the first newline uses that just because",
+    "finish \\n if the first newline uses that",
     "start defaults to \\n if there are no newlines",
     "finish defaults to \\n if there are no newlines",
     "start handles Windows line endings in multiline strings",
@@ -206,7 +208,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
         "{\"testID\":0,\"error\":\"Failed to load \\\"test/formatter_test.dart\\\":\\nline 117 pos 69: named argument expected\\n    test('infers \\\\\\\\r\\\\\\\\n if the first newline uses that', skip:true, () {\\n                                                                    ^\",\"stackTrace\":\"\",\"isFailure\":false,\"type\":\"error\",\"time\":497}\n",
         "{\"testID\":0,\"result\":\"error\",\"hidden\":false,\"type\":\"testDone\",\"time\":499}\n",
         "{\"success\":false,\"type\":\"done\",\"time\":500}\n", "\n", "Process finished with exit code 1\n",};
-    String[] signals = {"start Failed to load", "fail Failed to load false",};
+    String[] signals = {"start Failed to load", "fail Failed to load false", "finish loading test/formatter_test.dart"};
     runTest(events, signals, new int[]{});
   }
 
