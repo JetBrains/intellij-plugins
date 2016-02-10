@@ -32,6 +32,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
+
+  public static final String TEMPLATE_REF = "TemplateRef";
+
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
     final JSExpression expression = callExpression.getMethodExpression();
@@ -91,8 +94,10 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
             elementBuilder.setUserString("adi");
             outData.addImplicitElement(elementBuilder.toImplicitElement());
           }
-          if (end > 0) {
-            elementBuilder = new JSImplicitElementImpl.Builder("*" + selectorName.substring(1, end), decorator)
+          if (end > start) {
+            final String attributeName = selectorName.substring(1, end);
+            final String prefix = isTemplate(decorator) ? "*" : "";
+            elementBuilder = new JSImplicitElementImpl.Builder(prefix + attributeName, decorator)
               .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
             elementBuilder.setUserString("adi");
             outData.addImplicitElement(elementBuilder.toImplicitElement());
@@ -101,6 +106,21 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return outData;
+  }
+
+  private static boolean isTemplate(PsiElement decorator) {
+    final JSClass clazz = PsiTreeUtil.getParentOfType(decorator, JSClass.class);
+    if (clazz != null) {
+      final JSFunction constructor = clazz.getConstructor();
+      final JSParameterList params = constructor != null ? constructor.getParameterList() : null;
+      return params != null && params.getText().contains(TEMPLATE_REF);
+    }
+    final PsiElement parent = decorator.getParent();
+    if (parent instanceof JSArrayLiteralExpression) {
+      final JSCallExpression metadata = PsiTreeUtil.getNextSiblingOfType(decorator, JSCallExpression.class);
+      return metadata != null && metadata.getText().contains(TEMPLATE_REF);
+    }
+    return false;
   }
 
   @Nullable

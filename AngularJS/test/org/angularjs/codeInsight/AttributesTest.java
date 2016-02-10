@@ -589,4 +589,69 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testTemplate20TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("template.html", "angular2.js", "template.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("template.ts", resolve.getContainingFile().getName());
+        offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
+        ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        assertNull(ref.resolve());
+      }
+    });
+  }
+
+  public void testNoTemplate20TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("noTemplate.html", "angular2.js", "noTemplate.ts");
+        int offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
+        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        PsiElement resolve = ref.resolve();
+        assertNotNull(resolve);
+        assertEquals("noTemplate.ts", resolve.getContainingFile().getName());
+        offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
+        ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        assertNotNull(ref);
+        assertNull(ref.resolve());
+      }
+    });
+  }
+  public void testTemplate20JavaScript() throws Exception {
+    myFixture.configureByFiles("template.html", "angular2_compiled.js", "template.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("template.js", resolve.getContainingFile().getName());
+    offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
+    ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    assertNull(ref.resolve());
+  }
+
+  public void testNoTemplate20JavaScript() throws Exception {
+    myFixture.configureByFiles("noTemplate.html", "angular2_compiled.js", "noTemplate.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("myHover<caret>List", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("noTemplate.js", resolve.getContainingFile().getName());
+    offsetBySignature = AngularTestUtil.findOffsetBySignature("*myHover<caret>List", myFixture.getFile());
+    ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    assertNull(ref.resolve());
+  }
+
 }
