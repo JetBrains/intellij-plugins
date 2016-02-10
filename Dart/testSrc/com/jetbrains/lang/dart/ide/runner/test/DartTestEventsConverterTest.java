@@ -70,6 +70,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   // Do not reformat this list.
   private static final String[] Sample1Signals = {
     // @formatter:off
+    "suite started line endings",
     "start uses given line ending",
     "finish uses given line ending",
     "start fails once",
@@ -86,6 +87,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "fail fails thrice false",
     "print fails thrice package:test                    expect\ntest/formatter_test.dart 115:7  main.<fn>.<fn>\n",
     "finish fails thrice",
+    "suite started infers",
     "start \\r\\n if the first newline uses that",
     "skip \\r\\n if the first newline uses that Test ignored.",
     "finish \\r\\n if the first newline uses that",
@@ -96,6 +98,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "finish defaults to \\n if there are no newlines",
     "start handles Windows line endings in multiline strings",
     "finish handles Windows line endings in multiline strings",
+    "suite finished line endings",
+    "suite finished infers"
     // @formatter:on
   };
 
@@ -166,19 +170,31 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   // Do not reformat this list.
   private static final String[] Sample2Signals = {
     // @formatter:off
+    "suite started CountdownTimer",
     "start should countdown",
+    "suite started collect",
     "start should produce no events for no futures",
+    "suite started createTimer",
     "start should be assignable to CreateTimer",
+    "suite started FutureGroup",
     "start should complete when all added futures are complete",
     "finish should be assignable to CreateTimer",
+    "suite started createTimerPeriodic",
     "start should be assignable to CreateTimerPeriodic",
     "finish should produce no events for no futures",
     "start should produce events for future completions in input order",
     "finish should be assignable to CreateTimerPeriodic",
+    "suite started enumerate",
     "start should add indices to its argument",
     "finish should complete when all added futures are complete",
     "start should throw if adding a future after the group is completed",
     "finish should throw if adding a future after the group is completed",
+    "suite finished CountdownTimer",
+    "suite finished enumerate",
+    "suite finished collect",
+    "suite finished createTimer",
+    "suite finished FutureGroup",
+    "suite finished createTimerPeriodic"
     // @formatter:on
   };
 
@@ -209,6 +225,63 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
         "{\"testID\":0,\"result\":\"error\",\"hidden\":false,\"type\":\"testDone\",\"time\":499}\n",
         "{\"success\":false,\"type\":\"done\",\"time\":500}\n", "\n", "Process finished with exit code 1\n",};
     String[] signals = {"start Failed to load", "fail Failed to load false", "finish loading test/formatter_test.dart"};
+    runTest(events, signals, new int[]{});
+  }
+
+  public void testGroupsDone() throws Exception {
+    String[] events = {
+      "{'protocolVersion':'0.1.0','runnerVersion':'0.12.10','type':'start','time':0}\n",
+      "{'count':1,'type':'allSuites','time':0}\n",
+      "{'suite':{'id':0,'platform':'vm','path':'C:/dart_projects/DartSample2/test/a/bb/c/foo_test.dart'},'type':'suite','time':0}\n",
+      "{'test':{'id':1,'name':'loading C:/dart_projects/DartSample2/test/a/bb/c/foo_test.dart','suiteID':0,'groupIDs':[],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':0}\n",
+      "{'testID':1,'result':'success','hidden':true,'type':'testDone','time':192}\n",
+      "{'group':{'id':2,'suiteID':0,'parentID':null,'name':null,'metadata':{'skip':false,'skipReason':null},'testCount':6},'type':'group','time':196}\n",
+      "{'group':{'id':3,'suiteID':0,'parentID':2,'name':'some group','metadata':{'skip':false,'skipReason':null},'testCount':5},'type':'group','time':196}\n",
+      "{'group':{'id':4,'suiteID':0,'parentID':3,'name':'some group sub group 1','metadata':{'skip':false,'skipReason':null},'testCount':1},'type':'group','time':196}\n",
+      "{'test':{'id':5,'name':'some group sub group 1 passing test1','suiteID':0,'groupIDs':[2,3,4],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':196}\n",
+      "{'testID':5,'result':'success','hidden':false,'type':'testDone','time':1224}\n",
+      "{'group':{'id':6,'suiteID':0,'parentID':3,'name':'some group sub group 2','metadata':{'skip':false,'skipReason':null},'testCount':3},'type':'group','time':1224}\n",
+      "{'test':{'id':7,'name':'some group sub group 2 passing test 2','suiteID':0,'groupIDs':[2,3,6],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':1224}\n",
+      "{'testID':7,'result':'success','hidden':false,'type':'testDone','time':2226}\n",
+      "{'test':{'id':8,'name':'some group sub group 2 skipped test','suiteID':0,'groupIDs':[2,3,6],'metadata':{'skip':true,'skipReason':'skip reason'}},'type':'testStart','time':2227}\n",
+      "{'testID':8,'result':'success','hidden':false,'type':'testDone','time':2227}\n",
+      "{'test':{'id':9,'name':'some group sub group 2 standard TestFailure','suiteID':0,'groupIDs':[2,3,6],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':2228}\n",
+      "{'testID':9,'message':'in standard TestFailure test','type':'print','time':2230}\n",
+      "{'testID':9,'error':'Expected: <false>\n  Actual: <true>\n','stackTrace':'package:test                     expect\ntest\\a\\bb\\c\\foo_test.dart 12:79  main.<fn>.<fn>.<fn>\n','isFailure':true,'type':'error','time':2365}\n",
+      "{'testID':9,'result':'failure','hidden':false,'type':'testDone','time':2366}\n",
+      "{'test':{'id':10,'name':'some group unexpected error','suiteID':0,'groupIDs':[2,3],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':2366}\n",
+      "{'testID':10,'message':'in unexpected error test','type':'print','time':2367}\n",
+      "{'testID':10,'error':'Unlucky','stackTrace':'test\\a\\bb\\c\\foo_test.dart 15:69  main.<fn>.<fn>\n','isFailure':false,'type':'error','time':2401}\n",
+      "{'testID':10,'result':'error','hidden':false,'type':'testDone','time':2401}\n",
+      "{'test':{'id':11,'name':'passing test 3','suiteID':0,'groupIDs':[2],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':2402}\n",
+      "{'testID':11,'message':'in passing test','type':'print','time':2403}\n",
+      "{'testID':11,'result':'success','hidden':false,'type':'testDone','time':3404}\n",
+      "{'success':false,'type':'done','time':3406}\n",
+    };
+    String[] signals = {
+      "suite started some group",
+      "suite started sub group 1",
+      "start passing test1",
+      "finish passing test1",
+      "suite finished sub group 1",
+      "suite started sub group 2",
+      "start passing test 2",
+      "finish passing test 2",
+      "start skipped test",
+      "skip skipped test skip reason",
+      "finish skipped test",
+      "start standard TestFailure",
+      "print standard TestFailure \nin standard TestFailure test\n",
+      "finish standard TestFailure",
+      "suite finished sub group 2",
+      "start unexpected error",
+      "print unexpected error \nin unexpected error test\n",
+      "finish unexpected error",
+      "suite finished some group",
+      "start passing test 3",
+      "print passing test 3 \nin passing test\n",
+      "finish passing test 3"
+    };
     runTest(events, signals, new int[]{});
   }
 
@@ -349,6 +422,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
 
     @Override
     public void onSuiteStarted(@NotNull TestSuiteStartedEvent suiteStartedEvent) {
+      signals.add("suite started " + suiteStartedEvent.getName());
+
       DefaultMutableTreeNode node = new DefaultMutableTreeNode(suiteStartedEvent.getName());
       myNodes.put(suiteStartedEvent.getId(), node);
       DefaultMutableTreeNode parentNode = myParentNode;
@@ -362,6 +437,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
 
     @Override
     public void onSuiteFinished(@NotNull TestSuiteFinishedEvent suiteFinishedEvent) {
+      signals.add("suite finished " + suiteFinishedEvent.getName());
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -195,7 +196,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     Test test = getTest(obj);
-    setNotRunning(test);
+    test.testDone();
 
     //if (test.getMetadata().skip) return true; // skipped tests are reported as ignored in
 
@@ -203,7 +204,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     long duration = getTestMillis(obj) - myStartMillis;
     ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
     testFinished.addAttribute("duration", Long.toString(duration));
-    return finishMessage(testFinished, test.getId(), test.getValidParentId());
+
+    return finishMessage(testFinished, test.getId(), test.getValidParentId()) && checkGroupDone(test.getParent());
+  }
+
+  private boolean checkGroupDone(@Nullable final Group group) throws ParseException {
+    if (group != null && group.getTestCount() > 0 && group.getDoneTestsCount() == group.getTestCount()) {
+      return processGroupDone(group) && checkGroupDone(group.getParent());
+    }
+    return true;
   }
 
   private boolean handleGroup(JsonObject obj) throws ParseException {
@@ -323,14 +332,17 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private void processAllTestsDone() {
     // All tests are done.
     for (Group group : myGroupData.values()) {
-      // There is no 'groupDone' event, due to asynchrony, so finish them all at the end.
+      // For package: test prior to v. 0.12.9 there were no Group.testCount field, so need to finish them all at the end.
       // AFAIK the order does not matter. A depth-first post-order traversal of the tree would work
       // if order does matter. Note: Currently, there is no tree representation, just parent links.
-      try {
-        processGroupDone(group);
-      }
-      catch (ParseException ex) {
-        // ignore it
+
+      if (group.getTestCount() == 0 || group.getDoneTestsCount() != group.getTestCount()) {
+        try {
+          processGroupDone(group);
+        }
+        catch (ParseException ex) {
+          // ignore it
+        }
       }
     }
     myTestData.clear();
@@ -339,11 +351,11 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     mySuitCount = 0;
   }
 
-  private boolean processGroupDone(Group group) throws ParseException {
+  private boolean processGroupDone(@NotNull final Group group) throws ParseException {
     if (group.isArtificial()) return true;
+
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getBaseName());
-    finishMessage(groupMsg, group.getId(), group.getValidParentId());
-    return true;
+    return finishMessage(groupMsg, group.getId(), group.getValidParentId());
   }
 
   private boolean finishMessage(@NotNull ServiceMessageBuilder msg, int testId, int parentId) throws ParseException {
@@ -376,10 +388,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       location = loc + "," + nameList;
     }
     messageBuilder.addAttribute("locationHint", location);
-  }
-
-  private static void setNotRunning(Test test) {
-    test.isRunning = false;
   }
 
   private static long getTestMillis(JsonObject obj) throws ParseException {
@@ -606,10 +614,19 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     Test(int id, String name, Group parent, Suite suite, Metadata metadata) {
       super(id, name, parent, suite, metadata);
     }
+
+    public void testDone() {
+      isRunning = false;
+
+      if (getParent() != null) {
+        getParent().incDoneTestsCount();
+      }
+    }
   }
 
   private static class Group extends Item {
     private int myTestCount = 0;
+    private int myDoneTestsCount = 0;
 
     static int extractTestCount(JsonObject obj) {
       JsonElement elem = obj.get(JSON_TEST_COUNT);
@@ -635,6 +652,18 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     int getTestCount() {
       return myTestCount;
+    }
+
+    public int getDoneTestsCount() {
+      return myDoneTestsCount;
+    }
+
+    public void incDoneTestsCount() {
+      myDoneTestsCount++;
+
+      if (getParent() != null) {
+        getParent().incDoneTestsCount();
+      }
     }
   }
 
