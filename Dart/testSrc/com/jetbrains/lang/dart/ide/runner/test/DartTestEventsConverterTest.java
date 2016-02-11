@@ -167,15 +167,17 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     // @formatter:on
   };
 
-  // Do not reformat this list.
   private static final String[] Sample2Signals = {
-    // @formatter:off
+    "suite started countdown_timer_test.dart",
     "suite started CountdownTimer",
     "start should countdown",
+    "suite started collect_test.dart",
     "suite started collect",
     "start should produce no events for no futures",
+    "suite started create_timer_test.dart",
     "suite started createTimer",
     "start should be assignable to CreateTimer",
+    "suite started future_group_test.dart",
     "suite started FutureGroup",
     "start should complete when all added futures are complete",
     "finish should be assignable to CreateTimer",
@@ -184,18 +186,23 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "finish should produce no events for no futures",
     "start should produce events for future completions in input order",
     "finish should be assignable to CreateTimerPeriodic",
+    "suite started enumerate_test.dart",
     "suite started enumerate",
     "start should add indices to its argument",
     "finish should complete when all added futures are complete",
     "start should throw if adding a future after the group is completed",
     "finish should throw if adding a future after the group is completed",
+    "suite finished countdown_timer_test.dart",
     "suite finished CountdownTimer",
+    "suite finished enumerate_test.dart",
     "suite finished enumerate",
+    "suite finished collect_test.dart",
     "suite finished collect",
+    "suite finished create_timer_test.dart",
     "suite finished createTimer",
+    "suite finished future_group_test.dart",
     "suite finished FutureGroup",
     "suite finished createTimerPeriodic"
-    // @formatter:on
   };
 
   private SMTRunnerConsoleView myConsole;
@@ -259,6 +266,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "{'success':false,'type':'done','time':3406}\n",
     };
     String[] signals = {
+      "suite started foo_test.dart",
       "suite started some group",
       "suite started sub group 1",
       "start passing test1",
@@ -280,7 +288,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "suite finished some group",
       "start passing test 3",
       "print passing test 3 \nin passing test\n",
-      "finish passing test 3"
+      "finish passing test 3",
+      "suite finished foo_test.dart"
     };
     runTest(events, signals, new int[]{});
   }

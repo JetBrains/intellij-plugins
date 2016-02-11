@@ -7,6 +7,7 @@ import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsC
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -548,12 +549,23 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     String getBaseName() {
+      // file-level group
+      if (this instanceof Group && NO_NAME.equals(myName) && myParent == null && hasSuite()) {
+        return PathUtil.getFileName(getSuite().getPath());
+      }
+
+      // top-level group in suite
+      if (this instanceof Group && myParent != null && myParent.getParent() == null && NO_NAME.equals(myParent.getName())) {
+        return myName;
+      }
+
       if (hasValidParent()) {
-        int parentLength = getParent().getName().length();
-        if (myName.length() > parentLength) {
-          return myName.substring(parentLength + 1);
+        final String parentName = getParent().getName();
+        if (myName.startsWith(parentName + " ")) {
+          return myName.substring(parentName.length() + 1);
         }
       }
+
       return myName;
     }
 
@@ -574,7 +586,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     boolean isArtificial() {
-      return myName == NO_NAME;
+      return NO_NAME.equals(myName) && myParent == null && !hasSuite();
     }
 
     boolean hasValidParent() {
@@ -597,9 +609,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     void addNames(List<String> names) {
-      if (hasValidParent()) {
+      if (this instanceof Group && NO_NAME.equals(myName) && myParent == null) {
+        return; // do not add a name of a file-level group
+      }
+
+      if (myParent != null) {
         myParent.addNames(names);
       }
+
       names.add(StringUtil.escapeStringCharacters(getBaseName()));
     }
 
