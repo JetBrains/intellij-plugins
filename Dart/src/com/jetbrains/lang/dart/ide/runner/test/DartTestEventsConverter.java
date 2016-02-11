@@ -75,6 +75,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String FAILED_TO_LOAD = "Failed to load ";
   private static final String FILE_URL_PREFIX = "dart_location://";
   private static final String LOADING_PREFIX = "loading ";
+  private static final String COMPILING_PREFIX = "compiling ";
 
   private static final Gson GSON = new Gson();
 
@@ -165,8 +166,17 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     JsonObject testObj = obj.getAsJsonObject(DEF_TEST);
     // Not reached if testObj == null.
     Test test = getTest(obj);
-    if (test.getParent() == null && test.getName().startsWith(LOADING_PREFIX)) { // virtual test that represents loading a test suite
-      String path = test.getName().substring(LOADING_PREFIX.length());
+    if (test.getParent() == null && (test.getName().startsWith(LOADING_PREFIX) || test.getName().startsWith(COMPILING_PREFIX))) {
+      // Virtual test that represents loading or compiling a test suite. See lib/src/runner/loader.dart -> Loader.loadFile() in pkg/test source code
+      String path = "";
+
+      if (test.getName().startsWith(LOADING_PREFIX)) {
+        path = test.getName().substring(LOADING_PREFIX.length());
+      }
+      else if (test.getName().startsWith(COMPILING_PREFIX)) {
+        path = test.getName().substring(COMPILING_PREFIX.length());
+      }
+
       if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
       return true;
     }
@@ -182,7 +192,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     if (metadata.skip) {
       ServiceMessageBuilder message = ServiceMessageBuilder.testIgnored(testName);
       if (metadata.skipReason != null) message.addAttribute("message", metadata.skipReason);
-      result |= finishMessage(message, test.getId(), test.getValidParentId());
+      result &= finishMessage(message, test.getId(), test.getValidParentId());
     }
 
     return result;

@@ -125,7 +125,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "{\"suite\":{\"id\":12,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/future_stream_test.dart\"},\"type\":\"suite\",\"time\":3}\n",
     "{\"test\":{\"id\":13,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/future_stream_test.dart\",\"suiteID\":12,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":4}\n",
     "{\"suite\":{\"id\":14,\"platform\":\"vm\",\"path\":\"/Users/messick/src/quiver-dart/test/async/iteration_test.dart\"},\"type\":\"suite\",\"time\":4}\n",
-    "{\"test\":{\"id\":15,\"name\":\"loading /Users/messick/src/quiver-dart/test/async/iteration_test.dart\",\"suiteID\":14,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":4}\n",
+    "{\"test\":{\"id\":15,\"name\":\"compiling /Users/messick/src/quiver-dart/test/async/iteration_test.dart\",\"suiteID\":14,\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":4}\n",
     "{\"testID\":5,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":723}\n",
     "{\"group\":{\"id\":16,\"suiteID\":4,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":730}\n",
     "{\"group\":{\"id\":17,\"suiteID\":4,\"parentID\":16,\"name\":\"CountdownTimer\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":730}\n",
