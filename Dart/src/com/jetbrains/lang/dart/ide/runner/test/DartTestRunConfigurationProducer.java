@@ -19,6 +19,7 @@ import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -89,7 +90,13 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
     return setupRunnerParametersForFolder(params, dir);
   }
 
-  private static boolean setupRunnerParametersForFolder(@NotNull final DartTestRunnerParameters params, @NotNull final VirtualFile dir) {
+  private static boolean setupRunnerParametersForFolder(@NotNull final DartTestRunnerParameters params, @NotNull VirtualFile dir) {
+    if ("test".equals(dir.getName()) &&
+        dir.findChild(PubspecYamlUtil.PUBSPEC_YAML) == null &&
+        dir.getParent().findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
+      dir = dir.getParent(); // anyway test engine looks for tests in 'test' subfolder only
+    }
+
     params.setScope(Scope.FOLDER);
     params.setFilePath(dir.getPath());
     return true;
