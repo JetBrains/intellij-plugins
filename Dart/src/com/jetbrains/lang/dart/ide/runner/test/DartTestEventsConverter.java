@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
+import gnu.trove.TIntLongHashMap;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,13 +81,11 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   private static final Gson GSON = new Gson();
 
-  // In theory, test events could be generated asynchronously and out of order. We might want to keep a map of tests to start times
-  // so we get accurate durations when tests end. See myTestData.
-  private long myStartMillis;
   private String myLocation;
   private boolean myOutputAppeared = false;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
+  private TIntLongHashMap myTestIdToTimestamp;
   private Map<Integer, Test> myTestData;
   private Map<Integer, Group> myGroupData;
   private Map<Integer, Suite> mySuiteData;
@@ -94,6 +93,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName, @NotNull final TestConsoleProperties consoleProperties) {
     super(testFrameworkName, consoleProperties);
+    myTestIdToTimestamp = new TIntLongHashMap();
     myTestData = new HashMap<Integer, Test>();
     myGroupData = new HashMap<Integer, Group>();
     mySuiteData = new HashMap<Integer, Suite>();
@@ -184,8 +184,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
 
     String testName = test.getBaseName();
     ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(testName);
+    myTestIdToTimestamp.put(test.getId(), getTimestamp(obj));
     addLocationHint(testStarted, test);
-    myStartMillis = getTestMillis(obj);
     myOutputAppeared = false;
     boolean result = finishMessage(testStarted, test.getId(), test.getValidParentId());
 
@@ -209,11 +209,10 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     Test test = getTest(obj);
     test.testDone();
 
-    //if (test.getMetadata().skip) return true; // skipped tests are reported as ignored in
+    //if (test.getMetadata().skip) return true; // skipped tests are reported as ignored in handleTestStart(). testFinished signal must follow
 
-    // Since we cannot tell when a group is finished always reset the parent ID.
-    long duration = getTestMillis(obj) - myStartMillis;
     ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
+    long duration = getTimestamp(obj) - myTestIdToTimestamp.get(test.getId());
     testFinished.addAttribute("duration", Long.toString(duration));
 
     return finishMessage(testFinished, test.getId(), test.getValidParentId()) && checkGroupDone(test.getParent());
@@ -290,14 +289,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     if (!getBoolean(obj, JSON_IS_FAILURE)) testError.addAttribute("error", "true");
     testError.addAttribute("message", failureMessage + NEWLINE);
 
-    long duration = getTestMillis(obj) - myStartMillis;
-    testError.addAttribute("duration", Long.toString(duration));
-
     final ServiceMessageBuilder testStdErr = ServiceMessageBuilder.testStdErr(test.getBaseName());
     testStdErr.addAttribute("out", getStackTrace(obj));
-
-    final ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished(test.getBaseName());
-    testFinished.addAttribute("duration", Long.toString(duration));
 
     return finishMessage(testError, test.getId(), test.getValidParentId()) &&
            finishMessage(testStdErr, test.getId(), test.getValidParentId());
@@ -326,6 +319,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handleStart(JsonObject obj) {
+    myTestIdToTimestamp.clear();
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
@@ -356,6 +350,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
         }
       }
     }
+    myTestIdToTimestamp.clear();
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
@@ -401,7 +396,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     messageBuilder.addAttribute("locationHint", location);
   }
 
-  private static long getTestMillis(JsonObject obj) throws ParseException {
+  private static long getTimestamp(JsonObject obj) throws ParseException {
     return getLong(obj, JSON_MILLIS);
   }
 
