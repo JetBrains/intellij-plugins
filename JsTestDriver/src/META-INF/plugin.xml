@@ -26,7 +26,6 @@
   <depends>JavaScript</depends>
 
   <depends optional="true" config-file="jstd-yaml.xml">org.jetbrains.plugins.yaml</depends>
-  <depends optional="true" config-file="jstd-yaml.xml">com.intellij.modules.yaml</depends>
 
   <depends optional="true" config-file="jstd-coverage.xml">com.intellij.modules.coverage</depends>
 
