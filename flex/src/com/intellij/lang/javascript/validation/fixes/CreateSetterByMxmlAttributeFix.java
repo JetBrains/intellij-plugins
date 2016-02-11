@@ -25,7 +25,7 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
                                final PsiFile file,
                                final PsiElement anchorParent) {
     template.addTextSegment("public ");
-    writeFunctionAndName(template, myReferencedName, file, null);
+    writeFunctionAndName(template, myReferencedName, file, null, referenceExpression);
 
     template.addTextSegment("(");
     template.addTextSegment(myReferencedName + ":");

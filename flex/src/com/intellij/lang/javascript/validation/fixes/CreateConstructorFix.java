@@ -190,7 +190,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       template.addTextSegment("public ");
     }
 
-    writeFunctionAndName(template, myClass.getName(), file, null);
+    writeFunctionAndName(template, myClass.getName(), file, null, referenceExpression);
     template.addTextSegment("(");
     addParameters(template, myNode.getArgumentList(), myNode, file);
     template.addTextSegment("){");
