@@ -56,9 +56,15 @@ public class TestUtil {
       final String fileOrDirName = PathUtil.getFileName(path);
       switch (scope) {
         case METHOD:
-          return DartBundle.message("test.0.in.1", testName, fileOrDirName);
+          if (testName != null) {
+            return DartBundle.message("test.0.in.1", testName, fileOrDirName);
+          }
+          // fall through
         case GROUP:
-          return DartBundle.message("test.group.0.in.1", testName, fileOrDirName);
+          if (testName != null) {
+            return DartBundle.message("test.group.0.in.1", testName, fileOrDirName);
+          }
+          // fall through
         case FILE:
           return DartBundle.message("all.tests.in.0", fileOrDirName);
         case FOLDER:
