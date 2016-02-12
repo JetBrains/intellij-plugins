@@ -105,7 +105,7 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
   private static boolean setupRunnerParametersForFileIfApplicable(@NotNull final DartTestRunnerParameters params,
                                                                   @NotNull final ConfigurationContext context,
                                                                   @NotNull final Ref<PsiElement> sourceElement) {
-    final VirtualFile dartFile = DartCommandLineRuntimeConfigurationProducer.getRunnableDartFileFromContext(context);
+    final VirtualFile dartFile = DartCommandLineRuntimeConfigurationProducer.getRunnableDartFileFromContext(context, false);
     if (dartFile == null) return false;
 
     final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), dartFile);
