@@ -11,8 +11,10 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.*;
-import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.EnumComboBoxModel;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
@@ -40,14 +42,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JTextField myTestNameField;
   private JLabel myTargetNameLabel;
   private JTextField myTargetNameField;
-  private RawCommandLineEditor myVMOptions;
-  private JBCheckBox myCheckedModeCheckBox;
-  private RawCommandLineEditor myArguments;
   private EnvironmentVariablesComponent myEnvironmentVariables;
-  private JCheckBox myVMCheckBox;
-  private JCheckBox myDartiumCheckBox;
-  private JCheckBox myChromeCheckBox;
-  private JCheckBox myFirefoxCheckBox;
 
   private final Project myProject;
   private TestModel myCachedModel;
@@ -99,9 +94,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myDirField.getTextField().getDocument().addDocumentListener(dirListener);
     myTestNameField.getDocument().addDocumentListener(documentListener);
 
-    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
-    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
-
     // 'Environment variables' is the widest label, anchored by myTestFileLabel
     myTestFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
     myDirLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
@@ -122,9 +114,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
       myFileField.setText(testPath);
     }
     myTestNameField.setText(parameters.getScope().expectsTestName() ? StringUtil.notNullize(parameters.getTestName()) : "");
-    myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
-    myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
-    myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
 
@@ -141,9 +130,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(pathSource.getText().trim()), true));
     parameters.setTestName(scope.expectsTestName() ? StringUtil.nullize(myTestNameField.getText().trim()) : null);
     parameters.setTargetName(scope == Scope.FOLDER ? StringUtil.nullize(myTargetNameField.getText().trim()) : null);
-    parameters.setArguments(StringUtil.nullize(myArguments.getText().trim(), true));
-    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText().trim(), true));
-    parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
   }
