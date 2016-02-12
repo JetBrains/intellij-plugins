@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
@@ -40,7 +39,6 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String RUN_COMMAND = "run";
   private static final String TEST_PACKAGE_SPEC = "test:test";
   private static final String EXPANDED_REPORTER_OPTION = "-r json";
-  private static final String NAME_REGEX_OPTION = "-n";
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
     super(environment);
@@ -112,8 +110,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
       String testName = params.getTestName();
       if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
-        String safeName = StringUtil.escapeToRegexp(testName);
-        builder.append(' ').append(NAME_REGEX_OPTION).append(' ').append('"').append(safeName).append('"');
+        builder.append(" -N \"").append(testName).append("\"");
       }
     }
 
