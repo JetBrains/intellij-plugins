@@ -42,6 +42,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JTextField myTestNameField;
   private JLabel myTargetNameLabel;
   private JTextField myTargetNameField;
+  private JTextField myTestRunnerOptionsField;
   private EnvironmentVariablesComponent myEnvironmentVariables;
 
   private final Project myProject;
@@ -114,6 +115,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
       myFileField.setText(testPath);
     }
     myTestNameField.setText(parameters.getScope().expectsTestName() ? StringUtil.notNullize(parameters.getTestName()) : "");
+    myTestRunnerOptionsField.setText(parameters.getTestRunnerOptions());
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
 
@@ -127,9 +129,10 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     parameters.setScope(scope);
     TextFieldWithBrowseButton pathSource = scope == Scope.FOLDER ? myDirField : myFileField;
-    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(pathSource.getText().trim()), true));
+    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(pathSource.getText().trim())));
     parameters.setTestName(scope.expectsTestName() ? StringUtil.nullize(myTestNameField.getText().trim()) : null);
     parameters.setTargetName(scope == Scope.FOLDER ? StringUtil.nullize(myTargetNameField.getText().trim()) : null);
+    parameters.setTestRunnerOptions(StringUtil.nullize(myTestRunnerOptionsField.getText().trim()));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
   }

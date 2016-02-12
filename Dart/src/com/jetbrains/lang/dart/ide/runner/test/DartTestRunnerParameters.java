@@ -7,9 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class DartTestRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
 
-  private @NotNull Scope myScope = Scope.FILE;
-  private @Nullable String myTestName = null;
-  private @Nullable String myTargetName = null;
+  @NotNull private Scope myScope = Scope.FILE;
+  @Nullable private String myTestName = null;
+  @Nullable private String myTargetName = null;
+  @Nullable private String myTestRunnerOptions = null;
 
   @NotNull
   public Scope getScope() {
@@ -27,17 +28,26 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     return myTestName;
   }
 
+  public void setTestName(final @Nullable String name) {
+    myTestName = name;
+  }
+
   @Nullable
   public String getTargetName() {
     return myTargetName;
   }
 
-  public void setTestName(final @Nullable String name) {
-    myTestName = name;
-  }
-
   public void setTargetName(final @Nullable String name) {
     myTargetName = name;
+  }
+
+  @Nullable
+  public String getTestRunnerOptions() {
+    return myTestRunnerOptions;
+  }
+
+  public void setTestRunnerOptions(@Nullable String testRunnerOptions) {
+    myTestRunnerOptions = testRunnerOptions;
   }
 
   @Override

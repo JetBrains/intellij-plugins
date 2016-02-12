@@ -94,12 +94,20 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
     final boolean projectWithoutPubspec = Registry.is("dart.projects.without.pubspec", false);
     final String targetName = params.getTargetName();
+    final String testRunnerOptions = params.getTestRunnerOptions();
+
     if (projectWithoutPubspec && params.getScope() == Scope.FOLDER && targetName != null && !targetName.isEmpty()) {
       builder.append(" ").append(":").append(targetName).append(" ").append(EXPANDED_REPORTER_OPTION);
+      if (testRunnerOptions != null && !testRunnerOptions.isEmpty()) {
+        builder.append(" ").append(testRunnerOptions);
+      }
     }
     else {
       builder.append(' ').append(TEST_PACKAGE_SPEC);
       builder.append(' ').append(EXPANDED_REPORTER_OPTION);
+      if (testRunnerOptions != null && !testRunnerOptions.isEmpty()) {
+        builder.append(" ").append(testRunnerOptions);
+      }
       builder.append(' ').append(params.getFilePath());
 
       String testName = params.getTestName();
