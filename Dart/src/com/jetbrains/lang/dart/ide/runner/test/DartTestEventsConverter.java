@@ -318,14 +318,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     return finishMessage(message, test.getId(), test.getValidParentId());
   }
 
-  private boolean handleStart(JsonObject obj) {
+  private boolean handleStart(JsonObject obj) throws ParseException {
     myTestIdToTimestamp.clear();
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
     mySuitCount = 0;
-    // This apparently is a no-op: myProcessor.signalTestFrameworkAttached();
-    return true;
+
+    return doProcessServiceMessages(new ServiceMessageBuilder("enteredTheMatrix").toString());
   }
 
   private boolean handleDone(JsonObject obj) throws ParseException {
