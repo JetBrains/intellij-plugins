@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide;
 
 import com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler;
 import com.intellij.lang.surroundWith.Surrounder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithIfElseSurrounder;
@@ -20,7 +21,13 @@ public class DartSurroundWithInHtmlTest extends LightPlatformCodeInsightTestCase
 
   private void doTest(final Surrounder handler) throws Exception {
     configureByFile(getTestName(false) + ".html");
-    SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), handler);
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), handler);
+      }
+    });
+
     checkResultByFile(getTestName(false) + ".after.html");
   }
 
