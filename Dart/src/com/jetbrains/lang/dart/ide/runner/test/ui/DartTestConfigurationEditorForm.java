@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.runner.test.ui;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
@@ -44,7 +43,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private RawCommandLineEditor myVMOptions;
   private JBCheckBox myCheckedModeCheckBox;
   private RawCommandLineEditor myArguments;
-  private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
   private JCheckBox myVMCheckBox;
   private JCheckBox myDartiumCheckBox;
@@ -67,9 +65,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
         onTestDirChanged(project);
       }
     });
-
-    myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
-                                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myScopeCombo.setModel(new EnumComboBoxModel<Scope>(Scope.class));
     myScopeCombo.setRenderer(new ListCellRendererWrapper<Scope>() {
@@ -130,7 +125,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
     myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
-    myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
 
@@ -150,7 +144,6 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     parameters.setArguments(StringUtil.nullize(myArguments.getText().trim(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText().trim(), true));
     parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
-    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
   }

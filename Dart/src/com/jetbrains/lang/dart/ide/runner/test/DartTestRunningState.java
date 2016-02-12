@@ -29,7 +29,6 @@ import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.ide.runner.util.Scope;
-import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -71,14 +70,10 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     try {
       final VirtualFile dartFile = runnerParameters.getDartFileOrDirectory();
       consoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
-
-      final String workingDir = StringUtil.isEmptyOrSpaces(runnerParameters.getWorkingDirectory())
-                                ? dartFile.getParent().getPath()
-                                : runnerParameters.getWorkingDirectory();
-      consoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, workingDir));
+      consoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, runnerParameters.computeProcessWorkingDirectory(project)));
       consoleView.addMessageFilter(new UrlFilter());
     }
-    catch (RuntimeConfigurationError ignore) {/**/}
+    catch (RuntimeConfigurationError ignore) {/* can't happen because already checked */}
 
     Disposer.register(project, consoleView);
     return consoleView;
@@ -88,21 +83,12 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
     Project project = getEnvironment().getProject();
+
     DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null) {
-      throw new ExecutionException("Dart SDK cannot be found"); // can't happen
-    }
-    String sdkPath = sdk.getHomePath();
+    if (sdk == null) throw new ExecutionException("Dart SDK cannot be found"); // can't happen, already checked
+
     DartTestRunnerParameters params = (DartTestRunnerParameters)myRunnerParameters;
-    VirtualFile dartFile;
-    final String filePath = params.getFilePath();
-    try {
-      dartFile = params.getDartFileOrDirectory();
-    }
-    catch (RuntimeConfigurationError ex) {
-      throw new ExecutionException("Cannot find test file: " + filePath, ex);
-    }
-    // TODO Try adding --pause-after-load to VM args to see if that makes test debugging possible
+
     StringBuilder builder = new StringBuilder();
     builder.append(RUN_COMMAND);
 
@@ -114,9 +100,8 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     else {
       builder.append(' ').append(TEST_PACKAGE_SPEC);
       builder.append(' ').append(EXPANDED_REPORTER_OPTION);
-      if (filePath != null) {
-        builder.append(' ').append(filePath);
-      }
+      builder.append(' ').append(params.getFilePath());
+
       String testName = params.getTestName();
       if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
         String safeName = StringUtil.escapeToRegexp(testName);
@@ -125,8 +110,9 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     }
 
     params.setArguments(builder.toString());
-    params.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(project, dartFile));
-    return doStartProcess(pathToDartUrl(sdkPath + PUB_SNAPSHOT_PATH));
+    // working directory is not configurable in UI because there's only one valid value that we calculate ourselves
+    params.setWorkingDirectory(params.computeProcessWorkingDirectory(project));
+    return doStartProcess(pathToDartUrl(sdk.getHomePath() + PUB_SNAPSHOT_PATH));
   }
 
   private static String pathToDartUrl(@NonNls @NotNull String path) {

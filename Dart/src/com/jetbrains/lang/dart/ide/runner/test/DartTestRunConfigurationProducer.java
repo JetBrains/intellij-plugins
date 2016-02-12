@@ -14,7 +14,6 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer;
 import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.ide.runner.util.TestUtil;
-import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -144,7 +143,6 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
       final VirtualFile dartFile = virtualFiles.iterator().next();
       final String dartFilePath = dartFile.getPath();
       runnerParams.setFilePath(dartFilePath);
-      runnerParams.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(psiElement.getProject(), dartFile));
       return true;
     }
     else {
@@ -159,7 +157,6 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
         runnerParams.setScope(Scope.FILE);
         final String dartFilePath = FileUtil.toSystemIndependentName(virtualFile.getPath());
         runnerParams.setFilePath(dartFilePath);
-        runnerParams.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(psiElement.getProject(), virtualFile));
         return true;
       }
     }

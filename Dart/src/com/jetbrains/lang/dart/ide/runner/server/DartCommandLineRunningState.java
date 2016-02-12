@@ -51,8 +51,9 @@ public class DartCommandLineRunningState extends CommandLineState {
     super(env);
     myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().clone();
 
+    final Project project = env.getProject();
     try {
-      myRunnerParameters.check(env.getProject());
+      myRunnerParameters.check(project);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e);
@@ -64,16 +65,11 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     try {
-      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFileOrDirectory()));
-
-      // unit tests can be run as normal Dart apps, so add DartUnitConsoleFilter as well
-      final String workingDir = myRunnerParameters.computeProcessWorkingDirectory();
-      builder.addFilter(new DartRelativePathsConsoleFilter(env.getProject(), workingDir));
+      builder.addFilter(new DartConsoleFilter(project, myRunnerParameters.getDartFileOrDirectory()));
+      builder.addFilter(new DartRelativePathsConsoleFilter(project, myRunnerParameters.computeProcessWorkingDirectory(project)));
       builder.addFilter(new UrlFilter());
     }
-    catch (RuntimeConfigurationError e) {
-      builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked
-    }
+    catch (RuntimeConfigurationError e) { /* can't happen because already checked */}
   }
 
   @Override
@@ -122,25 +118,16 @@ public class DartCommandLineRunningState extends CommandLineState {
     return processHandler;
   }
 
-  private GeneralCommandLine createCommandLine(final @Nullable String overriddenMainFilePath) throws ExecutionException {
+  private GeneralCommandLine createCommandLine(@Nullable final String overriddenMainFilePath) throws ExecutionException {
     final DartSdk sdk = DartSdk.getDartSdk(getEnvironment().getProject());
     if (sdk == null) {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
     }
 
-    final String dartExePath = DartSdkUtil.getDartExePath(sdk);
-
-    final String workingDir;
-    try {
-      workingDir = myRunnerParameters.computeProcessWorkingDirectory();
-    }
-    catch (RuntimeConfigurationError e) {
-      throw new ExecutionException(e); // can't happen because already checked
-    }
-
-    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
+    final GeneralCommandLine commandLine = new GeneralCommandLine()
+      .withWorkDirectory(myRunnerParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
-    commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
+    commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);

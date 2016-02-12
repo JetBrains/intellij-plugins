@@ -11,6 +11,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,26 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   private @Nullable String myWorkingDirectory = null;
   private @NotNull Map<String, String> myEnvs = new LinkedHashMap<String, String>();
   private boolean myIncludeParentEnvs = true;
+
+  /**
+   * Get the Dart project directory for the given file (or folder) by looking for the first parent that contains a pubspec.
+   * In case none can be found, the file's parent (or the folder itself) is used instead.
+   */
+  public static String suggestDartWorkingDir(@NotNull final Project project, @NotNull final VirtualFile dartFileOrFolder) {
+    final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, dartFileOrFolder);
+    if (pubspec != null) {
+      final VirtualFile parent = pubspec.getParent();
+      if (parent != null) {
+        return parent.getPath();
+      }
+    }
+    if (dartFileOrFolder.isDirectory()) {
+      return dartFileOrFolder.getPath();
+    }
+    else {
+      return dartFileOrFolder.getParent().getPath();
+    }
+  }
 
   @Nullable
   public String getFilePath() {
@@ -90,33 +111,41 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myIncludeParentEnvs = includeParentEnvs;
   }
 
-  public String computeProcessWorkingDirectory() throws RuntimeConfigurationError {
-    return StringUtil.isEmptyOrSpaces(getWorkingDirectory()) ? getDartFile().getParent().getPath() : getWorkingDirectory();
+  @NotNull
+  public String computeProcessWorkingDirectory(@NotNull final Project project) {
+    if (!StringUtil.isEmptyOrSpaces(myWorkingDirectory)) return myWorkingDirectory;
+
+    try {
+      return suggestDartWorkingDir(project, getDartFileOrDirectory());
+    }
+    catch (RuntimeConfigurationError error) {
+      return "";
+    }
   }
 
   @NotNull
   public VirtualFile getDartFile() throws RuntimeConfigurationError {
     final VirtualFile dartFile = getDartFileOrDirectory();
     if (dartFile.isDirectory()) {
-      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(getFilePath())));
+      assert myFilePath != null;
+      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(myFilePath)));
     }
     return dartFile;
   }
 
   @NotNull
   public VirtualFile getDartFileOrDirectory() throws RuntimeConfigurationError {
-    final String filePath = getFilePath();
-    if (StringUtil.isEmptyOrSpaces(filePath)) {
+    if (StringUtil.isEmptyOrSpaces(myFilePath)) {
       throw new RuntimeConfigurationError(DartBundle.message("path.to.dart.file.not.set"));
     }
 
-    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(myFilePath);
     if (dartFile == null) {
-      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(filePath)));
+      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(myFilePath)));
     }
 
     if (dartFile.getFileType() != DartFileType.INSTANCE && !dartFile.isDirectory()) {
-      throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file.or.directory", FileUtil.toSystemDependentName(filePath)));
+      throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file.or.directory", FileUtil.toSystemDependentName(myFilePath)));
     }
 
     return dartFile;
@@ -137,11 +166,11 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     getDartFileOrDirectory();
 
     // check working directory
-    final String workDirPath = getWorkingDirectory();
-    if (!StringUtil.isEmptyOrSpaces(workDirPath)) {
-      final VirtualFile workDir = LocalFileSystem.getInstance().findFileByPath(workDirPath);
+    if (!StringUtil.isEmptyOrSpaces(myWorkingDirectory)) {
+      final VirtualFile workDir = LocalFileSystem.getInstance().findFileByPath(myWorkingDirectory);
       if (workDir == null || !workDir.isDirectory()) {
-        throw new RuntimeConfigurationError(DartBundle.message("work.dir.does.not.exist", FileUtil.toSystemDependentName(workDirPath)));
+        throw new RuntimeConfigurationError(
+          DartBundle.message("work.dir.does.not.exist", FileUtil.toSystemDependentName(myWorkingDirectory)));
       }
     }
   }
