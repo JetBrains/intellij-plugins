@@ -28,10 +28,7 @@ import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.PairProcessor;
+import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -53,7 +50,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
   private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<String, PairProcessor<JSProperty, JSElementIndexingData>>();
-  private final static Set<String> IGNORE_QUALIFIED_NAMES_COMMANDS = new HashSet<String>();
+  private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<String, Function<String, List<String>>>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
@@ -127,7 +124,23 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
 
     CUSTOM_PROPERTY_PROCESSORS.put(WHEN, createRouterWhenProcessor());
-    IGNORE_QUALIFIED_NAMES_COMMANDS.add(STATE);
+    // example of nested states https://scotch.io/tutorials/angular-routing-using-ui-router
+    POLY_NAME_CONVERTERS.put(STATE, new NotNullFunction<String, List<String>>() {
+      @NotNull
+      @Override
+      public List<String> fun(String dom) {
+        final String[] parts = dom.split("\\.");
+        final List<String> result = new ArrayList<String>();
+        result.add(dom);
+        String tail = "";
+        for (int i = parts.length - 1; i > 0; i--) {
+          final String part = "." + parts[i] + tail;
+          result.add(part);
+          tail = part;
+        }
+        return result;
+      }
+    });
   }
 
   static final String RESTRICT = "@restrict";
@@ -349,31 +362,40 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                           @NotNull String defaultName,
                                           @Nullable final String value,
                                           @NotNull final JSElementIndexingData outData) {
+    final List<String> keys = INDEXES.getKeysByValue(index);
+    assert keys != null && keys.size() == 1;
+    final Consumer<JSImplicitElementImpl.Builder> adder = new Consumer<JSImplicitElementImpl.Builder>() {
+      @Override
+      public void consume(JSImplicitElementImpl.Builder builder) {
+        builder.setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
+          .setTypeString(value);
+        builder.setUserString(keys.get(0));
+        final JSImplicitElementImpl implicitElement = builder.toImplicitElement();
+        outData.addImplicitElement(implicitElement);
+      }
+    };
+
+    final Function<String, List<String>> variants = POLY_NAME_CONVERTERS.get(command);
     final Function<String, String> converter = command != null ? NAME_CONVERTERS.get(command) : null;
     final String name = converter != null ? converter.fun(defaultName) : defaultName;
 
-    JSImplicitElementImpl.Builder elementBuilder;
-    if (IGNORE_QUALIFIED_NAMES_COMMANDS.contains(command)) {
-      elementBuilder = new JSImplicitElementImpl.Builder(name, elementProvider);
+    if (variants != null) {
+      final List<String> strings = variants.fun(name);
+      for (String string : strings) {
+        adder.consume(new JSImplicitElementImpl.Builder(string, elementProvider));
+      }
     } else {
-      JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(name);
-      elementBuilder = new JSImplicitElementImpl.Builder(qName, elementProvider);
+      adder.consume(new JSImplicitElementImpl.Builder(JSQualifiedNameImpl.fromQualifiedName(name), elementProvider));
     }
-      elementBuilder.setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
-      .setTypeString(value);
-    List<String> keys = INDEXES.getKeysByValue(index);
-    assert keys != null && keys.size() == 1;
-    elementBuilder.setUserString(keys.get(0));
-    final JSImplicitElementImpl implicitElement = elementBuilder.toImplicitElement();
-    outData.addImplicitElement(implicitElement);
+
     if (!StringUtil.equals(defaultName, name)) {
-      elementBuilder = new JSImplicitElementImpl.Builder(defaultName, elementProvider)
+      JSImplicitElementImpl.Builder symbolElementBuilder = new JSImplicitElementImpl.Builder(defaultName, elementProvider)
         .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
         .setTypeString(value);
-      keys = INDEXES.getKeysByValue(AngularSymbolIndex.KEY);
-      assert keys != null && keys.size() == 1;
-      elementBuilder.setUserString(keys.get(0));
-      final JSImplicitElementImpl implicitElement2 = elementBuilder.toImplicitElement();
+      final List<String> symbolKeys = INDEXES.getKeysByValue(AngularSymbolIndex.KEY);
+      assert symbolKeys != null && symbolKeys.size() == 1;
+      symbolElementBuilder.setUserString(symbolKeys.get(0));
+      final JSImplicitElementImpl implicitElement2 = symbolElementBuilder.toImplicitElement();
       outData.addImplicitElement(implicitElement2);
     }
   }

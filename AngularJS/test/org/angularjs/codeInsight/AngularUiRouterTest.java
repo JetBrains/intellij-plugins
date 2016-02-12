@@ -98,12 +98,14 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
   public void testStatesNavigation() throws Exception {
     final PsiFile[] files = myFixture.configureByFiles("stateReferences.html", "appStates.js", "angular.js");
     myFixture.doHighlighting();
-    checkNavigation(files[0], "one");
-    checkNavigation(files[0], "two");
-    checkNavigation(files[0], "two.words");
+    checkNavigation(files[0], "one", null);
+    checkNavigation(files[0], "two", null);
+    checkNavigation(files[0], "two.words", null);
+    checkNavigation(files[0], ".words", "two.words");
   }
 
-  private void checkNavigation(PsiFile file, String state) {
+  private void checkNavigation(PsiFile file, String state, String referencedTextExpected) {
+    referencedTextExpected = referencedTextExpected == null ? state : referencedTextExpected;
     final int idx = myFixture.getEditor().getDocument().getText().indexOf("ui-sref=\"" + state + "\"");
     Assert.assertTrue(idx > 0);
     final PsiElement inObj = file.findElementAt(idx);
@@ -119,6 +121,6 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     final PsiElement resolve = reference.resolve();
     Assert.assertNotNull(resolve);
     Assert.assertEquals("appStates.js", resolve.getContainingFile().getName());
-    Assert.assertEquals(state, ((JSPsiNamedElementBase) resolve).getName());
+    Assert.assertEquals(referencedTextExpected, StringUtil.unquoteString(resolve.getNavigationElement().getText()));
   }
 }
