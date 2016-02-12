@@ -105,20 +105,7 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
                                                                   @NotNull final ConfigurationContext context,
                                                                   @NotNull final Ref<PsiElement> sourceElement) {
     final VirtualFile dartFile = DartCommandLineRuntimeConfigurationProducer.getRunnableDartFileFromContext(context, false);
-    if (dartFile == null) return false;
-
-    final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), dartFile);
-    final VirtualFile dartTestLib = urlResolver.findFileByDartUrl("package:test/test.dart");
-    if (dartTestLib == null) return false;
-
-    final VirtualFile yamlFile = urlResolver.getPubspecYamlFile();
-    if (yamlFile != null) {
-      final VirtualFile parent = yamlFile.getParent();
-      final VirtualFile testFolder = parent == null ? null : parent.findChild("test");
-      if (testFolder == null || !testFolder.isDirectory() || !VfsUtilCore.isAncestor(testFolder, dartFile, true)) {
-        return false;
-      }
-    }
+    if (dartFile == null || !isFileInTestDirAndTestPackageExists(context.getProject(), dartFile)) return false;
 
     final PsiElement testElement = TestUtil.findTestElement(context.getPsiLocation());
     if (testElement == null || !setupRunnerParametersForFile(params, testElement)) {
@@ -126,6 +113,23 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
     }
 
     sourceElement.set(testElement);
+    return true;
+  }
+
+  public static boolean isFileInTestDirAndTestPackageExists(@NotNull final Project project, @NotNull final VirtualFile file) {
+    final DartUrlResolver urlResolver = DartUrlResolver.getInstance(project, file);
+    final VirtualFile dartTestLib = urlResolver.findFileByDartUrl("package:test/test.dart");
+    if (dartTestLib == null) return false;
+
+    final VirtualFile yamlFile = urlResolver.getPubspecYamlFile();
+    if (yamlFile != null) {
+      final VirtualFile parent = yamlFile.getParent();
+      final VirtualFile testFolder = parent == null ? null : parent.findChild("test");
+      if (testFolder == null || !testFolder.isDirectory() || !VfsUtilCore.isAncestor(testFolder, file, true)) {
+        return false;
+      }
+    }
+
     return true;
   }
 
