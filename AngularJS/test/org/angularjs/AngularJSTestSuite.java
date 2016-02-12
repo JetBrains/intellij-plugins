@@ -34,6 +34,7 @@ public class AngularJSTestSuite {
     testSuite.addTestSuite(EmptyEventHandlerInspectionTest.class);
     testSuite.addTestSuite(DirectiveRenameTest.class);
     testSuite.addTestSuite(ContextTest.class);
+    testSuite.addTestSuite(AngularUiRouterTest.class);
 
     return testSuite;
   }

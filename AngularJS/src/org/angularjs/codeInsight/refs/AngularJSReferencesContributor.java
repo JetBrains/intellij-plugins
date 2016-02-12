@@ -1,10 +1,7 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.*;
@@ -26,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
+  private static final PsiElementPattern.Capture<JSProperty> UI_VIEW_PATTERN = uiViewPattern();
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
       @Override
@@ -98,6 +96,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     });
     registrar.registerReferenceProvider(CONTROLLER_PATTERN, new AngularJSControllerReferencesProvider());
     registrar.registerReferenceProvider(DI_PATTERN, new AngularJSDIReferencesProvider());
+    registrar.registerReferenceProvider(UI_VIEW_PATTERN, new AngularJSUiRouterViewReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {
@@ -110,6 +109,31 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             final PsiElement parent = literal.getParent();
             if (parent instanceof JSProperty && propertyName.equals(((JSProperty)parent).getName())) {
               return AngularIndexUtil.hasAngularJS(literal.getProject());
+            }
+          }
+        }
+        return false;
+      }
+
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
+  }
+
+  private static PsiElementPattern.Capture<JSProperty> uiViewPattern() {
+    return PlatformPatterns.psiElement(JSProperty.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        if (element instanceof JSProperty) {
+          final JSProperty property = (JSProperty)element;
+          final PsiElement mustBeObject = property.getParent();
+          if (mustBeObject instanceof JSObjectLiteralExpression) {
+            final PsiElement viewsProperty = mustBeObject.getParent();
+            if (viewsProperty instanceof JSProperty && "views".equals(((JSProperty)viewsProperty).getName())) {
+              // by now will not go further todo other cases
+              return true;
             }
           }
         }
