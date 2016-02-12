@@ -53,6 +53,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
   private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<String, PairProcessor<JSProperty, JSElementIndexingData>>();
+  private final static Set<String> IGNORE_QUALIFIED_NAMES_COMMANDS = new HashSet<String>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
@@ -61,6 +62,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String COMPONENT = "component";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
+  public static final String STATE = "state";
   private static final String START_SYMBOL = "startSymbol";
   private static final String END_SYMBOL = "endSymbol";
   public static final String DEFAULT_RESTRICTIONS = "D";
@@ -101,6 +103,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXERS.put(CONTROLLER, AngularControllerIndex.KEY);
     INDEXERS.put(MODULE, AngularModuleIndex.KEY);
     INDEXERS.put(FILTER, AngularFilterIndex.KEY);
+    INDEXERS.put(STATE, AngularUiRouterStatesIndex.KEY);
 
     final THashSet<String> allInterestingMethods = new THashSet<String>(INTERESTING_METHODS);
     allInterestingMethods.addAll(INJECTABLE_METHODS);
@@ -117,12 +120,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("aidi", AngularInjectionDelimiterIndex.KEY);
     INDEXES.put("ami", AngularModuleIndex.KEY);
     INDEXES.put("asi", AngularSymbolIndex.KEY);
+    INDEXES.put("arsi", AngularUiRouterStatesIndex.KEY);
 
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
 
     CUSTOM_PROPERTY_PROCESSORS.put(WHEN, createRouterWhenProcessor());
+    IGNORE_QUALIFIED_NAMES_COMMANDS.add(STATE);
   }
 
   static final String RESTRICT = "@restrict";
@@ -347,9 +352,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final Function<String, String> converter = command != null ? NAME_CONVERTERS.get(command) : null;
     final String name = converter != null ? converter.fun(defaultName) : defaultName;
 
-    JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(name);
-    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(qName, elementProvider)
-      .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
+    JSImplicitElementImpl.Builder elementBuilder;
+    if (IGNORE_QUALIFIED_NAMES_COMMANDS.contains(command)) {
+      elementBuilder = new JSImplicitElementImpl.Builder(name, elementProvider);
+    } else {
+      JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(name);
+      elementBuilder = new JSImplicitElementImpl.Builder(qName, elementProvider);
+    }
+      elementBuilder.setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
       .setTypeString(value);
     List<String> keys = INDEXES.getKeysByValue(index);
     assert keys != null && keys.size() == 1;

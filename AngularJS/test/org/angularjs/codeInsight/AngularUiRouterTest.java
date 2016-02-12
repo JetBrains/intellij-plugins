@@ -8,6 +8,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.junit.Assert;
@@ -83,5 +85,40 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
 
     final PsiElement element = ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset();
     Assert.assertEquals("ui-view", element.getText());
+  }
+
+  // states
+  public void testStatesCompletion() throws Exception {
+    final List<String> variants = myFixture.getCompletionVariants("stateReferences1.html", "appStates.js", "angular.js");
+    Assert.assertTrue(variants.contains("one"));
+    Assert.assertTrue(variants.contains("two"));
+    Assert.assertTrue(variants.contains("two.words"));
+  }
+
+  public void testStatesNavigation() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("stateReferences.html", "appStates.js", "angular.js");
+    myFixture.doHighlighting();
+    checkNavigation(files[0], "one");
+    checkNavigation(files[0], "two");
+    checkNavigation(files[0], "two.words");
+  }
+
+  private void checkNavigation(PsiFile file, String state) {
+    final int idx = myFixture.getEditor().getDocument().getText().indexOf("ui-sref=\"" + state + "\"");
+    Assert.assertTrue(idx > 0);
+    final PsiElement inObj = file.findElementAt(idx);
+    Assert.assertNotNull(inObj);
+    Assert.assertEquals("ui-sref", inObj.getText());
+    Assert.assertTrue(inObj.getParent() instanceof XmlAttribute);
+    final XmlAttributeValue element = ((XmlAttribute)inObj.getParent()).getValueElement();
+    Assert.assertNotNull(element);
+
+    final PsiReference reference = element.getReference();
+    Assert.assertEquals(state, reference.getCanonicalText());
+
+    final PsiElement resolve = reference.resolve();
+    Assert.assertNotNull(resolve);
+    Assert.assertEquals("appStates.js", resolve.getContainingFile().getName());
+    Assert.assertEquals(state, ((JSPsiNamedElementBase) resolve).getName());
   }
 }

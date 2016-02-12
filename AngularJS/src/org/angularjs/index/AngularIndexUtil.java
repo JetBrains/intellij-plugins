@@ -25,6 +25,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -39,15 +40,30 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 31;
+  public static final int BASE_VERSION = 32;
   private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
-    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     final Ref<JSImplicitElement> result = new Ref<JSImplicitElement>(null);
+    final Consumer<JSImplicitElement> consumer = new Consumer<JSImplicitElement>() {
+      @Override
+      public void consume(JSImplicitElement element) {
+        result.set(element);
+      }
+    };
+    multiResolve(project, index, lookupKey, consumer);
+
+    return result.get();
+  }
+
+  public static void multiResolve(Project project,
+                                   final StubIndexKey<String, JSImplicitElementProvider> index,
+                                   final String lookupKey,
+                                   final Consumer<JSImplicitElement> consumer) {
+    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     StubIndex.getInstance().processElements(
       index, lookupKey, project, scope, JSImplicitElementProvider.class, new Processor<JSImplicitElementProvider>() {
         @Override
@@ -59,7 +75,7 @@ public class AngularIndexUtil {
               for (JSImplicitElement element : elements) {
                 if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                             AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
-                  result.set(element);
+                  consumer.consume(element);
                   if (DialectDetector.isTypeScript(element)) {
                     return false;
                   }
@@ -71,8 +87,6 @@ public class AngularIndexUtil {
         }
       }
     );
-
-    return result.get();
   }
 
   public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {

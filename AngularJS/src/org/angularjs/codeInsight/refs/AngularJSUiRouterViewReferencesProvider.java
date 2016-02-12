@@ -15,7 +15,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -23,7 +22,6 @@ import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.AngularUiRouterViewsIndex;
 import org.angularjs.index.AngularViewDefinition;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +37,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     return new PsiReference[] {new AngularJSUiRouterViewReference(((JSProperty) element).getNameIdentifier())};
   }
 
-  private static class AngularJSUiRouterViewReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
+  private static class AngularJSUiRouterViewReference extends AngularPolyReferenceBase<PsiElement> {
     public AngularJSUiRouterViewReference(PsiElement element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
@@ -52,35 +50,12 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     }
 
     @NotNull
-    @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
-      return ResolveCache.getInstance(getElement().getProject()).resolveWithCaching(this, MyResolver.INSTANCE, false, false);
-    }
-
-    @Override
-    public boolean isReferenceTo(PsiElement element) {
-      final ResolveResult[] results = multiResolve(false);
-      for (ResolveResult result : results) {
-        if (getElement().getManager().areElementsEquivalent(result.getElement(), element)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    @Nullable
-    @Override
-    public PsiElement resolve() {
-      ResolveResult[] resolveResults = multiResolve(false);
-      return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
-    }
-
-    @NotNull
     public ResolveResult[] resolveInner() {
       final FileBasedIndex instance = FileBasedIndex.getInstance();
       final Project project = getElement().getProject();
       final String id = getViewName();
-      Collection<VirtualFile> files = instance.getContainingFiles(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, GlobalSearchScope.allScope(project));
+      Collection<VirtualFile> files =
+        instance.getContainingFiles(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, GlobalSearchScope.allScope(project));
       if (StringUtil.isEmptyOrSpaces(id)) {
         // try to find templateUrl
         files = filterByTemplateUrl(files);
@@ -104,7 +79,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     private Collection<VirtualFile> filterByTemplateUrl(Collection<VirtualFile> files) {
       if (files.isEmpty()) return files;
 
-      final PsiElement object = myElement.getParent() instanceof JSProperty ? ((JSProperty) myElement.getParent()).getValue() : null;
+      final PsiElement object = myElement.getParent() instanceof JSProperty ? ((JSProperty)myElement.getParent()).getValue() : null;
       if (object instanceof JSObjectLiteralExpression) {
         final JSProperty templateUrl = ((JSObjectLiteralExpression)object).findProperty("templateUrl");
         if (templateUrl != null && templateUrl.getValue() != null) {
@@ -145,16 +120,6 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
         elements.add(item);
       }
       return elements.toArray(new LookupElement[elements.size()]);
-    }
-
-    private static class MyResolver implements ResolveCache.PolyVariantResolver<PsiPolyVariantReference> {
-      private final static MyResolver INSTANCE = new MyResolver();
-
-      @NotNull
-      @Override
-      public ResolveResult[] resolve(@NotNull PsiPolyVariantReference reference, boolean incompleteCode) {
-        return ((AngularJSUiRouterViewReference) reference).resolveInner();
-      }
     }
   }
 }

@@ -24,6 +24,8 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
   private static final PsiElementPattern.Capture<JSProperty> UI_VIEW_PATTERN = uiViewPattern();
+  private static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = uiViewRefPattern();
+
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
       @Override
@@ -97,6 +99,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(CONTROLLER_PATTERN, new AngularJSControllerReferencesProvider());
     registrar.registerReferenceProvider(DI_PATTERN, new AngularJSDIReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_PATTERN, new AngularJSUiRouterViewReferencesProvider());
+    registrar.registerReferenceProvider(UI_VIEW_REF, new AngularJSUiRouterStatesReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {
@@ -136,6 +139,25 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
               return true;
             }
           }
+        }
+        return false;
+      }
+
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    }));
+  }
+
+  private static PsiElementPattern.Capture<XmlAttributeValue> uiViewRefPattern() {
+    return PlatformPatterns.psiElement(XmlAttributeValue.class).and(new FilterPattern(new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
+        final XmlAttributeValue attributeValue = (XmlAttributeValue)element;
+        final PsiElement parent = attributeValue.getParent();
+        if (parent instanceof XmlAttribute && "ui-sref".equals(((XmlAttribute)parent).getName())) {
+          return true;
         }
         return false;
       }
