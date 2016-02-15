@@ -65,7 +65,8 @@ public class Angular2Injector implements MultiHostInjector {
       final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
       final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
       if (expression instanceof JSReferenceExpression) {
-        if (!AngularJS2IndexingHandler.isDirective(((JSReferenceExpression)expression).getReferenceName())) return true;
+        final String command = ((JSReferenceExpression)expression).getReferenceName();
+        if (!AngularJS2IndexingHandler.isDirective(command) && !"View".equals(command)) return true;
 
         final TextRange range = ElementManipulators.getValueTextRange(context);
         registrar.startInjecting(language).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();
