@@ -74,12 +74,12 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "start uses given line ending",
     "finish uses given line ending",
     "start fails once",
-    "print fails once \nsomething\n",
+    "print fails once something\n",
     "fail fails once false",
     "print fails once package:test                    fail\ntest/formatter_test.dart 108:7  main.<fn>.<fn>\n",
     "finish fails once",
     "start fails twice",
-    "print fails twice \nmessage\n",
+    "print fails twice message\n",
     "fail fails twice true",
     "print fails twice dart:core                       NoSuchMethodError._throwNew\ntest/formatter_test.dart 112:7  main.<fn>.<fn>\n",
     "finish fails twice",
@@ -223,15 +223,31 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   }
 
   public void testLoadFailure() throws Exception {
-    String[] events =
-      {"/usr/local/opt/dart/libexec/bin/dart --ignore-unrecognized-flags --checked --enable-vm-service:50383 --trace_service_pause_events file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json test/formatter_test.dart -n \"line endings\"\n",
-        "Observatory listening on http://127.0.0.1:50383\n", "\n",
-        "{\"protocolVersion\":\"0.1.0\",\"runnerVersion\":\"0.12.6\",\"type\":\"start\",\"time\":0}\n",
-        "{\"test\":{\"id\":0,\"name\":\"loading test/formatter_test.dart\",\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":0}\n",
-        "{\"testID\":0,\"error\":\"Failed to load \\\"test/formatter_test.dart\\\":\\nline 117 pos 69: named argument expected\\n    test('infers \\\\\\\\r\\\\\\\\n if the first newline uses that', skip:true, () {\\n                                                                    ^\",\"stackTrace\":\"\",\"isFailure\":false,\"type\":\"error\",\"time\":497}\n",
-        "{\"testID\":0,\"result\":\"error\",\"hidden\":false,\"type\":\"testDone\",\"time\":499}\n",
-        "{\"success\":false,\"type\":\"done\",\"time\":500}\n", "\n", "Process finished with exit code 1\n",};
-    String[] signals = {"start Failed to load", "fail Failed to load false", "finish loading test/formatter_test.dart"};
+    String[] events = {
+      "{'test':{'id':0,'name':'loading test/formatter_test.dart','groupIDs':[],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':0}\n",
+      "{'testID':0,'error':'Failed to load \\\"test/formatter_test.dart\\\":\\nline 117 pos 69','stackTrace':'','isFailure':false,'type':'error','time':497}\n",
+      "{'testID':0,'error':'2nd failure message','stackTrace':'','isFailure':false,'type':'error','time':497}\n",
+      "{'testID':0,'error':'3rd failure message','stackTrace':'3rd stack trace','isFailure':false,'type':'error','time':497}\n",
+      "{'testID':0,'result':'error','hidden':false,'type':'testDone','time':499}\n",
+      "{'test':{'id':1,'name':'loading another_bad_test.dart','groupIDs':[],'metadata':{'skip':false,'skipReason':null}},'type':'testStart','time':0}\n",
+      "{'testID':1,'message':'some output\\n','type':'print','time':30}\n",
+      "{'testID':1,'error':'Failed to load \\\"another_bad_test.dart\\\"','stackTrace':'some stack','isFailure':false,'type':'error','time':497}\n",
+      "{'testID':1,'result':'error','hidden':true,'type':'testDone','time':499}\n",
+      "{'success':false,'type':'done','time':500}\n", "\n", "Process finished with exit code 1\n",
+    };
+    String[] signals = {
+      "start loading formatter_test.dart",
+      "fail loading formatter_test.dart true",
+      "print loading formatter_test.dart 2nd failure message\n",
+      "print loading formatter_test.dart 3rd failure message\n",
+      "print loading formatter_test.dart 3rd stack trace\n",
+      "finish loading formatter_test.dart",
+      "start loading another_bad_test.dart",
+      "print loading another_bad_test.dart some output\n",
+      "fail loading another_bad_test.dart true",
+      "print loading another_bad_test.dart some stack\n",
+      "finish loading another_bad_test.dart"
+    };
     runTest(events, signals, new int[]{});
   }
 
@@ -279,15 +295,15 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "skip skipped test skip reason",
       "finish skipped test",
       "start standard TestFailure",
-      "print standard TestFailure \nin standard TestFailure test\n",
+      "print standard TestFailure in standard TestFailure test\n",
       "finish standard TestFailure",
       "suite finished sub group 2",
       "start unexpected error",
-      "print unexpected error \nin unexpected error test\n",
+      "print unexpected error in unexpected error test\n",
       "finish unexpected error",
       "suite finished some group",
       "start passing test 3",
-      "print passing test 3 \nin passing test\n",
+      "print passing test 3 in passing test\n",
       "finish passing test 3",
       "suite finished foo_test.dart"
     };

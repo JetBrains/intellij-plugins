@@ -56,7 +56,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String JSON_PARENT_ID = "parentID";
   private static final String JSON_GROUP_IDS = "groupIDs";
   private static final String JSON_RESULT = "result";
-  private static final String JSON_HIDDEN = "hidden";
   private static final String JSON_MILLIS = "time";
   private static final String JSON_COUNT = "count";
   private static final String JSON_TEST_COUNT = "testCount";
@@ -71,10 +70,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final String RESULT_FAILURE = "failure";
   private static final String RESULT_ERROR = "error";
 
-  private static final String NEWLINE = "\n";
   private static final String EXPECTED = "Expected: ";
   private static final Pattern EXPECTED_ACTUAL_RESULT = Pattern.compile("\\nExpected: (.*)\\n  Actual: (.*)\\n *\\^\\n Differ.*\\n");
-  private static final String FAILED_TO_LOAD = "Failed to load ";
   private static final String FILE_URL_PREFIX = "dart_location://";
   private static final String LOADING_PREFIX = "loading ";
   private static final String COMPILING_PREFIX = "compiling ";
@@ -82,7 +79,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   private static final Gson GSON = new Gson();
 
   private String myLocation;
-  private boolean myOutputAppeared = false;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
   private TIntLongHashMap myTestIdToTimestamp;
@@ -116,8 +112,13 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
     catch (JsonSyntaxException ex) {
       if (text.contains("\"json\" is not an allowed value for option \"reporter\"")) {
-        failedToLoad("Please update your pubspec.yaml dependency on package:test to version 0.12.7 or later.", 0);
+        final ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted("Failed to start");
+        final ServiceMessageBuilder testFailed = ServiceMessageBuilder.testFailed("Failed to start");
+        testFailed.addAttribute("message", "Please update your pubspec.yaml dependency on package:test to version 0.12.9 or later.");
+        final ServiceMessageBuilder testFinished = ServiceMessageBuilder.testFinished("Failed to start");
+        return finishMessage(testStarted, 1, 0) & finishMessage(testFailed, 1, 0) & finishMessage(testFinished, 1, 0);
       }
+
       return doProcessServiceMessages(text);
     }
     if (elem == null || !elem.isJsonObject()) return false;
@@ -164,11 +165,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handleTestStart(JsonObject obj) throws ParseException {
-    JsonObject testObj = obj.getAsJsonObject(DEF_TEST);
+    final JsonObject testObj = obj.getAsJsonObject(DEF_TEST);
+
     // Not reached if testObj == null.
-    Test test = getTest(obj);
+    final Test test = getTest(obj);
+    myTestIdToTimestamp.put(test.getId(), getTimestamp(obj));
+
     if (test.getParent() == null && (test.getName().startsWith(LOADING_PREFIX) || test.getName().startsWith(COMPILING_PREFIX))) {
       // Virtual test that represents loading or compiling a test suite. See lib/src/runner/loader.dart -> Loader.loadFile() in pkg/test source code
+      // At this point we do not report anything to the framework, but if error occurs, we'll report it as a normal test
       String path = "";
 
       if (test.getName().startsWith(LOADING_PREFIX)) {
@@ -179,19 +184,20 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
       }
 
       if (path.length() > 0) myLocation = FILE_URL_PREFIX + path;
+
+      test.myTestStartReported = false;
       return true;
     }
 
-    String testName = test.getBaseName();
-    ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(testName);
-    myTestIdToTimestamp.put(test.getId(), getTimestamp(obj));
+    final ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(test.getBaseName());
+    test.myTestStartReported = true;
+
     addLocationHint(testStarted, test);
-    myOutputAppeared = false;
     boolean result = finishMessage(testStarted, test.getId(), test.getValidParentId());
 
-    Metadata metadata = Metadata.from(testObj.getAsJsonObject(DEF_METADATA));
+    final Metadata metadata = Metadata.from(testObj.getAsJsonObject(DEF_METADATA));
     if (metadata.skip) {
-      ServiceMessageBuilder message = ServiceMessageBuilder.testIgnored(testName);
+      final ServiceMessageBuilder message = ServiceMessageBuilder.testIgnored(test.getBaseName());
       if (metadata.skipReason != null) message.addAttribute("message", metadata.skipReason);
       result &= finishMessage(message, test.getId(), test.getValidParentId());
     }
@@ -200,13 +206,15 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handleTestDone(JsonObject obj) throws ParseException {
-    if (getBoolean(obj, JSON_HIDDEN)) return true;
+    final Test test = getTest(obj);
+
+    if (!test.myTestStartReported) return true;
+
     String result = getResult(obj);
     if (!result.equals(RESULT_SUCCESS) && !result.equals(RESULT_FAILURE) && !result.equals(RESULT_ERROR)) {
       throw new ParseException("Unknown result: " + obj, 0);
     }
 
-    Test test = getTest(obj);
     test.testDone();
 
     //if (test.getMetadata().skip) return true; // skipped tests are reported as ignored in handleTestStart(). testFinished signal must follow
@@ -253,69 +261,85 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private boolean handleError(JsonObject obj) throws ParseException {
-    String message = getErrorMessage(obj);
-    if (message.startsWith(FAILED_TO_LOAD)) {
-      // An error due to loading failure probably was preceded by a start event that was not recorded since it is not a test.
-      JsonElement elem = obj.get(JSON_TEST_ID);
-      if (elem != null &&
-          elem.isJsonPrimitive() &&
-          (myTestData.get(elem.getAsInt()) == null || !myTestData.get(elem.getAsInt()).hasValidParent())) {
-        return failedToLoad(message, elem.getAsInt());
-      }
+    final Test test = getTest(obj);
+    final String message = getErrorMessage(obj);
+    boolean result = true;
+
+    if (!test.myTestStartReported) {
+      final ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(test.getBaseName());
+      test.myTestStartReported = true;
+      result = finishMessage(testStarted, test.getId(), test.getValidParentId());
     }
 
-    Test test = getTest(obj);
-    final ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
+    if (test.myTestErrorReported) {
+      final ServiceMessageBuilder testErrorMessage = ServiceMessageBuilder.testStdErr(test.getBaseName());
+      testErrorMessage.addAttribute("out", appendLineBreakIfNeeded(message));
+      result &= finishMessage(testErrorMessage, test.getId(), test.getValidParentId());
+    }
+    else {
+      final ServiceMessageBuilder testError = ServiceMessageBuilder.testFailed(test.getBaseName());
+      test.myTestErrorReported = true;
 
-    String failureMessage = message;
-    int firstExpectedIndex = message.indexOf(EXPECTED);
-    if (firstExpectedIndex >= 0) {
-      Matcher matcher = EXPECTED_ACTUAL_RESULT.matcher(message);
-      if (matcher.find(firstExpectedIndex + EXPECTED.length())) {
-        String expectedText = matcher.group(1);
-        String actualText = matcher.group(2);
-        testError.addAttribute("expected", expectedText);
-        testError.addAttribute("actual", actualText);
-        if (firstExpectedIndex == 0) {
-          failureMessage = "Comparison failed";
-        }
-        else {
-          failureMessage = message.substring(0, firstExpectedIndex);
+      String failureMessage = message;
+      int firstExpectedIndex = message.indexOf(EXPECTED);
+      if (firstExpectedIndex >= 0) {
+        Matcher matcher = EXPECTED_ACTUAL_RESULT.matcher(message);
+        if (matcher.find(firstExpectedIndex + EXPECTED.length())) {
+          String expectedText = matcher.group(1);
+          String actualText = matcher.group(2);
+          testError.addAttribute("expected", expectedText);
+          testError.addAttribute("actual", actualText);
+          if (firstExpectedIndex == 0) {
+            failureMessage = "Comparison failed";
+          }
+          else {
+            failureMessage = message.substring(0, firstExpectedIndex);
+          }
         }
       }
+
+      if (!getBoolean(obj, JSON_IS_FAILURE)) testError.addAttribute("error", "true");
+      testError.addAttribute("message", appendLineBreakIfNeeded(failureMessage));
+
+      result &= finishMessage(testError, test.getId(), test.getValidParentId());
     }
 
-    // The stack trace could be null, but we disallow that for consistency with all the transmitted values.
-    if (!getBoolean(obj, JSON_IS_FAILURE)) testError.addAttribute("error", "true");
-    testError.addAttribute("message", failureMessage + NEWLINE);
+    final String stackTrace = getStackTrace(obj);
+    if (!StringUtil.isEmptyOrSpaces(stackTrace)) {
+      final ServiceMessageBuilder stackTraceMessage = ServiceMessageBuilder.testStdErr(test.getBaseName());
+      stackTraceMessage.addAttribute("out", appendLineBreakIfNeeded(stackTrace));
+      result &= finishMessage(stackTraceMessage, test.getId(), test.getValidParentId());
+    }
 
-    final ServiceMessageBuilder testStdErr = ServiceMessageBuilder.testStdErr(test.getBaseName());
-    testStdErr.addAttribute("out", getStackTrace(obj));
+    return result;
+  }
 
-    return finishMessage(testError, test.getId(), test.getValidParentId()) &&
-           finishMessage(testStdErr, test.getId(), test.getValidParentId());
+  @NotNull
+  private static String appendLineBreakIfNeeded(@NotNull final String message) {
+    return message.endsWith("\n") ? message : message + "\n";
   }
 
   private boolean handleAllSuites(JsonObject obj) {
-    JsonElement elem = obj.get(JSON_TEST_COUNT);
+    JsonElement elem = obj.get(JSON_COUNT);
     if (elem == null || !elem.isJsonPrimitive()) return true;
     mySuitCount = elem.getAsInt();
     return true;
   }
 
   private boolean handlePrint(JsonObject obj) throws ParseException {
-    Test test = getTest(obj);
+    final Test test = getTest(obj);
+    boolean result = true;
+
+    if (!test.myTestStartReported) {
+      final ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted(test.getBaseName());
+      test.myTestStartReported = true;
+      result = finishMessage(testStarted, test.getId(), test.getValidParentId());
+    }
+
     ServiceMessageBuilder message = ServiceMessageBuilder.testStdOut(test.getBaseName());
-    String out;
-    if (myOutputAppeared) {
-      out = getMessage(obj) + NEWLINE;
-    }
-    else {
-      out = NEWLINE + getMessage(obj) + NEWLINE;
-    }
-    message.addAttribute("out", out);
-    myOutputAppeared = true;
-    return finishMessage(message, test.getId(), test.getValidParentId());
+    message.addAttribute("out", appendLineBreakIfNeeded(getMessage(obj)));
+
+    return result & finishMessage(message, test.getId(), test.getValidParentId());
   }
 
   private boolean handleStart(JsonObject obj) throws ParseException {
@@ -368,16 +392,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     msg.addAttribute("nodeId", String.valueOf(testId));
     msg.addAttribute("parentNodeId", String.valueOf(parentId));
     return doProcessServiceMessages(msg.toString());
-  }
-
-  private boolean failedToLoad(String message, int testId) throws ParseException {
-    int syntheticTestId = testId + 1;
-    ServiceMessageBuilder testStarted = ServiceMessageBuilder.testStarted("Failed to load");
-    finishMessage(testStarted, syntheticTestId, 0);
-    ServiceMessageBuilder testFailed = ServiceMessageBuilder.testFailed("Failed to load");
-    testFailed.addAttribute("message", message);
-    finishMessage(testFailed, syntheticTestId, 0);
-    return true;
   }
 
   private void addLocationHint(ServiceMessageBuilder messageBuilder, Item item) {
@@ -544,6 +558,17 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     String getBaseName() {
+      // Virtual test that represents loading or compiling a test suite. See lib/src/runner/loader.dart -> Loader.loadFile() in pkg/test source code
+      if (this instanceof Test && getParent() == null) {
+        if (myName.startsWith(LOADING_PREFIX)) {
+          return LOADING_PREFIX + PathUtil.getFileName(myName.substring(LOADING_PREFIX.length()));
+        }
+        else if (myName.startsWith(COMPILING_PREFIX)) {
+          return COMPILING_PREFIX + PathUtil.getFileName(myName.substring(COMPILING_PREFIX.length()));
+        }
+        return myName; // can't happen
+      }
+
       // file-level group
       if (this instanceof Group && NO_NAME.equals(myName) && myParent == null && hasSuite()) {
         return PathUtil.getFileName(getSuite().getPath());
@@ -621,7 +646,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private static class Test extends Item {
-    private boolean isRunning = true;
+    private boolean myTestStartReported = false;
+    private boolean myTestErrorReported = false;
 
     static Test from(JsonObject obj, Map<Integer, Group> groups, Map<Integer, Suite> suites) {
       int[] groupIds = GSON.fromJson(obj.get(JSON_GROUP_IDS), (Type)int[].class);
@@ -638,8 +664,6 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     public void testDone() {
-      isRunning = false;
-
       if (getParent() != null) {
         getParent().incDoneTestsCount();
       }
@@ -730,8 +754,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
   }
 
   private static class Metadata {
-    private boolean skip; // GSON needs name in JSON string.
-    private String skipReason; // GSON needs name in JSON string.
+    @SuppressWarnings("unused") private boolean skip; // assigned by GSON via reflection
+    @SuppressWarnings("unused") private String skipReason; // assigned by GSON via reflection
 
     static Metadata from(JsonElement elem) {
       if (elem == null) return new Metadata();
