@@ -136,7 +136,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             final PsiElement viewsProperty = mustBeObject.getParent();
             if (viewsProperty instanceof JSProperty && "views".equals(((JSProperty)viewsProperty).getName())) {
               // by now will not go further todo other cases
-              return true;
+              return AngularIndexUtil.hasAngularJS(property.getProject());
             }
           }
         }
@@ -157,7 +157,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         final XmlAttributeValue attributeValue = (XmlAttributeValue)element;
         final PsiElement parent = attributeValue.getParent();
         if (parent instanceof XmlAttribute && "ui-sref".equals(((XmlAttribute)parent).getName())) {
-          return true;
+          return AngularIndexUtil.hasAngularJS(attributeValue.getProject());
         }
         return false;
       }
