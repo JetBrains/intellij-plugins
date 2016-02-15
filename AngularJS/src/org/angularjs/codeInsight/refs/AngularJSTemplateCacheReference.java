@@ -8,7 +8,6 @@ import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ArrayUtil;
@@ -58,14 +57,6 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
       });
     }
 
-    if (result.isNull()) {
-      final String normalized = id.replace('\\', '/');
-      final String[] parts = normalized.split("/");
-      final PsiFile[] filesByName = FilenameIndex.getFilesByName(project, parts[parts.length - 1], GlobalSearchScope.projectScope(project));
-      for (PsiFile file : filesByName) {
-        if (file.getVirtualFile().getPath().endsWith(normalized)) return file;
-      }
-    }
     return result.get();
   }
 }
