@@ -98,6 +98,7 @@ public class DartConsoleFilterTest extends TestCase {
     doNegativeRelativePathsFilterTest("foo.dart 4:x");
 
     doPositiveRelativePathsFilterTest("foo.dart 1:1", "foo.dart", 0, 0);
+    doPositiveRelativePathsFilterTest("foo.dart line 5 pos 9:z", "foo.dart", 4, 8);
     doPositiveRelativePathsFilterTest("../foo\\bar.dart 4:15 x", "../foo\\bar.dart", 3, 14);
     doPositiveRelativePathsFilterTest("web\\foo.dart:566:1:", "web\\foo.dart", 565, 0);
   }
