@@ -59,11 +59,11 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     final VirtualFile dotPackagesFile = pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
     if (dotPackagesFile == null) {
-      return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pub.get.never.done.for.0", projectName));
+      return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pub.get.never.done"));
     }
 
     if (FileDocumentManager.getInstance().isFileModified(pubspecFile) || pubspecFile.getTimeStamp() > dotPackagesFile.getTimeStamp()) {
-      return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pubspec.edited.in.0", projectName));
+      return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pubspec.edited"));
     }
 
     return null;
