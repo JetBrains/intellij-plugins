@@ -5,9 +5,7 @@ import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -118,9 +116,21 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     final PsiReference reference = element.getReference();
     Assert.assertEquals(state, reference.getCanonicalText());
 
-    final PsiElement resolve = reference.resolve();
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("appStates.js", resolve.getContainingFile().getName());
-    Assert.assertEquals(referencedTextExpected, StringUtil.unquoteString(resolve.getNavigationElement().getText()));
+    final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
+    if (results.length > 1) {
+      for (ResolveResult result : results) {
+        final PsiElement resolvedElement = result.getElement();
+        Assert.assertEquals("appStates.js", resolvedElement.getContainingFile().getName());
+        if (StringUtil.equals(referencedTextExpected, StringUtil.unquoteString(resolvedElement.getNavigationElement().getText()))) {
+          return;
+        }
+      }
+      Assert.assertTrue(false);
+    } else {
+      final PsiElement resolve = reference.resolve();
+      Assert.assertNotNull(state, resolve);
+      Assert.assertEquals("appStates.js", resolve.getContainingFile().getName());
+      Assert.assertEquals(referencedTextExpected, StringUtil.unquoteString(resolve.getNavigationElement().getText()));
+    }
   }
 }

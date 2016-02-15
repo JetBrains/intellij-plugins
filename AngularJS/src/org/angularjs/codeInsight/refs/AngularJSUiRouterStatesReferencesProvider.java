@@ -10,8 +10,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.Processor;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularUiRouterStatesIndex;
 import org.jetbrains.annotations.NotNull;
@@ -52,10 +52,11 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
 
       final List<ResolveResult> list = new ArrayList<ResolveResult>();
       AngularIndexUtil.multiResolve(myElement.getProject(), AngularUiRouterStatesIndex.KEY, id,
-                                    new Consumer<JSImplicitElement>() {
+                                    new Processor<JSImplicitElement>() {
                                       @Override
-                                      public void consume(JSImplicitElement element) {
+                                      public boolean process(JSImplicitElement element) {
                                         list.add(new JSResolveResult(element));
+                                        return true;
                                       }
                                     });
       return list.toArray(new ResolveResult[list.size()]);
