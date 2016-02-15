@@ -27,7 +27,6 @@ import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
-import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +93,10 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     final String targetName = params.getTargetName();
     final String testRunnerOptions = params.getTestRunnerOptions();
 
-    if (projectWithoutPubspec && params.getScope() == Scope.FOLDER && targetName != null && !targetName.isEmpty()) {
+    if (projectWithoutPubspec &&
+        params.getScope() == DartTestRunnerParameters.Scope.FOLDER &&
+        targetName != null &&
+        !targetName.isEmpty()) {
       builder.append(" ").append(":").append(targetName).append(" ").append(EXPANDED_REPORTER_OPTION);
       if (testRunnerOptions != null && !testRunnerOptions.isEmpty()) {
         builder.append(" ").append(testRunnerOptions);
@@ -108,9 +110,11 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       }
       builder.append(' ').append(params.getFilePath());
 
-      String testName = params.getTestName();
-      if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
-        builder.append(" -N \"").append(testName).append("\"");
+      String groupOrTestName = params.getTestName();
+      if (groupOrTestName != null &&
+          !groupOrTestName.isEmpty() &&
+          params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
+        builder.append(" -N \"").append(groupOrTestName).append("\"");
       }
     }
 

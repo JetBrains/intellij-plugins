@@ -12,7 +12,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer;
-import com.jetbrains.lang.dart.ide.runner.util.Scope;
 import com.jetbrains.lang.dart.ide.runner.util.TestUtil;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartFile;
@@ -66,7 +65,8 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
 
     return Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
            Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
-           (!existingParams.getScope().expectsTestName() || Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
+           (existingParams.getScope() != DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME ||
+            Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
   }
 
   private static boolean setupRunnerParametersForFolderIfApplicable(@NotNull final Project project,
@@ -96,7 +96,7 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
       dir = dir.getParent(); // anyway test engine looks for tests in 'test' subfolder only
     }
 
-    params.setScope(Scope.FOLDER);
+    params.setScope(DartTestRunnerParameters.Scope.FOLDER);
     params.setFilePath(dir.getPath());
     return true;
   }
@@ -136,14 +136,14 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
   private static boolean setupRunnerParametersForFile(@NotNull final DartTestRunnerParameters runnerParams,
                                                       @NotNull final PsiElement psiElement) {
     if (psiElement instanceof DartCallExpression) {
-      final String testName = TestUtil.findTestName((DartCallExpression)psiElement);
+      final String testName = TestUtil.findGroupOrTestName((DartCallExpression)psiElement);
       final List<VirtualFile> virtualFiles = DartResolveUtil.findLibrary(psiElement.getContainingFile());
       if (testName == null || virtualFiles.isEmpty()) {
         return false;
       }
 
       runnerParams.setTestName(testName);
-      runnerParams.setScope(TestUtil.isTest((DartCallExpression)psiElement) ? Scope.METHOD : Scope.GROUP);
+      runnerParams.setScope(DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME);
       final VirtualFile dartFile = virtualFiles.iterator().next();
       final String dartFilePath = dartFile.getPath();
       runnerParams.setFilePath(dartFilePath);
@@ -158,7 +158,7 @@ public class DartTestRunConfigurationProducer extends RunConfigurationProducer<D
         }
 
         runnerParams.setTestName(DartResolveUtil.getLibraryName((DartFile)psiElement));
-        runnerParams.setScope(Scope.FILE);
+        runnerParams.setScope(DartTestRunnerParameters.Scope.FILE);
         final String dartFilePath = FileUtil.toSystemIndependentName(virtualFile.getPath());
         runnerParams.setFilePath(dartFilePath);
         return true;

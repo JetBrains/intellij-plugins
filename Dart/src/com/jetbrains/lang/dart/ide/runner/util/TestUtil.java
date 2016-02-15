@@ -3,8 +3,6 @@ package com.jetbrains.lang.dart.ide.runner.util;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PathUtil;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartArgumentList;
 import com.jetbrains.lang.dart.psi.DartArguments;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
@@ -15,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class TestUtil {
 
   @Nullable
-  public static String findTestName(@Nullable DartCallExpression expression) {
+  public static String findGroupOrTestName(@Nullable final DartCallExpression expression) {
     String testName;
     final DartArguments arguments = expression == null ? null : expression.getArguments();
     final DartArgumentList dartArgumentList = arguments == null ? null : arguments.getArgumentList();
@@ -49,37 +47,5 @@ public class TestUtil {
 
   private static boolean checkCalledFunctionName(@NotNull final DartCallExpression callExpression, @NotNull final String expectedName) {
     return expectedName.equals(callExpression.getExpression().getText());
-  }
-
-  public static String suggestedName(@Nullable final String path, @NotNull final Scope scope, @Nullable final String testName) {
-    if (path != null) {
-      final String fileOrDirName = PathUtil.getFileName(path);
-      switch (scope) {
-        case METHOD:
-          if (testName != null) {
-            return DartBundle.message("test.0.in.1", testName, fileOrDirName);
-          }
-          // fall through
-        case GROUP:
-          if (testName != null) {
-            return DartBundle.message("test.group.0.in.1", testName, fileOrDirName);
-          }
-          // fall through
-        case FILE:
-          return DartBundle.message("all.tests.in.0", fileOrDirName);
-        case FOLDER:
-          final String dirName;
-          if ("test".equals(fileOrDirName)) {
-            final String parentPath = PathUtil.getParentPath(path);
-            final String parentDirName = PathUtil.getFileName(parentPath);
-            dirName = parentDirName.isEmpty() ? fileOrDirName : parentDirName + "/" + fileOrDirName;
-          }
-          else {
-            dirName = fileOrDirName;
-          }
-          return DartBundle.message("all.tests.in.0", dirName);
-      }
-    }
-    return null;
   }
 }

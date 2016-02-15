@@ -29,7 +29,7 @@
         </constraints>
         <properties>
           <labelFor value="49d21"/>
-          <text value="Test &amp;name:"/>
+          <text value="Group or test &amp;name:"/>
         </properties>
       </component>
       <component id="49d21" class="javax.swing.JTextField" binding="myTestNameField">
@@ -50,9 +50,7 @@
       </component>
       <component id="54f57" class="javax.swing.JComboBox" binding="myScopeCombo">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="100" height="-1"/>
-          </grid>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
@@ -67,7 +65,7 @@
         </constraints>
         <properties>
           <labelFor value="54f57"/>
-          <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dart.unit.scope"/>
+          <text value="Test &amp;mode:"/>
         </properties>
       </component>
       <vspacer id="f1014">
@@ -87,7 +85,7 @@
         </constraints>
         <properties>
           <labelFor value="ad4e9"/>
-          <text value="Test &amp;directory:"/>
+          <text value="Test &amp;folder:"/>
         </properties>
       </component>
       <component id="3ea6e" class="javax.swing.JLabel" binding="myTargetNameLabel">
