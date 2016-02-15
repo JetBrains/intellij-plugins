@@ -42,7 +42,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     invoke(project, editor, file, editor.getCaretModel().getOffset());
   }
 
-  public void invoke(Project project, Editor editor, PsiFile file, int offset) {
+  public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, final int offset) {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
     final DartClass dartClass = PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
     if (dartClass == null) return;
@@ -177,10 +177,10 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     return true;
   }
 
-  protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(final Project project,
-                                                                          final DartClass dartClass,
-                                                                          final Collection<DartComponent> candidates,
-                                                                          String title) {
+  protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(@NotNull final Project project,
+                                                                          @NotNull final DartClass dartClass,
+                                                                          @NotNull final Collection<DartComponent> candidates,
+                                                                          @NotNull final String title) {
     final MemberChooser<DartNamedElementNode> chooser =
       new MemberChooser<DartNamedElementNode>(ContainerUtil.map(candidates, new Function<DartComponent, DartNamedElementNode>() {
         @Override

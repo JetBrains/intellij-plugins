@@ -7,6 +7,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,20 +21,22 @@ public class DartOverrideMethodHandler extends BaseDartGenerateHandler {
   }
 
   @Override
-  protected void collectCandidates(DartClass dartClass, List<DartComponent> candidates) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
+    return new OverrideImplementMethodFix(dartClass, false);
+  }
+
+  @Override
+  protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
     Map<Pair<String, Boolean>, DartComponent> result =
       new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
     result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
     candidates.addAll(ContainerUtil.findAll(result.values(), new Condition<DartComponent>() {
       @Override
-      public boolean value(DartComponent component) {
-        return component.isPublic() && DartComponentType.typeOf(component) != DartComponentType.FIELD;
+      public boolean value(final DartComponent component) {
+        return DartComponentType.typeOf(component) != DartComponentType.FIELD &&
+               (component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component));
       }
     }));
   }
 
-  @Override
-  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
-    return new OverrideImplementMethodFix(dartClass, false);
-  }
 }

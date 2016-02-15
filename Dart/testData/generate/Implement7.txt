@@ -1,0 +1,37 @@
+abstract class A {
+  somePublicMethod();
+  _somePrivateMethod();
+  var a;
+  int b;
+  double d, e;
+  final int f = 1;
+}
+
+class B implements A {
+
+  @override
+  somePublicMethod() {
+    
+  }
+  @override
+  final int f = null;
+
+  @override
+  var e;
+
+  @override
+  double d;
+
+  @override
+  int b;
+
+  @override
+  var a;
+
+
+  @override
+  _somePrivateMethod() {
+    
+  }
+
+}

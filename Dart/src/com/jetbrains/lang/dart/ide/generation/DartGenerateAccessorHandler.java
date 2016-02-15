@@ -24,7 +24,7 @@ public abstract class DartGenerateAccessorHandler extends BaseDartGenerateHandle
   }
 
   @Override
-  protected void collectCandidates(final DartClass dartClass, List<DartComponent> candidates) {
+  protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
     final List<DartComponent> subComponents = DartResolveUtil.getNamedSubComponents(dartClass);
 
     candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, true).values(), new Condition<DartComponent>() {
