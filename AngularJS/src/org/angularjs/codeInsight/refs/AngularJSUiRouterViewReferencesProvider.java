@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
@@ -82,7 +83,8 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
       final PsiElement object = myElement.getParent() instanceof JSProperty ? ((JSProperty)myElement.getParent()).getValue() : null;
       if (object instanceof JSObjectLiteralExpression) {
         final JSProperty templateUrl = ((JSObjectLiteralExpression)object).findProperty("templateUrl");
-        if (templateUrl != null && templateUrl.getValue() != null) {
+        if (templateUrl != null && templateUrl.getValue() != null && templateUrl.getValue() instanceof JSLiteralExpression
+            && ((JSLiteralExpression)templateUrl.getValue()).isQuotedLiteral()) {
           String templateUrlText = StringUtil.unquoteString(templateUrl.getValue().getText());
           if (!StringUtil.isEmptyOrSpaces(templateUrlText)) {
             templateUrlText = templateUrlText.trim().replace('\\', '/');
