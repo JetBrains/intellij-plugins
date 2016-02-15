@@ -103,17 +103,17 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
                                                               @NotNull CssElementDescriptorFactory2 descriptorFactory,
                                                               @NotNull CssGroupValue parent) {
     CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
-    attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, 1, 1, attributeValue));
+    attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, attributeName, 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createStringValueDescriptor(null, 1, 1, attributeValue));
     return attributeValue;
   }
   
   private static CssGroupValue createBooleanAttributeValueDescriptor(@NotNull String attributeName, boolean required,
-                                                              @NotNull CssElementDescriptorFactory2 descriptorFactory,
-                                                              @NotNull CssGroupValue parent) {
+                                                                     @NotNull CssElementDescriptorFactory2 descriptorFactory,
+                                                                     @NotNull CssGroupValue parent) {
     CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
-    attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, 1, 1, attributeValue));
+    attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, attributeName, 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
     
     CssGroupValue booleanValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, attributeValue, null);
@@ -212,7 +212,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         if (module != null) {
           final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
           if (jsClass != null) {
-            String classOrFileName = findJsClassOrFile(jsClass, ContainerUtil.<JSClass>newLinkedHashSet(), allNames);
+            String classOrFileName = findJsClassOrFile(jsClass, ContainerUtil.newLinkedHashSet(), allNames);
             if (classOrFileName != null) {
               namesFromSelectors.add(classOrFileName);
             }
@@ -224,7 +224,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
         for (PsiElement element : elements) {
           if (element instanceof JSClass) {
-            String classOrFileName = findJsClassOrFile((JSClass)element, ContainerUtil.<JSClass>newLinkedHashSet(), allNames);
+            String classOrFileName = findJsClassOrFile((JSClass)element, ContainerUtil.newLinkedHashSet(), allNames);
             if (classOrFileName != null) {
               namesFromSelectors.add(classOrFileName);
             }
