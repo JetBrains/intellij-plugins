@@ -10,5 +10,4 @@ class Foo extends I {
   set foo(x) {
     <caret>
   }
-
 }

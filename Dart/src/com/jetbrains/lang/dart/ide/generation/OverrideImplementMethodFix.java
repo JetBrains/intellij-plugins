@@ -62,7 +62,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
         template.addTextSegment(" ");
         template.addTextSegment("null");
       }
-      template.addTextSegment(";\n");
+      template.addTextSegment("; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
       return template;
     }
 
@@ -82,7 +82,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     }
     template.addTextSegment("{\n");
     template.addEndVariable();
-    template.addTextSegment("\n}\n");
+    template.addTextSegment("\n} "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     return template;
   }
 }

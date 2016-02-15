@@ -7,5 +7,4 @@ class ToString extends Foo {
   String toString() {
     return 'ToString{str1: $str1, str2: $str2, i: $i}';
   }<caret>
-
 }

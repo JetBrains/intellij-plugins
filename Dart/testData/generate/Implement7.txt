@@ -15,23 +15,17 @@ class B implements A {
   }
   @override
   final int f = null;
-
   @override
   var e;
-
   @override
   double d;
-
   @override
   int b;
-
   @override
   var a;
-
 
   @override
   _somePrivateMethod() {
     
   }
-
 }

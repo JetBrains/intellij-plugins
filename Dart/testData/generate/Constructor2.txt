@@ -3,5 +3,4 @@ class IntValue {
   static var s;
 
   IntValue(this._value);<caret>
-
 }

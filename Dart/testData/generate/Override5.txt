@@ -21,16 +21,13 @@ class C extends B {
     
   }
 
-
   @override
   publicMethodInB() {
     
   }
 
-
   @override
   _privateMethodInA() {
     
   }
-
 }

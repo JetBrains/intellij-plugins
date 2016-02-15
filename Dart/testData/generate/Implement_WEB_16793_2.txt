@@ -11,5 +11,4 @@ class Dog implements Animal {
     <caret>
   }
 
-
 }

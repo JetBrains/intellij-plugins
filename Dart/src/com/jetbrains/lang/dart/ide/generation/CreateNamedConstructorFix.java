@@ -64,7 +64,7 @@ public class CreateNamedConstructorFix extends BaseCreateMethodsFix<DartComponen
     }
     template.addTextSegment(");");
     template.addEndVariable();
-    template.addTextSegment("\n");
+    template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     return template;
   }
 

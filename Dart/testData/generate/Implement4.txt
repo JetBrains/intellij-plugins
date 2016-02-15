@@ -13,5 +13,4 @@ class Foo implements I {
   set foo(x) {
     <caret>
   }
-
 }

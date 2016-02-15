@@ -3,5 +3,4 @@ class Point {
   num y;
 
   Point.name(this.x, this.y);<caret>
-
 }

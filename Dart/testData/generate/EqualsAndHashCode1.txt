@@ -19,5 +19,4 @@ class EqualsAndHashCode1 {
   int get hashCode {
     return str.hashCode ^ v.hashCode ^ i.hashCode;
   }<caret>
-
 }
