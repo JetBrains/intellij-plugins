@@ -1364,28 +1364,35 @@ public class DartAnalysisServerService {
                               debugStream);
       myServerSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
       myServerSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
-      myServer = new RemoteAnalysisServerImpl(myServerSocket);
+
+      final AnalysisServer startedServer = new RemoteAnalysisServerImpl(myServerSocket);
 
       try {
-        myServer.start();
-        myServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
+        startedServer.start();
+        startedServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
         if (Registry.is("dart.projects.without.pubspec", false)) {
-          myServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
+          startedServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         }
-        myServer.addAnalysisServerListener(myAnalysisServerListener);
+        startedServer.addAnalysisServerListener(myAnalysisServerListener);
 
-        myServer.addStatusListener(new AnalysisServerStatusListener() {
+        startedServer.addStatusListener(new AnalysisServerStatusListener() {
           @Override
           public void isAliveServer(boolean isAlive) {
             if (!isAlive) {
-              stopServer();
+              synchronized (myLock) {
+                if (startedServer == myServer) {
+                  stopServer();
+                }
+              }
             }
           }
         });
 
         mySdkVersion = sdk.getVersion();
 
-        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
+        startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
+
+        myServer = startedServer;
       }
       catch (Exception e) {
         LOG.warn("Failed to start Dart analysis server", e);
@@ -1445,14 +1452,8 @@ public class DartAnalysisServerService {
         }
       }
 
-      onServerStopped();
-    }
-  }
+      stopShowingServerProgress();
 
-  private void onServerStopped() {
-    stopShowingServerProgress();
-
-    synchronized (myLock) {
       myServerSocket = null;
       myServer = null;
       mySdkHome = null;
