@@ -95,6 +95,10 @@
 
       <codeInsight.parameterInfo language="CFML"
                                  implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlParameterInfoHandler"/>
+
+      <!-- moduleBuilder works in IntelliJ IDEA only -->
+      <moduleBuilder builderClass="com.intellij.coldFusion.projectWizard.CfmlModuleBuilder"/>
+
       <projectConfigurable groupId="language" instance="com.intellij.coldFusion.UI.config.CfmlProjectConfigurable"
                            id="reference.plugin.settings.project.settings.cfml" displayName="ColdFusion" nonDefaultProject="true"/>
       <projectService serviceInterface="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"

@@ -16,9 +16,14 @@
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.model.files.CfmlFileType;
+import com.intellij.coldFusion.projectWizard.CfmlModuleBuilder;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.WebModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -26,6 +31,7 @@ import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collection;
 
 /**
  * Created by Lera Nikolaenko
@@ -33,6 +39,7 @@ import javax.swing.*;
  */
 public class CfmlRunConfigurationType implements ConfigurationType {
   private ConfigurationFactory myConfigurationFactory;
+  private CfmlRunConfiguration myTemplateConfiguration;
 
   public CfmlRunConfigurationType() {
     myConfigurationFactory = new ConfigurationFactory(this) {
@@ -41,10 +48,17 @@ public class CfmlRunConfigurationType implements ConfigurationType {
         return FileTypeIndex.containsFileOfType(CfmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
 
-      public RunConfiguration createTemplateConfiguration(Project project) {
-        return new CfmlRunConfiguration(project, this, "Cold Fusion");
+      @NotNull
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+        CfmlRunConfiguration cfmlRunConfiguration = new CfmlRunConfiguration(project, this, "ColdFusion");
+        myTemplateConfiguration = cfmlRunConfiguration;
+        return cfmlRunConfiguration;
       }
     };
+  }
+
+  public CfmlRunConfiguration getTemplateConfiguration() {
+    return myTemplateConfiguration;
   }
 
   public String getDisplayName() {
@@ -59,6 +73,10 @@ public class CfmlRunConfigurationType implements ConfigurationType {
     return CFMLIcons.Cfml;
   }
 
+  public static CfmlRunConfigurationType getInstance() {
+    return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
+  }
+
   @NotNull
   public String getId() {
     return getConfigurationTypeDescription();
@@ -66,5 +84,9 @@ public class CfmlRunConfigurationType implements ConfigurationType {
 
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myConfigurationFactory};
+  }
+
+  public void setConfigurationFactory(ConfigurationFactory configurationFactory){
+    myConfigurationFactory = configurationFactory;
   }
 }

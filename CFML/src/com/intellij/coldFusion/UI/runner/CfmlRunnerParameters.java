@@ -23,7 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class CfmlRunnerParameters implements Cloneable {
   private String myUrl = "";
+  private String myPort = "";
+  private String myPageUrl = "";
   private WebBrowser myNonDefaultBrowser;
+
+  public final static String WWW_ROOT = "wwwroot";
 
   @Attribute("web_path")
   public String getUrl() {
@@ -33,6 +37,16 @@ public class CfmlRunnerParameters implements Cloneable {
   public void setUrl(@NotNull String url) {
     myUrl = url;
   }
+
+  @Attribute("web_port")
+  public String getPort() {
+    return myPort;
+  }
+
+  public void setPort(@NotNull String port) {
+    myPort = port;
+  }
+
 
   @Transient
   @Nullable
@@ -55,4 +69,11 @@ public class CfmlRunnerParameters implements Cloneable {
       return null;
     }
   }
+
+  public void setPageUrl(@NotNull String url) {
+    myPageUrl = url;
+  }
+
+  @Attribute("web_page")
+  public String getPageUrl() { return myPageUrl;}
 }
