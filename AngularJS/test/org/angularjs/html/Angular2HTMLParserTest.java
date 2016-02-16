@@ -36,7 +36,6 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
                          new HtmlInlineJSScriptTokenTypesProvider());
     registerExtensionPoint(StartTagEndTokenProvider.EP_NAME, StartTagEndTokenProvider.class);
     registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
-
   }
 
   public void testBinding() throws Exception {
@@ -44,6 +43,14 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
   }
 
   public void testEvent() throws Exception {
+    doTest(true);
+  }
+
+  public void testXmlText() throws Exception {
+    doTest(true);
+  }
+
+  public void testXmlAttribute() throws Exception {
     doTest(true);
   }
 }
