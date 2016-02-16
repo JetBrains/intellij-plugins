@@ -7,7 +7,7 @@ HtmlFile:xmlAttribute.html
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
       PsiElement(XML_ATTRIBUTE)
-        XmlToken:XML_NAME('style')
+        XmlToken:XML_NAME('lang')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
