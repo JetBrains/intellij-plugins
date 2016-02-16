@@ -16,25 +16,25 @@ import org.angularjs.AngularTestUtil;
 public class Angular2InterpolationsLexerTest extends LexerTestCase {
   public void testInterpolation() {
     doTest("{{interpolated}}", "XML_DATA_CHARACTERS ('{{')\n" +
-                               "JS:EMBEDDED_EXPRESSION ('interpolated')\n" +
+                               "EMBEDDED_CONTENT ('interpolated')\n" +
                                "XML_DATA_CHARACTERS ('}}')");
 
     doTest("{{interpolated}}{{again}}", "XML_DATA_CHARACTERS ('{{')\n" +
-                                        "JS:EMBEDDED_EXPRESSION ('interpolated')\n" +
+                                        "EMBEDDED_CONTENT ('interpolated')\n" +
                                         "XML_DATA_CHARACTERS ('}}{{')\n" +
-                                        "JS:EMBEDDED_EXPRESSION ('again')\n" +
+                                        "EMBEDDED_CONTENT ('again')\n" +
                                         "XML_DATA_CHARACTERS ('}}')");
 
     doTest("{{interpolated}}with{{text}}", "XML_DATA_CHARACTERS ('{{')\n" +
-                                           "JS:EMBEDDED_EXPRESSION ('interpolated')\n" +
+                                           "EMBEDDED_CONTENT ('interpolated')\n" +
                                            "XML_DATA_CHARACTERS ('}}with{{')\n" +
-                                           "JS:EMBEDDED_EXPRESSION ('text')\n" +
+                                           "EMBEDDED_CONTENT ('text')\n" +
                                            "XML_DATA_CHARACTERS ('}}')");
 
     doTest("more{{interpolated}}with{{text}}again", "XML_DATA_CHARACTERS ('more{{')\n" +
-                                                    "JS:EMBEDDED_EXPRESSION ('interpolated')\n" +
+                                                    "EMBEDDED_CONTENT ('interpolated')\n" +
                                                     "XML_DATA_CHARACTERS ('}}with{{')\n" +
-                                                    "JS:EMBEDDED_EXPRESSION ('text')\n" +
+                                                    "EMBEDDED_CONTENT ('text')\n" +
                                                     "XML_DATA_CHARACTERS ('}}again')");
   }
 
