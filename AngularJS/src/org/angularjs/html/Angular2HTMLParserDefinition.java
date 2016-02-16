@@ -1,9 +1,11 @@
 package org.angularjs.html;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.html.HTMLParserDefinition;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
@@ -20,6 +22,12 @@ public class Angular2HTMLParserDefinition extends HTMLParserDefinition {
   @Override
   public Lexer createLexer(Project project) {
     return new Angular2HTMLLexer();
+  }
+
+  @NotNull
+  @Override
+  public PsiElement createElement(ASTNode node) {
+    return super.createElement(node);
   }
 
   @Override
