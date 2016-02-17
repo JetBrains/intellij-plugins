@@ -16,6 +16,7 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
@@ -27,6 +28,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
@@ -131,12 +133,13 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(getEnvironment().getProject(), sdk, commandLine, myRunnerParameters, overriddenMainFilePath);
+    setupParameters(getEnvironment().getProject(), getEnvironment().getRunner(), sdk, commandLine, myRunnerParameters, overriddenMainFilePath);
 
     return commandLine;
   }
 
   private void setupParameters(@NotNull final Project project,
+                               @NotNull final ProgramRunner runner,
                                @NotNull final DartSdk sdk,
                                @NotNull final GeneralCommandLine commandLine,
                                @NotNull final DartCommandLineRunnerParameters runnerParameters,
@@ -199,7 +202,11 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
     else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
       myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
-      commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+      if (runner instanceof DartCoverageProgramRunner) {
+        commandLine.addParameter("--observe:" + myObservatoryPort);
+      } else {
+        commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+      }
     }
 
     commandLine.addParameter("--trace_service_pause_events");

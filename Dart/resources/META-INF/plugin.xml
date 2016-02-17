@@ -8,7 +8,8 @@
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
-
+  <depends optional="true" config-file="dart-coverage.xml">Coverage</depends>
+  <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
   <!-- Uncomment the following line when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
   <!--<depends>com.intellij.plugins.webcomponents</depends>-->
 

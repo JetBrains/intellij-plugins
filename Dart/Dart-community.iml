@@ -149,5 +149,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="coverage-common" />
   </component>
 </module>
