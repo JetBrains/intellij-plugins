@@ -41,8 +41,6 @@ import java.util.Set;
 public class DartCoverageEngine extends CoverageEngine {
   private static final Logger LOG = Logger.getInstance(DartCoverageEngine.class.getName());
 
-  public static final String ID = "DartCoverageEngine";
-
   public static final DartCoverageEngine INSTANCE = new DartCoverageEngine();
 
   @Override
@@ -165,6 +163,6 @@ public class DartCoverageEngine extends CoverageEngine {
 
   @Override
   public String getPresentableText() {
-    return ID;
+    return "Dart Coverage";
   }
 }

@@ -16,7 +16,6 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
@@ -105,7 +104,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
 
     // Commented out code is a workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
-    // The problem is not actula at the moment because Observatory is not turned on for tests
+    // The problem is not actual at the moment because Observatory is not turned on for tests
     //final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
     //  @Override
     //  public void coloredTextAvailable(String text, Key attributes) {
@@ -133,23 +132,19 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(getEnvironment().getProject(), getEnvironment().getRunner(), sdk, commandLine, myRunnerParameters, overriddenMainFilePath);
+    setupParameters(sdk, commandLine, overriddenMainFilePath);
 
     return commandLine;
   }
 
-  private void setupParameters(@NotNull final Project project,
-                               @NotNull final ProgramRunner runner,
-                               @NotNull final DartSdk sdk,
+  private void setupParameters(@NotNull final DartSdk sdk,
                                @NotNull final GeneralCommandLine commandLine,
-                               @NotNull final DartCommandLineRunnerParameters runnerParameters,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
-    // TODO Clean up dialog box and trim unused VM options here.
     commandLine.addParameter("--ignore-unrecognized-flags");
 
     int customObservatoryPort = -1;
 
-    final String vmOptions = runnerParameters.getVMOptions();
+    final String vmOptions = myRunnerParameters.getVMOptions();
     if (vmOptions != null) {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
@@ -168,19 +163,19 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
-    if (runnerParameters.isCheckedMode()) {
+    if (myRunnerParameters.isCheckedMode()) {
       commandLine.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
     }
 
     final VirtualFile dartFile;
     try {
-      dartFile = runnerParameters.getDartFileOrDirectory();
+      dartFile = myRunnerParameters.getDartFileOrDirectory();
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e);
     }
 
-    final VirtualFile packageRoot = DartUrlResolver.getInstance(project, dartFile).getPackageRoot();
+    final VirtualFile packageRoot = DartUrlResolver.getInstance(getEnvironment().getProject(), dartFile).getPackageRoot();
     if (packageRoot != null) {
       // more than one package root is not supported by the [SDK]/bin/dart tool
       commandLine.addParameter("--package-root=" + FileUtil.toSystemDependentName(packageRoot.getPath()));
@@ -202,10 +197,10 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
     else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
       myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
-      if (runner instanceof DartCoverageProgramRunner) {
-        commandLine.addParameter("--observe:" + myObservatoryPort);
-      } else {
-        commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+      commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+
+      if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
+        commandLine.addParameter("--pause-isolates-on-exit");
       }
     }
 
@@ -213,7 +208,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     commandLine.addParameter(FileUtil.toSystemDependentName(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath));
 
-    final String arguments = runnerParameters.getArguments();
+    final String arguments = myRunnerParameters.getArguments();
     if (arguments != null) {
       StringTokenizer argumentsTokenizer = new CommandLineTokenizer(arguments);
       while (argumentsTokenizer.hasMoreTokens()) {

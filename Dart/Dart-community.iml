@@ -109,6 +109,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="coverage-common" />
     <orderEntry type="library" name="Netty" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="gson" level="project" />
@@ -149,6 +150,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="coverage-common" />
   </component>
 </module>

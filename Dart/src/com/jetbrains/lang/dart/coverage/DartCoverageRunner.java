@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.SortedMap;
 
 public class DartCoverageRunner extends CoverageRunner {
+  private static final String ID = "DartCoverageRunner";
   private static final Logger LOG = Logger.getInstance(DartCoverageRunner.class.getName());
 
   @Nullable
@@ -70,7 +71,7 @@ public class DartCoverageRunner extends CoverageRunner {
         @Override
         public void run() {
           ProgressIndicator progress = pm.getProgressIndicator();
-          for (int i = 0; i < 10; ++i) {
+          for (int i = 0; i < 100; ++i) {
             if (progress.isCanceled() || coverageProcess.waitFor(100)) {
               return;
             }
@@ -139,19 +140,19 @@ public class DartCoverageRunner extends CoverageRunner {
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Dart Coverage";
+    return "Dart";
   }
 
   @NotNull
   @Override
   public String getId() {
-    return DartCoverageEngine.ID;
+    return ID;
   }
 
   @NotNull
   @Override
   public String getDataFileExtension() {
-    return "coverage";
+    return "json";
   }
 
   @Override
