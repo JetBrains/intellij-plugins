@@ -71,10 +71,7 @@ public class DartCoverageRunner extends CoverageRunner {
         public void run() {
           ProgressIndicator progress = pm.getProgressIndicator();
           for (int i = 0; i < 10; ++i) {
-            if (progress.isCanceled()) {
-              return;
-            }
-            if (coverageProcess.waitFor(100)) {
+            if (progress.isCanceled() || coverageProcess.waitFor(100)) {
               return;
             }
           }
