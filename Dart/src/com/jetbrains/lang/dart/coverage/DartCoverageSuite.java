@@ -19,21 +19,23 @@ import com.intellij.coverage.BaseCoverageSuite;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageFileProvider;
 import com.intellij.coverage.CoverageRunner;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartCoverageSuite extends BaseCoverageSuite {
-  @NotNull
-  private final DartCoverageEngine myCoverageEngine;
+  @NotNull private final DartCoverageEngine myCoverageEngine;
 
-  @Nullable
-  private final VirtualFile myContextFile;
+  @Nullable private final VirtualFile myContextFile;
+
+  @Nullable private final ProcessHandler myCoverageProcess;
 
   public DartCoverageSuite(@NotNull DartCoverageEngine coverageEngine) {
     myCoverageEngine = coverageEngine;
     myContextFile = null;
+    myCoverageProcess = null;
   }
 
   public DartCoverageSuite(CoverageRunner coverageRunner,
@@ -45,10 +47,12 @@ public class DartCoverageSuite extends BaseCoverageSuite {
                            boolean trackTestFolders,
                            final Project project,
                            @NotNull DartCoverageEngine dartCoverageEngine,
-                           @Nullable VirtualFile contextFile) {
+                           @Nullable VirtualFile contextFile,
+                           @Nullable ProcessHandler coverageProcess) {
     super(name, fileProvider, lastCoverageTimeStamp, coverageByTestEnabled, tracingEnabled, trackTestFolders, coverageRunner, project);
     myCoverageEngine = dartCoverageEngine;
     myContextFile = contextFile;
+    myCoverageProcess = coverageProcess;
   }
 
   @NotNull
@@ -60,5 +64,10 @@ public class DartCoverageSuite extends BaseCoverageSuite {
   @Nullable
   public VirtualFile getContextFile() {
     return myContextFile;
+  }
+
+  @Nullable
+  public ProcessHandler getCoverageProcess() {
+    return myCoverageProcess;
   }
 }

@@ -18,10 +18,23 @@ package com.jetbrains.lang.dart.coverage;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
+import com.intellij.execution.process.ProcessHandler;
+import org.jetbrains.annotations.Nullable;
 
 public class DartCoverageEnabledConfiguration extends CoverageEnabledConfiguration {
+  @Nullable private ProcessHandler coverageProcess;
+
   public DartCoverageEnabledConfiguration(RunConfigurationBase configuration) {
     super(configuration);
     setCoverageRunner(CoverageRunner.getInstance(DartCoverageRunner.class));
+  }
+
+  @Nullable
+  public ProcessHandler getCoverageProcess() {
+    return coverageProcess;
+  }
+
+  public void setCoverageProcess(@Nullable ProcessHandler coverageProcess) {
+    this.coverageProcess = coverageProcess;
   }
 }

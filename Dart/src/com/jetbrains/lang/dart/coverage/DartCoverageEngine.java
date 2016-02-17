@@ -83,11 +83,13 @@ public class DartCoverageEngine extends CoverageEngine {
                                            @NotNull CoverageFileProvider coverageDataFileProvider,
                                            @NotNull CoverageEnabledConfiguration config) {
     if (config instanceof DartCoverageEnabledConfiguration) {
+      DartCoverageEnabledConfiguration dartCoverageEnabledConfiguration = (DartCoverageEnabledConfiguration)config;
       Project project = config.getConfiguration().getProject();
       try {
-        VirtualFile contextFile = ((DartCommandLineRunConfiguration)config.getConfiguration()).getRunnerParameters().getDartFile();
+        VirtualFile contextFile =
+          ((DartCommandLineRunConfiguration)dartCoverageEnabledConfiguration.getConfiguration()).getRunnerParameters().getDartFile();
         return new DartCoverageSuite(covRunner, name, coverageDataFileProvider, new Date().getTime(), false, false, false, project, this,
-                                     contextFile);
+                                     contextFile, dartCoverageEnabledConfiguration.getCoverageProcess());
       }
       catch (RuntimeConfigurationError e) {
         LOG.warn(e);

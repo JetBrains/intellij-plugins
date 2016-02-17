@@ -23,7 +23,6 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -68,8 +67,8 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
 
     final String dartPubPath = DartSdkUtil.getPubPath(sdk);
 
-    CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
-    String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
+    DartCoverageEnabledConfiguration config = (DartCoverageEnabledConfiguration)CoverageEnabledConfiguration.getOrCreate(runConfiguration);
+    String coverageFilePath = config.getCoverageFilePath();
 
     RunContentDescriptor result = super.doExecute(state, env);
     if (result == null) {
@@ -79,7 +78,9 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
     GeneralCommandLine cmdline = new GeneralCommandLine().withExePath(dartPubPath)
       .withParameters("global", "run", "coverage:collect_coverage", "-p",
                       Integer.toString(((DartCommandLineRunningState)state).getObservatoryPort()), "-o", coverageFilePath, "-r", "-w");
-    cmdline.createProcess();
+    ProcessHandler coverageProcess = new OSProcessHandler(cmdline);
+    coverageProcess.startNotify();
+    config.setCoverageProcess(coverageProcess);
 
     ProcessHandler resultProcessHandler = result.getProcessHandler();
     if (resultProcessHandler != null) {

@@ -19,7 +19,10 @@ import com.google.gson.Gson;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.rt.coverage.data.ClassData;
 import com.intellij.rt.coverage.data.LineData;
@@ -32,7 +35,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Date;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -41,12 +43,12 @@ public class DartCoverageRunner extends CoverageRunner {
 
   @Nullable
   @Override
-  public ProjectData loadCoverageData(@NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
+  public ProjectData loadCoverageData(@NotNull final File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
     if (baseCoverageSuite == null || !(baseCoverageSuite instanceof DartCoverageSuite)) {
       return null;
     }
 
-    DartCoverageSuite coverageSuite = (DartCoverageSuite)baseCoverageSuite;
+    final DartCoverageSuite coverageSuite = (DartCoverageSuite)baseCoverageSuite;
     VirtualFile contextFile = coverageSuite.getContextFile();
     if (contextFile == null) {
       return null;
@@ -57,17 +59,31 @@ public class DartCoverageRunner extends CoverageRunner {
     }
 
     try {
-      for (int i = 0; i < 10; i++) {
-        LOG.warn(new Date().getTime() + ":" + sessionDataFile.length() + "," + sessionDataFile.exists());
-        if (sessionDataFile.length() > 0) {
-          break;
+      final ProgressManager pm = ProgressManager.getInstance();
+      final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
+      if (coverageProcess == null) {
+        return null;
+      }
+
+      boolean result = pm.runProcessWithProgressSynchronously(new Runnable() {
+        @Override
+        public void run() {
+          ProgressIndicator progress = pm.getProgressIndicator();
+          for (int i = 0; i < 10; ++i) {
+            if (progress.isCanceled()) {
+              return;
+            }
+            if (coverageProcess.waitFor(100)) {
+              return;
+            }
+          }
         }
-        try {
-          Thread.sleep(100);
-        }
-        catch (InterruptedException e) {
-          LOG.warn("Sleep interrupted.");
-        }
+      }, "Loading Coverage Data...", true, coverageSuite.getProject());
+
+      if (!result || !coverageProcess.isProcessTerminated()) {
+        coverageProcess.destroyProcess();
+        LOG.warn("Load coverage process didn't finish correctly.");
+        return null;
       }
 
       DartCoverageData data = new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile)), DartCoverageData.class);
@@ -92,6 +108,7 @@ public class DartCoverageRunner extends CoverageRunner {
         }
         classData.setLines(lines);
       }
+
       return projectData;
     }
     catch (FileNotFoundException e) {
