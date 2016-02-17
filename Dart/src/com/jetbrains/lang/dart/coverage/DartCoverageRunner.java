@@ -16,6 +16,7 @@
 package com.jetbrains.lang.dart.coverage;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
@@ -87,6 +88,10 @@ public class DartCoverageRunner extends CoverageRunner {
       }
 
       DartCoverageData data = new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile)), DartCoverageData.class);
+      if (data == null) {
+        LOG.warn("Coverage file does not contain valid data.");
+        return null;
+      }
       ProjectData projectData = new ProjectData();
       for (Map.Entry<String, SortedMap<Integer, Integer>> entry : data.getMergedDartFileCoverageData().entrySet()) {
         String filePath = getFileForUri(contextId, entry.getKey());
@@ -112,6 +117,10 @@ public class DartCoverageRunner extends CoverageRunner {
       return projectData;
     }
     catch (FileNotFoundException e) {
+      LOG.warn(e);
+      return null;
+    }
+    catch (JsonSyntaxException e) {
       LOG.warn(e);
       return null;
     }
