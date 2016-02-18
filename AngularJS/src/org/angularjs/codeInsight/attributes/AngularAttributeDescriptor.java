@@ -84,6 +84,12 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     return false;
   }
 
+  @NotNull
+  public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration) {
+    return ArrayUtil.mergeArrays(AngularBindingDescriptor.getBindingDescriptors(declaration),
+                                 AngularEventHandlerDescriptor.getEventHandlerDescriptors(declaration));
+  }
+
   @Override
   public PsiElement getDeclaration() {
     final String name = DirectiveUtil.normalizeAttributeName(getName());
