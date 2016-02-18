@@ -102,7 +102,7 @@ public class FlexNavigationTest extends CodeInsightTestCase {
 
     Collection<PsiElement> elementsToCheck;
     GlobalSearchScope scope;
-    if (clazz == null) {
+    if (clazz == null || !(clazz instanceof JSQualifiedNamedElement)) {
       PsiReference reference = TargetElementUtil.findReference(editor);
       assertNotNull(reference);
       elementsToCheck = TargetElementUtil.getInstance().getTargetCandidates(reference);
