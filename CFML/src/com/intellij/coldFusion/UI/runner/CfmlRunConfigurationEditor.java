@@ -19,6 +19,7 @@ import com.intellij.ide.browsers.BrowserSelector;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,18 +98,11 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
     }
   }
 
-  public boolean isSyncServerAndPageUrl() {
-    return syncServerAndPageUrl;
-  }
-
-  public void setSyncServerAndPageUrl(boolean syncServerAndPageUrl) {
-    this.syncServerAndPageUrl = syncServerAndPageUrl;
-  }
 
   private void updatePagePath(String url)  {
     try {
       String text = myWebPathField.getDocument().getText(0, myWebPathField.getDocument().getLength());
-      String appendUrl = (url.equals("") ? getRelativeProjectPath() : url);
+      String appendUrl = (url.isEmpty() ? getRelativeProjectPath() : url);
       myPagePathField.setText(text + appendUrl);
     }
     catch (BadLocationException e) {
@@ -152,7 +146,7 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
    * @return relative path from <b>wwwroot</b> folder to index.cfm in project.
    */
   public String getRelativeProjectPath() {
-    Project project = com.intellij.openapi.project.ProjectUtil.guessCurrentProject(myMainPanel);
+    Project project = ProjectUtil.guessCurrentProject(myMainPanel);
 
     VirtualFile projectBaseDir = project.getBaseDir();
     String projectPath = projectBaseDir.getPath();

@@ -60,10 +60,9 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
       if (root == null) return false;
     }
 
-
     CfmlRunnerParameters params = configuration.getRunnerParameters();
     String serverUrl = configuration.getRunnerParameters().getUrl();
-    if (serverUrl.equals("")) {
+    if (serverUrl.isEmpty()) {
       CfmlRunConfiguration templateConfiguration = CfmlRunConfigurationType.getInstance().getTemplateConfiguration();
       if (templateConfiguration != null) {
         serverUrl = templateConfiguration.getRunnerParameters().getUrl();
@@ -77,13 +76,13 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
   }
 
   @NotNull
-  private String generateName(PsiFile containingFile) {
+  private static String generateName(PsiFile containingFile) {
     return StringUtil.isNotEmpty(containingFile.getVirtualFile().getPath()) ? PathUtil
       .getFileName(containingFile.getVirtualFile().getPath()) : "";
   }
 
   @NotNull
-  private String buildPageUrl(ConfigurationContext context, VirtualFile file) {
+  private static String buildPageUrl(ConfigurationContext context, VirtualFile file) {
     String result;
     String absolutePageUrl = file.getUrl();
     int wwwrootIndex = absolutePageUrl.indexOf(WWW_ROOT);
@@ -92,8 +91,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
                FileUtil.getRelativePath(context.getProject().getBaseDir().getPath(), file.getPath(), '/');
     }
     else {
-      String relativePageUrl = absolutePageUrl.substring(wwwrootIndex + WWW_ROOT.length());
-      result = relativePageUrl;
+      result = absolutePageUrl.substring(wwwrootIndex + WWW_ROOT.length());
     }
     return result;
   }
@@ -109,60 +107,12 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
 
       final String path;
       path = buildPageUrl(context, containingFile.getVirtualFile());
-      return equalsUrlPaths(path, configuration.getRunnerParameters().getPageUrl());
+      return StringUtil.equals(path, configuration.getRunnerParameters().getPageUrl());
     }
     return false;
   }
 
   private static boolean isValid(@Nullable PsiFile containingFile) {
     return containingFile != null && containingFile.getFileType() == CfmlFileType.INSTANCE && containingFile.getVirtualFile() != null;
-  }
-
-
-  /**
-   * @return a new URL to file on server. It based on {server path} + {relative path to file in project}
-   * @throws MalformedURLException
-   */
-  @NotNull
-  private static String buildNewUrl(CfmlRunConfiguration configuration, ConfigurationContext context, PsiFile containingFile)
-    throws MalformedURLException {
-    return configuration.getRunnerParameters().getUrl();
-  }
-
-  /**
-   * Method cuts from URL query part and path. For example: cutUrl("http://localhost:8500/CFTest/index.cfm") returns "http://localhost:8500"
-   *
-   * @param stringUrl contains full URL with protocol, host, port, possible path and query
-   * @return URL without path and query
-   * @throws MalformedURLException
-   */
-  private static String cutUrl(String stringUrl) throws MalformedURLException {
-    URL url = new URL(stringUrl);
-    return url.getProtocol() + "://" + url.getAuthority();
-  }
-
-  /**
-   *
-   * @param strUrl1 - first URL built for file
-   * @param strUrl2 - second URL from server preferences. Order is not important
-   * @return true if URLs without queries are equaled.
-   */
-  private static boolean equalsUrlPaths(String strUrl1, String strUrl2) {
-    return strUrl1.equals(strUrl2);
-  }
-
-  /**
-   * if URL contains "localhost" it is replaced with 127.0.0.1
-   *
-   * @param oldUrl may contain "localhost"
-   * @return URL without "localhost"
-   */
-  private static String generalizeLocalhost(String oldUrl) {
-    String localhostConst = "//localhost";
-    if (oldUrl.contains(localhostConst)) {
-      int index = oldUrl.indexOf(localhostConst);
-      return (oldUrl.substring(0, index) + "//127.0.0.1" + oldUrl.substring(index + localhostConst.length()));
-    }
-    return oldUrl;
   }
 }
