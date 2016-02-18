@@ -15,10 +15,15 @@
  */
 package com.jetbrains.lang.dart.coverage;
 
+import com.intellij.coverage.CoverageSuitesBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
+import com.jetbrains.lang.dart.DartFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   public DartCoverageAnnotator(@NotNull Project project) {
@@ -28,5 +33,35 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   @NotNull
   public static DartCoverageAnnotator getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, DartCoverageAnnotator.class);
+  }
+
+  @Override
+  @Nullable
+  protected DirCoverageInfo getDirCoverageInfo(@NotNull final PsiDirectory directory, @NotNull final CoverageSuitesBundle currentSuite) {
+    DirCoverageInfo dirCoverageInfo = super.getDirCoverageInfo(directory, currentSuite);
+    if (dirCoverageInfo == null) {
+      return null;
+    }
+
+    dirCoverageInfo.totalFilesCount = getDartFilesCount(directory);
+    return dirCoverageInfo;
+  }
+
+  private static int getDartFilesCount(@NotNull PsiDirectory directory) {
+    int filesCount = 0;
+    for (PsiFile f : directory.getFiles()) {
+      if (f.getFileType() instanceof DartFileType) {
+        filesCount++;
+      }
+    }
+
+    for (PsiDirectory d : directory.getSubdirectories()) {
+      if (!d.getName().equals("packages")) {
+        // Only count files out of "packages" folder.
+        filesCount += getDartFilesCount(d);
+      }
+    }
+
+    return filesCount;
   }
 }
