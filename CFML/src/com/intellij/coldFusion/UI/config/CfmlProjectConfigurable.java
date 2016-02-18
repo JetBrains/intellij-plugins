@@ -88,6 +88,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
     storeLanguageVersionWithProgress(myProject);
   }
 
+
   public void reset() {
     myForm.reset(CfmlProjectConfiguration.getInstance(myProject).getState());
   }

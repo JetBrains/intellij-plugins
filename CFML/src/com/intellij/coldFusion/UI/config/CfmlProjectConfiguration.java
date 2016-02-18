@@ -81,7 +81,7 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
 
   public static class State {
     private CfmlMappingsConfig myMapps = new CfmlMappingsConfig();
-
+    private String coldFusionDir;
     private String myLanguageLevel = CfmlLanguage.CF10;
 
     public State() {
@@ -91,6 +91,19 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
       myMapps = mappings;
     }
 
+    public State(CfmlMappingsConfig mappings, String coldFusionDir) {
+      myMapps = mappings;
+      this.coldFusionDir = coldFusionDir;
+    }
+
+    @Tag("coldfusiondir")
+    public String getColdFusionDir() {
+      return coldFusionDir;
+    }
+
+    public void setColdFusionDir(String coldFusionDir) {
+      this.coldFusionDir = coldFusionDir;
+    }
 
     @Property(surroundWithTag = false)
     public CfmlMappingsConfig getMapps() {
@@ -174,6 +187,7 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
       final State state = (State)o;
 
       if (myLanguageLevel != null ? !myLanguageLevel.equals(state.myLanguageLevel) : state.myLanguageLevel != null) return false;
+      if (coldFusionDir != null ? !coldFusionDir.equals(state.coldFusionDir) : state.coldFusionDir != null) return false;
 
       CfmlMappingsConfig m1 = myMapps != null ? myMapps : new CfmlMappingsConfig();
       CfmlMappingsConfig m2 = state.myMapps != null ? state.myMapps : new CfmlMappingsConfig();

@@ -17,13 +17,18 @@ package com.intellij.coldFusion.UI.config;
 
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.CfmlLanguage;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextBrowseFolderListener;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ui.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -40,9 +45,9 @@ public class CfmlMappingsForm {
   private JPanel myTablePanel;
   private JComboBox myLanguageLevel;
   private JLabel myMessageLabel;
+  private TextFieldWithBrowseButton myPathToCfusionFolder;
   private ValidatingTableEditor<Item> myTableEditor;
   private final Project myProject;
-
 
   public JComponent getContentPane() {
     return myContentPanel;
@@ -133,6 +138,25 @@ public class CfmlMappingsForm {
 
     myMessageLabel.setIcon(UIUtil.getBalloonWarningIcon());
     myMessageLabel.setVisible(false);
+
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+    descriptor.setTitle(CfmlBundle.message("cfml.project.config.cfdir.description"));
+
+    myPathToCfusionFolder.addBrowseFolderListener(new TextBrowseFolderListener(descriptor){
+      @Override
+      protected void onFileChosen(@NotNull VirtualFile chosenFile) {
+        if(!chosenFile.getName().equals("cfusion")) {
+          myMessageLabel.setText(CfmlBundle.message("cfml.project.config.cfdir.error"));
+          myMessageLabel.setVisible(true);
+        } else {
+          super.onFileChosen(chosenFile);
+          myMessageLabel.setText("");
+          myMessageLabel.setVisible(false);
+          CfmlMappingsConfig.getMappingFromCfserver(myPathToCfusionFolder.getText());
+        }
+      }
+
+    });
   }
 
   public void setItems(Map<String, String> paths) {
@@ -159,11 +183,13 @@ public class CfmlMappingsForm {
     setItems(state != null ? state.getMapps().getServerMappings() : Collections.<String, String>emptyMap());
     String newLanguageLevel = state != null ? state.getLanguageLevel() : CfmlLanguage.CF10;
     myLanguageLevel.setSelectedItem(newLanguageLevel);
+    if(state.getColdFusionDir() != null && !state.getColdFusionDir().equals("")) myPathToCfusionFolder.setText(state.getColdFusionDir());
   }
 
   public void applyTo(CfmlProjectConfiguration.State state) {
     state.setMapps(new CfmlMappingsConfig(getPaths()));
     state.setLanguageLevel((String)myLanguageLevel.getSelectedItem());
+    state.setColdFusionDir(myPathToCfusionFolder.getText());
   }
 
   private static class LogicalPathColumnInfo extends ColumnInfo<Item, String> implements ValidatingTableEditor.RowHeightProvider {
