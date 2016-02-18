@@ -30,9 +30,9 @@ import static com.intellij.coldFusion.UI.runner.CfmlRunnerParameters.WWW_ROOT;
 /**
  * Created by karashevich on 25/01/16.
  */
-public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration>{
+public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
 
-  public CfmlRunConfigurationProducer(){
+  public CfmlRunConfigurationProducer() {
     super(CfmlRunConfigurationType.getInstance());
   }
 
@@ -65,8 +65,9 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
     String serverUrl = configuration.getRunnerParameters().getUrl();
     if (serverUrl.equals("")) {
       CfmlRunConfiguration templateConfiguration = CfmlRunConfigurationType.getInstance().getTemplateConfiguration();
-      if (templateConfiguration != null)
+      if (templateConfiguration != null) {
         serverUrl = templateConfiguration.getRunnerParameters().getUrl();
+      }
     }
     params.setUrl(serverUrl);
     params.setPageUrl(buildPageUrl(context, file));
@@ -77,18 +78,20 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
 
   @NotNull
   private String generateName(PsiFile containingFile) {
-    return StringUtil.isNotEmpty(containingFile.getVirtualFile().getPath()) ? PathUtil.getFileName(containingFile.getVirtualFile().getPath()) : "";
+    return StringUtil.isNotEmpty(containingFile.getVirtualFile().getPath()) ? PathUtil
+      .getFileName(containingFile.getVirtualFile().getPath()) : "";
   }
 
   @NotNull
-  private String buildPageUrl(ConfigurationContext context, VirtualFile file ){
+  private String buildPageUrl(ConfigurationContext context, VirtualFile file) {
     String result;
     String absolutePageUrl = file.getUrl();
     int wwwrootIndex = absolutePageUrl.indexOf(WWW_ROOT);
     if (wwwrootIndex == -1) {
       result = context.getProject().getBaseDir().getName() + "/" +
                FileUtil.getRelativePath(context.getProject().getBaseDir().getPath(), file.getPath(), '/');
-    } else {
+    }
+    else {
       String relativePageUrl = absolutePageUrl.substring(wwwrootIndex + WWW_ROOT.length());
       result = relativePageUrl;
     }
@@ -117,12 +120,12 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
 
 
   /**
-   *
    * @return a new URL to file on server. It based on {server path} + {relative path to file in project}
    * @throws MalformedURLException
    */
   @NotNull
-  private static String buildNewUrl(CfmlRunConfiguration configuration, ConfigurationContext context, PsiFile containingFile) throws MalformedURLException {
+  private static String buildNewUrl(CfmlRunConfiguration configuration, ConfigurationContext context, PsiFile containingFile)
+    throws MalformedURLException {
     return configuration.getRunnerParameters().getUrl();
   }
 
@@ -135,28 +138,17 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
    */
   private static String cutUrl(String stringUrl) throws MalformedURLException {
     URL url = new URL(stringUrl);
-    return url.getProtocol() +"://" + url.getAuthority();
+    return url.getProtocol() + "://" + url.getAuthority();
   }
 
   /**
-   * compares two generalized (with replaced "localhost") URLs without queries
    *
    * @param strUrl1 - first URL built for file
    * @param strUrl2 - second URL from server preferences. Order is not important
    * @return true if URLs without queries are equaled.
    */
-  private static boolean equalsUrlPaths(String strUrl1, String strUrl2){
-    try {
-      URL url1  = new URL(generalizeLocalhost(strUrl1));
-      URL url2  = new URL(generalizeLocalhost(strUrl2));
-
-      return StringUtil.equals(url1.getProtocol() + "://" + url1.getAuthority() + url1.getPath(),
-                               url2.getProtocol() + "://" + url2.getAuthority() + url2.getPath());
-    }
-    catch (MalformedURLException e) {
-      return strUrl1.equals(strUrl2);
-    }
-
+  private static boolean equalsUrlPaths(String strUrl1, String strUrl2) {
+    return strUrl1.equals(strUrl2);
   }
 
   /**
@@ -165,7 +157,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
    * @param oldUrl may contain "localhost"
    * @return URL without "localhost"
    */
-  private static String generalizeLocalhost(String oldUrl){
+  private static String generalizeLocalhost(String oldUrl) {
     String localhostConst = "//localhost";
     if (oldUrl.contains(localhostConst)) {
       int index = oldUrl.indexOf(localhostConst);
