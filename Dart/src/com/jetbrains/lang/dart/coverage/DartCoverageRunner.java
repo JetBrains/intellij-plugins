@@ -21,6 +21,7 @@ import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -68,7 +69,7 @@ public class DartCoverageRunner extends CoverageRunner {
 
     final ProjectData projectData = new ProjectData();
 
-    pm.runProcessWithProgressSynchronously(() -> {
+    final Runnable loadCoverageTask = () -> {
       ProgressIndicator progress = pm.getProgressIndicator();
       for (int i = 0; i < 100; ++i) {
         if (progress.isCanceled()) {
@@ -123,7 +124,14 @@ public class DartCoverageRunner extends CoverageRunner {
       finally {
         DartAnalysisServerService.getInstance().execution_deleteContext(contextId);
       }
-    }, "Loading Coverage Data...", true, coverageSuite.getProject());
+    };
+
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      pm.runProcessWithProgressSynchronously(loadCoverageTask, "Loading Coverage Data...", true, coverageSuite.getProject());
+    }
+    else {
+      loadCoverageTask.run();
+    }
 
     return projectData;
   }
