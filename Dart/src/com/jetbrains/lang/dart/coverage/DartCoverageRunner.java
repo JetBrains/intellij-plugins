@@ -54,76 +54,83 @@ public class DartCoverageRunner extends CoverageRunner {
     if (contextFile == null) {
       return null;
     }
-    String contextId = DartAnalysisServerService.getInstance().execution_createContext(contextFile.getPath());
+    final String contextId = DartAnalysisServerService.getInstance().execution_createContext(contextFile.getPath());
     if (contextId == null) {
       return null;
     }
 
-    try {
-      final ProgressManager pm = ProgressManager.getInstance();
-      final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
-      if (coverageProcess == null) {
-        return null;
-      }
+    final ProgressManager pm = ProgressManager.getInstance();
+    final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
+    if (coverageProcess == null) {
+      return null;
+    }
 
-      boolean result = pm.runProcessWithProgressSynchronously(new Runnable() {
-        @Override
-        public void run() {
-          ProgressIndicator progress = pm.getProgressIndicator();
-          for (int i = 0; i < 10; ++i) {
-            if (progress.isCanceled() || coverageProcess.waitFor(100)) {
-              return;
-            }
+    final ProjectData projectData = new ProjectData();
+
+    pm.runProcessWithProgressSynchronously(new Runnable() {
+      @Override
+      public void run() {
+        ProgressIndicator progress = pm.getProgressIndicator();
+        for (int i = 0; i < 10; ++i) {
+          if (progress.isCanceled()) {
+            return;
+          }
+
+          if (coverageProcess.waitFor(100)) {
+            break;
           }
         }
-      }, "Loading Coverage Data...", true, coverageSuite.getProject());
 
-      if (!result || !coverageProcess.isProcessTerminated()) {
-        coverageProcess.destroyProcess();
-        LOG.warn("Load coverage process didn't finish correctly.");
-        return null;
-      }
+        if (!coverageProcess.isProcessTerminated()) {
+          coverageProcess.destroyProcess();
+          LOG.warn("Load coverage process didn't finish correctly.");
+          return;
+        }
 
-      DartCoverageData data = new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile)), DartCoverageData.class);
-      if (data == null) {
-        LOG.warn("Coverage file does not contain valid data.");
-        return null;
-      }
-      ProjectData projectData = new ProjectData();
-      for (Map.Entry<String, SortedMap<Integer, Integer>> entry : data.getMergedDartFileCoverageData().entrySet()) {
-        String filePath = getFileForUri(contextId, entry.getKey());
-        if (filePath == null) {
-          // File is not found.
-          continue;
-        }
-        SortedMap<Integer, Integer> lineHits = entry.getValue();
-        ClassData classData = projectData.getOrCreateClassData(filePath);
-        if (lineHits.size() == 0) {
-          classData.setLines(new LineData[1]);
-          continue;
-        }
-        LineData[] lines = new LineData[lineHits.lastKey() + 1];
-        for (Map.Entry<Integer, Integer> hit : lineHits.entrySet()) {
-          LineData lineData = new LineData(hit.getKey(), null);
-          lineData.setHits(hit.getValue());
-          lines[hit.getKey()] = lineData;
-        }
-        classData.setLines(lines);
-      }
+        try {
+          DartCoverageData data = new Gson().fromJson(new BufferedReader(new FileReader(sessionDataFile)), DartCoverageData.class);
+          if (data == null) {
+            LOG.warn("Coverage file does not contain valid data.");
+            return;
+          }
+          for (Map.Entry<String, SortedMap<Integer, Integer>> entry : data.getMergedDartFileCoverageData().entrySet()) {
+            if (progress.isCanceled()) {
+              return;
+            }
 
-      return projectData;
-    }
-    catch (FileNotFoundException e) {
-      LOG.warn(e);
-      return null;
-    }
-    catch (JsonSyntaxException e) {
-      LOG.warn(e);
-      return null;
-    }
-    finally {
-      DartAnalysisServerService.getInstance().execution_deleteContext(contextId);
-    }
+            String filePath = getFileForUri(contextId, entry.getKey());
+            if (filePath == null) {
+              // File is not found.
+              continue;
+            }
+            SortedMap<Integer, Integer> lineHits = entry.getValue();
+            ClassData classData = projectData.getOrCreateClassData(filePath);
+            if (lineHits.size() == 0) {
+              classData.setLines(new LineData[1]);
+              continue;
+            }
+            LineData[] lines = new LineData[lineHits.lastKey() + 1];
+            for (Map.Entry<Integer, Integer> hit : lineHits.entrySet()) {
+              LineData lineData = new LineData(hit.getKey(), null);
+              lineData.setHits(hit.getValue());
+              lines[hit.getKey()] = lineData;
+            }
+            classData.setLines(lines);
+          }
+        }
+        catch (FileNotFoundException e) {
+          LOG.warn(e);
+        }
+        catch (JsonSyntaxException e) {
+          LOG.warn(e);
+        }
+        finally {
+          DartAnalysisServerService.getInstance().execution_deleteContext(contextId);
+        }
+      }
+    }, "Loading Coverage Data...", true, coverageSuite.getProject());
+
+    return projectData;
   }
 
   @Nullable
