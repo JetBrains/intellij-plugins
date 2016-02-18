@@ -16,8 +16,7 @@ import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.codeInsight.attributes.AngularBindingDescriptor;
-import org.angularjs.codeInsight.attributes.AngularEventHandlerDescriptor;
+import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
@@ -68,8 +67,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final String[] split = attributes.split(",");
     final XmlAttributeDescriptor[] result;
     if (context != null && AngularIndexUtil.hasAngularJS2(context.getProject())) {
-      result = ArrayUtil.mergeArrays(AngularBindingDescriptor.getBindingDescriptors(declaration),
-                                     AngularEventHandlerDescriptor.getEventHandlerDescriptors(declaration));
+      result = AngularAttributeDescriptor.getFieldBasedDescriptors(declaration);
     } else if (split.length == 1 && split[0].isEmpty()) {
       result = XmlAttributeDescriptor.EMPTY;
     } else {
