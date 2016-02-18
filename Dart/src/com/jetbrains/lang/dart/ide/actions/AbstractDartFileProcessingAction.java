@@ -29,6 +29,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -213,10 +214,9 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       if (!fileOrDir.isDirectory() && isApplicableFile(project, fileOrDir)) {
         return true;
       }
-    }
 
-    for (VirtualFile fileOrDir : files) {
       if (fileOrDir.isDirectory() &&
+          ProjectRootManager.getInstance(project).getFileIndex().isInContent(fileOrDir) &&
           FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScopesCore.directoryScope(project, fileOrDir, true))) {
         return true;
       }
