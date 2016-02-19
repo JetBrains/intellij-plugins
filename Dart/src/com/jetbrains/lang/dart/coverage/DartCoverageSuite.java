@@ -21,14 +21,22 @@ import com.intellij.coverage.CoverageFileProvider;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartCoverageSuite extends BaseCoverageSuite {
+
+  @NonNls private static final String CONTEXT_FILE_PATH = "CONTEXT_FILE_PATH";
+
   @NotNull private final DartCoverageEngine myCoverageEngine;
 
-  @Nullable private final VirtualFile myContextFile;
+  @Nullable private VirtualFile myContextFile;
 
   @Nullable private final ProcessHandler myCoverageProcess;
 
@@ -69,5 +77,20 @@ public class DartCoverageSuite extends BaseCoverageSuite {
   @Nullable
   public ProcessHandler getCoverageProcess() {
     return myCoverageProcess;
+  }
+
+  @Override
+  public void writeExternal(final Element element) throws WriteExternalException {
+    super.writeExternal(element);
+    element.setAttribute(CONTEXT_FILE_PATH, myContextFile == null ? null : myContextFile.getPath());
+  }
+
+  @Override
+  public void readExternal(final Element element) throws InvalidDataException {
+    super.readExternal(element);
+    String contextFilePath = element.getAttributeValue(CONTEXT_FILE_PATH);
+    if (contextFilePath != null) {
+      myContextFile = LocalFileSystem.getInstance().findFileByPath(contextFilePath);
+    }
   }
 }

@@ -62,29 +62,32 @@ public class DartCoverageRunner extends CoverageRunner {
     }
 
     final ProgressManager pm = ProgressManager.getInstance();
-    final ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
-    if (coverageProcess == null) {
-      return null;
-    }
+
 
     final ProjectData projectData = new ProjectData();
 
     final Runnable loadCoverageTask = () -> {
       ProgressIndicator progress = pm.getProgressIndicator();
-      for (int i = 0; i < 100; ++i) {
-        if (progress.isCanceled()) {
+
+      ProcessHandler coverageProcess = coverageSuite.getCoverageProcess();
+      if (coverageProcess != null) {
+        // Only wait for process to end when it's not null.
+
+        for (int i = 0; i < 100; ++i) {
+          if (progress.isCanceled()) {
+            return;
+          }
+
+          if (coverageProcess.waitFor(100)) {
+            break;
+          }
+        }
+
+        if (!coverageProcess.isProcessTerminated()) {
+          coverageProcess.destroyProcess();
+          LOG.warn("Load coverage process didn't finish correctly.");
           return;
         }
-
-        if (coverageProcess.waitFor(100)) {
-          break;
-        }
-      }
-
-      if (!coverageProcess.isProcessTerminated()) {
-        coverageProcess.destroyProcess();
-        LOG.warn("Load coverage process didn't finish correctly.");
-        return;
       }
 
       try {
