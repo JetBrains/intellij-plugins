@@ -23,55 +23,41 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartCoverageSuite extends BaseCoverageSuite {
-
   @NonNls private static final String CONTEXT_FILE_PATH = "CONTEXT_FILE_PATH";
 
-  @NotNull private final DartCoverageEngine myCoverageEngine;
-
-  @Nullable private VirtualFile myContextFile;
-
+  @Nullable private String myContextFilePath;
   @Nullable private final ProcessHandler myCoverageProcess;
 
-  public DartCoverageSuite(@NotNull DartCoverageEngine coverageEngine) {
-    myCoverageEngine = coverageEngine;
-    myContextFile = null;
+  public DartCoverageSuite() {
     myCoverageProcess = null;
   }
 
-  public DartCoverageSuite(CoverageRunner coverageRunner,
-                           String name,
-                           @Nullable final CoverageFileProvider fileProvider,
-                           long lastCoverageTimeStamp,
-                           boolean coverageByTestEnabled,
-                           boolean tracingEnabled,
-                           boolean trackTestFolders,
-                           final Project project,
-                           @NotNull DartCoverageEngine dartCoverageEngine,
-                           @Nullable VirtualFile contextFile,
-                           @Nullable ProcessHandler coverageProcess) {
-    super(name, fileProvider, lastCoverageTimeStamp, coverageByTestEnabled, tracingEnabled, trackTestFolders, coverageRunner, project);
-    myCoverageEngine = dartCoverageEngine;
-    myContextFile = contextFile;
+  public DartCoverageSuite(@NotNull final Project project,
+                           @NotNull final String name,
+                           @NotNull final CoverageFileProvider fileProvider,
+                           @NotNull final CoverageRunner coverageRunner,
+                           @Nullable final String contextFilePath,
+                           @Nullable final ProcessHandler coverageProcess) {
+    super(name, fileProvider, System.currentTimeMillis(), false, false, false, coverageRunner, project);
+    myContextFilePath = contextFilePath;
     myCoverageProcess = coverageProcess;
   }
 
   @NotNull
   @Override
   public CoverageEngine getCoverageEngine() {
-    return myCoverageEngine;
+    return DartCoverageEngine.getInstance();
   }
 
   @Nullable
-  public VirtualFile getContextFile() {
-    return myContextFile;
+  public String getContextFilePath() {
+    return myContextFilePath;
   }
 
   @Nullable
@@ -82,15 +68,19 @@ public class DartCoverageSuite extends BaseCoverageSuite {
   @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
-    element.setAttribute(CONTEXT_FILE_PATH, myContextFile == null ? null : myContextFile.getPath());
+
+    if (myContextFilePath != null) {
+      element.setAttribute(CONTEXT_FILE_PATH, myContextFilePath);
+    }
   }
 
   @Override
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
-    String contextFilePath = element.getAttributeValue(CONTEXT_FILE_PATH);
+
+    final String contextFilePath = element.getAttributeValue(CONTEXT_FILE_PATH);
     if (contextFilePath != null) {
-      myContextFile = LocalFileSystem.getInstance().findFileByPath(contextFilePath);
+      myContextFilePath = contextFilePath;
     }
   }
 }

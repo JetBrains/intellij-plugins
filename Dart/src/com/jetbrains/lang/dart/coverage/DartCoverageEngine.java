@@ -17,10 +17,9 @@ package com.jetbrains.lang.dart.coverage;
 
 import com.intellij.coverage.*;
 import com.intellij.execution.configurations.RunConfigurationBase;
-import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.testframework.AbstractTestProxy;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,15 +32,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class DartCoverageEngine extends CoverageEngine {
-  private static final Logger LOG = Logger.getInstance(DartCoverageEngine.class.getName());
 
-  public static final DartCoverageEngine INSTANCE = new DartCoverageEngine();
+  public static DartCoverageEngine getInstance() {
+    return Extensions.findExtension(CoverageEngine.EP_NAME, DartCoverageEngine.class);
+  }
 
   @Override
   public boolean isApplicableTo(@Nullable RunConfigurationBase conf) {
@@ -83,14 +82,8 @@ public class DartCoverageEngine extends CoverageEngine {
     if (config instanceof DartCoverageEnabledConfiguration) {
       DartCoverageEnabledConfiguration dartConfig = (DartCoverageEnabledConfiguration)config;
       Project project = config.getConfiguration().getProject();
-      try {
-        VirtualFile contextFile = ((DartCommandLineRunConfiguration)dartConfig.getConfiguration()).getRunnerParameters().getDartFile();
-        return new DartCoverageSuite(covRunner, name, coverageDataFileProvider, new Date().getTime(), false, false, false, project, this,
-                                     contextFile, dartConfig.getCoverageProcess());
-      }
-      catch (RuntimeConfigurationError e) {
-        LOG.warn(e);
-      }
+      final String contextFilePath = ((DartCommandLineRunConfiguration)dartConfig.getConfiguration()).getRunnerParameters().getFilePath();
+      return new DartCoverageSuite(project, name, coverageDataFileProvider, covRunner, contextFilePath, dartConfig.getCoverageProcess());
     }
 
     return null;
@@ -99,7 +92,7 @@ public class DartCoverageEngine extends CoverageEngine {
   @Nullable
   @Override
   public CoverageSuite createEmptyCoverageSuite(@NotNull CoverageRunner coverageRunner) {
-    return new DartCoverageSuite(this);
+    return new DartCoverageSuite();
   }
 
   @NotNull
