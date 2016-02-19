@@ -33,6 +33,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Couple;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,13 +42,22 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by Lera Nikolaenko
@@ -101,10 +111,10 @@ public class CfmlUtil {
       return true;
     }
     else if (ref2.getScope() == null) {
-      return CfmlUtil.isSearchedScope(ref1.getScope().getText());
+      return isSearchedScope(ref1.getScope().getText());
     }
     else if (ref1.getScope() == null) {
-      return CfmlUtil.isSearchedScope(ref2.getScope().getText());
+      return isSearchedScope(ref2.getScope().getText());
     }
     else if (ref2.getScope().getText().equalsIgnoreCase(ref1.getScope().getText())) {
       return true;
@@ -317,4 +327,7 @@ public class CfmlUtil {
     }
     return Couple.of(name.substring(0, index), name.substring(index + 1));
   }
+
+
+
 }

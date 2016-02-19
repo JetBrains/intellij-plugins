@@ -25,6 +25,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -118,60 +119,13 @@ public class CfmlMappingsConfig implements Cloneable {
     return true;
   }
 
-  public static void getMappingFromCfserver(String cfusionDirPath){
-    String path = cfusionDirPath;
-    File dir = FileUtil.findFirstThatExist(path);
-    File[] libs = dir.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.equals("lib");
-      }
-    });
-    File[] result = null;
-    if (libs != null && libs.length == 1) {
-      result = libs[0].listFiles(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          return name.equals("neo-runtime.xml");
-        }
-      });
-    }
-    File neoRuntimeXml = null;
-    if(result != null && result.length == 1) {
-      neoRuntimeXml = result[0];
-    } else return;
-    SAXBuilder builder = new SAXBuilder();
 
-    try {
-      Document doc = (Document) builder.build(neoRuntimeXml);
-      Element rootNode = doc.getRootElement();
-      List<Element> arrayElements = rootNode.getChild("data").getChild("array").getChildren();
-      Element mapping = null;
-      for(Element el: arrayElements) {
-        if (el.getChildren() != null && el.getChildren().size() > 0 && el.getChildren().get(0) != null && el.getChildren().get(0).getAttributeValue("name") != null) {
-          for(Element varEl: el.getChildren()) {
-            if (varEl.getAttributeValue("name").length() >= 6 && varEl.getAttributeValue("name").substring(0, 6).equals("/CFIDE")) {
-              mapping = el;
-              break;
-            }
-          }
-        }
-      }
-      //(logicalPath -> directoryPath)
-      Map<String, String> serverMap = new BidirectionalMap<String, String>();
-      for(Element varElement: mapping.getChildren()){
-        String logicalPath = varElement.getAttributeValue("name");
-        String directoryPath = varElement.getChild("string").getValue();
-        serverMap.put(logicalPath, directoryPath);
-      }
-      System.out.println(serverMap);
+  public static boolean mapEquals(@NotNull Map<String, String> mapLocal, @NotNull Map<String, String> mapServer){
+    if (mapLocal.size() != mapServer.size()) return false;
+    for (String keyLocal : mapLocal.keySet()) {
+      if (!mapServer.containsKey(keyLocal) || !mapLocal.get(keyLocal).equals(mapServer.get(keyLocal))) return false;
     }
-    catch (JDOMException e) {
-      e.printStackTrace();
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
+    return true;
   }
 
   @Override

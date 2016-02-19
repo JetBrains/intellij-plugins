@@ -37,6 +37,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.intellij.coldFusion.UI.config.CfmlProjectConfigurable.ChangeState.APPLIED;
+import static com.intellij.coldFusion.UI.config.CfmlProjectConfigurable.ChangeState.MODIFIED;
+
 /**
  * @author vnikolaenko
  */
@@ -44,6 +47,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
 
   private final Project myProject;
   private CfmlMappingsForm myForm;
+  public enum ChangeState {MODIFIED, APPLIED}
 
   public CfmlProjectConfigurable(Project project) {
     myProject = project;
@@ -76,14 +80,14 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
   public boolean isModified() {
     CfmlProjectConfiguration.State originalState = CfmlProjectConfiguration.getInstance(myProject).getState();
     CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
-    myForm.applyTo(currentState);
+    myForm.applyTo(currentState, MODIFIED);
 
     return !currentState.equals(originalState);
   }
 
   public void apply() throws ConfigurationException {
     CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
-    myForm.applyTo(currentState);
+    myForm.applyTo(currentState, APPLIED);
     CfmlProjectConfiguration.getInstance(myProject).loadState(currentState);
     storeLanguageVersionWithProgress(myProject);
   }

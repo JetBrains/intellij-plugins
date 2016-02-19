@@ -16,10 +16,14 @@
 package com.intellij.coldFusion.UI.config;
 
 import com.intellij.coldFusion.CfmlBundle;
+import com.intellij.coldFusion.CfmlServerUtil;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -27,6 +31,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.StateRestoringCheckBox;
 import com.intellij.util.ui.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +41,8 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static com.intellij.coldFusion.UI.config.CfmlMappingsConfig.mapEquals;
 
 /**
  * @author vnikolaenko
@@ -152,11 +159,22 @@ public class CfmlMappingsForm {
           super.onFileChosen(chosenFile);
           myMessageLabel.setText("");
           myMessageLabel.setVisible(false);
-          CfmlMappingsConfig.getMappingFromCfserver(myPathToCfusionFolder.getText());
+          Map<String, String> cfserverMapping = CfmlServerUtil.getMappingFromCfserver(myPathToCfusionFolder.getText());
+
+          if (cfserverMapping != null) addItems(cfserverMapping);
+
         }
       }
 
     });
+  }
+
+  public void addItems(Map<String, String> serverMapping){
+    Map<String, String> paths = getPaths();
+    for (String ditPathKey : serverMapping.keySet()) {
+      paths.put(ditPathKey, serverMapping.get(ditPathKey));
+    }
+    setItems(paths);
   }
 
   public void setItems(Map<String, String> paths) {
@@ -183,13 +201,30 @@ public class CfmlMappingsForm {
     setItems(state != null ? state.getMapps().getServerMappings() : Collections.<String, String>emptyMap());
     String newLanguageLevel = state != null ? state.getLanguageLevel() : CfmlLanguage.CF10;
     myLanguageLevel.setSelectedItem(newLanguageLevel);
-    if(state.getColdFusionDir() != null && !state.getColdFusionDir().equals("")) myPathToCfusionFolder.setText(state.getColdFusionDir());
+    if(state != null && state.getColdFusionDir() != null && !state.getColdFusionDir().isEmpty()) myPathToCfusionFolder.setText(state.getColdFusionDir());
   }
 
-  public void applyTo(CfmlProjectConfiguration.State state) {
+  public void applyTo(CfmlProjectConfiguration.State state, CfmlProjectConfigurable.ChangeState changeState) {
+    if (changeState == CfmlProjectConfigurable.ChangeState.APPLIED &&
+        myPathToCfusionFolder.getText() != null &&
+        CfmlServerUtil.getMappingFromCfserver(myPathToCfusionFolder.getText()) != null &&
+        !mapEquals(getPaths(), CfmlServerUtil.getMappingFromCfserver(myPathToCfusionFolder.getText()))) {
+      CfmlServerUtil.saveMappingToCfserver(getPaths(), myPathToCfusionFolder.getText());
+      try {
+        askUserToRestartServer();
+        CfmlServerUtil.restartColdfusionServer(myPathToCfusionFolder.getText());
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     state.setMapps(new CfmlMappingsConfig(getPaths()));
     state.setLanguageLevel((String)myLanguageLevel.getSelectedItem());
     state.setColdFusionDir(myPathToCfusionFolder.getText());
+  }
+
+  private void askUserToRestartServer() {
+    (new RestartServerDialog(ProjectUtil.guessCurrentProject(myPathToCfusionFolder))).show();
   }
 
   private static class LogicalPathColumnInfo extends ColumnInfo<Item, String> implements ValidatingTableEditor.RowHeightProvider {
@@ -266,5 +301,60 @@ public class CfmlMappingsForm {
     public int getRowHeight() {
       return new JTextField().getPreferredSize().height + 1;
     }
+  }
+
+  class RestartServerDialog extends DialogWrapper {
+    private final Project myProject;
+
+    private StateRestoringCheckBox myCbDoNotAskAgain;
+
+
+    public RestartServerDialog(Project project) {
+      super(project, true);
+      myProject = project;
+      setTitle(CfmlBundle.message("cfml.project.config.dialog.restartserver.title"));
+      init();
+      getOKAction().putValue(Action.NAME, CfmlBundle.message("cfml.project.config.dialog.restartserver.yesButton"));
+      getCancelAction().putValue(Action.NAME, CfmlBundle.message("cfml.project.config.dialog.restartserver.noButton"));
+    }
+
+
+    @Override
+    @NotNull
+    protected Action[] createActions() {
+      return new Action[]{getOKAction(), getCancelAction()};
+    }
+
+    @Override
+    protected JComponent createNorthPanel() {
+      JLabel label = new JLabel(CfmlBundle.message("cfml.project.config.dialog.restartserver.message"));
+      JPanel panel = new JPanel(new BorderLayout());
+      panel.add(label, BorderLayout.CENTER);
+      Icon icon = UIUtil.getQuestionIcon();
+      label.setIcon(icon);
+      label.setIconTextGap(7);
+      return panel;
+    }
+
+
+
+    @Override
+    protected JComponent createCenterPanel() {
+      return null;
+    }
+
+
+    @Override
+    protected void doOKAction() {
+      super.doOKAction();
+      //TODO: add exception handler here
+      try {
+        CfmlServerUtil.restartColdfusionServer(myPathToCfusionFolder.getText());
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
   }
 }
