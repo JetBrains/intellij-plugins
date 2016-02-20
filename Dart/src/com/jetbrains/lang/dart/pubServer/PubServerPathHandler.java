@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -55,7 +56,9 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
       VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(FileUtilRt.toSystemIndependentName(dirInfo.getFilePath()));
       final VirtualFile parentDir = dir == null ? null : dir.getParent();
       if (parentDir != null && parentDir.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
-        if ("build".equals(dirInfo.getName())) {
+        if ("build".equals(dirInfo.getName()) ||
+            "lib".equals(dirInfo.getName()) ||
+            DartUrlResolver.PACKAGES_FOLDER_NAME.equals(dir.getName())) {
           return null; // contents of "build" folder should be served by the IDE internal web server directly, i.e. without pub serve
         }
 
