@@ -12,6 +12,7 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
@@ -40,11 +41,21 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
     return p.getParameters();
   }
 
+  @Nullable
   @Override
   public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
-    final PsiElement at = context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
-    final DartArguments arguments = PsiTreeUtil.getParentOfType(at, DartArguments.class);
-    return arguments == null ? null : PsiTreeUtil.getParentOfType(arguments, DartCallExpression.class, DartNewExpression.class);
+    final PsiElement contextElement = context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
+    return findElementForParameterInfo(contextElement);
+  }
+
+  @Nullable
+  public static PsiElement findElementForParameterInfo(@Nullable final PsiElement contextElement) {
+    final DartArguments arguments = PsiTreeUtil.getParentOfType(contextElement, DartArguments.class);
+    final PsiElement parent = arguments == null ? null : arguments.getParent();
+    if (parent instanceof DartCallExpression || parent instanceof DartNewExpression || parent instanceof DartMetadata) {
+      return parent;
+    }
+    return null;
   }
 
   @Override
@@ -69,6 +80,14 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
         functionDescription = DartFunctionDescription.createDescription((DartComponent)target.getParent(), classResolveResult);
       }
     }
+    else if (element instanceof DartMetadata) {
+      final DartReferenceExpression refExpression = ((DartMetadata)element).getReferenceExpression();
+      final PsiElement target = refExpression.resolve();
+      if (target instanceof DartComponentName) {
+        functionDescription =
+          DartFunctionDescription.createDescription((DartComponent)target.getParent(), refExpression.resolveDartClass());
+      }
+    }
 
     if (functionDescription != null) {
       context.setItemsToShow(new Object[]{functionDescription});
@@ -84,7 +103,7 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
     if (context.getParameterOwner() == null) {
       context.setParameterOwner(place);
     }
-    else if (context.getParameterOwner() != PsiTreeUtil.getParentOfType(place, DartCallExpression.class, DartNewExpression.class)) {
+    else if (context.getParameterOwner() != findElementForParameterInfo(place)) {
       context.removeHint();
       return;
     }
