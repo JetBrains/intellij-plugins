@@ -149,4 +149,8 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
   public void testParamInfo_fieldFormal_named() throws Throwable {
     doTest("int a, {double b}", 0);
   }
+
+  public void testAnnotation() throws Throwable {
+    doTest("", 0);
+  }
 }
