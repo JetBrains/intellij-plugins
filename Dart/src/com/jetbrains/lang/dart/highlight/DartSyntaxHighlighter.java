@@ -50,6 +50,8 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
     ATTRIBUTES.put(DOT_DOT, DartSyntaxHighlighterColors.DOT);
     ATTRIBUTES.put(QUEST_DOT, DartSyntaxHighlighterColors.DOT);
     ATTRIBUTES.put(SEMICOLON, DartSyntaxHighlighterColors.SEMICOLON);
+    ATTRIBUTES.put(COLON, DartSyntaxHighlighterColors.COLON);
+    ATTRIBUTES.put(EXPRESSION_BODY_DEF, DartSyntaxHighlighterColors.FAT_ARROW);
 
     ATTRIBUTES.put(SINGLE_LINE_COMMENT, DartSyntaxHighlighterColors.LINE_COMMENT);
     ATTRIBUTES.put(SINGLE_LINE_DOC_COMMENT, DartSyntaxHighlighterColors.DOC_COMMENT);
