@@ -151,6 +151,6 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
   }
 
   public void testAnnotation() throws Throwable {
-    doTest("", 0);
+    doTest("String itemA, int itemB", 0);
   }
 }
