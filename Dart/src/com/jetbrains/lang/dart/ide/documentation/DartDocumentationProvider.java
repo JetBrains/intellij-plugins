@@ -25,8 +25,8 @@ public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
 
   @Override
-  public String generateDoc(PsiElement element, PsiElement originalElement) {
-    final String serverDoc = generateDocServer(originalElement);
+  public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
+    final String serverDoc = generateDocServer(element);
     if (serverDoc != null) {
       return serverDoc;
     }
