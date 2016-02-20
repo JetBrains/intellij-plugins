@@ -15,7 +15,11 @@
  */
 package com.intellij.coldFusion.UI.runner;
 
+import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.BrowserSelector;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -33,6 +37,7 @@ import java.awt.*;
 import static com.intellij.coldFusion.UI.runner.CfmlRunnerParameters.WWW_ROOT;
 
 public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfiguration> {
+  private static final Logger LOG = Logger.getInstance(CfmlRunConfigurationEditor.class);
   private JPanel myMainPanel;
   private JTextField myWebPathField;
   private JTextField myPagePathField;
@@ -41,7 +46,7 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
   private JLabel myServerURLLabel;
   private final BrowserSelector myBrowserSelector;
 
-  private final String INDEX_CFM = "/index.cfm";
+  private final static String INDEX_CFM = "/index.cfm";
   private boolean syncServerAndPageUrl = true;
 
   public CfmlRunConfigurationEditor() {
@@ -106,7 +111,7 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
       myPagePathField.setText(text + appendUrl);
     }
     catch (BadLocationException e) {
-      e.printStackTrace();
+      LOG.error(e);
     }
   }
 
@@ -114,7 +119,10 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
   protected void resetEditorFrom(CfmlRunConfiguration s) {
     CfmlRunnerParameters params = s.getRunnerParameters();
     myWebPathField.setText(params.getUrl());
-    myBrowserSelector.setSelected(params.getNonDefaultBrowser() != null ? params.getNonDefaultBrowser() : null);
+    String uuid = params.getNonDefaultBrowserUuid();
+    if (!uuid.isEmpty()) {
+      myBrowserSelector.setSelected(WebBrowserManager.getInstance().findBrowserById(uuid));
+    }
   }
 
   @Override
@@ -131,7 +139,11 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
     }
     params.setUrl(myWebPathField.getText());
     params.setPageUrl(pagePath);
-    params.setNonDefaultBrowser(myBrowserSelector.getSelected());
+    if(myBrowserSelector.getSelected() == null) {
+      params.setNonDefaultBrowserUuid("");
+    } else {
+      params.setNonDefaultBrowserUuid(myBrowserSelector.getSelected().getId().toString());
+    }
 
   }
 

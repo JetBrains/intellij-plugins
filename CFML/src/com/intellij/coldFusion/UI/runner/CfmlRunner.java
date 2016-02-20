@@ -24,6 +24,8 @@ import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserLauncher;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +37,9 @@ public class CfmlRunner extends DefaultProgramRunner {
       FileDocumentManager.getInstance().saveAllDocuments();
       final CfmlRunConfiguration runProfile = (CfmlRunConfiguration)runProfileRaw;
       final CfmlRunnerParameters params = runProfile.getRunnerParameters();
-      BrowserLauncher.getInstance().browse(params.getUrl() + params.getPageUrl(), params.getNonDefaultBrowser(), env.getProject());
+      String uuid = params.getNonDefaultBrowserUuid();
+      WebBrowser webBrowser = (uuid.isEmpty() ? null : WebBrowserManager.getInstance().findBrowserById(uuid));
+      BrowserLauncher.getInstance().browse(params.getUrl() + params.getPageUrl(), webBrowser, env.getProject());
       return null;
     }
     else {

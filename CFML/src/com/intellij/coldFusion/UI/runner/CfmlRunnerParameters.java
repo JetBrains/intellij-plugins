@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class CfmlRunnerParameters implements Cloneable {
   private String myUrl = "";
   private String myPageUrl = "";
-  private WebBrowser myNonDefaultBrowser;
+  private String myNonDefaultBrowserUuid = "";
 
   public final static String WWW_ROOT = "wwwroot";
 
@@ -37,14 +37,13 @@ public class CfmlRunnerParameters implements Cloneable {
     myUrl = url;
   }
 
-  @Transient
-  @Nullable
-  public WebBrowser getNonDefaultBrowser() {
-    return myNonDefaultBrowser;
+  @Attribute("default_browser")
+  public String getNonDefaultBrowserUuid() {
+    return myNonDefaultBrowserUuid;
   }
 
-  public void setNonDefaultBrowser(@Nullable WebBrowser nonDefaultBrowser) {
-    myNonDefaultBrowser = nonDefaultBrowser;
+  public void setNonDefaultBrowserUuid(@Nullable String nonDefaultBrowserUuid) {
+    myNonDefaultBrowserUuid = nonDefaultBrowserUuid;
   }
 
   @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})
