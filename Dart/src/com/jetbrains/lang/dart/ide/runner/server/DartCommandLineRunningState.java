@@ -152,10 +152,13 @@ public class DartCommandLineRunningState extends CommandLineState {
         commandLine.addParameter(vmOption);
 
         try {
-          if (vmOption.startsWith("--enable-vm-service:")) {
+          if (vmOption.equals("--enable-vm-service") || vmOption.equals("--observe")) {
+            customObservatoryPort = 8181; // default port, see https://www.dartlang.org/tools/dart-vm/
+          }
+          else if (vmOption.startsWith("--enable-vm-service:")) {
             customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--enable-vm-service:".length()));
           }
-          if (vmOption.startsWith("--observe:")) {
+          else if (vmOption.startsWith("--observe:")) {
             customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--observe:".length()));
           }
         }
