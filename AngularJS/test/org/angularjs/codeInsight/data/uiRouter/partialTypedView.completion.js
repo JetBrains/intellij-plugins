@@ -7,10 +7,8 @@ angular.module('sample', [
           function ($stateProvider,   $urlRouterProvider) {
             $stateProvider.state('one', {
               views: {
-                '<caret>' : {
-                  templateUrl: 'one.html'
-                }
-              })
+                '<caret>' :
+              }})
                 .state('two', {
               views: {
                 '' : {

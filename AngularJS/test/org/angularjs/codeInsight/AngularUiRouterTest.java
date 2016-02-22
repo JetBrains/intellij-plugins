@@ -29,9 +29,32 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     return false;
   }
 
-  public void testCompletion() throws Exception {
-    final List<String> variants = myFixture.getCompletionVariants("app1.js", "one.html", "two.html", "angular.js");
+  public void testSimpleViewCompletion() throws Exception {
+    final List<String> variants = myFixture.getCompletionVariants("simpleView.completion.js", "one.html", "two.html", "angular.js");
     Assert.assertEquals("menuTip", variants.get(0));
+  }
+
+  public void testPartialTypedViewCompletion() throws Exception {
+    final List<String> variants = myFixture.getCompletionVariants("partialTypedView.completion.js", "one.html", "two.html", "angular.js");
+    Assert.assertEquals("menuTip", variants.get(0));
+  }
+
+  public void testPartialTypedViewNavigation() throws Exception {
+    final PsiFile[] files = myFixture.configureByFiles("partialTypedView.navigation.js", "one.html", "two.html", "angular.js");
+    myFixture.doHighlighting();
+
+    testNavigationToMenuTip(files[0]);
+  }
+
+  private void testNavigationToMenuTip(PsiFile file) {
+    final String str = "'menuTip'";
+    final PsiReference reference = getReferenceByTextAround(file, str);
+    Assert.assertEquals(StringUtil.unquoteString(str), reference.getCanonicalText());
+
+    final PsiElement resolve = reference.resolve();
+    Assert.assertNotNull(resolve);
+    Assert.assertEquals("one.html", resolve.getContainingFile().getName());
+    Assert.assertEquals(StringUtil.unquoteString(str), ((JSPsiNamedElementBase) resolve).getName());
   }
 
   public void testInnerPropertyControllerAs() throws Exception {
@@ -75,14 +98,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
-    final String str = "'menuTip'";
-    final PsiReference reference = getReferenceByTextAround(files[0], str);
-    Assert.assertEquals(StringUtil.unquoteString(str), reference.getCanonicalText());
-
-    final PsiElement resolve = reference.resolve();
-    Assert.assertNotNull(resolve);
-    Assert.assertEquals("one.html", resolve.getContainingFile().getName());
-    Assert.assertEquals(StringUtil.unquoteString(str), ((JSPsiNamedElementBase) resolve).getName());
+    testNavigationToMenuTip(files[0]);
   }
 
   @NotNull
