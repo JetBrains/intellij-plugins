@@ -124,7 +124,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
 
-    final PairProcessor<JSProperty, JSElementIndexingData> processor = createRouterWhenProcessor();
+    final PairProcessor<JSProperty, JSElementIndexingData> processor = createRouterParametersProcessor();
     CUSTOM_PROPERTY_PROCESSORS.put(WHEN, processor);
     CUSTOM_PROPERTY_PROCESSORS.put("otherwise", processor);
     CUSTOM_PROPERTY_PROCESSORS.put("state", processor);
@@ -586,7 +586,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return collection;
   }
 
-  private static PairProcessor<JSProperty, JSElementIndexingData> createRouterWhenProcessor() {
+  private static PairProcessor<JSProperty, JSElementIndexingData> createRouterParametersProcessor() {
     return new PairProcessor<JSProperty, JSElementIndexingData>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
