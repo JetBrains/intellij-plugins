@@ -38,14 +38,15 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
   protected void resetEditorFrom(CfmlRunConfiguration s) {
     CfmlRunnerParameters params = s.getRunnerParameters();
     myWebPathField.setText(params.getUrl());
-    myBrowserSelector.setSelected(params.getNonDefaultBrowser() != null ? params.getNonDefaultBrowser() : null);
+    myBrowserSelector.setSelected(params.getCustomBrowser());
   }
 
   @Override
   protected void applyEditorTo(CfmlRunConfiguration s) throws ConfigurationException {
     CfmlRunnerParameters params = s.getRunnerParameters();
     params.setUrl(myWebPathField.getText());
-    params.setNonDefaultBrowser(myBrowserSelector.getSelected());
+
+    params.setCustomBrowser(myBrowserSelector.getSelected());
   }
 
   @NotNull

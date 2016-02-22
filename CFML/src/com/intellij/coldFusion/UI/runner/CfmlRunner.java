@@ -35,7 +35,7 @@ public class CfmlRunner extends DefaultProgramRunner {
       FileDocumentManager.getInstance().saveAllDocuments();
       final CfmlRunConfiguration runProfile = (CfmlRunConfiguration)runProfileRaw;
       final CfmlRunnerParameters params = runProfile.getRunnerParameters();
-      BrowserLauncher.getInstance().browse(params.getUrl(), params.getNonDefaultBrowser(), env.getProject());
+      BrowserLauncher.getInstance().browse(params.getUrl(), params.getCustomBrowser(), env.getProject());
       return null;
     }
     else {

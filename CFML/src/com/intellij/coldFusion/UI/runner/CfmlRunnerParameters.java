@@ -16,6 +16,7 @@
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CfmlRunnerParameters implements Cloneable {
   private String myUrl = "";
-  private WebBrowser myNonDefaultBrowser;
+  private String myCustomBrowserId = "";
 
   @Attribute("web_path")
   public String getUrl() {
@@ -34,14 +35,27 @@ public class CfmlRunnerParameters implements Cloneable {
     myUrl = url;
   }
 
-  @Transient
-  @Nullable
-  public WebBrowser getNonDefaultBrowser() {
-    return myNonDefaultBrowser;
+  @Attribute("custom_browser")
+  public String getCustomBrowserId() {
+    return myCustomBrowserId;
   }
 
-  public void setNonDefaultBrowser(@Nullable WebBrowser nonDefaultBrowser) {
-    myNonDefaultBrowser = nonDefaultBrowser;
+  public void setCustomBrowserId(@NotNull String customBrowserId) {
+    myCustomBrowserId = customBrowserId;
+  }
+
+  @Transient
+  @Nullable
+  public WebBrowser getCustomBrowser() {
+    String customBrowserId = getCustomBrowserId();
+    if (!customBrowserId.isEmpty()) {
+      return WebBrowserManager.getInstance().findBrowserById(customBrowserId);
+    }
+    return null;
+  }
+
+  public void setCustomBrowser(@Nullable WebBrowser customBrowser) {
+    setCustomBrowserId(customBrowser != null ? customBrowser.getId().toString() : "");
   }
 
   @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})
