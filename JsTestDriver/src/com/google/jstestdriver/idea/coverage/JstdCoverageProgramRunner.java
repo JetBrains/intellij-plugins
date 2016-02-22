@@ -26,7 +26,6 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
@@ -56,21 +55,16 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
   protected Promise<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
-      return Promise.<RunProfileStarter>resolve(new MyStarter(null));
+      return Promise.resolve(new MyStarter(null));
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return Promise.<RunProfileStarter>resolve(new MyStarter(server));
+      return Promise.resolve(new MyStarter(server));
     }
     return jstdToolWindowManager.restartServer()
-      .then(new Function<JstdServer, RunProfileStarter>() {
-        @Override
-        public RunProfileStarter fun(JstdServer server) {
-          return server != null ? new MyStarter(server) : null;
-        }
-      });
+      .then(server1 -> server1 != null ? new MyStarter(server1) : null);
   }
 
   public static class MyStarter extends RunProfileStarter {

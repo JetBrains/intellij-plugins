@@ -260,7 +260,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     DEBUG {
       @Override
       boolean isAvailable() {
-        return JstdDebugProgramRunner.isAvailable();
+        return JstdDebugProgramRunner.Companion.isAvailable();
       }
 
       @NotNull

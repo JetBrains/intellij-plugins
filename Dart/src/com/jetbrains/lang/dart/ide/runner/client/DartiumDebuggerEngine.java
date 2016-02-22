@@ -15,17 +15,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.PairFunction;
 import com.intellij.util.Url;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.debugger.Location;
 
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   private static final Logger LOG = Logger.getInstance(DartiumDebuggerEngine.class);
@@ -41,17 +38,14 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
     ChromeDebugProcess debugProcess =
       super.createDebugProcess(session, browser, fileFinder, initialUrl, executionResult, usePreliminaryPage);
     debugProcess.setProcessBreakpointConditionsAtIdeSide(true);
-    debugProcess.setBreakpointLanguageHint(new PairFunction<XLineBreakpoint<?>, Location, String>() {
-      @Override
-      public String fun(XLineBreakpoint<?> breakpoint, Location location) {
-        String result = StringUtil.endsWithIgnoreCase(breakpoint == null ? location.getUrl().getPath() : breakpoint.getFileUrl(), ".dart")
-                        ? "dart"
-                        : null;
-        if (LOG.isDebugEnabled()) {
-          LOG.debug(breakpoint + ", " + location.getUrl() + " " + result);
-        }
-        return result;
+    debugProcess.setBreakpointLanguageHint((breakpoint, location) -> {
+      String result = StringUtil.endsWithIgnoreCase(breakpoint == null ? location.getUrl().getPath() : breakpoint.getFileUrl(), ".dart")
+                      ? "dart"
+                      : null;
+      if (LOG.isDebugEnabled()) {
+        LOG.debug(breakpoint + ", " + location.getUrl() + " " + result);
       }
+      return result;
     });
     return debugProcess;
   }
@@ -65,12 +59,8 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   @Override
   public void checkAvailability(@NotNull final Project project) throws RuntimeConfigurationError {
     if (DartiumUtil.getDartiumBrowser() == null) {
-      throw new RuntimeConfigurationError(DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()), new Runnable() {
-        @Override
-        public void run() {
-          DartConfigurable.openDartSettings(project);
-        }
-      });
+      throw new RuntimeConfigurationError(DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()),
+                                          () -> DartConfigurable.openDartSettings(project));
     }
   }
 
