@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.util.JSTreeUtil;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -123,7 +124,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
 
-    CUSTOM_PROPERTY_PROCESSORS.put(WHEN, createRouterWhenProcessor());
+    final PairProcessor<JSProperty, JSElementIndexingData> processor = createRouterWhenProcessor();
+    CUSTOM_PROPERTY_PROCESSORS.put(WHEN, processor);
+    CUSTOM_PROPERTY_PROCESSORS.put("otherwise", processor);
+    CUSTOM_PROPERTY_PROCESSORS.put("state", processor);
     // example of nested states https://scotch.io/tutorials/angular-routing-using-ui-router
     POLY_NAME_CONVERTERS.put(STATE, new NotNullFunction<String, List<String>>() {
       @NotNull
@@ -221,13 +225,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final String name = property.getName();
     if (name == null) return outData;
 
-    final PsiElement parent = property.getParent();
-    if (!(parent instanceof JSObjectLiteralExpression)) return outData;
-    final PsiElement grandParent = parent.getParent();
-    if (!(grandParent instanceof JSArgumentList)) return outData;
-    final PsiElement callExpression = grandParent.getParent();
-    if (!(callExpression instanceof JSCallExpression)) return outData;
-    final JSExpression methodExpression = ((JSCallExpression)callExpression).getMethodExpression();
+    final Pair<JSCallExpression, Integer> pair = findImmediatelyWrappingCall(property);
+    if (pair == null) return outData;
+    final JSCallExpression callExpression = pair.getFirst();
+    final int level = pair.getSecond();
+
+    final JSExpression methodExpression = callExpression.getMethodExpression();
     if (!(methodExpression instanceof JSReferenceExpression) || ((JSReferenceExpression)methodExpression).getQualifier() == null) {
       return outData;
     }
@@ -235,17 +238,43 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final PairProcessor<JSProperty, JSElementIndexingData> customProcessor = CUSTOM_PROPERTY_PROCESSORS.get(command);
     JSElementIndexingData localOutData = null;
     if (customProcessor != null && customProcessor.process(property,
-                                                           (localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))))
+                                                           (localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData)))) {
       return localOutData;
+    }
+    // for 'standard' properties, keep indexing only for properties - immediate children of function calls parameters
+    if (level > 1) return outData;
 
-    final StubIndexKey<String, JSImplicitElementProvider> index =
-      INDEXERS.get(command);
+    final PsiElement parent = property.getParent();
+    final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(command);
     if (index == null) return outData;
-    if (((JSCallExpression)callExpression).getArguments()[0] != parent) return outData;
+    if (callExpression.getArguments()[0] != parent) return outData;
 
     if (outData == null) outData = new JSElementIndexingDataImpl();
     addImplicitElements(property, command, index, name, null, outData);
     return outData;
+  }
+
+  @Nullable
+  private Pair<JSCallExpression, Integer> findImmediatelyWrappingCall(@NotNull JSProperty property) {
+    PsiElement current = property.getParent();
+    int level = 0;
+    while (current != null && current instanceof JSElement) {
+      if (current instanceof JSProperty) {
+        current = current.getParent();
+        continue;
+      }
+      else if (current instanceof JSObjectLiteralExpression) {
+        ++level;
+        current = current.getParent();
+        continue;
+      }
+      if (current instanceof JSArgumentList) {
+        final PsiElement callExpression = current.getParent();
+        if (callExpression instanceof JSCallExpression) return Pair.create((JSCallExpression)callExpression, level);
+      }
+      return null;
+    }
+    return null;
   }
 
   @Override

@@ -33,6 +33,11 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals("menuTip", variants.get(0));
   }
 
+  public void testInnerPropertyControllerAs() throws Exception {
+    final List<String> variants = myFixture.getCompletionVariants("innerPropertyControllerAs.completion.js", "one.html", "two.html", "angular.js");
+    Assert.assertEquals("testMe", variants.get(0));
+  }
+
   public void testNavigationToView1() throws Exception {
     final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
