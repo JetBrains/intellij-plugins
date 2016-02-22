@@ -1,9 +1,5 @@
 package org.angularjs.codeInsight.refs;
 
-import com.intellij.codeInsight.completion.PrioritizedLookupElement;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -17,6 +13,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -35,7 +32,8 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] {new AngularJSUiRouterViewReference(((JSProperty) element).getNameIdentifier())};
+    final PsiElement identifier = element instanceof JSProperty ? ((JSProperty)element).getNameIdentifier() : element;
+    return new PsiReference[] {new AngularJSUiRouterViewReference(identifier)};
   }
 
   private static class AngularJSUiRouterViewReference extends AngularPolyReferenceBase<PsiElement> {
@@ -105,23 +103,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     @NotNull
     @Override
     public Object[] getVariants() {
-      final FileBasedIndex instance = FileBasedIndex.getInstance();
-      final Project project = getElement().getProject();
-
-      final Collection<String> keys = instance.getAllKeys(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, project);
-      final List<LookupElement> elements = new ArrayList<LookupElement>();
-      //boolean checkEmpty = false;
-      for (String key : keys) {
-        if (StringUtil.isEmptyOrSpaces(key)) {
-          // no sense in adding empty strings into completion
-          continue;
-        }
-        final LookupElementBuilder builder = LookupElementBuilder.create(key)
-          .withTailText(" (angular-ui-router ui-view)", true);
-        final LookupElement item = PrioritizedLookupElement.withPriority(builder, JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY);
-        elements.add(item);
-      }
-      return elements.toArray(new LookupElement[elements.size()]);
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
   }
 }
