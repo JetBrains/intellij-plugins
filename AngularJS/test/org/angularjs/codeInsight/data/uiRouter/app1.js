@@ -10,7 +10,7 @@ angular.module('sample', [
                 '<caret>' : {
                   templateUrl: 'one.html'
                 }
-              })
+              }})
                 .state('two', {
               views: {
                 '' : {
