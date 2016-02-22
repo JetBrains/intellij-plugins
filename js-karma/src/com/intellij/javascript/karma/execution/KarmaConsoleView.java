@@ -4,7 +4,9 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.testframework.*;
+import com.intellij.execution.testframework.PoolOfTestIcons;
+import com.intellij.execution.testframework.TestConsoleProperties;
+import com.intellij.execution.testframework.TestTreeView;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMRootTestProxyFormatter;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
@@ -77,12 +79,9 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
     }
     else {
-      myServer.onPortBound(new Runnable() {
-        @Override
-        public void run() {
-          KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
-          scheduleBrowserCapturingSuggestion();
-        }
+      myServer.onPortBound(() -> {
+        KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
+        scheduleBrowserCapturingSuggestion();
       });
     }
     final ProcessAdapter listener = new ProcessAdapter() {
@@ -107,29 +106,23 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   private void scheduleBrowserCapturingSuggestion() {
     final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
-    alarm.addRequest(new Runnable() {
-      @Override
-      public void run() {
-        if (!myServer.getProcessHandler().isProcessTerminated() &&
-            !myServer.areBrowsersReady() &&
-            !Disposer.isDisposed(KarmaConsoleView.this)) {
-          printBrowserCapturingSuggestion();
-        }
-        Disposer.dispose(alarm);
+    alarm.addRequest(() -> {
+      if (!myServer.getProcessHandler().isProcessTerminated() &&
+          !myServer.areBrowsersReady() &&
+          !Disposer.isDisposed(this)) {
+        printBrowserCapturingSuggestion();
       }
+      Disposer.dispose(alarm);
     }, 1000, ModalityState.any());
   }
 
   private void printBrowserCapturingSuggestion() {
     SMTestProxy.SMRootTestProxy rootNode = getResultsViewer().getTestsRootNode();
-    rootNode.addLast(new Printable() {
-      @Override
-      public void printOn(Printer printer) {
-        printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-        String url = myServer.formatUrl("/");
-        printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-        printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-      }
+    rootNode.addLast(printer -> {
+      printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+      String url = myServer.formatUrl("/");
+      printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+      printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
     });
   }
 
@@ -147,7 +140,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return myExecutionSession;
   }
 
-  public KarmaDebugTabLayouter createDebugLayouter(@NotNull JavaScriptDebugProcess<? extends VmConnection> debugProcess) {
+  public KarmaDebugTabLayouter createDebugLayouter(@NotNull JavaScriptDebugProcess<?> debugProcess) {
     return new KarmaDebugTabLayouter(debugProcess);
   }
 
@@ -242,7 +235,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     @Override
     public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
       super.registerAdditionalContent(ui);
-      KarmaConsoleView.this.registerKarmaServerTab(ui);
+      registerKarmaServerTab(ui);
     }
   }
 }
