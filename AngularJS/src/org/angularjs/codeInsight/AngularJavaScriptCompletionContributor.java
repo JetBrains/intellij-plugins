@@ -18,16 +18,20 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     if (AngularJSCompletionContributor.getElementLanguage(parameters).isKindOf(JavascriptLanguage.INSTANCE)) {
-      final String prefix = result.getPrefixMatcher().getPrefix();
-      if (StringUtil.isEmptyOrSpaces(prefix)) return;
-      final String[] parts = prefix.split(" ");
       if (parameters.getOriginalPosition() != null && parameters.getOriginalPosition().getParent() instanceof JSLiteralExpression) {
         final JSLiteralExpression literal = (JSLiteralExpression)parameters.getOriginalPosition().getParent();
-        if (literal.isQuotedLiteral() && literal.getParent() instanceof JSProperty &&
-            AngularJSIndexingHandler.CONTROLLER.equals(((JSProperty)literal.getParent()).getName())) {
+        if (isControllerPropertyValue(literal)) {
+          final String prefix = result.getPrefixMatcher().getPrefix();
+          if (StringUtil.isEmptyOrSpaces(prefix)) return;
+          final String[] parts = prefix.split(" ");
           result.addElement(LookupElementBuilder.create(parts[0] + AngularJSIndexingHandler.AS_CONNECTOR_WITH_SPACES));
         }
       }
     }
+  }
+
+  private static boolean isControllerPropertyValue(JSLiteralExpression literal) {
+    return literal.isQuotedLiteral() && literal.getParent() instanceof JSProperty &&
+           AngularJSIndexingHandler.CONTROLLER.equals(((JSProperty)literal.getParent()).getName());
   }
 }
