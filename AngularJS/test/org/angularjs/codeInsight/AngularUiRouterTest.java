@@ -10,6 +10,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
 import java.util.List;
@@ -38,24 +39,68 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals("testMe", variants.get(0));
   }
 
+  public void testControllerRedefinitionSyntax() throws Exception {
+    final List<String> variants = myFixture.getCompletionVariants("controllerRedefinitionSyntax.completion.js", "one.html", "two.html", "angular.js");
+    Assert.assertEquals("testMe", variants.get(0));
+    Assert.assertEquals("testMe as ", variants.get(1));
+  }
+
+  public void testControllerRedefinitionSyntaxOutside() throws Exception {
+    final List<String> variants = myFixture.getCompletionVariants("controllerRedefinitionSyntaxOutside.completion.js", "one.html", "two.html", "angular.js");
+    Assert.assertTrue(variants.contains("testMe"));
+    Assert.assertTrue(variants.contains("something"));
+  }
+
+  public void testControllerRedefinitionSyntaxNavigation() throws Exception {
+    final String mainFile = "controllerRedefinitionSyntax.navigation.js";
+    final PsiFile[] files = myFixture.configureByFiles(mainFile, "one.html", "two.html", "angular.js");
+    myFixture.doHighlighting();
+    final String str = "'testMe as something'";
+    final PsiElement element = getElement(files[0], str);
+    Assert.assertEquals(str, element.getText());
+    Assert.assertTrue(element.getParent() instanceof JSLiteralExpression);
+    Assert.assertTrue(element.getParent().getParent() instanceof JSProperty);
+
+    final PsiReference[] references = element.getParent().getReferences();
+    Assert.assertEquals(1, references.length);
+    Assert.assertEquals("testMe", references[0].getCanonicalText());
+
+    final PsiElement resolve = references[0].resolve();
+    Assert.assertNotNull(resolve);
+    Assert.assertEquals(mainFile, resolve.getContainingFile().getName());
+    Assert.assertEquals("testMe", ((JSPsiNamedElementBase) resolve).getName());
+  }
+
   public void testNavigationToView1() throws Exception {
     final PsiFile[] files = myFixture.configureByFiles("app.js", "one.html", "two.html", "angular.js");
     myFixture.doHighlighting();
 
     final String str = "'menuTip'";
-    final int idx = myFixture.getEditor().getDocument().getText().indexOf(str);
-    Assert.assertTrue(idx > 0);
-    final PsiElement element = files[0].findElementAt(idx);
-    Assert.assertNotNull(element);
-    Assert.assertTrue(element.getParent() instanceof JSProperty);
-    final PsiReference reference = element.getParent().getReference();
-    Assert.assertNotNull(reference);
+    final PsiReference reference = getReferenceByTextAround(files[0], str);
     Assert.assertEquals(StringUtil.unquoteString(str), reference.getCanonicalText());
 
     final PsiElement resolve = reference.resolve();
     Assert.assertNotNull(resolve);
     Assert.assertEquals("one.html", resolve.getContainingFile().getName());
     Assert.assertEquals(StringUtil.unquoteString(str), ((JSPsiNamedElementBase) resolve).getName());
+  }
+
+  @NotNull
+  private PsiReference getReferenceByTextAround(PsiFile file, String str) {
+    final PsiElement element = getElement(file, str);
+    Assert.assertTrue(element.getParent() instanceof JSProperty);
+    PsiReference reference = element.getParent().getReference();
+    Assert.assertNotNull(reference);
+    return reference;
+  }
+
+  @NotNull
+  private PsiElement getElement(PsiFile file, String str) {
+    final int idx = myFixture.getEditor().getDocument().getText().indexOf(str);
+    Assert.assertTrue(idx > 0);
+    final PsiElement element = file.findElementAt(idx);
+    Assert.assertNotNull(element);
+    return element;
   }
 
   public void testNavigationToView2() throws Exception {
@@ -67,10 +112,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
   }
 
   private void emptyViewNavigatesToFilesDefaultView(PsiFile file, String str) {
-    final int idx = myFixture.getEditor().getDocument().getText().indexOf(str);
-    Assert.assertTrue(idx > 0);
-    final PsiElement inObj = file.findElementAt(idx);
-    Assert.assertNotNull(inObj);
+    final PsiElement inObj = getElement(file, str);
     Assert.assertTrue(inObj.getParent() instanceof JSLiteralExpression);
     Assert.assertTrue(inObj.getParent().getParent() instanceof JSProperty);
     final JSProperty templateUrl = (JSProperty)inObj.getParent().getParent();
@@ -109,10 +151,7 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
 
   private void checkNavigation(PsiFile file, String state, String referencedTextExpected) {
     referencedTextExpected = referencedTextExpected == null ? state : referencedTextExpected;
-    final int idx = myFixture.getEditor().getDocument().getText().indexOf("ui-sref=\"" + state + "\"");
-    Assert.assertTrue(idx > 0);
-    final PsiElement inObj = file.findElementAt(idx);
-    Assert.assertNotNull(inObj);
+    final PsiElement inObj = getElement(file, "ui-sref=\"" + state + "\"");
     Assert.assertEquals("ui-sref", inObj.getText());
     Assert.assertTrue(inObj.getParent() instanceof XmlAttribute);
     final XmlAttributeValue element = ((XmlAttribute)inObj.getParent()).getValueElement();
