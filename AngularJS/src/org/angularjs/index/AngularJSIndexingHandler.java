@@ -68,6 +68,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   private static final String[] ALL_INTERESTING_METHODS;
   private static final BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXES;
+  public static final String AS_CONNECTOR_WITH_SPACES = " as ";
 
   static {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
@@ -593,20 +594,36 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         if (AngularJSRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
           final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
           if (!value.isQuotedLiteral()) return false;
-          final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(CONTROLLER);
-          assert index != null;
-          final JSObjectLiteralExpression object = ObjectUtils.tryCast(property.getParent(), JSObjectLiteralExpression.class);
-          if (object == null) return false;
-          final JSProperty controllerProperty = object.findProperty(CONTROLLER);
-          if (controllerProperty != null) {
-            // value (JSFunctionExpression) is not implicit element provider
-            addImplicitElements(controllerProperty, null, index, StringUtil.unquoteString(value.getText()), null, outData);
-            return true;
+          final String unquotedValue = StringUtil.unquoteString(value.getText());
+          return recordControllerAs(property, outData, value, unquotedValue);
+        } else if (CONTROLLER.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
+          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
+          if (!value.isQuotedLiteral()) return false;
+          final String unquotedValue = StringUtil.unquoteString(value.getText());
+          final int idx = unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES);
+          if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
+            return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
           }
-          addImplicitElements(value, null, index, StringUtil.unquoteString(value.getText()), null, outData);
-          return true;
         }
         return false;
+      }
+
+      private boolean recordControllerAs(JSProperty property,
+                                         JSElementIndexingData outData,
+                                         JSLiteralExpression value,
+                                         String unquotedValue) {
+        final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(CONTROLLER);
+        assert index != null;
+        final JSObjectLiteralExpression object = ObjectUtils.tryCast(property.getParent(), JSObjectLiteralExpression.class);
+        if (object == null) return false;
+        final JSProperty controllerProperty = object.findProperty(CONTROLLER);
+        if (controllerProperty != null) {
+          // value (JSFunctionExpression) is not implicit element provider
+          addImplicitElements(controllerProperty, null, index, unquotedValue, null, outData);
+          return true;
+        }
+        addImplicitElements(value, null, index, unquotedValue, null, outData);
+        return true;
       }
     };
   }
