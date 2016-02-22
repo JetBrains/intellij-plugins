@@ -11,7 +11,7 @@ angular.module('sample', [
                   templateUrl: 'one.html'
                 },
                 'menuTip': {}
-              })
+              }})
                 .state('two', {
               views: {
                 '' : {
