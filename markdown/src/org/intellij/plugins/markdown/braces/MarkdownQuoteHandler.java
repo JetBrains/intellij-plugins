@@ -19,6 +19,7 @@ import com.intellij.codeInsight.editorActions.QuoteHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +37,30 @@ public class MarkdownQuoteHandler implements QuoteHandler {
     final CharSequence charsSequence = iterator.getDocument().getCharsSequence();
     final TextRange current = getRangeOfThisType(charsSequence, offset);
 
-    final int prev = locateNextPosition(charsSequence, charsSequence.charAt(offset), current.getStartOffset() - 1, -1);
-    return prev != -1 && getRangeOfThisType(charsSequence, prev).getLength() <= current.getLength();
+    final boolean isBacktick = iterator.getTokenType() == MarkdownTokenTypes.BACKTICK;
+    final boolean seekPrev = isBacktick ||
+                             (current.getStartOffset() - 1 >= 0 && 
+                              !Character.isWhitespace(charsSequence.charAt(current.getStartOffset() - 1)));
+
+    if (seekPrev) {
+      final int prev = locateNextPosition(charsSequence, charsSequence.charAt(offset), current.getStartOffset() - 1, -1);
+      if (prev != -1) {
+        return getRangeOfThisType(charsSequence, prev).getLength() <= current.getLength();
+      }
+    }
+    return current.getLength() % 2 == 0 && (!isBacktick || offset > (current.getStartOffset() + current.getEndOffset()) / 2);
   }
 
   @Override
   public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
-    return QUOTE_TYPES.contains(iterator.getTokenType());
+    final IElementType tokenType = iterator.getTokenType();
+    
+    if (!QUOTE_TYPES.contains(tokenType)) {
+      return false;
+    }
+    final CharSequence chars = iterator.getDocument().getCharsSequence();
+    return (offset <= 0 || Character.isWhitespace(chars.charAt(offset - 1)))
+      && (offset + 1 >= chars.length() || Character.isWhitespace(chars.charAt(offset + 1)));
   }
 
   @Override
@@ -59,7 +77,7 @@ public class MarkdownQuoteHandler implements QuoteHandler {
     return false;
   }
 
-  private TextRange getRangeOfThisType(@NotNull CharSequence charSequence, int offset) {
+  private static TextRange getRangeOfThisType(@NotNull CharSequence charSequence, int offset) {
     final int length = charSequence.length();
     final char c = charSequence.charAt(offset);
 
@@ -73,7 +91,7 @@ public class MarkdownQuoteHandler implements QuoteHandler {
     return TextRange.create(l, r + 1);
   }
 
-  private int locateNextPosition(@NotNull CharSequence haystack, char needle, int from, int dx) {
+  private static int locateNextPosition(@NotNull CharSequence haystack, char needle, int from, int dx) {
     while (from >= 0 && from < haystack.length()) {
       final char currentChar = haystack.charAt(from);
       if (currentChar == needle) {
