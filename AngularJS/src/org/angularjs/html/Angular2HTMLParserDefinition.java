@@ -1,10 +1,8 @@
 package org.angularjs.html;
 
-import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.html.HTMLParserDefinition;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
@@ -39,12 +37,6 @@ public class Angular2HTMLParserDefinition extends HTMLParserDefinition {
 
   @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
-    return new HtmlFileImpl(viewProvider, HTML_FILE) {
-      @NotNull
-      @Override
-      public FileType getFileType() {
-        return HtmlFileType.INSTANCE;
-      }
-    };
+    return new HtmlFileImpl(viewProvider, HTML_FILE);
   }
 }
