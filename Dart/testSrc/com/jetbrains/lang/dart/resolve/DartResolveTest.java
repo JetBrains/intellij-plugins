@@ -103,14 +103,10 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                          new VirtualFile[]{inContent, inProject2Web, inProject3Web, inExcluded},
                          false);
 
-      doTestUseScope(new VirtualFile[]{inSdk1, inSdk2},
+      doTestUseScope(new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web,
                        inProject3Lib, inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
                      new VirtualFile[]{inExcluded});
-      doTestUseScope(new VirtualFile[]{inIdeLib1, inIdeLib2},
-                     new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web,
-                       inProject3Lib, inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
-                     new VirtualFile[]{inSdk1, inSdk2});
       doTestUseScope(new VirtualFile[]{inContent},
                      new VirtualFile[]{inContent},
                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Web, inProject2Lib, inProject3Web,
@@ -216,6 +212,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
         final Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.addRoot(root, OrderRootType.CLASSES);
         libModel.commit();
+
+        model.getContentEntries()[0].addExcludeFolder(root);
         model.commit();
       }
     });
