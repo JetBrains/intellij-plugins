@@ -26,13 +26,11 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.util.regex.Pattern;
 
 // Instantiated by reflection
 @SuppressWarnings("unused")
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
-  public static final Pattern SVG_REPLACE_PATTERN = Pattern.compile("(<img[^>]+src=\"[^\"]+\\.)svg([^\"]*\"[^>]*>)");
   @NotNull
   private final JFXPanel myPanel;
   @Nullable
