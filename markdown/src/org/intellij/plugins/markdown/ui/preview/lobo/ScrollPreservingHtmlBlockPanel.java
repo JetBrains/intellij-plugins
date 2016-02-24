@@ -30,7 +30,7 @@ class ScrollPreservingHtmlBlockPanel extends HtmlBlockPanel {
         oldY = viewport.getY();
       }
       final RBlock block = new RBlock(node, 0, this.ucontext, this.rcontext,
-                                this.frameContext, this);
+                                      this.frameContext, this);
       block.setDefaultMarginInsets(this.defaultMarginInsets);
       // block.setDefaultPaddingInsets(this.defaultPaddingInsets);
       block.setDefaultOverflowX(this.defaultOverflowX);
@@ -41,7 +41,8 @@ class ScrollPreservingHtmlBlockPanel extends HtmlBlockPanel {
 
       node.setUINode(block);
       this.rblock = block;
-    } else {
+    }
+    else {
       this.rblock = null;
     }
     this.invalidate();

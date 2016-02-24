@@ -50,11 +50,11 @@ public class MarkdownHighlighterColors {
   public static final TextAttributesKey HRULE_ATTR_KEY = createTextAttributesKey("MARKDOWN_HRULE", BLOCK_COMMENT);
   public static final TextAttributesKey CODE_BLOCK_ATTR_KEY = createTextAttributesKey("MARKDOWN_CODE_BLOCK", BLOCK_COMMENT);
   public static final TextAttributesKey CODE_FENCE_ATTR_KEY = createTextAttributesKey("MARKDOWN_CODE_FENCE", BLOCK_COMMENT);
-  
+
   public static final TextAttributesKey LIST_ITEM_ATTR_KEY = createTextAttributesKey("MARKDOWN_LIST_ITEM", TEXT);
   public static final TextAttributesKey TABLE_SEPARATOR_ATTR_KEY = createTextAttributesKey("MARKDOWN_TABLE_SEPARATOR", BLOCK_COMMENT);
   public static final TextAttributesKey STRIKE_THROUGH_ATTR_KEY = createTextAttributesKey("MARKDOWN_STRIKE_THROUGH", DEPRECATED_ATTRIBUTES);
-  
+
   public static final TextAttributesKey LINK_DEFINITION_ATTR_KEY = createTextAttributesKey("MARKDOWN_LINK_DEFINITION", TEXT);
   public static final TextAttributesKey REFERENCE_LINK_ATTR_KEY = createTextAttributesKey("MARKDOWN_REFERENCE_LINK", STRING);
   public static final TextAttributesKey IMAGE_ATTR_KEY = createTextAttributesKey("MARKDOWN_IMAGE", INJECTED_LANGUAGE_FRAGMENT);

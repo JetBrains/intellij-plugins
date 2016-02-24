@@ -38,5 +38,4 @@ public class MarkdownParserAdapter implements PsiParser {
 
     return builder.getTreeBuilt();
   }
-
 }
