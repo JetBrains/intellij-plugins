@@ -5,6 +5,7 @@ import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.HtmlLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.lexer.MergingLexerAdapter;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlTokenType;
@@ -36,8 +37,12 @@ public class Angular2HTMLLexer extends HtmlLexer {
   public void advance() {
     if (myInterpolationLexer != null) {
       myInterpolationLexer.advance();
-      if (myInterpolationLexer.getTokenType() != null) {
-        return;
+      try {
+        if (myInterpolationLexer.getTokenType() != null) {
+          return;
+        }
+      } catch (Error error) {
+        Logger.getInstance(Angular2HTMLLexer.class).error(myInterpolationLexer.getBufferSequence());
       }
       myInterpolationLexer = null;
     }
