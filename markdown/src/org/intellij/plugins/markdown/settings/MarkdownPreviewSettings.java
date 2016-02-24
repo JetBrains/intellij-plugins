@@ -19,7 +19,7 @@ public final class MarkdownPreviewSettings {
   @Property(surroundWithTag = false)
   @NotNull
   private MarkdownHtmlPanelProvider.ProviderInfo myHtmlPanelProviderInfo = LoboHtmlPanelProvider.INFO;
-  
+
   @Attribute("UseGrayscaleRendering")
   private boolean myUseGrayscaleRendering = false;
 

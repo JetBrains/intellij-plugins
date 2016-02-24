@@ -60,7 +60,8 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
 
     add(mySpacingPanel);
     add(leftToolbar.getComponent());
-    add(centerPanel, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+    add(centerPanel,
+        new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     add(myRightToolbar.getComponent());
 
     setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtil.CONTRAST_BORDER_COLOR));
@@ -147,5 +148,4 @@ public class SplitEditorToolbar extends JPanel implements Disposable {
       mySpacing = spacing;
     }
   }
-
 }

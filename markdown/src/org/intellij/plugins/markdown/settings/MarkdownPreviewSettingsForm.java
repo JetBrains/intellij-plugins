@@ -69,7 +69,7 @@ public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Hold
       }
     });
   }
-  
+
   private void updateUseGrayscaleEnabled() {
     final MarkdownHtmlPanelProvider.ProviderInfo selected = myPreviewPanelModel.getSelected();
     myUseGrayscaleRenderingForJBCheckBox.setEnabled(selected != null && selected.getClassName().contains("JavaFxHtmlPanelProvider"));
@@ -92,8 +92,8 @@ public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Hold
     if (myPreviewPanelModel.getSelected() == null) {
       throw new IllegalStateException("Should be selected always");
     }
-    return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(), 
-                                       myPreviewPanelModel.getSelected(), 
+    return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(),
+                                       myPreviewPanelModel.getSelected(),
                                        myUseGrayscaleRenderingForJBCheckBox.isSelected());
   }
 }

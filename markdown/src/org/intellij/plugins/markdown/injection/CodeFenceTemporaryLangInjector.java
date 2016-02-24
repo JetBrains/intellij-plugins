@@ -19,5 +19,4 @@ public class CodeFenceTemporaryLangInjector extends CodeFenceInjector {
     }
     return null;
   }
-
 }

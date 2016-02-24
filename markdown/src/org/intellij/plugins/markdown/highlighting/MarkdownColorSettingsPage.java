@@ -182,5 +182,4 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
       }
     }
   }
-
 }

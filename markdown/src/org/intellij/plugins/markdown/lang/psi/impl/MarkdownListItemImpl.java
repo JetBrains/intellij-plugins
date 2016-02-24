@@ -29,7 +29,7 @@ public class MarkdownListItemImpl extends MarkdownCompositePsiElementBase {
       return null;
     }
   }
-  
+
   @Nullable
   public PsiElement getCheckBox() {
     final PsiElement markerElement = getMarkerElement();
@@ -44,7 +44,7 @@ public class MarkdownListItemImpl extends MarkdownCompositePsiElementBase {
       return null;
     }
   }
-  
+
   @Override
   public ItemPresentation getPresentation() {
     return new MyItemPresentation();
@@ -54,7 +54,7 @@ public class MarkdownListItemImpl extends MarkdownCompositePsiElementBase {
   protected String getPresentableTagName() {
     return "li";
   }
-  
+
   private class MyItemPresentation extends MarkdownBasePresentation implements ColoredItemPresentation {
     @Nullable
     @Override
@@ -106,5 +106,5 @@ public class MarkdownListItemImpl extends MarkdownCompositePsiElementBase {
         return ConsoleHighlighter.RED;
       }
     }
-  } 
+  }
 }
