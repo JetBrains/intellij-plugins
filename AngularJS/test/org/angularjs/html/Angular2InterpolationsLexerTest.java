@@ -38,6 +38,13 @@ public class Angular2InterpolationsLexerTest extends LexerTestCase {
                                                     "XML_DATA_CHARACTERS ('}}again')");
   }
 
+  public void testWithLineBreaks() {
+    doTest("#todo of todoService.todos\n" +
+           "            | started : status\n" +
+           "            | search : term\n" +
+           "            ", "XML_DATA_CHARACTERS ('#todo of todoService.todos\\n            | started : status\\n            | search : term\\n            ')");
+  }
+
   @Override
   protected Lexer createLexer() {
     final _AngularJSInterpolationsLexer lexer = new _AngularJSInterpolationsLexer(null);

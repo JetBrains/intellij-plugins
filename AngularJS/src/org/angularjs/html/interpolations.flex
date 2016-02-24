@@ -27,5 +27,5 @@ import com.intellij.lang.javascript.JSElementTypes;
 
 <YYINITIAL> "{{"     { yybegin(INTERPOLATION); return myType; }
 <INTERPOLATION> "}}" { yybegin(YYINITIAL); return myType; }
-<INTERPOLATION> .    { return JSElementTypes.EMBEDDED_CONTENT; }
-<YYINITIAL> .        { return myType; }
+<INTERPOLATION> .|"\n"    { return JSElementTypes.EMBEDDED_CONTENT; }
+<YYINITIAL> .|"\n"        { return myType; }
