@@ -56,7 +56,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Nullable
   private Runnable myLastHtmlOrRefreshRequest = null;
 
-  private int myLastScrollOffset;
+  private volatile int myLastScrollOffset;
   @NotNull
   private String myLastRenderedHtml = "";
 
@@ -107,6 +107,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     // Do not scroll if html update request is online
     // This will restrain preview from glitches on editing
     if (!myPooledAlarm.isEmpty()) {
+      myLastScrollOffset = offset;
       return;
     }
 
