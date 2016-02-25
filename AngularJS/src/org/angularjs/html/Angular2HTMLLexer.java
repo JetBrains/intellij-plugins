@@ -1,6 +1,5 @@
 package org.angularjs.html;
 
-import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.HtmlLexer;
 import com.intellij.lexer.Lexer;
@@ -9,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlTokenType;
+import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -88,6 +88,6 @@ public class Angular2HTMLLexer extends HtmlLexer {
   private static Lexer createLexer(IElementType type) {
     final _AngularJSInterpolationsLexer lexer = new _AngularJSInterpolationsLexer(null);
     lexer.setType(type);
-    return new MergingLexerAdapter(new FlexAdapter(lexer), TokenSet.create(JSElementTypes.EMBEDDED_CONTENT, XmlTokenType.XML_DATA_CHARACTERS));
+    return new MergingLexerAdapter(new FlexAdapter(lexer), TokenSet.create(AngularJSElementTypes.EMBEDDED_CONTENT, XmlTokenType.XML_DATA_CHARACTERS));
   }
 }
