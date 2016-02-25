@@ -1,6 +1,5 @@
 package org.angularjs.html;
 
-import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.lexer.MergingLexerAdapter;
@@ -9,6 +8,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.testFramework.LexerTestCase;
 import org.angularjs.AngularTestUtil;
+import org.angularjs.lang.parser.AngularJSElementTypes;
 
 /**
  * @author Dennis.Ushakov
@@ -49,7 +49,7 @@ public class Angular2InterpolationsLexerTest extends LexerTestCase {
   protected Lexer createLexer() {
     final _AngularJSInterpolationsLexer lexer = new _AngularJSInterpolationsLexer(null);
     lexer.setType(XmlTokenType.XML_DATA_CHARACTERS);
-    return new MergingLexerAdapter(new FlexAdapter(lexer), TokenSet.create(JSElementTypes.EMBEDDED_CONTENT, XmlTokenType.XML_DATA_CHARACTERS));
+    return new MergingLexerAdapter(new FlexAdapter(lexer), TokenSet.create(AngularJSElementTypes.EMBEDDED_CONTENT, XmlTokenType.XML_DATA_CHARACTERS));
   }
 
   @Override
