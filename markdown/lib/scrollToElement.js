@@ -42,8 +42,6 @@ window.__IntelliJTools.scrollToOffset = (function () {
   }
   
   var scrollToSrcOffset = function (newOffsetToScroll, newAttributeName) {
-    alert("!")
-    window.JavaPanelBridge.log(newOffsetToScroll, newAttributeName)
     attributeName = newAttributeName;
     offsetToScroll = newOffsetToScroll;
     
@@ -90,7 +88,6 @@ window.__IntelliJTools.scrollToOffset = (function () {
     if (Math.abs(newValue - oldValue) > 50) {
       document.documentElement.scrollTop = document.body.scrollTop = newValue;
     }
-    // window.JavaPanelBridge.log("" + [leftBound, rightBound, resultY, height])
   }
 
   return scrollToSrcOffset
