@@ -34,8 +34,8 @@ public class CodeFenceInjector implements MultiHostInjector {
     for (int i = 0; i < list.size(); i++) {
       final MarkdownCodeFenceContentImpl content = list.get(i);
       final boolean includeEol = (i + 1 < list.size());
-      final TextRange rangeInHost = TextRange.create(content.getStartOffsetInParent(),
-                                                     content.getStartOffsetInParent() + content.getTextLength() + (includeEol ? 1 : 0));
+      final TextRange rangeInHost = TextRange.from(content.getStartOffsetInParent(),
+                                                   content.getTextLength() + (includeEol ? 1 : 0));
       registrar.addPlace(null, null, ((MarkdownCodeFenceImpl)context), rangeInHost);
     }
     registrar.doneInjecting();
