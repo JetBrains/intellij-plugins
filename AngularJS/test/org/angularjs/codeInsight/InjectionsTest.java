@@ -15,6 +15,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
+import com.sixrr.inspectjs.style.UnterminatedStatementJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.lang.AngularJSLanguage;
@@ -233,6 +234,16 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
         final int offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
         final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
         assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
+      }
+    });
+  }
+  public void testUnterminated() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.enableInspections(UnterminatedStatementJSInspection.class);
+        myFixture.configureByFiles("unterminated.ts", "angular2.js");
+        myFixture.checkHighlighting();
       }
     });
   }
