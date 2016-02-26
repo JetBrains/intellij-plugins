@@ -247,4 +247,42 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       }
     });
   }
+
+  public void testNgForExternalCompletion() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<RuntimeException>() {
+      @Override
+      public void run() throws RuntimeException {
+        myFixture.testCompletion("ngFor.html", "ngFor.after.html", "angular2.js");
+      }
+    });
+  }
+
+  public void testNgForExternalResolve() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<RuntimeException>() {
+      @Override
+      public void run() throws RuntimeException {
+        myFixture.configureByFiles("ngFor.after.html", "angular2.js");
+        checkVariableResolve("myTo<caret>do", "myTodo", JSDefinitionExpression.class);
+      }
+    });
+  }
+
+  public void testNgForInlineCompletion() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<RuntimeException>() {
+      @Override
+      public void run() throws RuntimeException {
+        myFixture.testCompletion("ngFor.ts", "ngFor.after.ts", "angular2.js");
+      }
+    });
+  }
+
+  public void testNgForInlineResolve() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), new ThrowableRunnable<RuntimeException>() {
+      @Override
+      public void run() throws RuntimeException {
+        myFixture.configureByFiles("ngFor.after.ts", "angular2.js");
+        checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSDefinitionExpression.class);
+      }
+    });
+  }
 }

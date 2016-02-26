@@ -1,0 +1,9 @@
+<li *ngFor="#myTodo of todoService.todos
+            | started : status
+            | search : term
+            ">
+  <todo-item-renderer
+      [todo]="myTodo<caret>"
+      (toggle)="todoService.toggleTodo($event)"
+  ></todo-item-renderer>
+</li>

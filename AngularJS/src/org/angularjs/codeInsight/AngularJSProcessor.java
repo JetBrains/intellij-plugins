@@ -20,6 +20,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
+import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,10 @@ public class AngularJSProcessor {
 
   public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
-    final PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
+    PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
+    if (!(hostFile instanceof XmlFile)) {
+      hostFile = original.getContainingFile();
+    }
     if (!(hostFile instanceof XmlFile)) return;
 
     final XmlFile file = (XmlFile)hostFile;
@@ -67,26 +71,7 @@ public class AngularJSProcessor {
 
   private static void processDocument(XmlDocument document, final Collection<JSNamedElement> result) {
     if (document == null) return;
-    final JSResolveUtil.JSInjectedFilesVisitor visitor = new JSResolveUtil.JSInjectedFilesVisitor() {
-      @Override
-      protected void process(JSFile file) {
-        file.accept(new AngularJSRecursiveVisitor() {
-          @Override
-          public void visitJSDefinitionExpression(JSDefinitionExpression node) {
-            result.add(node);
-            super.visitJSDefinitionExpression(node);
-          }
-
-          @Override
-          public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
-            for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
-              result.add(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
-            }
-            super.visitAngularJSRepeatExpression(repeatExpression);
-          }
-        });
-      }
-    };
+    final AngularInjectedFilesVisitor visitor = new AngularInjectedFilesVisitor(result);
 
     for (XmlTag tag : PsiTreeUtil.getChildrenOfTypeAsList(document, XmlTag.class)) {
       new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true){
@@ -94,6 +79,9 @@ public class AngularJSProcessor {
         public boolean execute(@NotNull PsiElement element) {
           if (element instanceof HtmlEmbeddedContentImpl) {
             processDocument(PsiTreeUtil.findChildOfType(element, XmlDocument.class), result);
+          }
+          if (element instanceof XmlAttribute) {
+            visitor.accept(element);
           }
           return super.execute(element);
         }
@@ -117,5 +105,38 @@ public class AngularJSProcessor {
               declarationContainer.getTextOffset() < elementContainer.getTextOffset());
     }
     return true;
+  }
+
+  private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
+    private final Collection<JSNamedElement> myResult;
+
+    public AngularInjectedFilesVisitor(Collection<JSNamedElement> result) {
+      myResult = result;
+    }
+
+    @Override
+    protected void process(JSFile file) {
+      accept(file);
+    }
+
+    protected void accept(PsiElement file) {
+      file.accept(new AngularJSRecursiveVisitor() {
+        @Override
+        public void visitJSDefinitionExpression(JSDefinitionExpression node) {
+          myResult.add(node);
+          super.visitJSDefinitionExpression(node);
+        }
+
+        @Override
+        public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
+          if (repeatExpression.getNode().getElementType() == AngularJSElementTypes.REPEAT_EXPRESSION) {
+            for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
+              myResult.add(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
+            }
+          }
+          super.visitAngularJSRepeatExpression(repeatExpression);
+        }
+      });
+    }
   }
 }
