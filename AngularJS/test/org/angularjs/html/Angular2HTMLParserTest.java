@@ -58,4 +58,8 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
   public void testBindingAttribute() throws Exception {
     doTest(true);
   }
+
+  public void testElvis() throws Exception {
+    doTest(true);
+  }
 }

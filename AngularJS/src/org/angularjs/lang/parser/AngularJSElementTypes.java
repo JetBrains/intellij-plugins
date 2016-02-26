@@ -1,6 +1,8 @@
 package org.angularjs.lang.parser;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.lang.AngularJSLanguage;
 
@@ -18,5 +20,10 @@ public interface AngularJSElementTypes {
   IElementType MESSAGE_FORMAT_OPTION = new IElementType("MESSAGE_FORMAT_OPTION", AngularJSLanguage.INSTANCE);
   IElementType MESSAGE_FORMAT_SELECTION_KEYWORD = new IElementType("MESSAGE_FORMAT_SELECTION_KEYWORD", AngularJSLanguage.INSTANCE);
 
-  IElementType EMBEDDED_CONTENT = new JSElementTypes.EmbeddedContentElementType(AngularJSLanguage.INSTANCE);
+  IElementType EMBEDDED_CONTENT = new JSElementTypes.EmbeddedContentElementType(AngularJSLanguage.INSTANCE) {
+    @Override
+    protected Lexer createStripperLexer(Language baseLanguage) {
+      return null;
+    }
+  };
 }
