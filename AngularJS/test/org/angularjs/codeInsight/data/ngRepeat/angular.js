@@ -21,6 +21,7 @@
 /**
  * @ngdoc directive
  * @name ng.directive:ngController
+ * @param {expression} ngController
  */
 
 /**

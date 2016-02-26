@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -50,5 +51,12 @@ public class NgRepeatTest extends LightPlatformCodeInsightFixtureTestCase {
     assertTrue(variants.size() >= 2);
     assertEquals("firstName", variants.get(0));
     assertEquals("lastName", variants.get(1));
+  }
+
+  public void testInspection() {
+    myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+    myFixture.disableInspections();
+    myFixture.configureByFiles("controllerWithAlias.inspect.html", "angular.js", "customNoVar.js");
+    myFixture.checkHighlighting();
   }
 }
