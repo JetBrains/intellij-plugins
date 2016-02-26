@@ -26,7 +26,7 @@ public class Angular2HTMLLexer extends HtmlLexer {
       public void handleElement(Lexer lexer) {
         if (!isHtmlTagState(lexer.getState())) {
           final String text = lexer.getTokenText();
-          if (text.startsWith("(") || text.startsWith("[")) {
+          if (text.startsWith("(") || text.startsWith("[") || text.startsWith("*")) {
             seenAttribute = true;
             seenScript = true;
             seenAngularScript = true;

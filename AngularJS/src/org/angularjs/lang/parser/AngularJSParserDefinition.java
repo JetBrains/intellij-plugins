@@ -39,7 +39,7 @@ public class AngularJSParserDefinition extends JavascriptParserDefinition {
   @Override
   public PsiElement createElement(ASTNode node) {
     final IElementType type = node.getElementType();
-    if (type == AngularJSElementTypes.REPEAT_EXPRESSION) {
+    if (type == AngularJSElementTypes.REPEAT_EXPRESSION || type == AngularJSElementTypes.FOR_EXPRESSION) {
       return new AngularJSRepeatExpression(node);
     } else if (type == AngularJSElementTypes.FILTER_EXPRESSION) {
       return new AngularJSFilterExpression(node);

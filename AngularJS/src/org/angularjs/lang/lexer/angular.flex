@@ -32,7 +32,7 @@ FP_LITERAL4=({DIGIT})+
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
 
 
-IDENT =[_$a-zA-Z#][$0-9_a-zA-Z]*
+IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 
 %state YYSTRING
 
@@ -50,10 +50,12 @@ IDENT =[_$a-zA-Z#][$0-9_a-zA-Z]*
   "undefined"                 { return UNDEFINED_KEYWORD; }
   "in"                        { return IN_KEYWORD; }
   "as"                        { return AS_KEYWORD; }
+  "of"                        { return OF_KEYWORD; }
   "track by"                  { return TRACK_BY_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
-  {IDENT}                     { return IDENTIFIER;}
+  {IDENT}                     { return IDENTIFIER; }
+  "#"                         { return HASH; }
 
   "+"                         { return PLUS; }
   "-"                         { return MINUS; }
