@@ -194,10 +194,18 @@ public class AngularJSParser
       final PsiBuilder.Marker expr = builder.mark();
       final PsiBuilder.Marker def = builder.mark();
       builder.advanceLexer();
-      buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      } else {
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      }
       def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
 
-      builder.advanceLexer();
+      if (builder.getTokenType() != JSTokenTypes.OF_KEYWORD) {
+        builder.error("'of' expected");
+      } else {
+        builder.advanceLexer();
+      }
       parseExpression();
       expr.done(AngularJSElementTypes.FOR_EXPRESSION);
       return true;
