@@ -173,3 +173,11 @@ ASTWrapperPsiElement(FILE)
       PsiElement(ONE_TIME_BINDING)('::')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('a')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSReferenceExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('aaa')
+      PsiElement(ELVIS)('?.')
+      PsiElement(JS:IDENTIFIER)('foo')

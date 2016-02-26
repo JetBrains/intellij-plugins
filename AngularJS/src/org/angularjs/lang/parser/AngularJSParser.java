@@ -129,6 +129,11 @@ public class AngularJSParser
     }
 
     @Override
+    protected boolean isReferenceQualifierSeparator(IElementType tokenType) {
+      return tokenType == AngularJSTokenTypes.ELVIS || super.isReferenceQualifierSeparator(tokenType);
+    }
+
+    @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
       if (builder.getTokenType() == JSTokenTypes.OR) return 10;
       return super.getCurrentBinarySignPriority(allowIn, advance);
