@@ -28,17 +28,8 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     if (AngularJSCompletionContributor.getElementLanguage(parameters).isKindOf(JavascriptLanguage.INSTANCE)) {
-      if (parameters.getOriginalPosition() != null && parameters.getOriginalPosition().getParent() instanceof JSLiteralExpression) {
-        final JSLiteralExpression literal = (JSLiteralExpression)parameters.getOriginalPosition().getParent();
-        if (isControllerPropertyValue(literal)) {
-          final String prefix = result.getPrefixMatcher().getPrefix();
-          if (StringUtil.isEmptyOrSpaces(prefix)) return;
-          final String[] parts = prefix.split(" ");
-          result.addElement(LookupElementBuilder.create(parts[0] + AngularJSIndexingHandler.AS_CONNECTOR_WITH_SPACES));
-          return;
-        }
-      }
       final PsiElement originalPosition = parameters.getOriginalPosition();
+      if (originalPosition == null) return;
       if (AngularJSReferencesContributor.UI_VIEW_PATTERN.accepts(originalPosition)) {
         final FileBasedIndex instance = FileBasedIndex.getInstance();
         final Project project = originalPosition.getProject();

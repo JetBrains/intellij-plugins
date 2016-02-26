@@ -62,12 +62,6 @@ public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase
     Assert.assertEquals("testMe", variants.get(0));
   }
 
-  public void testControllerRedefinitionSyntax() throws Exception {
-    final List<String> variants = myFixture.getCompletionVariants("controllerRedefinitionSyntax.completion.js", "one.html", "two.html", "angular.js");
-    Assert.assertEquals("testMe", variants.get(0));
-    Assert.assertEquals("testMe as ", variants.get(1));
-  }
-
   public void testControllerRedefinitionSyntaxOutside() throws Exception {
     final List<String> variants = myFixture.getCompletionVariants("controllerRedefinitionSyntaxOutside.completion.js", "one.html", "two.html", "angular.js");
     Assert.assertTrue(variants.contains("testMe"));
