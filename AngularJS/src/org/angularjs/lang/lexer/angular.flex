@@ -32,7 +32,7 @@ FP_LITERAL4=({DIGIT})+
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
 
 
-IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
+IDENT =[_$a-zA-Z#][$0-9_a-zA-Z]*
 
 %state YYSTRING
 
@@ -83,6 +83,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "["                         { return LBRACKET; }
   "]"                         { return RBRACKET; }
   "."                         { return DOT; }
+  "?."                        { return ELVIS; }
   ","                         { return COMMA; }
   ";"                         { return SEMICOLON; }
   ":"                         { return COLON; }
