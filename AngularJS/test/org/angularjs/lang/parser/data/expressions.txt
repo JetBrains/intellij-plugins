@@ -181,3 +181,45 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:IDENTIFIER)('aaa')
       PsiElement(ELVIS)('?.')
       PsiElement(JS:IDENTIFIER)('foo')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    AngularJSRepeatExpression
+      JSDefinitionExpression
+        PsiElement(HASH)('#')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('todo')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSBinaryExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('todoService')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('todos')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          AngularJSFilterExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('started')
+            PsiWhiteSpace(' ')
+            JSArgumentList
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('status')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        AngularJSFilterExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('search')
+          PsiWhiteSpace(' ')
+          JSArgumentList
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('term')

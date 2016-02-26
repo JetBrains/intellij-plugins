@@ -31,12 +31,26 @@ public class AngularJSParser
             return;
           }
         }
+        if (firstToken == AngularJSTokenTypes.HASH) {
+          parseNgForStatement();
+          return;
+        }
         if (builder.getTokenType() == JSTokenTypes.LPAR) {
           if (parseInStatement()) {
             return;
           }
         }
         super.doParseStatement(canHaveClasses);
+      }
+
+      private boolean parseNgForStatement() {
+        PsiBuilder.Marker statement = builder.mark();
+        if (!getExpressionParser().parseForExpression()) {
+          statement.drop();
+          return false;
+        }
+        statement.done(JSElementTypes.EXPRESSION_STATEMENT);
+        return true;
       }
 
       private boolean parseInStatement() {
@@ -173,6 +187,19 @@ public class AngularJSParser
       if (errorMessage != null) {
         builder.error(errorMessage);
       }
+      return true;
+    }
+
+    public boolean parseForExpression() {
+      final PsiBuilder.Marker expr = builder.mark();
+      final PsiBuilder.Marker def = builder.mark();
+      builder.advanceLexer();
+      buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
+
+      builder.advanceLexer();
+      parseExpression();
+      expr.done(AngularJSElementTypes.FOR_EXPRESSION);
       return true;
     }
 
