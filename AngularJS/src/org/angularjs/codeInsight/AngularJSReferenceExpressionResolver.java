@@ -13,8 +13,10 @@ import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularControllerIndex;
+import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.psi.AngularJSAsExpression;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 
 import java.util.ArrayList;
@@ -62,6 +64,11 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.KEY, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};
+      }
+    } else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
+      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
+      if (resolve != null) {
+        return new JSResolveResult[] {new JSResolveResult(resolve)};
       }
     } else if (myQualifier == null) {
       final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);
