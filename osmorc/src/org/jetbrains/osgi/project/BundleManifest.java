@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ public class BundleManifest {
   @Nullable
   public String getExportedPackage(@NotNull String packageName) {
     for (String exported : getValues(Constants.EXPORT_PACKAGE)) {
+      exported = StringUtil.trimEnd(exported, ".*");
       if (PsiNameHelper.isSubpackageOf(packageName, exported)) {
         return exported;
       }

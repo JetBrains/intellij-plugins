@@ -116,6 +116,7 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
 
   // OSGi Core Spec 3.5 "Class Loading Architecture"
   private static Problem checkAccessibility(PsiClass targetClass, OsmorcFacet facet) {
+    // ignores annotations invisible at runtime
     if (targetClass.isAnnotationType()) {
       RetentionPolicy retention = AnnotationsHighlightUtil.getRetentionPolicy(targetClass);
       if (retention == RetentionPolicy.SOURCE || retention == RetentionPolicy.CLASS) {
@@ -123,33 +124,32 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       }
     }
 
+    // ignores files of unsupported type
     PsiFile targetFile = targetClass.getContainingFile();
     if (!(targetFile instanceof PsiClassOwner)) {
-      return null;  // alien file, ignore
+      return null;
     }
 
-    // The parent class loader (normally java.* packages from the boot class path)
+    // accepts classes from the parent class loader (normally java.* packages from the boot class path)
     String packageName = ((PsiClassOwner)targetFile).getPackageName();
     if (packageName.isEmpty() || packageName.startsWith("java.")) {
       return null;
     }
 
-    Project project = targetClass.getProject();
-
-    // The bundle's class path (private packages)
+    // accepts classes from the bundle's class path (private packages)
     Module requestorModule = facet.getModule();
     Module targetModule = ModuleUtilCore.findModuleForPsiElement(targetClass);
     if (targetModule == requestorModule) {
       return null;
     }
 
-    BundleManifest manifest = BundleManifestCache.getInstance(project).getManifest(requestorModule);
-    if (manifest != null && (manifest.isPrivatePackage(packageName) || manifest.getExportedPackage(packageName) != null)) {
+    BundleManifest importer = BundleManifestCache.getInstance(targetClass.getProject()).getManifest(requestorModule);
+    if (importer != null && (importer.isPrivatePackage(packageName) || importer.getExportedPackage(packageName) != null)) {
       return null;
     }
 
-    // obtaining export name of the package from a providing manifest
-    BundleManifest exporter = BundleManifestCache.getInstance(project).getManifest(targetClass);
+    // rejects non-exported classes (manifest missing, or a package isn't listed as exported)
+    BundleManifest exporter = BundleManifestCache.getInstance(targetClass.getProject()).getManifest(targetClass);
     if (exporter == null || exporter.getBundleSymbolicName() == null) {
       return Problem.weak(message("PackageAccessibilityInspection.non.osgi", packageName));
     }
@@ -159,19 +159,18 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       return Problem.error(message("PackageAccessibilityInspection.not.exported", packageName));
     }
 
-    // checking if the package is imported (only for manually-edited manifests)
+    // ignores facets other than manually-edited manifests (most probably, they will have their import list correctly generated)
     if (!facet.getConfiguration().isManifestManuallyEdited()) {
       return null;
     }
 
-    if (manifest != null) {
-      // Imported packages
-      if (manifest.isPackageImported(packageName)) {
+    // accepts packages listed as imported or required
+    if (importer != null) {
+      if (importer.isPackageImported(packageName)) {
         return null;
       }
 
-      // Required bundles
-      if (manifest.isBundleRequired(exporter.getBundleSymbolicName())) {
+      if (importer.isBundleRequired(exporter.getBundleSymbolicName())) {
         return null;
       }
 

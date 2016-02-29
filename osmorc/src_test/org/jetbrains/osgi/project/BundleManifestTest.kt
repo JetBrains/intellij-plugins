@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,13 @@ class BundleManifestTest {
 
   @Test fun exportedPackage() {
     val manifest = BundleManifest(mapOf("Export-Package" to "foo.bar.baz;version= 1.0.0,foo.bar.bam;version= 1.0.0"))
+    assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz"))
+    assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz.impl"))
+    assertNull(manifest.getExportedPackage("foo.bar.no.way"))
+  }
+
+  @Test fun exportedPackageWildcard() {
+    val manifest = BundleManifest(mapOf("Export-Package" to "foo.bar.baz.*"))
     assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz"))
     assertEquals("foo.bar.baz", manifest.getExportedPackage("foo.bar.baz.impl"))
     assertNull(manifest.getExportedPackage("foo.bar.no.way"))
