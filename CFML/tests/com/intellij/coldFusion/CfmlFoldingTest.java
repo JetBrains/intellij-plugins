@@ -16,7 +16,6 @@
 package com.intellij.coldFusion;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 /**
  * @author vnikolaenko
@@ -43,4 +42,7 @@ public class CfmlFoldingTest extends CfmlCodeInsightFixtureTestCase {
     CodeFoldingSettings.getInstance().COLLAPSE_METHODS = oldValue;
   }
 
+  public void testIfSwitchLoop() throws Throwable {
+    myFixture.testFoldingWithCollapseStatus(getTestDataPath() + "/" + getTestName(false) + ".test.cfml");
+  }
 }
