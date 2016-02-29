@@ -18,6 +18,7 @@ package com.intellij.coldFusion.UI.folding;
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
+import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
 import com.intellij.coldFusion.model.psi.CfmlFunction;
@@ -83,15 +84,22 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
     if (start + 1 < end) {
       TextRange range = null;
       ASTNode astNode = tag.getNode();
+      IElementType astType = astNode.getElementType();
+
       if (tag instanceof CfmlTag) {
         //if (tag instanceof CfmlTagFunctionImpl || tag instanceof CfmlTagComponentImpl || tag instanceof CfmlTagScriptImpl) {
         range = buildRangeForBraces(range, astNode, CfmlTokenTypes.R_ANGLEBRACKET, CfmlTokenTypes.LSLASH_ANGLEBRACKET);
         //}
       }
-      else if (tag instanceof CfmlFunction) {
-        final ASTNode body = astNode.findChildByType(CfmlElementTypes.FUNCTIONBODY);
-        if (body != null) {
-          range = buildRange(range, body.getStartOffset(), body.getTextRange().getEndOffset());
+      else if (astType == CfmlElementTypes.FUNCTIONBODY ||
+               astType == CfmlElementTypes.BLOCK_OF_STATEMENTS
+              ) {
+        range = buildRange(range, start, end);
+      } else if (astType == CfmlElementTypes.SWITCHEXPRESSION) {
+        ASTNode lparen = astNode.findChildByType(CfscriptTokenTypes.L_CURLYBRACKET);
+        ASTNode rparen = astNode.findChildByType(CfscriptTokenTypes.R_CURLYBRACKET);
+        if (lparen != null && rparen != null) {
+          range = buildRange(range, lparen.getStartOffset(), rparen.getTextRange().getEndOffset());
         }
       }
       else if (tag instanceof PsiComment) {
@@ -133,7 +141,11 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
   }
 
   public String getPlaceholderText(@NotNull ASTNode node) {
-    if (node.getElementType() == CfmlElementTypes.FUNCTION_DEFINITION) {
+    IElementType type = node.getElementType();
+    if (type == CfmlElementTypes.FUNCTIONBODY ||
+        type == CfmlElementTypes.BLOCK_OF_STATEMENTS ||
+        type == CfmlElementTypes.SWITCHEXPRESSION
+       ) {
       return "{...}";
     }
     return "...";
@@ -143,7 +155,7 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
     CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
     final PsiElement element = SourceTreeToPsiMap.treeElementToPsi(node);
 
-    if (node.getPsi() instanceof PsiComment) {
+    if (element instanceof PsiComment) {
       // find out if file header
       final ASTNode parent = node.getTreeParent();
       ASTNode treePrev = node.getTreePrev();
@@ -155,7 +167,7 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
         return CodeFoldingSettings.getInstance().COLLAPSE_DOC_COMMENTS;
       }
     }
-    else if (element instanceof CfmlFunction) {
+    else if (element instanceof CfmlFunction || node.getElementType() == CfmlElementTypes.FUNCTIONBODY) {
       return settings.COLLAPSE_METHODS;
     }/* else if (element instanceof CfmlComponent) {
       return settings.isCollapseClasses();
