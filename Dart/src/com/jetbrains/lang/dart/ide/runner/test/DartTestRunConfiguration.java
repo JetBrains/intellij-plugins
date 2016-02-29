@@ -8,9 +8,10 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.PathUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.test.ui.DartTestConfigurationEditorForm;
-import com.jetbrains.lang.dart.ide.runner.util.TestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,8 +39,35 @@ public class DartTestRunConfiguration extends DartRunConfigurationBase {
     return new DartTestRunningState(env);
   }
 
+  @Nullable
   public String suggestedName() {
-    return TestUtil.suggestedName(myRunnerParameters.getFilePath(), myRunnerParameters.getScope(), myRunnerParameters.getTestName());
+    final String path = myRunnerParameters.getFilePath();
+    final String groupOrTestName = myRunnerParameters.getTestName();
+    if (path == null) return null;
+
+    final String fileOrDirName = PathUtil.getFileName(path);
+    switch (myRunnerParameters.getScope()) {
+      case GROUP_OR_TEST_BY_NAME:
+        if (groupOrTestName != null) {
+          return DartBundle.message("test.0.in.1", groupOrTestName, fileOrDirName);
+        }
+        // fall through
+      case FILE:
+        return DartBundle.message("all.tests.in.0", fileOrDirName);
+      case FOLDER:
+        final String dirName;
+        if ("test".equals(fileOrDirName)) {
+          final String parentPath = PathUtil.getParentPath(path);
+          final String parentDirName = PathUtil.getFileName(parentPath);
+          dirName = parentDirName.isEmpty() ? fileOrDirName : parentDirName + "/" + fileOrDirName;
+        }
+        else {
+          dirName = fileOrDirName;
+        }
+        return DartBundle.message("all.tests.in.0", dirName);
+      default:
+        return null;
+    }
   }
 
   public RunConfiguration clone() {

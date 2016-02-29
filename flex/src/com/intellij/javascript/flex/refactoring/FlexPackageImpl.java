@@ -179,4 +179,10 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   public boolean isDeprecated() {
     return false;
   }
+
+  @NotNull
+  @Override
+  public ClassOrInterface isClassOrInterface() {
+    return ClassOrInterface.NONE;
+  }
 }

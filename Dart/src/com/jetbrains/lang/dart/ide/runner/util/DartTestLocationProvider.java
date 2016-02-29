@@ -53,7 +53,14 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
     }
 
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-    return getLocation(project, pathToNodes(names), psiFile);
+
+    final List<String> nodes = pathToNodes(names);
+
+    if (psiFile instanceof DartFile && nodes.isEmpty()) {
+      return Collections.<Location>singletonList(new PsiLocation<PsiElement>(psiFile));
+    }
+
+    return getLocation(project, nodes, psiFile);
   }
 
   private static List<String> pathToNodes(final String element) {
@@ -66,13 +73,10 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   }
 
   protected List<Location> getLocation(@NotNull final Project project, final List<String> nodes, final PsiFile psiFile) {
-
     final List<Location> locations = new ArrayList<Location>();
 
     if (psiFile instanceof DartFile && !nodes.isEmpty()) {
-
       PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<PsiElement>() {
-
         @Override
         public boolean execute(@NotNull final PsiElement element) {
           if (element instanceof DartCallExpression) {

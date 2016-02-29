@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.ide.DartNamedElementNode;
@@ -18,7 +19,6 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +46,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
       anchor = child;
     }
     PsiElement next = anchor == null ? null : anchor.getNextSibling();
-    while (next != null && (UsefulPsiTreeUtil.isWhitespaceOrComment(next) || ";".equals(next.getText()))) {
+    while (next != null && (next instanceof PsiWhiteSpace || ";".equals(next.getText()))) {
       anchor = next;
       next = anchor.getNextSibling();
     }
@@ -104,10 +104,8 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     if (functionTemplate != null) {
       setCaretSafe(editor, anchor.getTextRange().getEndOffset());
       templateManager.startTemplate(editor, functionTemplate);
-      final PsiElement dartComponent = PsiTreeUtil.getParentOfType(
-        anchor.findElementAt(editor.getCaretModel().getOffset()),
-        DartComponent.class
-      );
+      final PsiElement dartComponent =
+        PsiTreeUtil.getParentOfType(anchor.findElementAt(editor.getCaretModel().getOffset()), DartComponent.class);
       return dartComponent != null ? dartComponent : anchor;
     }
     return anchor;

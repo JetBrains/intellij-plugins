@@ -431,10 +431,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
         final Ref<JSFunction> set = new Ref<JSFunction>();
         boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSResolveUtil.OverrideHandler() {
-          public boolean process(final SinkResolveProcessor processor, final PsiElement scope, final String className) {
+          public boolean process(@NotNull final List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             //noinspection StringEquality
             if (qName == className || qName != null && qName.equals(className)) return true;
-            JSFunction value = (JSFunction)processor.getResult();
+            JSFunction value = (JSFunction)elements.iterator().next();
             set.set(value);
 
             DialectOptionHolder holder;

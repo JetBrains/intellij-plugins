@@ -5,17 +5,14 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartReturnType;
-import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
   final boolean myImplementNotOverride;
 
-  public OverrideImplementMethodFix(final DartClass dartClass, final boolean implementNotOverride) {
+  public OverrideImplementMethodFix(@NotNull final DartClass dartClass, final boolean implementNotOverride) {
     super(dartClass);
     myImplementNotOverride = implementNotOverride;
   }
@@ -36,6 +33,11 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     if (CodeStyleSettingsManager.getSettings(element.getProject()).INSERT_OVERRIDE_ANNOTATION) {
       template.addTextSegment("@override\n");
     }
+    final boolean isField = element instanceof DartVarAccessDeclaration || element instanceof DartVarDeclarationListPart;
+    if (isField && element.isFinal()) {
+      template.addTextSegment("final");
+      template.addTextSegment(" ");
+    }
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(element, DartReturnType.class);
     final DartType dartType = PsiTreeUtil.getChildOfType(element, DartType.class);
     if (returnType != null) {
@@ -45,6 +47,23 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     else if (dartType != null) {
       template.addTextSegment(DartPresentableUtil.buildTypeText(element, dartType, specializations));
       template.addTextSegment(" ");
+    }
+
+    if (isField) {
+      if (returnType == null && dartType == null) {
+        template.addTextSegment("var");
+        template.addTextSegment(" ");
+      }
+      //noinspection ConstantConditions
+      template.addTextSegment(element.getName());
+      if (element.isFinal()) {
+        template.addTextSegment(" ");
+        template.addTextSegment("=");
+        template.addTextSegment(" ");
+        template.addTextSegment("null");
+      }
+      template.addTextSegment("; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
+      return template;
     }
 
     if (element.isOperator()) {
@@ -63,7 +82,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     }
     template.addTextSegment("{\n");
     template.addEndVariable();
-    template.addTextSegment("\n}\n");
+    template.addTextSegment("\n} "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     return template;
   }
 }

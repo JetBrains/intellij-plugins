@@ -1,10 +1,15 @@
 package com.jetbrains.lang.dart.ide.generation;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -16,17 +21,22 @@ public class DartOverrideMethodHandler extends BaseDartGenerateHandler {
   }
 
   @Override
-  protected void collectCandidates(Map<Pair<String, Boolean>, DartComponent> classMembersMap,
-                                   Map<Pair<String, Boolean>, DartComponent> superClassesMembersMap,
-                                   Map<Pair<String, Boolean>, DartComponent> superInterfacesMembersMap,
-                                   List<DartComponent> candidates) {
-    Map<Pair<String, Boolean>, DartComponent> result = new THashMap<Pair<String, Boolean>, DartComponent>(superClassesMembersMap);
-    result.keySet().removeAll(classMembersMap.keySet());
-    candidates.addAll(result.values());
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
+    return new OverrideImplementMethodFix(dartClass, false);
   }
 
   @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
-    return new OverrideImplementMethodFix(dartClass, false);
+  protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
+    Map<Pair<String, Boolean>, DartComponent> result =
+      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
+    result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
+    candidates.addAll(ContainerUtil.findAll(result.values(), new Condition<DartComponent>() {
+      @Override
+      public boolean value(final DartComponent component) {
+        return DartComponentType.typeOf(component) != DartComponentType.FIELD &&
+               (component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component));
+      }
+    }));
   }
+
 }

@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
@@ -51,8 +52,9 @@ public class DartCommandLineRunningState extends CommandLineState {
     super(env);
     myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().clone();
 
+    final Project project = env.getProject();
     try {
-      myRunnerParameters.check(env.getProject());
+      myRunnerParameters.check(project);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e);
@@ -64,16 +66,11 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     try {
-      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFileOrDirectory()));
-
-      // unit tests can be run as normal Dart apps, so add DartUnitConsoleFilter as well
-      final String workingDir = myRunnerParameters.computeProcessWorkingDirectory();
-      builder.addFilter(new DartRelativePathsConsoleFilter(env.getProject(), workingDir));
+      builder.addFilter(new DartConsoleFilter(project, myRunnerParameters.getDartFileOrDirectory()));
+      builder.addFilter(new DartRelativePathsConsoleFilter(project, myRunnerParameters.computeProcessWorkingDirectory(project)));
       builder.addFilter(new UrlFilter());
     }
-    catch (RuntimeConfigurationError e) {
-      builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked
-    }
+    catch (RuntimeConfigurationError e) { /* can't happen because already checked */}
   }
 
   @Override
@@ -107,7 +104,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
 
     // Commented out code is a workaround for "Observatory listening on ..." message that is concatenated (without line break) with the message following it
-    // The problem is not actula at the moment because Observatory is not turned on for tests
+    // The problem is not actual at the moment because Observatory is not turned on for tests
     //final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
     //  @Override
     //  public void coloredTextAvailable(String text, Key attributes) {
@@ -122,44 +119,32 @@ public class DartCommandLineRunningState extends CommandLineState {
     return processHandler;
   }
 
-  private GeneralCommandLine createCommandLine(final @Nullable String overriddenMainFilePath) throws ExecutionException {
+  private GeneralCommandLine createCommandLine(@Nullable final String overriddenMainFilePath) throws ExecutionException {
     final DartSdk sdk = DartSdk.getDartSdk(getEnvironment().getProject());
     if (sdk == null) {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
     }
 
-    final String dartExePath = DartSdkUtil.getDartExePath(sdk);
-
-    final String workingDir;
-    try {
-      workingDir = myRunnerParameters.computeProcessWorkingDirectory();
-    }
-    catch (RuntimeConfigurationError e) {
-      throw new ExecutionException(e); // can't happen because already checked
-    }
-
-    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
+    final GeneralCommandLine commandLine = new GeneralCommandLine()
+      .withWorkDirectory(myRunnerParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
     commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
-    commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
+    commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
-    setupParameters(getEnvironment().getProject(), sdk, commandLine, myRunnerParameters, overriddenMainFilePath);
+    setupParameters(sdk, commandLine, overriddenMainFilePath);
 
     return commandLine;
   }
 
-  private void setupParameters(@NotNull final Project project,
-                               @NotNull final DartSdk sdk,
+  private void setupParameters(@NotNull final DartSdk sdk,
                                @NotNull final GeneralCommandLine commandLine,
-                               @NotNull final DartCommandLineRunnerParameters runnerParameters,
                                @Nullable final String overriddenMainFilePath) throws ExecutionException {
-    // TODO Clean up dialog box and trim unused VM options here.
     commandLine.addParameter("--ignore-unrecognized-flags");
 
     int customObservatoryPort = -1;
 
-    final String vmOptions = runnerParameters.getVMOptions();
+    final String vmOptions = myRunnerParameters.getVMOptions();
     if (vmOptions != null) {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
@@ -167,10 +152,13 @@ public class DartCommandLineRunningState extends CommandLineState {
         commandLine.addParameter(vmOption);
 
         try {
-          if (vmOption.startsWith("--enable-vm-service:")) {
+          if (vmOption.equals("--enable-vm-service") || vmOption.equals("--observe")) {
+            customObservatoryPort = 8181; // default port, see https://www.dartlang.org/tools/dart-vm/
+          }
+          else if (vmOption.startsWith("--enable-vm-service:")) {
             customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--enable-vm-service:".length()));
           }
-          if (vmOption.startsWith("--observe:")) {
+          else if (vmOption.startsWith("--observe:")) {
             customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--observe:".length()));
           }
         }
@@ -178,19 +166,19 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
-    if (runnerParameters.isCheckedMode()) {
+    if (myRunnerParameters.isCheckedMode()) {
       commandLine.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
     }
 
     final VirtualFile dartFile;
     try {
-      dartFile = runnerParameters.getDartFileOrDirectory();
+      dartFile = myRunnerParameters.getDartFileOrDirectory();
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e);
     }
 
-    final VirtualFile packageRoot = DartUrlResolver.getInstance(project, dartFile).getPackageRoot();
+    final VirtualFile packageRoot = DartUrlResolver.getInstance(getEnvironment().getProject(), dartFile).getPackageRoot();
     if (packageRoot != null) {
       // more than one package root is not supported by the [SDK]/bin/dart tool
       commandLine.addParameter("--package-root=" + FileUtil.toSystemDependentName(packageRoot.getPath()));
@@ -213,13 +201,17 @@ public class DartCommandLineRunningState extends CommandLineState {
     else if (!(myRunnerParameters instanceof DartTestRunnerParameters)) {
       myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
       commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+
+      if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
+        commandLine.addParameter("--pause-isolates-on-exit");
+      }
     }
 
     commandLine.addParameter("--trace_service_pause_events");
 
     commandLine.addParameter(FileUtil.toSystemDependentName(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath));
 
-    final String arguments = runnerParameters.getArguments();
+    final String arguments = myRunnerParameters.getArguments();
     if (arguments != null) {
       StringTokenizer argumentsTokenizer = new CommandLineTokenizer(arguments);
       while (argumentsTokenizer.hasMoreTokens()) {

@@ -2,7 +2,9 @@ package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.Property;
@@ -10,8 +12,8 @@ import com.intellij.util.xmlb.annotations.Property;
 @State(
   name = "FlexIdeProjectLevelCompilerOptionsHolder",
   storages = {
-    @Storage(file = StoragePathMacros.WORKSPACE_FILE),
-    @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/flexCompiler.xml", scheme = StorageScheme.DIRECTORY_BASED)
+    @Storage("flexCompiler.xml"),
+    @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
   }
 )
 public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelCompilerOptionsHolder

@@ -2,7 +2,10 @@ package org.intellij.plugins.markdown.settings;
 
 import com.intellij.ide.ui.LafManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
@@ -11,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 @State(
   name = "MarkdownApplicationSettings",
-  storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/markdown.xml")
+  storages = @Storage("markdown.xml")
 )
 public class MarkdownApplicationSettings implements PersistentStateComponent<MarkdownApplicationSettings.State>,
                                                     MarkdownCssSettings.Holder,

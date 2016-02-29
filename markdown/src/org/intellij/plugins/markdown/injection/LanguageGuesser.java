@@ -16,13 +16,14 @@ import java.util.Map;
 public enum LanguageGuesser {
   INSTANCE;
 
-  private NotNullLazyValue<List<EmbeddedTokenTypesProvider>> embeddedTokenTypeProviders = new NotNullLazyValue<List<EmbeddedTokenTypesProvider>>() {
-    @NotNull
-    @Override
-    protected List<EmbeddedTokenTypesProvider> compute() {
-      return Arrays.asList(Extensions.getExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME));
-    }
-  };
+  private NotNullLazyValue<List<EmbeddedTokenTypesProvider>> embeddedTokenTypeProviders =
+    new NotNullLazyValue<List<EmbeddedTokenTypesProvider>>() {
+      @NotNull
+      @Override
+      protected List<EmbeddedTokenTypesProvider> compute() {
+        return Arrays.asList(Extensions.getExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME));
+      }
+    };
 
   private NotNullLazyValue<Map<String, Language>> langIdToLanguage = new NotNullLazyValue<Map<String, Language>>() {
     @NotNull

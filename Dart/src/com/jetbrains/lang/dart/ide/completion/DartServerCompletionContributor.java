@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
@@ -121,11 +122,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
 
-    LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, suggestion.getCompletion());
+    final String lookupString = suggestion.getCompletion();
+    LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, lookupString);
 
     // keywords are bold
     if (suggestion.getKind().equals(CompletionSuggestionKind.KEYWORD)) {
       lookup = lookup.bold();
+    }
+
+    final int dotIndex = lookupString.indexOf('.');
+    if (dotIndex > 0 && dotIndex < lookupString.length() - 1 &&
+        StringUtil.isJavaIdentifier(lookupString.substring(0, dotIndex)) &&
+        StringUtil.isJavaIdentifier(lookupString.substring(dotIndex + 1))) {
+      // 'path.Context' should match 'Conte' prefix
+      lookup = lookup.withLookupString(lookupString.substring(dotIndex + 1));
     }
 
     boolean shouldSetSelection = true;

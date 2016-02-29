@@ -8,10 +8,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartGetterDeclaration;
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfType;
 
 public abstract class BaseDartGenerateAction extends AnAction {
 
@@ -49,16 +55,45 @@ public abstract class BaseDartGenerateAction extends AnAction {
     return dartClass != null;
   }
 
-  protected static boolean doesClassContainMember(@NotNull final DartClass dartClass, @NotNull final String memberName) {
-    if (memberName.isEmpty()) {
+  protected static boolean doesClassContainMethod(@NotNull final DartClass dartClass, @NotNull final String methodName) {
+    if (methodName.isEmpty()) {
       return false;
     }
-    final DartComponent dartComponent = dartClass.findMemberByName(memberName);
-    if (dartComponent == null) {
-      return true;
+    final DartMethodDeclaration[] methodDeclarations = getChildrenOfType(DartResolveUtil.getBody(dartClass), DartMethodDeclaration.class);
+    if (methodDeclarations == null) {
+      return false;
     }
-    final DartClass containingClass = PsiTreeUtil.getParentOfType(dartComponent, DartClass.class);
-    return containingClass != dartClass;
+    for (DartMethodDeclaration methodDecaration : methodDeclarations) {
+      if (methodName.equals(methodDecaration.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected static boolean doesClassContainGetter(@NotNull final DartClass dartClass, @NotNull final String getterName) {
+    if (getterName.isEmpty()) {
+      return false;
+    }
+    final DartGetterDeclaration[] getterDeclarations = getChildrenOfType(DartResolveUtil.getBody(dartClass), DartGetterDeclaration.class);
+    if (getterDeclarations == null) {
+      return false;
+    }
+    for (DartGetterDeclaration getterDecaration : getterDeclarations) {
+      if (getterName.equals(getterDecaration.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected static boolean hasNonStaticField(@NotNull final DartClass dartClass) {
+    for (DartComponent component : DartResolveUtil.getNamedSubComponents(dartClass)) {
+      if (DartComponentType.typeOf(component) == DartComponentType.FIELD && !component.isStatic()) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

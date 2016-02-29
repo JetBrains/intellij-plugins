@@ -136,6 +136,8 @@ public class DartProblemsView {
   public void clearAll() {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
+    ProjectView.getInstance(myProject).refresh(); // refresh red waves managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+
     synchronized (myLock) {
       myAlarm.cancelAllRequests();
       myScheduledFilePathToErrors.clear();

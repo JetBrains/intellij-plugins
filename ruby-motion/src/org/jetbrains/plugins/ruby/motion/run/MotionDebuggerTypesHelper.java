@@ -11,7 +11,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
-import com.jetbrains.cidr.execution.debugger.CidrStackFrame;
+import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrDebuggerTypesHelper;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrMemberValue;
@@ -85,14 +85,9 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
   }
 
   @Override
-  public boolean hasStructType(@NotNull CidrPhysicalValue value, EvaluationContext context) throws ExecutionException {
-    if (super.hasStructType(value, context)) {
-      return true;
-    }
-    final CidrStackFrame.CachedTypeInfo typeInfo = value.getFrame().getTypeInfo(value.getType());
-    if (typeInfo.isStruct() != null) {
-      return typeInfo.isStruct();
-    }
+  public boolean isStructType(@NotNull CidrPhysicalValue value, EvaluationContext context) throws ExecutionException, DBUserException {
+    if (super.isStructType(value, context)) return true;
+
     final String type = value.getType();
     final Module module = RubyMotionUtil.getInstance().getModuleWithMotionSupport(myProcess.getProject());
     if (module == null) return false;
@@ -102,9 +97,7 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
         return RubyMotionSymbolProvider.findClassOrStruct(module, ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).getFrameworks(module), Collections.singletonList(type));
       }
     });
-    final boolean isStruct = symbol instanceof StructSymbol;
-    typeInfo.setStruct(isStruct);
-    return isStruct;
+    return symbol instanceof StructSymbol;
   }
 
   @Nullable

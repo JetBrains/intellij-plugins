@@ -59,7 +59,6 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
             ((EditorEx)myEditor).setBackgroundColor(ColorUtil.isDark(baseColor) ?
                                                     ColorUtil.brighter(baseColor, 1) : ColorUtil.darker(baseColor, 1));
           }
-
         }
       }
     };
@@ -76,7 +75,6 @@ public class MarkdownCssSettingsForm implements MarkdownCssSettings.Holder,
 
     myEditor = createEditor();
     myEditorPanel.add(myEditor.getComponent(), BorderLayout.CENTER);
-
   }
 
   @NotNull

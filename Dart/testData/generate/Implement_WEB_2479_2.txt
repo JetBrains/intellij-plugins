@@ -12,5 +12,4 @@ class Dog implements Animal {
   void speak(String say) {
     <caret>
   }
-
 }

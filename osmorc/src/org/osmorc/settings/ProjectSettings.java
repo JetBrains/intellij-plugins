@@ -24,7 +24,9 @@
  */
 package org.osmorc.settings;
 
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.util.io.FileUtil;
@@ -43,10 +45,7 @@ import java.util.EventListener;
  * @author Robert F. Beeger (robert@beeger.net)
  * @author Jan Thom&auml; (janthomae@janthomae.de)
  */
-@State(
-  name = "Osmorc",
-  storages = {@Storage(
-    file = StoragePathMacros.PROJECT_FILE)})
+@State(name = "Osmorc")
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
   private EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
 

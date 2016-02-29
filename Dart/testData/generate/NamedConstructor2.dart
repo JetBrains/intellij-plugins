@@ -1,3 +1,4 @@
 class IntValue {
-  num _value;<caret>
+  num _value;
+  static var s;<caret>
 }

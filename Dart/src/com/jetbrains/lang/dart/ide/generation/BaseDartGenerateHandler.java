@@ -42,7 +42,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     invoke(project, editor, file, editor.getCaretModel().getOffset());
   }
 
-  public void invoke(Project project, Editor editor, PsiFile file, int offset) {
+  public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file, final int offset) {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
     final DartClass dartClass = PsiTreeUtil.getParentOfType(file.findElementAt(offset), DartClassDefinition.class);
     if (dartClass == null) return;
@@ -100,53 +100,72 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
   }
 
-  protected abstract BaseCreateMethodsFix createFix(DartClass dartClass);
+  protected abstract BaseCreateMethodsFix createFix(final DartClass dartClass);
 
   protected abstract String getTitle();
 
-  protected void collectCandidates(DartClass aClass, List<DartComponent> candidates) {
+  protected abstract void collectCandidates(final DartClass dartClass, final List<DartComponent> candidates);
+
+  private final static Condition<DartComponent> NOT_CONSTRUCTOR_CONDITION = new Condition<DartComponent>() {
+    @Override
+    public boolean value(DartComponent component) {
+      return DartComponentType.typeOf(component) != DartComponentType.CONSTRUCTOR;
+    }
+  };
+
+  private final static Condition<DartComponent> NOT_STATIC_CONDITION = new Condition<DartComponent>() {
+    @Override
+    public boolean value(DartComponent component) {
+      return !component.isStatic();
+    }
+  };
+
+  @NotNull
+  protected final Map<Pair<String, Boolean>, DartComponent> computeClassMembersMap(@NotNull final DartClass dartClass,
+                                                                                   final boolean doIncludeStatics) {
+    List<DartComponent> classMembers = DartResolveUtil.getNamedSubComponents(dartClass);
+    classMembers = ContainerUtil.filter(classMembers, NOT_CONSTRUCTOR_CONDITION);
+    if (!doIncludeStatics) {
+      classMembers = ContainerUtil.filter(classMembers, NOT_STATIC_CONDITION);
+    }
+    return DartResolveUtil.namedComponentToMap(classMembers);
+  }
+
+  @NotNull
+  protected final Map<Pair<String, Boolean>, DartComponent> computeSuperClassesMemberMap(@NotNull final DartClass dartClass) {
     final List<DartClass> superClasses = new ArrayList<DartClass>();
     final List<DartClass> superInterfaces = new ArrayList<DartClass>();
 
-    DartResolveUtil.collectSupers(superClasses, superInterfaces, aClass);
+    DartResolveUtil.collectSupers(superClasses, superInterfaces, dartClass);
 
-    List<DartComponent> classMembers = DartResolveUtil.getNamedSubComponents(aClass);
     List<DartComponent> superClassesMembers = new ArrayList<DartComponent>();
     for (DartClass superClass : superClasses) {
       superClassesMembers.addAll(DartResolveUtil.getNamedSubComponents(superClass));
     }
+
+    superClassesMembers = ContainerUtil.filter(superClassesMembers, NOT_CONSTRUCTOR_CONDITION);
+    superClassesMembers = ContainerUtil.filter(superClassesMembers, NOT_STATIC_CONDITION);
+
+    return DartResolveUtil.namedComponentToMap(superClassesMembers);
+  }
+
+  @NotNull
+  protected final Map<Pair<String, Boolean>, DartComponent> computeSuperInterfacesMembersMap(@NotNull final DartClass dartClass) {
+    final List<DartClass> superClasses = new ArrayList<DartClass>();
+    final List<DartClass> superInterfaces = new ArrayList<DartClass>();
+
+    DartResolveUtil.collectSupers(superClasses, superInterfaces, dartClass);
+
     List<DartComponent> superInterfacesMembers = new ArrayList<DartComponent>();
     for (DartClass superInterface : superInterfaces) {
       superInterfacesMembers.addAll(DartResolveUtil.getNamedSubComponents(superInterface));
     }
 
-    final Condition<DartComponent> notConstructorCondition = new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        return DartComponentType.typeOf(component) != DartComponentType.CONSTRUCTOR;
-      }
-    };
-    classMembers = ContainerUtil.filter(classMembers, notConstructorCondition);
-    superClassesMembers = ContainerUtil.filter(superClassesMembers, notConstructorCondition);
-    superInterfacesMembers = ContainerUtil.filter(superInterfacesMembers, notConstructorCondition);
+    superInterfacesMembers = ContainerUtil.filter(superInterfacesMembers, NOT_CONSTRUCTOR_CONDITION);
+    superInterfacesMembers = ContainerUtil.filter(superInterfacesMembers, NOT_STATIC_CONDITION);
 
-    final Map<Pair<String, Boolean>, DartComponent> classMembersMap = DartResolveUtil.namedComponentToMap(classMembers);
-    final Map<Pair<String, Boolean>, DartComponent> superClassesMembersMap = DartResolveUtil.namedComponentToMap(superClassesMembers);
-    final Map<Pair<String, Boolean>, DartComponent> superInterfacesMembersMap = DartResolveUtil.namedComponentToMap(superInterfacesMembers);
-
-    collectCandidates(classMembersMap, superClassesMembersMap, superInterfacesMembersMap, candidates);
+    return DartResolveUtil.namedComponentToMap(superInterfacesMembers);
   }
-
-  /**
-   * @param classMembersMap           of (component name, isGetter) -> component
-   * @param superClassesMembersMap    of (component name, isGetter) -> component
-   * @param superInterfacesMembersMap of (component name, isGetter) -> component
-   * @param candidates                to process
-   */
-  protected abstract void collectCandidates(Map<Pair<String, Boolean>, DartComponent> classMembersMap,
-                                            Map<Pair<String, Boolean>, DartComponent> superClassesMembersMap,
-                                            Map<Pair<String, Boolean>, DartComponent> superInterfacesMembersMap,
-                                            List<DartComponent> candidates);
 
   @Nullable
   protected JComponent getOptionsComponent(DartClass jsClass, final Collection<DartComponent> candidates) {
@@ -158,10 +177,10 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     return true;
   }
 
-  protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(final Project project,
-                                                                          final DartClass dartClass,
-                                                                          final Collection<DartComponent> candidates,
-                                                                          String title) {
+  protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(@NotNull final Project project,
+                                                                          @NotNull final DartClass dartClass,
+                                                                          @NotNull final Collection<DartComponent> candidates,
+                                                                          @NotNull final String title) {
     final MemberChooser<DartNamedElementNode> chooser =
       new MemberChooser<DartNamedElementNode>(ContainerUtil.map(candidates, new Function<DartComponent, DartNamedElementNode>() {
         @Override

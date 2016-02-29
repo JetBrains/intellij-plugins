@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
-import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -26,16 +26,19 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
   protected boolean setupConfigurationFromContext(final @NotNull DartCommandLineRunConfiguration configuration,
                                                   final @NotNull ConfigurationContext context,
                                                   final @NotNull Ref<PsiElement> sourceElement) {
-    final VirtualFile dartFile = getRunnableDartFileFromContext(context);
-    if (dartFile != null) {
-      configuration.getRunnerParameters().setFilePath(dartFile.getPath());
-      configuration.getRunnerParameters().setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(context.getProject(), dartFile));
-      configuration.setGeneratedName();
-
-      sourceElement.set(sourceElement.isNull() ? null : sourceElement.get().getContainingFile());
-      return true;
+    final VirtualFile dartFile = getRunnableDartFileFromContext(context, true);
+    if (dartFile == null || DartTestRunConfigurationProducer.isFileInTestDirAndTestPackageExists(context.getProject(), dartFile)) {
+      return false;
     }
-    return false;
+
+    configuration.getRunnerParameters().setFilePath(dartFile.getPath());
+    configuration.getRunnerParameters()
+      .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(context.getProject(), dartFile));
+
+    configuration.setGeneratedName();
+    sourceElement.set(sourceElement.isNull() ? null : sourceElement.get().getContainingFile());
+
+    return true;
   }
 
   @Override
@@ -46,7 +49,8 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
   }
 
   @Nullable
-  public static VirtualFile getRunnableDartFileFromContext(final @NotNull ConfigurationContext context) {
+  public static VirtualFile getRunnableDartFileFromContext(@NotNull final ConfigurationContext context,
+                                                           final boolean checkBrowserSpecificImports) {
     final PsiElement psiLocation = context.getPsiLocation();
     final PsiFile psiFile = psiLocation == null ? null : psiLocation.getContainingFile();
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -56,9 +60,9 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
         ProjectRootManager.getInstance(context.getProject()).getFileIndex().isInContent(virtualFile) &&
         !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile.getProject(), virtualFile) &&
         DartResolveUtil.getMainFunction(psiFile) != null &&
-        !hasImport((DartFile)psiFile,
-                   "dart:html", "dart:html_common", "dart:indexed_db", "dart:js",
-                   "dart:svg", "dart:web_audio", "dart:web_gl", "dart:web_sql")) {
+        (!checkBrowserSpecificImports || !hasImport((DartFile)psiFile,
+                                                    "dart:html", "dart:html_common", "dart:indexed_db", "dart:js",
+                                                    "dart:svg", "dart:web_audio", "dart:web_gl", "dart:web_sql"))) {
       return virtualFile;
     }
 

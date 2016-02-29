@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 class JavaScriptGenerateToStringHandler extends BaseJSGenerateHandler {
@@ -32,7 +33,7 @@ class JavaScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
         final boolean[] needOverride = new boolean[1];
         JSResolveUtil.processOverrides(jsClass, new JSResolveUtil.OverrideHandler() {
-          public boolean process(final SinkResolveProcessor processor, final PsiElement scope, final String className) {
+          public boolean process(@NotNull List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             needOverride[0] = !"Object".equals(className);
             return false;
           }

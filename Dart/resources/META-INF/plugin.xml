@@ -3,14 +3,12 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="144.1" until-build="144.*"/>
+  <idea-version since-build="146.1" until-build="146.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
-
-  <!-- Uncomment the following line when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
-  <!--<depends>com.intellij.plugins.webcomponents</depends>-->
+  <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
 
   <change-notes>
     <![CDATA[
@@ -190,10 +188,6 @@
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfigurationType"/>
-
-    <!--<configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>-->
-    <!--<runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer"/>-->
-
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>
 
@@ -254,6 +248,10 @@
     <action id="Generate.ToString.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateToStringAction"
             text="toString()">
       <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Dart" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.EqualsAndHashcode.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateEqualsAndHashcodeAction"
+            text="==() and hashCode">
+      <add-to-group anchor="after" relative-to-action="Generate.ToString.Dart" group-id="GenerateGroup"/>
     </action>
 
     <group>

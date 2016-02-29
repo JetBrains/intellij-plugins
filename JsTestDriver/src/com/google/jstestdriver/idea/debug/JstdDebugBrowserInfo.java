@@ -102,7 +102,7 @@ public class JstdDebugBrowserInfo {
     Collection<JstdBrowserInfo> capturedBrowsers = server.getCapturedBrowsers();
     List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
     for (JstdBrowserInfo browserInfo : capturedBrowsers) {
-      Pair<JavaScriptDebugEngine, WebBrowser> engine = JavaScriptDebugEngine.findByBrowserIdOrName(browserInfo.getName());
+      Pair<JavaScriptDebugEngine, WebBrowser> engine = JavaScriptDebugEngine.Companion.findByBrowserIdOrName(browserInfo.getName());
       if (engine != null) {
         debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, server.getSettings(), browserInfo));
       }

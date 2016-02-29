@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// resolves paths relative to working dir that are reported by unittest framework or 'pub build'
+// resolves paths relative to working dir that are reported by package:test or 'pub build'
 public class DartRelativePathsConsoleFilter implements Filter {
   @NotNull private final Project myProject;
   @NotNull private final String myBaseDirPath;
@@ -58,7 +58,7 @@ public class DartRelativePathsConsoleFilter implements Filter {
     final String relPath = text.substring(0, index);
     if (!relPath.endsWith(".dart") || (text.charAt(index) != ' ' && text.charAt(index) != ':')) return null;
 
-    final Couple<Integer> lineAndColumn = DartPositionInfo.parseLineAndColumnInColonFormat(text.substring(index + 1));
+    final Couple<Integer> lineAndColumn = DartPositionInfo.parseLineAndColumn(text.substring(index + 1));
     final int line = lineAndColumn == null ? -1 : lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first;
     final int column = lineAndColumn == null ? -1 : lineAndColumn.second >= 0 ? lineAndColumn.second - 1 : lineAndColumn.second;
     if (line < 0 || column < 0) return null;

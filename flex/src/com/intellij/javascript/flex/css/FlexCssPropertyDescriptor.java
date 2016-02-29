@@ -106,7 +106,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
     if (constantSet.size() > 0) {
       for (String constant : constantSet) {
-        children.add(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor(constant.trim(), 1, 1, null));
+        String constantName = constant.trim();
+        children.add(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor(constantName, constantName, 1, 1, null));
       }
     }
   }
@@ -216,7 +217,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       result.addChild(CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(1, 1, result));
     }
 
-    result.addChild(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor("undefined", 1, 1, result));
+    result.addChild(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor("undefined", "undefined", 1, 1, result));
     result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("PropertyReference", 1, 1, result));
     result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("Embed", 1, 1, result));
     return result;

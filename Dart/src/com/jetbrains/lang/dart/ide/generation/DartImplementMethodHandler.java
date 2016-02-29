@@ -1,10 +1,14 @@
 package com.jetbrains.lang.dart.ide.generation;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -16,24 +20,30 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
   }
 
   @Override
-  protected void collectCandidates(Map<Pair<String, Boolean>, DartComponent> classMembersMap,
-                                   Map<Pair<String, Boolean>, DartComponent> superClassesMembersMap,
-                                   Map<Pair<String, Boolean>, DartComponent> superInterfacesMembersMap,
-                                   List<DartComponent> candidates) {
-    Map<Pair<String, Boolean>, DartComponent> result = new THashMap<Pair<String, Boolean>, DartComponent>(superInterfacesMembersMap);
-    result.keySet().removeAll(superClassesMembersMap.keySet());
-    for (Map.Entry<Pair<String, Boolean>, DartComponent> entry : superClassesMembersMap.entrySet()) {
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
+    return new OverrideImplementMethodFix(dartClass, true);
+  }
+
+  @Override
+  protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
+    Map<Pair<String, Boolean>, DartComponent> result =
+      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperInterfacesMembersMap(dartClass));
+    Map<Pair<String, Boolean>, DartComponent> superClassesMemberMap =
+      new THashMap<Pair<String, Boolean>, DartComponent>(computeSuperClassesMemberMap(dartClass));
+    result.keySet().removeAll(superClassesMemberMap.keySet());
+    for (Map.Entry<Pair<String, Boolean>, DartComponent> entry : superClassesMemberMap.entrySet()) {
       final DartComponent component = entry.getValue();
       if (component.isAbstract() && !result.containsKey(entry.getKey())) {
         result.put(entry.getKey(), entry.getValue());
       }
     }
-    result.keySet().removeAll(classMembersMap.keySet());
-    candidates.addAll(result.values());
+    result.keySet().removeAll(computeClassMembersMap(dartClass, false).keySet());
+    candidates.addAll(ContainerUtil.findAll(result.values(), new Condition<DartComponent>() {
+      @Override
+      public boolean value(final DartComponent component) {
+        return component.isPublic() || DartResolveUtil.sameLibrary(dartClass, component);
+      }
+    }));
   }
 
-  @Override
-  protected BaseCreateMethodsFix createFix(DartClass dartClass) {
-    return new OverrideImplementMethodFix(dartClass, true);
-  }
 }

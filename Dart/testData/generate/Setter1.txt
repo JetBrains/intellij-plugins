@@ -2,5 +2,4 @@ class Setter1 {
   int _foo;
 
   set foo(int value) => _foo = value;
-
 }

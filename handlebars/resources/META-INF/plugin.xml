@@ -9,12 +9,9 @@
     ]]>
   </description>
   <category>HTML/JavaScript Development</category>
-  <version>0.8</version>
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true">JavaScript</depends>
   <vendor url="https://github.com/dmarcotte">dmarcotte, JetBrains</vendor>
-
-  <idea-version since-build="134.1342"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.dmarcotte.handlebars.file.HbFileTypeFactory"/>

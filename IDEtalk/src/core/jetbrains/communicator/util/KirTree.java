@@ -57,12 +57,6 @@ public class KirTree extends Tree {
 
     addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseReleased(MouseEvent e) {
-        // Disable selection on mouse release
-        //e.consume();
-      }
-
-      @Override
       public void mousePressed(final MouseEvent e) {
         final TreePath closestPath = getPathForLocation(e.getX(), e.getY());
         if (e.getClickCount() == 2) {

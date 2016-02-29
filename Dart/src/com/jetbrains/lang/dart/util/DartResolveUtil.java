@@ -24,6 +24,7 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.*;
 import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
+import com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass;
 import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
@@ -958,12 +959,8 @@ public class DartResolveUtil {
       // callExpression -> arguments -> argumentList
       parameterIndex = prevSibling.getExpressionList().size() + prevSibling.getNamedArgumentList().size();
     }
-    else if (PsiTreeUtil.getParentOfType(place, DartCallExpression.class, true) != null) {
-      // seems foo(<caret>)
-      parameterIndex = 0;
-    }
-    else if (PsiTreeUtil.getParentOfType(place, DartNewExpression.class, true) != null) {
-      // seems new Foo(<caret>)
+    else if (DartParameterInfoHandler.findElementForParameterInfo(place) != null) {
+      // foo(<caret>), new Foo(<caret>) or @Foo(<caret>)
       parameterIndex = 0;
     }
     return parameterIndex;

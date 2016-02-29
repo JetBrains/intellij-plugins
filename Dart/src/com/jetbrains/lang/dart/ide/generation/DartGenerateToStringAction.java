@@ -32,7 +32,7 @@ public class DartGenerateToStringAction extends BaseDartGenerateAction {
     if (dartClass == null) {
       return false;
     }
-    return doesClassContainMember(dartClass, TO_STRING);
+    return !doesClassContainMethod(dartClass, TO_STRING);
   }
 
 }

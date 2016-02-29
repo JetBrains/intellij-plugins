@@ -8,15 +8,11 @@
   <vendor>JetBrains</vendor>
   <category>HTML/JavaScript Development</category>
 
-  <version>999.999</version>
-  <idea-version since-build="144.0" until-build="145.0"/>
-
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
 
   <depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>
 
-  <depends optional="true" config-file="karma-coverage.xml">Coverage</depends>
   <depends optional="true" config-file="karma-coverage.xml">com.intellij.modules.coverage</depends>
 
   <extensions defaultExtensionNs="com.intellij">

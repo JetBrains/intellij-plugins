@@ -35,6 +35,7 @@ public class DartSuspendContext extends XSuspendContext {
     return myActiveExecutionStack;
   }
 
+  @NotNull
   @Override
   public XExecutionStack[] getExecutionStacks() {
     if (myExecutionStacks == null) {

@@ -1,8 +1,5 @@
 package org.angularjs.index;
 
-import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementWalkingVisitor;
 import com.intellij.psi.xml.XmlAttribute;
@@ -46,12 +43,7 @@ public class AngularTemplateCacheIndex extends ScalarIndexExtension<String> {
   @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return new DefaultFileTypeSpecificInputFilter(StdFileTypes.HTML, StdFileTypes.XHTML) {
-      @Override
-      public boolean acceptInput(@NotNull VirtualFile file) {
-        return super.acceptInput(file) && !(file.getFileSystem() instanceof JarFileSystem);
-      }
-    };
+    return AngularTemplateIndexInputFilter.INSTANCE;
   }
 
   @Override

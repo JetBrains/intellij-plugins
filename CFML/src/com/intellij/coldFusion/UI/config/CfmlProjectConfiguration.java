@@ -16,7 +16,10 @@
 package com.intellij.coldFusion.UI.config;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.JDOMUtil;
@@ -29,11 +32,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author vnikolaenko
  */
-@State(name = "CfmlProjectConfiguration",
-       storages = {
-         @Storage(file = StoragePathMacros.PROJECT_FILE),
-         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/cfml.xml", scheme = StorageScheme.DIRECTORY_BASED)
-       })
+@State(name = "CfmlProjectConfiguration", storages = @Storage("cfml.xml"))
 public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlProjectConfiguration.State> {
   private State myState = new State();
 

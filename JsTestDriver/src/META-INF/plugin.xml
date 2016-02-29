@@ -17,17 +17,13 @@
              url="https://confluence.jetbrains.com/display/WI/JsTestDriver+IntelliJ+plugin">
   <name>JSTestDriver Plugin</name>
   <description>Allows running, debugging JavaScript unit tests and measure test coverage.</description>
-  <version>999.999</version>
   <vendor>Google, JetBrains</vendor>
-  <idea-version since-build="144.0" until-build="145.0"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
 
   <depends optional="true" config-file="jstd-yaml.xml">org.jetbrains.plugins.yaml</depends>
-  <depends optional="true" config-file="jstd-yaml.xml">com.intellij.modules.yaml</depends>
 
-  <depends optional="true" config-file="jstd-coverage.xml">Coverage</depends>
   <depends optional="true" config-file="jstd-coverage.xml">com.intellij.modules.coverage</depends>
 
   <depends optional="true" config-file="jstd-javascript-debugger.xml">JavaScriptDebugger</depends>

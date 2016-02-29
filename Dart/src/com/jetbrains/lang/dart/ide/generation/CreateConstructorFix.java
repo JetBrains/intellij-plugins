@@ -12,12 +12,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
-  public CreateConstructorFix(DartClass dartClass) {
+  public CreateConstructorFix(@NotNull final DartClass dartClass) {
     super(dartClass);
   }
 
   @Override
-  protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<DartComponent> elementsToProcess) {
+  protected void processElements(@NotNull final Project project, @NotNull final Editor editor, Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
   }
@@ -46,7 +46,7 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
     }
     template.addTextSegment(");");
     template.addEndVariable();
-    template.addTextSegment("\n");
+    template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     return template;
   }
 

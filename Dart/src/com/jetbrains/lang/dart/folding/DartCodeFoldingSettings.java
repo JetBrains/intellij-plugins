@@ -8,13 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-@State(
-  name = "DartCodeFoldingSettings",
-  storages = {
-    @Storage(
-      file = StoragePathMacros.APP_CONFIG + "/editor.codeinsight.xml"
-    )}
-)
+@State(name = "DartCodeFoldingSettings", storages = @Storage("editor.codeinsight.xml"))
 public class DartCodeFoldingSettings implements PersistentStateComponent<DartCodeFoldingSettings>, ExportableComponent {
   private boolean myCollapseParts = true;
   private boolean myCollapseGenericParams = false;

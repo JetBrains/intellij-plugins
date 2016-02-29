@@ -4,7 +4,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
 import com.intellij.openapi.project.Project;
@@ -21,6 +20,7 @@ import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import org.angularjs.html.Angular2HTMLLanguage;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJS2IndexingHandler;
+import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,10 +46,12 @@ public class Angular2Injector implements MultiHostInjector {
     }
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
       final int length = context.getTextLength();
-      if ((AngularAttributesRegistry.isEventAttribute(((XmlAttribute)parent).getName(), project) ||
-           AngularAttributesRegistry.isBindingAttribute(((XmlAttribute)parent).getName(), project)) &&
+      final String name = ((XmlAttribute)parent).getName();
+      if ((AngularAttributesRegistry.isEventAttribute(name, project) ||
+           AngularAttributesRegistry.isBindingAttribute(name, project) ||
+           AngularAttributesRegistry.isTemplateAttribute(name, project)) &&
           length > 0) {
-        registrar.startInjecting(JavascriptLanguage.INSTANCE).
+        registrar.startInjecting(AngularJSLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, ElementManipulators.getValueTextRange(context)).
           doneInjecting();
       }
@@ -65,7 +67,8 @@ public class Angular2Injector implements MultiHostInjector {
       final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
       final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
       if (expression instanceof JSReferenceExpression) {
-        if (!AngularJS2IndexingHandler.isDirective(((JSReferenceExpression)expression).getReferenceName())) return true;
+        final String command = ((JSReferenceExpression)expression).getReferenceName();
+        if (!AngularJS2IndexingHandler.isDirective(command) && !"View".equals(command)) return true;
 
         final TextRange range = ElementManipulators.getValueTextRange(context);
         registrar.startInjecting(language).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();

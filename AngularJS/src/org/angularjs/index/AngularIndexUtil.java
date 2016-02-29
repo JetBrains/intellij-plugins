@@ -39,15 +39,37 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 29;
+  public static final int BASE_VERSION = 36;
   private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
-    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     final Ref<JSImplicitElement> result = new Ref<JSImplicitElement>(null);
+    final Processor<JSImplicitElement> processor = new Processor<JSImplicitElement>() {
+      @Override
+      public boolean process(JSImplicitElement element) {
+        if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
+                                                    AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
+          result.set(element);
+          if (DialectDetector.isTypeScript(element)) {
+            return false;
+          }
+        }
+        return true;
+      }
+    };
+    multiResolve(project, index, lookupKey, processor);
+
+    return result.get();
+  }
+
+  public static void multiResolve(Project project,
+                                   final StubIndexKey<String, JSImplicitElementProvider> index,
+                                   final String lookupKey,
+                                   final Processor<JSImplicitElement> processor) {
+    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     StubIndex.getInstance().processElements(
       index, lookupKey, project, scope, JSImplicitElementProvider.class, new Processor<JSImplicitElementProvider>() {
         @Override
@@ -57,13 +79,7 @@ public class AngularIndexUtil {
             final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
             if (elements != null) {
               for (JSImplicitElement element : elements) {
-                if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
-                                                            AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
-                  result.set(element);
-                  if (DialectDetector.isTypeScript(element)) {
-                    return false;
-                  }
-                }
+                if (!processor.process(element)) return false;
               }
             }
           }
@@ -71,8 +87,6 @@ public class AngularIndexUtil {
         }
       }
     );
-
-    return result.get();
   }
 
   public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {

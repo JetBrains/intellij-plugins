@@ -1,11 +1,7 @@
 <idea-plugin version="2" url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <name>AngularJS</name>
   <description>Support for AngularJS</description>
-  <version>999.999</version>
   <vendor>johnlindquist, JetBrains</vendor>
-
-  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="138.1029"/>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
@@ -37,8 +33,10 @@
     <stubIndex implementation="org.angularjs.index.AngularModuleIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularUiRouterStatesIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularTemplateCacheIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularUiRouterViewsIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
@@ -50,6 +48,7 @@
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
+    <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
@@ -58,6 +57,8 @@
                             id="AngularJSCompletionContributor" order="first"/>
     <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJSDICompletionContributor"
                             id="AngularJSDICompletionContributor" order="first"/>
+    <completion.contributor language="JavaScript" implementationClass="org.angularjs.codeInsight.AngularJavaScriptCompletionContributor"
+                            id="AngularJavaScriptCompletionContributor" order="first"/>
     <lookup.charFilter implementation="org.angularjs.editor.Angular2LookupCharFilter" order="before xml"/>
 
     <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
@@ -80,5 +81,6 @@
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJS2IndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
+    <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
   </extensions>
 </idea-plugin>

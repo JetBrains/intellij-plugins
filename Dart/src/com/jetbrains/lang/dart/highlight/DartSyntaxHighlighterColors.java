@@ -83,6 +83,8 @@ public class DartSyntaxHighlighterColors {
   private static final String DART_COMMA = "DART_COMMA";
   private static final String DART_DOT = "DART_DOT";
   private static final String DART_SEMICOLON = "DART_SEMICOLON";
+  private static final String DART_COLON = "DART_COLON";
+  private static final String DART_FAT_ARROW = "DART_FAT_ARROW";
   private static final String DART_BAD_CHARACTER = "DART_BAD_CHARACTER";
   private static final String DART_SYMBOL_LITERAL = "DART_SYMBOL_LITERAL";
 
@@ -114,6 +116,8 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey COMMA = createTextAttributesKey(DART_COMMA, DefaultLanguageHighlighterColors.COMMA);
   public static final TextAttributesKey DOT = createTextAttributesKey(DART_DOT, DefaultLanguageHighlighterColors.DOT);
   public static final TextAttributesKey SEMICOLON = createTextAttributesKey(DART_SEMICOLON, DefaultLanguageHighlighterColors.SEMICOLON);
+  public static final TextAttributesKey COLON = createTextAttributesKey(DART_COLON, DefaultLanguageHighlighterColors.OPERATION_SIGN);
+  public static final TextAttributesKey FAT_ARROW = createTextAttributesKey(DART_FAT_ARROW, DefaultLanguageHighlighterColors.OPERATION_SIGN);
   public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey(DART_BAD_CHARACTER, HighlighterColors.BAD_CHARACTER);
   public static final TextAttributesKey SYMBOL_LITERAL =
     createTextAttributesKey(DART_SYMBOL_LITERAL, DefaultLanguageHighlighterColors.KEYWORD);

@@ -50,6 +50,11 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public String getPresentableName() {
+    return myBc.getName();
+  }
+
+  @Override
+  public String getPresentableText() {
     return FlexCommonBundle.message("bc.0.module.1", myBc.getName(), myModule.getName());
   }
 

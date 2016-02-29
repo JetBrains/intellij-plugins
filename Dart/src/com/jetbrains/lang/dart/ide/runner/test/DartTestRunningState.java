@@ -20,14 +20,13 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
-import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,6 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String RUN_COMMAND = "run";
   private static final String TEST_PACKAGE_SPEC = "test:test";
   private static final String EXPANDED_REPORTER_OPTION = "-r json";
-  private static final String NAME_REGEX_OPTION = "-n";
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
     super(environment);
@@ -69,14 +67,10 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     try {
       final VirtualFile dartFile = runnerParameters.getDartFileOrDirectory();
       consoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
-
-      final String workingDir = StringUtil.isEmptyOrSpaces(runnerParameters.getWorkingDirectory())
-                                ? dartFile.getParent().getPath()
-                                : runnerParameters.getWorkingDirectory();
-      consoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, workingDir));
+      consoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, runnerParameters.computeProcessWorkingDirectory(project)));
       consoleView.addMessageFilter(new UrlFilter());
     }
-    catch (RuntimeConfigurationError ignore) {/**/}
+    catch (RuntimeConfigurationError ignore) {/* can't happen because already checked */}
 
     Disposer.register(project, consoleView);
     return consoleView;
@@ -86,35 +80,48 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
     Project project = getEnvironment().getProject();
+
     DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null) {
-      throw new ExecutionException("Dart SDK cannot be found"); // can't happen
-    }
-    String sdkPath = sdk.getHomePath();
+    if (sdk == null) throw new ExecutionException("Dart SDK cannot be found"); // can't happen, already checked
+
     DartTestRunnerParameters params = (DartTestRunnerParameters)myRunnerParameters;
-    VirtualFile dartFile;
-    final String filePath = params.getFilePath();
-    try {
-      dartFile = params.getDartFileOrDirectory();
-    }
-    catch (RuntimeConfigurationError ex) {
-      throw new ExecutionException("Cannot find test file: " + filePath, ex);
-    }
-    // TODO Try adding --pause-after-load to VM args to see if that makes test debugging possible
+
     StringBuilder builder = new StringBuilder();
-    builder.append(RUN_COMMAND).append(' ').append(TEST_PACKAGE_SPEC);
-    builder.append(' ').append(EXPANDED_REPORTER_OPTION);
-    if (filePath != null) {
-      builder.append(' ').append(filePath);
+    builder.append(RUN_COMMAND);
+
+    final boolean projectWithoutPubspec = Registry.is("dart.projects.without.pubspec", false);
+    final String targetName = params.getTargetName();
+    final String testRunnerOptions = params.getTestRunnerOptions();
+
+    if (projectWithoutPubspec &&
+        params.getScope() == DartTestRunnerParameters.Scope.FOLDER &&
+        targetName != null &&
+        !targetName.isEmpty()) {
+      builder.append(" ").append(":").append(targetName).append(" ").append(EXPANDED_REPORTER_OPTION);
+      if (testRunnerOptions != null && !testRunnerOptions.isEmpty()) {
+        builder.append(" ").append(testRunnerOptions);
+      }
     }
-    String testName = params.getTestName();
-    if (testName != null && !testName.isEmpty() && params.getScope().expectsTestName()) {
-      String safeName = StringUtil.escapeToRegexp(testName);
-      builder.append(' ').append(NAME_REGEX_OPTION).append(' ').append('"').append(safeName).append('"');
+    else {
+      builder.append(' ').append(TEST_PACKAGE_SPEC);
+      builder.append(' ').append(EXPANDED_REPORTER_OPTION);
+      if (testRunnerOptions != null && !testRunnerOptions.isEmpty()) {
+        builder.append(" ").append(testRunnerOptions);
+      }
+      builder.append(' ').append(params.getFilePath());
+
+      String groupOrTestName = params.getTestName();
+      if (groupOrTestName != null &&
+          !groupOrTestName.isEmpty() &&
+          params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
+        builder.append(" -N \"").append(groupOrTestName).append("\"");
+      }
     }
+
     params.setArguments(builder.toString());
-    params.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(project, dartFile));
-    return doStartProcess(pathToDartUrl(sdkPath + PUB_SNAPSHOT_PATH));
+    // working directory is not configurable in UI because there's only one valid value that we calculate ourselves
+    params.setWorkingDirectory(params.computeProcessWorkingDirectory(project));
+    return doStartProcess(pathToDartUrl(sdk.getHomePath() + PUB_SNAPSHOT_PATH));
   }
 
   private static String pathToDartUrl(@NonNls @NotNull String path) {

@@ -227,7 +227,10 @@ module Teamcity
       def tc_after_feature_element(feature_element)
         unregister_tags_holder
         # close scenario/scenario_outline suite
-        log_suite_finished(@current_example_or_feature_elems_stack.pop) unless @current_example_or_feature_elems_stack.empty?
+        unless @current_example_or_feature_elems_stack.empty?
+          log_suite_finished(@current_example_or_feature_elems_stack.pop)
+          log_in_idea(@message_factory.create_custom_progress_test_status(:finished))
+        end
         @in_outline_scenario_stack.pop
       end
 
@@ -485,7 +488,8 @@ module Teamcity
         if @in_outline_examples && !@previous_examples_scenario_outline.nil?
           # Examples doesn't allow to identify scenario finished event
           # so we will close prev scenario
-          log_suite_finished(@current_example_or_feature_elems_stack.pop)
+          log_suite_finished(@current_example_or_feature_elems_stack.pop) #
+          log_in_idea(@message_factory.create_custom_progress_test_status(:finished))
         end
         # report suite started
         # TODO - to think, seems it isn't correct only scenario outline name

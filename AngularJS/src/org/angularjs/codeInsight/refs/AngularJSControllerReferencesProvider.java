@@ -11,6 +11,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +30,17 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
   public static class AngularJSControllerReference extends AngularJSReferenceBase<JSLiteralExpression> {
     public AngularJSControllerReference(@NotNull JSLiteralExpression element) {
       super(element, ElementManipulators.getValueTextRange(element));
+    }
+
+    @NotNull
+    @Override
+    public String getCanonicalText() {
+      final String text = super.getCanonicalText();
+      final int idx = text.indexOf(AngularJSIndexingHandler.AS_CONNECTOR_WITH_SPACES);
+      if (idx > 0) {
+        return text.substring(0, idx);
+      }
+      return text;
     }
 
     @Nullable

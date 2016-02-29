@@ -45,6 +45,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
           }
         }
       }
+
       return super.getDefaultContexts();
     }
   }

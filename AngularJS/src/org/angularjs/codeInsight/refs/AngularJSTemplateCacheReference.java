@@ -56,6 +56,7 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
         }
       });
     }
+
     return result.get();
   }
 }

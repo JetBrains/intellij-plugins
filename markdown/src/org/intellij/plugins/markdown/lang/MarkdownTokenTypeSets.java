@@ -19,9 +19,9 @@ import com.intellij.psi.tree.TokenSet;
 
 public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
   TokenSet HEADER_MARKERS = TokenSet.create(
-          MarkdownTokenTypes.ATX_HEADER,
-          MarkdownTokenTypes.SETEXT_1,
-          MarkdownTokenTypes.SETEXT_2);
+    MarkdownTokenTypes.ATX_HEADER,
+    MarkdownTokenTypes.SETEXT_1,
+    MarkdownTokenTypes.SETEXT_2);
   TokenSet HEADER_LEVEL_1_SET = TokenSet.create(ATX_1, SETEXT_1);
   TokenSet HEADER_LEVEL_2_SET = TokenSet.create(ATX_2, SETEXT_2);
   TokenSet HEADER_LEVEL_3_SET = TokenSet.create(ATX_3);
@@ -36,8 +36,8 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
                                     HEADER_LEVEL_6_SET);
 
   TokenSet REFERENCE_LINK_SET = TokenSet.create(FULL_REFERENCE_LINK, SHORT_REFERENCE_LINK);
-  
-  TokenSet CODE_FENCE_ITEMS = TokenSet.create(MarkdownTokenTypes.CODE_FENCE_CONTENT, 
+
+  TokenSet CODE_FENCE_ITEMS = TokenSet.create(MarkdownTokenTypes.CODE_FENCE_CONTENT,
                                               MarkdownTokenTypes.CODE_FENCE_START,
                                               MarkdownTokenTypes.CODE_FENCE_END,
                                               MarkdownTokenTypes.FENCE_LANG);
@@ -50,6 +50,4 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
     TokenSet.create(MarkdownElementTypes.PARAGRAPH,
                     MarkdownTokenTypes.ATX_CONTENT,
                     MarkdownTokenTypes.SETEXT_CONTENT);
-
-
 }

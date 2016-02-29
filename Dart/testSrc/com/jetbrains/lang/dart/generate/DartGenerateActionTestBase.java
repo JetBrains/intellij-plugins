@@ -9,6 +9,10 @@ abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsigh
     doTest(new DartOverrideMethodHandler());
   }
 
+  protected void doEqualsAndHashcodeTest() {
+    doTest(new DartGenerateEqualsAndHashcodeHandler());
+  }
+
   protected void doImplementTest() {
     doTest(new DartImplementMethodHandler());
   }
@@ -22,11 +26,11 @@ abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsigh
     });
   }
 
-  protected void doConstructor() {
+  protected void doConstructorTest() {
     doTest(new DartGenerateConstructorHandler());
   }
 
-  protected void doNamedConstructor() {
+  protected void doNamedConstructorTest() {
     doTest(new DartGenerateNamedConstructorHandler());
   }
 

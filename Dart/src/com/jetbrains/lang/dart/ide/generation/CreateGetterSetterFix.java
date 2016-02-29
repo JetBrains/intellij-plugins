@@ -64,7 +64,7 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
 
   private final @NotNull Strategy myStrategy;
 
-  public CreateGetterSetterFix(final DartClass dartClass, @NotNull Strategy strategy) {
+  public CreateGetterSetterFix(@NotNull final DartClass dartClass, @NotNull Strategy strategy) {
     super(dartClass);
     myStrategy = strategy;
   }
@@ -76,31 +76,41 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   }
 
   @Override
-  protected Template buildFunctionsText(TemplateManager templateManager, DartComponent namedComponent) {
+  protected Template buildFunctionsText(final TemplateManager templateManager, final DartComponent namedComponent) {
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(namedComponent, DartReturnType.class);
     final DartType dartType = PsiTreeUtil.getChildOfType(namedComponent, DartType.class);
-    final String typeText = returnType == null ? DartPresentableUtil.buildTypeText(namedComponent, dartType, null)
-                                               : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
+    final String typeText = returnType == null
+                            ? DartPresentableUtil.buildTypeText(namedComponent, dartType, null)
+                            : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
     if (myStrategy == Strategy.GETTER || myStrategy == Strategy.GETTERSETTER) {
-      buildGetter(template, namedComponent.getName(), typeText);
+      buildGetter(template, namedComponent.getName(), typeText, namedComponent.isStatic());
     }
     if (myStrategy == Strategy.SETTER || myStrategy == Strategy.GETTERSETTER) {
-      buildSetter(template, namedComponent.getName(), typeText);
+      buildSetter(template, namedComponent.getName(), typeText, namedComponent.isStatic());
     }
     return template;
   }
 
-  private static void buildGetter(Template template, String name, String typeText) {
-    build(template, name, typeText, true);
+  private static void buildGetter(final Template template, final String name, final String typeText, final boolean isStatic) {
+    build(template, name, typeText, isStatic, true);
   }
 
-  private static void buildSetter(Template template, String name, String typeText) {
-    build(template, name, typeText, false);
+  private static void buildSetter(final Template template, final String name, final String typeText, final boolean isStatic) {
+    build(template, name, typeText, isStatic, false);
   }
 
-  private static void build(Template template, String name, String typeText, boolean isGetter) {
+  private static void build(final Template template,
+                            final String name,
+                            final String typeText,
+                            final boolean isStatic,
+                            final boolean isGetter) {
+    if (isStatic) {
+      template.addTextSegment("static");
+      template.addTextSegment(" ");
+    }
+
     if (isGetter) {
       template.addTextSegment(typeText);
       template.addTextSegment(" ");
@@ -119,11 +129,11 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
     template.addTextSegment(" => ");
     if (isGetter) {
       template.addTextSegment(name);
-      template.addTextSegment(";");
+      template.addTextSegment("; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     }
     else {
       template.addTextSegment(name);
-      template.addTextSegment("=value;\n");
+      template.addTextSegment("=value; "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     }
   }
 }

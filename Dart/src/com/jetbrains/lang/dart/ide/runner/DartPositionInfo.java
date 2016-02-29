@@ -73,9 +73,7 @@ public class DartPositionInfo {
     final String url = text.substring(urlStartIndex, urlEndIndex);
     final String tail = text.length() == urlEndIndex ? "" : text.substring(urlEndIndex).trim();
 
-    Couple<Integer> lineAndColumn = parseLineAndColumnInColonFormat(tail);
-    if (lineAndColumn == null) lineAndColumn = parseLineAndColumnInTextFormat(tail);
-
+    final Couple<Integer> lineAndColumn = parseLineAndColumn(tail);
     final int colonIndexInUrl = url.indexOf(':');
     assert colonIndexInUrl > 0 : text;
 
@@ -90,6 +88,12 @@ public class DartPositionInfo {
     final int line = lineAndColumn == null ? -1 : lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first;
     final int column = lineAndColumn == null ? -1 : lineAndColumn.second >= 0 ? lineAndColumn.second - 1 : lineAndColumn.second;
     return new DartPositionInfo(type, FileUtil.toSystemIndependentName(path), urlStartIndex, urlEndIndex, line, column);
+  }
+
+  @Nullable
+  public static Couple<Integer> parseLineAndColumn(@NotNull final String text) {
+    Couple<Integer> result = parseLineAndColumnInColonFormat(text);
+    return result != null ? result : parseLineAndColumnInTextFormat(text);
   }
 
   // WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL PREFIX PATH_ENDING_WITH_DOT_DART WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
@@ -149,7 +153,7 @@ public class DartPositionInfo {
   }
 
   @Nullable
-  public static Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
+  private static Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
     // "12 whatever, ":12 whatever", "12:34 whatever" or ":12:34 whatever"
     final Pair<Integer, String> lineAndRemainingText = parseNextIntSkippingColon(text);
     if (lineAndRemainingText == null) return null;

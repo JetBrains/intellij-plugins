@@ -2,7 +2,10 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -11,15 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * PhoneGapSettings.java
- * <p/>
- * Created by Masahiro Suzuka on 2014/04/12.
- */
-@State(
-  name = "PhoneGapSettings",
-  storages = {@Storage(
-    file = StoragePathMacros.APP_CONFIG + "/phonegap.xml")})
+@State(name = "PhoneGapSettings", storages = @Storage("phonegap.xml"))
 public final class PhoneGapSettings implements PersistentStateComponent<PhoneGapSettings.State> {
 
   public static String PHONEGAP_WORK_DIRECTORY = "js.phonegap.settings.workdir";

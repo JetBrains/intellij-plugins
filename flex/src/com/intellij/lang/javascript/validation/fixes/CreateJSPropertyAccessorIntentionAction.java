@@ -22,7 +22,11 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   }
 
   @Override
-  protected void writeFunctionAndName(Template template, String referencedName, PsiFile file, JSClass clazz) {
+  protected void writeFunctionAndName(Template template,
+                                      String referencedName,
+                                      PsiFile file,
+                                      JSClass clazz,
+                                      JSReferenceExpression referenceExpression) {
     template.addTextSegment("function ");
     template.addTextSegment(myIsGetter ? "get ":"set ");
     template.addTextSegment(referencedName);

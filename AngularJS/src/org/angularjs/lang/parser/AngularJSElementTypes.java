@@ -1,5 +1,8 @@
 package org.angularjs.lang.parser;
 
+import com.intellij.lang.Language;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.lang.AngularJSLanguage;
 
@@ -8,6 +11,7 @@ import org.angularjs.lang.AngularJSLanguage;
  */
 public interface AngularJSElementTypes {
   IElementType REPEAT_EXPRESSION = new IElementType("REPEAT_EXPRESSION", AngularJSLanguage.INSTANCE);
+  IElementType FOR_EXPRESSION = new IElementType("REPEAT_EXPRESSION", AngularJSLanguage.INSTANCE);
   IElementType FILTER_EXPRESSION = new IElementType("FILTER_EXPRESSION", AngularJSLanguage.INSTANCE);
   IElementType AS_EXPRESSION     = new IElementType("AS_EXPRESSION", AngularJSLanguage.INSTANCE);
 
@@ -16,4 +20,11 @@ public interface AngularJSElementTypes {
   IElementType MESSAGE_FORMAT_MESSAGE = new IElementType("MESSAGE_FORMAT_MESSAGE", AngularJSLanguage.INSTANCE);
   IElementType MESSAGE_FORMAT_OPTION = new IElementType("MESSAGE_FORMAT_OPTION", AngularJSLanguage.INSTANCE);
   IElementType MESSAGE_FORMAT_SELECTION_KEYWORD = new IElementType("MESSAGE_FORMAT_SELECTION_KEYWORD", AngularJSLanguage.INSTANCE);
+
+  IElementType EMBEDDED_CONTENT = new JSElementTypes.EmbeddedContentElementType(AngularJSLanguage.INSTANCE) {
+    @Override
+    protected Lexer createStripperLexer(Language baseLanguage) {
+      return null;
+    }
+  };
 }

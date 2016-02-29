@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class CreateToStringFix extends BaseCreateMethodsFix<DartComponent> {
 
-  public CreateToStringFix(final DartClass dartClass) {
+  public CreateToStringFix(@NotNull final DartClass dartClass) {
     super(dartClass);
   }
 
@@ -75,7 +75,7 @@ public class CreateToStringFix extends BaseCreateMethodsFix<DartComponent> {
     template.addTextSegment("}';\n");
     template.addTextSegment("}");
     template.addEndVariable();
-    template.addTextSegment("\n");
+    template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     return template;
   }
 
