@@ -93,4 +93,8 @@ public abstract class DartUrlResolver {
 
   @NotNull
   public abstract String getDartUrlForFile(final @NotNull VirtualFile file);
+
+  public boolean mayNeedDynamicUpdate() {
+    return true;
+  }
 }

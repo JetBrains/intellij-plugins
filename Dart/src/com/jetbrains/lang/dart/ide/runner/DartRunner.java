@@ -45,11 +45,9 @@ public class DartRunner extends DefaultProgramRunner {
 
   @Override
   public boolean canRun(final @NotNull String executorId, final @NotNull RunProfile profile) {
-    return (profile instanceof DartCommandLineRunConfiguration && (DefaultRunExecutor.EXECUTOR_ID.equals(executorId) ||
-                                                                   DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)))
-           ||
-           (profile instanceof DartTestRunnerParameters && DefaultRunExecutor.EXECUTOR_ID.equals(executorId))
-           ||
+    return (profile instanceof DartCommandLineRunConfiguration &&
+            (DefaultRunExecutor.EXECUTOR_ID.equals(executorId) || DefaultDebugExecutor.EXECUTOR_ID.equals(executorId))) ||
+           (profile instanceof DartTestRunnerParameters && DefaultRunExecutor.EXECUTOR_ID.equals(executorId)) ||
            (profile instanceof DartRemoteDebugConfiguration && DefaultDebugExecutor.EXECUTOR_ID.equals(executorId));
   }
 
@@ -88,8 +86,8 @@ public class DartRunner extends DefaultProgramRunner {
 
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
                                                   final @NotNull ExecutionEnvironment env,
-                                                  final @Nullable String dasExecutionContextId) throws RuntimeConfigurationError,
-                                                                                                       ExecutionException {
+                                                  final @Nullable String dasExecutionContextId)
+    throws RuntimeConfigurationError, ExecutionException {
     final DartSdk sdk = DartSdk.getDartSdk(env.getProject());
     assert (sdk != null); // already checked
 
@@ -144,19 +142,19 @@ public class DartRunner extends DefaultProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
+        final DartUrlResolver dartUrlResolver = getDartUrlResolver(env, contextFileOrDir);
         return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
                ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
-               : new DartVmServiceDebugProcess(session,
-                                               StringUtil.notNullize(debuggingHost, "localhost"),
-                                               observatoryPort,
-                                               executionResult,
-                                               dartUrlResolver,
-                                               dasExecutionContextId,
+               : new DartVmServiceDebugProcess(session, StringUtil.notNullize(debuggingHost, "localhost"), observatoryPort, executionResult,
+                                               dartUrlResolver, dasExecutionContextId,
                                                runConfiguration instanceof DartRemoteDebugConfiguration);
       }
     });
 
     return debugSession.getRunContentDescriptor();
+  }
+
+  protected DartUrlResolver getDartUrlResolver(@NotNull ExecutionEnvironment env, @NotNull VirtualFile contextFileOrDir) {
+    return DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
   }
 }

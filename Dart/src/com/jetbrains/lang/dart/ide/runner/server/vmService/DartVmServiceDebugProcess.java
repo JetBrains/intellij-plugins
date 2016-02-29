@@ -111,6 +111,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       LOG.assertTrue(myExecutionResult == null && myDASExecutionContextId == null, myDASExecutionContextId + myExecutionResult);
     }
     else {
+      // This causes a runtime exception if test debugger starts before DAS is started. That can happen today if
+      // a project is opened with a YAML file in the editor and a pre-defined test is started via the Debug button.
       LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
     }
   }
@@ -393,11 +395,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   public String getUriForFile(@NotNull final VirtualFile file) {
     String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
 
-    // DAS from SDK 1.13 is not returning dart:xxx URIs correctly
-    if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
-      final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
-      if (uriByServer != null) {
-        return uriByServer;
+    if (myDartUrlResolver.mayNeedDynamicUpdate()) {
+      // DAS from SDK 1.13 is not returning dart:xxx URIs correctly
+      if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
+        final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
+        if (uriByServer != null) {
+          return uriByServer;
+        }
       }
     }
 
