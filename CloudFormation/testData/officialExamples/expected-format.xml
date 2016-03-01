@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <problems>
   <problem>
-    <file>autoscalingmultiazwithnotifications-4ccf.template</file>
-    <line>199</line>
-    <description>Unknown resource type property: NotificationConfiguration</description>
-  </problem>
-
-  <problem>
     <file>vpc_rds_db_instance-7735.template</file>
     <line>80</line>
     <description>Required resource properties are not set: DBSecurityGroupIngress</description>
@@ -22,11 +16,5 @@
     <file>dynamodb_table-0b27.template</file>
     <line>45</line>
     <description>Required resource properties are not set: AttributeDefinitions</description>
-  </problem>
-
-  <problem>
-    <file>wordpress-1.0.0-14a6.template</file>
-    <line>286</line>
-    <description>Unknown resource type property: NotificationConfiguration</description>
   </problem>
 </problems>

@@ -220,6 +220,11 @@ object ResourceTypesSaver {
             }
           }
 
+          if (resourceTypeName == "AWS::AutoScaling::AutoScalingGroup" && name == "NotificationConfigurations") {
+            val additionalProperty = CloudFormationResourceProperty("NotificationConfiguration", descriptionValue, type, required, updateValue)
+            properties[additionalProperty.name] = additionalProperty
+          }
+
           properties[name] = CloudFormationResourceProperty(name, descriptionValue, type, required, updateValue)
         }
       }
