@@ -1,0 +1,38 @@
+plugins {
+  id 'org.jetbrains.intellij' version "0.0.39"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+
+sourceSets {
+  main.java.srcDirs = ['src', 'gen']
+  main.resources.srcDir 'resources'
+
+  test.java.srcDir 'test/src'
+  test.resources.srcDir 'test/data'
+}
+
+intellij {
+  version = 'IU-15.0.1'
+  plugins = ['JavaScriptLanguage', 'CSS']
+
+  updateSinceUntilBuild = false
+
+  sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
+}
+
+test {
+  testLogging {
+    exceptionFormat = 'full'
+  }
+}
+
+idea {
+  module {
+    generatedSourceDirs += file('gen')
+  }
+}
