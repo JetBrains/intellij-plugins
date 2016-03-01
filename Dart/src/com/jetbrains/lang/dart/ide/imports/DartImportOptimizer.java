@@ -29,6 +29,7 @@ public class DartImportOptimizer implements ImportOptimizer {
   @NotNull
   @Override
   public Runnable processFile(final PsiFile file) {
+    DartAnalysisServerService.getInstance().serverReadyForRequest(file.getProject());
     return new Runnable() {
       @Override
       public void run() {

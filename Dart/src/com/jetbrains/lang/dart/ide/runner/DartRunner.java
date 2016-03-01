@@ -66,13 +66,14 @@ public class DartRunner extends DefaultProgramRunner {
         final String dasExecutionContextId;
 
         final RunProfile runConfig = env.getRunProfile();
-        if (runConfig instanceof DartRunConfigurationBase) {
+        if (runConfig instanceof DartRunConfigurationBase &&
+            DartAnalysisServerService.getInstance().serverReadyForRequest(env.getProject())) {
           final String path = ((DartRunConfigurationBase)runConfig).getRunnerParameters().getFilePath();
           assert path != null; // already checked
           dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
         }
         else {
-          dasExecutionContextId = null; // remote debug
+          dasExecutionContextId = null; // remote debug or can't start DAS
         }
 
         return doExecuteDartDebug(state, env, dasExecutionContextId);
