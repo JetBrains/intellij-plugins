@@ -307,7 +307,7 @@ public class CodeContext {
 
   private static void handleFileDependency(Module module, Map<String, CodeContext> contextsOfModule, VirtualFile file) {
     if (file.getFileType() == FileTypes.ARCHIVE &&
-        ("swc".equalsIgnoreCase(file.getExtension()) || "ane".equalsIgnoreCase(file.getExtension()))) {
+        ("swc".equalsIgnoreCase(file.getExtension()) || "ane".equalsIgnoreCase(file.getExtension()) || "jar".equalsIgnoreCase(file.getExtension()))) {
       final VirtualFile local = file.getFileSystem() instanceof JarFileSystem
                                 ? file : JarFileSystem.getInstance().getJarRootForLocalFile(file);
       if (local == null) return;
