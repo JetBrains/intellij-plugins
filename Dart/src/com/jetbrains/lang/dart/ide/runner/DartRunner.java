@@ -145,7 +145,7 @@ public class DartRunner extends DefaultProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
+        final DartUrlResolver dartUrlResolver = getDartUrlResolver(env, contextFileOrDir);
         return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
                ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
                : new DartVmServiceDebugProcess(session,
@@ -159,5 +159,9 @@ public class DartRunner extends DefaultProgramRunner {
     });
 
     return debugSession.getRunContentDescriptor();
+  }
+
+  protected DartUrlResolver getDartUrlResolver(@NotNull ExecutionEnvironment env, @NotNull VirtualFile contextFileOrDir) {
+    return DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
   }
 }

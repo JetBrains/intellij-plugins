@@ -393,11 +393,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   public String getUriForFile(@NotNull final VirtualFile file) {
     String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
 
-    // DAS from SDK 1.13 is not returning dart:xxx URIs correctly
-    if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
-      final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
-      if (uriByServer != null) {
-        return uriByServer;
+    if (myDartUrlResolver.mayNeedDynamicUpdate()) {
+      // DAS from SDK 1.13 is not returning dart:xxx URIs correctly
+      if (myDASExecutionContextId != null && !uriByIde.startsWith(DartUrlResolver.DART_PREFIX)) {
+        final String uriByServer = DartAnalysisServerService.getInstance().execution_mapUri(myDASExecutionContextId, file.getPath(), null);
+        if (uriByServer != null) {
+          return uriByServer;
+        }
       }
     }
 

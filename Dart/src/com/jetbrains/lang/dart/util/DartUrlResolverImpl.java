@@ -33,7 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-class DartUrlResolverImpl extends DartUrlResolver {
+public class DartUrlResolverImpl extends DartUrlResolver {
+  // TODO Fold into superclass.
 
   @NotNull private final Project myProject;
   @Nullable private final DartSdk myDartSdk;
@@ -44,7 +45,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
   // myPackagesMapFromLib is not empty only if pubspec.yaml file is null
   @NotNull private final Map<String, List<String>> myPackagesMapFromLib = new THashMap<String, List<String>>();
 
-  DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
+  public DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
     myDartSdk = DartSdk.getDartSdk(project);
 
