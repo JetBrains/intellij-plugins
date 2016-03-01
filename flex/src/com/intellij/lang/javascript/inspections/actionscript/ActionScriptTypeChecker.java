@@ -28,7 +28,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAME;
 
@@ -75,7 +77,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
     if (annotationAndExprType == null &&
         type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
-        "addEventListener".equals(((JSFunction)p.getParent().getParent()).getName()) &&
+        isAddEventListenerMethod((JSFunction)p.getParent().getParent()) &&
         (( expr instanceof JSReferenceExpression &&
            (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
          ) ||
@@ -159,6 +161,32 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
         }
       }
     }
+  }
+
+  private static boolean isAddEventListenerMethod(final JSFunction method) {
+    if ("addEventListener".equals(method.getName())) {
+      PsiElement declaringClass = method.getParent();
+      if (declaringClass instanceof JSClass) {
+        return implementsInterface(FlexCommonTypeNames.FLASH_IEVENT_DISPATCHER_FQN, new HashSet<JSClass>(), (JSClass)declaringClass);
+      }
+    }
+    return false;
+  }
+
+  private static boolean implementsInterface(String interfaceName, Set<JSClass> visited, JSClass clazz) {
+    if (clazz == null || !visited.add(clazz)) {
+      return false;
+    }
+    if (interfaceName.equals(clazz.getQualifiedName())) {
+      return true;
+    }
+    JSClass[] supers = clazz.getSupers();
+    for (JSClass superClass : supers) {
+      if (implementsInterface(interfaceName, visited, superClass)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Nullable
