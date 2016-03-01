@@ -146,6 +146,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::EIPAssociation
                 + AWS::EC2::Instance
                 + AWS::EC2::InternetGateway
+                + AWS::EC2::NatGateway
                 + AWS::EC2::NetworkAcl
                 + AWS::EC2::NetworkAclEntry
                 + AWS::EC2::NetworkInterface
@@ -171,6 +172,7 @@ User Guide (API Version 2010-05-15)
                 + AWS::EC2::VPNConnectionRoute
                 + AWS::EC2::VPNGateway
                 + AWS::EC2::VPNGatewayRoutePropagation
+                + AWS::ECR::Repository
                 + AWS::ECS::Cluster
                 + AWS::ECS::Service
                 + AWS::ECS::TaskDefinition
@@ -187,6 +189,10 @@ User Guide (API Version 2010-05-15)
                 + AWS::ElasticBeanstalk::ConfigurationTemplate
                 + AWS::ElasticBeanstalk::Environment
                 + AWS::ElasticLoadBalancing::LoadBalancer
+                + AWS::Elasticsearch::Domain
+                + AWS::EMR::Cluster
+                + AWS::EMR::InstanceGroupConfig
+                + AWS::EMR::Step
                 + AWS::IAM::AccessKey
                 + AWS::IAM::Group
                 + AWS::IAM::InstanceProfile
@@ -369,6 +375,21 @@ User Guide (API Version 2010-05-15)
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
+                + Amazon ES Domain EBSOptions
+                + Amazon ES Domain ElasticsearchClusterConfig
+                + Amazon ES Domain SnapshotOptions
+                + Amazon EMR Cluster Application
+                + Amazon EMR Cluster BootstrapActionConfig
+                + Amazon EMR Cluster BootstrapActionConfig
+                  ScriptBootstrapActionConfig
+                + Amazon EMR Cluster Configuration
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig
+                + Amazon EMR Cluster JobFlowInstancesConfig
+                  InstanceGroupConfig
+                + Amazon EMR Step HadoopJarStepConfig
+                + Amazon EMR Step HadoopJarStepConfig KeyValue
                 + IAM Policies
                 + IAM User LoginProfile
                 + AWS Lambda Function Code
@@ -519,6 +540,78 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	Release Date 	Description 	API Version
+
+New resources
+
+February 26, 2016
+
+AWS CloudFormation added the following resources:
+
+AWS::ECR::Repository
+
+    Create Amazon EC2 Container Registry repositories where users can push
+    and pull Docker images.
+
+AWS::EC2::NatGateway
+
+    Use the network address translator (NAT) gateway to enable EC2
+    instances in a private subnet to connect to the Internet.
+
+AWS::Elasticsearch::Domain
+
+    Create Amazon Elasticsearch Service (Amazon ES) domains that contain
+    the Amazon ES engine instances, which process Amazon ES requests.
+
+AWS::EMR::Cluster, AWS::EMR::InstanceGroupConfig, AWS::EMR::Step
+
+    Use the Amazon Elastic MapReduce resources to help you analyze and
+    process vast amounts of data. You can create clusters and then run jobs
+    on them.
+
+2010-05-15
+
+Updated resources
+
+February 26, 2016
+
+AWS CloudFormation updated the following resources:
+
+AWS::CloudTrail::Trail
+
+    Use the IsMultiRegionTrail property to specify whether to create an AWS
+    CloudTrail trail in the region in which you create a stack or in all
+    regions.
+
+AWS::Config::ConfigurationRecorder
+
+    For the recording group, use the IncludeGlobalResourceTypes property to
+    record all global resource types.
+
+AWS::RDS::DBCluster
+
+    Use the KmsKeyId and StorageEncrypted properties to encrypt database
+    instances in the cluster.
+
+2010-05-15
+
+Retain resources
+
+February 26, 2016
+
+For stacks in the DELETE_FAILED state, use the RetainResources parameter to 
+retain resources that AWS CloudFormation can't delete. For more 
+information, see Delete Stack Fails.
+
+2010-05-15
+
+Update stack tags
+
+February 26, 2016
+
+You can add, modify, or remove stack tags when you update a stack. For more 
+information, see Updating a Stack.
+
+2010-05-15
 
 Continue rolling back failed update rollbacks
 

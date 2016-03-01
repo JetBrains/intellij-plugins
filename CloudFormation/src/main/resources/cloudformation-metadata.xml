@@ -914,10 +914,10 @@
    &quot;Type&quot; : &quot;AWS::AutoScaling::LaunchConfiguration&quot;,
    &quot;Properties&quot; : {
       &quot;KeyName&quot; : { &quot;Ref&quot; : &quot;KeyName&quot; },
-      &quot;ImageId&quot; : { &quot;ami-7430ba44&quot; },
+      &quot;ImageId&quot; : &quot;ami-7430ba44&quot;,
       &quot;UserData&quot; : { &quot;Fn::Base64&quot; : { &quot;Ref&quot; : &quot;WebServerPort&quot; } },
       &quot;SecurityGroups&quot; : [ { &quot;Ref&quot; : &quot;InstanceSecurityGroup&quot; } ],
-      &quot;InstanceType&quot; : { &quot;m1.large&quot; },
+      &quot;InstanceType&quot; : &quot;m1.large&quot;,
       &quot;EbsOptimized&quot; : &quot;true&quot;
    }
 },       &lt;/code&gt;&lt;/pre&gt;
@@ -2411,7 +2411,7 @@
      &lt;/div&gt;
     &lt;/div&gt;
    &lt;/div&gt;
-   &lt;p&gt;With Lambda functions and custom resources, you can run custom code in response to stack events (create, update, and delete). The following custom resource invokes a Lambda function and sends it the &lt;code class=&quot;code&quot;&gt;StackName&lt;/code&gt; property as input. The function returns an the outputs from the specified stack name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;walkthrough-custom-resources-lambda-cross-stack-ref.html#walkthrough-custom-resources-lambda-cross-stack-ref.title&quot;&gt;Walkthrough: Refer to Resources in Another Stack&lt;/a&gt;.&lt;/p&gt;
+   &lt;p&gt;With Lambda functions and custom resources, you can run custom code in response to stack events (create, update, and delete). The following custom resource invokes a Lambda function and sends it the &lt;code class=&quot;code&quot;&gt;StackName&lt;/code&gt; property as input. The function uses this property to get outputs from the appropriate stack. For more information, see &lt;a class=&quot;xref&quot; href=&quot;walkthrough-custom-resources-lambda-cross-stack-ref.html#walkthrough-custom-resources-lambda-cross-stack-ref.title&quot;&gt;Walkthrough: Refer to Resources in Another Stack&lt;/a&gt;.&lt;/p&gt;
    &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;    &quot;MyCustomResource&quot; : {
       &quot;Type&quot; : &quot;Custom::TestLambdaCrossStackRef&quot;,
       &quot;Properties&quot; : {
@@ -3234,6 +3234,7 @@
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-enablelogfilevalidation&quot;&gt;&lt;code class=&quot;code&quot;&gt;EnableLogFileValidation&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-includeglobalserviceevents&quot;&gt;&lt;code class=&quot;code&quot;&gt;IncludeGlobalServiceEvents&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-islogging&quot;&gt;&lt;code class=&quot;code&quot;&gt;IsLogging&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-ismultiregiontrail&quot;&gt;&lt;code class=&quot;code&quot;&gt;IsMultiRegionTrail&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-kmskeyid&quot;&gt;&lt;code class=&quot;code&quot;&gt;KMSKeyId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-s3bucketname&quot;&gt;&lt;code class=&quot;code&quot;&gt;S3BucketName&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-cloudtrail-trail.html#cfn-cloudtrail-trail-s3keyprefix&quot;&gt;&lt;code class=&quot;code&quot;&gt;S3KeyPrefix&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
@@ -3277,7 +3278,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EnableLogFileValidation&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;Indicates whether CloudTrail validates the integrity of log files. When you disable log file integrity validation, CloudTrail stops creating digest files. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_CreateTrail.html&quot; target=&quot;_blank&quot;&gt;CreateTrail&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS CloudTrail API Reference&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;Indicates whether CloudTrail validates the integrity of log files. By default, AWS CloudFormation sets this value to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;. When you disable log file integrity validation, CloudTrail stops creating digest files. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_CreateTrail.html&quot; target=&quot;_blank&quot;&gt;CreateTrail&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS CloudTrail API Reference&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -3291,7 +3292,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;IncludeGlobalServiceEvents&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;Indicates whether the trail is publishing events from global services, such as IAM, to the log files.&lt;/p&gt;
+     &lt;p&gt;Indicates whether the trail is publishing events from global services, such as IAM, to the log files. By default, AWS CloudFormation sets this value to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
@@ -3303,6 +3304,16 @@
     &lt;dd&gt;
      &lt;p&gt;Indicates whether the CloudTrail trail is currently logging AWS API calls.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-cloudtrail-trail-ismultiregiontrail&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;IsMultiRegionTrail&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Indicates whether the CloudTrail trail is created in the region in which you create the stack (&lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;) or in all regions (&lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;). By default, AWS CloudFormation sets this value to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-concepts.html#cloudtrail-concepts-regional-and-global-services&quot; target=&quot;_blank&quot;&gt;How Does CloudTrail Behave Regionally and Globally?&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS CloudTrail User Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -3498,7 +3509,7 @@
             <string>EnableLogFileValidation</string>
             <ResourceProperty>
               <name>EnableLogFileValidation</name>
-              <description>&lt;p&gt;Indicates whether CloudTrail validates the integrity of log files. When you disable log file integrity validation, CloudTrail stops creating digest files. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_CreateTrail.html&quot; target=&quot;_blank&quot;&gt;CreateTrail&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS CloudTrail API Reference&lt;/em&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;Indicates whether CloudTrail validates the integrity of log files. By default, AWS CloudFormation sets this value to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;. When you disable log file integrity validation, CloudTrail stops creating digest files. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_CreateTrail.html&quot; target=&quot;_blank&quot;&gt;CreateTrail&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS CloudTrail API Reference&lt;/em&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -3508,7 +3519,7 @@
             <string>IncludeGlobalServiceEvents</string>
             <ResourceProperty>
               <name>IncludeGlobalServiceEvents</name>
-              <description>&lt;p&gt;Indicates whether the trail is publishing events from global services, such as IAM, to the log files.&lt;/p&gt;</description>
+              <description>&lt;p&gt;Indicates whether the trail is publishing events from global services, such as IAM, to the log files. By default, AWS CloudFormation sets this value to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -3521,6 +3532,16 @@
               <description>&lt;p&gt;Indicates whether the CloudTrail trail is currently logging AWS API calls.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>IsMultiRegionTrail</string>
+            <ResourceProperty>
+              <name>IsMultiRegionTrail</name>
+              <description>&lt;p&gt;Indicates whether the CloudTrail trail is created in the region in which you create the stack (&lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;) or in all regions (&lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;). By default, AWS CloudFormation sets this value to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-concepts.html#cloudtrail-concepts-regional-and-global-services&quot; target=&quot;_blank&quot;&gt;How Does CloudTrail Behave Regionally and Globally?&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;AWS CloudTrail User Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
+              <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
@@ -6569,7 +6590,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ShortName&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The short name of the directory, such as &lt;code class=&quot;code&quot;&gt;CORP&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;The NetBIOS name of the on-premises directory, such as &lt;code class=&quot;code&quot;&gt;CORP&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -6727,7 +6748,7 @@
             <string>ShortName</string>
             <ResourceProperty>
               <name>ShortName</name>
-              <description>&lt;p&gt;The short name of the directory, such as &lt;code class=&quot;code&quot;&gt;CORP&lt;/code&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The NetBIOS name of the on-premises directory, such as &lt;code class=&quot;code&quot;&gt;CORP&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -6787,7 +6808,7 @@
  &lt;p&gt;Creates a DynamoDB table.&lt;/p&gt;
  &lt;div class=&quot;aws-note&quot;&gt;
   &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
-  &lt;p&gt;AWS CloudFormation typically creates DynamoDB tables in parallel. However, if your template includes DynamoDB tables with indexes, you must declare dependencies so that the tables are created sequentially. For a sample snippet, see &lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-examples-dependson&quot; title=&quot;DynamoDB Table with a DependsOn Attribute&quot;&gt;DynamoDB Table with a DependsOn Attribute&lt;/a&gt;.&lt;/p&gt;
+  &lt;p&gt;AWS CloudFormation typically creates DynamoDB tables in parallel. However, if your template includes multiple DynamoDB tables with indexes, you must declare dependencies so that the tables are created sequentially. DynamoDB limits the number of tables with secondary indexes that are in the creating state. If you create multiple tables with indexes at the same time, DynamoDB returns an error and the stack operation fails. For a sample snippet, see &lt;a class=&quot;xref&quot; href=&quot;aws-resource-dynamodb-table.html#cfn-dynamodb-table-examples-dependson&quot; title=&quot;DynamoDB Table with a DependsOn Attribute&quot;&gt;DynamoDB Table with a DependsOn Attribute&lt;/a&gt;.&lt;/p&gt;
  &lt;/div&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
@@ -7079,7 +7100,8 @@
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
-  &lt;p&gt;If you include multiple DynamoDB tables with indexes in a single template, you must include dependencies so that the tables are created sequentially. The following sample assumes that the &lt;code class=&quot;code&quot;&gt;myFirstDDBTable&lt;/code&gt; table is declared in the same template as the &lt;code class=&quot;code&quot;&gt;mySecondDDBTable&lt;/code&gt; table, and both tables include a secondary index. The &lt;code class=&quot;code&quot;&gt;mySecondDDBTable&lt;/code&gt; table includes a dependency on the &lt;code class=&quot;code&quot;&gt;myFirstDDBTable&lt;/code&gt; table so that AWS CloudFormation creates the tables one at a time.&lt;/p&gt;
+  &lt;p&gt;If you include multiple DynamoDB tables with indexes in a single template, you must include dependencies so that the tables are created sequentially. DynamoDB limits the number of tables with secondary indexes that are in the creating state. If you create multiple tables with indexes at the same time, DynamoDB returns an error and the stack operation fails.&lt;/p&gt;
+  &lt;p&gt;The following sample assumes that the &lt;code class=&quot;code&quot;&gt;myFirstDDBTable&lt;/code&gt; table is declared in the same template as the &lt;code class=&quot;code&quot;&gt;mySecondDDBTable&lt;/code&gt; table, and both tables include a secondary index. The &lt;code class=&quot;code&quot;&gt;mySecondDDBTable&lt;/code&gt; table includes a dependency on the &lt;code class=&quot;code&quot;&gt;myFirstDDBTable&lt;/code&gt; table so that AWS CloudFormation creates the tables one at a time.&lt;/p&gt;
   &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;mySecondDDBTable&quot; : {
   &quot;Type&quot; : &quot;AWS::DynamoDB::Table&quot;,
   &quot;DependsOn&quot; : &quot;myFirstDDBTable&quot; ,
@@ -8978,6 +9000,146 @@
       </ResourceType>
     </entry>
     <entry>
+      <string>AWS::EC2::NatGateway</string>
+      <ResourceType>
+        <name>AWS::EC2::NatGateway</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::EC2::NatGateway&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::EC2::NatGateway&lt;/code&gt; resource creates a network address translation (NAT) gateway in the specified private subnet. Use a NAT gateway to allow instances in a private subnet to connect to the Internet or to other AWS services, but prevent the Internet from initiating a connection with those instances. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-gateway.html&quot; target=&quot;_blank&quot;&gt;NAT Gateways&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon VPC User Guide&lt;/em&gt;.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::EC2::NatGateway&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ec2-natgateway.html#cfn-ec2-natgateway-allocationid&quot;&gt;&lt;code class=&quot;code&quot;&gt;AllocationId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ec2-natgateway.html#cfn-ec2-natgateway-subnetid&quot;&gt;&lt;code class=&quot;code&quot;&gt;SubnetId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-ec2-natgateway-allocationid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;AllocationId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-ec2-natgateway-subnetid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;SubnetId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The subnet in which to create the NAT gateway.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Value&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When you pass the logical ID of an &lt;code class=&quot;code&quot;&gt;AWS::EC2::NatGateway&lt;/code&gt; resource to the intrinsic &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, the function returns the ID of the NAT gateway, such as &lt;code class=&quot;code&quot;&gt;nat-0a12bc456789de0fg&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates a NAT gateway and a route that associates the NAT gateway with a route table. The route table must be associated with an Internet gateway so that the NAT gateway can connect to the Internet.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;NAT&quot; : {
+  &quot;DependsOn&quot; : &quot;VPCGatewayAttach&quot;,
+  &quot;Type&quot; : &quot;AWS::EC2::NatGateway&quot;,
+  &quot;Properties&quot; : {
+    &quot;AllocationId&quot; : { &quot;Fn::GetAtt&quot; : [&quot;EIP&quot;, &quot;AllocationId&quot;]},
+    &quot;SubnetId&quot; : { &quot;Ref&quot; : &quot;Subnet&quot;}
+  }
+},
+&quot;EIP&quot; : {
+  &quot;Type&quot; : &quot;AWS::EC2::EIP&quot;,
+  &quot;Properties&quot; : {
+    &quot;Domain&quot; : &quot;vpc&quot;
+  }
+},
+&quot;Route&quot; : {
+  &quot;Type&quot; : &quot;AWS::EC2::Route&quot;,
+  &quot;Properties&quot; : {
+    &quot;RouteTableId&quot; : { &quot;Ref&quot; : &quot;RouteTable&quot; },
+    &quot;DestinationCidrBlock&quot; : &quot;0.0.0.0/0&quot;,
+    &quot;NatGatewayId&quot; : { &quot;Ref&quot; : &quot;NAT&quot; }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>AllocationId</string>
+            <ResourceProperty>
+              <name>AllocationId</name>
+              <description>&lt;p&gt;The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>SubnetId</string>
+            <ResourceProperty>
+              <name>SubnetId</name>
+              <description>&lt;p&gt;The subnet in which to create the NAT gateway.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
       <string>AWS::EC2::NetworkAcl</string>
       <ResourceType>
         <name>AWS::EC2::NetworkAcl</name>
@@ -10075,17 +10237,17 @@
     &lt;/div&gt;
    &lt;/div&gt;
   &lt;/div&gt;
-  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;
-{
-   &quot;Type&quot; : &quot;AWS::EC2::Route&quot;,
-   &quot;Properties&quot; : {
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-destinationcidrblock&quot;&gt;DestinationCidrBlock&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-gatewayid&quot;&gt;GatewayId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-instanceid&quot;&gt;InstanceId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-networkinterfaceid&quot;&gt;NetworkInterfaceId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-routetableid&quot;&gt;RouteTableId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
-      &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-vpcpeeringconnectionid&quot;&gt;&lt;code class=&quot;literal&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
-   }
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::EC2::Route&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-destinationcidrblock&quot;&gt;DestinationCidrBlock&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-gatewayid&quot;&gt;GatewayId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-instanceid&quot;&gt;InstanceId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-natgatewayid&quot;&gt;&lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-networkinterfaceid&quot;&gt;NetworkInterfaceId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;link&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-routetableid&quot;&gt;RouteTableId&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ec2-route.html#cfn-ec2-route-vpcpeeringconnectionid&quot;&gt;&lt;code class=&quot;literal&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
 }&lt;/code&gt;&lt;/pre&gt;
  &lt;/div&gt;
  &lt;div class=&quot;section&quot;&gt;
@@ -10103,7 +10265,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;DestinationCidrBlock&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The CIDR address block used for the destination match. For example, &lt;code class=&quot;code&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/code&gt;. Routing decisions are based on the most specific match.&lt;/p&gt;
+     &lt;p&gt;The CIDR address block used for the destination match. For example, &lt;code class=&quot;code&quot;&gt;0.0.0.0/0&lt;/code&gt;. Routing decisions are based on the most specific match.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -10113,9 +10275,9 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;GatewayId&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The ID of an Internet gateway or virtual private gateway that is attached to your VPC. For example: &lt;code class=&quot;code&quot;&gt;&quot;igw-eaad4883&quot;&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;The ID of an Internet gateway or virtual private gateway that is attached to your VPC. For example: &lt;code class=&quot;code&quot;&gt;igw-eaad4883&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;For route entries that specify a gateway, you must specify a dependency on the gateway attachment resource. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-attribute-dependson.html&quot; title=&quot;DependsOn Attribute&quot;&gt;DependsOn Attribute&lt;/a&gt;.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -10124,8 +10286,18 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;InstanceId&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The ID of a NAT instance in your VPC. For example, &lt;code class=&quot;code&quot;&gt;&quot;i-1a2b3c4d&quot;&lt;/code&gt;.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;The ID of a NAT instance in your VPC. For example, &lt;code class=&quot;code&quot;&gt;i-1a2b3c4d&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-ec2-route-natgatewayid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The ID of a NAT gateway. For example, &lt;code class=&quot;code&quot;&gt;nat-0a12bc456789de0fg&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -10134,8 +10306,8 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;literal&quot;&gt;NetworkInterfaceId&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;Allows the routing of network interface IDs. &lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;Allows the routing of network interface IDs.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -10159,7 +10331,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;The ID of a VPC peering connection.&lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify only one of the following properties: &lt;code class=&quot;code&quot;&gt;GatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;InstanceId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NatGatewayId&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;NetworkInterfaceId&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;VpcPeeringConnectionId&lt;/code&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -10302,7 +10474,7 @@
             <string>DestinationCidrBlock</string>
             <ResourceProperty>
               <name>DestinationCidrBlock</name>
-              <description>&lt;p&gt;The CIDR address block used for the destination match. For example, &lt;code class=&quot;code&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/code&gt;. Routing decisions are based on the most specific match.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The CIDR address block used for the destination match. For example, &lt;code class=&quot;code&quot;&gt;0.0.0.0/0&lt;/code&gt;. Routing decisions are based on the most specific match.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -10322,7 +10494,17 @@
             <string>InstanceId</string>
             <ResourceProperty>
               <name>InstanceId</name>
-              <description>&lt;p&gt;The ID of a NAT instance in your VPC. For example, &lt;code class=&quot;code&quot;&gt;&quot;i-1a2b3c4d&quot;&lt;/code&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The ID of a NAT instance in your VPC. For example, &lt;code class=&quot;code&quot;&gt;i-1a2b3c4d&lt;/code&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>NatGatewayId</string>
+            <ResourceProperty>
+              <name>NatGatewayId</name>
+              <description>&lt;p&gt;The ID of a NAT gateway. For example, &lt;code class=&quot;code&quot;&gt;nat-0a12bc456789de0fg&lt;/code&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -10332,7 +10514,7 @@
             <string>NetworkInterfaceId</string>
             <ResourceProperty>
               <name>NetworkInterfaceId</name>
-              <description>&lt;p&gt;Allows the routing of network interface IDs. &lt;/p&gt;</description>
+              <description>&lt;p&gt;Allows the routing of network interface IDs.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -14420,6 +14602,158 @@
       </ResourceType>
     </entry>
     <entry>
+      <string>AWS::ECR::Repository</string>
+      <ResourceType>
+        <name>AWS::ECR::Repository</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::ECR::Repository&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::ECR::Repository&lt;/code&gt; resource creates an Amazon EC2 Container Registry (Amazon ECR) repository, where users can push and pull Docker images. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonECR/latest/userguide/Repositories.html&quot; target=&quot;_blank&quot;&gt;Amazon ECR Repositories&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon EC2 Container Registry User Guide&lt;/em&gt;.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::ECR::Repository&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ecr-repository.html#cfn-ecr-repository-repositoryname&quot;&gt;&lt;code class=&quot;code&quot;&gt;RepositoryName&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-ecr-repository.html#cfn-ecr-repository-repositorypolicytext&quot;&gt;&lt;code class=&quot;code&quot;&gt;RepositoryPolicyText&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;JSON object&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-ecr-repository-repositoryname&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;RepositoryName&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A name for the image repository. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the repository name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;
+     &lt;div class=&quot;aws-note&quot;&gt;
+      &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
+      &lt;p&gt;If you specify a name, you cannot do updates that require this resource to be replaced. You can still do updates that require no or some interruption. If you must replace the resource, specify a new name.&lt;/p&gt;
+     &lt;/div&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-ecr-repository-repositorypolicytext&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;RepositoryPolicyText&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A policy that controls who has access to the repository and which actions they can perform on it. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicies.html&quot; target=&quot;_blank&quot;&gt;Amazon ECR Repository Policies&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon EC2 Container Registry User Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Values&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the resource name, such as &lt;code class=&quot;code&quot;&gt;test-repository&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates a repository named &lt;code class=&quot;code&quot;&gt;test-repository&lt;/code&gt;. Its policy permits the users &lt;code class=&quot;code&quot;&gt;Bob&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;Alice&lt;/code&gt; to push and pull images.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;MyRepository&quot;: {
+  &quot;Type&quot;: &quot;AWS::ECR::Repository&quot;,
+  &quot;Properties&quot;: {
+    &quot;RepositoryName&quot; : &quot;test-repository&quot;,
+    &quot;RepositoryPolicyText&quot; : {
+      &quot;Version&quot;: &quot;2008-10-17&quot;,
+      &quot;Statement&quot;: [
+        {
+          &quot;Sid&quot;: &quot;AllowPushPull&quot;,
+          &quot;Effect&quot;: &quot;Allow&quot;,
+          &quot;Principal&quot;: {
+            &quot;AWS&quot;: [
+              &quot;arn:aws:iam::123456789012:user/Bob&quot;,
+              &quot;arn:aws:iam::123456789012:user/Alice&quot;
+            ]
+          },
+          &quot;Action&quot;: [
+            &quot;ecr:GetDownloadUrlForLayer&quot;,
+            &quot;ecr:BatchGetImage&quot;,
+            &quot;ecr:BatchCheckLayerAvailability&quot;,
+            &quot;ecr:PutImage&quot;,
+            &quot;ecr:InitiateLayerUpload&quot;,
+            &quot;ecr:UploadLayerPart&quot;,
+            &quot;ecr:CompleteLayerUpload&quot;
+          ]
+        }
+      ]
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>RepositoryName</string>
+            <ResourceProperty>
+              <name>RepositoryName</name>
+              <description>&lt;p&gt;A name for the image repository. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the repository name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>RepositoryPolicyText</string>
+            <ResourceProperty>
+              <name>RepositoryPolicyText</name>
+              <description>&lt;p&gt;A policy that controls who has access to the repository and which actions they can perform on it. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicies.html&quot; target=&quot;_blank&quot;&gt;Amazon ECR Repository Policies&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon EC2 Container Registry User Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
       <string>AWS::ECS::Cluster</string>
       <ResourceType>
         <name>AWS::ECS::Cluster</name>
@@ -15177,6 +15511,842 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;. Before updating this property, stop EC2 instances that are using this mount target and then restart them after the update is complete. That way the instances can unmount the file system before the mount target is replaced. If you don&apos;t stop and restart them, instances or applications that are using those mounts might be disrupted when the mount target is deleted (uncommitted writes might be lost).&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::EMR::Cluster</string>
+      <ResourceType>
+        <name>AWS::EMR::Cluster</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::EMR::Cluster&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::EMR::Cluster&lt;/code&gt; resource creates an Amazon Elastic MapReduce (Amazon EMR) cluster, which is a collection of EC2 instances on which you can run big data frameworks to process and analyze vast amounts of data. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-plan.html&quot; target=&quot;_blank&quot;&gt;Plan an Amazon EMR Cluster&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::EMR::Cluster&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-additionalinfo&quot;&gt;&lt;code class=&quot;code&quot;&gt;AdditionalInfo&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;JSON object&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-applications&quot;&gt;&lt;code class=&quot;code&quot;&gt;Applications&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Applications, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-bootstrapactions&quot;&gt;&lt;code class=&quot;code&quot;&gt;BootstrapActions&lt;/code&gt;&lt;/a&gt;&quot; [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Bootstrap Actions, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-configurations&quot;&gt;&lt;code class=&quot;code&quot;&gt;Configurations&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Configurations, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-instances&quot;&gt;&lt;code class=&quot;code&quot;&gt;Instances&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;JobFlowInstancesConfig&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-jobflowrole&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowRole&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-loguri&quot;&gt;&lt;code class=&quot;code&quot;&gt;LogUri&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-name&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-releaselabel&quot;&gt;&lt;code class=&quot;code&quot;&gt;ReleaseLabel&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-servicerole&quot;&gt;&lt;code class=&quot;code&quot;&gt;ServiceRole&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-tags&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html#cfn-emr-cluster-visibletoallusers&quot;&gt;&lt;code class=&quot;code&quot;&gt;VisibleToAllUsers&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-additionalinfo&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;AdditionalInfo&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Additional features that you want to select.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-applications&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Applications&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The software applications to deploy on the cluster, and the arguments that Amazon EMR passes to those applications.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-application.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Application&quot;&gt;Amazon Elastic MapReduce Cluster Application&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-bootstrapactions&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;BootstrapActions&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A list of bootstrap actions that Amazon EMR runs before starting applications on the cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-bootstrapactionconfig.html&quot; title=&quot;Amazon Elastic MapReduce Cluster BootstrapActionConfig&quot;&gt;Amazon Elastic MapReduce Cluster BootstrapActionConfig&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-configurations&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Configurations&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The software configuration of the Amazon EMR cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-configuration.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Configuration&quot;&gt;Amazon Elastic MapReduce Cluster Configuration&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-instances&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Instances&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Configures the EC2 instances that will run jobs in the Amazon EMR cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-jobflowinstancesconfig.html&quot; title=&quot;Amazon Elastic MapReduce Cluster JobFlowInstancesConfig&quot;&gt;Amazon Elastic MapReduce Cluster JobFlowInstancesConfig&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-jobflowrole&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowRole&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An AWS Identity and Access Management (IAM) role for an Amazon EMR cluster. All EC2 instances in the cluster assume this role, which instances use to access AWS services and resources to complete a job. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-iam-roles.html&quot; target=&quot;_blank&quot;&gt;Configure IAM Roles for Amazon EMR&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-loguri&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;LogUri&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An S3 bucket location to which Amazon EMR writes logs files from a job flow. If you don&apos;t specify a value, Amazon EMR doesn&apos;t write any log files.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-name&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A name for the Amazon EMR cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-releaselabel&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ReleaseLabel&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The Amazon EMR software release label. A release is a set of software applications and components that you can install and configure on an Amazon EMR cluster. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ReleaseGuide/emr-release-components.html&quot; target=&quot;_blank&quot;&gt;About Amazon EMR Releases&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Release Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;Currently, AWS CloudFormation supports only Amazon EMR 4.0 and later software releases.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-servicerole&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ServiceRole&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The IAM role that Amazon EMR assumes to access AWS resources on your behalf. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-iam-roles.html&quot; target=&quot;_blank&quot;&gt;Configure IAM Roles for Amazon EMR&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-tags&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to help you identify the Amazon EMR cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-cluster-visibletoallusers&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;VisibleToAllUsers&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Indicates whether the instances in the cluster are visible to all IAM users in the AWS account. If you specify &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;, all IAM users can view and (if they have permissions) manage the instances. If you specify &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;, only the IAM user that created the cluster can view and manage it. By default, AWS CloudFormation sets this property to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Values&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the cluster ID, such as &lt;code class=&quot;code&quot;&gt;j-1ABCD123AB1A&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Fn::GetAtt&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;&lt;code class=&quot;function&quot;&gt;Fn::GetAtt&lt;/code&gt; returns a value for a specified attribute of this type. This section lists the available attributes and sample return values.&lt;/p&gt;
+   &lt;div class=&quot;variablelist&quot;&gt;
+    &lt;dl&gt;
+     &lt;dt&gt;
+      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;MasterPublicDNS&lt;/code&gt;&lt;/span&gt;
+     &lt;/dt&gt;
+     &lt;dd&gt;
+      &lt;p&gt;The public DNS name of the master node (instance), such as &lt;code class=&quot;code&quot;&gt;ec2-12-123-123-123.us-west-2.compute.amazonaws.com&lt;/code&gt;.&lt;/p&gt;
+     &lt;/dd&gt;
+    &lt;/dl&gt;
+   &lt;/div&gt;
+   &lt;p&gt;For more information about using &lt;code class=&quot;function&quot;&gt;Fn:GetAtt&lt;/code&gt;, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-getatt.html&quot; title=&quot;Fn::GetAtt&quot;&gt;Fn::GetAtt&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates an Amazon EMR cluster with one master node and two core nodes. The specified IAM roles are the default roles provided by Amazon EMR.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;TestCluster&quot;: {
+  &quot;Type&quot;: &quot;AWS::EMR::Cluster&quot;,
+  &quot;Properties&quot;: {
+    &quot;Instances&quot;: {
+      &quot;MasterInstanceGroup&quot;: {
+        &quot;InstanceCount&quot;: 1,
+        &quot;InstanceType&quot;: &quot;m3.xlarge&quot;,
+        &quot;Market&quot;: &quot;ON_DEMAND&quot;,
+        &quot;Name&quot;: &quot;Master&quot;
+      },
+      &quot;CoreInstanceGroup&quot;: {
+        &quot;InstanceCount&quot;: 2,
+        &quot;InstanceType&quot;: &quot;m3.xlarge&quot;,
+        &quot;Market&quot;: &quot;ON_DEMAND&quot;,
+        &quot;Name&quot;: &quot;Core&quot;
+      },
+      &quot;TerminationProtected&quot; : true
+    },
+    &quot;Name&quot;: &quot;TestCluster&quot;,
+    &quot;JobFlowRole&quot; : &quot;EMR_EC2_DefaultRole&quot;,
+    &quot;ServiceRole&quot; : &quot;EMR_DefaultRole&quot;,
+    &quot;ReleaseLabel&quot; : &quot;emr-4.2.0&quot;,
+    &quot;Tags&quot;: [
+      {
+        &quot;Key&quot;: &quot;IsTest&quot;,
+        &quot;Value&quot;: &quot;True&quot;
+      }
+    ]
+  }
+},
+&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>AdditionalInfo</string>
+            <ResourceProperty>
+              <name>AdditionalInfo</name>
+              <description>&lt;p&gt;Additional features that you want to select.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Applications</string>
+            <ResourceProperty>
+              <name>Applications</name>
+              <description>&lt;p&gt;The software applications to deploy on the cluster, and the arguments that Amazon EMR passes to those applications.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-application.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Application&quot;&gt;Amazon Elastic MapReduce Cluster Application&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>BootstrapActions</string>
+            <ResourceProperty>
+              <name>BootstrapActions</name>
+              <description>&lt;p&gt;A list of bootstrap actions that Amazon EMR runs before starting applications on the cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-bootstrapactionconfig.html&quot; title=&quot;Amazon Elastic MapReduce Cluster BootstrapActionConfig&quot;&gt;Amazon Elastic MapReduce Cluster BootstrapActionConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Configurations</string>
+            <ResourceProperty>
+              <name>Configurations</name>
+              <description>&lt;p&gt;The software configuration of the Amazon EMR cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-configuration.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Configuration&quot;&gt;Amazon Elastic MapReduce Cluster Configuration&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Instances</string>
+            <ResourceProperty>
+              <name>Instances</name>
+              <description>&lt;p&gt;Configures the EC2 instances that will run jobs in the Amazon EMR cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-jobflowinstancesconfig.html&quot; title=&quot;Amazon Elastic MapReduce Cluster JobFlowInstancesConfig&quot;&gt;Amazon Elastic MapReduce Cluster JobFlowInstancesConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>JobFlowRole</string>
+            <ResourceProperty>
+              <name>JobFlowRole</name>
+              <description>&lt;p&gt;An AWS Identity and Access Management (IAM) role for an Amazon EMR cluster. All EC2 instances in the cluster assume this role, which instances use to access AWS services and resources to complete a job. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-iam-roles.html&quot; target=&quot;_blank&quot;&gt;Configure IAM Roles for Amazon EMR&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>LogUri</string>
+            <ResourceProperty>
+              <name>LogUri</name>
+              <description>&lt;p&gt;An S3 bucket location to which Amazon EMR writes logs files from a job flow. If you don&apos;t specify a value, Amazon EMR doesn&apos;t write any log files.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <description>&lt;p&gt;A name for the Amazon EMR cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ReleaseLabel</string>
+            <ResourceProperty>
+              <name>ReleaseLabel</name>
+              <description>&lt;p&gt;Currently, AWS CloudFormation supports only Amazon EMR 4.0 and later software releases.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ServiceRole</string>
+            <ResourceProperty>
+              <name>ServiceRole</name>
+              <description>&lt;p&gt;The IAM role that Amazon EMR assumes to access AWS resources on your behalf. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-iam-roles.html&quot; target=&quot;_blank&quot;&gt;Configure IAM Roles for Amazon EMR&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to help you identify the Amazon EMR cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>VisibleToAllUsers</string>
+            <ResourceProperty>
+              <name>VisibleToAllUsers</name>
+              <description>&lt;p&gt;Indicates whether the instances in the cluster are visible to all IAM users in the AWS account. If you specify &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;, all IAM users can view and (if they have permissions) manage the instances. If you specify &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;, only the IAM user that created the cluster can view and manage it. By default, AWS CloudFormation sets this property to &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="linked-hash-map">
+          <entry>
+            <string>MasterPublicDNS</string>
+            <ResourceAttribute>
+              <name>MasterPublicDNS</name>
+              <description>The public DNS name of the master node (instance). Example: ec2-12-123-123-123.us-west-2.compute.amazonaws.com</description>
+            </ResourceAttribute>
+          </entry>
+        </attributes>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::EMR::InstanceGroupConfig</string>
+      <ResourceType>
+        <name>AWS::EMR::InstanceGroupConfig</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::EMR::InstanceGroupConfig&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::EMR::InstanceGroupConfig&lt;/code&gt; resource configures a task instance group for an Amazon Elastic MapReduce (Amazon EMR) cluster.&lt;/p&gt;
+ &lt;div class=&quot;aws-note&quot;&gt;
+  &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
+  &lt;p&gt;You can&apos;t delete an instance group. If you remove an instance group, AWS CloudFormation sets the instance count to zero (&lt;code class=&quot;code&quot;&gt;0&lt;/code&gt;).&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::EMR::InstanceGroupConfig&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-bidprice&quot;&gt;&lt;code class=&quot;code&quot;&gt;BidPrice&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-configurations&quot;&gt;&lt;code class=&quot;code&quot;&gt;Configurations&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Configuration, ...&lt;/code&gt;&lt;/em&gt; ],
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-instancecount&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceCount&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-instancerole&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceRole&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-instancetype&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceType&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-jobflowid&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowId&lt;/code&gt;&lt;/a&gt;&quot;: &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-market&quot;&gt;&lt;code class=&quot;code&quot;&gt;Market&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-instancegroupconfig.html#cfn-emr-instancegroupconfig-name&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-bidprice&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;BidPrice&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The bid price in USD for each EC2 instance in the instance group when launching instances (nodes) as Spot Instances.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-configurations&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Configurations&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A list of configurations to apply to this instance group. For more information see, &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ReleaseGuide/emr-configure-apps.html&quot; target=&quot;_blank&quot;&gt;Configuring Applications&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Release Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-configuration.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Configuration&quot;&gt;Amazon Elastic MapReduce Cluster Configuration&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-instancecount&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceCount&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The number of instances to launch in the instance group.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-instancerole&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceRole&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The role of the servers in the Amazon EMR cluster, such as &lt;code class=&quot;code&quot;&gt;TASK&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/InstanceGroups.html&quot; target=&quot;_blank&quot;&gt;Instance Groups&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;div class=&quot;aws-note&quot;&gt;
+      &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
+      &lt;p&gt;Currently, the only valid value is &lt;code class=&quot;code&quot;&gt;TASK&lt;/code&gt;. You configure the master and core instance groups as part of the &lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-cluster.html&quot; title=&quot;AWS::EMR::Cluster&quot;&gt;AWS::EMR::Cluster&lt;/a&gt; resource.&lt;/p&gt;
+     &lt;/div&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-instancetype&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;InstanceType&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The EC2 instance type for all instances in the instance group. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-plan-ec2-instances.html&quot; target=&quot;_blank&quot;&gt;Instance Configurations&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-jobflowid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The ID of an Amazon EMR cluster that you want to associate this instance group with.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-market&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Market&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The type of marketplace from which your instances are provisioned into this group, either &lt;code class=&quot;code&quot;&gt;ON_DEMAND&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;SPOT&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://aws.amazon.com/ec2/purchasing-options/&quot; target=&quot;_blank&quot;&gt;Amazon EC2 Purchasing Options&lt;/a&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-instancegroupconfig-name&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A name for the instance group.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Values&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the instance group ID, such as &lt;code class=&quot;code&quot;&gt;ig-ABC12DEF3456&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example adds a task instance group to the &lt;code class=&quot;code&quot;&gt;TestCluster&lt;/code&gt; cluster. The instance group contains two m3.xlarge instances.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;TestInstanceGroupConfig&quot;: {
+  &quot;Type&quot;: &quot;AWS::EMR::InstanceGroupConfig&quot;,
+  &quot;Properties&quot;: {
+    &quot;InstanceCount&quot;: 2,
+    &quot;InstanceType&quot;: &quot;m3.xlarge&quot;,
+    &quot;InstanceRole&quot;: &quot;TASK&quot;,
+    &quot;Market&quot;: &quot;ON_DEMAND&quot;,
+    &quot;Name&quot;: &quot;cfnTask2&quot;,
+    &quot;JobFlowId&quot;: {
+      &quot;Ref&quot;: &quot;cluster&quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>BidPrice</string>
+            <ResourceProperty>
+              <name>BidPrice</name>
+              <description>&lt;p&gt;The bid price in USD for each EC2 instance in the instance group when launching instances (nodes) as Spot Instances.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Configurations</string>
+            <ResourceProperty>
+              <name>Configurations</name>
+              <description>&lt;p&gt;A list of configurations to apply to this instance group. For more information see, &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ReleaseGuide/emr-configure-apps.html&quot; target=&quot;_blank&quot;&gt;Configuring Applications&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Release Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: List of &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-cluster-configuration.html&quot; title=&quot;Amazon Elastic MapReduce Cluster Configuration&quot;&gt;Amazon Elastic MapReduce Cluster Configuration&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>InstanceCount</string>
+            <ResourceProperty>
+              <name>InstanceCount</name>
+              <description>&lt;p&gt;The number of instances to launch in the instance group.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Integer&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>InstanceRole</string>
+            <ResourceProperty>
+              <name>InstanceRole</name>
+              <description>&lt;p&gt;The role of the servers in the Amazon EMR cluster, such as &lt;code class=&quot;code&quot;&gt;TASK&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/InstanceGroups.html&quot; target=&quot;_blank&quot;&gt;Instance Groups&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>InstanceType</string>
+            <ResourceProperty>
+              <name>InstanceType</name>
+              <description>&lt;p&gt;The EC2 instance type for all instances in the instance group. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/emr-plan-ec2-instances.html&quot; target=&quot;_blank&quot;&gt;Instance Configurations&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>JobFlowId</string>
+            <ResourceProperty>
+              <name>JobFlowId</name>
+              <description>&lt;p&gt;The ID of an Amazon EMR cluster that you want to associate this instance group with.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Market</string>
+            <ResourceProperty>
+              <name>Market</name>
+              <description>&lt;p&gt;The type of marketplace from which your instances are provisioned into this group, either &lt;code class=&quot;code&quot;&gt;ON_DEMAND&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;SPOT&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://aws.amazon.com/ec2/purchasing-options/&quot; target=&quot;_blank&quot;&gt;Amazon EC2 Purchasing Options&lt;/a&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <description>&lt;p&gt;A name for the instance group.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
+      <string>AWS::EMR::Step</string>
+      <ResourceType>
+        <name>AWS::EMR::Step</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::EMR::Step&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::EMR::Step&lt;/code&gt; resource creates a unit of work (a job flow step) that you submit to an Amazon Elastic MapReduce (Amazon EMR) cluster. The job flow step contains instructions for processing data on the cluster.&lt;/p&gt;
+ &lt;div class=&quot;aws-note&quot;&gt;
+  &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
+  &lt;p&gt;You can&apos;t delete work flow steps. During a stack update, if you remove a step, AWS CloudFormation takes no action.&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::EMR::Step&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-step.html#cfn-emr-step-actiononfailure&quot;&gt;&lt;code class=&quot;code&quot;&gt;ActionOnFailure&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-step.html#cfn-emr-step-hadoopjarstep&quot;&gt;&lt;code class=&quot;code&quot;&gt;HadoopJarStep&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;HadoopJarStepConfig&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-step.html#cfn-emr-step-jobflowid&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-emr-step.html#cfn-emr-step-name&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-step-actiononfailure&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ActionOnFailure&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The action to take if the job flow step fails. Currently, AWS CloudFormation supports &lt;code class=&quot;code&quot;&gt;CONTINUE&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;CONTINUE_AND_WAIT&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/UsingEMR_TerminationProtection.html&quot; target=&quot;_blank&quot;&gt;Managing Cluster Termination&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-step-hadoopjarstep&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;HadoopJarStep&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The JAR file that includes the main function that Amazon EMR executes.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-step-hadoopjarstepconfig.html&quot; title=&quot;Amazon Elastic MapReduce Step HadoopJarStepConfig&quot;&gt;Amazon Elastic MapReduce Step HadoopJarStepConfig&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-step-jobflowid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;JobFlowId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The ID of a cluster in which you want to run this job flow step.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-emr-step-name&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Name&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A name for the job flow step.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Values&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the step ID, such as &lt;code class=&quot;code&quot;&gt;s-1A2BC3D4EFG56&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p&gt;The following example creates a step that submits work to the &lt;code class=&quot;code&quot;&gt;TestCluster&lt;/code&gt; cluster. The step runs the &lt;code class=&quot;code&quot;&gt;pi&lt;/code&gt; program in the &lt;code class=&quot;code&quot;&gt;hadoop-mapreduce-examples-2.6.0.jar&lt;/code&gt; file with 5 maps and 10 samples, specified in the &lt;code class=&quot;code&quot;&gt;Args&lt;/code&gt; property.&lt;/p&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;TestStep&quot;: {
+  &quot;Type&quot;: &quot;AWS::EMR::Step&quot;,
+  &quot;Properties&quot;: {
+    &quot;ActionOnFailure&quot;: &quot;CONTINUE&quot;,
+    &quot;HadoopJarStep&quot;: {
+      &quot;Args&quot;: [
+        &quot;5&quot;,
+        &quot;10&quot;
+      ],
+      &quot;Jar&quot;: &quot;s3://emr-cfn-test/hadoop-mapreduce-examples-2.6.0.jar&quot;,
+      &quot;MainClass&quot;: &quot;pi&quot;
+    },
+    &quot;Name&quot;: &quot;TestStep&quot;,
+    &quot;JobFlowId&quot;: {
+      &quot;Ref&quot;: &quot;TestCluster&quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>ActionOnFailure</string>
+            <ResourceProperty>
+              <name>ActionOnFailure</name>
+              <description>&lt;p&gt;The action to take if the job flow step fails. Currently, AWS CloudFormation supports &lt;code class=&quot;code&quot;&gt;CONTINUE&lt;/code&gt; and &lt;code class=&quot;code&quot;&gt;CONTINUE_AND_WAIT&lt;/code&gt;. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com//ElasticMapReduce/latest/ManagementGuide/UsingEMR_TerminationProtection.html&quot; target=&quot;_blank&quot;&gt;Managing Cluster Termination&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elastic MapReduce Management Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>HadoopJarStep</string>
+            <ResourceProperty>
+              <name>HadoopJarStep</name>
+              <description>&lt;p&gt;The JAR file that includes the main function that Amazon EMR executes.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-emr-step-hadoopjarstepconfig.html&quot; title=&quot;Amazon Elastic MapReduce Step HadoopJarStepConfig&quot;&gt;Amazon Elastic MapReduce Step HadoopJarStepConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>JobFlowId</string>
+            <ResourceProperty>
+              <name>JobFlowId</name>
+              <description>&lt;p&gt;The ID of a cluster in which you want to run this job flow step.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Name</string>
+            <ResourceProperty>
+              <name>Name</name>
+              <description>&lt;p&gt;A name for the job flow step.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
         </properties>
@@ -18595,6 +19765,275 @@
       </ResourceType>
     </entry>
     <entry>
+      <string>AWS::Elasticsearch::Domain</string>
+      <ResourceType>
+        <name>AWS::Elasticsearch::Domain</name>
+        <description>&lt;div class=&quot;section&quot;&gt;
+ &lt;div class=&quot;titlepage&quot;&gt;
+  &lt;div&gt;
+   &lt;div&gt;
+    &lt;h1 class=&quot;topictitle&quot;&gt;AWS::Elasticsearch::Domain&lt;/h1&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::Elasticsearch::Domain&lt;/code&gt; resource creates an Amazon Elasticsearch Service (Amazon ES) domain that encapsulates the Amazon ES engine instances. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-configuration-api.html#es-configuration-api-actions-createelasticsearchdomain&quot; target=&quot;_blank&quot;&gt;CreateElasticsearchDomain&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Syntax&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;Type&quot; : &quot;AWS::Elasticsearch::Domain&quot;,
+  &quot;Properties&quot; : {
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-accesspolicies&quot;&gt;&lt;code class=&quot;code&quot;&gt;AccessPolicies&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;JSON object&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-advancedoptions&quot;&gt;&lt;code class=&quot;code&quot;&gt;AdvancedOptions&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Advanced Options&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-domainname&quot;&gt;&lt;code class=&quot;code&quot;&gt;DomainName&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-ebsoptions&quot;&gt;&lt;code class=&quot;code&quot;&gt;EBSOptions&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;EBS Options&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-elasticsearchclusterconfig&quot;&gt;&lt;code class=&quot;code&quot;&gt;ElasticsearchClusterConfig&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Elasticsearch Cluster Config&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-snapshotoptions&quot;&gt;&lt;code class=&quot;code&quot;&gt;SnapshotOptions&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Snaptshot Options&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-elasticsearch-domain.html#cfn-elasticsearch-domain-tags&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ]
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Properties&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;variablelist&quot;&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-accesspolicies&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;AccessPolicies&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An AWS Identity and Access Management (IAM) policy document that specifies who can access the Amazon ES domain and their permissions. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-access-policies&quot; target=&quot;_blank&quot;&gt;Configuring Access Policies&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-advancedoptions&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;AdvancedOptions&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Additional options to specify for the Amazon ES domain. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-advanced-options&quot; target=&quot;_blank&quot;&gt;Configuring Advanced Options&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A JSON object consisting of a string key-value pair, such as:&lt;/p&gt;
+     &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;{
+  &quot;rest.action.multi.allow_explicit_index&quot;: &quot;true&quot;
+}&lt;/code&gt;&lt;/pre&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-domainname&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;DomainName&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;A name for the Amazon ES domain. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the domain name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;
+     &lt;div class=&quot;aws-note&quot;&gt;
+      &lt;p class=&quot;aws-note&quot;&gt;Important&lt;/p&gt;
+      &lt;p&gt;If you specify a name, you cannot do updates that require this resource to be replaced. You can still do updates that require no or some interruption. If you must replace the resource, specify a new name.&lt;/p&gt;
+     &lt;/div&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-ebsoptions&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;EBSOptions&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The configurations of Amazon Elastic Block Store (Amazon EBS) volumes that are attached to data nodes in the Amazon ES domain. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-ebs&quot; target=&quot;_blank&quot;&gt;Configuring EBS-based Storage&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-ebsoptions.html&quot; title=&quot;Amazon Elasticsearch Service Domain EBSOptions&quot;&gt;Amazon Elasticsearch Service Domain EBSOptions&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-elasticsearchclusterconfig&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;ElasticsearchClusterConfig&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The cluster configuration for the Amazon ES domain. You can specify options such as the instance type and the number of instances. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomains-configure-cluster-cli&quot; target=&quot;_blank&quot;&gt;Configuring Amazon ES Domains&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-elasticsearchclusterconfig.html&quot; title=&quot;Amazon Elasticsearch Service Domain ElasticsearchClusterConfig&quot;&gt;Amazon Elasticsearch Service Domain ElasticsearchClusterConfig&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-snapshotoptions&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;SnapshotOptions&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The automated snapshot configuration for the Amazon ES domain indices.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-snapshotoptions.html&quot; title=&quot;Amazon Elasticsearch Service Domain SnapshotOptions&quot;&gt;Amazon Elasticsearch Service Domain SnapshotOptions&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-elasticsearch-domain-tags&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to associate with the Amazon ES domain.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+   &lt;/dl&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Return Values&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;section&quot;&gt;
+   &lt;div class=&quot;titlepage&quot;&gt;
+    &lt;div&gt;
+     &lt;div&gt;
+      &lt;h3 class=&quot;title&quot;&gt;Ref&lt;/h3&gt;
+     &lt;/div&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;p&gt;When the logical ID of this resource is provided to the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; intrinsic function, &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; returns the resource name, such as &lt;code class=&quot;code&quot;&gt;1234a1a-a1b1-12a1-abcd-a123b123456&lt;/code&gt;.&lt;/p&gt;
+   &lt;p&gt;For more information about using the &lt;code class=&quot;function&quot;&gt;Ref&lt;/code&gt; function, see &lt;a class=&quot;link&quot; href=&quot;intrinsic-function-reference-ref.html&quot; title=&quot;Ref&quot;&gt;Ref&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;div class=&quot;section&quot;&gt;
+  &lt;div class=&quot;titlepage&quot;&gt;
+   &lt;div&gt;
+    &lt;div&gt;
+     &lt;h2 class=&quot;title&quot; style=&quot;clear: both&quot;&gt;Example&lt;/h2&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;pre class=&quot;programlisting&quot;&gt;&lt;code class=&quot;nohighlight&quot;&gt;&quot;ElasticsearchDomain&quot;: {
+  &quot;Type&quot;: &quot;AWS::Elasticsearch::Domain&quot;,
+  &quot;Properties&quot;: {
+    &quot;ElasticsearchClusterConfig&quot;: {
+      &quot;DedicatedMasterEnabled&quot;: &quot;true&quot;,
+      &quot;InstanceCount&quot;: &quot;2&quot;,
+      &quot;ZoneAwarenessEnabled&quot;: &quot;true&quot;,
+      &quot;InstanceType&quot;: &quot;m3.medium.elasticsearch&quot;,
+      &quot;DedicatedMasterType&quot;: &quot;m3.medium.elasticsearch&quot;,
+      &quot;DedicatedMasterCount&quot;: &quot;3&quot;
+    },
+    &quot;EBSOptions&quot;: {
+      &quot;EBSEnabled&quot;: true,
+      &quot;Iops&quot;: 0,
+      &quot;VolumeSize&quot;: 20,
+      &quot;VolumeType&quot;: &quot;gp2&quot;
+    },
+    &quot;SnapshotOptions&quot;: {
+      &quot;AutomatedSnapshotStartHour&quot;: &quot;0&quot;
+    },
+    &quot;AccessPolicies&quot;: {
+      &quot;Version&quot;: &quot;2012-10-17&quot;,
+      &quot;Statement&quot;: [{
+        &quot;Effect&quot;: &quot;Allow&quot;,
+        &quot;Principal&quot;: {
+          &quot;AWS&quot;: &quot;*&quot;
+        },
+        &quot;Action&quot;: &quot;es:*&quot;,
+        &quot;Resource&quot;: &quot;*&quot;
+      }]
+    },
+    &quot;AdvancedOptions&quot;: {
+      &quot;rest.action.multi.allow_explicit_index&quot;: &quot;true&quot;
+    },
+    &quot;Tags&quot;: [{
+      &quot;Key&quot;: &quot;type&quot;,
+      &quot;Value&quot;: &quot;test&quot;
+    }]
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+ &lt;/div&gt;
+&lt;/div&gt;</description>
+        <properties class="linked-hash-map">
+          <entry>
+            <string>AccessPolicies</string>
+            <ResourceProperty>
+              <name>AccessPolicies</name>
+              <description>&lt;p&gt;An AWS Identity and Access Management (IAM) policy document that specifies who can access the Amazon ES domain and their permissions. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-access-policies&quot; target=&quot;_blank&quot;&gt;Configuring Access Policies&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: JSON object&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>AdvancedOptions</string>
+            <ResourceProperty>
+              <name>AdvancedOptions</name>
+              <description>&lt;p&gt;Additional options to specify for the Amazon ES domain. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-advanced-options&quot; target=&quot;_blank&quot;&gt;Configuring Advanced Options&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: A JSON object consisting of a string key-value pair, such as:&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>DomainName</string>
+            <ResourceProperty>
+              <name>DomainName</name>
+              <description>&lt;p&gt;A name for the Amazon ES domain. If you don&apos;t specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the domain name. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-properties-name.html&quot; title=&quot;Name Type&quot;&gt;Name Type&lt;/a&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>true</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>EBSOptions</string>
+            <ResourceProperty>
+              <name>EBSOptions</name>
+              <description>&lt;p&gt;The configurations of Amazon Elastic Block Store (Amazon EBS) volumes that are attached to data nodes in the Amazon ES domain. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomain-configure-ebs&quot; target=&quot;_blank&quot;&gt;Configuring EBS-based Storage&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-ebsoptions.html&quot; title=&quot;Amazon Elasticsearch Service Domain EBSOptions&quot;&gt;Amazon Elasticsearch Service Domain EBSOptions&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>ElasticsearchClusterConfig</string>
+            <ResourceProperty>
+              <name>ElasticsearchClusterConfig</name>
+              <description>&lt;p&gt;The cluster configuration for the Amazon ES domain. You can specify options such as the instance type and the number of instances. For more information, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createupdatedomains.html#es-createdomains-configure-cluster-cli&quot; target=&quot;_blank&quot;&gt;Configuring Amazon ES Domains&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Elasticsearch Service Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-elasticsearchclusterconfig.html&quot; title=&quot;Amazon Elasticsearch Service Domain ElasticsearchClusterConfig&quot;&gt;Amazon Elasticsearch Service Domain ElasticsearchClusterConfig&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>SnapshotOptions</string>
+            <ResourceProperty>
+              <name>SnapshotOptions</name>
+              <description>&lt;p&gt;The automated snapshot configuration for the Amazon ES domain indices.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;xref&quot; href=&quot;aws-properties-elasticsearch-domain-snapshotoptions.html&quot; title=&quot;Amazon Elasticsearch Service Domain SnapshotOptions&quot;&gt;Amazon Elasticsearch Service Domain SnapshotOptions&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>Tags</string>
+            <ResourceProperty>
+              <name>Tags</name>
+              <description>&lt;p&gt;An arbitrary set of tags (key&amp;#x2013;value pairs) to associate with the Amazon ES domain.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;aws-properties-resource-tags.html&quot; title=&quot;AWS CloudFormation Resource Tags Type&quot;&gt;AWS CloudFormation Resource Tags&lt;/a&gt;&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-no-interrupt&quot;&gt;No interruption&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+        </properties>
+        <attributes class="kotlin.collections.EmptyMap" reference="../../../entry/ResourceType/attributes"/>
+      </ResourceType>
+    </entry>
+    <entry>
       <string>AWS::IAM::AccessKey</string>
       <ResourceType>
         <name>AWS::IAM::AccessKey</name>
@@ -20145,7 +21584,7 @@
             <string>Arn</string>
             <ResourceAttribute>
               <name>Arn</name>
-              <description>Example: arn:aws:iam::123456789012:group/mystack-myuser-1CCXAFG2H2U4D</description>
+              <description>Example: arn:aws:iam::123456789012:user/mystack-myuser-1CCXAFG2H2U4D</description>
             </ResourceAttribute>
           </entry>
         </attributes>
@@ -21173,7 +22612,7 @@
   &quot;Type&quot;: &quot;AWS::Lambda::Permission&quot;,
   &quot;Properties&quot;: {
     &quot;FunctionName&quot; : { &quot;Fn::GetAtt&quot; : [&quot;MyLambdaFunction&quot;, &quot;Arn&quot;] },
-    &quot;Action&quot;: [&quot;lambda:InvokeFunction&quot;],
+    &quot;Action&quot;: &quot;lambda:InvokeFunction&quot;,
     &quot;Principal&quot;: &quot;s3.amazonaws.com&quot;,
     &quot;SourceAccount&quot;: { &quot;Ref&quot; : &quot;AWS::AccountId&quot; }
   }
@@ -21844,7 +23283,7 @@
    &lt;/div&gt;
   &lt;/div&gt;
  &lt;/div&gt;
- &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::Logs::SubscriptionFilter&lt;/code&gt; resource creates an Amazon CloudWatch Logs (CloudWatch Logs) subscription filter that defines which log events are delivered to your Amazon Kinesis stream and where to send them. For more information about Amazon Kinesis, see the &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/kinesis/latest/dev/&quot; target=&quot;_blank&quot;&gt;&lt;em class=&quot;citetitle&quot;&gt;Amazon Kinesis Developer Guide&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+ &lt;p&gt;The &lt;code class=&quot;code&quot;&gt;AWS::Logs::SubscriptionFilter&lt;/code&gt; resource creates an Amazon CloudWatch Logs (CloudWatch Logs) subscription filter that defines which log events are delivered to your Amazon Kinesis stream or AWS Lambda (Lambda) function and where to send them.&lt;/p&gt;
  &lt;div class=&quot;section&quot;&gt;
   &lt;div class=&quot;titlepage&quot;&gt;
    &lt;div&gt;
@@ -21878,7 +23317,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;DestinationArn&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The Amazon Resource Name (ARN) of the Amazon Kinesis stream that you want to use as the subscription feed destination.&lt;/p&gt;
+     &lt;p&gt;The Amazon Resource Name (ARN) of the Amazon Kinesis stream or Lambda function that you want to use as the subscription feed destination.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -21888,7 +23327,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;FilterPattern&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The filtering expressions that restrict what gets delivered to the destination Amazon Kinesis stream. For more information about the filter pattern syntax, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/FilterAndPatternSyntax.html&quot; target=&quot;_blank&quot;&gt;Filter and Pattern Syntax&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon CloudWatch Developer Guide&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;The filtering expressions that restrict what gets delivered to the destination AWS resource. For more information about the filter pattern syntax, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/FilterAndPatternSyntax.html&quot; target=&quot;_blank&quot;&gt;Filter and Pattern Syntax&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon CloudWatch Developer Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -21898,7 +23337,7 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;LogGroupName&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;The log group to associate with the subscription filter. All log events that are uploaded to this log group are filtered and delivered to the specified Amazon Kinesis stream if the filter pattern matches the log events.&lt;/p&gt;
+     &lt;p&gt;The log group to associate with the subscription filter. All log events that are uploaded to this log group are filtered and delivered to the specified AWS resource if the filter pattern matches the log events.&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Yes&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
@@ -21908,8 +23347,8 @@
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;RoleArn&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
     &lt;dd&gt;
-     &lt;p&gt;An IAM role that grants CloudWatch Logs permission to put data into the specified Amazon Kinesis stream. &lt;/p&gt;
-     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. You must specify this property unless you specify a CloudWatch Logs &lt;a class=&quot;link&quot; href=&quot;aws-resource-logs-destination.html&quot; title=&quot;AWS::Logs::Destination&quot;&gt;destination&lt;/a&gt; for the &lt;code class=&quot;code&quot;&gt;DestinationArn&lt;/code&gt; property. In this case, do not specify this property.&lt;/p&gt;
+     &lt;p&gt;An IAM role that grants CloudWatch Logs permission to put data into the specified Amazon Kinesis stream. For Lambda and CloudWatch Logs destinations, don&apos;t specify this property because CloudWatch Logs gets the necessary permissions from the destination resource.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
@@ -21967,7 +23406,7 @@
             <string>DestinationArn</string>
             <ResourceProperty>
               <name>DestinationArn</name>
-              <description>&lt;p&gt;The Amazon Resource Name (ARN) of the Amazon Kinesis stream that you want to use as the subscription feed destination.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The Amazon Resource Name (ARN) of the Amazon Kinesis stream or Lambda function that you want to use as the subscription feed destination.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -21977,7 +23416,7 @@
             <string>FilterPattern</string>
             <ResourceProperty>
               <name>FilterPattern</name>
-              <description>&lt;p&gt;The filtering expressions that restrict what gets delivered to the destination Amazon Kinesis stream. For more information about the filter pattern syntax, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/FilterAndPatternSyntax.html&quot; target=&quot;_blank&quot;&gt;Filter and Pattern Syntax&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon CloudWatch Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The filtering expressions that restrict what gets delivered to the destination AWS resource. For more information about the filter pattern syntax, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/FilterAndPatternSyntax.html&quot; target=&quot;_blank&quot;&gt;Filter and Pattern Syntax&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon CloudWatch Developer Guide&lt;/em&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -21987,7 +23426,7 @@
             <string>LogGroupName</string>
             <ResourceProperty>
               <name>LogGroupName</name>
-              <description>&lt;p&gt;The log group to associate with the subscription filter. All log events that are uploaded to this log group are filtered and delivered to the specified Amazon Kinesis stream if the filter pattern matches the log events.&lt;/p&gt;</description>
+              <description>&lt;p&gt;The log group to associate with the subscription filter. All log events that are uploaded to this log group are filtered and delivered to the specified AWS resource if the filter pattern matches the log events.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>true</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -21997,7 +23436,7 @@
             <string>RoleArn</string>
             <ResourceProperty>
               <name>RoleArn</name>
-              <description>&lt;p&gt;An IAM role that grants CloudWatch Logs permission to put data into the specified Amazon Kinesis stream. &lt;/p&gt;</description>
+              <description>&lt;p&gt;An IAM role that grants CloudWatch Logs permission to put data into the specified Amazon Kinesis stream. For Lambda and CloudWatch Logs destinations, don&apos;t specify this property because CloudWatch Logs gets the necessary permissions from the destination resource.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
@@ -23940,12 +25379,14 @@
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-dbsubnetgroupname&quot;&gt;&lt;code class=&quot;code&quot;&gt;DBSubnetGroupName&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-engine&quot;&gt;&lt;code class=&quot;code&quot;&gt;Engine&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-engineversion&quot;&gt;&lt;code class=&quot;code&quot;&gt;EngineVersion&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-kmskeyid&quot;&gt;&lt;code class=&quot;code&quot;&gt;KmsKeyId&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-masterusername&quot;&gt;&lt;code class=&quot;code&quot;&gt;MasterUsername&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-masteruserpassword&quot;&gt;&lt;code class=&quot;code&quot;&gt;MasterUserPassword&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-port&quot;&gt;&lt;code class=&quot;code&quot;&gt;Port&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-preferredbackupwindow&quot;&gt;&lt;code class=&quot;code&quot;&gt;PreferredBackupWindow&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-preferredmaintenancewindow&quot;&gt;&lt;code class=&quot;code&quot;&gt;PreferredMaintenanceWindow&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-snapshotidentifier&quot;&gt;&lt;code class=&quot;code&quot;&gt;SnapshotIdentifier&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String&lt;/code&gt;&lt;/em&gt;,
+    &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-storageencrypted&quot;&gt;&lt;code class=&quot;code&quot;&gt;StorageEncrypted&lt;/code&gt;&lt;/a&gt;&quot; : &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Boolean&lt;/code&gt;&lt;/em&gt;,
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-tags&quot;&gt;&lt;code class=&quot;code&quot;&gt;Tags&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;Resource Tag, ...&lt;/code&gt;&lt;/em&gt; ],
     &quot;&lt;a class=&quot;xref&quot; href=&quot;aws-resource-rds-dbcluster.html#cfn-rds-dbcluster-vpcsecuritygroupids&quot;&gt;&lt;code class=&quot;code&quot;&gt;VpcSecurityGroupIds&lt;/code&gt;&lt;/a&gt;&quot; : [ &lt;em class=&quot;replaceable&quot;&gt;&lt;code&gt;String, ...&lt;/code&gt;&lt;/em&gt; ]
   }
@@ -24033,6 +25474,17 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
+     &lt;a name=&quot;cfn-rds-dbcluster-kmskeyid&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;KmsKeyId&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;The Amazon Resource Name (ARN) of the AWS Key Management Service master key that is used to encrypt the database instances in the DB cluster, such as &lt;code class=&quot;code&quot;&gt;arn:aws:kms:us-east-1:012345678910:key/abcd1234-a123-456a-a12b-a123b4cd56ef&lt;/code&gt;. If you enable the &lt;code class=&quot;code&quot;&gt;StorageEncrypted&lt;/code&gt; property but don&apos;t specify this property, the default master key is used. If you specify this property, you must set the &lt;code class=&quot;code&quot;&gt;StorageEncrypted&lt;/code&gt; property to &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;.&lt;/p&gt;
+     &lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;SnapshotIdentifier&lt;/code&gt;, do not specify this property. The value is inherited from the snapshot DB cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
      &lt;a name=&quot;cfn-rds-dbcluster-masterusername&quot;&gt;&lt;/a&gt;
      &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;MasterUsername&lt;/code&gt;&lt;/span&gt;
     &lt;/dt&gt;
@@ -24093,6 +25545,17 @@
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;
+    &lt;/dd&gt;
+    &lt;dt&gt;
+     &lt;a name=&quot;cfn-rds-dbcluster-storageencrypted&quot;&gt;&lt;/a&gt;
+     &lt;span class=&quot;term&quot;&gt;&lt;code class=&quot;code&quot;&gt;StorageEncrypted&lt;/code&gt;&lt;/span&gt;
+    &lt;/dt&gt;
+    &lt;dd&gt;
+     &lt;p&gt;Indicates whether the DB instances in the cluster are encrypted.&lt;/p&gt;
+     &lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;SnapshotIdentifier&lt;/code&gt; property, do not specify this property. The value is inherited from the snapshot DB cluster.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: Conditional. If you specify the &lt;code class=&quot;code&quot;&gt;KmsKeyId&lt;/code&gt; property, you must enable encryption.&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
+     &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;
     &lt;/dd&gt;
     &lt;dt&gt;
      &lt;a name=&quot;cfn-rds-dbcluster-tags&quot;&gt;&lt;/a&gt;
@@ -24279,6 +25742,16 @@
             </ResourceProperty>
           </entry>
           <entry>
+            <string>KmsKeyId</string>
+            <ResourceProperty>
+              <name>KmsKeyId</name>
+              <description>&lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;SnapshotIdentifier&lt;/code&gt;, do not specify this property. The value is inherited from the snapshot DB cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
             <string>MasterUsername</string>
             <ResourceProperty>
               <name>MasterUsername</name>
@@ -24336,6 +25809,16 @@
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: String&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;&lt;/p&gt;</updateRequires>
+            </ResourceProperty>
+          </entry>
+          <entry>
+            <string>StorageEncrypted</string>
+            <ResourceProperty>
+              <name>StorageEncrypted</name>
+              <description>&lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;SnapshotIdentifier&lt;/code&gt; property, do not specify this property. The value is inherited from the snapshot DB cluster.&lt;/p&gt;</description>
+              <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
+              <required>false</required>
+              <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
             </ResourceProperty>
           </entry>
           <entry>
@@ -24940,9 +26423,10 @@
     &lt;dd&gt;
      &lt;p&gt;Indicates whether the database instance is an Internet-facing instance. If you specify &lt;code class=&quot;code&quot;&gt;true&lt;/code&gt;, an instance is created with a publicly resolvable DNS name, which resolves to a public IP address. If you specify &lt;code class=&quot;code&quot;&gt;false&lt;/code&gt;, an internal instance is created with a DNS name that resolves to a private IP address. &lt;/p&gt;
      &lt;p&gt;The default behavior value depends on your VPC setup and the database subnet group. For more information, see the &lt;code class=&quot;code&quot;&gt;PubliclyAccessible&lt;/code&gt; parameter in &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html&quot; target=&quot;_blank&quot;&gt;CreateDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;
+     &lt;p&gt;If this resource has a public IP address and is also in a VPC that is defined in the same template, you must use the &lt;code class=&quot;code&quot;&gt;DependsOn&lt;/code&gt; attribute to declare a dependency on the VPC-gateway attachment. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-attribute-dependson.html&quot; title=&quot;DependsOn Attribute&quot;&gt;DependsOn Attribute&lt;/a&gt;.&lt;/p&gt;
      &lt;div class=&quot;aws-note&quot;&gt;
       &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
-      &lt;p&gt;If this resource has a public IP address and is also in a VPC that is defined in the same template, you must use the &lt;code class=&quot;code&quot;&gt;DependsOn&lt;/code&gt; attribute to declare a dependency on the VPC-gateway attachment. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-attribute-dependson.html&quot; title=&quot;DependsOn Attribute&quot;&gt;DependsOn Attribute&lt;/a&gt;.&lt;/p&gt;
+      &lt;p&gt;Currently, if you specify &lt;code class=&quot;code&quot;&gt;DBSecurityGroups&lt;/code&gt;, this property is ignored. If you want to specify a security group and this property, you must use a VPC security group. For more information about Amazon RDS and VPC, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.html&quot; target=&quot;_blank&quot;&gt;Using Amazon RDS with Amazon VPC&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service User Guide&lt;/em&gt;.&lt;/p&gt;
      &lt;/div&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Required&lt;/em&gt;&lt;/span&gt;: No&lt;/p&gt;
      &lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;
@@ -24977,7 +26461,7 @@
     &lt;/dt&gt;
     &lt;dd&gt;
      &lt;p&gt;Indicates whether the database instance is encrypted.&lt;/p&gt;
-     &lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;DBSnapshotIdentifier&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;SourceDBInstanceIdentifier&lt;/code&gt; property, do not specify this property. The value is inherited from the snapshot or source database instance.&lt;/p&gt;
+     &lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;DBClusterIdentifier&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;DBSnapshotIdentifier&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;SourceDBInstanceIdentifier&lt;/code&gt; property, do not specify this property. The value is inherited from the cluster, snapshot, or source database instance.&lt;/p&gt;
      &lt;div class=&quot;aws-note&quot;&gt;
       &lt;p class=&quot;aws-note&quot;&gt;Note&lt;/p&gt;
       &lt;p&gt;Currently, if you specify &lt;code class=&quot;code&quot;&gt;DBSecurityGroups&lt;/code&gt;, this property is ignored. If you want to specify a security group and this property, you must use a VPC security group. For more information about Amazon RDS and VPC, see &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.html&quot; target=&quot;_blank&quot;&gt;Using Amazon RDS with Amazon VPC&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service User Guide&lt;/em&gt;.&lt;/p&gt;
@@ -25449,7 +26933,7 @@
             <string>PubliclyAccessible</string>
             <ResourceProperty>
               <name>PubliclyAccessible</name>
-              <description>&lt;p&gt;The default behavior value depends on your VPC setup and the database subnet group. For more information, see the &lt;code class=&quot;code&quot;&gt;PubliclyAccessible&lt;/code&gt; parameter in &lt;a class=&quot;ulink&quot; href=&quot;http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html&quot; target=&quot;_blank&quot;&gt;CreateDBInstance&lt;/a&gt; in the &lt;em class=&quot;citetitle&quot;&gt;Amazon Relational Database Service API Reference&lt;/em&gt;.&lt;/p&gt;</description>
+              <description>&lt;p&gt;If this resource has a public IP address and is also in a VPC that is defined in the same template, you must use the &lt;code class=&quot;code&quot;&gt;DependsOn&lt;/code&gt; attribute to declare a dependency on the VPC-gateway attachment. For more information, see &lt;a class=&quot;xref&quot; href=&quot;aws-attribute-dependson.html&quot; title=&quot;DependsOn Attribute&quot;&gt;DependsOn Attribute&lt;/a&gt;.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
@@ -25469,7 +26953,7 @@
             <string>StorageEncrypted</string>
             <ResourceProperty>
               <name>StorageEncrypted</name>
-              <description>&lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;DBSnapshotIdentifier&lt;/code&gt; or &lt;code class=&quot;code&quot;&gt;SourceDBInstanceIdentifier&lt;/code&gt; property, do not specify this property. The value is inherited from the snapshot or source database instance.&lt;/p&gt;</description>
+              <description>&lt;p&gt;If you specify the &lt;code class=&quot;code&quot;&gt;DBClusterIdentifier&lt;/code&gt;, &lt;code class=&quot;code&quot;&gt;DBSnapshotIdentifier&lt;/code&gt;, or &lt;code class=&quot;code&quot;&gt;SourceDBInstanceIdentifier&lt;/code&gt; property, do not specify this property. The value is inherited from the cluster, snapshot, or source database instance.&lt;/p&gt;</description>
               <type>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Type&lt;/em&gt;&lt;/span&gt;: Boolean&lt;/p&gt;</type>
               <required>false</required>
               <updateRequires>&lt;p&gt;&lt;span class=&quot;emphasis&quot;&gt;&lt;em&gt;Update requires&lt;/em&gt;&lt;/span&gt;: &lt;a class=&quot;link&quot; href=&quot;using-cfn-updating-stacks.html#update-replacement&quot;&gt;Replacement&lt;/a&gt;.&lt;/p&gt;</updateRequires>
