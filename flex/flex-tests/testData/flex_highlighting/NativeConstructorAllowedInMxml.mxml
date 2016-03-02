@@ -1,0 +1,5 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+      public native function NativeConstructorAllowedInMxml(config:Object = null);
+    </mx:Script>
+</mx:Application>
