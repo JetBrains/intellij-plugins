@@ -310,9 +310,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       parent = JSResolveUtil.getClassReferenceForXmlFromContext(parent);
       final String name = node.getName();
 
+      final JSAttributeList attributeList = node.getAttributeList();
+      final boolean isNative = attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.NATIVE);
+
       if (parent instanceof JSClass &&
           name != null &&
           name.equals(((JSClass)parent).getName()) &&
+          !isNative &&
           JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
         final Annotation annotation = myHolder.createErrorAnnotation(
           nameIdentifier,
