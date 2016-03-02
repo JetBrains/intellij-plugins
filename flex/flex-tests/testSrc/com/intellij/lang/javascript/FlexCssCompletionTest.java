@@ -5,14 +5,20 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 /**
  * @author Eugene.Kudelevsky
@@ -22,6 +28,9 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
 
   @Override
   protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
     myAfterCommitRunnable = null;
 

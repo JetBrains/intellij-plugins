@@ -3,6 +3,7 @@ package com.intellij.lang.javascript;
 import com.intellij.codeInsight.EditorInfo;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.util.DirectoryUtil;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveInnerClassProcessor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -16,6 +17,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -26,6 +28,9 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class FlexMoveInnerClassTest extends MultiFileTestCase {
 
@@ -42,6 +47,8 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
 
   @Override
   protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
     JSTestUtils.disableFileHeadersInTemplates(getProject());
   }

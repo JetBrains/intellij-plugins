@@ -3,6 +3,7 @@ package com.intellij.lang.javascript;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -10,6 +11,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.PsiFileImpl;
@@ -26,7 +28,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+
 public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
+  @Override
+  protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
+  }
 
   protected List<PsiFile> myPsiFiles = new ArrayList<PsiFile>();
 

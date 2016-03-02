@@ -4,11 +4,17 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.flex.FlexTestUtils
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler
 import com.intellij.lang.javascript.flex.FlexModuleType
 import com.intellij.openapi.module.ModuleType
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor
 import org.jetbrains.annotations.NotNull
+
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath
 
 /**
  * @author Konstantin.Ulitin
@@ -26,6 +32,9 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
   @Override
   protected void setUp() {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp()
     edt { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class) }
     CodeInsightSettings.instance.SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = true

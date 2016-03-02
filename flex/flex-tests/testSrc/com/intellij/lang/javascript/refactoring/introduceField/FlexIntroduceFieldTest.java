@@ -1,16 +1,27 @@
 package com.intellij.lang.javascript.refactoring.introduceField;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldSettings.InitializationPlace.*;
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class FlexIntroduceFieldTest extends LightCodeInsightTestCase {
+  @Override
+  protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
+  }
+
   @NotNull
   @Override
   protected String getTestDataPath() {

@@ -2,17 +2,20 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilder;
 import com.intellij.lang.javascript.imports.FlexModuleFixtureBuilderImpl;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.xml.util.ColorIconCache;
 import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 /**
  * @author Eugene.Kudelevsky
@@ -25,6 +28,10 @@ public class FlexColorAnnotatorTest extends CodeInsightFixtureTestCase<FlexModul
 
   @Override
   protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass());

@@ -45,7 +45,7 @@ Prerequisites:
 How to debug compiler.
 
   Compiler is started as a separate Java process (see com.intellij.compiler.server.BuildManager#launchBuildProcess). In its turn it starts one more Java process for the Flex compiler (see JpsBuiltInFlexCompilerHandler#startCompilerProcess). So none of those is possible to debug by simply running 'Flex plugin' run configuration.
-  To debug main compiler process (that runs code from 'flex-plugin-jps' module use 'Compiler debug' remote debug configuration:
+  To debug main compiler process (that runs code from 'flex-plugin-jps' module) use 'Compiler debug' remote debug configuration:
   - Open Run | Edit Configurations | 'Flex plugin' and change the value of the -Dcompiler.process.debug.port VM option to the port that is specified in the 'Compiler debug' configuration (5660 by default). To disable compiler debugging set the value back to -1.
   - Start 'Flex plugin' run configuration (run or debug - both are ok), when IDE starts - trigger any compilation. Compiler process will be waiting for the remote debug connection.
   - Start 'Compiler debug' run configuration.
@@ -67,4 +67,4 @@ Troubleshooting.
    A: Delete folder plugins-sandbox/test and run tests again. Path to the plugins-sandbox folder is shown in Project Structure | SDKs | IntelliJ IDEA Ultimate
 
 3. Q: Some tests fail anyway.
-   A: About 20 tests are known to fail and will be fixed soon. Just make sure not to break passing tests and keep IntelliJ IDEA installation up-to-date.
+   A: A couple of tests are known to fail and will be fixed some day. Just make sure not to break passing tests and keep IntelliJ IDEA installation up-to-date.

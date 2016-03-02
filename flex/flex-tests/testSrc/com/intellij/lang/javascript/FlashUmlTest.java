@@ -11,6 +11,8 @@ import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.diagram.util.UmlDataModelDumper;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.DataManager;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -34,6 +36,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
@@ -45,10 +48,21 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+
 @SkipInHeadlessEnvironment
 public class FlashUmlTest extends CodeInsightTestCase {
 
   private static final String BASE_PATH = "uml/";
+
+  @Override
+  protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
+  }
 
   @Override
   protected String getTestDataPath() {

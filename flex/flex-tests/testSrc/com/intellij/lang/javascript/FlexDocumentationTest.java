@@ -2,6 +2,8 @@ package com.intellij.lang.javascript;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javascript.flex.FlexDocumentationProvider;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -14,10 +16,14 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.ex.http.HttpFileSystem;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.descriptor.CssPropertyDescriptorStub;
 import com.intellij.psi.css.impl.util.CssDocumentationProvider;
 import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 /**
  * @author Konstantin.Ulitin
@@ -49,6 +55,9 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @Override
   protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
     myAfterCommitRunnable = null;
   }
