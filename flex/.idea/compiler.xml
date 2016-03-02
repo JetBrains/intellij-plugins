@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/ImportingNonJavaModulesTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/FlexmojosImporterTestBase.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/NonJarDependenciesImportingTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/Flexmojos4ImporterTest.java" />
+      <file url="file://$PROJECT_DIR$/flex-tests/testSrc/com/intellij/lang/javascript/maven/Flexmojos3ImporterTest.java" />
+    </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|gif|png|jpeg|jpg|xml|dtd|tld|xsd|ft|html|template)" />
     </resourceExtensions>
