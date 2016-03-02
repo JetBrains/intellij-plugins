@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.0.0-rc-1036'
+    ext.kotlin_version = '1.0.0'
     repositories {
         mavenCentral()
     }
@@ -25,8 +25,8 @@ allprojects {
         mavenCentral()
     }
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 project(':metadata-crawler') {
@@ -35,9 +35,6 @@ project(':metadata-crawler') {
     intellij {
         version idea_version
     }
-
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
 
     dependencies {
         compile rootProject
