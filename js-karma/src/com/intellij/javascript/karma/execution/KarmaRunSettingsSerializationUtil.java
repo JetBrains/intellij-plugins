@@ -2,6 +2,7 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configuration.EnvironmentVariablesData;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,23 +16,17 @@ public class KarmaRunSettingsSerializationUtil {
   private static final String CONFIG_FILE = "config-file";
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String BROWSERS = "browsers";
-  private static final String OLD_PASS_PARENT_ENV_VAR = "pass-parent-env-vars"; // TODO to be removed in IDEA 16
+  private static final String NODE_INTERPRETER = "node-interpreter";
 
   private KarmaRunSettingsSerializationUtil() {}
 
   public static KarmaRunSettings readXml(@NotNull Element element) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
 
-    String configFilePath = getAttrValue(element, CONFIG_FILE);
-    if (configFilePath == null) {
-      configFilePath = JDOMExternalizerUtil.getFirstChildValueAttribute(element, CONFIG_FILE);
-    }
+    String configFilePath = JDOMExternalizerUtil.getFirstChildValueAttribute(element, CONFIG_FILE);
     builder.setConfigPath(FileUtil.toSystemDependentName(StringUtil.notNullize(configFilePath)));
 
-    String browsers = getAttrValue(element, BROWSERS);
-    if (browsers == null) {
-      browsers = JDOMExternalizerUtil.getFirstChildValueAttribute(element, BROWSERS);
-    }
+    String browsers = JDOMExternalizerUtil.getFirstChildValueAttribute(element, BROWSERS);
     if (browsers != null) {
       builder.setBrowsers(browsers);
     }
@@ -40,11 +35,11 @@ public class KarmaRunSettingsSerializationUtil {
       builder.setKarmaPackageDir(FileUtil.toSystemDependentName(karmaPackageDir));
     }
 
+    String interpreterRefName = JDOMExternalizerUtil.getFirstChildValueAttribute(element, NODE_INTERPRETER);
+    builder.setInterpreterRef(interpreterRefName == null ? NodeJsInterpreterRef.createProjectRef()
+                                                         : NodeJsInterpreterRef.create(interpreterRefName));
+
     EnvironmentVariablesData envData = EnvironmentVariablesData.readExternal(element);
-    String passParentEnvVarsStr = getAttrValue(element, OLD_PASS_PARENT_ENV_VAR);
-    if (passParentEnvVarsStr != null) {
-      envData = EnvironmentVariablesData.create(envData.getEnvs(), Boolean.parseBoolean(passParentEnvVarsStr));
-    }
     builder.setEnvData(envData);
 
     return builder.build();
@@ -57,17 +52,17 @@ public class KarmaRunSettingsSerializationUtil {
   }
 
   public static void writeXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
-    element.setAttribute(CONFIG_FILE, FileUtil.toSystemIndependentName(settings.getConfigPath()));
+    JDOMExternalizerUtil.addElementWithValueAttribute(element,
+                                                      CONFIG_FILE,
+                                                      settings.getConfigSystemIndependentPath());
     if (StringUtil.isNotEmpty(settings.getBrowsers())) {
-      element.setAttribute(BROWSERS, settings.getBrowsers());
+      JDOMExternalizerUtil.addElementWithValueAttribute(element, BROWSERS, settings.getBrowsers());
     }
-    if (settings.getKarmaPackageDir() != null) {
-      String value = FileUtil.toSystemIndependentName(settings.getKarmaPackageDir());
-      JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR, value);
+    if (settings.getKarmaPackageDirSystemIndependentPath() != null) {
+      JDOMExternalizerUtil.addElementWithValueAttribute(element, KARMA_PACKAGE_DIR,
+                                                        settings.getKarmaPackageDirSystemIndependentPath());
     }
+    JDOMExternalizerUtil.addElementWithValueAttribute(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
     EnvironmentVariablesComponent.writeExternal(element, settings.getEnvData().getEnvs());
-    if (!settings.getEnvData().isPassParentEnvs()) {
-      element.setAttribute(OLD_PASS_PARENT_ENV_VAR, String.valueOf(settings.getEnvData().isPassParentEnvs()));
-    }
   }
 }

@@ -1,6 +1,8 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -11,16 +13,16 @@ public class KarmaRunSettings {
   private final String myConfigPath;
   private final String myKarmaPackageDir;
   private final String myBrowsers;
+  private final NodeJsInterpreterRef myInterpreterRef;
   private final EnvironmentVariablesData myEnvData;
 
-  public KarmaRunSettings(@NotNull String configPath,
-                          @Nullable String karmaPackageDir,
-                          @NotNull String browsers,
-                          @NotNull EnvironmentVariablesData envData) {
-    myConfigPath = configPath;
-    myKarmaPackageDir = karmaPackageDir;
-    myBrowsers = browsers;
-    myEnvData = envData;
+  public KarmaRunSettings(@NotNull Builder builder) {
+    myConfigPath = FileUtil.toSystemDependentName(builder.myConfigPath);
+    myKarmaPackageDir = builder.myKarmaPackageDir != null ? FileUtil.toSystemDependentName(builder.myKarmaPackageDir)
+                                                          : null;
+    myBrowsers = builder.myBrowsers;
+    myInterpreterRef = builder.myInterpreterRef;
+    myEnvData = builder.myEnvData;
   }
 
   @NotNull
@@ -28,14 +30,29 @@ public class KarmaRunSettings {
     return myConfigPath;
   }
 
+  @NotNull
+  public String getConfigSystemIndependentPath() {
+    return FileUtil.toSystemIndependentName(myConfigPath);
+  }
+
   @Nullable
   public String getKarmaPackageDir() {
     return myKarmaPackageDir;
   }
 
+  @Nullable
+  public String getKarmaPackageDirSystemIndependentPath() {
+    return myKarmaPackageDir == null ? null : FileUtil.toSystemIndependentName(myKarmaPackageDir);
+  }
+
   @NotNull
   public String getBrowsers() {
     return myBrowsers;
+  }
+
+  @NotNull
+  public NodeJsInterpreterRef getInterpreterRef() {
+    return myInterpreterRef;
   }
 
   @NotNull
@@ -53,6 +70,7 @@ public class KarmaRunSettings {
     return myConfigPath.equals(that.myConfigPath) &&
           ComparatorUtil.equalsNullable(myKarmaPackageDir, that.myKarmaPackageDir) &&
           myBrowsers.equals(that.myBrowsers) &&
+          myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
           myEnvData.equals(that.myEnvData);
   }
 
@@ -61,8 +79,14 @@ public class KarmaRunSettings {
     int result = myConfigPath.hashCode();
     result = 31 * result + StringUtil.notNullize(myKarmaPackageDir).hashCode();
     result = 31 * result + myBrowsers.hashCode();
+    result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
     result = 31 * result + myEnvData.hashCode();
     return result;
+  }
+
+  @NotNull
+  public Builder builder() {
+    return new Builder(this);
   }
 
   public static class Builder {
@@ -70,6 +94,7 @@ public class KarmaRunSettings {
     private String myConfigPath = "";
     private String myKarmaPackageDir = null;
     private String myBrowsers = "";
+    private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private EnvironmentVariablesData myEnvData = EnvironmentVariablesData.DEFAULT;
 
     public Builder() {}
@@ -78,6 +103,7 @@ public class KarmaRunSettings {
       myConfigPath = settings.getConfigPath();
       myKarmaPackageDir = settings.getKarmaPackageDir();
       myBrowsers = settings.getBrowsers();
+      myInterpreterRef = settings.getInterpreterRef();
       myEnvData = settings.myEnvData;
     }
 
@@ -94,20 +120,26 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setEnvData(@NotNull EnvironmentVariablesData envData) {
-      myEnvData = envData;
-      return this;
-    }
-
-    @NotNull
     public Builder setBrowsers(@NotNull String browsers) {
       myBrowsers = browsers;
       return this;
     }
 
     @NotNull
+    public Builder setInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
+      myInterpreterRef = interpreterRef;
+      return this;
+    }
+
+    @NotNull
+    public Builder setEnvData(@NotNull EnvironmentVariablesData envData) {
+      myEnvData = envData;
+      return this;
+    }
+
+    @NotNull
     public KarmaRunSettings build() {
-      return new KarmaRunSettings(myConfigPath, myKarmaPackageDir, myBrowsers, myEnvData);
+      return new KarmaRunSettings(this);
     }
   }
 }
