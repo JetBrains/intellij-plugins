@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart;
+package org.jetbrains.flutter;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 public class FlutterBundle {
 
   private static Reference<ResourceBundle> ourBundle;
-  @NonNls private static final String BUNDLE = "com.jetbrains.lang.dart.FlutterBundle";
+  @NonNls private static final String BUNDLE = "org.jetbrains.flutter.FlutterBundle";
 
   public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
     return CommonBundle.message(getBundle(), key, params);

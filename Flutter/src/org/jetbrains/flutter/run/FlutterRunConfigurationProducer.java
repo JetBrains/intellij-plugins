@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.flutter;
+package org.jetbrains.flutter.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;

@@ -12,9 +12,9 @@
 
 
   <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunConfigurationType"/>
-    <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunConfigurationProducer"/>
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunner"/>
+    <configurationType implementation="org.jetbrains.flutter.run.FlutterRunConfigurationType"/>
+    <runConfigurationProducer implementation="org.jetbrains.flutter.run.FlutterRunConfigurationProducer"/>
+    <programRunner implementation="org.jetbrains.flutter.run.FlutterRunner"/>
   </extensions>
 
 </idea-plugin>

@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.flutter;
+package org.jetbrains.flutter.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
@@ -10,7 +10,6 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
-import com.jetbrains.lang.dart.ide.runner.flutter.ui.FlutterConfigurationEditorForm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

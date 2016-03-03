@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.flutter;
+package org.jetbrains.flutter.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 
-import static com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunningState.*;
+import static org.jetbrains.flutter.run.FlutterRunningState.*;
 
 public class FlutterRunner extends DartRunner {
   private static final Logger LOG = Logger.getInstance(FlutterRunner.class);

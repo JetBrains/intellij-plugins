@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.flutter;
+package org.jetbrains.flutter.run;
 
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import org.jetbrains.annotations.Nullable;

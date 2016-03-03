@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.flutter.ui;
+package org.jetbrains.flutter.run;
 
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
@@ -12,8 +12,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunConfiguration;
-import com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunnerParameters;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

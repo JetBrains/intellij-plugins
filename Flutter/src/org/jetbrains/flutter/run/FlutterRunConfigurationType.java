@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.flutter;
+package org.jetbrains.flutter.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
@@ -8,9 +8,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.FlutterBundle;
 import icons.FlutterIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.flutter.FlutterBundle;
 
 public class FlutterRunConfigurationType extends ConfigurationTypeBase {
 
