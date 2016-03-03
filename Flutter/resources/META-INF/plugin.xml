@@ -4,27 +4,17 @@
   <version>999.999</version>
   <vendor>JetBrains</vendor>
 
+  <depends>Dart</depends>
+
   <description><![CDATA[
-      Flutter-specific extenstions for Dart.
+      Flutter-specific extensions for Dart.
     ]]></description>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="146.1" until-build="146.*"/>
-
-  <depends>Dart</depends>
-  <depends>com.intellij.modules.all</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunConfigurationProducer"/>
-
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.flutter.FlutterRunner"/>
-
   </extensions>
-
-  <actions>
-    <!-- Add your actions here -->
-  </actions>
 
 </idea-plugin>
