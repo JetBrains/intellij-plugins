@@ -12,6 +12,7 @@ import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.server.watch.KarmaWatcher;
 import com.intellij.javascript.karma.util.StreamEventListener;
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -116,8 +117,8 @@ public class KarmaServer {
   }
 
   @NotNull
-  public String getNodeInterpreterPath() {
-    return myServerSettings.getNodeInterpreterPath();
+  public NodeJsLocalInterpreter getNodeInterpreter() {
+    return myServerSettings.getNodeInterpreter();
   }
 
   @NotNull
@@ -154,7 +155,7 @@ public class KarmaServer {
     KarmaRunSettings runSettings = serverSettings.getRunSettings();
     runSettings.getEnvData().configureCommandLine(commandLine, true);
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
-    commandLine.setExePath(serverSettings.getNodeInterpreterPath());
+    commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
     //commandLine.addParameter("--debug-brk=34598");
     commandLine.addParameter(serverFile.getAbsolutePath());

@@ -139,7 +139,7 @@ public class KarmaCoveragePeer {
 
   private void checkCoveragePlugin(@NotNull KarmaServer server) {
     NodeInstalledPackagesLocator locator = NodeInstalledPackagesLocator.getInstance();
-    NodeSettings nodeSettings = new NodeSettings(server.getNodeInterpreterPath());
+    NodeSettings nodeSettings = NodeSettings.create(server.getNodeInterpreter());
     NodeInstalledPackage pkg = locator.findInstalledPackages("karma-coverage", server.getKarmaPackageDir(), nodeSettings);
     fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, pkg != null));
   }

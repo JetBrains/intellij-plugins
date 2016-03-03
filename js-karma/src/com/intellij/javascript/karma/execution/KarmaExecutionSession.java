@@ -15,6 +15,8 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +33,6 @@ public class KarmaExecutionSession {
   private final KarmaRunConfiguration myRunConfiguration;
   private final Executor myExecutor;
   private final KarmaServer myKarmaServer;
-  private final String myNodeInterpreterPath;
   private final KarmaRunSettings myRunSettings;
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
@@ -41,14 +42,12 @@ public class KarmaExecutionSession {
                                @NotNull KarmaRunConfiguration runConfiguration,
                                @NotNull Executor executor,
                                @NotNull KarmaServer karmaServer,
-                               @NotNull String nodeInterpreterPath,
                                @NotNull KarmaRunSettings runSettings,
                                @NotNull KarmaExecutionType executionType) throws ExecutionException {
     myProject = project;
     myRunConfiguration = runConfiguration;
     myExecutor = executor;
     myKarmaServer = karmaServer;
-    myNodeInterpreterPath = nodeInterpreterPath;
     myRunSettings = runSettings;
     mySmtConsoleView = createSMTRunnerConsoleView();
     myExecutionType = executionType;
@@ -107,7 +106,9 @@ public class KarmaExecutionSession {
   @NotNull
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server,
                                                   @NotNull File clientAppFile) throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(server.getServerPort(), server.getKarmaConfig(), clientAppFile);
+    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(myProject);
+    NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.cast(interpreter);
+    GeneralCommandLine commandLine = createCommandLine(localInterpreter, server.getServerPort(), server.getKarmaConfig(), clientAppFile);
     OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
@@ -116,14 +117,15 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(int serverPort,
+  private GeneralCommandLine createCommandLine(@NotNull NodeJsLocalInterpreter interpreter,
+                                               int serverPort,
                                                @Nullable KarmaConfig config,
                                                @NotNull File clientAppFile) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
     commandLine.withWorkDirectory(configFile.getParentFile());
-    commandLine.setExePath(myNodeInterpreterPath);
+    commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
     //commandLine.addParameter("--debug-brk=5858");
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());

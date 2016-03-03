@@ -11,6 +11,8 @@ import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -25,7 +27,6 @@ public class KarmaRunProfileState implements RunProfileState {
   private final Project myProject;
   private final KarmaRunConfiguration myRunConfiguration;
   private final ExecutionEnvironment myEnvironment;
-  private final String myNodeInterpreterPath;
   private final String myKarmaPackageDirPath;
   private final KarmaRunSettings myRunSettings;
   private final KarmaExecutionType myExecutionType;
@@ -33,12 +34,10 @@ public class KarmaRunProfileState implements RunProfileState {
   public KarmaRunProfileState(@NotNull Project project,
                               @NotNull KarmaRunConfiguration runConfiguration,
                               @NotNull ExecutionEnvironment environment,
-                              @NotNull String nodeInterpreterPath,
                               @NotNull String karmaPackageDirPath) {
     myProject = project;
     myRunConfiguration = runConfiguration;
     myEnvironment = environment;
-    myNodeInterpreterPath = nodeInterpreterPath;
     myKarmaPackageDirPath = karmaPackageDirPath;
     myRunSettings = runConfiguration.getRunSettings();
     myExecutionType = findExecutionType(myEnvironment.getExecutor());
@@ -56,8 +55,10 @@ public class KarmaRunProfileState implements RunProfileState {
 
   @Nullable
   public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
+    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(myProject);
+    NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.castAndValidate(interpreter);
     KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
-      .setNodeInterpreterPath(myNodeInterpreterPath)
+      .setNodeInterpreter(localInterpreter)
       .setKarmaPackageDirPath(myKarmaPackageDirPath)
       .setRunSettings(myRunSettings)
       .setWithCoverage(myExecutionType == KarmaExecutionType.COVERAGE)
@@ -100,7 +101,6 @@ public class KarmaRunProfileState implements RunProfileState {
                                                               myRunConfiguration,
                                                               executor,
                                                               server,
-                                                              myNodeInterpreterPath,
                                                               myRunSettings,
                                                               myExecutionType);
     SMTRunnerConsoleView smtRunnerConsoleView = session.getSmtConsoleView();

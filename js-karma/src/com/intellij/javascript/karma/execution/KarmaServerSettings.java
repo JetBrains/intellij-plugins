@@ -1,32 +1,27 @@
 package com.intellij.javascript.karma.execution;
 
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaServerSettings {
 
-  private final String myNodeInterpreterPath;
+  private final NodeJsLocalInterpreter myNodeInterpreter;
   private final String myKarmaPackageDirPath;
   private final KarmaRunSettings myRunSettings;
   private final boolean myWithCoverage;
 
-  private KarmaServerSettings(@NotNull String nodeInterpreterPath,
-                              @NotNull String karmaPackageDirPath,
-                              @NotNull KarmaRunSettings runSettings,
-                              boolean withCoverage) {
-    myNodeInterpreterPath = nodeInterpreterPath;
-    myKarmaPackageDirPath = karmaPackageDirPath;
-    myRunSettings = runSettings;
-    myWithCoverage = withCoverage;
+  private KarmaServerSettings(@NotNull Builder builder) {
+    myNodeInterpreter = builder.myNodeInterpreter;
+    myKarmaPackageDirPath = builder.myKarmaPackageDirPath;
+    myRunSettings = builder.myRunSettings;
+    myWithCoverage = builder.myWithCoverage;
   }
 
   @NotNull
-  public String getNodeInterpreterPath() {
-    return myNodeInterpreterPath;
+  public NodeJsLocalInterpreter getNodeInterpreter() {
+    return myNodeInterpreter;
   }
 
   @NotNull
@@ -61,14 +56,14 @@ public class KarmaServerSettings {
     KarmaServerSettings that = (KarmaServerSettings)o;
 
     return myKarmaPackageDirPath.equals(that.myKarmaPackageDirPath) &&
-           myNodeInterpreterPath.equals(that.myNodeInterpreterPath) &&
+           myNodeInterpreter.getInterpreterSystemIndependentPath().equals(that.myNodeInterpreter.getInterpreterSystemIndependentPath()) &&
            myRunSettings.equals(that.myRunSettings) &&
            myWithCoverage == that.myWithCoverage;
   }
 
   @Override
   public int hashCode() {
-    int result = myNodeInterpreterPath.hashCode();
+    int result = myNodeInterpreter.getInterpreterSystemIndependentPath().hashCode();
     result = 31 * result + myKarmaPackageDirPath.hashCode();
     result = 31 * result + myRunSettings.hashCode();
     result = 31 * result + (myWithCoverage ? 1 : 0);
@@ -76,14 +71,14 @@ public class KarmaServerSettings {
   }
 
   public static class Builder {
-    private String myNodeInterpreterPath;
+    private NodeJsLocalInterpreter myNodeInterpreter;
     private String myKarmaPackageDirPath;
     private KarmaRunSettings myRunSettings;
     private boolean myWithCoverage;
 
     @NotNull
-    public Builder setNodeInterpreterPath(@NotNull String nodeInterpreterPath) {
-      myNodeInterpreterPath = nodeInterpreterPath;
+    public Builder setNodeInterpreter(@NotNull NodeJsLocalInterpreter interpreter) {
+      myNodeInterpreter = interpreter;
       return this;
     }
 
@@ -107,8 +102,8 @@ public class KarmaServerSettings {
 
     @NotNull
     public KarmaServerSettings build() {
-      if (myNodeInterpreterPath == null) {
-        throw new RuntimeException("Path to node interpreter isn't set!");
+      if (myNodeInterpreter == null) {
+        throw new RuntimeException("Unspecified Node.js interpreter");
       }
       if (myKarmaPackageDirPath == null) {
         throw new RuntimeException("Path to karma package isn't set!");
@@ -116,8 +111,7 @@ public class KarmaServerSettings {
       if (myRunSettings == null) {
         throw new RuntimeException("Run settings aren't set!");
       }
-      return new KarmaServerSettings(myNodeInterpreterPath, myKarmaPackageDirPath, myRunSettings, myWithCoverage);
+      return new KarmaServerSettings(this);
     }
   }
-
 }

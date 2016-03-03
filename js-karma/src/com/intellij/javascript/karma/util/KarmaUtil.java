@@ -11,6 +11,8 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodeSettings;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
@@ -142,14 +144,14 @@ public class KarmaUtil {
   @Nullable
   public static String detectKarmaPackageDir(@NotNull Project project,
                                              @NotNull String configFilePath,
-                                             @NotNull String nodeInterpreterPath) {
+                                             @NotNull NodeJsInterpreterRef interpreterRef) {
     List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
     VirtualFile requester = getRequester(project, configFilePath);
-    NodeSettings nodeSettings = StringUtil.isEmptyOrSpaces(nodeInterpreterPath) ? null : new NodeSettings(nodeInterpreterPath);
+    NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(interpreterRef.resolve(project));
     NodeModuleSearchUtil.findModulesWithName(modules,
                                              NODE_PACKAGE_NAME,
                                              requester,
-                                             nodeSettings,
+                                             NodeSettings.create(interpreter),
                                              true);
     for (CompletionModuleInfo module : modules) {
       VirtualFile moduleRoot = module.getVirtualFile();
