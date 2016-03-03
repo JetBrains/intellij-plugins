@@ -29,7 +29,7 @@ import java.net.URL;
  * Created by karashevich on 02/03/16.
  */
 public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
-  private static final Logger LOG = Logger.getInstance("com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
+  private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
   public final static String WWW_ROOT = "wwwroot";
 
   public CfmlRunConfigurationProducer() {
@@ -67,7 +67,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
 
     try {
       URL url = new URL(urlStr);
-      String serverUrl = url.getHost();
+      String serverUrl = url.getProtocol() + "://" + url.getAuthority();
 
       if (serverUrl.isEmpty()) {
         CfmlRunConfiguration templateConfiguration = CfmlRunConfigurationType.getInstance().getTemplateConfiguration();
@@ -81,7 +81,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
       return true;
     }
     catch (MalformedURLException e) {
-      LOG.warn(CfmlBundle.message("cfml.producer.warn.url"));
+      LOG.warn(CfmlBundle.message("cfml.producer.warn.url") );
       return false;
     }
   }
@@ -119,7 +119,14 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
 
       final String path;
       path = buildPageUrl(context, containingFile.getVirtualFile());
-      return StringUtil.equals(path, configuration.getRunnerParameters().getUrl());
+      URL url = null;
+      try {
+        url = new URL(configuration.getRunnerParameters().getUrl());
+        return StringUtil.equals(url.getPath(), path);
+      }
+      catch (MalformedURLException e) {
+        LOG.warn(CfmlBundle.message("cfml.producer.warn.url"));
+      }
     }
     return false;
   }

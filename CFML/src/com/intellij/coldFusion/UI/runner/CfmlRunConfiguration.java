@@ -22,11 +22,15 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +39,7 @@ import java.net.URL;
  * Created by Lera Nikolaenko
  * Date: 07.04.2009
  */
-public class CfmlRunConfiguration extends RunConfigurationBase {
+public class CfmlRunConfiguration extends RunConfigurationBase implements LocatableConfiguration{
   private CfmlRunnerParameters myRunnerParameters = new CfmlRunnerParameters();
 
   protected CfmlRunConfiguration(Project project, ConfigurationFactory factory, String name) {
@@ -99,5 +103,18 @@ public class CfmlRunConfiguration extends RunConfigurationBase {
 
   public CfmlRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
+  }
+
+
+  @Override
+  public boolean isGeneratedName() {
+    return Comparing.equal(getName(), suggestedName());
+  }
+
+  @Nullable
+  @Override
+  public String suggestedName() {
+    final String path = getRunnerParameters().getUrl();
+    return StringUtil.isNotEmpty(path) ? PathUtil.getFileName(path) : "";
   }
 }
