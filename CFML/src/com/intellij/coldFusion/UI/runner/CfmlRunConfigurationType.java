@@ -18,6 +18,7 @@ package com.intellij.coldFusion.UI.runner;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.FileTypeIndex;
@@ -33,6 +34,7 @@ import javax.swing.*;
  */
 public class CfmlRunConfigurationType implements ConfigurationType {
   private ConfigurationFactory myConfigurationFactory;
+  private CfmlRunConfiguration myTemplateConfiguration;
 
   public CfmlRunConfigurationType() {
     myConfigurationFactory = new ConfigurationFactory(this) {
@@ -41,10 +43,17 @@ public class CfmlRunConfigurationType implements ConfigurationType {
         return FileTypeIndex.containsFileOfType(CfmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
 
-      public RunConfiguration createTemplateConfiguration(Project project) {
-        return new CfmlRunConfiguration(project, this, "Cold Fusion");
+      @NotNull
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+        CfmlRunConfiguration cfmlRunConfiguration = new CfmlRunConfiguration(project, this, "ColdFusion");
+        myTemplateConfiguration = cfmlRunConfiguration;
+        return cfmlRunConfiguration;
       }
     };
+  }
+
+  public CfmlRunConfiguration getTemplateConfiguration() {
+    return myTemplateConfiguration;
   }
 
   public String getDisplayName() {
@@ -59,6 +68,10 @@ public class CfmlRunConfigurationType implements ConfigurationType {
     return CFMLIcons.Cfml;
   }
 
+  public static CfmlRunConfigurationType getInstance() {
+    return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
+  }
+
   @NotNull
   public String getId() {
     return getConfigurationTypeDescription();
@@ -67,4 +80,5 @@ public class CfmlRunConfigurationType implements ConfigurationType {
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myConfigurationFactory};
   }
+
 }

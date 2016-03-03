@@ -23,7 +23,7 @@
       <psi.referenceContributor language="CFML" implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
         <programRunner implementation="com.intellij.coldFusion.UI.runner.CfmlRunner"/>
         <configurationType implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationType"/>
-        <runConfigurationProducer implementation="com.intellij.coldFusion.execution.CfmlRunConfigurationProducer"/>
+        <runConfigurationProducer implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer"/>
 
 
       <localInspection language="CFML" shortName="CfmlReferenceInspection" bundle="messages.CfmlBundle" key="cfml.references.inspection"
