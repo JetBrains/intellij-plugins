@@ -75,7 +75,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
     if (annotationAndExprType == null &&
         type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
-        "addEventListener".equals(((JSFunction)p.getParent().getParent()).getName()) &&
+        isAddEventListenerMethod((JSFunction)p.getParent().getParent()) &&
         (( expr instanceof JSReferenceExpression &&
            (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
          ) ||
@@ -159,6 +159,20 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
         }
       }
     }
+  }
+
+  private static boolean isAddEventListenerMethod(final JSFunction method) {
+    if ("addEventListener".equals(method.getName())) {
+      PsiElement methodParent = method.getParent();
+      if (methodParent instanceof JSClass) {
+        JSClass declaringClass = (JSClass)methodParent;
+        if (JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_IEVENT_DISPATCHER_FQN, declaringClass.getQualifiedName(), method)
+          || ActionScriptClassResolver.isParentClass(declaringClass, FlexCommonTypeNames.STARLING_EVENT_DISPATCHER_FQN, false)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Nullable

@@ -9,6 +9,8 @@ import starling.events.Event;
 import starling.events.ResizeEvent;
 import starling.events.TouchEvent;
 
+import com.acme.MyEventDispatcher;
+
 [Event(type="starling.events.Event")]
 [Event(type="starling.events.TouchEvent")]
 [Event(type="starling.events.<error descr="Expected class flash.events.Event, starling.events.Event or descendant">NotEvent</error>")]
@@ -96,6 +98,8 @@ public class StarlingEvent extends Sprite{
         quad.addEventListener(TouchEvent.TOUCH, function(e:TouchEvent):void{});
         quad.addEventListener(TouchEvent.TOUCH, function(e:starling.events.Event):void{});
         quad.addEventListener(TouchEvent.TOUCH, function(e:starling.events.Event, b:Boolean=true, ...rest):void{});
+
+        new MyEventDispatcher().addEventListener("foo", function(one:String, two:int, three:Boolean):void {});
     }
 }
 }
@@ -107,10 +111,20 @@ package <error>starling.events</error>{
     }
     public class <error><error>ResizeEvent</error></error> extends Event {}
     public class <error><error>NotEvent</error></error> {}
+    public class <error><error>EventDispatcher</error></error> {
+        public function addEventListener(type:String, listener:Function):void{}
+    }
 }
 
 package <error>starling.display</error>{
-    public class <error>Quad</error>{
+    import starling.events.EventDispatcher;
+    public class <error>Quad</error> extends starling.events.EventDispatcher {
+        override public function addEventListener(type:String, listener:Function):void{}
+    }
+}
+
+package <error>com.acme</error>{
+    public class <error>MyEventDispatcher</error> {
         public function addEventListener(type:String, listener:Function):void{}
     }
 }
