@@ -23,7 +23,7 @@ public class HbTokenTypes {
   public static final IElementType PATH = new HbCompositeElementType("PATH");
   public static final IElementType PARAM = new HbCompositeElementType("PARAM");
   public static final IElementType PARTIAL_STACHE = new HbCompositeElementType("PARTIAL_STACHE");
-  public static final IElementType HELPER_NAME = new HbCompositeElementType("HELPER_NAME");
+  public static final IElementType PARTIAL_NAME = new HbCompositeElementType("PARTIAL_NAME");
   public static final IElementType SIMPLE_INVERSE = new HbCompositeElementType("SIMPLE_INVERSE");
   public static final IElementType STATEMENTS = new HbCompositeElementType("STATEMENTS");
 
