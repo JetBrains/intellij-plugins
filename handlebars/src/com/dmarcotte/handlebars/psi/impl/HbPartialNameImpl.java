@@ -1,11 +1,11 @@
 package com.dmarcotte.handlebars.psi.impl;
 
-import com.dmarcotte.handlebars.psi.HbHelperName;
+import com.dmarcotte.handlebars.psi.HbPartialName;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
-public class HbHelperNameImpl extends HbPsiElementImpl implements HbHelperName {
-  public HbHelperNameImpl(@NotNull ASTNode astNode) {
+public class HbPartialNameImpl extends HbPsiElementImpl implements HbPartialName {
+  public HbPartialNameImpl(@NotNull ASTNode astNode) {
     super(astNode);
   }
 

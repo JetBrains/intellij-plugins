@@ -87,8 +87,8 @@ public class HbParseDefinition implements ParserDefinition {
       return new HbPartialImpl(node);
     }
 
-    if (elementType == HbTokenTypes.HELPER_NAME) {
-      return new HbHelperNameImpl(node);
+    if (elementType == HbTokenTypes.PARTIAL_NAME) {
+      return new HbPartialNameImpl(node);
     }
 
     if (elementType == HbTokenTypes.SIMPLE_INVERSE) {
