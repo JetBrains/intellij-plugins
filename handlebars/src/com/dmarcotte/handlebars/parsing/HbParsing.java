@@ -11,13 +11,15 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/2a4819d75cba7513946af5cf28ee22881561814f/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
  * Places where we've gone off book to make the live syntax detection a more pleasant experience are
  * marked HB_CUSTOMIZATION.  If we find bugs, or the grammar is ever updated, these are the first candidates to check.
  */
+@SuppressWarnings("Duplicates") // suppress duplicate detection since we want to maintain the structural parity between
+                                // the code and the jison grammar rules, which can appear to duplicate code
 public class HbParsing {
   private final PsiBuilder builder;
 
@@ -413,37 +415,14 @@ public class HbParsing {
 
   /**
    * partial
-   * : OPEN_PARTIAL partialName param hash? CLOSE
-   * | OPEN_PARTIAL partialName hash? CLOSE
+   * | OPEN_PARTIAL sexpr CLOSE
    * ;
    */
   protected void parsePartial(PsiBuilder builder) {
     PsiBuilder.Marker partialMarker = builder.mark();
-
     parseLeafToken(builder, OPEN_PARTIAL);
-
-    parsePartialName(builder);
-
-    // parse the optional param
-    PsiBuilder.Marker optionalParamMarker = builder.mark();
-    if (parseParam(builder)) {
-      optionalParamMarker.drop();
-    }
-    else {
-      optionalParamMarker.rollbackTo();
-    }
-
-    // parse the optional hash
-    PsiBuilder.Marker optionalHashMarker = builder.mark();
-    if (parseHash(builder)) {
-      optionalHashMarker.drop();
-    }
-    else {
-      optionalHashMarker.rollbackTo();
-    }
-
+    parseSexpr(builder);
     parseLeafTokenGreedy(builder, CLOSE);
-
     partialMarker.done(PARTIAL_STACHE);
   }
 
@@ -494,10 +473,15 @@ public class HbParsing {
 
   /**
    * sexpr
-   * : path params hash
-   * | path params
-   * | path hash
-   * | path
+   * : helperName params* hash?
+   *
+   * or, more explicitly as implemented here:
+   *
+   * sexpr
+   * : helperName params hash
+   * | helperName params
+   * | helperName hash
+   * | helperName
    * | dataName
    * ;
    */
@@ -505,7 +489,7 @@ public class HbParsing {
     PsiBuilder.Marker sexprMarker = builder.mark();
     PsiBuilder.Marker mustacheNameMarker = builder.mark();
 
-    if (!parsePath(builder)) {
+    if (!parseHelperName(builder)) {
       // not a path, try to parse dataName
       if (parseDataName(builder)) {
         mustacheNameMarker.done(MUSTACHE_NAME);
@@ -741,19 +725,19 @@ public class HbParsing {
   }
 
   /**
-   * partialName
+   * helperName
    * : path
    * | STRING
    * | NUMBER
    * ;
    */
-  private boolean parsePartialName(PsiBuilder builder) {
-    PsiBuilder.Marker partialNameMarker = builder.mark();
+  private boolean parseHelperName(PsiBuilder builder) {
+    PsiBuilder.Marker helperNameMarker = builder.mark();
 
     PsiBuilder.Marker pathMarker = builder.mark();
     if (parsePath(builder)) {
       pathMarker.drop();
-      partialNameMarker.done(PARTIAL_NAME);
+      helperNameMarker.done(HELPER_NAME);
       return true;
     }
     else {
@@ -763,7 +747,7 @@ public class HbParsing {
     PsiBuilder.Marker stringMarker = builder.mark();
     if (parseLeafToken(builder, STRING)) {
       stringMarker.drop();
-      partialNameMarker.done(PARTIAL_NAME);
+      helperNameMarker.done(HELPER_NAME);
       return true;
     }
     else {
@@ -773,14 +757,14 @@ public class HbParsing {
     PsiBuilder.Marker integerMarker = builder.mark();
     if (parseLeafToken(builder, NUMBER)) {
       integerMarker.drop();
-      partialNameMarker.done(PARTIAL_NAME);
+      helperNameMarker.done(HELPER_NAME);
       return true;
     }
     else {
       integerMarker.rollbackTo();
     }
 
-    partialNameMarker.error(HbBundle.message("hb.parsing.expected.partial.name"));
+    helperNameMarker.rollbackTo();
     return false;
   }
 
