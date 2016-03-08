@@ -11,7 +11,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/884bf1553663734f22ffcd9d758c9d71d4373bf9/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/39121cf8f50ec02b5a979f4911caefef8030161a/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
@@ -364,7 +364,7 @@ public class HbParsing {
 
   /**
    * closeRawBlock
-   * : END_RAW_BLOCK path CLOSE_RAW_BLOCK
+   * : END_RAW_BLOCK helperName CLOSE_RAW_BLOCK
    * ;
    */
   private boolean parseCloseRawBlock(PsiBuilder builder) {
@@ -375,9 +375,7 @@ public class HbParsing {
       return false;
     }
 
-    PsiBuilder.Marker mustacheNameMark = builder.mark();
-    parsePath(builder);
-    mustacheNameMark.done(MUSTACHE_NAME);
+    parseHelperName(builder);
     parseLeafTokenGreedy(builder, CLOSE_RAW_BLOCK);
     closeRawBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
@@ -385,7 +383,7 @@ public class HbParsing {
 
   /**
    * closeBlock
-   * : OPEN_ENDBLOCK path CLOSE { $$ = $2; }
+   * : OPEN_ENDBLOCK helperName CLOSE { $$ = $2; }
    * ;
    */
   private boolean parseCloseBlock(PsiBuilder builder) {
@@ -396,9 +394,7 @@ public class HbParsing {
       return false;
     }
 
-    PsiBuilder.Marker mustacheNameMark = builder.mark();
-    parsePath(builder);
-    mustacheNameMark.done(MUSTACHE_NAME);
+    parseHelperName(builder);
     parseLeafTokenGreedy(builder, CLOSE);
     closeBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
@@ -589,60 +585,20 @@ public class HbParsing {
 
   /**
    * param
-   * : path
-   * | STRING
-   * | NUMBER
-   * | BOOLEAN
-   * | dataName
+   * : helperName
    * | sexpr
    * ;
    */
   protected boolean parseParam(PsiBuilder builder) {
     PsiBuilder.Marker paramMarker = builder.mark();
 
-    if (parsePath(builder)) {
+    PsiBuilder.Marker helperNameMark = builder.mark();
+    if (parseHelperName(builder)) {
+      helperNameMark.drop();
       paramMarker.done(PARAM);
       return true;
-    }
-
-    PsiBuilder.Marker stringMarker = builder.mark();
-    if (parseLeafToken(builder, STRING)) {
-      stringMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      stringMarker.rollbackTo();
-    }
-
-    PsiBuilder.Marker integerMarker = builder.mark();
-    if (parseLeafToken(builder, NUMBER)) {
-      integerMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      integerMarker.rollbackTo();
-    }
-
-    PsiBuilder.Marker booleanMarker = builder.mark();
-    if (parseLeafToken(builder, BOOLEAN)) {
-      booleanMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      booleanMarker.rollbackTo();
-    }
-
-    PsiBuilder.Marker dataMarker = builder.mark();
-    if (parseDataName(builder)) {
-      dataMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      dataMarker.rollbackTo();
+    } else {
+      helperNameMark.rollbackTo();
     }
 
     PsiBuilder.Marker sexprMarker = builder.mark();
