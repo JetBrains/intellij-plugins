@@ -515,5 +515,8 @@ public class HbTokenizerSpecTest extends HbLexerTest {
 
     result = tokenize("{{#foo as as | bar baz |}}");
     result.shouldMatchTokenTypes(OPEN_BLOCK, ID, WHITE_SPACE, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_BLOCK_PARAMS, CLOSE);
+
+    result = tokenize("{{else foo as |bar baz|}}");
+    result.shouldMatchTokenTypes(OPEN, ELSE, WHITE_SPACE, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, ID, WHITE_SPACE, ID, CLOSE_BLOCK_PARAMS, CLOSE);
   }
 }
