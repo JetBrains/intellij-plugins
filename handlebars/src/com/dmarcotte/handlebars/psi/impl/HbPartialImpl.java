@@ -1,7 +1,7 @@
 package com.dmarcotte.handlebars.psi.impl;
 
+import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.dmarcotte.handlebars.psi.HbPartial;
-import com.dmarcotte.handlebars.psi.HbPartialName;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import icons.HandlebarsIcons;
@@ -18,8 +18,8 @@ public class HbPartialImpl extends HbPlainMustacheImpl implements HbPartial {
   @Override
   public String getName() {
     for (PsiElement childElement : getChildren()) {
-      if (childElement instanceof HbPartialName) {
-        return ((HbPartialName)childElement).getName();
+      if (childElement instanceof HbMustacheName) {
+        return ((HbMustacheName)childElement).getName();
       }
     }
 
