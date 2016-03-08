@@ -11,7 +11,7 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import org.angularjs.codeInsight.router.AngularJSRouterConstants;
+import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
@@ -79,7 +79,7 @@ public class AngularUiRouterViewsIndex extends FileBasedIndexExtension<String, A
           new XmlRecursiveElementWalkingVisitor() {
             @Override
             public void visitXmlAttribute(XmlAttribute attribute) {
-              if (AngularJSRouterConstants.uiView.equals(attribute.getName())) {
+              if (AngularJSUiRouterConstants.uiView.equals(attribute.getName())) {
                 final XmlAttributeValue element = attribute.getValueElement();
                 if (element == null) {
                   map.put("", new AngularViewDefinition("", attribute.getTextRange().getStartOffset()));

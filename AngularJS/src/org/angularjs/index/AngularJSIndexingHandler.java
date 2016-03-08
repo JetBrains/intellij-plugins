@@ -33,7 +33,7 @@ import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.codeInsight.router.AngularJSRouterConstants;
+import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -591,7 +591,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return new PairProcessor<JSProperty, JSElementIndexingData>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
-        if (AngularJSRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
+        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
           final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
           if (!value.isQuotedLiteral()) return false;
           final String unquotedValue = StringUtil.unquoteString(value.getText());
