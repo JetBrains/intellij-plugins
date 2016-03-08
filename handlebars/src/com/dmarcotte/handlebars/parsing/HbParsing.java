@@ -743,6 +743,7 @@ public class HbParsing {
    * | dataName
    * | STRING
    * | NUMBER
+   * | BOOLEAN
    * ;
    */
   private boolean parseHelperName(PsiBuilder builder) {
@@ -786,6 +787,16 @@ public class HbParsing {
     }
     else {
       integerMarker.rollbackTo();
+    }
+
+    PsiBuilder.Marker booleanMarker = builder.mark();
+    if (parseLeafToken(builder, BOOLEAN)) {
+      booleanMarker.drop();
+      helperNameMarker.done(MUSTACHE_NAME);
+      return true;
+    }
+    else {
+      booleanMarker.rollbackTo();
     }
 
     helperNameMarker.error(HbBundle.message("hb.parsing.expected.path.or.data"));
