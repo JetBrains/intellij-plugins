@@ -11,7 +11,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/2a4819d75cba7513946af5cf28ee22881561814f/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/5c921cafebee438fa27d417ae701b24323373a30/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
@@ -799,7 +799,7 @@ public class HbParsing {
 
   /**
    * dataName
-   * : DATA path
+   * : DATA pathSegments
    * ;
    */
   private boolean parseDataName(PsiBuilder builder) {
@@ -813,7 +813,7 @@ public class HbParsing {
     }
 
     PsiBuilder.Marker dataMarker = builder.mark();
-    if (parsePath(builder)) {
+    if (parsePathSegments(builder)) {
       dataMarker.done(DATA);
       return true;
     }
@@ -824,7 +824,7 @@ public class HbParsing {
 
   /**
    * path
-   * : pathSegments { $$ = new yy.IdNode($1); }
+   * : pathSegments
    * ;
    */
   protected boolean parsePath(PsiBuilder builder) {
