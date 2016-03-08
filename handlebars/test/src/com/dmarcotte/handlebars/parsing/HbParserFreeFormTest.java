@@ -95,4 +95,8 @@ public class HbParserFreeFormTest extends HbParserTest {
   public void testDataFunctionsWithParams() {
     doTest(true);
   }
+
+  public void testLiteralHelperName() {
+    doTest(true);
+  }
 }

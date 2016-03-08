@@ -9,9 +9,10 @@ HbFile:NoOpenQuote.hbs
             PsiElement([Hb] ID)('test')
       PsiWhiteSpace(' ')
       HbParamImpl(PARAM)
-        HbPathImpl(PATH)
-          HbPsiElementImpl([Hb] ID)
-            PsiElement([Hb] ID)('what')
+        HbMustacheNameImpl(MUSTACHE_NAME)
+          HbPathImpl(PATH)
+            HbPsiElementImpl([Hb] ID)
+              PsiElement([Hb] ID)('what')
       PsiErrorElement:Expected Close "}}"
         PsiElement([Hb] EQUALS)('=')
         PsiElement([Hb] INVALID)('a')
