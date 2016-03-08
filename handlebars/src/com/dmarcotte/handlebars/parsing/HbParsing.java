@@ -11,7 +11,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/5c921cafebee438fa27d417ae701b24323373a30/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/3238645f260a77b02baa9b686cf7d5de3a7d2694/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
@@ -316,7 +316,7 @@ public class HbParsing {
 
   /**
    * openInverseChain
-   * : OPEN_INVERSE_CHAIN sexpr CLOSE
+   * : OPEN_INVERSE_CHAIN sexpr blockParams? CLOSE
    * ;
    */
   private boolean parseOpenInverseChain(PsiBuilder builder) {
@@ -328,6 +328,14 @@ public class HbParsing {
     }
 
     if (parseSexpr(builder)) {
+      PsiBuilder.Marker optionalBlockParamsMarker = builder.mark();
+      if (parseBlockParams(builder)) {
+        optionalBlockParamsMarker.drop();
+      }
+      else {
+        optionalBlockParamsMarker.rollbackTo();
+      }
+
       parseLeafTokenGreedy(builder, CLOSE);
     }
 
