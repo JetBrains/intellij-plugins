@@ -5,7 +5,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 /**
  * Java representation of the validations in the spec/tokenizer.js revision which corresponds
  * to the revision of handlesbars.l that our lexer is based on
- * (https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/spec/tokenizer.js)
+ * (https://github.com/wycats/handlebars.js/blob/408192ba9f262bb82be88091ab3ec3c16dc02c6d/spec/tokenizer.js)
  * <p/>
  * All the tests should be nearly identical except that we generate whitespace tokens to give IDEA a better picture
  * of the text, vs. the actual Handlebars lexer which can just toss whitespace out
@@ -265,6 +265,14 @@ public class HbTokenizerSpecTest extends HbLexerTest {
   }
 
   /**
+   * tokenizes partial block declarations
+   */
+  public void testTokenizePartialBlockDeclarations() {
+    TokenizerResult result = tokenize("{{#> foo}}");
+    result.shouldMatchTokenTypes(OPEN_PARTIAL_BLOCK, WHITE_SPACE, ID, CLOSE);
+  }
+
+  /**
    * tokenizes a comment as 'COMMENT'
    */
   public void testTokenizeComment() {
@@ -518,5 +526,15 @@ public class HbTokenizerSpecTest extends HbLexerTest {
 
     result = tokenize("{{else foo as |bar baz|}}");
     result.shouldMatchTokenTypes(OPEN, ELSE, WHITE_SPACE, ID, WHITE_SPACE, OPEN_BLOCK_PARAMS, ID, WHITE_SPACE, ID, CLOSE_BLOCK_PARAMS, CLOSE);
+  }
+
+  /**
+   * tokenizes directives
+   */
+  public void testTokenizeDirectives() {
+    TokenizerResult result = tokenize("{{#*foo}}content{{/foo}}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, ID, CLOSE, CONTENT, OPEN_ENDBLOCK, ID, CLOSE);
+    result = tokenize("{{*foo}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE);
   }
 }

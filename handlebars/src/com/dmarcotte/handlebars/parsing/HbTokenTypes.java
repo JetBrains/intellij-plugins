@@ -16,6 +16,7 @@ public class HbTokenTypes {
   public static final IElementType BLOCK_WRAPPER = new HbCompositeElementType("BLOCK_WRAPPER");
     // used to delineate blocks in the PSI tree. The formatter requires this extra structure.
   public static final IElementType OPEN_BLOCK_STACHE = new HbCompositeElementType("OPEN_BLOCK_STACHE");
+  public static final IElementType OPEN_PARTIAL_BLOCK_STACHE = new HbCompositeElementType("OPEN_PARTIAL_BLOCK_STACHE");
   public static final IElementType OPEN_INVERSE_BLOCK_STACHE = new HbCompositeElementType("OPEN_INVERSE_BLOCK_STACHE");
   public static final IElementType CLOSE_BLOCK_STACHE = new HbCompositeElementType("CLOSE_BLOCK_STACHE");
   public static final IElementType MUSTACHE = new HbCompositeElementType("MUSTACHE");
@@ -40,6 +41,7 @@ public class HbTokenTypes {
   public static final IElementType OPEN = new HbElementType("OPEN", "hb.parsing.element.expected.open");
   public static final IElementType OPEN_BLOCK = new HbElementType("OPEN_BLOCK", "hb.parsing.element.expected.open_block");
   public static final IElementType OPEN_PARTIAL = new HbElementType("OPEN_PARTIAL", "hb.parsing.element.expected.open_partial");
+  public static final IElementType OPEN_PARTIAL_BLOCK = new HbElementType("OPEN_PARTIAL_BLOCK", "hb.parsing.element.expected.open_partial_block");
   public static final IElementType OPEN_ENDBLOCK = new HbElementType("OPEN_ENDBLOCK", "hb.parsing.element.expected.open_end_block");
   public static final IElementType OPEN_INVERSE = new HbElementType("OPEN_INVERSE", "hb.parsing.element.expected.open_inverse");
   public static final IElementType OPEN_INVERSE_CHAIN = new HbElementType("OPEN_INVERSE_CHAIN", "hb.parsing.element.expected.open_inverse_chain");
