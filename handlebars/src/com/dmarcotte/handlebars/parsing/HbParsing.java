@@ -11,7 +11,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/39121cf8f50ec02b5a979f4911caefef8030161a/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/408192ba9f262bb82be88091ab3ec3c16dc02c6d/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
@@ -119,6 +119,7 @@ public class HbParsing {
    * mustache if we parse this first)
    * | rawBlock
    * | partial
+   * | partialBlock
    * | ESCAPE_CHAR (HB_CUSTOMIZATION the official Handlebars lexer just throws out the escape char;
    * it's convenient for us to keep it so that we can highlight it)
    * | CONTENT
@@ -130,7 +131,7 @@ public class HbParsing {
 
     /**
      * block
-     * : openBlock program inverseAndChain? closeBlock
+     * : openBlock program inverseChain? closeBlock
      * | openInverse program inverseAndProgram? closeBlock
      */
     {
@@ -157,9 +158,18 @@ public class HbParsing {
 
       if (tokenType == OPEN_BLOCK) {
         PsiBuilder.Marker blockMarker = builder.mark();
+
+        // this is a fairly lo-fi way to detect this, but it's how it's done in handlebars.js (https://github.com/wycats/handlebars.js/commit/408192ba9f262bb82be88091ab3ec3c16dc02c6d#diff-e85944a1a496f573d1227511819c9e23R128)
+        // so we avoid unneeded complexity by directly porting it
+        boolean hasDecorator = (builder.getTokenText() != null && builder.getTokenText().equals("{{#*"));
         if (parseOpenBlock(builder)) {
           parseProgram(builder);
-          parseInverseChain(builder);
+          PsiBuilder.Marker inverseMarker = builder.mark();
+          if (parseInverseChain(builder) && hasDecorator) {
+            inverseMarker.error(HbBundle.message("hb.parsing.unexpected.decorator.inverse"));
+          } else {
+            inverseMarker.drop();
+          }
           parseCloseBlock(builder);
           blockMarker.done(BLOCK_WRAPPER);
         }
@@ -220,6 +230,24 @@ public class HbParsing {
       return true;
     }
 
+    /**
+     * partialBlock
+     +  : openPartialBlock program closeBlock
+     */
+    if (tokenType == OPEN_PARTIAL_BLOCK) {
+      PsiBuilder.Marker blockMarker = builder.mark();
+      if (parseOpenPartialBlock(builder)) {
+        parseProgram(builder);
+        parseCloseBlock(builder);
+        blockMarker.done(BLOCK_WRAPPER);
+      }
+      else {
+        return false;
+      }
+
+      return true;
+    }
+
     if (tokenType == ESCAPE_CHAR) {
       builder.advanceLexer(); // ignore the escape character
       return true;
@@ -251,13 +279,15 @@ public class HbParsing {
    * : openInverseChain program inverseChain?
    * | inverseAndProgram
    */
-  private void parseInverseChain(PsiBuilder builder) {
-    if (!parseInverseAndProgram(builder)) {
-      if (parseOpenInverseChain(builder)) {
-        parseProgram(builder);
-        parseInverseChain(builder);
-      }
+  private boolean parseInverseChain(PsiBuilder builder) {
+    if (parseInverseAndProgram(builder)) {
+      return true;
+    } else if (parseOpenInverseChain(builder)) {
+      parseProgram(builder);
+      parseInverseChain(builder);
+      return true;
     }
+    return false;
   }
 
   /**
@@ -291,6 +321,27 @@ public class HbParsing {
     }
 
     openRawBlockStacheMarker.done(OPEN_BLOCK_STACHE);
+    return true;
+  }
+
+  /**
+   * openPartialBlock
+   *  : OPEN_PARTIAL_BLOCK partialName param* hash? CLOSE
+   */
+  private boolean parseOpenPartialBlock(PsiBuilder builder) {
+    PsiBuilder.Marker openPartialBlockStacheMarker = builder.mark();
+    if (!parseLeafToken(builder, OPEN_PARTIAL_BLOCK)) {
+      openPartialBlockStacheMarker.rollbackTo();
+      return false;
+    }
+
+    if (parsePartialName(builder)) {
+      parseParamsStartHashQuestion(builder);
+    }
+
+    parseLeafTokenGreedy(builder, CLOSE);
+
+    openPartialBlockStacheMarker.done(OPEN_PARTIAL_BLOCK_STACHE);
     return true;
   }
 
