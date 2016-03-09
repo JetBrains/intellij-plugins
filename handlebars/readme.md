@@ -2,7 +2,7 @@
 
 IDEA-Handlebars adds support for [Handlebars](http://handlebarsjs.com/) and [Mustache](http://mustache.github.com/) templates to IDEs based on the Intellij IDEA platform (IntelliJ IDEA, IDEA Community Edition, RubyMine, PhpStorm, WebStorm, PyCharm, AppCode).
 
-![Handlebars/Mustache editing screenshot](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/editor.png "Handlebars/Mustache editing")
+![Handlebars/Mustache editing screenshot](https://raw.github.com/JetBrains/intellij-plugins/master/handlebars/markdown_images/editor.png "Handlebars/Mustache editing")
 
 [Jetbrains plugin repository page](http://plugins.intellij.net/plugin/?idea&pluginId=6884)
 

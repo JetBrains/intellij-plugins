@@ -66,13 +66,14 @@ public class DartRunner extends DefaultProgramRunner {
         final String dasExecutionContextId;
 
         final RunProfile runConfig = env.getRunProfile();
-        if (runConfig instanceof DartRunConfigurationBase) {
+        if (runConfig instanceof DartRunConfigurationBase &&
+            DartAnalysisServerService.getInstance().serverReadyForRequest(env.getProject())) {
           final String path = ((DartRunConfigurationBase)runConfig).getRunnerParameters().getFilePath();
           assert path != null; // already checked
           dasExecutionContextId = DartAnalysisServerService.getInstance().execution_createContext(path);
         }
         else {
-          dasExecutionContextId = null; // remote debug
+          dasExecutionContextId = null; // remote debug or can't start DAS
         }
 
         return doExecuteDartDebug(state, env, dasExecutionContextId);
@@ -144,7 +145,7 @@ public class DartRunner extends DefaultProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
+        final DartUrlResolver dartUrlResolver = getDartUrlResolver(env, contextFileOrDir);
         return StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0
                ? new DartCommandLineDebugProcess(session, debuggingHost, debuggingPort, observatoryPort, executionResult, dartUrlResolver)
                : new DartVmServiceDebugProcess(session,
@@ -158,5 +159,9 @@ public class DartRunner extends DefaultProgramRunner {
     });
 
     return debugSession.getRunContentDescriptor();
+  }
+
+  protected DartUrlResolver getDartUrlResolver(@NotNull ExecutionEnvironment env, @NotNull VirtualFile contextFileOrDir) {
+    return DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
   }
 }

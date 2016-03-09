@@ -26,7 +26,7 @@ public class MarkdownLinkDefinitionImpl extends ASTWrapperPsiElement implements 
     }
     return label;
   }
-  
+
   @NotNull
   public PsiElement getLinkDestination() {
     final PsiElement destination = findChildByType(MarkdownElementTypes.LINK_DESTINATION);
@@ -35,12 +35,12 @@ public class MarkdownLinkDefinitionImpl extends ASTWrapperPsiElement implements 
     }
     return destination;
   }
-  
+
   @Nullable
   public PsiElement getLinkTitle() {
     return findChildByType(MarkdownElementTypes.LINK_TITLE);
   }
-  
+
   @Override
   public ItemPresentation getPresentation() {
     return new MarkdownBasePresentation() {
@@ -50,7 +50,7 @@ public class MarkdownLinkDefinitionImpl extends ASTWrapperPsiElement implements 
         if (!isValid()) {
           return null;
         }
-        
+
         return "Def: " + getLinkLabel().getText() + " → " + getLinkDestination().getText();
       }
 
@@ -60,7 +60,7 @@ public class MarkdownLinkDefinitionImpl extends ASTWrapperPsiElement implements 
         if (!isValid()) {
           return null;
         }
-        
+
         final PsiElement linkTitle = getLinkTitle();
         if (linkTitle == null) {
           return null;

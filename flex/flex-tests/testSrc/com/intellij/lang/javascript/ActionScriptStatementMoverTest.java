@@ -1,12 +1,24 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 
 import java.util.concurrent.Callable;
 
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+
 public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
+  @Override
+  protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
+  }
+
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("statementMover/");

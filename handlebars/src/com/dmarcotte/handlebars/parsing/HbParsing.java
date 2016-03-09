@@ -11,13 +11,15 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
  * The parser is based directly on Handlebars.yy
- * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/src/handlebars.yy)
+ * (taken from the following revision: https://github.com/wycats/handlebars.js/blob/408192ba9f262bb82be88091ab3ec3c16dc02c6d/src/handlebars.yy)
  * <p/>
  * Methods mapping to expression in the grammar are commented with the part of the grammar they map to.
  * <p/>
  * Places where we've gone off book to make the live syntax detection a more pleasant experience are
  * marked HB_CUSTOMIZATION.  If we find bugs, or the grammar is ever updated, these are the first candidates to check.
  */
+@SuppressWarnings("Duplicates") // suppress duplicate detection since we want to maintain the structural parity between
+                                // the code and the jison grammar rules, which can appear to duplicate code
 public class HbParsing {
   private final PsiBuilder builder;
 
@@ -117,6 +119,7 @@ public class HbParsing {
    * mustache if we parse this first)
    * | rawBlock
    * | partial
+   * | partialBlock
    * | ESCAPE_CHAR (HB_CUSTOMIZATION the official Handlebars lexer just throws out the escape char;
    * it's convenient for us to keep it so that we can highlight it)
    * | CONTENT
@@ -128,7 +131,7 @@ public class HbParsing {
 
     /**
      * block
-     * : openBlock program inverseAndChain? closeBlock
+     * : openBlock program inverseChain? closeBlock
      * | openInverse program inverseAndProgram? closeBlock
      */
     {
@@ -155,9 +158,18 @@ public class HbParsing {
 
       if (tokenType == OPEN_BLOCK) {
         PsiBuilder.Marker blockMarker = builder.mark();
+
+        // this is a fairly lo-fi way to detect this, but it's how it's done in handlebars.js (https://github.com/wycats/handlebars.js/commit/408192ba9f262bb82be88091ab3ec3c16dc02c6d#diff-e85944a1a496f573d1227511819c9e23R128)
+        // so we avoid unneeded complexity by directly porting it
+        boolean hasDecorator = (builder.getTokenText() != null && builder.getTokenText().equals("{{#*"));
         if (parseOpenBlock(builder)) {
           parseProgram(builder);
-          parseInverseChain(builder);
+          PsiBuilder.Marker inverseMarker = builder.mark();
+          if (parseInverseChain(builder) && hasDecorator) {
+            inverseMarker.error(HbBundle.message("hb.parsing.unexpected.decorator.inverse"));
+          } else {
+            inverseMarker.drop();
+          }
           parseCloseBlock(builder);
           blockMarker.done(BLOCK_WRAPPER);
         }
@@ -218,6 +230,24 @@ public class HbParsing {
       return true;
     }
 
+    /**
+     * partialBlock
+     +  : openPartialBlock program closeBlock
+     */
+    if (tokenType == OPEN_PARTIAL_BLOCK) {
+      PsiBuilder.Marker blockMarker = builder.mark();
+      if (parseOpenPartialBlock(builder)) {
+        parseProgram(builder);
+        parseCloseBlock(builder);
+        blockMarker.done(BLOCK_WRAPPER);
+      }
+      else {
+        return false;
+      }
+
+      return true;
+    }
+
     if (tokenType == ESCAPE_CHAR) {
       builder.advanceLexer(); // ignore the escape character
       return true;
@@ -249,13 +279,15 @@ public class HbParsing {
    * : openInverseChain program inverseChain?
    * | inverseAndProgram
    */
-  private void parseInverseChain(PsiBuilder builder) {
-    if (!parseInverseAndProgram(builder)) {
-      if (parseOpenInverseChain(builder)) {
-        parseProgram(builder);
-        parseInverseChain(builder);
-      }
+  private boolean parseInverseChain(PsiBuilder builder) {
+    if (parseInverseAndProgram(builder)) {
+      return true;
+    } else if (parseOpenInverseChain(builder)) {
+      parseProgram(builder);
+      parseInverseChain(builder);
+      return true;
     }
+    return false;
   }
 
   /**
@@ -274,7 +306,7 @@ public class HbParsing {
 
   /**
    * openRawBlock
-   * : OPEN_RAW_BLOCK sexpr CLOSE_RAW_BLOCK
+   * : OPEN_RAW_BLOCK helperName param* hash? CLOSE_RAW_BLOCK
    */
   private boolean parseOpenRawBlock(PsiBuilder builder) {
     PsiBuilder.Marker openRawBlockStacheMarker = builder.mark();
@@ -283,7 +315,8 @@ public class HbParsing {
       return false;
     }
 
-    if (parseSexpr(builder)) {
+    if (parseHelperName(builder)) {
+      parseParamsStartHashQuestion(builder);
       parseLeafTokenGreedy(builder, CLOSE_RAW_BLOCK);
     }
 
@@ -292,8 +325,29 @@ public class HbParsing {
   }
 
   /**
+   * openPartialBlock
+   *  : OPEN_PARTIAL_BLOCK partialName param* hash? CLOSE
+   */
+  private boolean parseOpenPartialBlock(PsiBuilder builder) {
+    PsiBuilder.Marker openPartialBlockStacheMarker = builder.mark();
+    if (!parseLeafToken(builder, OPEN_PARTIAL_BLOCK)) {
+      openPartialBlockStacheMarker.rollbackTo();
+      return false;
+    }
+
+    if (parsePartialName(builder)) {
+      parseParamsStartHashQuestion(builder);
+    }
+
+    parseLeafTokenGreedy(builder, CLOSE);
+
+    openPartialBlockStacheMarker.done(OPEN_PARTIAL_BLOCK_STACHE);
+    return true;
+  }
+
+  /**
    * openBlock
-   * : OPEN_BLOCK sexpr blockParams? CLOSE { $$ = new yy.MustacheNode($2[0], $2[1]); }
+   * : OPEN_BLOCK helperName param* hash? blockParams? CLOSE { $$ = new yy.MustacheNode($2[0], $2[1]); }
    * ;
    */
   private boolean parseOpenBlock(PsiBuilder builder) {
@@ -303,7 +357,8 @@ public class HbParsing {
       return false;
     }
 
-    if (parseSexpr(builder)) {
+    if(parseHelperName(builder)) {
+      parseParamsStartHashQuestion(builder);
       parseBlockParams(builder);
       parseLeafTokenGreedy(builder, CLOSE);
     }
@@ -314,7 +369,7 @@ public class HbParsing {
 
   /**
    * openInverseChain
-   * : OPEN_INVERSE_CHAIN sexpr CLOSE
+   * : OPEN_INVERSE_CHAIN helperName param* hash? blockParams? CLOSE
    * ;
    */
   private boolean parseOpenInverseChain(PsiBuilder builder) {
@@ -325,7 +380,9 @@ public class HbParsing {
       return false;
     }
 
-    if (parseSexpr(builder)) {
+    if (parseHelperName(builder)) {
+      parseParamsStartHashQuestion(builder);
+      parseBlockParams(builder);
       parseLeafTokenGreedy(builder, CLOSE);
     }
 
@@ -336,7 +393,7 @@ public class HbParsing {
 
   /**
    * openInverse
-   * : OPEN_INVERSE sexpr blockParams? CLOSE
+   * : OPEN_INVERSE helperName param* hash? blockParams? CLOSE
    * ;
    */
   private boolean parseOpenInverse(PsiBuilder builder) {
@@ -346,7 +403,8 @@ public class HbParsing {
       return false;
     }
 
-    if (parseSexpr(builder)) {
+    if (parseHelperName(builder)) {
+      parseParamsStartHashQuestion(builder);
       parseBlockParams(builder);
       parseLeafTokenGreedy(builder, CLOSE);
     }
@@ -357,7 +415,7 @@ public class HbParsing {
 
   /**
    * closeRawBlock
-   * : END_RAW_BLOCK path CLOSE_RAW_BLOCK
+   * : END_RAW_BLOCK helperName CLOSE_RAW_BLOCK
    * ;
    */
   private boolean parseCloseRawBlock(PsiBuilder builder) {
@@ -368,9 +426,7 @@ public class HbParsing {
       return false;
     }
 
-    PsiBuilder.Marker mustacheNameMark = builder.mark();
-    parsePath(builder);
-    mustacheNameMark.done(MUSTACHE_NAME);
+    parseHelperName(builder);
     parseLeafTokenGreedy(builder, CLOSE_RAW_BLOCK);
     closeRawBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
@@ -378,7 +434,7 @@ public class HbParsing {
 
   /**
    * closeBlock
-   * : OPEN_ENDBLOCK path CLOSE { $$ = $2; }
+   * : OPEN_ENDBLOCK helperName CLOSE { $$ = $2; }
    * ;
    */
   private boolean parseCloseBlock(PsiBuilder builder) {
@@ -389,9 +445,7 @@ public class HbParsing {
       return false;
     }
 
-    PsiBuilder.Marker mustacheNameMark = builder.mark();
-    parsePath(builder);
-    mustacheNameMark.done(MUSTACHE_NAME);
+    parseHelperName(builder);
     parseLeafTokenGreedy(builder, CLOSE);
     closeBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
@@ -399,52 +453,49 @@ public class HbParsing {
 
   /**
    * mustache
-   * : OPEN sexpr CLOSE
-   * | OPEN_UNESCAPED sexpr CLOSE_UNESCAPED
+   * : OPEN helperName param* hash? CLOSE
+   * | OPEN_UNESCAPED helperName param* hash? CLOSE_UNESCAPED
    * ;
    */
   protected void parseMustache(PsiBuilder builder, IElementType openStache, IElementType closeStache) {
     PsiBuilder.Marker mustacheMarker = builder.mark();
     parseLeafToken(builder, openStache);
-    parseSexpr(builder);
+    if (parseHelperName(builder)) {
+      parseParamsStartHashQuestion(builder);
+    }
     parseLeafTokenGreedy(builder, closeStache);
     mustacheMarker.done(MUSTACHE);
   }
 
   /**
    * partial
-   * : OPEN_PARTIAL partialName param hash? CLOSE
-   * | OPEN_PARTIAL partialName hash? CLOSE
+   * : OPEN_PARTIAL partialName param* hash? CLOSE
    * ;
    */
   protected void parsePartial(PsiBuilder builder) {
     PsiBuilder.Marker partialMarker = builder.mark();
-
     parseLeafToken(builder, OPEN_PARTIAL);
-
-    parsePartialName(builder);
-
-    // parse the optional param
-    PsiBuilder.Marker optionalParamMarker = builder.mark();
-    if (parseParam(builder)) {
-      optionalParamMarker.drop();
+    if (parsePartialName(builder)) {
+      parseParamsStartHashQuestion(builder);
     }
-    else {
-      optionalParamMarker.rollbackTo();
-    }
-
-    // parse the optional hash
-    PsiBuilder.Marker optionalHashMarker = builder.mark();
-    if (parseHash(builder)) {
-      optionalHashMarker.drop();
-    }
-    else {
-      optionalHashMarker.rollbackTo();
-    }
-
     parseLeafTokenGreedy(builder, CLOSE);
-
     partialMarker.done(PARTIAL_STACHE);
+  }
+
+  /**
+   * partialName
+   * : helperName
+   * | sexpr
+   */
+  private boolean parsePartialName(PsiBuilder builder) {
+    PsiBuilder.Marker partialNameMark = builder.mark();
+    if (parseHelperName(builder) || parseSexpr(builder)) {
+      partialNameMark.done(PARTIAL_NAME);
+      return true;
+    }
+
+    partialNameMark.error(HbBundle.message("hb.parsing.expected.partial.name"));
+    return false;
   }
 
   /**
@@ -494,32 +545,28 @@ public class HbParsing {
 
   /**
    * sexpr
-   * : path params hash
-   * | path params
-   * | path hash
-   * | path
-   * | dataName
-   * ;
+   * : OPEN_SEXPR helperName param* hash? CLOSE_SEXPR
    */
   protected boolean parseSexpr(PsiBuilder builder) {
     PsiBuilder.Marker sexprMarker = builder.mark();
-    PsiBuilder.Marker mustacheNameMarker = builder.mark();
 
-    if (!parsePath(builder)) {
-      // not a path, try to parse dataName
-      if (parseDataName(builder)) {
-        mustacheNameMarker.done(MUSTACHE_NAME);
-        sexprMarker.drop();
-        return true;
-      }
-      else {
-        mustacheNameMarker.drop();
-        sexprMarker.error(HbBundle.message("hb.parsing.expected.path.or.data"));
-        return false;
-      }
+    if (parseLeafToken(builder, OPEN_SEXPR)) {
+      parseParamsStartHashQuestion(builder);
+      parseLeafTokenGreedy(builder, CLOSE_SEXPR);
+      sexprMarker.drop();
+      return true;
     }
 
-    mustacheNameMarker.done(MUSTACHE_NAME);
+    sexprMarker.rollbackTo();
+    return false;
+  }
+
+  /**
+   * Helper for the common `param* hash?` expression in the grammar.
+   * ;
+   */
+  private void parseParamsStartHashQuestion(PsiBuilder builder) {
+    PsiBuilder.Marker helpParamHashMarker = builder.mark();
 
     // try to extend the 'path' we found to 'path hash'
     PsiBuilder.Marker hashMarker = builder.mark();
@@ -538,7 +585,7 @@ public class HbParsing {
         }
         else {
           if (hashStartPos < builder.getCurrentOffset()) {
-                        /* HB_CUSTOMIZATION */
+            /* HB_CUSTOMIZATION */
             // managed to partially parse the hash.  Don't rollback so that
             // we can keep the errors
             paramsHashMarker.drop();
@@ -554,8 +601,7 @@ public class HbParsing {
       }
     }
 
-    sexprMarker.drop();
-    return true;
+    helpParamHashMarker.drop();
   }
 
   /**
@@ -590,66 +636,24 @@ public class HbParsing {
 
   /**
    * param
-   * : path
-   * | STRING
-   * | NUMBER
-   * | BOOLEAN
-   * | dataName
-   * | OPEN_SEXPR sexpr CLOSE_SEXPR
+   * : helperName
+   * | sexpr
    * ;
    */
   protected boolean parseParam(PsiBuilder builder) {
     PsiBuilder.Marker paramMarker = builder.mark();
 
-    if (parsePath(builder)) {
+    PsiBuilder.Marker helperNameMark = builder.mark();
+    if (parseHelperName(builder)) {
+      helperNameMark.drop();
       paramMarker.done(PARAM);
       return true;
-    }
-
-    PsiBuilder.Marker stringMarker = builder.mark();
-    if (parseLeafToken(builder, STRING)) {
-      stringMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      stringMarker.rollbackTo();
-    }
-
-    PsiBuilder.Marker integerMarker = builder.mark();
-    if (parseLeafToken(builder, NUMBER)) {
-      integerMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      integerMarker.rollbackTo();
-    }
-
-    PsiBuilder.Marker booleanMarker = builder.mark();
-    if (parseLeafToken(builder, BOOLEAN)) {
-      booleanMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      booleanMarker.rollbackTo();
-    }
-
-    PsiBuilder.Marker dataMarker = builder.mark();
-    if (parseDataName(builder)) {
-      dataMarker.drop();
-      paramMarker.done(PARAM);
-      return true;
-    }
-    else {
-      dataMarker.rollbackTo();
+    } else {
+      helperNameMark.rollbackTo();
     }
 
     PsiBuilder.Marker sexprMarker = builder.mark();
-    if (parseLeafToken(builder, OPEN_SEXPR)) {
-      parseSexpr(builder);
-      parseLeafTokenGreedy(builder, CLOSE_SEXPR);
+    if (parseSexpr(builder)) {
       sexprMarker.drop();
       paramMarker.done(PARAM);
       return true;
@@ -741,29 +745,41 @@ public class HbParsing {
   }
 
   /**
-   * partialName
+   * helperName
    * : path
+   * | dataName
    * | STRING
    * | NUMBER
+   * | BOOLEAN
    * ;
    */
-  private boolean parsePartialName(PsiBuilder builder) {
-    PsiBuilder.Marker partialNameMarker = builder.mark();
+  private boolean parseHelperName(PsiBuilder builder) {
+    PsiBuilder.Marker helperNameMarker = builder.mark();
 
     PsiBuilder.Marker pathMarker = builder.mark();
     if (parsePath(builder)) {
       pathMarker.drop();
-      partialNameMarker.done(PARTIAL_NAME);
+      helperNameMarker.done(MUSTACHE_NAME);
       return true;
     }
     else {
       pathMarker.rollbackTo();
     }
 
+    PsiBuilder.Marker dataNameMarker = builder.mark();
+    if (parseDataName(builder)) {
+      dataNameMarker.drop();
+      helperNameMarker.done(MUSTACHE_NAME);
+      return true;
+    }
+    else {
+      dataNameMarker.rollbackTo();
+    }
+
     PsiBuilder.Marker stringMarker = builder.mark();
     if (parseLeafToken(builder, STRING)) {
       stringMarker.drop();
-      partialNameMarker.done(PARTIAL_NAME);
+      helperNameMarker.done(MUSTACHE_NAME);
       return true;
     }
     else {
@@ -773,14 +789,24 @@ public class HbParsing {
     PsiBuilder.Marker integerMarker = builder.mark();
     if (parseLeafToken(builder, NUMBER)) {
       integerMarker.drop();
-      partialNameMarker.done(PARTIAL_NAME);
+      helperNameMarker.done(MUSTACHE_NAME);
       return true;
     }
     else {
       integerMarker.rollbackTo();
     }
 
-    partialNameMarker.error(HbBundle.message("hb.parsing.expected.partial.name"));
+    PsiBuilder.Marker booleanMarker = builder.mark();
+    if (parseLeafToken(builder, BOOLEAN)) {
+      booleanMarker.drop();
+      helperNameMarker.done(MUSTACHE_NAME);
+      return true;
+    }
+    else {
+      booleanMarker.rollbackTo();
+    }
+
+    helperNameMarker.error(HbBundle.message("hb.parsing.expected.path.or.data"));
     return false;
   }
 
@@ -815,7 +841,7 @@ public class HbParsing {
 
   /**
    * dataName
-   * : DATA path
+   * : DATA pathSegments
    * ;
    */
   private boolean parseDataName(PsiBuilder builder) {
@@ -829,7 +855,7 @@ public class HbParsing {
     }
 
     PsiBuilder.Marker dataMarker = builder.mark();
-    if (parsePath(builder)) {
+    if (parsePathSegments(builder)) {
       dataMarker.done(DATA);
       return true;
     }
@@ -840,7 +866,7 @@ public class HbParsing {
 
   /**
    * path
-   * : pathSegments { $$ = new yy.IdNode($1); }
+   * : pathSegments
    * ;
    */
   protected boolean parsePath(PsiBuilder builder) {

@@ -1,5 +1,6 @@
 package com.dmarcotte.handlebars.parsing;
 
+import com.dmarcotte.handlebars.psi.HbOpenPartialBlockMustacheImpl;
 import com.dmarcotte.handlebars.psi.HbPsiFile;
 import com.dmarcotte.handlebars.psi.impl.*;
 import com.intellij.lang.ASTNode;
@@ -57,6 +58,10 @@ public class HbParseDefinition implements ParserDefinition {
 
     if (elementType == HbTokenTypes.OPEN_INVERSE_BLOCK_STACHE) {
       return new HbOpenInverseBlockMustacheImpl(node);
+    }
+
+    if (elementType == HbTokenTypes.OPEN_PARTIAL_BLOCK_STACHE) {
+      return new HbOpenPartialBlockMustacheImpl(node);
     }
 
     if (elementType == HbTokenTypes.CLOSE_BLOCK_STACHE) {

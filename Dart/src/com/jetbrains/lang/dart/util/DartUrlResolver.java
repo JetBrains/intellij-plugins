@@ -63,20 +63,38 @@ public abstract class DartUrlResolver {
   @Nullable
   public static VirtualFile findFileInDartSdkLibFolder(final @NotNull Project project,
                                                        final @Nullable DartSdk dartSdk,
-                                                       final @Nullable String dartUrl) {
-    if (dartSdk == null || dartUrl == null || !dartUrl.startsWith(DART_PREFIX)) return null;
+                                                       final @Nullable String dartUri) {
+    if (dartSdk == null || dartUri == null || !dartUri.startsWith(DART_PREFIX)) return null;
 
-    final VirtualFile sdkLibByUri = DartLibraryIndex.getSdkLibByUri(project, dartUrl);
+    final int firstSlashIndex = dartUri.indexOf('/');
 
-    if (sdkLibByUri != null) {
-      return sdkLibByUri;
+    if (firstSlashIndex < 0) {
+      // This is a main library file from SDK. For example "dart:html" URI maps to SDK/lib/html/dartium/html_dartium.dart file (according to info from SDK/lib/_internal/libraries.dart file)
+      return DartLibraryIndex.getSdkLibByUri(project, dartUri);
     }
 
-    final String sdkLibRelPath = dartUrl.substring(DART_PREFIX.length());
+    // URI contains slash that means that this is a 'part'-file, for example "dart:_internal/symbol.dart".
+    // First search for main library file ("dart:_internal" maps to SDK/lib/internal/internal.dart) and then look for its part near it.
+    final String mainLibUri = dartUri.substring(0, firstSlashIndex);
+    final VirtualFile mainLibFile = DartLibraryIndex.getSdkLibByUri(project, mainLibUri);
+    if (mainLibFile != null) {
+      final String partRelPath = dartUri.substring(firstSlashIndex + 1);
+      final VirtualFile partFile = mainLibFile.getParent().findFileByRelativePath(partRelPath);
+      if (partFile != null) {
+        return partFile;
+      }
+    }
+
+    // Finally look for file in SDK by its relative path
+    final String sdkLibRelPath = dartUri.substring(DART_PREFIX.length());
     final String path = dartSdk.getHomePath() + "/lib/" + sdkLibRelPath;
     return LocalFileSystem.getInstance().findFileByPath(path);
   }
 
   @NotNull
   public abstract String getDartUrlForFile(final @NotNull VirtualFile file);
+
+  public boolean mayNeedDynamicUpdate() {
+    return true;
+  }
 }

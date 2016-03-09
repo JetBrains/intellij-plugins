@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -17,6 +18,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.ModuleTestCase;
 import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
@@ -28,6 +30,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+
 /**
  * User: ksafonov
  */
@@ -37,6 +42,13 @@ public class FlexProjectConfigTest extends ModuleTestCase {
   protected void tearDown() throws Exception {
     Disposer.dispose(myTestRootDisposable);
     super.tearDown();
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
   }
 
   @Override

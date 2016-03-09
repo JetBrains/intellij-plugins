@@ -58,11 +58,11 @@ public interface MarkdownElementTypes {
   IElementType FULL_REFERENCE_LINK = platformType(org.intellij.markdown.MarkdownElementTypes.FULL_REFERENCE_LINK);
   IElementType SHORT_REFERENCE_LINK = platformType(org.intellij.markdown.MarkdownElementTypes.SHORT_REFERENCE_LINK);
   IElementType IMAGE = platformType(org.intellij.markdown.MarkdownElementTypes.IMAGE);
-  
+
   IElementType HTML_BLOCK = platformType(org.intellij.markdown.MarkdownElementTypes.HTML_BLOCK);
 
   IElementType AUTOLINK = platformType(org.intellij.markdown.MarkdownElementTypes.AUTOLINK);
-  
+
   IElementType TABLE = platformType(GFMElementTypes.TABLE);
   IElementType TABLE_ROW = platformType(GFMElementTypes.ROW);
   IElementType TABLE_HEADER = platformType(GFMElementTypes.HEADER);

@@ -39,7 +39,7 @@ public abstract class MarkdownCompositePsiElementBase extends ASTWrapperPsiEleme
   }
 
   /**
-   * @return <code>true</code> if there is more than one composite child 
+   * @return <code>true</code> if there is more than one composite child
    * OR there is one child which is not a paragraph, <code>false</code> otherwise.
    */
   public boolean hasTrivialChildren() {

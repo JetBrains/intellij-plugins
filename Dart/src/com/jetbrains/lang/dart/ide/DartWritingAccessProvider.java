@@ -44,7 +44,7 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
   public static boolean isInDartSdkOrDartPackagesFolder(final @NotNull Project project, final @NotNull VirtualFile file) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
-    if (fileIndex.isInLibraryClasses(file)) {
+    if (fileIndex.isInLibraryClasses(file) && !fileIndex.isInContent(file)) {
       return true; // file in SDK or in custom package root
     }
 

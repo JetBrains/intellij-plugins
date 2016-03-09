@@ -31,12 +31,26 @@ public class AngularJSParser
             return;
           }
         }
+        if (firstToken == AngularJSTokenTypes.HASH) {
+          parseNgForStatement();
+          return;
+        }
         if (builder.getTokenType() == JSTokenTypes.LPAR) {
           if (parseInStatement()) {
             return;
           }
         }
         super.doParseStatement(canHaveClasses);
+      }
+
+      private boolean parseNgForStatement() {
+        PsiBuilder.Marker statement = builder.mark();
+        if (!getExpressionParser().parseForExpression()) {
+          statement.drop();
+          return false;
+        }
+        statement.done(JSElementTypes.EXPRESSION_STATEMENT);
+        return true;
       }
 
       private boolean parseInStatement() {
@@ -129,6 +143,11 @@ public class AngularJSParser
     }
 
     @Override
+    protected boolean isReferenceQualifierSeparator(IElementType tokenType) {
+      return tokenType == AngularJSTokenTypes.ELVIS || super.isReferenceQualifierSeparator(tokenType);
+    }
+
+    @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
       if (builder.getTokenType() == JSTokenTypes.OR) return 10;
       return super.getCurrentBinarySignPriority(allowIn, advance);
@@ -168,6 +187,27 @@ public class AngularJSParser
       if (errorMessage != null) {
         builder.error(errorMessage);
       }
+      return true;
+    }
+
+    public boolean parseForExpression() {
+      final PsiBuilder.Marker expr = builder.mark();
+      final PsiBuilder.Marker def = builder.mark();
+      builder.advanceLexer();
+      if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      } else {
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      }
+      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
+
+      if (builder.getTokenType() != JSTokenTypes.OF_KEYWORD) {
+        builder.error("'of' expected");
+      } else {
+        builder.advanceLexer();
+      }
+      parseExpression();
+      expr.done(AngularJSElementTypes.FOR_EXPRESSION);
       return true;
     }
 

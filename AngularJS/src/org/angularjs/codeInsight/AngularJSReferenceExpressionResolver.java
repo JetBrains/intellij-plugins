@@ -8,12 +8,16 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.angularjs.index.AngularControllerIndex;
+import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.psi.AngularJSAsExpression;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
+import org.angularjs.lang.psi.AngularJSRepeatExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +47,16 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (myRef.getParent() instanceof JSDefinitionExpression) {
+      final AngularJSRepeatExpression repeat = PsiTreeUtil.getParentOfType(myRef, AngularJSRepeatExpression.class);
+      if (repeat != null) {
+        for (JSDefinitionExpression def : repeat.getDefinitions()) {
+          if (PsiTreeUtil.isAncestor(def, myRef, true)) return new JSResolveResult[]{new JSResolveResult(myRef)};
+        }
+      }
+      final AngularJSAsExpression as = PsiTreeUtil.getParentOfType(myRef, AngularJSAsExpression.class);
+      if (as != null) {
+        if (PsiTreeUtil.isAncestor(as.getDefinition(), myRef, true)) return new JSResolveResult[]{new JSResolveResult(myRef)};
+      }
       return ResolveResult.EMPTY_ARRAY;
     }
 
@@ -50,6 +64,11 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.KEY, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};
+      }
+    } else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
+      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
+      if (resolve != null) {
+        return new JSResolveResult[] {new JSResolveResult(resolve)};
       }
     } else if (myQualifier == null) {
       final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);

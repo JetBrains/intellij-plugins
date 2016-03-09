@@ -80,7 +80,6 @@ public class GrCucumberUtil {
       @Override
       public GrLiteral compute() {
         GrArgumentList argumentList = stepDefinition.getArgumentList();
-        if (argumentList == null) return null;
 
         GroovyPsiElement[] arguments = argumentList.getAllArguments();
         if (arguments.length == 0 || arguments.length > 2) return null;

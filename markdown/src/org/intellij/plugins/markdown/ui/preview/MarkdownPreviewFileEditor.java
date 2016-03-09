@@ -56,7 +56,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   @Nullable
   private Runnable myLastHtmlOrRefreshRequest = null;
 
-  private int myLastScrollOffset;
+  private volatile int myLastScrollOffset;
   @NotNull
   private String myLastRenderedHtml = "";
 
@@ -107,9 +107,10 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     // Do not scroll if html update request is online
     // This will restrain preview from glitches on editing
     if (!myPooledAlarm.isEmpty()) {
+      myLastScrollOffset = offset;
       return;
     }
-    
+
     synchronized (REQUESTS_LOCK) {
       if (myLastScrollRequest != null) {
         mySwingAlarm.cancelRequest(myLastScrollRequest);
@@ -237,7 +238,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   }
 
   /**
-   * Is always run from pooled thread 
+   * Is always run from pooled thread
    */
   private void updateHtml(final boolean preserveScrollOffset) {
     if (!myFile.isValid() || myDocument == null || Disposer.isDisposed(this)) {
@@ -257,7 +258,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     if (!myFile.isValid() || Disposer.isDisposed(this)) {
       return;
     }
-    
+
     synchronized (REQUESTS_LOCK) {
       if (myLastHtmlOrRefreshRequest != null) {
         mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);

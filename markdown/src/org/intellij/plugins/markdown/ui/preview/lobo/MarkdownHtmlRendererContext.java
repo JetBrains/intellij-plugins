@@ -22,8 +22,9 @@ class MarkdownHtmlRendererContext extends AbstractHtmlRendererContext {
   public HTMLCollection getFrames() {
     Object rootNode = myHtmlPanel.getRootNode();
     if (rootNode instanceof HTMLDocumentImpl) {
-      return ((HTMLDocumentImpl) rootNode).getFrames();
-    } else {
+      return ((HTMLDocumentImpl)rootNode).getFrames();
+    }
+    else {
       return null;
     }
   }

@@ -2,12 +2,15 @@ package com.intellij.lang.javascript;
 
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.structureView.JSStructureViewModel;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
@@ -19,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.intellij.lang.javascript.StructureViewTestUtil.getIcon;
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 /**
  * @author Konstantin.Ulitin
@@ -27,6 +32,14 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
   private static final String BASE_PATH = "/as_fileStructure/";
   private static final int OBJECT_METHODS_COUNT = 11;
+
+  @Override
+  protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
+  }
 
   @Override
   protected ModuleType getModuleType() {

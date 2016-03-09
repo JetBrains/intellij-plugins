@@ -76,7 +76,7 @@ public interface MarkdownTokenTypes extends TokenType {
   IElementType AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.AUTOLINK);
   IElementType EMAIL_AUTOLINK = platformType(org.intellij.markdown.MarkdownTokenTypes.EMAIL_AUTOLINK);
   IElementType HTML_TAG = platformType(org.intellij.markdown.MarkdownTokenTypes.HTML_TAG);
-  
+
   IElementType CHECK_BOX = platformType(GFMTokenTypes.CHECK_BOX);
 
   IElementType BAD_CHARACTER = platformType(org.intellij.markdown.MarkdownTokenTypes.BAD_CHARACTER);

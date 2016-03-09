@@ -20,7 +20,7 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
   public MarkdownCodeFenceImpl(IElementType type) {
     super(type);
   }
-  
+
   @Nullable
   public String getFenceLanguage() {
     final PsiElement element = findPsiChildByType(MarkdownTokenTypes.FENCE_LANG);
@@ -28,7 +28,7 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
       return null;
     }
     return element.getText();
-  } 
+  }
 
   @Override
   public ItemPresentation getPresentation() {

@@ -72,6 +72,5 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
       }
     });
     return panel;
-
   }
 }

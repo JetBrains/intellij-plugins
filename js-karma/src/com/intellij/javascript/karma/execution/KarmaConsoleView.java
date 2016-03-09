@@ -140,7 +140,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return myExecutionSession;
   }
 
-  public KarmaDebugTabLayouter createDebugLayouter(@NotNull JavaScriptDebugProcess<?> debugProcess) {
+  public JSDebugTabLayouter createDebugLayouter(@NotNull JavaScriptDebugProcess<?> debugProcess) {
     return new KarmaDebugTabLayouter(debugProcess);
   }
 

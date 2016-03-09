@@ -171,7 +171,7 @@ const Map<String, LibraryInfo> LIBRARIES = const {
                                            ? StringUtil.unquoteString(firstExpression.getText())
                                            : null;
 
-        if (libraryRelativePath != null && !libraryRelativePath.startsWith("_")) {
+        if (libraryRelativePath != null/* && !libraryRelativePath.startsWith("_")*/) {
           final String libraryUri = DartUrlResolver.DART_PREFIX + libraryName;
           result.put(libraryUri, libraryRelativePath);
         }

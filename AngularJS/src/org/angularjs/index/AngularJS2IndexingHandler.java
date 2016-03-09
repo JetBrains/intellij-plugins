@@ -34,15 +34,21 @@ import org.jetbrains.annotations.Nullable;
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String TEMPLATE_REF = "TemplateRef";
+  public static final String SELECTOR = "selector";
+  public static final String NAME = "name";
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
     final JSExpression expression = callExpression.getMethodExpression();
     if (expression instanceof JSReferenceExpression) {
       final String name = ((JSReferenceExpression)expression).getReferenceName();
-      if (!isDirective(name)) return;
-      addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, getSelectorName(callExpression));
-    }
+      if (isDirective(name)) {
+        addImplicitElement(callExpression, (JSElementIndexingDataImpl)outData, getPropertyName(callExpression, SELECTOR));
+      }
+      if (isPipe(name)) {
+        addPipe(callExpression, (JSElementIndexingDataImpl)outData, getPropertyName(callExpression, NAME));
+      }
+     }
   }
 
   @Override
@@ -55,7 +61,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       final ASTNode name = ref.getLastChildNode();
       if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
-        return isDirective(referencedName);
+        return isDirective(referencedName) || isPipe(referencedName);
       }
     }
     return false;
@@ -64,10 +70,13 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public JSElementIndexingDataImpl processDecorator(ES7Decorator decorator, JSElementIndexingDataImpl outData) {
     final String name = decorator.getName();
-    if (!isDirective(name)) return outData;
-    final String selectorName = getSelectorName(decorator);
-
-    return addImplicitElement(decorator, outData, selectorName);
+    if (isDirective(name)) {
+      return addImplicitElement(decorator, outData, getPropertyName(decorator, SELECTOR));
+    }
+    if (isPipe(name)) {
+      return addPipe(decorator, outData, getPropertyName(decorator, NAME));
+    }
+    return outData;
   }
 
   private static JSElementIndexingDataImpl addImplicitElement(PsiElement decorator,
@@ -108,6 +117,14 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
+  private static JSElementIndexingDataImpl addPipe(PsiElement expression, JSElementIndexingDataImpl outData, String pipe) {
+    if (pipe == null) return outData;
+    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(pipe, expression).setUserString("afi");
+    outData.addImplicitElement(elementBuilder.toImplicitElement());
+    return outData;
+  }
+
+
   private static boolean isTemplate(PsiElement decorator) {
     final JSClass clazz = PsiTreeUtil.getParentOfType(decorator, JSClass.class);
     if (clazz != null) {
@@ -124,8 +141,8 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  private static String getSelectorName(PsiElement decorator) {
-    final JSProperty selector = getSelector(decorator);
+  private static String getPropertyName(PsiElement decorator, String name) {
+    final JSProperty selector = getProperty(decorator, name);
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return StringUtil.unquoteString(value.getText());
@@ -135,16 +152,25 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   public static JSProperty getSelector(PsiElement decorator) {
+    return getProperty(decorator, SELECTOR);
+  }
+
+  @Nullable
+  private static JSProperty getProperty(PsiElement decorator, String name) {
     final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
     final JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
     final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
                                                                      JSObjectLiteralExpression.class);
-    return descriptor != null ? descriptor.findProperty("selector") : null;
+    return descriptor != null ? descriptor.findProperty(name) : null;
   }
 
   public static boolean isDirective(String name) {
     return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
            "Component".equals(name) || "ComponentAnnotation".equals(name);
+  }
+
+  private static boolean isPipe(String name) {
+    return "Pipe".equals(name);
   }
 
   @Override

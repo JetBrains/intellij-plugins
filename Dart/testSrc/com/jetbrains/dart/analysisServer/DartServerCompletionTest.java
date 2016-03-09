@@ -83,6 +83,10 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("for");
   }
 
+  public void testWithImportPrefix() throws Throwable {
+    doTest();
+  }
+
   public void testUriCompletionByTab() throws Throwable {
     final String testName = getTestName(false);
     myFixture.copyDirectoryToProject(testName, testName);

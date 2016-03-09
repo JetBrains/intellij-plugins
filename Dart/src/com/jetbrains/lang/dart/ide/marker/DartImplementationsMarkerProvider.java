@@ -72,7 +72,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
       componentName,
       componentName.getTextRange(),
       AllIcons.Gutter.OverridenMethod,
-      Pass.UPDATE_OVERRIDEN_MARKERS,
+      Pass.UPDATE_OVERRIDDEN_MARKERS,
       new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {
@@ -116,7 +116,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
       componentName,
       componentName.getTextRange(),
       isInterface ? AllIcons.Gutter.ImplementedMethod : AllIcons.Gutter.OverridenMethod,
-      Pass.UPDATE_OVERRIDEN_MARKERS,
+      Pass.UPDATE_OVERRIDDEN_MARKERS,
       new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {

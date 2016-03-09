@@ -77,7 +77,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     }
     else {
       final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-      if (filesAndDirs != null) {
+      if (filesAndDirs != null && DartAnalysisServerService.getInstance().serverReadyForRequest(project)) {
         final List<VirtualFile> files = getApplicableVirtualFiles(project, filesAndDirs);
         runOverFiles(project, files);
       }

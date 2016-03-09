@@ -127,7 +127,6 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
         PsiDocumentManager.getInstance(psiFile.getProject()).commitDocument(document);
       }
     });
-
   }
 
   public void removeEmphFromSelection(@NotNull Document document, @NotNull Caret caret, @NotNull TextRange nodeRange) {

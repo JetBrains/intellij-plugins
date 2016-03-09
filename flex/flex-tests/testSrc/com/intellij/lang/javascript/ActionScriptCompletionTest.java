@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.flex.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -18,6 +19,7 @@ import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
 
@@ -26,6 +28,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
+
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 /**
  * @by Maxim.Mossienko
@@ -48,6 +53,13 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
       "FuncTypePickedUp", "FuncTypePickedUp2", "FuncTypePickedUp3", "ConstTypePickedUp",
       "ConstTypePickedUp2", "VarTypePickedUp3", "VarTypePickedUp4", "VarTypePickedUp5"
     ));
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -738,7 +750,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertStartsWith(lookupElements, "zbb", "zzz", "zaa", "constructor");
     checkWeHaveInCompletion(lookupElements, "toSource");
   }
-  
+
   public void testClassHierarchyMembersOrder2() throws Exception {
     final LookupElement[] lookupElements = doTest("");
     assertStartsWith(lookupElements, "e", "param", "Extended", "a", "Base", "zbb", "zzz", "Object",  "zaa", "constructor");

@@ -19,37 +19,65 @@ import org.jetbrains.annotations.Nullable;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
-  private static final String SCHEME = "dart";
+  private static final String SDK_URL_MARKER = "/packages/$sdk/lib/";
+  private static final String PACKAGE_URL_MARKER = "/" + DartUrlResolver.PACKAGES_FOLDER_NAME + "/";
 
   @Nullable
   @Override
   public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project, @Nullable Url requestor) {
-    if (DartUrlResolver.DART_SCHEME.equals(url.getScheme())) {
-      return DartUrlResolver.findFileInDartSdkLibFolder(project, DartSdk.getDartSdk(project), DartUrlResolver.DART_PREFIX + url.getPath());
+    final String scheme = url.getScheme();
+    final String path = url.getPath();
+
+    if (DartUrlResolver.DART_SCHEME.equals(scheme)) {
+      return DartUrlResolver.findFileInDartSdkLibFolder(project, DartSdk.getDartSdk(project), DartUrlResolver.DART_PREFIX + path);
     }
 
-    if (DartUrlResolver.PACKAGE_SCHEME.equals(url.getScheme())) {
-      final String packageUrl = DartUrlResolver.PACKAGE_PREFIX + url.getPath();
+    if (DartUrlResolver.PACKAGE_SCHEME.equals(scheme)) {
+      final String packageUri = DartUrlResolver.PACKAGE_PREFIX + path;
       final VirtualFile contextFile = findContextFile(project, requestor);
 
       if (contextFile != null) {
         return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
           public VirtualFile compute() {
-            return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUrl);
+            return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri);
           }
         });
       }
       else {
         if (ApplicationManager.getApplication().isDispatchThread()) {
-          return DumbService.getInstance(project).isDumb() ? null : findFileInAnyPackagesFolder(project, packageUrl);
+          return DumbService.getInstance(project).isDumb() ? null : findFileInAnyPackagesFolder(project, packageUri);
         }
 
         return DumbService.getInstance(project).runReadActionInSmartMode(new Computable<VirtualFile>() {
           @Override
           public VirtualFile compute() {
-            return findFileInAnyPackagesFolder(project, packageUrl);
+            return findFileInAnyPackagesFolder(project, packageUri);
           }
         });
+      }
+    }
+
+    if ("http".equalsIgnoreCase(scheme)) {
+      final int sdkUrlMarkerIndex = path.indexOf(SDK_URL_MARKER);
+      if (sdkUrlMarkerIndex >= 0) {
+        // http://localhost:63343/dart-tagtree/example/packages/$sdk/lib/_internal/js_runtime/lib/js_helper.dart
+        final String relPath = path.substring(sdkUrlMarkerIndex + SDK_URL_MARKER.length());
+        return DartUrlResolver.findFileInDartSdkLibFolder(project, DartSdk.getDartSdk(project), DartUrlResolver.DART_PREFIX + relPath);
+      }
+
+      final int packageUrlMarkerIndex = path.lastIndexOf(PACKAGE_URL_MARKER);
+      if (packageUrlMarkerIndex >= 0) {
+        // http://localhost:63343/DartSample2/web/packages/browser/dart.js or http://localhost:63343/DartSample2/packages/DartSample2/src/myFile.dart
+        // First make sure that this URL relates to Dart. 'packageUrlMarkerIndex >= 0' condition is not strict enough to guarantee that this is a Dart project
+        final VirtualFile contextFile = findContextFile(project, requestor);
+        if (contextFile != null) {
+          final String packageUri = DartUrlResolver.PACKAGE_PREFIX + path.substring(packageUrlMarkerIndex + PACKAGE_URL_MARKER.length());
+          return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
+            public VirtualFile compute() {
+              return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUri);
+            }
+          });
+        }
       }
     }
 
@@ -82,6 +110,8 @@ final class DartFileUrlMapper extends FileUrlMapper {
   @Nullable
   @Override
   public FileType getFileType(@NotNull Url url) {
-    return SCHEME.equals(url.getScheme()) || DartUrlResolver.PACKAGE_SCHEME.equals(url.getScheme()) ? DartFileType.INSTANCE : null;
+    return DartUrlResolver.DART_SCHEME.equals(url.getScheme()) || DartUrlResolver.PACKAGE_SCHEME.equals(url.getScheme())
+           ? DartFileType.INSTANCE
+           : null;
   }
 }

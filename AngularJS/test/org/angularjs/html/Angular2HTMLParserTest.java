@@ -12,6 +12,7 @@ import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
+import org.angularjs.lang.parser.AngularJSParserDefinition;
 
 /**
  * @author Dennis.Ushakov
@@ -19,7 +20,7 @@ import com.intellij.testFramework.ParsingTestCase;
 public class Angular2HTMLParserTest extends ParsingTestCase {
   public Angular2HTMLParserTest() {
     super("", "html", true,
-          new Angular2HTMLParserDefinition(), new JavascriptParserDefinition());
+          new Angular2HTMLParserDefinition(), new JavascriptParserDefinition(), new AngularJSParserDefinition());
   }
 
   @Override
@@ -51,6 +52,14 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
   }
 
   public void testXmlAttribute() throws Exception {
+    doTest(true);
+  }
+
+  public void testBindingAttribute() throws Exception {
+    doTest(true);
+  }
+
+  public void testElvis() throws Exception {
     doTest(true);
   }
 }

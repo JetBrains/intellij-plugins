@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/blob/b8a9f7264d3b6ac48514272bf35291736cedad00/src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/blob/408192ba9f262bb82be88091ab3ec3c16dc02c6d/src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -137,7 +137,8 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "}}}}" { yypopState(); yypushState(raw); return HbTokenTypes.CLOSE_RAW_BLOCK; }
 
   "{{"\~?">" { return HbTokenTypes.OPEN_PARTIAL; }
-  "{{"\~?"#" { return HbTokenTypes.OPEN_BLOCK; }
+  "{{"\~?"#>" { return HbTokenTypes.OPEN_PARTIAL_BLOCK; }
+  "{{"\~?"#""*"? { return HbTokenTypes.OPEN_BLOCK; }
   "{{"\~?"/" { return HbTokenTypes.OPEN_ENDBLOCK; }
   // NOTE: the standard Handlebars lexer would checks for "{{^}}" and "{{else}}" here and lexes the simple inverse directly.
   // We lex it in pieces and identify simple inverses in the parser
@@ -148,7 +149,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "{{!" { yypopState(); yypushState(comment); return HbTokenTypes.COMMENT_OPEN; }
   "{{!--" { yypopState(); yypushState(comment_block); return HbTokenTypes.COMMENT_OPEN; }
 
-  "{{"\~? { return HbTokenTypes.OPEN; }
+  "{{"\~?"*"? { return HbTokenTypes.OPEN; }
   "=" { return HbTokenTypes.EQUALS; }
   "."/[\~\}\t| \n\x0B\f\r] { return HbTokenTypes.ID; }
   ".." { return HbTokenTypes.ID; }

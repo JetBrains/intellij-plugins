@@ -2,7 +2,7 @@ package org.intellij.plugins.markdown.settings;
 
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -32,11 +32,10 @@ class MarkdownLAFListener implements LafManagerListener {
     isLastLAFWasDarcula = isDarcula;
   }
 
-  public static boolean isDarcula(@NotNull UIManager.LookAndFeelInfo laf) {
+  public static boolean isDarcula(@Nullable UIManager.LookAndFeelInfo laf) {
+    if (laf == null) {
+      return false;
+    }
     return laf.getName().contains("Darcula");
-  }
-
-  private static boolean isDefaultCssSettings(@NotNull MarkdownCssSettings settings) {
-    return settings.equals(MarkdownCssSettings.DARCULA) || settings.equals(MarkdownCssSettings.DEFAULT);
   }
 }

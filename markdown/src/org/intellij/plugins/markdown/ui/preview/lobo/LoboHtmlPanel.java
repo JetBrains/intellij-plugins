@@ -136,7 +136,6 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
         }
       }
     }, ModalityState.NON_MODAL);
-
   }
 
   @Override

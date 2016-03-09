@@ -18,5 +18,4 @@ public class MarkdownSplitEditorProvider extends SplitTextEditorProvider {
     }
     return new MarkdownSplitEditor(((TextEditor)firstEditor), ((MarkdownPreviewFileEditor)secondEditor));
   }
-
 }

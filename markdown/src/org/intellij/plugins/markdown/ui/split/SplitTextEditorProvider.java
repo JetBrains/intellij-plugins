@@ -141,5 +141,4 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
       };
     }
   }
-
 }

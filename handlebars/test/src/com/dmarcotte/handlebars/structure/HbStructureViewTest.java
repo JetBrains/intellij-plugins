@@ -93,6 +93,8 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
       "{{/inverse}}\n" +
       "{{mustache}}\n" +
       "{{>partial}}\n" +
+      "{{#>partialBlock}}\n" +
+      "{{/partialBlock}}\n" +
       "{{@data}}\n" +
       "{{^}}\n" +
       "{{{unescaped}}\n",
@@ -103,6 +105,7 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
       "  else\n" +
       " mustache\n" +
       " partial\n" +
+      " partialBlock\n" +
       " @data\n" +
       " unescaped"
     );

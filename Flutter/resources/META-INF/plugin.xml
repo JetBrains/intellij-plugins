@@ -1,0 +1,20 @@
+<idea-plugin version="2">
+  <id>org.jetbrains.plugin.flutter</id>
+  <name>Flutter</name>
+  <version>999.999</version>
+  <vendor>JetBrains</vendor>
+
+  <depends>Dart</depends>
+
+  <description><![CDATA[
+      Flutter-specific extensions for Dart.
+    ]]></description>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="org.jetbrains.flutter.run.FlutterRunConfigurationType"/>
+    <runConfigurationProducer implementation="org.jetbrains.flutter.run.FlutterRunConfigurationProducer"/>
+    <programRunner implementation="org.jetbrains.flutter.run.FlutterRunner"/>
+  </extensions>
+
+</idea-plugin>

@@ -8,5 +8,4 @@ public class MarkdownCodeFenceContentImpl extends LeafPsiElement {
   public MarkdownCodeFenceContentImpl(@NotNull IElementType type, CharSequence text) {
     super(type, text);
   }
-
 }

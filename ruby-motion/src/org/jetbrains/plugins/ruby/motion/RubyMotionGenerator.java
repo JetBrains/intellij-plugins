@@ -42,24 +42,6 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
 
   @Nullable
   @Override
-  public RubyMotionSettingsHolder showGenerationSettings(VirtualFile baseDir) throws ProcessCanceledException {
-    final RubyMotionSettingsHolder settings = initSettings();
-    final RubyMotionGeneratorTab generatorTab = new RubyMotionGeneratorTab(settings);
-
-    final TabbedSettingsEditorTab[] tabs =
-      new TabbedSettingsEditorTab[]{
-        generatorTab
-      };
-
-    if (TabbedSettingsDialog.showDialog(TITLE, tabs) != DialogWrapper.OK_EXIT_CODE) {
-      throw new ProcessCanceledException();
-    }
-
-    return settings;
-  }
-
-  @Nullable
-  @Override
   public Icon getLogo() {
     return RubyIcons.RubyMotion.RubyMotion;
   }

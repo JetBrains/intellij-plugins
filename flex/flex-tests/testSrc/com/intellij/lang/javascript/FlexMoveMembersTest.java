@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript;
 
 import com.intellij.flex.FlexTestUtils;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -16,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.MultiFileTestCase;
@@ -26,11 +29,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+
 public class FlexMoveMembersTest extends MultiFileTestCase {
 
   private static final String VISIBILITY_AS_IS = null;
 
   private static final String[] ALL_MEMBERS = new String[]{};
+
+  @Override
+  protected void setUp() throws Exception {
+    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    super.setUp();
+  }
 
   @NotNull
   @Override
@@ -111,7 +125,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
 
       @Override
       public JSAttributeListOwner[] getSelectedMembers() {
-        final JSMemberInfo[] selected = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.<JSMemberInfo>alwaysTrue());
+        final JSMemberInfo[] selected = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
         JSAttributeListOwner[] result = new JSAttributeListOwner[selected.length];
         for (int i = 0; i < result.length; i++) {
           result[i] = selected[i].getMember();

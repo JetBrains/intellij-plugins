@@ -3,7 +3,7 @@ package org.angularjs.html;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 
-import com.intellij.lang.javascript.JSElementTypes;
+import org.angularjs.lang.parser.AngularJSElementTypes;
 
 %%
 
@@ -25,7 +25,7 @@ import com.intellij.lang.javascript.JSElementTypes;
 
 %%
 
-<YYINITIAL> "{{"     { yybegin(INTERPOLATION); return myType; }
-<INTERPOLATION> "}}" { yybegin(YYINITIAL); return myType; }
-<INTERPOLATION> .    { return JSElementTypes.EMBEDDED_CONTENT; }
-<YYINITIAL> .        { return myType; }
+<YYINITIAL> "{{"       { yybegin(INTERPOLATION); return myType; }
+<INTERPOLATION> "}}"   { yybegin(YYINITIAL); return myType; }
+<INTERPOLATION> .|"\n" { return AngularJSElementTypes.EMBEDDED_CONTENT; }
+<YYINITIAL> .|"\n"     { return myType; }

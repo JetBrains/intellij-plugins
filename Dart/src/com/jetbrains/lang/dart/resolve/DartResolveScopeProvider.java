@@ -52,7 +52,7 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     final DartSdk sdk = DartSdk.getDartSdk(project);
 
-    if (fileIndex.isInLibraryClasses(file)) {
+    if (fileIndex.isInLibraryClasses(file) && !fileIndex.isInContent(file)) {
       if (sdk != null && file.getPath().startsWith(sdk.getHomePath() + "/")) {
         return getDartSdkResolveScope(project);
       }

@@ -26,13 +26,11 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.util.regex.Pattern;
 
 // Instantiated by reflection
 @SuppressWarnings("unused")
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
-  public static final Pattern SVG_REPLACE_PATTERN = Pattern.compile("(<img[^>]+src=\"[^\"]+\\.)svg([^\"]*\"[^>]*>)");
   @NotNull
   private final JFXPanel myPanel;
   @Nullable
@@ -43,6 +41,10 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private String[] myCssUris = ArrayUtil.EMPTY_STRING_ARRAY;
   @NotNull
   private String myLastRawHtml = "";
+  @NotNull
+  private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
+  @NotNull
+  private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
 
   public JavaFxHtmlPanel() {
     //System.setProperty("prism.lcdtext", "false");
@@ -59,8 +61,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
         myWebView.setContextMenuEnabled(false);
 
         final WebEngine engine = myWebView.getEngine();
-        engine.getLoadWorker().stateProperty().addListener(new BridgeSettingListener());
-        engine.getLoadWorker().stateProperty().addListener(new ScrollPreservingListener());
+        engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+        engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
 
         engine.loadContent("<html><body>" + getScriptingLines() + "</body></html>");
 
@@ -153,14 +155,25 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
         getWebViewGuaranteed().getEngine().executeScript(
           "if ('__IntelliJTools' in window) " +
           "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
-
         );
+        final Object result = getWebViewGuaranteed().getEngine().executeScript(
+          "document.documentElement.scrollTop || document.body.scrollTop");
+        if (result instanceof Number) {
+          myScrollPreservingListener.myScrollY = ((Number)result).intValue();
+        }
       }
     });
   }
 
   @Override
   public void dispose() {
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
+        getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
+      }
+    });
   }
 
   @NotNull
@@ -207,16 +220,14 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-      if (newValue == State.SUCCEEDED) {
         JSObject win
           = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
         win.setMember("JavaPanelBridge", new JavaPanelBridge());
-      }
     }
   }
   
   private class ScrollPreservingListener implements ChangeListener<State> {
-    int myScrollY = 0;
+    volatile int myScrollY = 0;
 
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
