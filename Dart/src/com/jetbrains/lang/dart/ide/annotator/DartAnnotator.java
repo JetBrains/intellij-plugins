@@ -232,7 +232,6 @@ public class DartAnnotator implements Annotator {
 
   private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
     final PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
-    final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
 
     for (DartServerData.DartError error : DartAnalysisServerService.getInstance().getErrors(file)) {
       if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getType(), error.getAnalysisErrorFileSD())) continue;
@@ -240,7 +239,7 @@ public class DartAnnotator implements Annotator {
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
       if (annotation != null) {
-        final DartQuickFixSet quickFixSet = new DartQuickFixSet(file.getPath(), error.getOffset(), psiModificationCount);
+        final DartQuickFixSet quickFixSet = new DartQuickFixSet(psiFile.getManager(), file.getPath(), error.getOffset());
         for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
           annotation.registerFix(quickFix);
         }
