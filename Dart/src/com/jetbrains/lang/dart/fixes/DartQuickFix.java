@@ -108,8 +108,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
   @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
-    if (myQuickFixSet.getPsiModificationCount() != file.getManager().getModificationTracker().getModificationCount()) return false;
-
     myQuickFixSet.ensureInitialized();
     if (mySourceChange == null) return false;
 
@@ -127,7 +125,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     return true;
   }
 
-  public void setSourceChange(@NotNull final SourceChange sourceChange) {
+  public void setSourceChange(@Nullable final SourceChange sourceChange) {
     mySourceChange = sourceChange;
   }
 
