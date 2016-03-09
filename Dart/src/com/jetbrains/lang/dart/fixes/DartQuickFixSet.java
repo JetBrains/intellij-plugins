@@ -25,7 +25,7 @@ public class DartQuickFixSet {
     myPsiModificationCount = psiModificationCount;
 
     for (int i = 0; i < MAX_QUICK_FIXES; i++) {
-      myQuickFixes.add(new DartQuickFix(this));
+      myQuickFixes.add(new DartQuickFix(this, i));
     }
   }
 

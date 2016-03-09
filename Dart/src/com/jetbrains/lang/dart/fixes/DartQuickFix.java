@@ -29,11 +29,14 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public final class DartQuickFix implements IntentionAction {
+public final class DartQuickFix implements IntentionAction, Comparable<IntentionAction> {
+
   @NotNull private final DartQuickFixSet myQuickFixSet;
+  private final int myIndex;
   @Nullable private SourceChange mySourceChange;
 
-  public DartQuickFix(@NotNull final DartQuickFixSet quickFixSet) {
+  public DartQuickFix(@NotNull final DartQuickFixSet quickFixSet, final int index) {
+    myIndex = index;
     myQuickFixSet = quickFixSet;
   }
 
@@ -48,6 +51,14 @@ public final class DartQuickFix implements IntentionAction {
   public String getText() {
     myQuickFixSet.ensureInitialized();
     return mySourceChange == null ? "" : mySourceChange.getMessage();
+  }
+
+  @Override
+  public int compareTo(IntentionAction o) {
+    if (o instanceof DartQuickFix) {
+      return myIndex - ((DartQuickFix)o).myIndex;
+    }
+    return 0;
   }
 
   @Override
