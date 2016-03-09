@@ -24,9 +24,15 @@ public class KarmaRunSettingsSerializationUtil {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
 
     String configFilePath = JDOMExternalizerUtil.getFirstChildValueAttribute(element, CONFIG_FILE);
+    if (configFilePath == null) {
+      configFilePath = getAttrValue(element, CONFIG_FILE);
+    }
     builder.setConfigPath(FileUtil.toSystemDependentName(StringUtil.notNullize(configFilePath)));
 
     String browsers = JDOMExternalizerUtil.getFirstChildValueAttribute(element, BROWSERS);
+    if (browsers == null) {
+      browsers = getAttrValue(element, BROWSERS);
+    }
     if (browsers != null) {
       builder.setBrowsers(browsers);
     }
