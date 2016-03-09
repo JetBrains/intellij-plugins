@@ -21,8 +21,10 @@ import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
+import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -75,6 +77,10 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
       return null;
     }
 
+    if (!isCoverageActivated(dartPubPath) && !activateCoverage(dartPubPath)) {
+      throw new ExecutionException("Cannot activate pub package 'coverage'!");
+    }
+
     GeneralCommandLine cmdline = new GeneralCommandLine().withExePath(dartPubPath)
       .withParameters("global", "run", "coverage:collect_coverage", "-p",
                       Integer.toString(((DartCommandLineRunningState)state).getObservatoryPort()), "-o", coverageFilePath, "-r", "-w");
@@ -88,5 +94,28 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
     }
 
     return result;
+  }
+
+  private static boolean isCoverageActivated(String dartPubPath) {
+    try {
+      ProcessOutput output = new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "list"))
+        .runProcess(60 * 1000);
+      return output.getExitCode() == 0 && output.getStdout().contains("coverage ");
+    }
+    catch (ExecutionException e) {
+      return false;
+    }
+  }
+
+  private static boolean activateCoverage(String dartPubPath) {
+    try {
+      ProcessOutput output =
+        new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "activate", "coverage"))
+          .runProcess(60 * 1000);
+      return output.getExitCode() == 0;
+    }
+    catch (ExecutionException e) {
+      return false;
+    }
   }
 }
