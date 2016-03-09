@@ -266,7 +266,8 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       myLastHtmlOrRefreshRequest = new Runnable() {
         @Override
         public void run() {
-          final String currentHtml = "<html><head></head>" + html + "</html>";
+          String directory = myFile.getParent().getPresentableUrl() + "/";
+          final String currentHtml = "<html><head><base href=\"" + directory + "\" /></head>" + html + "</html>";
           if (!currentHtml.equals(myLastRenderedHtml)) {
             myLastRenderedHtml = currentHtml;
             getPanelGuaranteed().setHtml(myLastRenderedHtml);
