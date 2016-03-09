@@ -3,6 +3,7 @@ package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.files.CfmlFileType;
+import com.intellij.coldFusion.model.files.CfmlFileViewProvider;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
@@ -31,6 +32,7 @@ import java.net.URL;
 public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
   public final static String WWW_ROOT = "wwwroot";
+  public final static String DEFAULT_HOST="http://localhost:8500";
 
   public CfmlRunConfigurationProducer() {
     super(CfmlRunConfigurationType.getInstance());
@@ -60,10 +62,14 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
       if (root == null) return false;
     }
 
+    if (configuration == null) {
+      return false;
+    }
     CfmlRunnerParameters params = configuration.getRunnerParameters();
 
     String urlStr = configuration.getRunnerParameters().getUrl();
-    if (urlStr.isEmpty()) return false;
+    if (urlStr.isEmpty()) urlStr = DEFAULT_HOST;
+    //TODO: ask user to change default host;
 
     try {
       URL url = new URL(urlStr);
@@ -132,6 +138,8 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
   }
 
   private static boolean isValid(@Nullable PsiFile containingFile) {
-    return containingFile != null && containingFile.getFileType() == CfmlFileType.INSTANCE && containingFile.getVirtualFile() != null;
+    return containingFile != null &&
+           (containingFile.getFileType() == CfmlFileType.INSTANCE || containingFile.getViewProvider() instanceof CfmlFileViewProvider) &&
+           containingFile.getVirtualFile() != null;
   }
 }
