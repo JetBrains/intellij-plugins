@@ -38,7 +38,6 @@ public class DartQuickFixSet {
     final long modCount = myPsiManager.getModificationTracker().getModificationCount();
     if (myPsiModCount == modCount) return;
 
-    System.out.println(modCount);
     myPsiModCount = modCount;
 
     for (DartQuickFix fix : myQuickFixes) {
