@@ -40,14 +40,12 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class DartCoverageProgramRunner extends DefaultProgramRunner {
   private static final Logger LOG = Logger.getInstance(DartCoverageProgramRunner.class.getName());
 
   private static final String ID = "DartCoverageProgramRunner";
-  private static final Set<String> activatedPubs = new HashSet<>();
+
+  private boolean myCoveragePackageActivated;
 
   @NotNull
   @Override
@@ -86,8 +84,8 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
       return null;
     }
 
-    if (!activatedPubs.contains(dartPubPath) && !activateCoverage(dartPubPath, runConfiguration.getProject())) {
-      throw new ExecutionException("Cannot activate pub package 'coverage'!");
+    if (!myCoveragePackageActivated && !activateCoverage(runConfiguration.getProject(), dartPubPath)) {
+      throw new ExecutionException("Cannot activate pub package 'coverage'.");
     }
 
     GeneralCommandLine cmdline = new GeneralCommandLine().withExePath(dartPubPath)
@@ -105,28 +103,49 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
     return result;
   }
 
-  private static boolean activateCoverage(@NotNull String dartPubPath, @Nullable Project project) {
+  private boolean activateCoverage(@NotNull final Project project, @NotNull final String dartPubPath) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       try {
-        ProcessOutput activateOutput =
-          new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "activate", "coverage"))
-            .runProcess(60 * 1000);
-        ProcessOutput listOutput =
-          new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "list"))
-            .runProcess(60 * 1000);
-        if (listOutput.getExitCode() == 0 && listOutput.getStdout().contains("coverage ")) {
-          activatedPubs.add(dartPubPath);
+        // 'pub global list' is fast, let's run it first to find out if coverage package is already activated.
+        // Following 'pub global activate' is long and may be cancelled by user
+        checkIfCoverageActivated(dartPubPath);
+
+        // run 'pub global activate' regardless of activation status, because it checks for the coverage package update
+        final ProcessOutput activateOutput = new CapturingProcessHandler(
+          new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "activate", "coverage").withRedirectErrorStream(true))
+          .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator());
+
+        if (activateOutput.getExitCode() != 0) {
+          LOG.warn("'pub global activate coverage' exit code: " + activateOutput.getExitCode() +
+                   ", stdout:\n" + activateOutput.getStdout());
         }
-        else {
-          LOG.warn("Activation of coverage package failed.");
-          LOG.warn("Activation output (exit code " + activateOutput.getExitCode() + "):\n" + activateOutput.getStdout());
-          LOG.warn("List of activated packages (exit code " + listOutput.getExitCode() + "):\n" + listOutput.getStdout());
+
+        if (!myCoveragePackageActivated) {
+          checkIfCoverageActivated(dartPubPath);
         }
       }
       catch (ExecutionException e) {
         LOG.warn(e);
       }
-    }, "Activating Coverage Package...", false, project);
-    return activatedPubs.contains(dartPubPath);
+    }, "Activating Coverage Package...", true, project);
+
+    // Even if 'pub global activate' process has been cancelled we can proceed if coverage already activated
+    return myCoveragePackageActivated;
+  }
+
+  private void checkIfCoverageActivated(@NotNull final String dartPubPath) throws ExecutionException {
+    final ProcessOutput listOutput = new CapturingProcessHandler(
+      new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "list").withRedirectErrorStream(true))
+      .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator());
+
+    final String listOutputStdout = listOutput.getStdout();
+    if (listOutput.getExitCode() == 0) {
+      if (listOutputStdout.startsWith("coverage ") || listOutputStdout.contains("\ncoverage ")) {
+        myCoveragePackageActivated = true;
+      }
+    }
+    else {
+      LOG.warn("'pub global list' exit code: " + listOutput.getExitCode() + ", stdout:\n" + listOutputStdout);
+    }
   }
 }
