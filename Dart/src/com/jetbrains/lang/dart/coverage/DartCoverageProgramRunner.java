@@ -28,7 +28,10 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
@@ -37,8 +40,14 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class DartCoverageProgramRunner extends DefaultProgramRunner {
+  private static final Logger LOG = Logger.getInstance(DartCoverageProgramRunner.class.getName());
+
   private static final String ID = "DartCoverageProgramRunner";
+  private static final Set<String> activatedPubs = new HashSet<>();
 
   @NotNull
   @Override
@@ -77,7 +86,7 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
       return null;
     }
 
-    if (!isCoverageActivated(dartPubPath) && !activateCoverage(dartPubPath)) {
+    if (!activatedPubs.contains(dartPubPath) && !activateCoverage(dartPubPath, runConfiguration.getProject())) {
       throw new ExecutionException("Cannot activate pub package 'coverage'!");
     }
 
@@ -96,26 +105,28 @@ public class DartCoverageProgramRunner extends DefaultProgramRunner {
     return result;
   }
 
-  private static boolean isCoverageActivated(String dartPubPath) {
-    try {
-      ProcessOutput output = new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "list"))
-        .runProcess(60 * 1000);
-      return output.getExitCode() == 0 && output.getStdout().contains("coverage ");
-    }
-    catch (ExecutionException e) {
-      return false;
-    }
-  }
-
-  private static boolean activateCoverage(String dartPubPath) {
-    try {
-      ProcessOutput output =
-        new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "activate", "coverage"))
-          .runProcess(60 * 1000);
-      return output.getExitCode() == 0;
-    }
-    catch (ExecutionException e) {
-      return false;
-    }
+  private static boolean activateCoverage(@NotNull String dartPubPath, @Nullable Project project) {
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      try {
+        ProcessOutput activateOutput =
+          new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "activate", "coverage"))
+            .runProcess(60 * 1000);
+        ProcessOutput listOutput =
+          new CapturingProcessHandler(new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "list"))
+            .runProcess(60 * 1000);
+        if (listOutput.getExitCode() == 0 && listOutput.getStdout().contains("coverage ")) {
+          activatedPubs.add(dartPubPath);
+        }
+        else {
+          LOG.warn("Activation of coverage package failed.");
+          LOG.warn("Activation output (exit code " + activateOutput.getExitCode() + "):\n" + activateOutput.getStdout());
+          LOG.warn("List of activated packages (exit code " + listOutput.getExitCode() + "):\n" + listOutput.getStdout());
+        }
+      }
+      catch (ExecutionException e) {
+        LOG.warn(e);
+      }
+    }, "Activating Coverage Package...", false, project);
+    return activatedPubs.contains(dartPubPath);
   }
 }
