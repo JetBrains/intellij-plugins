@@ -212,7 +212,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private DefaultMutableTreeNode myParentNode;
   private SMTestRunnerResultsForm myResultsViewer;
   private MockPrinter myMockResettablePrinter;
-  private Map<Integer, DefaultMutableTreeNode> myNodes;
+  private Map<String, DefaultMutableTreeNode> myNodes;
 
   public void testSample1() throws Exception {
     runTest(Sample1Events, Sample1Signals, Sample1Parents);
@@ -327,8 +327,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     for (int childIdx = 0; childIdx < parents.length; childIdx++) {
       int parentIdx = parents[childIdx];
       if (parentIdx > 0) {
-        DefaultMutableTreeNode child = myNodes.get(childIdx);
-        DefaultMutableTreeNode parent = myNodes.get(parentIdx);
+        DefaultMutableTreeNode child = myNodes.get(String.valueOf(childIdx));
+        DefaultMutableTreeNode parent = myNodes.get(String.valueOf(parentIdx));
         assertEquals(parent, child.getParent());
       }
     }
@@ -337,7 +337,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myNodes = new HashMap<Integer, DefaultMutableTreeNode>();
+    myNodes = new HashMap<String, DefaultMutableTreeNode>();
     final ExecutionEnvironment environment = new ExecutionEnvironment();
     myMockResettablePrinter = new MockPrinter(true);
     TestConsoleProperties consoleProperties = createConsoleProperties();
@@ -417,8 +417,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       DefaultMutableTreeNode node = new DefaultMutableTreeNode(testStartedEvent.getName());
       myNodes.put(testStartedEvent.getId(), node);
       DefaultMutableTreeNode parentNode = myParentNode;
-      int parentId = testStartedEvent.getParentId();
-      if (parentId > 0) {
+      String parentId = testStartedEvent.getParentId();
+      if (parentId != null && !parentId.equals(TreeNodeEvent.ROOT_NODE_ID)) {
         parentNode = myNodes.get(parentId);
       }
       myTreeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
@@ -452,8 +452,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       DefaultMutableTreeNode node = new DefaultMutableTreeNode(suiteStartedEvent.getName());
       myNodes.put(suiteStartedEvent.getId(), node);
       DefaultMutableTreeNode parentNode = myParentNode;
-      int parentId = suiteStartedEvent.getParentId();
-      if (parentId > 0) {
+      String parentId = suiteStartedEvent.getParentId();
+      if (parentId != null && !parentId.equals(TreeNodeEvent.ROOT_NODE_ID)) {
         parentNode = myNodes.get(parentId);
       }
       myTreeModel.insertNodeInto(node, parentNode, parentNode.getChildCount());
