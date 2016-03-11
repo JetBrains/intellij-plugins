@@ -34,7 +34,6 @@ import javax.swing.*;
  */
 public class CfmlRunConfigurationType implements ConfigurationType {
   private ConfigurationFactory myConfigurationFactory;
-  private CfmlRunConfiguration myTemplateConfiguration;
 
   public CfmlRunConfigurationType() {
     myConfigurationFactory = new ConfigurationFactory(this) {
@@ -46,15 +45,11 @@ public class CfmlRunConfigurationType implements ConfigurationType {
       @NotNull
       public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         CfmlRunConfiguration cfmlRunConfiguration = new CfmlRunConfiguration(project, this, "ColdFusion");
-        myTemplateConfiguration = cfmlRunConfiguration;
         return cfmlRunConfiguration;
       }
     };
   }
 
-  public CfmlRunConfiguration getTemplateConfiguration() {
-    return myTemplateConfiguration;
-  }
 
   public String getDisplayName() {
     return "Cold Fusion";
