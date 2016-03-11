@@ -10,27 +10,34 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.TestConsoleProperties;
+import com.intellij.execution.testframework.TestFrameworkRunningModel;
+import com.intellij.execution.testframework.actions.AbstractRerunFailedTestsAction;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMCustomMessagesParsing;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Getter;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.openapi.command.impl.CommandLog.LOG;
 
 public class DartTestRunningState extends DartCommandLineRunningState {
   public static final String DART_FRAMEWORK_NAME = "DartTestRunner";
@@ -52,14 +59,23 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
     final DefaultExecutionResult executionResult =
       new DefaultExecutionResult(consoleView, processHandler, createActions(consoleView, processHandler, executor));
-    executionResult.setRestartActions(new ToggleAutoTestAction());
+    DartConsoleProperties properties = (DartConsoleProperties)((SMTRunnerConsoleView)consoleView).getProperties();
+    AbstractRerunFailedTestsAction rerunFailedTestsAction = properties.createRerunFailedTestsAction(consoleView);
+    LOG.assertTrue(rerunFailedTestsAction != null);
+    rerunFailedTestsAction.setModelProvider(new Getter<TestFrameworkRunningModel>() {
+      @Override
+      public TestFrameworkRunningModel get() {
+        return ((SMTRunnerConsoleView)consoleView).getResultsViewer();
+      }
+    });
+    executionResult.setRestartActions(rerunFailedTestsAction, new ToggleAutoTestAction());
     return executionResult;
   }
 
   private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) {
     final Project project = env.getProject();
-    final DartTestRunConfiguration runConfiguration = (DartTestRunConfiguration)env.getRunProfile();
-    final DartTestRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
+    final DartRunConfiguration runConfiguration = (DartRunConfiguration)env.getRunProfile();
+    final DartTestRunnerParameters runnerParameters = (DartTestRunnerParameters)runConfiguration.getRunnerParameters();
 
     final TestConsoleProperties testConsoleProperties = new DartConsoleProperties(runConfiguration, env);
     final ConsoleView consoleView = SMTestRunnerConnectionUtil.createConsole(DART_FRAMEWORK_NAME, testConsoleProperties);
@@ -84,7 +100,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) throw new ExecutionException("Dart SDK cannot be found"); // can't happen, already checked
 
-    DartTestRunnerParameters params = (DartTestRunnerParameters)myRunnerParameters;
+    DartTestRunnerParameters params = getParameters();
 
     StringBuilder builder = new StringBuilder();
     builder.append(RUN_COMMAND);
@@ -112,9 +128,13 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
       String groupOrTestName = params.getTestName();
       if (groupOrTestName != null &&
-          !groupOrTestName.isEmpty() &&
-          params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
-        builder.append(" -N \"").append(groupOrTestName).append("\"");
+          !groupOrTestName.isEmpty()) {
+        if (params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
+          builder.append(" -N \"").append(groupOrTestName).append("\"");
+        }
+        else if (params.getScope() == DartTestRunnerParameters.Scope.MULTIPLE_NAMES) {
+          builder.append(" -n \"").append(groupOrTestName).append("\"");
+        }
       }
     }
 
@@ -124,13 +144,17 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     return doStartProcess(pathToDartUrl(sdk.getHomePath() + PUB_SNAPSHOT_PATH));
   }
 
+  DartTestRunnerParameters getParameters() {
+    return (DartTestRunnerParameters)myRunnerParameters;
+  }
+
   private static String pathToDartUrl(@NonNls @NotNull String path) {
     final String url = VfsUtilCore.pathToUrl(path);
     return SystemInfo.isWindows ? url.replace("file://", "file:///") : url;
   }
 
   private static class DartConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
-    public DartConsoleProperties(DartTestRunConfiguration runConfiguration, ExecutionEnvironment env) {
+    public DartConsoleProperties(DartRunConfiguration runConfiguration, ExecutionEnvironment env) {
       super(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
       setUsePredefinedMessageFilter(false);
       setIdBasedTestTree(true);
@@ -146,6 +170,14 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName,
                                                                         @NotNull TestConsoleProperties consoleProperties) {
       return new DartTestEventsConverter(testFrameworkName, consoleProperties);
+    }
+
+    @Nullable
+    @Override
+    public AbstractRerunFailedTestsAction createRerunFailedTestsAction(ConsoleView consoleView) {
+      DartTestRerunnerAction action = new DartTestRerunnerAction(consoleView, this);
+      action.init(this);
+      return action;
     }
   }
 }
