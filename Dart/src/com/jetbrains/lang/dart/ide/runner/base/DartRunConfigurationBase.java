@@ -22,7 +22,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class DartRunConfigurationBase extends LocatableConfigurationBase implements RefactoringListenerProvider {
+public abstract class DartRunConfigurationBase extends LocatableConfigurationBase
+  implements RefactoringListenerProvider, DartRunConfiguration {
 
   protected DartRunConfigurationBase(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
