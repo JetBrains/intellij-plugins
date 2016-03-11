@@ -21,4 +21,24 @@ public class DartComponentInfo {
   public String getLibraryName() {
     return myLibraryName;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DartComponentInfo info = (DartComponentInfo)o;
+
+    if (myComponentType != info.myComponentType) return false;
+    if (myLibraryName != null ? !myLibraryName.equals(info.myLibraryName) : info.myLibraryName != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myComponentType != null ? myComponentType.hashCode() : 0;
+    result = 31 * result + (myLibraryName != null ? myLibraryName.hashCode() : 0);
+    return result;
+  }
 }
