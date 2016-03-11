@@ -41,6 +41,7 @@ import java.net.URL;
  */
 public class CfmlRunConfiguration extends RunConfigurationBase implements LocatableConfiguration{
   private CfmlRunnerParameters myRunnerParameters = new CfmlRunnerParameters();
+  private boolean fromDefaultHost = false;
 
   protected CfmlRunConfiguration(Project project, ConfigurationFactory factory, String name) {
     super(project, factory, name);
@@ -117,4 +118,13 @@ public class CfmlRunConfiguration extends RunConfigurationBase implements Locata
     final String path = getRunnerParameters().getUrl();
     return StringUtil.isNotEmpty(path) ? PathUtil.getFileName(path) : "";
   }
+
+  public void setFromDefaultHost(boolean generatedFromDefaultHost){
+    fromDefaultHost = generatedFromDefaultHost;
+  }
+
+  public boolean isFromDefaultHost() {
+    return fromDefaultHost;
+  }
+
 }

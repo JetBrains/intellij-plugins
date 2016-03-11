@@ -32,7 +32,7 @@ import java.net.URL;
 public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
   public final static String WWW_ROOT = "wwwroot";
-  public final static String DEFAULT_HOST="http://localhost:8500";
+  public final static String DEFAULT_HOST = "http://localhost:8500";
 
   public CfmlRunConfigurationProducer() {
     super(CfmlRunConfigurationType.getInstance());
@@ -68,28 +68,25 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
     CfmlRunnerParameters params = configuration.getRunnerParameters();
 
     String urlStr = configuration.getRunnerParameters().getUrl();
-    if (urlStr.isEmpty()) urlStr = DEFAULT_HOST;
-    //TODO: ask user to change default host;
+    String serverUrl;
 
-    try {
-      URL url = new URL(urlStr);
-      String serverUrl = url.getProtocol() + "://" + url.getAuthority();
-
-      if (serverUrl.isEmpty()) {
-        CfmlRunConfiguration templateConfiguration = CfmlRunConfigurationType.getInstance().getTemplateConfiguration();
-        if (templateConfiguration != null) {
-          serverUrl = templateConfiguration.getRunnerParameters().getUrl();
-        }
+    if (!urlStr.isEmpty()) {    //generated from default run configuration
+      try {
+        URL url = new URL(urlStr);
+        serverUrl = url.getProtocol() + "://" + url.getAuthority();
+      } catch (MalformedURLException e) {
+        LOG.warn(CfmlBundle.message("cfml.producer.warn.url") );
+        return false;
       }
-      String path = buildPageUrl(context, file);
-      params.setUrl(serverUrl + path);
-      configuration.setName(generateName(containingFile));
-      return true;
+    } else {    // if default configuration is not defined
+      serverUrl = DEFAULT_HOST;
+      configuration.setFromDefaultHost(true);
     }
-    catch (MalformedURLException e) {
-      LOG.warn(CfmlBundle.message("cfml.producer.warn.url") );
-      return false;
-    }
+
+    String path = buildPageUrl(context, file);
+    params.setUrl(serverUrl + path);
+    configuration.setName(generateName(containingFile));
+    return true;
   }
 
   @NotNull
@@ -125,7 +122,7 @@ public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlR
 
       final String path;
       path = buildPageUrl(context, containingFile.getVirtualFile());
-      URL url = null;
+      URL url;
       try {
         url = new URL(configuration.getRunnerParameters().getUrl());
         return StringUtil.equals(url.getPath(), path);
