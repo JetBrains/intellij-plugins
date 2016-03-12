@@ -31,6 +31,9 @@ import org.angularjs.html.Angular2HTMLLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String TEMPLATE_REF = "TemplateRef";
@@ -84,6 +87,7 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
                                                               String selector) {
     if (selector == null) return outData;
 
+    final Set<String> added = new HashSet<>();
     final String[] names = selector.split(",");
     for (String selectorName : names) {
       final int not = selectorName.indexOf(":");
@@ -97,19 +101,24 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
           if (outData == null) outData = new JSElementIndexingDataImpl();
           JSImplicitElementImpl.Builder elementBuilder;
           for (String attr : StringUtil.split(selectorName, "]", false)) {
+            if (added.contains(attr)) continue;
             final String restrict = selectorName.startsWith("[") ? "A" : "E";
             elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
               .setType(JSImplicitElement.Type.Class).setTypeString(restrict + ";template;;");
             elementBuilder.setUserString("adi");
             outData.addImplicitElement(elementBuilder.toImplicitElement());
+            added.add(attr);
           }
           if (end > start) {
             final String attributeName = selectorName.substring(1, end);
             final String prefix = isTemplate(decorator) ? "*" : "";
-            elementBuilder = new JSImplicitElementImpl.Builder(prefix + attributeName, decorator)
+            final String attr = prefix + attributeName;
+            if (added.contains(attr)) continue;
+            elementBuilder = new JSImplicitElementImpl.Builder(attr, decorator)
               .setType(JSImplicitElement.Type.Class).setTypeString("A;;;");
             elementBuilder.setUserString("adi");
             outData.addImplicitElement(elementBuilder.toImplicitElement());
+            added.add(attr);
           }
         }
       }
