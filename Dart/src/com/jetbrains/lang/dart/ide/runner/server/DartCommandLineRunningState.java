@@ -30,7 +30,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.coverage.DartCoverageProgramRunner;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
-import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
+import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
@@ -50,7 +50,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
-    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters().clone();
+    myRunnerParameters = ((DartRunConfiguration)env.getRunProfile()).getRunnerParameters().clone();
 
     final Project project = env.getProject();
     try {

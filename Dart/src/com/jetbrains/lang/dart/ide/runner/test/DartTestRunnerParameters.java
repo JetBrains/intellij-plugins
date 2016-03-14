@@ -69,7 +69,8 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
       GROUP("Test group"),
     @Deprecated // GROUP_OR_TEST_BY_NAME used instead
       METHOD("Test name"),
-    GROUP_OR_TEST_BY_NAME("Group or test by name");
+    GROUP_OR_TEST_BY_NAME("Group or test by name"),
+    MULTIPLE_NAMES("Multiple names"); // Used by test re-runner action; not visible in UI
 
     private final String myPresentableName;
 
