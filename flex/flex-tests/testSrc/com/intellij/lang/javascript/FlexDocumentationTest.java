@@ -239,7 +239,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testQuickNavigateInfoWithMxml2() throws Exception {
-    doNavigateTest(getTestName(false), "mxml", "xxx:mypackage.List");
+    doNavigateTest(getTestName(false), "mxml", "id xxx");
   }
 
   public void testQuickNavigateInfo_2() throws Exception {
