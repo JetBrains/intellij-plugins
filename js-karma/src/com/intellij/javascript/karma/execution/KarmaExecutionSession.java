@@ -160,7 +160,7 @@ public class KarmaExecutionSession {
     public KarmaConsoleProperties(KarmaRunConfiguration configuration, Executor executor, KarmaTestProxyFilterProvider filterProvider) {
       super(configuration, FRAMEWORK_NAME, executor);
       myFilterProvider = filterProvider;
-      setUsePredefinedMessageFilter(false);
+      setUsePredefinedMessageFilter(true);
       setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
       setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
       setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
