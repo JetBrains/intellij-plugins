@@ -15,7 +15,7 @@ function configureCoverage(config) {
   if (cli.isWithCoverage()) {
     // Ensure 'coverage' reporter is specified, otherwise coverage preprocessor won't work:
     //   https://github.com/karma-runner/karma-coverage/blob/v0.5.3/lib/preprocessor.js#L54
-    if (reporters.indexOf(karmaCoverageReporterName) < 0) {
+    if (!isWebpackUsed(config) && reporters.indexOf(karmaCoverageReporterName) < 0) {
       reporters.push(karmaCoverageReporterName);
       console.log('IntelliJ integration enabled coverage by adding \'' + karmaCoverageReporterName + '\' reporter');
       // 'coverage' reporter uses settings from 'config.coverageReporter'. If no settings set,
@@ -77,6 +77,18 @@ function findLcovInfoFile(coverageDir, callback) {
   });
 }
 
+/**
+ * If webpack is used, coverage is configured in a different way:
+ *  - no explicit 'coverage' reporter needed
+ *  - no explicit 'coverage' preprocessor needed
+ *
+ * @param config karma config
+ * @returns {boolean} true if webpack preprocessor is configured
+ */
+function isWebpackUsed(config) {
+  return intellijUtil.isPreprocessorSpecified(config.preprocessors, 'webpack');
+}
+
 function createKarmaCoverageReporter(injector, emitter, config) {
   try {
     var karmaCoverageReporterName = 'reporter:coverage';
@@ -114,7 +126,8 @@ function IntellijCoverageReporter(injector, config) {
   }
   // Missing coverage preprocessor is a common mistake that results in empty coverage reports.
   // Reporting such a mistake before actually running tests with coverage improves user experience.
-  var coveragePreprocessorSpecifiedInConfig = intellijUtil.isPreprocessorSpecified(config.preprocessors, coveragePreprocessorName);
+  var coveragePreprocessorSpecifiedInConfig = intellijUtil.isPreprocessorSpecified(config.preprocessors, coveragePreprocessorName) ||
+                                              isWebpackUsed(config);
   IntellijCoverageReporter.reportCoverageStartupStatus(coveragePreprocessorSpecifiedInConfig, karmaCoverageReporter != null);
   return that;
 }
