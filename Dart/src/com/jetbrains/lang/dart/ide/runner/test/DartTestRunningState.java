@@ -37,8 +37,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.openapi.command.impl.CommandLog.LOG;
-
 public class DartTestRunningState extends DartCommandLineRunningState {
   public static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String PUB_SNAPSHOT_PATH = "/bin/snapshots/pub.dart.snapshot";
@@ -61,7 +59,6 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       new DefaultExecutionResult(consoleView, processHandler, createActions(consoleView, processHandler, executor));
     DartConsoleProperties properties = (DartConsoleProperties)((SMTRunnerConsoleView)consoleView).getProperties();
     AbstractRerunFailedTestsAction rerunFailedTestsAction = properties.createRerunFailedTestsAction(consoleView);
-    LOG.assertTrue(rerunFailedTestsAction != null);
     rerunFailedTestsAction.setModelProvider(new Getter<TestFrameworkRunningModel>() {
       @Override
       public TestFrameworkRunningModel get() {
@@ -127,8 +124,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       builder.append(' ').append(params.getFilePath());
 
       String groupOrTestName = params.getTestName();
-      if (groupOrTestName != null &&
-          !groupOrTestName.isEmpty()) {
+      if (groupOrTestName != null && !groupOrTestName.isEmpty()) {
         if (params.getScope() == DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME) {
           builder.append(" -N \"").append(groupOrTestName).append("\"");
         }
@@ -172,7 +168,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
       return new DartTestEventsConverter(testFrameworkName, consoleProperties);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public AbstractRerunFailedTestsAction createRerunFailedTestsAction(ConsoleView consoleView) {
       DartTestRerunnerAction action = new DartTestRerunnerAction(consoleView, this);
