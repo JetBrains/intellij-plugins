@@ -49,9 +49,8 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
   public JavaFxHtmlPanel() {
     //System.setProperty("prism.lcdtext", "false");
     //System.setProperty("prism.text", "t2k");
-    myPanel = new JFXPanel();
+    myPanel = new JFXPanelWrapper();
 
-    Platform.setImplicitExit(false);
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
