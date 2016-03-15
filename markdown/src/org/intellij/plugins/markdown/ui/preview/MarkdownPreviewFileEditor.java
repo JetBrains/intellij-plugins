@@ -185,7 +185,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       return;
     }
 
-    mySwingAlarm.addRequest(new Runnable() {
+    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       @Override
       public void run() {
         final MarkdownHtmlPanel newPanel = newPanelProvider.createHtmlPanel();
@@ -198,7 +198,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         myPanel.setHtml(myLastRenderedHtml);
         myHtmlPanelWrapper.repaint();
       }
-    }, 0, ModalityState.stateForComponent(myHtmlPanelWrapper));
+    }, ModalityState.stateForComponent(getComponent()));
   }
 
   @Nullable("Null means leave current panel")
