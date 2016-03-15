@@ -586,7 +586,7 @@ module Teamcity
         step_def_name = if step_exception.nil?
                           step_name.index(step_keyword) == 0 ? (step_name[step_keyword.length..-1]).lstrip : step_name
                         else
-                          ::Cucumber::Undefined === step_exception ? step_exception.step_name : step_name
+                          step_exception.respond_to?(:step_name) ? step_exception.step_name : step_name
                         end
 
         snippet = create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
