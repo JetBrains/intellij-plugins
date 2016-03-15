@@ -28,10 +28,8 @@ import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
-import java.util.HashSet
+import java.util.*
 import java.util.jar.JarFile
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun module(name: String, osgi: Boolean = true): JpsModule {
@@ -97,7 +95,7 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
       val actual = it.getManifest()!!.getMainAttributes()!!.filter {
         if (it.key.toString() in instrumental) false
         else if (it.key.toString() in required) {
-          assertNotNull(it.getValue()); false }
+          assertNotNull(it.value); false }
         else true
       }.map { "${it.key}=${it.value}" }.toSet()
       assertEquals(expected, actual)

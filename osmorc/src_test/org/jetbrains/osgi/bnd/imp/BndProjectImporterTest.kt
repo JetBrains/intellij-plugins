@@ -28,11 +28,10 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.facet.OsmorcFacet
-
 import java.io.File
-
 import kotlin.properties.Delegates
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class BndProjectImporterTest : IdeaTestCase() {
   var myWorkspace: Workspace by Delegates.notNull()
@@ -82,8 +81,8 @@ class BndProjectImporterTest : IdeaTestCase() {
     }
 
     val rootManager = ModuleRootManager.getInstance(rootModule)
-    assertEquals(1, rootManager.getContentRootUrls().size())
-    assertEquals(0, rootManager.getSourceRootUrls().size())
+    assertEquals(1, rootManager.getContentRootUrls().size)
+    assertEquals(0, rootManager.getSourceRootUrls().size)
     assertNull(OsmorcFacet.getInstance(rootModule))
   }
 
@@ -96,7 +95,7 @@ class BndProjectImporterTest : IdeaTestCase() {
     val targetLevel = CompilerConfiguration.getInstance(myProject).getProjectBytecodeTarget()
     assertEquals("1.8", targetLevel)
 
-    val javacOptions = JavacConfiguration.getOptions(myProject, javaClass<JavacConfiguration>())
+    val javacOptions = JavacConfiguration.getOptions(myProject, JavacConfiguration::class.java)
     assertTrue(javacOptions.DEBUGGING_INFO)
     assertEquals("", javacOptions.ADDITIONAL_OPTIONS_STRING)
   }
@@ -105,14 +104,14 @@ class BndProjectImporterTest : IdeaTestCase() {
     myImporter.resolve()
 
     val modules = ModuleManager.getInstance(myProject).getModules()
-    assertEquals(3, modules.size())
+    assertEquals(3, modules.size)
     assertEquals(setOf("hello.provider", "hello.consumer", "hello.tests"), modules.map { it.getName() }.toSet())
 
     modules.forEach {
       val rootManager = ModuleRootManager.getInstance(it)
-      assertEquals(1, rootManager.getContentRootUrls().size(), it.getName())
-      assertEquals(2, rootManager.getSourceRootUrls().size(), it.getName())
-      assertEquals(3, rootManager.getExcludeRootUrls().size(), it.getName())
+      assertEquals(1, rootManager.getContentRootUrls().size, it.getName())
+      assertEquals(2, rootManager.getSourceRootUrls().size, it.getName())
+      assertEquals(3, rootManager.getExcludeRootUrls().size, it.getName())
 
       val dependencies = getDependencies(it)
       when (it.getName()) {
@@ -121,7 +120,7 @@ class BndProjectImporterTest : IdeaTestCase() {
         "hello.tests" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), dependencies)
       }
 
-      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(javaClass<LanguageLevelModuleExtension>()).getLanguageLevel()
+      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(LanguageLevelModuleExtension::class.java).getLanguageLevel()
       val expectedSource = if (it.getName() == "hello.provider") LanguageLevel.JDK_1_7 else LanguageLevel.JDK_1_8
       assertEquals(expectedSource, sourceLevel)
 
