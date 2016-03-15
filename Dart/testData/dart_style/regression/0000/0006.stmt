@@ -10,5 +10,6 @@ messageMentionsAsset(id) =>
     messageMentions(id.toString()) ||
     messageMentions(path.fromUri(entry.assetId.path));
 <<<
-messageMentionsAsset(id) => messageMentions(id.toString()) ||
+messageMentionsAsset(id) =>
+    messageMentions(id.toString()) ||
     messageMentions(path.fromUri(entry.assetId.path));

@@ -50,3 +50,11 @@ part of some_very_long_library_name_that_wraps;
 library    a .  b   . c;
 <<<
 library a.b.c;
+>>> configuration
+import'a'if(b  . c . d)'e';
+<<<
+import 'a' if (b.c.d) 'e';
+>>> configuration
+export'a'if(b  . c=='d'   )'e';
+<<<
+export 'a' if (b.c == 'd') 'e';

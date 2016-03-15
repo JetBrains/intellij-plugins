@@ -273,9 +273,34 @@ longFunctionName([
   element,
   element
 ]);
->>> nest trailing named if there are non-body named
-longFunctionName(a: argument, b: argument,
+>>> allow leading non-collection to not split
+longFunctionName(a: arg, b: arg,
 c: [element, element, element, element], d: [element, element, element, element]);
+<<<
+longFunctionName(a: arg, b: arg, c: [
+  element,
+  element,
+  element,
+  element
+], d: [
+  element,
+  element,
+  element,
+  element
+]);
+>>> don't allow splitting before first arg while splitting collections
+longFunctionName(
+    a: argument, b: argument, c: [
+  element,
+  element,
+  element,
+  element
+], d: [
+  element,
+  element,
+  element,
+  element
+]);
 <<<
 longFunctionName(
     a: argument,
@@ -292,6 +317,41 @@ longFunctionName(
       element,
       element
     ]);
+>>> trailing named arguments that do not split
+longFunctionName(a: [element, element, element, element],
+b: [element, element, element, element], c: argument, d: argument);
+<<<
+longFunctionName(a: [
+  element,
+  element,
+  element,
+  element
+], b: [
+  element,
+  element,
+  element,
+  element
+], c: argument, d: argument);
+>>> trailing named arguments that do split
+longFunctionName(a: [element, element, element, element],
+b: [element, element, element, element], c: argument, d: argument, e: argument);
+<<<
+longFunctionName(
+    a: [
+      element,
+      element,
+      element,
+      element
+    ],
+    b: [
+      element,
+      element,
+      element,
+      element
+    ],
+    c: argument,
+    d: argument,
+    e: argument);
 >>> leading named arguments
 longFunctionName(name1: [element, element], name2: [element, element], name3: argument, name4: argument);
 <<<
@@ -340,3 +400,38 @@ obj.outer(
       element,
       element
     ]));
+>>> leading positional collections indent if their args split
+function([[element]],
+[[element]], argument, // comment
+argument);
+<<<
+function(
+    [
+      [element]
+    ],
+    [
+      [element]
+    ],
+    argument, // comment
+    argument);
+>>> trailing positional collections indent if their args split
+function(argument, // comment
+argument, [[element]], [[element]]);
+<<<
+function(
+    argument, // comment
+    argument,
+    [
+      [element]
+    ],
+    [
+      [element]
+    ]);
+>>> comment before collection
+function(argument, // comment
+[[element]]);
+<<<
+function(argument, // comment
+    [
+      [element]
+    ]);

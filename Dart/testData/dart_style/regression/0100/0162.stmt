@@ -28,22 +28,19 @@ void main() {
 }
 <<<
 void main() {
-  useGeneratedCode(new StaticConfiguration(
-      checkedMode: false,
-      parents: {
-        smoke_0.A: smoke_1.PolymerElement,
-        smoke_0.B: smoke_0.A,
-        smoke_0.C: smoke_0.B,
-        smoke_0.D: smoke_0.B,
-        smoke_0.E: smoke_0.C,
-      },
-      declarations: {
-        smoke_0.A: {},
-        smoke_0.B: {},
-        smoke_0.C: {},
-        smoke_0.D: {},
-        smoke_0.E: {},
-      }));
+  useGeneratedCode(new StaticConfiguration(checkedMode: false, parents: {
+    smoke_0.A: smoke_1.PolymerElement,
+    smoke_0.B: smoke_0.A,
+    smoke_0.C: smoke_0.B,
+    smoke_0.D: smoke_0.B,
+    smoke_0.E: smoke_0.C,
+  }, declarations: {
+    smoke_0.A: {},
+    smoke_0.B: {},
+    smoke_0.C: {},
+    smoke_0.D: {},
+    smoke_0.E: {},
+  }));
   new LogInjector().injectLogsFromUrl('sort_registration_test.html._buildLogs');
   configureForDeployment([
     () => Polymer.register('x-a', i0.A),

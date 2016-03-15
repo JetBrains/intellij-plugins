@@ -4,7 +4,8 @@
           _borderWidth +
       clientY;
 <<<
-  int get screenY => window.screenTop +
+  int get screenY =>
+      window.screenTop +
       window.outerHeight -
       window.innerHeight -
       _borderWidth +

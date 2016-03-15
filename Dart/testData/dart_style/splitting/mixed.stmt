@@ -54,8 +54,10 @@ callSomeMethod(
       .method(argument)
       .method(argument)
       .method(() {
-    body;
-  }).another().another()
+        body;
+      })
+      .another()
+      .another()
 ];
 >>> function inside an argument list
 function(argument, obj.method(argument).method(argument).method(() {body;}).another().another());
@@ -66,8 +68,10 @@ function(
         .method(argument)
         .method(argument)
         .method(() {
-      body;
-    }).another().another());
+          body;
+        })
+        .another()
+        .another());
 >>> unnested function inside nested expression
 function(argument, function(() {;}));
 <<<
@@ -91,14 +95,15 @@ function(
 receiver.firstMethod().next((parameter) => longIdentifier == veryLongIdentifier);
 <<<
 receiver.firstMethod().next(
-    (parameter) => longIdentifier ==
+    (parameter) =>
+        longIdentifier ==
         veryLongIdentifier);
 >>> wrap after =>
 receiver.firstMethod().next(() => veryveryveryverylongIdentifier == veryLongIdentifier);
 <<<
 receiver.firstMethod().next(() =>
     veryveryveryverylongIdentifier ==
-        veryLongIdentifier);
+    veryLongIdentifier);
 >>> wrap at nested binary operator
 receiver.firstMethod().next(longIdentifier == veryLongIdentifier);
 <<<
@@ -194,3 +199,15 @@ longIdentifier +
 longIdentifier +
         (longIdentifier ? 0 : 1) ==
     identifier;
+>>> normal indent before unsplit binary operators in => body
+veryLongFunction() => extremelyLongArgument + argument;
+<<<
+veryLongFunction() =>
+    extremelyLongArgument + argument;
+>>> no extra indent before binary operators in => body
+veryLongFunction() => longArgument + longArgument + longArgument;
+<<<
+veryLongFunction() =>
+    longArgument +
+    longArgument +
+    longArgument;

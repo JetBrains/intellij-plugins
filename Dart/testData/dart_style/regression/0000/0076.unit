@@ -4,7 +4,8 @@ class TokenType {
 }
 <<<
 class TokenType {
-  bool get isUserDefinableOperator => identical(lexeme, "==") ||
+  bool get isUserDefinableOperator =>
+      identical(lexeme, "==") ||
       identical(lexeme, "~") ||
       identical(lexeme, "[]") ||
       identical(lexeme, "[]=") ||

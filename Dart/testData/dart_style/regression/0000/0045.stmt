@@ -5,7 +5,6 @@ foo() {
 }
 <<<
 foo() {
-  if (xxxxxxxxxxxxxxxx || xxxxxxxxxxxxxxxxxxxxx) return xxxxxxxxxxxxxx
-      ? xxxxxxxxxxxxxxxxxxxx
-      : xxxxxxxxxxxxxxxxxxxxxxxxxx;
+  if (xxxxxxxxxxxxxxxx || xxxxxxxxxxxxxxxxxxxxx)
+    return xxxxxxxxxxxxxx ? xxxxxxxxxxxxxxxxxxxx : xxxxxxxxxxxxxxxxxxxxxxxxxx;
 }

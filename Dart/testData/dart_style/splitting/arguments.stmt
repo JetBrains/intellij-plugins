@@ -64,6 +64,11 @@ foo(inner(veryLongArgument, veryLongArgument));
 <<<
 foo(inner(veryLongArgument,
     veryLongArgument));
+>>> do not force named single-argument list to split if argument splits
+foo(named:inner(veryLongArgument, veryLongArgument));
+<<<
+foo(named: inner(veryLongArgument,
+    veryLongArgument));
 >>> do not split empty argument list
 foo___________________________________();
 <<<

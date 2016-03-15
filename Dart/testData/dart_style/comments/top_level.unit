@@ -213,3 +213,8 @@ var a = 1;
 
 /// doc
 var b = 2;
+>>> in dotted name
+import 'a' if (/**/a/**/./**/b/**/) 'c';
+<<<
+import 'a'
+    if (/**/ a /**/ . /**/ b /**/) 'c';

@@ -14,6 +14,16 @@ import 'dart:io';
 
 @deprecated
 export 'dart:io';
+>>> metadata on part
+@foo part "part.dart";
+<<<
+@foo
+part "part.dart";
+>>> metadata on part of
+@foo part of bar;
+<<<
+@foo
+part of bar;
 >>> force newline before types
 @meta class X {}
 
@@ -53,19 +63,18 @@ foo() {
   @b
   var c;
 }
->>> allow inline annotations before functions
-@meta   foo() {}
-<<<
+>>> force newline before function
 @meta foo() {}
->>> allow newline before functions
-@meta
-
-
-foo() {}
 <<<
 @meta
 foo() {}
->>> allow inline annotations before members
+>>> multiple annotations before function get their own line
+@meta @another foo() {}
+<<<
+@meta
+@another
+foo() {}
+>>> force newline before member
 class X {
   @meta   var _x;
   @meta       X.y();
@@ -74,42 +83,35 @@ class X {
 }
 <<<
 class X {
-  @meta var _x;
-  @meta X.y();
-  @meta factory X(x) => null;
-  @meta int x() => null;
-}
->>> allow newline before members
-class X {
   @meta
-
   var _x;
-
   @meta
-
-
-
   X.y();
-
   @meta
   factory X(x) => null;
-
   @meta
-
   int x() => null;
+}
+>>> multiple annotations before members get own line
+class X {
+  @meta @another  var _x;
+  @meta @another       X.y();
+  @meta @another  factory X(x) => null;
+  @meta @another  int x() => null;
 }
 <<<
 class X {
   @meta
+  @another
   var _x;
-
   @meta
+  @another
   X.y();
-
   @meta
+  @another
   factory X(x) => null;
-
   @meta
+  @another
   int x() => null;
 }
 >>> collapse newlines between annotations
@@ -135,16 +137,6 @@ class A {}
 @a
 @b
 class A {}
->>> multiple member annotations always get their own line
-class A {
-  @a @b void foo() {}
-}
-<<<
-class A {
-  @a
-  @b
-  void foo() {}
-}
 >>> parameter annotations are inline
 foo(
 
@@ -216,3 +208,9 @@ named({@foo bar}) {}
 <<<
 positional([@foo bar]) {}
 named({@foo bar}) {}
+>>> split between metadata and parameter indents
+function(@VeryLongMetadataAnnotation longParameter) {}
+<<<
+function(
+    @VeryLongMetadataAnnotation
+        longParameter) {}
