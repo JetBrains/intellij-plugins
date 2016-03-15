@@ -15,10 +15,10 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,9 +106,8 @@ public class KarmaExecutionSession {
   @NotNull
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server,
                                                   @NotNull File clientAppFile) throws ExecutionException {
-    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(myProject);
-    NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.cast(interpreter);
-    GeneralCommandLine commandLine = createCommandLine(localInterpreter, server.getServerPort(), server.getKarmaConfig(), clientAppFile);
+    NodeJsLocalInterpreter interpreter = myRunSettings.getInterpreterRef().resolveAsLocal(myProject);
+    GeneralCommandLine commandLine = createCommandLine(interpreter, server.getServerPort(), server.getKarmaConfig(), clientAppFile);
     OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
@@ -124,7 +123,8 @@ public class KarmaExecutionSession {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
-    commandLine.withWorkDirectory(configFile.getParentFile());
+    commandLine.setWorkDirectory(configFile.getParentFile());
+    commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
     commandLine.setExePath(interpreter.getInterpreterSystemDependentPath());
     //commandLine.addParameter("--debug-brk=5858");
     commandLine.addParameter(clientAppFile.getAbsolutePath());
