@@ -171,7 +171,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     @NotNull
     @Override
     public AbstractRerunFailedTestsAction createRerunFailedTestsAction(ConsoleView consoleView) {
-      DartTestRerunnerAction action = new DartTestRerunnerAction(consoleView, this);
+      DartTestRerunnerAction action = new DartTestRerunnerAction(consoleView);
       action.init(this);
       return action;
     }

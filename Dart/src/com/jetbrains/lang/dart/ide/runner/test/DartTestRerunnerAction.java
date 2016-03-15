@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 class DartTestRerunnerAction extends AbstractRerunFailedTestsAction {
 
-  public DartTestRerunnerAction(@NotNull ComponentContainer componentContainer, @NotNull TestConsoleProperties consoleProperties) {
+  public DartTestRerunnerAction(@NotNull ComponentContainer componentContainer) {
     super(componentContainer);
   }
 
