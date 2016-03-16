@@ -118,11 +118,11 @@ public class DartSpacingProcessor {
         // Metadata on type parameters must be inlined.
         return Spacing.createSpacing(1, 1, 0, false, 0);
       }
-      if (parentType == DART_FILE && elementType != FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE) {
+      if (parentType == DART_FILE) {
         // Metadata on top-level declarations must be on its own line.
-        return Spacing.createSpacing(0, 0, 1, false, 0);//false here
+        return Spacing.createSpacing(0, 0, 1, false, 0); //false here
       }
-      if (parentType == CLASS_MEMBERS) {
+      if (parentType == CLASS_MEMBERS || FUNCTION_DEFINITION.contains(parentType)) {
         if (type2 == METADATA || FormatterUtil.isPrecededBy(node1, METADATA, WHITE_SPACE)) {
           // Multiple metadata each goes on its own line.
           return Spacing.createSpacing(0, 0, 1, false, 0);

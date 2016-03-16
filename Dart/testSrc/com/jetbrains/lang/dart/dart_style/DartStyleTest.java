@@ -69,7 +69,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("comments/maps.stmt:70  line comments after last item");
     KNOWN_TO_FAIL.add("comments/maps.stmt:79  line comments after trailing comma");
     KNOWN_TO_FAIL.add("comments/maps.stmt:88  inside map literal");
-    KNOWN_TO_FAIL.add("comments/top_level.unit:216  in dotted name"); // New 3/26 FIXME
+    KNOWN_TO_FAIL.add("comments/top_level.unit:216  in dotted name"); // https://github.com/munificent/dep-interface-libraries
 
     KNOWN_TO_FAIL.add("regression/0000/0000.stmt:1");
     KNOWN_TO_FAIL.add("regression/0000/0000.stmt:17  (indent 4)");
@@ -335,10 +335,10 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/imports.unit:11  split before deferred");
     KNOWN_TO_FAIL.add("splitting/imports.unit:110  force both keywords to split even if first would fit on first line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:116  force split in list");
-    KNOWN_TO_FAIL.add("splitting/imports.unit:124  multiple configurations on one line"); // NEW 3/16 FIXME
-    KNOWN_TO_FAIL.add("splitting/imports.unit:128  if configurations don't fit, they all split"); // NEW 3/16 FIXME
-    KNOWN_TO_FAIL.add("splitting/imports.unit:134  do not split before uri"); // NEW 3/16 FIXME
-    KNOWN_TO_FAIL.add("splitting/imports.unit:139  split before =="); // NEW 3/16 FIXME
+    KNOWN_TO_FAIL.add("splitting/imports.unit:124  multiple configurations on one line"); // https://github.com/munificent/dep-interface-libraries
+    KNOWN_TO_FAIL.add("splitting/imports.unit:128  if configurations don't fit, they all split"); // https://github.com/munificent/dep-interface-libraries
+    KNOWN_TO_FAIL.add("splitting/imports.unit:134  do not split before uri"); // https://github.com/munificent/dep-interface-libraries
+    KNOWN_TO_FAIL.add("splitting/imports.unit:139  split before =="); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("splitting/imports.unit:25  import moves all shows each to their own line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:46  import moves hides each to their own line");
     KNOWN_TO_FAIL.add("splitting/imports.unit:6  wrap import at as");
@@ -490,8 +490,8 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:77  force newline before member"); // NEW 3/16
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:95  multiple annotations before members get own line"); // NEW 3/16
     KNOWN_TO_FAIL.add("whitespace/metadata.unit:211  split between metadata and parameter indents"); // NEW 3/16
-    KNOWN_TO_FAIL.add("whitespace/directives.unit:53  configuration"); // NEW 3/16 FIXME
-    KNOWN_TO_FAIL.add("whitespace/directives.unit:57  configuration"); // NEW 3/16 FIXME
+    KNOWN_TO_FAIL.add("whitespace/directives.unit:53  configuration"); // https://github.com/munificent/dep-interface-libraries
+    KNOWN_TO_FAIL.add("whitespace/directives.unit:57  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
     KNOWN_TO_FAIL.add("whitespace/if.stmt:44  single-expression else body"); // NEW 3/16
     KNOWN_TO_FAIL.add("whitespace/if.stmt:67  long if without curlies"); // NEW 3/16

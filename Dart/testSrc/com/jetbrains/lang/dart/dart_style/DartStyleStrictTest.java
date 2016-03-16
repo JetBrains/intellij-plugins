@@ -36,8 +36,6 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
 
     KNOWN_TO_FAIL_STRICT.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
-    KNOWN_TO_FAIL_STRICT.add("whitespace/metadata.unit:66  force newline before function"); // NEW 3/16 FIXME
-    KNOWN_TO_FAIL_STRICT.add("whitespace/metadata.unit:71  multiple annotations before function get their own line"); // NEW 3/16 FIXME
   }
 
   /**
