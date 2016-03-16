@@ -48,16 +48,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class AssistUtils {
-  public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
-    final Set<String> excludedIds = Collections.emptySet();
-    applyFileEdit(fileEdit, excludedIds);
-  }
-
-  public static void applyFileEdit(@NotNull final SourceFileEdit fileEdit, @NotNull final Set<String> excludedIds) {
+  /**
+   * @return <code>true</code> if file contents changed, <code>false</code> otherwise
+   */
+  public static boolean applyFileEdit(@NotNull final SourceFileEdit fileEdit) {
     final VirtualFile file = findVirtualFile(fileEdit);
     if (file != null) {
-      applyFileEdit(file, fileEdit, excludedIds);
+      return applyFileEdit(file, fileEdit, Collections.emptySet());
     }
+
+    return false;
   }
 
   public static void applySourceChange(@NotNull final Project project,
@@ -110,7 +110,11 @@ public class AssistUtils {
       }
       final int offset = edit.getOffset();
       final int length = edit.getLength();
-      document.replaceString(offset, offset + length, edit.getReplacement());
+
+      if (length != edit.getReplacement().length() ||
+          !edit.getReplacement().equals(document.getText(TextRange.create(offset, offset + length)))) {
+        document.replaceString(offset, offset + length, edit.getReplacement());
+      }
     }
   }
 
@@ -147,13 +151,21 @@ public class AssistUtils {
     return map;
   }
 
-  private static void applyFileEdit(@NotNull final VirtualFile file,
-                                    @NotNull final SourceFileEdit fileEdit,
-                                    @NotNull final Set<String> excludedIds) {
+  /**
+   * @return <code>true</code> if file contents changed, <code>false</code> otherwise
+   */
+  private static boolean applyFileEdit(@NotNull final VirtualFile file,
+                                       @NotNull final SourceFileEdit fileEdit,
+                                       @NotNull final Set<String> excludedIds) {
     final Document document = FileDocumentManager.getInstance().getDocument(file);
     if (document != null) {
+      final long initialModStamp = document.getModificationStamp();
+
       applySourceEdits(document, fileEdit.getEdits(), excludedIds);
+
+      return document.getModificationStamp() != initialModStamp;
     }
+    return false;
   }
 
   private static ChangeTarget findChangeTarget(@NotNull Project project, final SourceChange sourceChange) {

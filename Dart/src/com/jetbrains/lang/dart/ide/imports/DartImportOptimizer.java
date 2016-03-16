@@ -18,19 +18,23 @@ package com.jetbrains.lang.dart.ide.imports;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartImportOptimizer implements ImportOptimizer {
   @NotNull
   @Override
   public Runnable processFile(final PsiFile file) {
     DartAnalysisServerService.getInstance().serverReadyForRequest(file.getProject());
-    return new Runnable() {
+    return new CollectingInfoRunnable() {
+      private boolean myFileChanged = false;
+
       @Override
       public void run() {
         final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(file);
@@ -38,9 +42,15 @@ public class DartImportOptimizer implements ImportOptimizer {
           final String filePath = vFile.getPath();
           final SourceFileEdit fileEdit = DartAnalysisServerService.getInstance().edit_organizeDirectives(filePath);
           if (fileEdit != null) {
-            AssistUtils.applyFileEdit(fileEdit);
+            myFileChanged = AssistUtils.applyFileEdit(fileEdit);
           }
         }
+      }
+
+      @Nullable
+      @Override
+      public String getUserNotificationInfo() {
+        return myFileChanged ? DartBundle.message("organized.directives") : null;
       }
     };
   }
