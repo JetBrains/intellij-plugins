@@ -10,8 +10,8 @@
 <<<
   init(
       {@Option(help: 'The git Uri containing the jefe.yaml.', abbr: 'g')
-      String gitUri,
+          String gitUri,
       @Option(help: 'The directory to install into', abbr: 'd')
-      String installDirectory: '.',
+          String installDirectory: '.',
       @Flag(help: 'Skips the checkout of the develop branch', abbr: 's')
-      bool skipCheckout: false}) async {}
+          bool skipCheckout: false}) async {}

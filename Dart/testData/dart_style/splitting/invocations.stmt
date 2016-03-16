@@ -17,7 +17,7 @@ return
 <<<
 return call({'type': type, 'id': id})
     .then(deserializeAsset);
->>> allows chained calls on one line with multi-line last argument list
+>>> trailing functions in a chain do not force it to split
 compiler
     .run(script)
     .then((_) {
@@ -27,26 +27,28 @@ compiler
 compiler.run(script).then((_) {
   body;
 });
->>> allow inline chains before and after a hard newline
-compiler.a().b((_) {
-  body;
-}).c().d();
+>>> a function in the middle of a chain is indented
+compiler.a().b((_) {body;}).c().d();
 <<<
-compiler.a().b((_) {
-  body;
-}).c().d();
->>> allow an inline chain before a hard newline but not after
-compiler.a().b((_) {
-  body;
-}).somethingLong().somethingLong().somethingLong();
+compiler
+    .a()
+    .b((_) {
+      body;
+    })
+    .c()
+    .d();
+>>> a function in the middle of a chain is indented
+compiler.a().b((_) {body;}).somethingLong().somethingLong().somethingLong();
 <<<
-compiler.a().b((_) {
-  body;
-})
+compiler
+    .a()
+    .b((_) {
+      body;
+    })
     .somethingLong()
     .somethingLong()
     .somethingLong();
->>> allow an inline chain after a hard newline but not before
+>>> a function in the middle of a chain is indented
 compiler.somethingLong().somethingLong().somethingLong((_) {
   body;
 }).a().b();
@@ -55,8 +57,21 @@ compiler
     .somethingLong()
     .somethingLong()
     .somethingLong((_) {
+      body;
+    })
+    .a()
+    .b();
+>>> one trailing call does not force function to indent
+compiler.somethingLong().somethingLong().somethingLong((_) {
   body;
-}).a().b();
+}).a();
+<<<
+compiler
+    .somethingLong()
+    .somethingLong()
+    .somethingLong((_) {
+  body;
+}).a();
 >>> nest calls one more than target
 someVeryLongExpression = someVeryLongExpression.someLongMethod();
 <<<
@@ -160,3 +175,108 @@ object
     .method()
     ?.method()
     .method();
+>>> index in property chain
+someReceiverObject.property1.property2
+        .property3[0]
+    .property4
+    .property5
+    .property6;
+<<<
+someReceiverObject
+    .property1
+    .property2
+    .property3[0]
+    .property4
+    .property5
+    .property6;
+>>> chained indexes
+someReceiverObject.property1.property2
+            .property3[argument]
+        [argument][argument]
+    .property4
+    .property5
+    .property6;
+<<<
+someReceiverObject
+    .property1
+    .property2
+    .property3[argument][argument]
+        [argument]
+    .property4
+    .property5
+    .property6;
+>>> index on method call
+someReceiverObject.property1.property2
+        .method3()[0]
+    .property4
+    .property5
+    .property6;
+<<<
+someReceiverObject.property1.property2
+    .method3()[0]
+    .property4
+    .property5
+    .property6;
+>>> target splits more deeply than method chain
+someTargetFunction(argument, argument, argument).method().method();
+<<<
+someTargetFunction(
+        argument, argument, argument)
+    .method()
+    .method();
+>>> splitting the target forces methods to split
+someVeryLongTargetFunction(argument, argument).one().two();
+<<<
+someVeryLongTargetFunction(
+        argument, argument)
+    .one()
+    .two();
+>>> target splits more deeply than property chain
+someTargetFunction(argument, argument, argument).property.property;
+<<<
+someTargetFunction(
+        argument, argument, argument)
+    .property
+    .property;
+>>> splitting the target forces methods to split
+someVeryLongTargetFunction(argument, argument).one.two;
+<<<
+someVeryLongTargetFunction(
+        argument, argument)
+    .one
+    .two;
+>>> do not split on "." when target is list
+[element, element, element, element, element].someLongMethod();
+<<<
+[
+  element,
+  element,
+  element,
+  element,
+  element
+].someLongMethod();
+>>> do not split on "." when target is map
+{"key": "value", "another": "another value"}.someLongMethod();
+<<<
+{
+  "key": "value",
+  "another": "another value"
+}.someLongMethod();
+>>> do not split on "." when target is function literal passed to method
+method(() {;}).someLongMethod();
+<<<
+method(() {
+  ;
+}).someLongMethod();
+>>> do not split on "." when target is function literal passed to constructor
+new Foo(() {;}).someLongMethod();
+<<<
+new Foo(() {
+  ;
+}).someLongMethod();
+>>> do not split on "." when target is function literal passed to function
+(function)(() {;}).someLongMethod();
+<<<
+(function)(() {
+  ;
+}).someLongMethod();

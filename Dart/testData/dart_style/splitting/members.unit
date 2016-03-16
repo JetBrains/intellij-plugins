@@ -8,3 +8,21 @@ class Foo {
   Stream methodName(AssetId id) =>
       methodBodyHereItIs;
 }
+>>> can split on getter
+class Foo {
+  VeryLongTypeAnnotation get veryLongGetter => null;
+}
+<<<
+class Foo {
+  VeryLongTypeAnnotation
+      get veryLongGetter => null;
+}
+>>> can split on setter
+class Foo {
+  VeryLongTypeAnnotation set veryLongSetter(v) {}
+}
+<<<
+class Foo {
+  VeryLongTypeAnnotation
+      set veryLongSetter(v) {}
+}

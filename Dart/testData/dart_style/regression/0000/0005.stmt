@@ -4,7 +4,8 @@ var overlapping = _directories.keys.where((directory) =>
     path.isWithin(rootDirectory, directory)).toList();
 <<<
 var overlapping = _directories.keys
-    .where((directory) => path.isWithin(directory, rootDirectory) ||
+    .where((directory) =>
+        path.isWithin(directory, rootDirectory) ||
         path.isWithin(rootDirectory, directory))
     .toList();
 >>>

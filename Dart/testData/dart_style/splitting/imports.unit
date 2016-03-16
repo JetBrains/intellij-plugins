@@ -121,3 +121,24 @@ import 'foo.dart'
     hide
         First, //
         Second;
+>>> multiple configurations on one line
+import 'a' if (b) 'b' if (c) 'c';
+<<<
+import 'a' if (b) 'b' if (c) 'c';
+>>> if configurations don't fit, they all split
+import 'long/import/url.dart' if (b) 'b' if (c) 'c';
+<<<
+import 'long/import/url.dart'
+    if (b) 'b'
+    if (c) 'c';
+>>> do not split before uri
+import 'long/import/url.dart' if (config) 'very/long/configured/import/url.dart';
+<<<
+import 'long/import/url.dart'
+    if (config) 'very/long/configured/import/url.dart';
+>>> split before ==
+import 'some/uri.dart' if (config.name.debug == 'string') 'c';
+<<<
+import 'some/uri.dart'
+    if (config.name.debug ==
+        'string') 'c';

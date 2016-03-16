@@ -44,8 +44,10 @@ if (true) {
 >>> single-expression else body
 if(true)print(1);else print(0);
 <<<
-if (true) print(1);
-else print(0);
+if (true)
+  print(1);
+else
+  print(0);
 >>> chained else if
 if (0 == 0) {
   zero = 0;
@@ -62,3 +64,28 @@ if (0 == 0) {
 } else if (0 == 2) {
   zero = 2;
 }
+>>> long if without curlies
+if (condition) someLong(argument, another);
+<<<
+if (condition)
+  someLong(argument, another);
+>>> long if else without curlies
+if (condition)
+  someLong(argument, another);
+else
+  anotherLong(argument, another);
+<<<
+if (condition)
+  someLong(argument, another);
+else
+  anotherLong(argument, another);
+>>> long if long else without curlies
+if (condition)
+  someLong(argument, another);
+else
+  anotherLong(argument, another, arg);
+<<<
+if (condition)
+  someLong(argument, another);
+else
+  anotherLong(argument, another, arg);

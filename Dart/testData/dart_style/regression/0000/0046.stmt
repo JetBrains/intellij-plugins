@@ -7,6 +7,6 @@ foo() {
 <<<
 foo() {
   if (true)
-      // comment!
-      return 0;
+    // comment!
+    return 0;
 }

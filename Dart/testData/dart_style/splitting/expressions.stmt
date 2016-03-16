@@ -134,3 +134,8 @@ identifier &&
     identifier &&
     identifier &&
     identifier;
+>>> "." in named constructor
+new VeryLongClassName.veryLongNamedConstructor();
+<<<
+new VeryLongClassName
+    .veryLongNamedConstructor();

@@ -247,3 +247,15 @@ final ListResultDescriptor<AnalysisError> HINTS =
       return irBuilder.makeConstructorDefinition(const [], const []);
     });
   }
+>>> (indent 4)
+    Element expectedElement = (declarations[0] as TopLevelVariableDeclaration)
+            .variables
+            .variables[0]
+        .name
+        .staticElement;
+<<<
+    Element expectedElement = (declarations[0] as TopLevelVariableDeclaration)
+        .variables
+        .variables[0]
+        .name
+        .staticElement;

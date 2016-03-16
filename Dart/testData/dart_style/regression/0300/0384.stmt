@@ -3,4 +3,5 @@
         ErrorCollectingPublisher] as ErrorCollectingPublisher).verify();
 <<<
     (scubaMatchers.publishers[ErrorCollectingPublisher]
-        as ErrorCollectingPublisher).verify();
+            as ErrorCollectingPublisher)
+        .verify();

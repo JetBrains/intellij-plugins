@@ -8,6 +8,26 @@ assert("some very long string that wraps");
 <<<
 assert(
     "some very long string that wraps");
+>>> single-line assert with message
+assert(true, "blah");
+<<<
+assert(true, "blah");
+>>> split assert with message before both
+assert(true, "looong string that wraps");
+<<<
+assert(
+    true, "looong string that wraps");
+>>> split assert with message after first
+assert(veryLongCondition, "long string that wraps");
+<<<
+assert(veryLongCondition,
+    "long string that wraps");
+>>> split assert with message at both
+assert(veryVeryVeryVeryVeryLongCondition, "long string that wraps");
+<<<
+assert(
+    veryVeryVeryVeryVeryLongCondition,
+    "long string that wraps");
 >>> split in do-while condition
 do {} while ("some long string that wraps");
 <<<

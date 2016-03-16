@@ -179,3 +179,25 @@ longFunction(argument, argument,
   ;
 }, argument, argument, argument,
     argument, argument);
+>>> all named args with leading non-function forces functions to indent
+longFunction(a: argument, b: () {;}, c: () {;});
+<<<
+longFunction(
+    a: argument,
+    b: () {
+      ;
+    },
+    c: () {
+      ;
+    });
+>>> all named args with trailing non-function forces functions to indent
+longFunction(a: () {;}, b: () {;}, c: argument);
+<<<
+longFunction(
+    a: () {
+      ;
+    },
+    b: () {
+      ;
+    },
+    c: argument);

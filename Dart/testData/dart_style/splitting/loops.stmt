@@ -84,3 +84,30 @@ for (var a = 0;
     a += 1, b += 1) {
   ;
 }
+>>> single line for without curlies
+for (i = 0; i < 10; i++) something(i);
+<<<
+for (i = 0; i < 10; i++) something(i);
+>>> multi-line for without curlies
+for (i = 0; i < 10; i++) somethingLonger(i);
+<<<
+for (i = 0; i < 10; i++)
+  somethingLonger(i);
+>>> single line for-in without curlies
+for (i in sequence) something(i);
+<<<
+for (i in sequence) something(i);
+>>> multi-line for-in without curlies
+for (i in sequence) somethingMuchLonger(i);
+<<<
+for (i in sequence)
+  somethingMuchLonger(i);
+>>> single line while without curlies
+while (condition) something(i);
+<<<
+while (condition) something(i);
+>>> multi-line while without curlies
+while (condition) somethingMuchLonger(i);
+<<<
+while (condition)
+  somethingMuchLonger(i);
