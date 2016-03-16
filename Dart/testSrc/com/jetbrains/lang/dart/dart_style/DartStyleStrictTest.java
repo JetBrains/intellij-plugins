@@ -38,10 +38,6 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("whitespace/compilation_unit.unit:38  collapse extra newlines between declarations");
   }
 
-  public void testMetadata() throws Exception {
-    runTestInDirectory("whitespace");
-  }
-
   /**
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
    */
