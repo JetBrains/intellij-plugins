@@ -48,51 +48,59 @@ public class AngularUiRouterDiagramBuilder {
         @Override
         public boolean process(JSImplicitElement element) {
           final UiRouterState state = new UiRouterState(id);
-          final JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+
+          JSCallExpression call = PsiTreeUtil.getParentOfType(element.getNavigationElement(), JSCallExpression.class);
+          if (call == null) {
+            final PsiElement elementAt = element.getContainingFile().findElementAt(element.getNavigationElement().getTextRange().getEndOffset() - 1);
+            if (elementAt != null) {
+              call = PsiTreeUtil.getParentOfType(elementAt, JSCallExpression.class);
+            }
+          }
           if (call != null) {
             final JSReferenceExpression methodExpression = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
             if (methodExpression != null && methodExpression.getQualifier() != null && "state".equals(methodExpression.getReferenceName())) {
               final JSExpression[] arguments = call.getArguments();
-              if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression &&
-                  PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
+              if (arguments.length > 0 && PsiTreeUtil.isAncestor(arguments[0], element.getNavigationElement(), false)) {
                 state.setPointer(mySmartPointerManager.createSmartPsiElementPointer(arguments[0]));
 
-                final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
-                final String url = getPropertyValueIfExists(object, "url");
-                if (url != null) {
-                  state.setUrl(StringUtil.unquoteString(url));
-                }
-                final String parentKey = getPropertyValueIfExists(object, "parent");
-                if (parentKey != null) {
-                  state.setParentName(parentKey);
-                }
-                final String templateUrl = getPropertyValueIfExists(object, "templateUrl");
-                if (templateUrl != null) {
-                  state.setTemplateUrl(templateUrl);
-                  final JSProperty urlProperty = object.findProperty("templateUrl");
-                  parseTemplate(call.getContainingFile().getVirtualFile(), templateUrl, urlProperty);
-                }
-                final JSProperty views = object.findProperty("views");
-                if (views != null) {
-                  final JSExpression value = views.getValue();
-                  if (value != null && value instanceof JSObjectLiteralExpression) {
-                    final JSProperty[] viewsProperties = ((JSObjectLiteralExpression)value).getProperties();
-                    if (viewsProperties != null && viewsProperties.length > 0) {
-                      final List<UiView> viewsList = new ArrayList<>();
-                      for (JSProperty property : viewsProperties) {
-                        if (property.getName() != null && property.getValue() != null) {
-                          viewsList.add(processView(property));
+                if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
+                  final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
+                  final String url = getPropertyValueIfExists(object, "url");
+                  if (url != null) {
+                    state.setUrl(StringUtil.unquoteString(url));
+                  }
+                  final String parentKey = getPropertyValueIfExists(object, "parent");
+                  if (parentKey != null) {
+                    state.setParentName(parentKey);
+                  }
+                  final String templateUrl = getPropertyValueIfExists(object, "templateUrl");
+                  if (templateUrl != null) {
+                    state.setTemplateUrl(templateUrl);
+                    final JSProperty urlProperty = object.findProperty("templateUrl");
+                    parseTemplate(call.getContainingFile().getVirtualFile(), templateUrl, urlProperty);
+                  }
+                  final JSProperty views = object.findProperty("views");
+                  if (views != null) {
+                    final JSExpression value = views.getValue();
+                    if (value != null && value instanceof JSObjectLiteralExpression) {
+                      final JSProperty[] viewsProperties = ((JSObjectLiteralExpression)value).getProperties();
+                      if (viewsProperties != null && viewsProperties.length > 0) {
+                        final List<UiView> viewsList = new ArrayList<>();
+                        for (JSProperty property : viewsProperties) {
+                          if (property.getName() != null && property.getValue() != null) {
+                            viewsList.add(processView(property));
+                          }
                         }
+                        state.setViews(viewsList);
                       }
-                      state.setViews(viewsList);
                     }
                   }
-                }
-                final JSProperty abstractProperty = object.findProperty("abstract");
-                if (abstractProperty != null && abstractProperty.getValue() instanceof JSLiteralExpression &&
-                  ((JSLiteralExpression)abstractProperty.getValue()).isBooleanLiteral() &&
-                    Boolean.TRUE.equals(((JSLiteralExpression)abstractProperty.getValue()).getValue())) {
-                  state.setAbstract(true);
+                  final JSProperty abstractProperty = object.findProperty("abstract");
+                  if (abstractProperty != null && abstractProperty.getValue() instanceof JSLiteralExpression &&
+                      ((JSLiteralExpression)abstractProperty.getValue()).isBooleanLiteral() &&
+                      Boolean.TRUE.equals(((JSLiteralExpression)abstractProperty.getValue()).getValue())) {
+                    state.setAbstract(true);
+                  }
                 }
               }
             }
