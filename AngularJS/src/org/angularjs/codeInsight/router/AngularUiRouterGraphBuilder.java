@@ -19,6 +19,9 @@ import com.intellij.openapi.graph.builder.actions.ZoomOutAction;
 import com.intellij.openapi.graph.builder.components.BasicGraphPresentationModel;
 import com.intellij.openapi.graph.builder.renderer.AbstractColoredNodeCellRenderer;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
+import com.intellij.openapi.graph.settings.GraphSettings;
+import com.intellij.openapi.graph.settings.GraphSettingsProvider;
 import com.intellij.openapi.graph.view.DefaultBackgroundRenderer;
 import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
@@ -77,6 +80,8 @@ public class AngularUiRouterGraphBuilder {
     myGraph = graphManager.createGraph2D();
     final Graph2DView view = graphManager.createGraph2DView(myGraph);
 
+    adjustLayout();
+
     final DefaultBackgroundRenderer backgroundRenderer = graphManager.createDefaultBackgroundRenderer(view);
     backgroundRenderer.setColor(UIUtil.getListBackground());
     view.setBackgroundRenderer(backgroundRenderer);
@@ -107,6 +112,67 @@ public class AngularUiRouterGraphBuilder {
     });
 
     return builderView.getJComponent();
+  }
+
+  private void adjustLayout() {
+    final GraphSettings settings = GraphSettingsProvider.getInstance(myProject).getSettings(myGraph);
+    //final CircularLayouter circularLayouter = settings.getCircularLayouter();
+    //circularLayouter.setPlaceChildrenOnCommonRadiusEnabled(true);
+    //circularLayouter.setLayoutStyle(CircularLayouter.SINGLE_CYCLE);
+    //circularLayouter.setPartitionLayoutStyle(CircularLayouter.PARTITION_LAYOUTSTYLE_CYCLIC);
+
+    final SmartOrganicLayouter organicLayouter = settings.getOrganicLayouter();
+    settings.setCurrentLayouter(organicLayouter);
+    /*myGraph.addDataProvider(CircularLayouter.CIRCULAR_CUSTOM_GROUPS_DPKEY, new com.intellij.openapi.graph.base.DataProvider() {
+      @Override
+      public Object get(Object _dataHolder) {
+        if (_dataHolder instanceof Node) {
+          final MyNode node = nodesBuilder.getAllNodes().get(((Node)_dataHolder).index());
+          if (node != null) return node.getIdentifyingElement().getType();
+        }
+        return null;
+      }
+
+      @Override
+      public int getInt(Object _dataHolder) {
+        return 0;
+      }
+
+      @Override
+      public double getDouble(Object _dataHolder) {
+        return 0;
+      }
+
+      @Override
+      public boolean getBool(Object _dataHolder) {
+        return false;
+      }
+    });
+    myGraph.addDataProvider(CircularLayouter.CIRCLE_ID_HOLDER_DPKEY, new com.intellij.openapi.graph.base.DataProvider() {
+      @Override
+      public Object get(Object _dataHolder) {
+        return null;
+      }
+
+      @Override
+      public boolean getBool(Object _dataHolder) {
+        return false;
+      }
+
+      @Override
+      public double getDouble(Object _dataHolder) {
+        return 0;
+      }
+
+      @Override
+      public int getInt(Object _dataHolder) {
+        if (_dataHolder instanceof Node) {
+          final MyNode node = nodesBuilder.getAllNodes().get(((Node)_dataHolder).index());
+          if (node != null) return node.getIdentifyingElement().getType().ordinal();
+        }
+        return 0;
+      }
+    });*/
   }
 
   public DefaultActionGroup buildActions() {
