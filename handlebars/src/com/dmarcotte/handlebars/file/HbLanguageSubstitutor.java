@@ -7,6 +7,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.LanguageSubstitutor;
+import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +17,10 @@ public class HbLanguageSubstitutor extends LanguageSubstitutor {
   public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
     if (HbConfig.shouldOpenHtmlAsHandlebars(project) &&
         file.getFileType() == HtmlFileType.INSTANCE) {
+      if (file instanceof LightVirtualFile) {
+        return null;
+      }
+
       return HbLanguage.INSTANCE;
     }
 
