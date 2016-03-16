@@ -148,6 +148,24 @@ public class AngularUiRouterGraphBuilder {
         }
       }
 
+      for (Map.Entry<String, MyNode> entry : stateNodes.entrySet()) {
+        final String key = entry.getKey();
+        final int dotIdx = key.lastIndexOf('.');
+        if (dotIdx > 0) {
+          final String parentKey = key.substring(0, dotIdx);
+          MyNode parentState = stateNodes.get(parentKey);
+          if (parentState != null) {
+            edges.add(new MyEdge(entry.getValue(), parentState, "parent"));
+          } else {
+            final UiRouterState state = myStatesMap.get(key);
+            if (state != null && state.getParentName() != null) {
+              parentState = stateNodes.get(state.getParentName());
+              edges.add(new MyEdge(entry.getValue(), parentState, "parent"));
+            }
+          }
+        }
+      }
+
       allNodes.addAll(stateNodes.values());
       allNodes.addAll(templateNodes.values());
       allNodes.addAll(templatePlaceHoldersNodes.values());
