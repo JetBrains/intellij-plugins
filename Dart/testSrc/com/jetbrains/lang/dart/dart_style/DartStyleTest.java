@@ -486,10 +486,9 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("splitting/variables.stmt:48");
     KNOWN_TO_FAIL.add("splitting/variables.stmt:62  dartbug.com/16379");
 
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:68  allow inline annotations before members"); // fails due to blank lines
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:77  force newline before member"); // NEW 3/16
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:95  multiple annotations before members get own line"); // NEW 3/16
-    KNOWN_TO_FAIL.add("whitespace/metadata.unit:211  split between metadata and parameter indents"); // NEW 3/16
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:77  force newline before member"); // Bad test
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:95  multiple annotations before members get own line"); // Bad test
+    KNOWN_TO_FAIL.add("whitespace/metadata.unit:211  split between metadata and parameter indents");
     KNOWN_TO_FAIL.add("whitespace/directives.unit:53  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("whitespace/directives.unit:57  configuration"); // https://github.com/munificent/dep-interface-libraries
     KNOWN_TO_FAIL.add("whitespace/expressions.stmt:110  ?. operator");
