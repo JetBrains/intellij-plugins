@@ -41,8 +41,9 @@ public class AngularUiRouterDiagramBuilder {
 
   public void build() {
     final Collection<String> stateIds = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, myProject);
-    // todo handle also situations with .child and home.child to be the same
+
     for (String id : stateIds) {
+      if (id.startsWith(".")) continue;
       AngularIndexUtil.multiResolve(myProject, AngularUiRouterStatesIndex.KEY, id, new Processor<JSImplicitElement>() {
         @Override
         public boolean process(JSImplicitElement element) {
