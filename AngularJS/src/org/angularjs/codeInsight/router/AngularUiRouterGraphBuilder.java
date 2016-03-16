@@ -4,13 +4,18 @@ import com.intellij.diagram.*;
 import com.intellij.diagram.presentation.DiagramLineType;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.base.Graph;
 import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.builder.GraphBuilderFactory;
 import com.intellij.openapi.graph.builder.GraphDataModel;
+import com.intellij.openapi.graph.builder.actions.ActualZoomAction;
+import com.intellij.openapi.graph.builder.actions.FitContentAction;
+import com.intellij.openapi.graph.builder.actions.ZoomInAction;
+import com.intellij.openapi.graph.builder.actions.ZoomOutAction;
 import com.intellij.openapi.graph.builder.components.BasicGraphPresentationModel;
 import com.intellij.openapi.graph.builder.renderer.AbstractColoredNodeCellRenderer;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
@@ -19,6 +24,7 @@ import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
 import com.intellij.openapi.graph.view.NodeRealizer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,11 +37,14 @@ import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.SmartList;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.*;
 import java.util.List;
 
@@ -46,6 +55,7 @@ public class AngularUiRouterGraphBuilder {
   @NotNull private final Project myProject;
   private final Map<String, UiRouterState> myStatesMap;
   private final Map<String, Template> myTemplatesMap;
+  private Graph2D myGraph;
 
   public AngularUiRouterGraphBuilder(@NotNull Project project,
                                      @NotNull Map<String, UiRouterState> statesMap,
@@ -55,7 +65,7 @@ public class AngularUiRouterGraphBuilder {
     myTemplatesMap = templatesMap;
   }
 
-  public JComponent build() {
+  public JComponent build(@NotNull final Disposable disposable) {
     final MyDiagramProvider provider = new MyDiagramProvider();
 
     final GraphNodesBuilder nodesBuilder = new GraphNodesBuilder(myStatesMap, myTemplatesMap);
@@ -64,27 +74,51 @@ public class AngularUiRouterGraphBuilder {
     // todo fill possible views as separate stage
 
     final GraphManager graphManager = GraphManager.getGraphManager();
-    final Graph2D graph = graphManager.createGraph2D();
-    final Graph2DView view = graphManager.createGraph2DView(graph);
+    myGraph = graphManager.createGraph2D();
+    final Graph2DView view = graphManager.createGraph2DView(myGraph);
 
     final DefaultBackgroundRenderer backgroundRenderer = graphManager.createDefaultBackgroundRenderer(view);
     backgroundRenderer.setColor(UIUtil.getListBackground());
     view.setBackgroundRenderer(backgroundRenderer);
 
-    final PresentationModel presentationModel = new PresentationModel(myProject, graph);
+    final PresentationModel presentationModel = new PresentationModel(myProject, myGraph);
     final MyDiagramModel model = new MyDiagramModel(myProject, provider, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
 
     final GraphBuilder<MyNode, MyEdge> builder =
-      GraphBuilderFactory.getInstance(myProject).createGraphBuilder(graph, view, model, presentationModel);
+      GraphBuilderFactory.getInstance(myProject).createGraphBuilder(myGraph, view, model, presentationModel);
     presentationModel.setGraphBuilder(builder);
 
-    //GraphViewUtil.addDataProvider(view, new MyDataProvider(myBuilder));
-    //todo!!!
-    //Disposer.register(this, builder);
+    GraphViewUtil.addDataProvider(view, new MyDataProvider(builder));
+    Disposer.register(disposable, builder);
 
     builder.initialize();
 
-    return builder.getView().getJComponent();
+    final Graph2DView builderView = builder.getView();
+    //todo scroll bar bug!
+    builderView.setScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    builderView.getJComponent().addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentShown(ComponentEvent e) {
+        builderView.fitContent();
+        builderView.adjustScrollBarVisibility();
+        builderView.adjustScrollBarVisibility();
+        builderView.getJComponent().removeComponentListener(this);
+      }
+    });
+
+    return builderView.getJComponent();
+  }
+
+  public DefaultActionGroup buildActions() {
+    final DefaultActionGroup group = new DefaultActionGroup();
+
+    group.add(new ZoomInAction(myGraph));
+    group.add(new ZoomOutAction(myGraph));
+    group.add(new ActualZoomAction(myGraph));
+    group.add(new FitContentAction(myGraph));
+    group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE));
+
+    return group;
   }
 
   private static class GraphNodesBuilder {
@@ -144,6 +178,7 @@ public class AngularUiRouterGraphBuilder {
               final MyNode templateNode = getOrCreateTemplateNode(provider, template);
               edges.add(new MyEdge(viewNode, templateNode, "provides"));
             }
+            edges.add(new MyEdge(node, viewNode));
           }
         }
       }
@@ -583,6 +618,38 @@ public class AngularUiRouterGraphBuilder {
     @Override
     public void dispose() {
 
+    }
+  }
+
+  private static class MyDataProvider implements DataProvider {
+    private final Project myProject;
+    private final Graph2D myGraph;
+    private final GraphBuilder<MyNode, MyEdge> myBuilder;
+
+    public MyDataProvider(GraphBuilder<MyNode, MyEdge> builder) {
+      myBuilder = builder;
+      myProject = builder.getProject();
+      myGraph = builder.getGraph();
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NonNls String dataId) {
+      if (CommonDataKeys.PROJECT.is(dataId)) {
+        return myProject;
+      }
+      else if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
+        for (Node node : myGraph.getNodeArray()) {
+          if (myGraph.getRealizer(node).isSelected()) {
+            final MyNode object = myBuilder.getNodeObject(node);
+            if (object != null) {
+              final SmartPsiElementPointer pointer = object.getIdentifyingElement().getNavigationTarget();
+              return pointer == null ? null : pointer.getElement();
+            }
+          }
+        }
+      }
+      return null;
     }
   }
 }
