@@ -56,9 +56,27 @@ public class DartTestRerunner implements RunProfileState {
         else {
           needsSeparator = true;
         }
-        buf.append(StringUtil.escapeToRegexp(test.getName()));
+        buf.append(buildFullTestName(test));
       }
     }
     return buf.toString();
+  }
+
+  private static String buildFullTestName(@NotNull AbstractTestProxy test) {
+    StringBuffer fullName = new StringBuffer();
+    buildFullTestName(test.getParent(), fullName);
+    fullName.append(test.getName());
+    return StringUtil.escapeToRegexp(fullName.toString());
+  }
+
+  private static void buildFullTestName(AbstractTestProxy test, StringBuffer fullName) {
+    if (test == null) return;
+    buildFullTestName(test.getParent(), fullName);
+    String url = test.getLocationUrl();
+    if (url == null || url.endsWith(",[]")) return;
+    String name = test.getName();
+    if (name == null || name.equals("[root]")) return; // Previous return should prevent reaching here.
+    fullName.append(name);
+    fullName.append(' ');
   }
 }
