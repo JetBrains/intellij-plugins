@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -10,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -368,7 +368,7 @@ public class DartServerData {
 
     private DartHighlightRegion(@NotNull final HighlightRegion region) {
       super(region.getOffset(), region.getLength());
-      type = region.getType();
+      type = region.getType().intern();
     }
 
     public String getType() {
@@ -408,7 +408,7 @@ public class DartServerData {
   }
 
   public static class DartNavigationRegion extends DartRegion {
-    private final List<DartNavigationTarget> myTargets = Lists.newArrayList();
+    private final List<DartNavigationTarget> myTargets = new SmartList<>();
 
     DartNavigationRegion(@NotNull final NavigationRegion region) {
       super(region.getOffset(), region.getLength());
@@ -434,9 +434,9 @@ public class DartServerData {
     private final String myKind;
 
     private DartNavigationTarget(@NotNull final NavigationTarget target) {
-      myFile = FileUtil.toSystemIndependentName(target.getFile());
+      myFile = FileUtil.toSystemIndependentName(target.getFile()).intern();
       myOffset = target.getOffset();
-      myKind = target.getKind();
+      myKind = target.getKind().intern();
     }
 
     public String getFile() {
