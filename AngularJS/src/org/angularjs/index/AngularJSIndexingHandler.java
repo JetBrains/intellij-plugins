@@ -146,6 +146,13 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         return result;
       }
     });
+    // do NOT split module names by dot
+    POLY_NAME_CONVERTERS.put(MODULE, new Function<String, List<String>>() {
+      @Override
+      public List<String> fun(String s) {
+        return Collections.singletonList(s);
+      }
+    });
   }
 
   static final String RESTRICT = "@restrict";

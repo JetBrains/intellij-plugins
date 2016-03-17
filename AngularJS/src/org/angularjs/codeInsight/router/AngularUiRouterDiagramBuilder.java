@@ -14,9 +14,9 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularNamedItemDefinition;
 import org.angularjs.index.AngularUiRouterStatesIndex;
 import org.angularjs.index.AngularUiRouterViewsIndex;
-import org.angularjs.index.AngularViewDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,9 +136,9 @@ public class AngularUiRouterDiagramBuilder {
           final PsiFile finalTemplateFile = templateFile;
           for (String key : placeholdersSet) {
             instance.processValues(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, key, null,
-                                   new FileBasedIndex.ValueProcessor<AngularViewDefinition>() {
+                                   new FileBasedIndex.ValueProcessor<AngularNamedItemDefinition>() {
                                      @Override
-                                     public boolean process(VirtualFile file, AngularViewDefinition value) {
+                                     public boolean process(VirtualFile file, AngularNamedItemDefinition value) {
                                        final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(JSQualifiedNameImpl.fromQualifiedName(key), null);
                                        final JSOffsetBasedImplicitElement implicitElement =
                                          new JSOffsetBasedImplicitElement(builder, (int)value.getStartOffset(), finalTemplateFile);

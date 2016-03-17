@@ -5,11 +5,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Irina.Chernushina on 2/11/2016.
  */
-public class AngularViewDefinition {
+public class AngularNamedItemDefinition {
   @Nullable private final String myName;
   private final long myStartOffset;
 
-  public AngularViewDefinition(@Nullable String name, long startOffset) {
+  public AngularNamedItemDefinition(@Nullable String name, long startOffset) {
     myName = name;
     myStartOffset = startOffset;
   }

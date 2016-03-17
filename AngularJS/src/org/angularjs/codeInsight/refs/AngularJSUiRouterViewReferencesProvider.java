@@ -17,8 +17,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.angularjs.index.AngularNamedItemDefinition;
 import org.angularjs.index.AngularUiRouterViewsIndex;
-import org.angularjs.index.AngularViewDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -61,9 +61,9 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
       }
       final List<ResolveResult> list = new ArrayList<ResolveResult>();
       for (VirtualFile file : files) {
-        final List<AngularViewDefinition> values =
+        final List<AngularNamedItemDefinition> values =
           instance.getValues(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, GlobalSearchScope.fileScope(project, file));
-        for (AngularViewDefinition value : values) {
+        for (AngularNamedItemDefinition value : values) {
           JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(id);
           JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(qName, null);
           final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
